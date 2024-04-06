@@ -4,7 +4,7 @@
 #include "StereoMixPlayerState.h"
 
 #include "AbilitySystemComponent.h"
-#include "GAS/AttributeSets/StereoMixCharacterAttributeSet.h"
+#include "AbilitySystems/AttributeSets/StereoMixCharacterAttributeSet.h"
 
 AStereoMixPlayerState::AStereoMixPlayerState()
 {

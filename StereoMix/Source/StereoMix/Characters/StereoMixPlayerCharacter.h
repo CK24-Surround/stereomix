@@ -106,13 +106,13 @@ protected:
 	
 // ~Movement Section
 public:
+	// 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
+	FVector GetCursorTargetingPoint();
+	
 	void SetMaxWalkSpeed(float InSpeed);
 
 protected:
 	void Move(const FInputActionValue& InputActionValue);
-
-	// 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
-	FVector GetCursorTargetingPoint();
 
 	UFUNCTION()
 	void OnRep_MaxWalkSpeed();

@@ -10,6 +10,7 @@
 
 UStereoMixCharacterAttributeSet::UStereoMixCharacterAttributeSet()
 {
+	Damage = 0.0f;
 	PostureGauge = 0.0f;
 	MaxPostureGauge = 100.0f;
 	MoveSpeed = 0.0f;
@@ -26,6 +27,16 @@ void UStereoMixCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetim
 	DOREPLIFETIME(UStereoMixCharacterAttributeSet, MoveSpeed);
 	DOREPLIFETIME(UStereoMixCharacterAttributeSet, ProjectileAttack);
 	DOREPLIFETIME(UStereoMixCharacterAttributeSet, ProjectileAttackCooldown);
+}
+
+void UStereoMixCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+{
+	Super::PreAttributeChange(Attribute, NewValue);
+
+	if (Attribute == GetDamageAttribute())
+	{
+		NewValue = NewValue > 0.0f ? NewValue : 0.0f;
+	}
 }
 
 void UStereoMixCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
@@ -58,6 +69,13 @@ void UStereoMixCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayE
 		{
 			NET_LOG(OwnerActor, Warning, TEXT("GAS와 호환되지 않는 액터입니다."));
 		}
+	}
+
+	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
+	{
+		const float NewPostureGauge = FMath::Clamp(GetPostureGauge() + GetDamage(), 0.0f, GetMaxPostureGauge());
+		SetPostureGauge(NewPostureGauge);
+		SetDamage(0.0f);
 	}
 }
 

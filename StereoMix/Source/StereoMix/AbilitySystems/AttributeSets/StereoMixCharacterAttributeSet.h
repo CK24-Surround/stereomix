@@ -22,6 +22,7 @@ public:
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
@@ -31,6 +32,8 @@ public:
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, MoveSpeed);
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, ProjectileAttack);
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, ProjectileAttackCooldown);
+	
+	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, Damage);
 
 protected:
 	UFUNCTION()
@@ -63,4 +66,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Posture", ReplicatedUsing = "OnRep_ProjectileAttackCooldown")
 	FGameplayAttributeData ProjectileAttackCooldown;
+
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "Damage")
+	FGameplayAttributeData Damage;
 };

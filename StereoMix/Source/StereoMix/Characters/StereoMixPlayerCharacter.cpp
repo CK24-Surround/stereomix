@@ -250,7 +250,7 @@ FVector AStereoMixPlayerCharacter::GetCursorTargetingPoint()
 		}
 	}
 
-	return FVector();
+	return FVector(0.0, 0.0, GetActorLocation().Z);
 }
 
 void AStereoMixPlayerCharacter::SetMaxWalkSpeed(float InSpeed)

@@ -5,6 +5,7 @@ namespace StereoMixCollisionProfileName
 {
 	inline const FName NoCollision = TEXT("NoCollision");
 	inline const FName Player = TEXT("Player");
+	inline const FName Projectile = TEXT("Projectile");
 }
 
 namespace StereoMixCollisionObjectChannel

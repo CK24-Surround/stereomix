@@ -3,6 +3,9 @@
 
 DECLARE_LOG_CATEGORY_CLASS(LogStereoMixNetwork, Log, All);
 
+#if UE_BUILD_SHIPPING
+#define NET_LOG(NetOwner, Verbosity, Format, ...)
+#else
 #define NET_LOG(NetOwner, Verbosity, Format, ...)\
 {\
 	const AActor* Macro_NetOwner = NetOwner;\
@@ -40,3 +43,4 @@ DECLARE_LOG_CATEGORY_CLASS(LogStereoMixNetwork, Log, All);
 		UE_LOG(LogStereoMixNetwork, Verbosity, TEXT(" \n\t%s"), *Macro_Log);\
 	}\
 }
+#endif
