@@ -8,16 +8,31 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Data/StereoMixControlData.h"
+#include "Data/StereoMixDesignData.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Player/StereoMixPlayerController.h"
 #include "Player/StereoMixPlayerState.h"
+#include "Utilities/StereoMixAssetPath.h"
 #include "Utilities/StereoMixCollision.h"
 #include "Utilities/StereoMixeLog.h"
+#include "Utilities/StereoMixTag.h"
 
 
 AStereoMixPlayerCharacter::AStereoMixPlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	static ConstructorHelpers::FObjectFinder<UStereoMixDesignData> StereoMixDesignDataRef(StereoMixAssetPath::DesignData);
+	if (StereoMixDesignDataRef.Object)
+	{
+		DesignData = StereoMixDesignDataRef.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("DesignData 로드에 실패했습니다."));
+	}
 
 	GetMesh()->SetCollisionProfileName(StereoMixCollisionProfileName::NoCollision);
 
@@ -30,6 +45,8 @@ AStereoMixPlayerCharacter::AStereoMixPlayerCharacter()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraBoom);
+
+	MaxWalkSpeed = 0.0f;
 }
 
 void AStereoMixPlayerCharacter::PostInitializeComponents()
@@ -45,6 +62,15 @@ void AStereoMixPlayerCharacter::PossessedBy(AController* NewController)
 
 	CachedStereoMixPlayerController = GetController<AStereoMixPlayerController>();
 	check(CachedStereoMixPlayerController);
+
+	InitASC();
+}
+
+void AStereoMixPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(AStereoMixPlayerCharacter, MaxWalkSpeed);
 }
 
 void AStereoMixPlayerCharacter::OnRep_Controller()
@@ -86,6 +112,8 @@ void AStereoMixPlayerCharacter::SetupPlayerInputComponent(UInputComponent* Playe
 	{
 		EnhancedInputComponent->BindAction(ControlData->MoveAction, ETriggerEvent::Triggered, this, &AStereoMixPlayerCharacter::Move);
 	}
+
+	SetupGASInputComponent();
 }
 
 UAbilitySystemComponent* AStereoMixPlayerCharacter::GetAbilitySystemComponent() const
@@ -97,24 +125,7 @@ void AStereoMixPlayerCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	AStereoMixPlayerState* StereoMixPlayerState = GetPlayerStateChecked<AStereoMixPlayerState>();
-	ASC = StereoMixPlayerState->GetAbilitySystemComponent();
-	if (ASC.Get())
-	{
-		ASC->InitAbilityActorInfo(StereoMixPlayerState, this);
-
-		for (const auto& DefaultActiveAbility : DefaultActiveAbilities)
-		{
-			FGameplayAbilitySpec AbilitySpec(DefaultActiveAbility.Value, 1, DefaultActiveAbility.Key);
-			ASC->GiveAbility(AbilitySpec);
-		}
-
-		for (const auto& DefaultAbility : DefaultAbilities)
-		{
-			FGameplayAbilitySpec AbilitySpec(DefaultAbility.Value);
-			ASC->GiveAbility(AbilitySpec);
-		}
-	}
+	InitASC();
 }
 
 void AStereoMixPlayerCharacter::InitCamera()
@@ -132,6 +143,86 @@ void AStereoMixPlayerCharacter::InitCamera()
 	CameraBoom->bEnableCameraLag = true;
 
 	Camera->SetFieldOfView(CameraFOV);
+}
+
+void AStereoMixPlayerCharacter::SetupGASInputComponent()
+{
+	if (!ASC)
+	{
+		NET_LOG(this, Warning, TEXT("%s는 GAS를 지원하지 않는 액터입니다."), *GetName())
+		return;
+	}
+
+	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	const AStereoMixPlayerController* PlayerController = CastChecked<AStereoMixPlayerController>(Controller);
+	const UStereoMixControlData* ControlData = PlayerController->GetControlData();
+	EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &AStereoMixPlayerCharacter::GAInputPressed, EActiveAbility::Shoot);
+}
+
+void AStereoMixPlayerCharacter::InitASC()
+{
+	AStereoMixPlayerState* StereoMixPlayerState = GetPlayerStateChecked<AStereoMixPlayerState>();
+	ASC = StereoMixPlayerState->GetAbilitySystemComponent();
+	if (HasAuthority())
+	{
+		if (ASC.Get())
+		{
+			ASC->InitAbilityActorInfo(StereoMixPlayerState, this);
+
+			const FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
+			if (GEContextHandle.IsValid())
+			{
+				const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(GEForInit, 0, GEContextHandle);
+				if (GESpecHandle.IsValid())
+				{
+					GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(StereoMixTag::AttributeSet_Character_Init_MoveSpeed, DesignData->MoveSpeed);
+					GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(StereoMixTag::AttributeSet_Character_Init_ProjectileCooldown, 1.0f / DesignData->ProjectileRate);
+					GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(StereoMixTag::AttributeSet_Character_Init_ProjectileAttack, DesignData->ProjectileAttack);
+					ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+				}
+			}
+
+			for (const auto& DefaultActiveAbility : DefaultActiveAbilities)
+			{
+				FGameplayAbilitySpec AbilitySpec(DefaultActiveAbility.Value, 1, static_cast<int32>(DefaultActiveAbility.Key));
+				ASC->GiveAbility(AbilitySpec);
+			}
+
+			for (const auto& DefaultAbility : DefaultAbilities)
+			{
+				FGameplayAbilitySpec AbilitySpec(DefaultAbility);
+				ASC->GiveAbility(AbilitySpec);
+			}
+		}
+	}
+}
+
+void AStereoMixPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
+{
+	FGameplayAbilitySpec* GASpec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InInputID));
+	if (GASpec)
+	{
+		if (GASpec->IsActive())
+		{
+			ASC->AbilitySpecInputPressed(*GASpec);
+		}
+		else
+		{
+			ASC->TryActivateAbility(GASpec->Handle);
+		}
+	}
+}
+
+void AStereoMixPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
+{
+	FGameplayAbilitySpec* GASpec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InInputID));
+	if (GASpec)
+	{
+		if (GASpec->IsActive())
+		{
+			ASC->AbilitySpecInputReleased(*GASpec);
+		}
+	}
 }
 
 void AStereoMixPlayerCharacter::Move(const FInputActionValue& InputActionValue)
@@ -160,4 +251,18 @@ FVector AStereoMixPlayerCharacter::GetCursorTargetingPoint()
 	}
 
 	return FVector();
+}
+
+void AStereoMixPlayerCharacter::SetMaxWalkSpeed(float InSpeed)
+{
+	if (HasAuthority())
+	{
+		MaxWalkSpeed = InSpeed;
+		OnRep_MaxWalkSpeed();
+	}
+}
+
+void AStereoMixPlayerCharacter::OnRep_MaxWalkSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
 }

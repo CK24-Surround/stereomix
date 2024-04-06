@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "StereoMixPlayerState.generated.h"
 
+class UStereoMixCharacterAttributeSet;
 /**
  * 
  */
@@ -24,4 +25,7 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "GAS|ASC")
 	TObjectPtr<UAbilitySystemComponent> ASC;
+
+	UPROPERTY(VisibleAnywhere, Category = "GAS|AttributeSet")
+	TObjectPtr<UStereoMixCharacterAttributeSet> CharacterAttributeSet; 
 };

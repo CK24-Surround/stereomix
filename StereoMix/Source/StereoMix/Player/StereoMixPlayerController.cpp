@@ -9,7 +9,7 @@
 
 AStereoMixPlayerController::AStereoMixPlayerController()
 {
-	static ConstructorHelpers::FObjectFinder<UStereoMixControlData> ControlDataRef(StereoMixAssetPath::ControlDataPath);
+	static ConstructorHelpers::FObjectFinder<UStereoMixControlData> ControlDataRef(StereoMixAssetPath::ControlData);
 	if (ControlDataRef.Object)
 	{
 		ControlData = ControlDataRef.Object;

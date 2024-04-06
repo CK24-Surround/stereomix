@@ -1,7 +1,7 @@
 
 #pragma once
 
-DECLARE_LOG_CATEGORY_CLASS(LogSteroMixNetwork, Log, All);
+DECLARE_LOG_CATEGORY_CLASS(LogStereoMixNetwork, Log, All);
 
 #define NET_LOG(NetOwner, Verbosity, Format, ...)\
 {\
@@ -16,8 +16,8 @@ DECLARE_LOG_CATEGORY_CLASS(LogSteroMixNetwork, Log, All);
 		const ENetMode Macro_NetMode = Macro_NetOwner->GetNetMode();\
 		Macro_NetModeInfo = Macro_NetMode == NM_Client ? FString::Printf(TEXT("Client%d"), static_cast<int>(GPlayInEditorID)) : Macro_NetMode == NM_DedicatedServer ? TEXT("Server") : TEXT("Misc");\
 		\
-		Macro_LocalRoleInfo = UEnum::GetValueAsString(TEXT("Engine.ENetRole"), Macro_NetOwner->GetRemoteRole());\
-		Macro_RemoteRoleInfo = UEnum::GetValueAsString(TEXT("Engine.ENetRole"), Macro_NetOwner->GetLocalRole());\
+		Macro_LocalRoleInfo = UEnum::GetValueAsString(TEXT("Engine.ENetRole"), Macro_NetOwner->GetLocalRole());\
+		Macro_RemoteRoleInfo = UEnum::GetValueAsString(TEXT("Engine.ENetRole"), Macro_NetOwner->GetRemoteRole());\
 	}\
 	\
 	FString Macro_Log;\
@@ -33,10 +33,10 @@ DECLARE_LOG_CATEGORY_CLASS(LogSteroMixNetwork, Log, All);
 	const FString Macro_NullText = TEXT("");\
 	if (Macro_NullText != Format)\
 	{\
-		UE_LOG(LogSteroMixNetwork, Verbosity, TEXT(" \n\t%s\n\t%s"), *Macro_Log, *FString::Printf(Format, ##__VA_ARGS__));\
+		UE_LOG(LogStereoMixNetwork, Verbosity, TEXT(" \n\t%s\n\t%s"), *Macro_Log, *FString::Printf(Format, ##__VA_ARGS__));\
 	}\
 	else\
 	{\
-		UE_LOG(LogSteroMixNetwork, Verbosity, TEXT(" \n\t%s"), *Macro_Log);\
+		UE_LOG(LogStereoMixNetwork, Verbosity, TEXT(" \n\t%s"), *Macro_Log);\
 	}\
 }

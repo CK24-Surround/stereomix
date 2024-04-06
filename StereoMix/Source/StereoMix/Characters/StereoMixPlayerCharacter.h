@@ -7,12 +7,22 @@
 #include "StereoMixCharacter.h"
 #include "StereoMixPlayerCharacter.generated.h"
 
+class UGameplayEffect;
 class UGameplayAbility;
 class AStereoMixPlayerController;
 struct FInputActionValue;
 class USphereComponent;
 class UCameraComponent;
 class USpringArmComponent;
+class UStereoMixDesignData;
+
+UENUM(BlueprintType)
+enum class EActiveAbility : uint8
+{
+	None,
+	Shoot,
+	Catch
+};
 
 UCLASS()
 class STEREOMIX_API AStereoMixPlayerCharacter : public AStereoMixCharacter, public IAbilitySystemInterface
@@ -22,10 +32,13 @@ class STEREOMIX_API AStereoMixPlayerCharacter : public AStereoMixCharacter, publ
 public:
 	AStereoMixPlayerCharacter();
 
-protected:
+public:
 	virtual void PostInitializeComponents() override;
 	virtual void PossessedBy(AController* NewController) override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void OnRep_Controller() override;
+	
+protected:
 	virtual void BeginPlay() override;
 
 public:
@@ -38,6 +51,7 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 protected:
+	// 카메라 관련 데이터를 초기화합니다.
 	void InitCamera();
 
 protected:
@@ -50,6 +64,12 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component|Camera")
 	TObjectPtr<UCameraComponent> Camera;
 
+// ~Data Section
+protected:
+	UPROPERTY()
+	TObjectPtr<const UStereoMixDesignData> DesignData;
+// ~Data Section
+	
 // ~Caching Section
 protected:
 	UPROPERTY()
@@ -58,22 +78,48 @@ protected:
 
 // ~GAS Section
 protected:
+	// GAS에서 사용할 액티브 GA들을 바인드합니다.
+	void SetupGASInputComponent();
+
+	// ASC를 초기화하고 기본 GA들을 부여합니다.
+	void InitASC();
+
+	// 액티브 GA와 바인드 된 함수입니다. 입력할때 트리거됩니다.
+	void GAInputPressed(EActiveAbility InInputID);
+
+	// 액티브 GA와 바인드 된 함수입니다. 놓을때 트리거됩니다.
+	void GAInputReleased(EActiveAbility InInputID);
+
+protected:
 	UPROPERTY()
 	TSoftObjectPtr<UAbilitySystemComponent> ASC;
 
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|GA")
-	TMap<int32, UGameplayAbility*> DefaultActiveAbilities;
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> GEForInit;
 
 	UPROPERTY(EditDefaultsOnly, Category = "GAS|GA")
-	TMap<int32, UGameplayAbility*> DefaultAbilities;
+	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
+
+	UPROPERTY(EditDefaultsOnly, Category = "GAS|GA")
+	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 // ~GAS Section
 	
 // ~Movement Section
+public:
+	void SetMaxWalkSpeed(float InSpeed);
+
 protected:
 	void Move(const FInputActionValue& InputActionValue);
 
+	// 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
 	FVector GetCursorTargetingPoint();
-// ~Movement Section
 
-	
+	UFUNCTION()
+	void OnRep_MaxWalkSpeed();
+
+protected:
+	// 이동속도 리플리케이션을 위한 변수로 직접 수정되어서는 안됩니다. SetMaxWalkSpeed를 사용해 수정해주세요.
+	UPROPERTY(ReplicatedUsing = "OnRep_MaxWalkSpeed")
+	float MaxWalkSpeed;
+// ~Movement Section
 };
