@@ -4,6 +4,7 @@
 #include "StereoMixGameplayAbility_Launch.h"
 
 #include "AbilitySystemComponent.h"
+#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystems/AttributeSets/StereoMixCharacterAttributeSet.h"
 #include "AbilityTasks/StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
 #include "Characters/StereoMixPlayerCharacter.h"
@@ -26,7 +27,7 @@ void UStereoMixGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpe
 		return;
 	}
 
-	const UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
+	UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
 	const UStereoMixCharacterAttributeSet* CharacterAttributeSet = ASC->GetSet<UStereoMixCharacterAttributeSet>();
 	if (!CharacterAttributeSet)
 	{
@@ -52,7 +53,15 @@ void UStereoMixGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpe
 		ServerRPCRequestSpawnProjectile(StartLocation, TargetLocation);
 	}
 
-	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
+	UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
+	if (!AnimInstance)
+	{
+		NET_LOG(ActorInfo->AvatarActor.Get(), Warning, TEXT("애님 인스턴스가 존재하지 않습니다."));
+	}
+
+	ASC->PlayMontage(this, ActivationInfo, Montage, 1.0f);
+
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void UStereoMixGameplayAbility_Launch::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -62,7 +71,7 @@ void UStereoMixGameplayAbility_Launch::EndAbility(const FGameplayAbilitySpecHand
 
 void UStereoMixGameplayAbility_Launch::OnFinished()
 {
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
 void UStereoMixGameplayAbility_Launch::ServerRPCRequestSpawnProjectile_Implementation(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& CursorLocation)
@@ -71,7 +80,7 @@ void UStereoMixGameplayAbility_Launch::ServerRPCRequestSpawnProjectile_Implement
 	{
 		NET_LOG(CurrentActorInfo ? CurrentActorInfo->AvatarActor.Get() : nullptr, Warning, TEXT("캐릭터의 위치와 커서의 위치가 평면상에 놓이지 않았습니다. 투사체 시작점: %s 목표 위치: %s"), *StartLocation.ToString(), *CursorLocation.ToString());
 	}
-	
+
 	const FVector Direction = (CursorLocation - StartLocation).GetSafeNormal();
 	UStereoMixAbilityTask_SpawnAndLaunchProjectile* AbilityTaskSpawnProjectile = UStereoMixAbilityTask_SpawnAndLaunchProjectile::CreateTask(this, ProjectileClass, StartLocation, Direction);
 	if (AbilityTaskSpawnProjectile)

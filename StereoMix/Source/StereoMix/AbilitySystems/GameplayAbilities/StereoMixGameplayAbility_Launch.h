@@ -26,10 +26,13 @@ protected:
 protected:
 	UFUNCTION()
 	void OnFinished();
-
+	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<AStereoMixProjectile> ProjectileClass;
+
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<UAnimMontage> Montage;
 
 protected:
 	UFUNCTION(Server, Reliable)

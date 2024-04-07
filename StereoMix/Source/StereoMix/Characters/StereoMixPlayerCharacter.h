@@ -4,9 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayTagContainer.h"
 #include "StereoMixCharacter.h"
 #include "StereoMixPlayerCharacter.generated.h"
 
+class UStereoMixAbilitySystemComponent;
 class UGameplayEffect;
 class UGameplayAbility;
 class AStereoMixPlayerController;
@@ -20,7 +22,7 @@ UENUM(BlueprintType)
 enum class EActiveAbility : uint8
 {
 	None,
-	Shoot,
+	Launch,
 	Catch
 };
 
@@ -37,7 +39,8 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void OnRep_Controller() override;
-	
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -57,7 +60,7 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component|HitBox")
 	TObjectPtr<USphereComponent> HitBox;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Component|Camera")
 	TObjectPtr<USpringArmComponent> CameraBoom;
 
@@ -69,7 +72,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<const UStereoMixDesignData> DesignData;
 // ~Data Section
-	
+
 // ~Caching Section
 protected:
 	UPROPERTY()
@@ -90,29 +93,45 @@ protected:
 	// 액티브 GA와 바인드 된 함수입니다. 놓을때 트리거됩니다.
 	void GAInputReleased(EActiveAbility InInputID);
 
+	// 부착되는 태그가 변경될때마다 호출됩니다. 서버에서만 호출됩니다.
+	void OnChangedTag(const FGameplayTag& Tag, bool TagExists);
+
+	void OnRemoveStunTag();
+
 protected:
 	UPROPERTY()
-	TSoftObjectPtr<UAbilitySystemComponent> ASC;
+	TSoftObjectPtr<UStereoMixAbilitySystemComponent> ASC;
 
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> GEForInit;
-
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|GA")
+	UPROPERTY(EditAnywhere, Category = "GAS|GA")
 	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
 
-	UPROPERTY(EditDefaultsOnly, Category = "GAS|GA")
+	UPROPERTY(EditAnywhere, Category = "GAS|GA")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
+
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> ForInitGE;
+
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> StunEndedGE;
+
+	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
+	FGameplayTagContainer LockAimTags;
+
+	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
+	FGameplayTagContainer LockMovementTags;
 // ~GAS Section
-	
+
 // ~Movement Section
 public:
 	// 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
 	FVector GetCursorTargetingPoint();
-	
+
 	void SetMaxWalkSpeed(float InSpeed);
 
 protected:
 	void Move(const FInputActionValue& InputActionValue);
+
+	void FocusToCursor();
 
 	UFUNCTION()
 	void OnRep_MaxWalkSpeed();

@@ -3,10 +3,12 @@
 
 #include "StereoMixCharacterAttributeSet.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/StereoMixeLog.h"
+#include "Utilities/StereoMixTag.h"
 
 UStereoMixCharacterAttributeSet::UStereoMixCharacterAttributeSet()
 {
@@ -42,6 +44,18 @@ void UStereoMixCharacterAttributeSet::PreAttributeChange(const FGameplayAttribut
 void UStereoMixCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
 {
 	Super::PostAttributeChange(Attribute, OldValue, NewValue);
+
+	if (Attribute == GetPostureGaugeAttribute())
+	{
+		if (GetPostureGauge() >= GetMaxPostureGauge())
+		{
+			const UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
+			if (ASC)
+			{
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(ASC->GetAvatarActor(), StereoMixTag::Event::Character::Stun, FGameplayEventData());
+			}
+		}
+	}
 }
 
 void UStereoMixCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
@@ -49,9 +63,9 @@ void UStereoMixCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayE
 	Super::PostGameplayEffectExecute(Data);
 
 	const AActor* OwnerActor = Data.Target.GetAvatarActor();
-	if (OwnerActor)
+	if (!OwnerActor)
 	{
-		NET_LOG(Data.Target.GetAvatarActor(), Verbose, TEXT("%s의 %s변경 감지"), *Data.Target.GetAvatarActor()->GetName(), *Data.EvaluatedData.Attribute.GetName());
+		return;
 	}
 
 	if (Data.EvaluatedData.Attribute == GetMoveSpeedAttribute())
