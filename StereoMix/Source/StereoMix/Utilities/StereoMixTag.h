@@ -19,6 +19,7 @@ namespace StereoMixTag
 
 	namespace Event::Character
 	{
+		inline FGameplayTag Catch = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Catch"));
 		inline FGameplayTag Stun = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Stun"));
 	}
 }
