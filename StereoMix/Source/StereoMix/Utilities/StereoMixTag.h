@@ -6,6 +6,7 @@ namespace StereoMixTag
 	namespace Ability
 	{
 		inline FGameplayTag Caught = FGameplayTag::RequestGameplayTag(TEXT("Ability.Caught"));
+		inline FGameplayTag CaughtRecover = FGameplayTag::RequestGameplayTag(TEXT("Ability.CaughtRecover"));
 	}
 
 	namespace AttributeSet::Character::Init
@@ -20,6 +21,7 @@ namespace StereoMixTag
 		inline FGameplayTag Caught = FGameplayTag::RequestGameplayTag(TEXT("Character.State.Caught"));
 		inline FGameplayTag Stun = FGameplayTag::RequestGameplayTag(TEXT("Character.State.Stun"));
 		inline FGameplayTag IsSmashed = FGameplayTag::RequestGameplayTag(TEXT("Character.State.IsSmashed"));
+		inline FGameplayTag Uncatchable = FGameplayTag::RequestGameplayTag(TEXT("Character.State.Uncatchable"));
 	}
 
 	namespace Event::Character

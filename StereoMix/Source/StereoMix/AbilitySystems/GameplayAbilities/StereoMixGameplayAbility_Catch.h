@@ -24,12 +24,15 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> CatchMontage;
-
+	
 	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer CatchableTags;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> ApplyCaughtStateGE;
+	TSubclassOf<UGameplayEffect> AddCatchStateGE;
+	
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> AddCaughtStateGE;
 
 protected:
 	UFUNCTION()

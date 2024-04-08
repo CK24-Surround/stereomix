@@ -133,17 +133,29 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestTargetOverlap_Implementati
 		if (TargetCharacter)
 		{
 			bSuccess = true;
-			UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
-			if (ASC)
+			UAbilitySystemComponent* SourceASC = GetAbilitySystemComponentFromActorInfo();
+			UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
+			if (SourceASC && TargetASC)
 			{
-				FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
-				if (GEContextHandle.IsValid())
+				FGameplayEffectContextHandle SourceGEContextHandle = SourceASC->MakeEffectContext();
+				if (SourceGEContextHandle.IsValid())
 				{
-					ASC->BP_ApplyGameplayEffectToSelf(ApplyCaughtStateGE, 0.0f, GEContextHandle);
+					SourceASC->BP_ApplyGameplayEffectToSelf(AddCatchStateGE, 0.0f, SourceGEContextHandle);
+				}
+				
+				
+				FGameplayEffectContextHandle TargetGEContextHandle = TargetASC->MakeEffectContext();
+				if (TargetGEContextHandle.IsValid())
+				{
+					TargetASC->BP_ApplyGameplayEffectToSelf(AddCaughtStateGE, 0.0f, TargetGEContextHandle);
 				}
 
 				AttachTargetCharacter(TargetCharacter);
 				NET_LOG(CasterCharacter, Log, TEXT("%s가 %s를 잡았습니다."), *CasterCharacter->GetName(), *TargetCharacter->GetName());
+			}
+			else
+			{
+				NET_LOG(CasterCharacter, Log, TEXT("잡기 타겟 검출에 성공했으나, Source 혹은 Target의 ASC가 유효하지 않습니다."));
 			}
 		}
 	}
@@ -157,14 +169,14 @@ TArray<AStereoMixPlayerCharacter*> UStereoMixGameplayAbility_Catch::GetCatchable
 	TArray<AStereoMixPlayerCharacter*> CheckedCharacters;
 	for (const auto& OverlapResult : InOverlapResults)
 	{
-		AStereoMixPlayerCharacter* StereoMixCharacter = Cast<AStereoMixPlayerCharacter>(OverlapResult.GetActor());
-		if (!StereoMixCharacter)
+		AStereoMixPlayerCharacter* CatchableCharacter = Cast<AStereoMixPlayerCharacter>(OverlapResult.GetActor());
+		if (!CatchableCharacter)
 		{
 			continue;
 		}
 
-		const UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(StereoMixCharacter);
-		if (!ASC)
+		const UAbilitySystemComponent* CatchableASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(CatchableCharacter);
+		if (!CatchableASC)
 		{
 			NET_LOG(nullptr, Warning, TEXT("타겟의 ASC가 유효하지 않습니다."));
 			continue;
@@ -173,12 +185,16 @@ TArray<AStereoMixPlayerCharacter*> UStereoMixGameplayAbility_Catch::GetCatchable
 		// TODO: 여기서 팀이 다르면 걸러줘야합니다.
 
 		// 잡을 수 있는지 확인합니다.
-		if (!ASC->HasAnyMatchingGameplayTags(CatchableTags))
+		if (CatchableASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Uncatchable))
+		{
+			continue;
+		}
+		else if (!CatchableASC->HasAnyMatchingGameplayTags(CatchableTags))
 		{
 			continue;
 		}
 
-		CheckedCharacters.Add(StereoMixCharacter);
+		CheckedCharacters.Add(CatchableCharacter);
 	}
 
 	return CheckedCharacters;
@@ -199,7 +215,11 @@ void UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerChar
 
 	InTargetCharacter->GetCharacterMovement()->bIgnoreClientMovementErrorChecksAndCorrection = true;
 	InTargetCharacter->SetCollision(false);
-	InTargetCharacter->AttachToComponent(CasterCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSocket"));
+
+	if (InTargetCharacter->AttachToComponent(CasterCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSocket")))
+	{
+		NET_LOG(CasterCharacter, Log, TEXT("잡기(어태치) 성공"));
+	}
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTargetCharacter);
 	if (!TargetASC)

@@ -129,7 +129,7 @@ protected:
 	TSubclassOf<UGameplayEffect> ForInitGE;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> StunEndedGE;
+	TArray<TSubclassOf<UGameplayEffect>> StunEndedGEs;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer LockAimTags;

@@ -4,10 +4,11 @@
 #include "StereoMixGameplayAbility_Caught.h"
 
 #include "AbilitySystemComponent.h"
-#include "Utilities/StereoMixeLog.h"
+#include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_Caught::UStereoMixGameplayAbility_Caught()
 {
+	AbilityTags = FGameplayTagContainer(StereoMixTag::Ability::Caught);
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 }
@@ -16,7 +17,12 @@ void UStereoMixGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpe
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UAbilitySystemComponent* ASC = GetAbilitySystemComponentFromActorInfo();
+	if (!ensure(ActorInfo))
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
 	if (!ASC)
 	{
 		return;

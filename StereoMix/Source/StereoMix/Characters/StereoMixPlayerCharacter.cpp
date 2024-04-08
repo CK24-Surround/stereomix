@@ -220,6 +220,12 @@ void AStereoMixPlayerCharacter::InitASC()
 
 void AStereoMixPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
 {
+	if (!ASC.Get())
+	{
+		NET_LOG(this, Warning, TEXT("ASC가 유효하지 않습니다."))
+		return;
+	}
+	
 	FGameplayAbilitySpec* GASpec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InInputID));
 	if (GASpec)
 	{
@@ -236,6 +242,12 @@ void AStereoMixPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
 
 void AStereoMixPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
 {
+	if (!ASC.Get())
+	{
+		NET_LOG(this, Warning, TEXT("ASC가 유효하지 않습니다."))
+		return;
+	}
+	
 	FGameplayAbilitySpec* GASpec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InInputID));
 	if (GASpec)
 	{
@@ -281,19 +293,23 @@ void AStereoMixPlayerCharacter::OnRemoveStunTag()
 	{
 		if (!ASC.Get())
 		{
+			NET_LOG(this, Log, TEXT("ASC가 유효하지 않습니다."));
 			return;
 		}
 
-		if (!StunEndedGE)
+		for (const auto& StunEndedGE : StunEndedGEs)
 		{
-			NET_LOG(this, Log, TEXT("스턴 GE가 유효하지 않습니다. 참조하지 않고 있을 수도 있습니다. 확인해주세요."));
-			return;
-		}
-
-		const FGameplayEffectContextHandle GESpec = ASC->MakeEffectContext();
-		if (GESpec.IsValid())
-		{
-			ASC->BP_ApplyGameplayEffectToSelf(StunEndedGE, 0.0f, GESpec);
+			if (!StunEndedGE)
+			{
+				NET_LOG(this, Log, TEXT("GE가 유효하지 않습니다. 참조하지 않고 있을 수도 있습니다. 확인해주세요."));
+				return;
+			}
+		
+			const FGameplayEffectContextHandle GESpec = ASC->MakeEffectContext();
+			if (GESpec.IsValid())
+			{
+				ASC->BP_ApplyGameplayEffectToSelf(StunEndedGE, 0.0f, GESpec);
+			}
 		}
 	}
 }
@@ -302,12 +318,14 @@ void AStereoMixPlayerCharacter::OnAddCaughtTag()
 {
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
-	SetActorRelativeTransform(FTransform::Identity);
+	SetActorRelativeRotation(FRotator::ZeroRotator);
 }
 
 void AStereoMixPlayerCharacter::OnRemoveCaughtTag()
 {
 	bUseControllerRotationYaw = true;
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	SetActorRelativeRotation(FRotator(0.0, GetActorRotation().Yaw, 0.0));
 }
 
 void AStereoMixPlayerCharacter::Move(const FInputActionValue& InputActionValue)

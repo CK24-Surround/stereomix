@@ -15,12 +15,15 @@ class STEREOMIX_API UStereoMixGameplayAbility_Stun : public UGameplayAbility
 	GENERATED_BODY()
 
 public:
+	UStereoMixGameplayAbility_Stun();
+
+public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
 	UFUNCTION()
 	void OnStandUp();
-	
+
 	UFUNCTION()
 	void OnComplete();
 
@@ -36,4 +39,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> StandUpMontage;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Time")
+	float StunTime = 6.0f;
 };

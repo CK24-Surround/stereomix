@@ -6,7 +6,14 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "Utilities/StereoMixeLog.h"
 #include "Utilities/StereoMixTag.h"
+
+UStereoMixGameplayAbility_Stun::UStereoMixGameplayAbility_Stun()
+{
+	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
+}
 
 void UStereoMixGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -27,7 +34,7 @@ void UStereoMixGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecH
 
 	ASC->PlayMontage(this, ActivationInfo, StunMontage, 1.0f);
 
-	UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, 6.0f);
+	UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, StunTime);
 	if (WaitDelayTask)
 	{
 		WaitDelayTask->OnFinish.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnStandUp);
@@ -37,7 +44,7 @@ void UStereoMixGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecH
 
 void UStereoMixGameplayAbility_Stun::OnStandUp()
 {
-	const UAbilitySystemComponent* ASC = CurrentActorInfo->AbilitySystemComponent.Get();
+	UAbilitySystemComponent* ASC = CurrentActorInfo->AbilitySystemComponent.Get();
 	if (!ensure(ASC))
 	{
 		return;
@@ -46,26 +53,36 @@ void UStereoMixGameplayAbility_Stun::OnStandUp()
 	if (ASC->HasMatchingGameplayTag(StereoMixTag::Character::State::IsSmashed))
 	{
 		// TODO: 스매시 당하는 중에는 기절에서 풀려나지 않습니다.
+		UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.1f);
+		if (WaitDelayTask)
+		{
+			WaitDelayTask->OnFinish.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnStandUp);
+			WaitDelayTask->ReadyForActivation();
+		}
 	}
 	else if (ASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Caught))
 	{
-		// TODO: 잡기 당하면 풀릴 때 다른 애니메이션을 재생해야합니다.
+		ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::CaughtRecover));
+		
+		UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
+		if (PlayMontageAndWaitTask)
+		{
+			PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
+			PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
+			PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnCancelled);
+			PlayMontageAndWaitTask->ReadyForActivation();
+		}
 	}
-
-	UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, 6.0f);
-	if (WaitDelayTask)
+	else
 	{
-		WaitDelayTask->OnFinish.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnStandUp);
-		WaitDelayTask->ReadyForActivation();
-	}
-
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
-	if (PlayMontageAndWaitTask)
-	{
-		PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
-		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
-		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnCancelled);
-		PlayMontageAndWaitTask->ReadyForActivation();
+		UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
+		if (PlayMontageAndWaitTask)
+		{
+			PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
+			PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
+			PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnCancelled);
+			PlayMontageAndWaitTask->ReadyForActivation();
+		}
 	}
 }
 
