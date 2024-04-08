@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "Characters/StereoMixPlayerCharacter.h"
 #include "StereoMixGameplayAbility_Catch.generated.h"
 
 /**
@@ -24,15 +25,18 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> CatchMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Tag")
+	FGameplayTagContainer CatchableTags;
+
 protected:
 	UFUNCTION()
-	void OnFinished();
-	
-	UFUNCTION()
 	void OnCancelled();
-	
+
 	UFUNCTION()
 	void OnInterrupted();
+
+	UFUNCTION()
+	void OnBlendOut();
 
 protected:
 	UFUNCTION()
@@ -40,8 +44,11 @@ protected:
 
 protected:
 	UFUNCTION(Server, Reliable)
-	void ServerRPCRequestSpawnTargetActor(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& CursorLocation);
+	void ServerRPCRequestTargetOverlap(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation);
 
-	UFUNCTION()
-	void OnCompleteTrace(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
+	TArray<AStereoMixPlayerCharacter*> GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults);
+
+protected:
+	FVector StartLocation;
+	FVector TargetLocation;
 };

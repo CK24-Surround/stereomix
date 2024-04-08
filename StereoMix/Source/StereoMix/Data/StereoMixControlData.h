@@ -25,4 +25,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<const UInputAction> ShootAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<const UInputAction> CatchAction;
 };

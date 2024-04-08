@@ -158,6 +158,7 @@ void AStereoMixPlayerCharacter::SetupGASInputComponent()
 	const AStereoMixPlayerController* PlayerController = CastChecked<AStereoMixPlayerController>(Controller);
 	const UStereoMixControlData* ControlData = PlayerController->GetControlData();
 	EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &AStereoMixPlayerCharacter::GAInputPressed, EActiveAbility::Launch);
+	EnhancedInputComponent->BindAction(ControlData->CatchAction, ETriggerEvent::Triggered, this, &AStereoMixPlayerCharacter::GAInputPressed, EActiveAbility::Catch);
 }
 
 void AStereoMixPlayerCharacter::InitASC()
