@@ -67,6 +67,19 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component|Camera")
 	TObjectPtr<UCameraComponent> Camera;
 
+// ~State Section
+public:
+	void SetCollision(bool bIsEnable);
+	
+protected:
+	UFUNCTION()
+	void OnRep_IsEnableCollision();
+
+protected:
+	UPROPERTY(ReplicatedUsing = "OnRep_IsEnableCollision")
+	uint32 bIsEnableCollision:1 = true;
+// ~State Section
+
 // ~Data Section
 protected:
 	UPROPERTY()
@@ -93,10 +106,14 @@ protected:
 	// 액티브 GA와 바인드 된 함수입니다. 놓을때 트리거됩니다.
 	void GAInputReleased(EActiveAbility InInputID);
 
-	// 부착되는 태그가 변경될때마다 호출됩니다. 서버에서만 호출됩니다.
+	// 부착되는 태그가 변경될때마다 호출됩니다. 서버, 클라이언트 모두 호출됩니다.
 	void OnChangedTag(const FGameplayTag& Tag, bool TagExists);
 
+	void OnAddStunTag();
 	void OnRemoveStunTag();
+
+	void OnAddCaughtTag();
+	void OnRemoveCaughtTag();
 
 protected:
 	UPROPERTY()

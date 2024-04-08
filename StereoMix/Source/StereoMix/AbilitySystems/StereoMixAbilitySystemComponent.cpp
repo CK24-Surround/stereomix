@@ -7,10 +7,5 @@
 
 void UStereoMixAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
 {
-	if (!IsOwnerActorAuthoritative())
-	{
-		return;
-	}
-
 	OnChangedTag.Broadcast(Tag, TagExists);
 }

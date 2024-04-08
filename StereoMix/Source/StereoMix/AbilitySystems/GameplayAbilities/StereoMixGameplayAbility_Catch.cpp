@@ -8,6 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/StereoMixCollision.h"
 #include "Utilities/StereoMixeLog.h"
 #include "Utilities/StereoMixTag.h"
@@ -28,7 +29,11 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 	}
 
 	AStereoMixPlayerCharacter* StereoMixCharacter = Cast<AStereoMixPlayerCharacter>(ActorInfo->AvatarActor.Get());
-	if (StereoMixCharacter) {}
+	if (!StereoMixCharacter)
+	{
+		NET_LOG(ActorInfo->AvatarActor.Get(), Warning, TEXT("호환되지 않은 GA입니다."))
+		return;
+	}
 
 	UAbilityTask_PlayMontageAndWait* AbilityTaskPlayMontageAndWait = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage);
 	if (AbilityTaskPlayMontageAndWait)
@@ -99,7 +104,7 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestTargetOverlap_Implementati
 	{
 		NET_LOG(CurrentActorInfo ? CurrentActorInfo->AvatarActor.Get() : nullptr, Warning, TEXT("캐릭터의 위치와 커서의 위치가 평면상에 놓이지 않았습니다. 투사체 시작점: %s 목표 위치: %s"), *StartLocation.ToString(), *InCursorLocation.ToString());
 	}
-	
+
 	TArray<FOverlapResult> OverlapResults;
 	const float Distance = 300.0f;
 	const FCollisionShape Sphere = FCollisionShape::MakeSphere(Distance);
@@ -110,7 +115,7 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestTargetOverlap_Implementati
 	if (bSuccess)
 	{
 		bSuccess = false;
-		
+
 		const TArray<AStereoMixPlayerCharacter*> CheckedCharacters = GetCatchableCharacters(OverlapResults);
 
 		AStereoMixPlayerCharacter* TargetCharacter = nullptr;
@@ -128,9 +133,18 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestTargetOverlap_Implementati
 		if (TargetCharacter)
 		{
 			bSuccess = true;
-			// TODO: 해당 캐릭터를 잡는 로직 필요
-			// 잡히는 측에서 잡히는 GA를 활성화 시킬 예정
-			NET_LOG(CasterCharacter, Warning, TEXT("잡을 수 있는 대상 검출 성공"));
+			UAbilitySystemComponent* ASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
+			if (ASC)
+			{
+				FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
+				if (GEContextHandle.IsValid())
+				{
+					ASC->BP_ApplyGameplayEffectToSelf(ApplyCaughtStateGE, 0.0f, GEContextHandle);
+				}
+
+				AttachTargetCharacter(TargetCharacter);
+				NET_LOG(CasterCharacter, Log, TEXT("%s가 %s를 잡았습니다."), *CasterCharacter->GetName(), *TargetCharacter->GetName());
+			}
 		}
 	}
 
@@ -168,4 +182,30 @@ TArray<AStereoMixPlayerCharacter*> UStereoMixGameplayAbility_Catch::GetCatchable
 	}
 
 	return CheckedCharacters;
+}
+
+void UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter)
+{
+	const AStereoMixPlayerCharacter* CasterCharacter = Cast<AStereoMixPlayerCharacter>(GetAvatarActorFromActorInfo());
+	if (!CasterCharacter)
+	{
+		return;
+	}
+
+	if (!InTargetCharacter)
+	{
+		return;
+	}
+
+	InTargetCharacter->GetCharacterMovement()->bIgnoreClientMovementErrorChecksAndCorrection = true;
+	InTargetCharacter->SetCollision(false);
+	InTargetCharacter->AttachToComponent(CasterCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSocket"));
+
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTargetCharacter);
+	if (!TargetASC)
+	{
+		return;
+	}
+
+	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::Caught));
 }

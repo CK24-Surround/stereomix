@@ -25,8 +25,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> CatchMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Tag")
+	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer CatchableTags;
+
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> ApplyCaughtStateGE;
 
 protected:
 	UFUNCTION()
@@ -48,6 +51,8 @@ protected:
 
 	TArray<AStereoMixPlayerCharacter*> GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults);
 
+	void AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
+	
 protected:
 	FVector StartLocation;
 	FVector TargetLocation;

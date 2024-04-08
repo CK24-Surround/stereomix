@@ -3,6 +3,11 @@
 
 namespace StereoMixTag
 {
+	namespace Ability
+	{
+		inline FGameplayTag Caught = FGameplayTag::RequestGameplayTag(TEXT("Ability.Caught"));
+	}
+
 	namespace AttributeSet::Character::Init
 	{
 		inline FGameplayTag MoveSpeed = FGameplayTag::RequestGameplayTag(TEXT("AttributeSet.Character.Init.MoveSpeed"));

@@ -71,6 +71,7 @@ void AStereoMixPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AStereoMixPlayerCharacter, MaxWalkSpeed);
+	DOREPLIFETIME(AStereoMixPlayerCharacter, bIsEnableCollision);
 }
 
 void AStereoMixPlayerCharacter::OnRep_Controller()
@@ -152,6 +153,20 @@ void AStereoMixPlayerCharacter::InitCamera()
 	Camera->SetFieldOfView(CameraFOV);
 }
 
+void AStereoMixPlayerCharacter::SetCollision(bool bIsEnable)
+{
+	if (HasAuthority())
+	{
+		bIsEnableCollision = bIsEnable;
+		OnRep_IsEnableCollision();
+	}
+}
+
+void AStereoMixPlayerCharacter::OnRep_IsEnableCollision()
+{
+	SetActorEnableCollision(bIsEnableCollision);
+}
+
 void AStereoMixPlayerCharacter::SetupGASInputComponent()
 {
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
@@ -169,7 +184,7 @@ void AStereoMixPlayerCharacter::InitASC()
 	{
 		return;
 	}
-	
+
 	if (HasAuthority())
 	{
 		ASC->InitAbilityActorInfo(StereoMixPlayerState, this);
@@ -198,9 +213,9 @@ void AStereoMixPlayerCharacter::InitASC()
 			FGameplayAbilitySpec AbilitySpec(DefaultAbility);
 			ASC->GiveAbility(AbilitySpec);
 		}
-
-		ASC->OnChangedTag.AddUObject(this, &AStereoMixPlayerCharacter::OnChangedTag);
 	}
+
+	ASC->OnChangedTag.AddUObject(this, &AStereoMixPlayerCharacter::OnChangedTag);
 }
 
 void AStereoMixPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
@@ -237,33 +252,62 @@ void AStereoMixPlayerCharacter::OnChangedTag(const FGameplayTag& Tag, bool TagEx
 	{
 		if (TagExists)
 		{
-			NET_LOG(this, Log, TEXT("스턴 태그 부착"));
+			OnAddStunTag();
 		}
 		else
 		{
 			OnRemoveStunTag();
 		}
 	}
+
+	if (Tag == StereoMixTag::Character::State::Caught)
+	{
+		if (TagExists)
+		{
+			OnAddCaughtTag();
+		}
+		else
+		{
+			OnRemoveCaughtTag();
+		}
+	}
 }
+
+void AStereoMixPlayerCharacter::OnAddStunTag() {}
 
 void AStereoMixPlayerCharacter::OnRemoveStunTag()
 {
-	if (!ASC.Get())
+	if (HasAuthority())
 	{
-		return;
-	}
-	
-	if (!StunEndedGE)
-	{
-		NET_LOG(this, Log, TEXT("스턴 GE가 유효하지 않습니다. 참조하지 않고 있을 수도 있습니다. 확인해주세요."));
-		return;
-	}
+		if (!ASC.Get())
+		{
+			return;
+		}
 
-	const FGameplayEffectContextHandle GESpec = ASC->MakeEffectContext();
-	if (GESpec.IsValid())
-	{
-		ASC->BP_ApplyGameplayEffectToSelf(StunEndedGE, 0.0f, GESpec);
+		if (!StunEndedGE)
+		{
+			NET_LOG(this, Log, TEXT("스턴 GE가 유효하지 않습니다. 참조하지 않고 있을 수도 있습니다. 확인해주세요."));
+			return;
+		}
+
+		const FGameplayEffectContextHandle GESpec = ASC->MakeEffectContext();
+		if (GESpec.IsValid())
+		{
+			ASC->BP_ApplyGameplayEffectToSelf(StunEndedGE, 0.0f, GESpec);
+		}
 	}
+}
+
+void AStereoMixPlayerCharacter::OnAddCaughtTag()
+{
+	bUseControllerRotationYaw = false;
+	GetCharacterMovement()->SetMovementMode(MOVE_None);
+	SetActorRelativeTransform(FTransform::Identity);
+}
+
+void AStereoMixPlayerCharacter::OnRemoveCaughtTag()
+{
+	bUseControllerRotationYaw = true;
 }
 
 void AStereoMixPlayerCharacter::Move(const FInputActionValue& InputActionValue)
