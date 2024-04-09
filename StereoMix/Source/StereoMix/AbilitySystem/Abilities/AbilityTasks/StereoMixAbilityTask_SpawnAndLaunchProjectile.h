@@ -17,7 +17,7 @@ class STEREOMIX_API UStereoMixAbilityTask_SpawnAndLaunchProjectile : public UAbi
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", DisplayName = "Spawn Projectile", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "true"))
-	static UStereoMixAbilityTask_SpawnAndLaunchProjectile* CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<AStereoMixProjectile> ProjectileClass, const FVector& StartLocation, const FVector& StartDirection);
+	static UStereoMixAbilityTask_SpawnAndLaunchProjectile* CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<AStereoMixProjectile> ProjectileClass, const FVector& StartLocation, const FRotator& StartRotation);
 
 protected:
 	virtual void Activate() override;
@@ -33,5 +33,5 @@ protected:
 	TObjectPtr<AStereoMixProjectile> SpawnedProjectile;
 
 	FVector StartLocation;
-	FVector StartDirection;
+	FRotator StartRotation;
 };

@@ -29,6 +29,7 @@ protected:
 	TObjectPtr<UAnimMontage> Montage;
 
 protected:
+	/** 서버에 투사체 생성 및 발사를 요청합니다. */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCRequestSpawnProjectile(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& CursorLocation);
+	void ServerRPCRequestProjectile(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& CursorLocation);
 };
