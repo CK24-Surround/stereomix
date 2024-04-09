@@ -4,7 +4,7 @@
 #include "StereoMixGameplayAbility_Launch.h"
 
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/AttributeSets/StereoMixCharacterAttributeSet.h"
+#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "AbilityTasks/StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "Utilities/StereoMixeLog.h"
@@ -17,48 +17,27 @@ UStereoMixGameplayAbility_Launch::UStereoMixGameplayAbility_Launch()
 void UStereoMixGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	if (!ActorInfo || !ActorInfo->AbilitySystemComponent.IsValid())
+	
+	AStereoMixPlayerCharacter* SourcePlayerCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	if (SourcePlayerCharacter)
 	{
-		NET_LOG(ActorInfo ? ActorInfo->AvatarActor.Get() : nullptr, Error, TEXT("ActorInfo 혹은 AbilitySystemComponent가 유효하지 않습니다."));
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
+		if (!ActorInfo->IsNetAuthority())
+		{
+			const FVector StartLocation = SourcePlayerCharacter->GetActorLocation();
+			const FVector TargetLocation = SourcePlayerCharacter->GetCursorTargetingPoint();
+			ServerRPCRequestSpawnProjectile(StartLocation, TargetLocation);
+		}
+
+		CommitAbility(Handle, ActorInfo, ActivationInfo);
+		
+		UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+		if (SourceASC)
+		{
+			SourceASC->PlayMontage(this, ActivationInfo, Montage, 1.0f);
+		}
 	}
 
-	UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
-	const UStereoMixCharacterAttributeSet* CharacterAttributeSet = ASC->GetSet<UStereoMixCharacterAttributeSet>();
-	if (!CharacterAttributeSet)
-	{
-		NET_LOG(ActorInfo->AvatarActor.Get(), Warning, TEXT("호환되지 않는 GA입니다. UStereoMixCharacterAttributeSet를 갖고 있어야합니다."));
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
-	}
-
-	AStereoMixPlayerCharacter* StereoMixPlayerCharacter = Cast<AStereoMixPlayerCharacter>(ActorInfo->AvatarActor.Get());
-	if (!StereoMixPlayerCharacter)
-	{
-		NET_LOG(ActorInfo->AvatarActor.Get(), Warning, TEXT("아바타는 AStereoMixPlayerCharacter여야 합니다."));
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
-	}
-
-	CommitAbility(Handle, ActorInfo, ActivationInfo);
-
-	if (!ActorInfo->IsNetAuthority())
-	{
-		const FVector StartLocation = StereoMixPlayerCharacter->GetActorLocation();
-		const FVector TargetLocation = StereoMixPlayerCharacter->GetCursorTargetingPoint();
-		ServerRPCRequestSpawnProjectile(StartLocation, TargetLocation);
-	}
-
-	UAnimInstance* AnimInstance = ActorInfo->GetAnimInstance();
-	if (!AnimInstance)
-	{
-		NET_LOG(ActorInfo->AvatarActor.Get(), Warning, TEXT("애님 인스턴스가 존재하지 않습니다."));
-	}
-
-	ASC->PlayMontage(this, ActivationInfo, Montage, 1.0f);
-
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UStereoMixGameplayAbility_Launch::ServerRPCRequestSpawnProjectile_Implementation(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& CursorLocation)
