@@ -3,8 +3,8 @@
 
 #include "StereoMixPlayerState.h"
 
-#include "AbilitySystems/StereoMixAbilitySystemComponent.h"
-#include "AbilitySystems/AttributeSets/StereoMixCharacterAttributeSet.h"
+#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSets/StereoMixCharacterAttributeSet.h"
 
 AStereoMixPlayerState::AStereoMixPlayerState()
 {

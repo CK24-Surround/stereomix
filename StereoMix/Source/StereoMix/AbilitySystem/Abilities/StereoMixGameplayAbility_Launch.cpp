@@ -4,22 +4,19 @@
 #include "StereoMixGameplayAbility_Launch.h"
 
 #include "AbilitySystemComponent.h"
-#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "AbilitySystems/AttributeSets/StereoMixCharacterAttributeSet.h"
+#include "AbilitySystem/AttributeSets/StereoMixCharacterAttributeSet.h"
 #include "AbilityTasks/StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "Utilities/StereoMixeLog.h"
 
 UStereoMixGameplayAbility_Launch::UStereoMixGameplayAbility_Launch()
 {
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 }
 
 void UStereoMixGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
 	if (!ActorInfo || !ActorInfo->AbilitySystemComponent.IsValid())
 	{
 		NET_LOG(ActorInfo ? ActorInfo->AvatarActor.Get() : nullptr, Error, TEXT("ActorInfo 혹은 AbilitySystemComponent가 유효하지 않습니다."));
@@ -61,16 +58,6 @@ void UStereoMixGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpe
 
 	ASC->PlayMontage(this, ActivationInfo, Montage, 1.0f);
 
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-}
-
-void UStereoMixGameplayAbility_Launch::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
-{
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-}
-
-void UStereoMixGameplayAbility_Launch::OnFinished()
-{
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 

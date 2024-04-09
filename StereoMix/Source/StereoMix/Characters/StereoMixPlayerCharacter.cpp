@@ -4,7 +4,7 @@
 #include "StereoMixPlayerCharacter.h"
 
 #include "EnhancedInputComponent.h"
-#include "AbilitySystems/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Data/StereoMixControlData.h"
