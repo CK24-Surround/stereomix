@@ -27,13 +27,21 @@ void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySp
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (!ensure(ActorInfo))
+	AActor* CachedAvatarActor = GetAvatarActorFromActorInfo();
+	if (!CachedAvatarActor)
 	{
+		NET_LOG(nullptr, Warning, TEXT("아바타 액터가 유효하지 않습니다."));
+	}
+	
+	AStereoMixPlayerCharacter* CachedAvatarCharacter = Cast<AStereoMixPlayerCharacter>(CachedAvatarActor);
+	if (!CachedAvatarCharacter)
+	{
+		NET_LOG(CachedAvatarActor, Warning, TEXT("캐스팅에 실패했습니다."))
 		return;
 	}
 
-	AStereoMixPlayerCharacter* AvatarCharacter = Cast<AStereoMixPlayerCharacter>(ActorInfo->AvatarActor.Get());
-	if (!AvatarCharacter)
+	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(CachedAvatarCharacter);
+	if (!SourceASC)
 	{
 		return;
 	}
@@ -51,8 +59,8 @@ void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySp
 	}
 
 	NET_LOG(ActorInfo->AvatarActor.Get(), Log, TEXT("풀기(디태치) 시전"));
-	AvatarCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-	AvatarCharacter->GetCharacterMovement()->bIgnoreClientMovementErrorChecksAndCorrection = false;
+	CachedAvatarCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	CachedAvatarCharacter->GetCharacterMovement()->bIgnoreClientMovementErrorChecksAndCorrection = false;
 	
 	if (RemoveCaughtStateGE)
 	{
@@ -68,20 +76,7 @@ void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySp
 		}
 	}
 
-	UAbilityTask_PlayMontageAndWait* AbilityTaskPlayMontageAndWait = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashedMontage"), SmashedMontage);
-	if (AbilityTaskPlayMontageAndWait)
-	{
-		AbilityTaskPlayMontageAndWait->OnCompleted.AddDynamic(this, &UStereoMixGameplayAbility_Smashed::OnCompleted);
-		AbilityTaskPlayMontageAndWait->ReadyForActivation();
-	}
-}
-
-void UStereoMixGameplayAbility_Smashed::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
-{
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
-}
-
-void UStereoMixGameplayAbility_Smashed::OnCompleted()
-{
+	SourceASC->PlayMontage(this, ActivationInfo, SmashedMontage, 1.0f);
+	
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
