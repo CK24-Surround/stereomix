@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/StereoMixeLog.h"
 #include "Utilities/StereoMixTag.h"
 
@@ -39,6 +40,8 @@ void UStereoMixGameplayAbility_CaughtRecover::ActivateAbility(const FGameplayAbi
 		return;
 	}
 
+	// TODO: 이벤트로 캐릭터 정보를 넘겨받도록 수정
+	// 이사이에 매치기를 통해 디태치 하게 되면 이 값이 유효하지 않게 됩니다.
 	AActor* CatchCaster = StereoMixCharacter->GetAttachParentActor();
 	if (!CatchCaster)
 	{
@@ -60,6 +63,7 @@ void UStereoMixGameplayAbility_CaughtRecover::ActivateAbility(const FGameplayAbi
 
 	NET_LOG(ActorInfo->AvatarActor.Get(), Log, TEXT("풀기(디태치) 시전"));
 	StereoMixCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	StereoMixCharacter->GetCharacterMovement()->bIgnoreClientMovementErrorChecksAndCorrection = false;
 	
 	if (RemoveCaughtStateGE)
 	{

@@ -23,7 +23,8 @@ enum class EActiveAbility : uint8
 {
 	None,
 	Launch,
-	Catch
+	Catch,
+	Smash
 };
 
 UCLASS()
@@ -146,4 +147,16 @@ protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_MaxWalkSpeed")
 	float MaxWalkSpeed;
 // ~Movement Section
+
+// ~State Section
+public:
+	void SetEnableCollision(bool bInEnableCollision);
+
+protected:
+	UFUNCTION()
+	void OnRep_EnableCollision();
+	
+	UPROPERTY(ReplicatedUsing = "OnRep_EnableCollision")
+	uint32 bEnableCollision:1 = true;
+// ~State Section
 };

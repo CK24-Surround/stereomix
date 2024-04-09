@@ -71,6 +71,7 @@ void AStereoMixPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AStereoMixPlayerCharacter, MaxWalkSpeed);
+	DOREPLIFETIME(AStereoMixPlayerCharacter, bEnableCollision);
 }
 
 void AStereoMixPlayerCharacter::OnRep_Controller()
@@ -159,6 +160,7 @@ void AStereoMixPlayerCharacter::SetupGASInputComponent()
 	const UStereoMixControlData* ControlData = PlayerController->GetControlData();
 	EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &AStereoMixPlayerCharacter::GAInputPressed, EActiveAbility::Launch);
 	EnhancedInputComponent->BindAction(ControlData->CatchAction, ETriggerEvent::Triggered, this, &AStereoMixPlayerCharacter::GAInputPressed, EActiveAbility::Catch);
+	EnhancedInputComponent->BindAction(ControlData->SmashAction, ETriggerEvent::Triggered, this, &AStereoMixPlayerCharacter::GAInputPressed, EActiveAbility::Smash);
 }
 
 void AStereoMixPlayerCharacter::InitASC()
@@ -312,7 +314,10 @@ void AStereoMixPlayerCharacter::OnAddCaughtTag()
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	SetActorRelativeRotation(FRotator::ZeroRotator);
-	SetActorEnableCollision(false);
+	if (HasAuthority())
+	{
+		SetEnableCollision(false);
+	}
 }
 
 void AStereoMixPlayerCharacter::OnRemoveCaughtTag()
@@ -324,7 +329,10 @@ void AStereoMixPlayerCharacter::OnRemoveCaughtTag()
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	SetActorRelativeRotation(FRotator(0.0, GetActorRotation().Yaw, 0.0));
-	SetActorEnableCollision(true);
+	if (HasAuthority())
+	{
+		SetEnableCollision(true);
+	}
 }
 
 void AStereoMixPlayerCharacter::Move(const FInputActionValue& InputActionValue)
@@ -399,4 +407,18 @@ void AStereoMixPlayerCharacter::SetMaxWalkSpeed(float InSpeed)
 void AStereoMixPlayerCharacter::OnRep_MaxWalkSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+}
+
+void AStereoMixPlayerCharacter::SetEnableCollision(bool bInEnableCollision)
+{
+	if (HasAuthority())
+	{
+		bEnableCollision = bInEnableCollision;
+		OnRep_EnableCollision();
+	}
+}
+
+void AStereoMixPlayerCharacter::OnRep_EnableCollision()
+{
+	SetActorEnableCollision(bEnableCollision);
 }

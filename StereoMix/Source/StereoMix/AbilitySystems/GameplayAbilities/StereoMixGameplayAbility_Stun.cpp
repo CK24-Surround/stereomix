@@ -50,9 +50,11 @@ void UStereoMixGameplayAbility_Stun::OnStandUp()
 		return;
 	}
 
-	if (ASC->HasMatchingGameplayTag(StereoMixTag::Character::State::IsSmashed))
+	// 스매시 당하는 중인 경우
+	if (ASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Smashed))
 	{
 		// TODO: 스매시 당하는 중에는 기절에서 풀려나지 않습니다.
+		NET_LOG(CurrentActorInfo->AvatarActor.Get(), Warning, TEXT("스턴 풀기 리젝트"));
 		UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.1f);
 		if (WaitDelayTask)
 		{
@@ -60,6 +62,7 @@ void UStereoMixGameplayAbility_Stun::OnStandUp()
 			WaitDelayTask->ReadyForActivation();
 		}
 	}
+	// 잡힌 상태인 경우
 	else if (ASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Caught))
 	{
 		ASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::CaughtRecover));
@@ -73,6 +76,7 @@ void UStereoMixGameplayAbility_Stun::OnStandUp()
 			PlayMontageAndWaitTask->ReadyForActivation();
 		}
 	}
+	// 기절 상태인 경우
 	else
 	{
 		UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
