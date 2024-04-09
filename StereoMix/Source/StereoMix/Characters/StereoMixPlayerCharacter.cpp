@@ -71,7 +71,6 @@ void AStereoMixPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AStereoMixPlayerCharacter, MaxWalkSpeed);
-	DOREPLIFETIME(AStereoMixPlayerCharacter, bIsEnableCollision);
 }
 
 void AStereoMixPlayerCharacter::OnRep_Controller()
@@ -151,20 +150,6 @@ void AStereoMixPlayerCharacter::InitCamera()
 	CameraBoom->bEnableCameraLag = true;
 
 	Camera->SetFieldOfView(CameraFOV);
-}
-
-void AStereoMixPlayerCharacter::SetCollision(bool bIsEnable)
-{
-	if (HasAuthority())
-	{
-		bIsEnableCollision = bIsEnable;
-		OnRep_IsEnableCollision();
-	}
-}
-
-void AStereoMixPlayerCharacter::OnRep_IsEnableCollision()
-{
-	SetActorEnableCollision(bIsEnableCollision);
 }
 
 void AStereoMixPlayerCharacter::SetupGASInputComponent()
@@ -289,6 +274,10 @@ void AStereoMixPlayerCharacter::OnAddStunTag() {}
 
 void AStereoMixPlayerCharacter::OnRemoveStunTag()
 {
+	// 스턴 태그가 제거될때 수행되는 작업:
+	// 체간 게이지 초기화 이펙트 실행
+	// Uncatchable태그 제거
+	
 	if (HasAuthority())
 	{
 		if (!ASC.Get())
@@ -316,16 +305,26 @@ void AStereoMixPlayerCharacter::OnRemoveStunTag()
 
 void AStereoMixPlayerCharacter::OnAddCaughtTag()
 {
+	// Caught 태그가 추가될때 수행되는 작업:
+	// 회전 잠금
+	// 움직임 잠금
+	// 콜라이더 비활성화
 	bUseControllerRotationYaw = false;
 	GetCharacterMovement()->SetMovementMode(MOVE_None);
 	SetActorRelativeRotation(FRotator::ZeroRotator);
+	SetActorEnableCollision(false);
 }
 
 void AStereoMixPlayerCharacter::OnRemoveCaughtTag()
 {
+	// Caught 태그가 추가될때 수행되는 작업:
+	// 회전 잠금 해제
+	// 움직임 잠금 해제
+	// 콜라이더 활성화
 	bUseControllerRotationYaw = true;
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	SetActorRelativeRotation(FRotator(0.0, GetActorRotation().Yaw, 0.0));
+	SetActorEnableCollision(true);
 }
 
 void AStereoMixPlayerCharacter::Move(const FInputActionValue& InputActionValue)

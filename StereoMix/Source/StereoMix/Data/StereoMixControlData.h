@@ -28,4 +28,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<const UInputAction> CatchAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<const UInputAction> SmashAction;
 };

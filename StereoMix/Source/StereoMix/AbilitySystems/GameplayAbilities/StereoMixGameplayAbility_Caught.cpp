@@ -9,6 +9,8 @@
 UStereoMixGameplayAbility_Caught::UStereoMixGameplayAbility_Caught()
 {
 	AbilityTags = FGameplayTagContainer(StereoMixTag::Ability::Caught);
+	ActivationOwnedTags = FGameplayTagContainer(StereoMixTag::Character::State::Caught);
+	
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 }

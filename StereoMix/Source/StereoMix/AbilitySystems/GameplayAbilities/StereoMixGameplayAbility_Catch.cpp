@@ -214,7 +214,6 @@ void UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerChar
 	}
 
 	InTargetCharacter->GetCharacterMovement()->bIgnoreClientMovementErrorChecksAndCorrection = true;
-	InTargetCharacter->SetCollision(false);
 
 	if (InTargetCharacter->AttachToComponent(CasterCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSocket")))
 	{

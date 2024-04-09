@@ -61,11 +61,6 @@ void UStereoMixGameplayAbility_CaughtRecover::ActivateAbility(const FGameplayAbi
 	NET_LOG(ActorInfo->AvatarActor.Get(), Log, TEXT("풀기(디태치) 시전"));
 	StereoMixCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 	
-	if (ActorInfo->IsNetAuthority())
-	{
-		StereoMixCharacter->SetCollision(true);
-	}
-
 	if (RemoveCaughtStateGE)
 	{
 		BP_ApplyGameplayEffectToOwner(RemoveCaughtStateGE);
