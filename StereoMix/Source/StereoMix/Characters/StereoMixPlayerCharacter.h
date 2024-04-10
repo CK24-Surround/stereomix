@@ -98,12 +98,6 @@ protected:
 	// 부착되는 태그가 변경될때마다 호출됩니다. 서버, 클라이언트 모두 호출됩니다.
 	void OnChangedTag(const FGameplayTag& Tag, bool TagExists);
 
-	void OnAddStunTag();
-	void OnRemoveStunTag();
-
-	void OnAddCaughtTag();
-	void OnRemoveCaughtTag();
-
 protected:
 	UPROPERTY()
 	TSoftObjectPtr<UStereoMixAbilitySystemComponent> ASC;
@@ -116,9 +110,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> ForInitGE;
-
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TArray<TSubclassOf<UGameplayEffect>> StunEndedGEs;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer LockAimTags;

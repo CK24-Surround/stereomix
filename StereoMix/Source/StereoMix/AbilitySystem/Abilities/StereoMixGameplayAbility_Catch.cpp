@@ -38,23 +38,23 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 		TargetLocation = SourceCharacter->GetCursorTargetingPoint();
 
 		// 애님 노티파이를 기다리고 노티파이가 호출되면 잡기를 요청합니다.
-		UAbilityTask_WaitGameplayEvent* AbilityTaskWaitGameplayEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::AnimNotify::Catch);
-		if (AbilityTaskWaitGameplayEvent)
+		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::AnimNotify::Catch);
+		if (WaitGameplayEventTask)
 		{
-			AbilityTaskWaitGameplayEvent->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnHoldAnimNotify);
-			AbilityTaskWaitGameplayEvent->ReadyForActivation();
+			WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnHoldAnimNotify);
+			WaitGameplayEventTask->ReadyForActivation();
 		}
 	}
 
-	UAbilityTask_PlayMontageAndWait* AbilityTaskPlayMontageAndWait = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage);
-	if (AbilityTaskPlayMontageAndWait)
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage);
+	if (ensure(PlayMontageAndWaitTask))
 	{
 		CommitAbility(Handle, ActorInfo, ActivationInfo);
 		// OnComplete는 EndAbility를 호출하기에 적합하지 않아 제외했습니다. BlendOut에 들어간 시점에 몽타주가 캔슬되면 OnComplete가 호출되지 않고, OnCancelled, OnInterrupted도 호출되지 않아 버그가 생길 수 있습니다. 
-		AbilityTaskPlayMontageAndWait->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
-		AbilityTaskPlayMontageAndWait->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
-		AbilityTaskPlayMontageAndWait->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnComplete);
-		AbilityTaskPlayMontageAndWait->ReadyForActivation();
+		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
+		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
+		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnComplete);
+		PlayMontageAndWaitTask->ReadyForActivation();
 	}
 	else
 	{
@@ -207,11 +207,15 @@ bool UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerChar
 		// 어태치합니다. 디버깅을 위해 단언을 수행합니다. 어태치 후 상대 회전을 0으로 정렬해줍니다.
 		if (InTargetCharacter->AttachToComponent(SourceCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSocket")))
 		{
-			// 위치 보정 무시를 활성화합니다.
-			UCharacterMovementComponent* CachedTargetMovement = InTargetCharacter->GetCharacterMovement();
-			if (ensure(CachedTargetMovement))
+			// 충돌판정, 움직임을 잠급니다.
+			InTargetCharacter->SetEnableCollision(false);
+			InTargetCharacter->SetEnableMovement(false);
+			
+			// 타겟의 위치 보정 무시를 활성화합니다.
+			UCharacterMovementComponent* TargetMovement = InTargetCharacter->GetCharacterMovement();
+			if (ensure(TargetMovement))
 			{
-				CachedTargetMovement->bIgnoreClientMovementErrorChecksAndCorrection = true;
+				TargetMovement->bIgnoreClientMovementErrorChecksAndCorrection = true;
 			}
 
 			MulticastRPCRelativeRotationReset(InTargetCharacter);
@@ -237,7 +241,5 @@ void UStereoMixGameplayAbility_Catch::MulticastRPCRelativeRotationReset_Implemen
 	if (ensure(RotatingCharacter))
 	{
 		RotatingCharacter->SetActorRelativeRotation(FRotator::ZeroRotator);
-		// 회전이 적용되지 않으면 틀어져 보이게 되기때문에 단언을 해줍니다. 나중에 틀어지게되었을때 찾기 수월해집니다.
-		ensure(RotatingCharacter->GetRootComponent()->GetRelativeRotation() == FRotator::ZeroRotator);
 	}
 }

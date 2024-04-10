@@ -40,9 +40,10 @@ namespace StereoMixTag
 
 		namespace Character
 		{
-			inline FGameplayTag Stun = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Stun"));
 			inline FGameplayTag Smash = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Smash"));
 			inline FGameplayTag Smashed = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Smashed"));
+			inline FGameplayTag Stun = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Stun"));
+			inline FGameplayTag StunEnd = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.StunEnd"));
 		}
 	}
 }

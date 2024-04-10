@@ -257,78 +257,17 @@ void AStereoMixPlayerCharacter::OnChangedTag(const FGameplayTag& Tag, bool TagEx
 	if (Tag == StereoMixTag::Character::State::Stun)
 	{
 		if (TagExists)
-		{
-			OnAddStunTag();
-		}
+		{}
 		else
-		{
-			OnRemoveStunTag();
-		}
+		{}
 	}
 
 	if (Tag == StereoMixTag::Character::State::Caught)
 	{
 		if (TagExists)
-		{
-			OnAddCaughtTag();
-		}
+		{}
 		else
-		{
-			OnRemoveCaughtTag();
-		}
-	}
-}
-
-void AStereoMixPlayerCharacter::OnAddStunTag() {}
-
-void AStereoMixPlayerCharacter::OnRemoveStunTag()
-{
-	// 스턴 태그가 제거될때 수행되는 작업:
-	// 체간 게이지 초기화 이펙트 실행
-	// Uncatchable태그 제거
-
-	if (HasAuthority())
-	{
-		if (!ASC.Get())
-		{
-			NET_LOG(this, Log, TEXT("ASC가 유효하지 않습니다."));
-			return;
-		}
-
-		for (const auto& StunEndedGE : StunEndedGEs)
-		{
-			if (!StunEndedGE)
-			{
-				NET_LOG(this, Log, TEXT("GE가 유효하지 않습니다. 참조하지 않고 있을 수도 있습니다. 확인해주세요."));
-				return;
-			}
-
-			const FGameplayEffectContextHandle GESpec = ASC->MakeEffectContext();
-			if (GESpec.IsValid())
-			{
-				ASC->BP_ApplyGameplayEffectToSelf(StunEndedGE, 0.0f, GESpec);
-			}
-		}
-	}
-}
-
-void AStereoMixPlayerCharacter::OnAddCaughtTag()
-{
-	if (HasAuthority())
-	{
-		SetUseControllerRotation(false);
-		SetEnableMovement(false);
-		SetEnableCollision(false);
-	}
-}
-
-void AStereoMixPlayerCharacter::OnRemoveCaughtTag()
-{
-	if (HasAuthority())
-	{
-		SetUseControllerRotation(true);
-		SetEnableMovement(true);
-		SetEnableCollision(true);
+		{}
 	}
 }
 
