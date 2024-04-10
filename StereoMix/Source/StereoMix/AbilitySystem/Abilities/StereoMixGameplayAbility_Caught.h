@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "StereoMixGameplayAbility.h"
 #include "StereoMixGameplayAbility_Caught.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility_Caught : public UGameplayAbility
+class STEREOMIX_API UStereoMixGameplayAbility_Caught : public UStereoMixGameplayAbility
 {
 	GENERATED_BODY()
 

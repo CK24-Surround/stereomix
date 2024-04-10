@@ -3,34 +3,34 @@
 
 #include "StereoMixGameplayAbility_Caught.h"
 
-#include "AbilitySystemComponent.h"
+#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_Caught::UStereoMixGameplayAbility_Caught()
 {
-	AbilityTags = FGameplayTagContainer(StereoMixTag::Ability::Caught);
-	ActivationOwnedTags = FGameplayTagContainer(StereoMixTag::Character::State::Caught);
-	
-	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
+
+	AbilityTags = FGameplayTagContainer(StereoMixTag::Ability::Caught);
 }
 
 void UStereoMixGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	if (!ensure(ActorInfo))
+	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	if (!ensure(SourceASC))
 	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-
-	UAbilitySystemComponent* ASC = ActorInfo->AbilitySystemComponent.Get();
-	if (!ASC)
+	
+	// 재생을 시도하고 재생에 실패했다면 bWasCancelled = true로 종료합니다.
+	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, CaughtMontage, 1.0f);
+	if (!ensure(Duration > 0.0f))
 	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-
-	ASC->PlayMontage(this, ActivationInfo, CaughtMontage, 1.0f);
 
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
