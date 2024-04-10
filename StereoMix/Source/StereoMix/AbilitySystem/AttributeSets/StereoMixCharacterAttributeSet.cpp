@@ -13,9 +13,12 @@
 UStereoMixCharacterAttributeSet::UStereoMixCharacterAttributeSet()
 {
 	Damage = 0.0f;
-	PostureGauge = 0.0f;
+	
 	MaxPostureGauge = 100.0f;
+	InitPostureGauge(GetMaxPostureGauge());
+	
 	MoveSpeed = 0.0f;
+	
 	ProjectileAttack = 0.0f;
 	ProjectileAttackCooldown = 0.0f;
 }
@@ -47,12 +50,12 @@ void UStereoMixCharacterAttributeSet::PostAttributeChange(const FGameplayAttribu
 
 	if (Attribute == GetPostureGaugeAttribute())
 	{
-		if (GetPostureGauge() >= GetMaxPostureGauge())
+		if (GetPostureGauge() <= 0.0f)
 		{
-			const UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
-			if (ASC)
+			const UAbilitySystemComponent* SourceASC = GetOwningAbilitySystemComponent();
+			if (ensure(SourceASC))
 			{
-				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(ASC->GetAvatarActor(), StereoMixTag::Event::Character::Stun, FGameplayEventData());
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), StereoMixTag::Event::Character::Stun, FGameplayEventData());
 			}
 		}
 	}
@@ -87,7 +90,7 @@ void UStereoMixCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayE
 
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
 	{
-		const float NewPostureGauge = FMath::Clamp(GetPostureGauge() + GetDamage(), 0.0f, GetMaxPostureGauge());
+		const float NewPostureGauge = FMath::Clamp(GetPostureGauge() - GetDamage(), 0.0f, GetMaxPostureGauge());
 		SetPostureGauge(NewPostureGauge);
 		SetDamage(0.0f);
 	}
