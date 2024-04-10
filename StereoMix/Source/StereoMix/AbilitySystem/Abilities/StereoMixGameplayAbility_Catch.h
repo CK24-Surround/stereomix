@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "StereoMixGameplayAbility.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "StereoMixGameplayAbility_Catch.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility_Catch : public UGameplayAbility
+class STEREOMIX_API UStereoMixGameplayAbility_Catch : public UStereoMixGameplayAbility
 {
 	GENERATED_BODY()
 
@@ -36,25 +36,27 @@ protected:
 
 protected:
 	UFUNCTION()
-	void OnCancelled();
-
-	UFUNCTION()
 	void OnInterrupted();
 
 	UFUNCTION()
-	void OnBlendOut();
+	void OnComplete();
 
 protected:
 	UFUNCTION()
-	void OnEventReceived(FGameplayEventData Payload);
+	void OnHoldAnimNotify(FGameplayEventData Payload);
 
 protected:
 	UFUNCTION(Server, Reliable)
-	void ServerRPCRequestTargetOverlap(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation);
+	void ServerRPCRequestCatchProcess(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation);
 
-	TArray<AStereoMixPlayerCharacter*> GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults);
+	/** TArray<FOverlapResult>에서 잡을 수 있는 캐릭터를 추려냅니다. 잡을 수 있는 캐릭터가 없다면 false를 반환합니다. */
+	bool GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<AStereoMixPlayerCharacter*>& OutCatchableCharacters);
 
-	void AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
+	/** 지정된 위치에 가장 가까운 캐릭터를 얻어냅니다. */
+	AStereoMixPlayerCharacter* GetClosestCharacterFromLocation(const TArray<AStereoMixPlayerCharacter*>& InCharacters, const FVector& InLocation);
+
+	/** 대상을 자신에게 어태치합니다. 서버에서만 수행되어야합니다. */
+	void AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter) const;
 	
 protected:
 	FVector StartLocation;

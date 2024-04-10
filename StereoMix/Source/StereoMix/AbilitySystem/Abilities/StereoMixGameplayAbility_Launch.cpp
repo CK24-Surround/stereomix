@@ -51,12 +51,4 @@ void UStereoMixGameplayAbility_Launch::ServerRPCRequestProjectile_Implementation
 	{
 		ProjectileTask->ReadyForActivation();
 	}
-
-	// 대부분의 경우 캐릭터의 위치와 조준한 위치가 평면상에 존재하지만 알 수 없는 오류로 인해 틀어질 수 있습니다. 이 경우를 확인하기 위한 로그입니다.
-	if (StartLocation.Z != CursorLocation.Z)
-	{
-		NET_LOG(GetAvatarActorFromActorInfo(), Warning,
-				TEXT("캐릭터의 위치와 커서의 위치가 평면상에 놓이지 않았습니다. 투사체가 캐릭터와 평행하게 발사되지 않습니다. 투사체 시작점: %s 목표 위치: %s"),
-				*StartLocation.ToString(), *CursorLocation.ToString());
-	}
 }

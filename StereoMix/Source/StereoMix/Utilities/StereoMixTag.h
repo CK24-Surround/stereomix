@@ -26,11 +26,18 @@ namespace StereoMixTag
 		inline FGameplayTag Uncatchable = FGameplayTag::RequestGameplayTag(TEXT("Character.State.Uncatchable"));
 	}
 
-	namespace Event::Character
+	namespace Event
 	{
-		inline FGameplayTag Catch = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Catch"));
-		inline FGameplayTag Stun = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Stun"));
-		inline FGameplayTag Smash = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Smash"));
-		inline FGameplayTag Smashed = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Smashed"));
+		namespace AnimNotify
+		{
+			inline FGameplayTag Catch = FGameplayTag::RequestGameplayTag(TEXT("Event.AnimNotify.Catch"));
+		}
+
+		namespace Character
+		{
+			inline FGameplayTag Stun = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Stun"));
+			inline FGameplayTag Smash = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Smash"));
+			inline FGameplayTag Smashed = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Smashed"));
+		}
 	}
 }
