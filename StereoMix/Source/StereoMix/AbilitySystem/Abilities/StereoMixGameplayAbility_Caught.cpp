@@ -8,8 +8,6 @@
 
 UStereoMixGameplayAbility_Caught::UStereoMixGameplayAbility_Caught()
 {
-	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
-
 	AbilityTags = FGameplayTagContainer(StereoMixTag::Ability::Caught);
 }
 

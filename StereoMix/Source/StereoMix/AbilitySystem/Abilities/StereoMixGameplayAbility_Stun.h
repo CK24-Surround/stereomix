@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "StereoMixGameplayAbility.h"
 #include "StereoMixGameplayAbility_Stun.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility_Stun : public UGameplayAbility
+class STEREOMIX_API UStereoMixGameplayAbility_Stun : public UStereoMixGameplayAbility
 {
 	GENERATED_BODY()
 
@@ -41,6 +41,6 @@ protected:
 	TObjectPtr<UAnimMontage> StandUpMontage;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Time")
+	UPROPERTY(EditAnywhere, Category = "Stun")
 	float StunTime = 6.0f;
 };
