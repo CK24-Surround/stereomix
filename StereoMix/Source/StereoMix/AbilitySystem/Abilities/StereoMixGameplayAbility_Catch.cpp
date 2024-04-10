@@ -10,12 +10,13 @@
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/StereoMixCollision.h"
-#include "Utilities/StereoMixeLog.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_Catch::UStereoMixGameplayAbility_Catch()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
+
+	ActivationOwnedTags = FGameplayTagContainer(StereoMixTag::Ability::Activation::Catch);
 }
 
 void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -80,7 +81,7 @@ void UStereoMixGameplayAbility_Catch::OnHoldAnimNotify(FGameplayEventData Payloa
 
 void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation)
 {
-	const AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
 		return;
@@ -105,27 +106,36 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementatio
 			AStereoMixPlayerCharacter* TargetCharacter = GetClosestCharacterFromLocation(CatchableCharacters, InCursorLocation);
 			if (ensure(TargetCharacter))
 			{
-				// 각 액터에게 필요한 태그를 GE를 통해 붙입니다.
 				UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 				UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 				if (ensure(SourceASC && TargetASC))
 				{
-					const FGameplayEffectContextHandle SourceGEContextHandle = SourceASC->MakeEffectContext();
-					if (ensure(SourceGEContextHandle.IsValid() && AddCatchStateGE))
-					{
-						SourceASC->BP_ApplyGameplayEffectToSelf(AddCatchStateGE, 0.0f, SourceGEContextHandle);
-					}
+					// 소스는 잡기, 타겟은 잡힌 상태 태그를 추가해줍니다.
+					SourceASC->SetCurrentCatchPawn(TargetCharacter);
+					SourceASC->AddLooseGameplayTag(StereoMixTag::Character::State::Catch);
+					SourceASC->AddReplicatedLooseGameplayTag(StereoMixTag::Character::State::Catch);
 
-					const FGameplayEffectContextHandle TargetGEContextHandle = TargetASC->MakeEffectContext();
-					if (ensure(TargetGEContextHandle.IsValid() && AddCaughtStateGE))
-					{
-						TargetASC->BP_ApplyGameplayEffectToSelf(AddCaughtStateGE, 0.0f, TargetGEContextHandle);
-					}
+					TargetASC->SetCurrentCaughtPawn(SourceCharacter);
+					TargetASC->AddLooseGameplayTag(StereoMixTag::Character::State::Caught);
+					TargetASC->AddReplicatedLooseGameplayTag(StereoMixTag::Character::State::Caught);
 
-					// 어태치하고 잡힌 대상은 잡히기 GA를 활성화합니다.
-					AttachTargetCharacter(TargetCharacter);
-					TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::Caught));
-					bSuccess = true;
+					// 어태치하고 잡힌 대상은 잡히기 GA를 활성화합니다. 만약에 실패한다면 적용사항들을 롤백합니다. 일반적으로 성공해야만 합니다.
+					const bool bSuccessAttach = AttachTargetCharacter(TargetCharacter);
+					if (ensure(bSuccessAttach))
+					{
+						TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::Caught));
+						bSuccess = true;
+					}
+					else
+					{
+						SourceASC->SetCurrentCatchPawn(nullptr);
+						SourceASC->RemoveLooseGameplayTag(StereoMixTag::Character::State::Catch);
+						SourceASC->RemoveReplicatedLooseGameplayTag(StereoMixTag::Character::State::Catch);
+
+						TargetASC->SetCurrentCaughtPawn(nullptr);
+						TargetASC->RemoveLooseGameplayTag(StereoMixTag::Character::State::Caught);
+						TargetASC->RemoveReplicatedLooseGameplayTag(StereoMixTag::Character::State::Caught);
+					}
 				}
 			}
 		}
@@ -147,7 +157,7 @@ bool UStereoMixGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverl
 		AStereoMixPlayerCharacter* TargetCharacter = Cast<AStereoMixPlayerCharacter>(OverlapResult.GetActor());
 		if (TargetCharacter)
 		{
-			// 태그를 기반으로 추려냅니다.
+			// 태그를 기반으로 추려냅니다. 일반적으로 TargetCharacter는 AStereoMixPlayerCharacter이기 때문에 TargetASC가 유효해야합니다.
 			const UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
 			if (ensure(TargetASC))
 			{
@@ -188,15 +198,46 @@ AStereoMixPlayerCharacter* UStereoMixGameplayAbility_Catch::GetClosestCharacterF
 	return TargetCharacter;
 }
 
-void UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter) const
+bool UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter)
 {
-	const AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
-	if (ensure(SourceCharacter))
+	bool bSuccess = true;
+	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	if (ensure(SourceCharacter && InTargetCharacter))
 	{
-		// 잡기 전에 위치 보정 무시를 활성화합니다.
-		InTargetCharacter->GetCharacterMovement()->bIgnoreClientMovementErrorChecksAndCorrection = true;
+		// 어태치합니다. 디버깅을 위해 단언을 수행합니다. 어태치 후 상대 회전을 0으로 정렬해줍니다.
+		if (InTargetCharacter->AttachToComponent(SourceCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSocket")))
+		{
+			// 위치 보정 무시를 활성화합니다.
+			UCharacterMovementComponent* CachedTargetMovement = InTargetCharacter->GetCharacterMovement();
+			if (ensure(CachedTargetMovement))
+			{
+				CachedTargetMovement->bIgnoreClientMovementErrorChecksAndCorrection = true;
+			}
 
-		// 어태치합니다. 디버깅을 위해 단언을 수행합니다.
-		ensure(InTargetCharacter->AttachToComponent(SourceCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSocket")));
+			MulticastRPCRelativeRotationReset(InTargetCharacter);
+
+			// 타겟 플레이어의 카메라 뷰를 소스 캐릭터의 카메라 뷰로 전환합니다.
+			APlayerController* TargetPlayerController = Cast<APlayerController>(InTargetCharacter->GetController());
+			if (ensure(TargetPlayerController))
+			{
+				TargetPlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
+			}
+		}
+		else
+		{
+			bSuccess = false;
+		}
+	}
+
+	return bSuccess;
+}
+
+void UStereoMixGameplayAbility_Catch::MulticastRPCRelativeRotationReset_Implementation(AStereoMixPlayerCharacter* RotatingCharacter)
+{
+	if (ensure(RotatingCharacter))
+	{
+		RotatingCharacter->SetActorRelativeRotation(FRotator::ZeroRotator);
+		// 회전이 적용되지 않으면 틀어져 보이게 되기때문에 단언을 해줍니다. 나중에 틀어지게되었을때 찾기 수월해집니다.
+		ensure(RotatingCharacter->GetRootComponent()->GetRelativeRotation() == FRotator::ZeroRotator);
 	}
 }

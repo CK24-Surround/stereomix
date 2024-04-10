@@ -16,7 +16,7 @@
 #include "Player/StereoMixPlayerState.h"
 #include "Utilities/StereoMixAssetPath.h"
 #include "Utilities/StereoMixCollision.h"
-#include "Utilities/StereoMixeLog.h"
+#include "Utilities/StereoMixLog.h"
 #include "Utilities/StereoMixTag.h"
 
 
@@ -47,6 +47,10 @@ AStereoMixPlayerCharacter::AStereoMixPlayerCharacter()
 	Camera->SetupAttachment(CameraBoom);
 
 	MaxWalkSpeed = 0.0f;
+
+	bUseControllerRotationPitch = true;
+	bUseControllerRotationYaw = true;
+	bUseControllerRotationRoll = true;
 }
 
 void AStereoMixPlayerCharacter::PostInitializeComponents()
@@ -72,6 +76,8 @@ void AStereoMixPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 
 	DOREPLIFETIME(AStereoMixPlayerCharacter, MaxWalkSpeed);
 	DOREPLIFETIME(AStereoMixPlayerCharacter, bEnableCollision);
+	DOREPLIFETIME(AStereoMixPlayerCharacter, bUseControllerRotation);
+	DOREPLIFETIME(AStereoMixPlayerCharacter, bEnableMovement);
 }
 
 void AStereoMixPlayerCharacter::OnRep_Controller()
@@ -209,7 +215,7 @@ void AStereoMixPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
 {
 	if (!ASC.Get())
 	{
-		NET_LOG(this, Warning, TEXT("ASC가 유효하지 않습니다."))
+		NET_LOG(this, Warning, TEXT("ASC가 유효하지 않습니다."));
 		return;
 	}
 
@@ -231,7 +237,7 @@ void AStereoMixPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
 {
 	if (!ASC.Get())
 	{
-		NET_LOG(this, Warning, TEXT("ASC가 유효하지 않습니다."))
+		NET_LOG(this, Warning, TEXT("ASC가 유효하지 않습니다."));
 		return;
 	}
 
@@ -247,6 +253,7 @@ void AStereoMixPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
 
 void AStereoMixPlayerCharacter::OnChangedTag(const FGameplayTag& Tag, bool TagExists)
 {
+	// TODO: 태그 추가될때 작업 수행보단 직접 GA에서 수정하도록 변경예정
 	if (Tag == StereoMixTag::Character::State::Stun)
 	{
 		if (TagExists)
@@ -307,30 +314,20 @@ void AStereoMixPlayerCharacter::OnRemoveStunTag()
 
 void AStereoMixPlayerCharacter::OnAddCaughtTag()
 {
-	// Caught 태그가 추가될때 수행되는 작업:
-	// 회전 잠금
-	// 움직임 잠금
-	// 콜라이더 비활성화
-	bUseControllerRotationYaw = false;
-	GetCharacterMovement()->SetMovementMode(MOVE_None);
-	SetActorRelativeRotation(FRotator::ZeroRotator);
 	if (HasAuthority())
 	{
+		SetUseControllerRotation(false);
+		SetEnableMovement(false);
 		SetEnableCollision(false);
 	}
 }
 
 void AStereoMixPlayerCharacter::OnRemoveCaughtTag()
 {
-	// Caught 태그가 추가될때 수행되는 작업:
-	// 회전 잠금 해제
-	// 움직임 잠금 해제
-	// 콜라이더 활성화
-	bUseControllerRotationYaw = true;
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	SetActorRelativeRotation(FRotator(0.0, GetActorRotation().Yaw, 0.0));
 	if (HasAuthority())
 	{
+		SetUseControllerRotation(true);
+		SetEnableMovement(true);
 		SetEnableCollision(true);
 	}
 }
@@ -428,7 +425,44 @@ void AStereoMixPlayerCharacter::SetEnableCollision(bool bInEnableCollision)
 	}
 }
 
+void AStereoMixPlayerCharacter::SetUseControllerRotation(bool bInUseControllerRotation)
+{
+	if (HasAuthority())
+	{
+		bUseControllerRotation = bInUseControllerRotation;
+		OnRep_UseControllerRotation();
+	}
+}
+
+void AStereoMixPlayerCharacter::SetEnableMovement(bool bInEnableMovementMode)
+{
+	if (HasAuthority())
+	{
+		bEnableMovement = bInEnableMovementMode;
+		OnRep_EnableMovement();
+	}
+}
+
 void AStereoMixPlayerCharacter::OnRep_EnableCollision()
 {
 	SetActorEnableCollision(bEnableCollision);
+}
+
+void AStereoMixPlayerCharacter::OnRep_UseControllerRotation()
+{
+	bUseControllerRotationPitch = bUseControllerRotation;
+	bUseControllerRotationYaw = bUseControllerRotation;
+	bUseControllerRotationRoll = bUseControllerRotation;
+}
+
+void AStereoMixPlayerCharacter::OnRep_EnableMovement()
+{
+	if (bEnableMovement)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+	else
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_None);
+	}
 }

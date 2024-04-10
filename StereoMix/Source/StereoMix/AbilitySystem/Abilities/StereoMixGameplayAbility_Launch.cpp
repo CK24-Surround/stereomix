@@ -7,7 +7,6 @@
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "AbilityTasks/StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
 #include "Characters/StereoMixPlayerCharacter.h"
-#include "Utilities/StereoMixeLog.h"
 
 UStereoMixGameplayAbility_Launch::UStereoMixGameplayAbility_Launch()
 {

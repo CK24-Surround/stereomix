@@ -28,12 +28,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer CatchableTags;
 
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> AddCatchStateGE;
-	
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> AddCaughtStateGE;
-
 protected:
 	UFUNCTION()
 	void OnInterrupted();
@@ -55,8 +49,11 @@ protected:
 	/** 지정된 위치에 가장 가까운 캐릭터를 얻어냅니다. */
 	AStereoMixPlayerCharacter* GetClosestCharacterFromLocation(const TArray<AStereoMixPlayerCharacter*>& InCharacters, const FVector& InLocation);
 
-	/** 대상을 자신에게 어태치합니다. 서버에서만 수행되어야합니다. */
-	void AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter) const;
+	/** 대상을 자신에게 어태치합니다. 서버에서만 수행되어야합니다. 만약 실패하면 false를 반환합니다.*/
+	bool AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCRelativeRotationReset(AStereoMixPlayerCharacter* RotatingCharacter);
 	
 protected:
 	FVector StartLocation;

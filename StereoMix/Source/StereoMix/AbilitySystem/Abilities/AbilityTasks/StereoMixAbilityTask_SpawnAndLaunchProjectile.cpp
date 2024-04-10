@@ -4,7 +4,6 @@
 #include "StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
 
 #include "Projectiles/StereoMixProjectile.h"
-#include "Utilities/StereoMixeLog.h"
 
 UStereoMixAbilityTask_SpawnAndLaunchProjectile* UStereoMixAbilityTask_SpawnAndLaunchProjectile::CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<AStereoMixProjectile> ProjectileClass, const FVector& StartLocation, const FRotator& StartRotation)
 {

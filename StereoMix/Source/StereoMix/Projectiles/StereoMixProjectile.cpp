@@ -10,9 +10,7 @@
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Utilities/StereoMixAssetPath.h"
 #include "Utilities/StereoMixCollision.h"
-#include "Utilities/StereoMixeLog.h"
-#include "Utilities/StereoMixTag.h"
-
+#include "Utilities/StereoMixLog.h"
 
 AStereoMixProjectile::AStereoMixProjectile()
 {

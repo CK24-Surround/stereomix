@@ -10,8 +10,8 @@ void UStereoMixAbilitySystemComponent::GetLifetimeReplicatedProps(TArray<FLifeti
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(UStereoMixAbilitySystemComponent, CurrentHoldingPawn);
-	DOREPLIFETIME(UStereoMixAbilitySystemComponent, CurrentHolderPawn);
+	DOREPLIFETIME(UStereoMixAbilitySystemComponent, CurrentCatchPawn);
+	DOREPLIFETIME(UStereoMixAbilitySystemComponent, CurrentCaughtPawn);
 }
 
 void UStereoMixAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)

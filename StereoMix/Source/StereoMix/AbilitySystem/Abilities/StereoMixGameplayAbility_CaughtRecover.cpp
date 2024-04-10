@@ -7,7 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Utilities/StereoMixeLog.h"
+#include "Utilities/StereoMixLog.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_CaughtRecover::UStereoMixGameplayAbility_CaughtRecover()

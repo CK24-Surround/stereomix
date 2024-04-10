@@ -6,7 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
-#include "Utilities/StereoMixeLog.h"
+#include "..\..\Utilities\StereoMixLog.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_Stun::UStereoMixGameplayAbility_Stun()

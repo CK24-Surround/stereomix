@@ -7,7 +7,7 @@
 #include "GameplayEffectExtension.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
-#include "Utilities/StereoMixeLog.h"
+#include "Utilities/StereoMixLog.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixCharacterAttributeSet::UStereoMixCharacterAttributeSet()

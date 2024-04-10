@@ -8,7 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
-#include "Utilities/StereoMixeLog.h"
+#include "Utilities/StereoMixLog.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_Smash::UStereoMixGameplayAbility_Smash()

@@ -151,12 +151,29 @@ protected:
 // ~State Section
 public:
 	void SetEnableCollision(bool bInEnableCollision);
+	
+	void SetUseControllerRotation(bool bInUseControllerRotation);
+
+	void SetEnableMovement(bool bInEnableMovementMode);
 
 protected:
 	UFUNCTION()
 	void OnRep_EnableCollision();
-	
+
+	UFUNCTION()
+	void OnRep_UseControllerRotation();
+
+	UFUNCTION()
+	void OnRep_EnableMovement();
+
+protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableCollision")
 	uint32 bEnableCollision:1 = true;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_UseControllerRotation")
+	uint32 bUseControllerRotation:1 = true;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_EnableMovement")
+	uint32 bEnableMovement:1 = true;
 // ~State Section
 };

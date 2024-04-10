@@ -5,6 +5,11 @@ namespace StereoMixTag
 {
 	namespace Ability
 	{
+		namespace Activation
+		{
+			inline FGameplayTag Catch = FGameplayTag::RequestGameplayTag(TEXT("Ability.Activation.Catch"));
+		}
+
 		inline FGameplayTag Caught = FGameplayTag::RequestGameplayTag(TEXT("Ability.Caught"));
 		inline FGameplayTag CaughtRecover = FGameplayTag::RequestGameplayTag(TEXT("Ability.CaughtRecover"));
 	}
