@@ -16,7 +16,7 @@ UStereoMixGameplayAbility_Smash::UStereoMixGameplayAbility_Smash()
 	ActivationOwnedTags = FGameplayTagContainer(StereoMixTag::Character::State::Smashing);
 	ActivationRequiredTags = FGameplayTagContainer(StereoMixTag::Character::State::Catch);
 }
-
+// TODO: Smash는 그냥 Smash에서 디태치 로직 실행하도록 수정 예정
 void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -26,7 +26,7 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 	{
 		AStereoMixPlayerCharacter* TargetCharacter = Cast<AStereoMixPlayerCharacter>(SourceASC->GetCurrentCatchPawn());
 		UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-		if (!ensure(TargetCharacter && TargetASC))
+		if (ensure(TargetCharacter && TargetASC))
 		{
 			UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::AnimNotify::Smash);
 			if (ensure(WaitGameplayEventTask))
@@ -70,7 +70,7 @@ void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 	{
 		AStereoMixPlayerCharacter* TargetCharacter = Cast<AStereoMixPlayerCharacter>(SourceASC->GetCurrentCatchPawn());
 		UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-		if (!ensure(TargetCharacter && TargetASC))
+		if (ensure(TargetCharacter && TargetASC))
 		{
 			if (CurrentActorInfo->IsNetAuthority())
 			{
@@ -83,11 +83,11 @@ void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 
 			// TODO: 타일 트리거 로직
 
-			// 타겟의 Smashed 어빌리티를 활성화합니다.
-			TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::Smashed));
-			
 			// 스매시 공격 이벤트를 타겟에게 보냅니다. 여기서 디태치 등 여러 작업을 수행합니다.
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetCharacter, StereoMixTag::Event::Character::OnSmash, FGameplayEventData());
+			
+			// 타겟의 Smashed 어빌리티를 활성화합니다.
+			TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::Smashed));
 		}
 	}
 }

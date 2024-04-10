@@ -120,19 +120,12 @@ void UStereoMixGameplayAbility_Stun::OnSmash(FGameplayEventData Payload)
 	// 잡기 상태를 해제합니다.
 	CaughtExit();
 
-	// 스매시 종료 이벤트를 기다립니다.
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::Character::SmashEnd);
-	if (ensure(WaitGameplayEventTask))
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
+	if (ensure(PlayMontageAndWaitTask))
 	{
-		WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnSmashEnded);
-		WaitGameplayEventTask->ReadyForActivation();
+		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
+		PlayMontageAndWaitTask->ReadyForActivation();
 	}
-}
-
-void UStereoMixGameplayAbility_Stun::OnSmashEnded(FGameplayEventData Payload)
-{
-	OnStunEnded();
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void UStereoMixGameplayAbility_Stun::CaughtExit()
@@ -154,7 +147,6 @@ void UStereoMixGameplayAbility_Stun::CaughtExit()
 		// Source의 Caught 태그 및 잡고 있는 대상을 제거합니다.
 		if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Caught))
 		{
-			SourceASC->SetCurrentCaughtPawn(nullptr);
 			SourceASC->RemoveLooseGameplayTag(StereoMixTag::Character::State::Caught);
 			SourceASC->RemoveReplicatedLooseGameplayTag(StereoMixTag::Character::State::Caught);
 		}
@@ -168,15 +160,18 @@ void UStereoMixGameplayAbility_Stun::CaughtExit()
 			{
 				if (TargetASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Catch))
 				{
-					TargetASC->SetCurrentCatchPawn(nullptr);
 					TargetASC->RemoveLooseGameplayTag(StereoMixTag::Character::State::Catch);
 					TargetASC->RemoveReplicatedLooseGameplayTag(StereoMixTag::Character::State::Catch);
 				}
+
+				// 디태치합니다. 
+				DetachToTargetCharacter();
+
+				// 마지막으로 Catch 및 Caught 폰을 초기화해줍니다.
+				SourceASC->SetCurrentCaughtPawn(nullptr);
+				TargetASC->SetCurrentCatchPawn(nullptr);
 			}
 		}
-
-		// 마지막으로 디태치합니다. 
-		DetachToTargetCharacter();
 	}
 }
 
@@ -264,7 +259,7 @@ void UStereoMixGameplayAbility_Stun::OnStunEnded()
 	{
 		return;
 	}
-	
+
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		// 컨트롤 로테이션을 따라가도록 복구해줍니다.
@@ -273,7 +268,7 @@ void UStereoMixGameplayAbility_Stun::OnStunEnded()
 		{
 			SourceCharacter->SetUseControllerRotation(true);
 		}
-		
+
 		// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거합니다.
 		// 서버에서만 실행하는 이유는 HasMatchingGameplayTag때문에 클라이언트에서 잘못 실행될 가능성이 있기 때문입니다.
 		if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Uncatchable))

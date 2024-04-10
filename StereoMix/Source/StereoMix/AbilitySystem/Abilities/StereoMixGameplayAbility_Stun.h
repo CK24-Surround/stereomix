@@ -46,9 +46,6 @@ protected:
 	UFUNCTION()
 	void OnSmash(FGameplayEventData Payload);
 
-	UFUNCTION()
-	void OnSmashEnded(FGameplayEventData Payload);
-
 protected:
 	/** 잡기에서 탈출합니다. */
 	void CaughtExit();
