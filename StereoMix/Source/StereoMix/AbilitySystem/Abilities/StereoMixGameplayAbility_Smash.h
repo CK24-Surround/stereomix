@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Abilities/GameplayAbility.h"
+#include "StereoMixGameplayAbility.h"
 #include "StereoMixGameplayAbility_Smash.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility_Smash : public UGameplayAbility
+class STEREOMIX_API UStereoMixGameplayAbility_Smash : public UStereoMixGameplayAbility
 {
 	GENERATED_BODY()
 
@@ -20,22 +20,14 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-
 protected:
 	UFUNCTION()
 	void OnCompleted();
 
 	UFUNCTION()
-	void OnEventReceived(FGameplayEventData Payload);
+	void OnSmash(FGameplayEventData Payload);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> SmashMontage;
-
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> AddSmashedState;
-
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> RemoveSmashedState;
 };

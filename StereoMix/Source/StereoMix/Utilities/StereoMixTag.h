@@ -12,6 +12,7 @@ namespace StereoMixTag
 
 		inline FGameplayTag Caught = FGameplayTag::RequestGameplayTag(TEXT("Ability.Caught"));
 		inline FGameplayTag CaughtRecover = FGameplayTag::RequestGameplayTag(TEXT("Ability.CaughtRecover"));
+		inline FGameplayTag Smashed = FGameplayTag::RequestGameplayTag(TEXT("Ability.Smashed"));
 	}
 
 	namespace AttributeSet::Character::Init
@@ -36,14 +37,14 @@ namespace StereoMixTag
 		namespace AnimNotify
 		{
 			inline FGameplayTag Catch = FGameplayTag::RequestGameplayTag(TEXT("Event.AnimNotify.Catch"));
+			inline FGameplayTag Smash = FGameplayTag::RequestGameplayTag(TEXT("Event.AnimNotify.Smash"));
 		}
 
 		namespace Character
 		{
-			inline FGameplayTag Smash = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Smash"));
-			inline FGameplayTag Smashed = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Smashed"));
+			inline FGameplayTag OnSmash = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.OnSmash"));
+			inline FGameplayTag SmashEnd = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.SmashEnd"));
 			inline FGameplayTag Stun = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.Stun"));
-			inline FGameplayTag StunEnd = FGameplayTag::RequestGameplayTag(TEXT("Event.Character.StunEnd"));
 		}
 	}
 }

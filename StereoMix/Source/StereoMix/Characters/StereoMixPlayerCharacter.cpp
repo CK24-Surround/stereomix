@@ -253,7 +253,7 @@ void AStereoMixPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
 
 void AStereoMixPlayerCharacter::OnChangedTag(const FGameplayTag& Tag, bool TagExists)
 {
-	// TODO: 태그 추가될때 작업 수행보단 직접 GA에서 수정하도록 변경예정
+	// TODO: [Deprecated] 태그 추가될때 작업 수행보단 직접 GA에서 수정하도록 변경예정
 	if (Tag == StereoMixTag::Character::State::Stun)
 	{
 		if (TagExists)

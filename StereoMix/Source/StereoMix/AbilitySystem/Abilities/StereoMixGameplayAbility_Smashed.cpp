@@ -12,14 +12,10 @@
 
 UStereoMixGameplayAbility_Smashed::UStereoMixGameplayAbility_Smashed()
 {
-	FAbilityTriggerData TriggerTag;
-	TriggerTag.TriggerTag = StereoMixTag::Event::Character::Smashed;
-	TriggerTag.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
-	AbilityTriggers.Add(TriggerTag);
-
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
-	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
+
+	AbilityTags = FGameplayTagContainer(StereoMixTag::Ability::Smashed);
 }
 
 void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

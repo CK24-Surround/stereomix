@@ -42,7 +42,10 @@ protected:
 	float StunTime = 6.0f;
 
 protected:
-	/** 스매시 종료 후 호출됩니다. */
+	/** 스매시 직후 호출됩니다. */
+	UFUNCTION()
+	void OnSmash(FGameplayEventData Payload);
+
 	UFUNCTION()
 	void OnSmashEnded(FGameplayEventData Payload);
 
