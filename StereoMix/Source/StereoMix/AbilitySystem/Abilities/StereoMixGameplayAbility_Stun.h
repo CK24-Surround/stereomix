@@ -59,12 +59,6 @@ protected:
 	float StunTime = 6.0f;
 
 protected:
-
-protected:
-
-protected:
-
-protected:
 	UFUNCTION()
 	void OnComplete();
 

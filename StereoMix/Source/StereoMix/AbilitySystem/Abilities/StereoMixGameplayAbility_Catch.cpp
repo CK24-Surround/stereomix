@@ -31,20 +31,18 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 	}
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage);
-	if (ensure(PlayMontageAndWaitTask))
-	{
-		CommitAbility(Handle, ActorInfo, ActivationInfo);
-		// OnComplete는 EndAbility를 호출하기에 적합하지 않아 제외했습니다. BlendOut에 들어간 시점에 몽타주가 캔슬되면 OnComplete가 호출되지 않고, OnCancelled, OnInterrupted도 호출되지 않아 버그가 생길 수 있습니다. 
-		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
-		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
-		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnComplete);
-		PlayMontageAndWaitTask->ReadyForActivation();
-	}
-	else
+	if (!ensure(PlayMontageAndWaitTask))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
+
+	CommitAbility(Handle, ActorInfo, ActivationInfo);
+	// OnComplete는 EndAbility를 호출하기에 적합하지 않아 제외했습니다. BlendOut에 들어간 시점에 몽타주가 캔슬되면 OnComplete가 호출되지 않고, OnCancelled, OnInterrupted도 호출되지 않아 버그가 생길 수 있습니다. 
+	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
+	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
+	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnComplete);
+	PlayMontageAndWaitTask->ReadyForActivation();
 
 	// 마우스 커서 정보는 클라이언트에만 존재합니다.
 	// 따라서 클라이언트의 커서정보를 기반으로 서버에 잡기 요청을 하기 위해 해당 로직은 클라이언트에서만 실행되어야합니다.
@@ -55,11 +53,14 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 
 		// 애님 노티파이를 기다리고 노티파이가 호출되면 잡기를 요청합니다.
 		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::AnimNotify::Catch);
-		if (ensure(WaitGameplayEventTask))
+		if (!ensure(WaitGameplayEventTask))
 		{
-			WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnHoldAnimNotify);
-			WaitGameplayEventTask->ReadyForActivation();
+			EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+			return;
 		}
+
+		WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnHoldAnimNotify);
+		WaitGameplayEventTask->ReadyForActivation();
 	}
 }
 

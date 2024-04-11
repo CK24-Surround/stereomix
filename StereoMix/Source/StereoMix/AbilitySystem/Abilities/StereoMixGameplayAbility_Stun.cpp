@@ -29,33 +29,39 @@ void UStereoMixGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecH
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
-	if (ensure(SourceASC))
+	if (!ensure(SourceASC))
 	{
-		// 몽타주가 정상적으로 실행되면 0.0f 이상의 값을 반환합니다.
-		const float Duration = SourceASC->PlayMontage(this, ActivationInfo, StunMontage, 1.0f);
-		if (ensure(Duration > 0.0f))
-		{
-			// 컨트롤 로테이션을 따라 회전하지 않도록 잠급니다.
-			AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
-			if (ensure(SourceCharacter))
-			{
-				SourceCharacter->SetUseControllerRotation(false);
-			}
-
-			// 스턴 시간 만큼 기다립니다.
-			UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, StunTime);
-			if (ensure(WaitDelayTask))
-			{
-				CommitAbility(Handle, ActorInfo, ActivationInfo);
-
-				WaitDelayTask->OnFinish.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnStunTimeEnded);
-				WaitDelayTask->ReadyForActivation();
-				return;
-			}
-		}
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
 	}
 
-	EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+	// 스턴 몽타주가 정상적으로 실행되면 0.0f 이상의 값을 반환합니다.
+	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, StunMontage, 1.0f);
+	if (!ensure(Duration > 0.0f))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	// 컨트롤 로테이션을 따라 회전하지 않도록 잠급니다.
+	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	if (ensure(SourceCharacter))
+	{
+		SourceCharacter->SetUseControllerRotation(false);
+	}
+
+	// 스턴 시간 만큼 기다립니다.
+	UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, StunTime);
+	if (!ensure(WaitDelayTask))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	CommitAbility(Handle, ActorInfo, ActivationInfo);
+
+	WaitDelayTask->OnFinish.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnStunTimeEnded);
+	WaitDelayTask->ReadyForActivation();
 }
 
 void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
