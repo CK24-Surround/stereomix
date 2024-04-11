@@ -30,4 +30,10 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> SmashMontage;
+
+protected:
+	void ReleaseCatch(AStereoMixPlayerCharacter* TargetCharacter);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCSetYawRotation(AStereoMixPlayerCharacter* TargetCharacter, float InYaw);
 };

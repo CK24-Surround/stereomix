@@ -69,6 +69,11 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 	// 스매시 당하는 중에는 기절에서 풀리면 안됩니다. 스매시 마무리 후 기절에서 풀려야합니다.
 	if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Smashed))
 	{
+		// TODO: 수정 필요
+		// 스매시 프로세스는 스매시에서 실행하고 여기서는 기절이 풀리는 작업만 진행해주도록 개선해야합니다.
+		// 여기서 기대할 수 있는 상황
+		// 디태치 및 필요한 태그 할당 및 제거
+
 		// 스매시 이벤트를 기다립니다.
 		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::Character::OnSmash);
 		if (ensure(WaitGameplayEventTask))
@@ -115,18 +120,7 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 	}
 }
 
-void UStereoMixGameplayAbility_Stun::OnSmash(FGameplayEventData Payload)
-{
-	// 잡기 상태를 해제합니다.
-	CaughtExit();
-
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
-	if (ensure(PlayMontageAndWaitTask))
-	{
-		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
-		PlayMontageAndWaitTask->ReadyForActivation();
-	}
-}
+void UStereoMixGameplayAbility_Stun::OnSmash(FGameplayEventData Payload) {}
 
 void UStereoMixGameplayAbility_Stun::CaughtExit()
 {
