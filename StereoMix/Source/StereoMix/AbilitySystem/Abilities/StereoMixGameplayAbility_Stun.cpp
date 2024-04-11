@@ -98,9 +98,14 @@ void UStereoMixGameplayAbility_Stun::ResetSmashedState()
 	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::Character::OnSmash);
 	if (ensure(WaitGameplayEventTask))
 	{
-		// WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnSmash);
+		WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnSmashEnded);
 		WaitGameplayEventTask->ReadyForActivation();
 	}
+}
+
+void UStereoMixGameplayAbility_Stun::OnSmashEnded(FGameplayEventData Payload)
+{
+	OnComplete();
 }
 
 void UStereoMixGameplayAbility_Stun::ResetCaughtState()
@@ -179,7 +184,7 @@ void UStereoMixGameplayAbility_Stun::DetachFromTargetCharacter(AStereoMixPlayerC
 
 	// 회전을 재지정합니다.
 	const float TargetYaw = InTargetCharacter->GetActorRotation().Yaw;
-	InTargetCharacter->MulticastRPCSetYawRotation(TargetYaw);
+	SourceCharacter->MulticastRPCSetYawRotation(TargetYaw);
 
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (ensure(SourceMovement))

@@ -116,11 +116,11 @@ void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 
 	// TODO: 타일 트리거 로직
 
-	// 스매시 공격 발생 이벤트를 타겟에게 보냅니다. 여기서 디태치 등 여러 작업을 수행합니다.
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetCharacter, StereoMixTag::Event::Character::OnSmash, FGameplayEventData());
-
 	// 타겟의 Smashed 어빌리티를 활성화합니다.
 	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::Smashed));
+
+	// 스매시 공격 발생 이벤트를 타겟에게 보냅니다. 이 이벤트는 만약 스턴 시간이 다 되었을때 스매시를 시전한 경우 마무리하기 위해서 쓰입니다.
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetCharacter, StereoMixTag::Event::Character::OnSmash, FGameplayEventData());
 }
 
 void UStereoMixGameplayAbility_Smash::ReleaseCatch(AStereoMixPlayerCharacter* TargetCharacter)

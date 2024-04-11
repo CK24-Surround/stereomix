@@ -23,10 +23,15 @@ public:
 protected:
 	UFUNCTION()
 	void OnStunTimeEnded();
-
+	
+protected:
+	/** 스턴이 끝나는 시점에 스매시 중이라면 스매시의 이벤트를 기다립니다.*/
 	void ResetSmashedState();
 
-protected:
+	/** ResetSmashedState에서 이어집니다. 스매시가 종료된 경우 호출됩니다.*/
+	UFUNCTION()
+	void OnSmashEnded(FGameplayEventData Payload);
+
 	/** 잡힌 상태에서 벗어납니다. */
 	void ResetCaughtState();
 
