@@ -33,7 +33,4 @@ protected:
 
 protected:
 	void ReleaseCatch(AStereoMixPlayerCharacter* TargetCharacter);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCSetYawRotation(AStereoMixPlayerCharacter* TargetCharacter, float InYaw);
 };

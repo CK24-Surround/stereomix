@@ -26,12 +26,12 @@ protected:
 
 	void ResetSmashedState();
 
-	/** 타겟 캐릭터로부터 소스 캐릭터를 디태치합니다. */
-	void DetachFromTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
-
 protected:
 	/** 잡힌 상태에서 벗어납니다. */
 	void ResetCaughtState();
+
+	/** 타겟 캐릭터로부터 소스 캐릭터를 디태치합니다. */
+	void DetachFromTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
 
 	/** 스턴 상태에서 벗어납니다. */
 	void ResetStunState();
