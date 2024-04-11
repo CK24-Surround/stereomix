@@ -10,6 +10,7 @@
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Utilities/StereoMixLog.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_Stun::UStereoMixGameplayAbility_Stun()
@@ -150,6 +151,7 @@ void UStereoMixGameplayAbility_Stun::ResetCaughtState()
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), CaughtExitMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
+		NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Warning, TEXT("몽타주 재생"));
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
 		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
 		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
