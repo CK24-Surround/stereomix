@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "Characters/StereoMixPlayerCharacter.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_Smashed::UStereoMixGameplayAbility_Smashed()
@@ -20,7 +21,14 @@ void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySp
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
-	if (ensure(SourceASC))
+	if (!ensure(SourceASC))
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		return;
+	}
+
+	auto SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	if (!ensure(SourceCharacter))
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
@@ -33,5 +41,7 @@ void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySp
 		return;
 	}
 
+	// 스매시 공격 발생 이벤트를 타겟에게 보냅니다. 이 이벤트는 만약 스턴 시간이 다 되었을때 스매시를 시전한 경우 마무리하기 위해서 쓰입니다.
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceCharacter, StereoMixTag::Event::Character::OnSmash, FGameplayEventData());
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }

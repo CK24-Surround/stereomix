@@ -73,6 +73,8 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 		return;
 	}
 
+	int32 TagCount = SourceASC->GetGameplayTagCount(StereoMixTag::Character::State::Caught);
+
 	// 스매시 당하는 상태인 경우의 처리입니다.
 	if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Smashed))
 	{
@@ -82,6 +84,7 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 	// 잡힌 상태인 경우의 처리입니다.
 	else if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Caught))
 	{
+		NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("기절 종료: %d"), TagCount);
 		ResetCaughtState();
 		return;
 	}
@@ -106,7 +109,14 @@ void UStereoMixGameplayAbility_Stun::ResetSmashedState()
 
 void UStereoMixGameplayAbility_Stun::OnSmashEnded(FGameplayEventData Payload)
 {
-	OnComplete();
+	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("스매시 종료 이벤트 콜"));
+
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
+	if (ensure(PlayMontageAndWaitTask))
+	{
+		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
+		PlayMontageAndWaitTask->ReadyForActivation();
+	}
 }
 
 void UStereoMixGameplayAbility_Stun::ResetCaughtState()
@@ -151,7 +161,6 @@ void UStereoMixGameplayAbility_Stun::ResetCaughtState()
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), CaughtExitMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
-		NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Warning, TEXT("몽타주 재생"));
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
 		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
 		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
@@ -204,7 +213,7 @@ void UStereoMixGameplayAbility_Stun::DetachFromTargetCharacter(AStereoMixPlayerC
 void UStereoMixGameplayAbility_Stun::ResetStunState()
 {
 	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
-	if (ensure(SourceASC))
+	if (!ensure(SourceASC))
 	{
 		return;
 	}
