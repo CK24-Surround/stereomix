@@ -74,6 +74,7 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 	}
 
 	int32 TagCount = SourceASC->GetGameplayTagCount(StereoMixTag::Character::State::Caught);
+	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("잡힌 상태 태그 수: %d"), TagCount);
 
 	// 스매시 당하는 상태인 경우의 처리입니다.
 	if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Smashed))
@@ -84,7 +85,6 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 	// 잡힌 상태인 경우의 처리입니다.
 	else if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Caught))
 	{
-		NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("기절 종료: %d"), TagCount);
 		ResetCaughtState();
 		return;
 	}
