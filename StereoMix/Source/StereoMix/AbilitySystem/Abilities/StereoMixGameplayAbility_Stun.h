@@ -27,19 +27,24 @@ protected:
 	void ResetSmashedState();
 
 	/** 타겟 캐릭터로부터 소스 캐릭터를 디태치합니다. */
-	void DetachToTargetCharacter();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCSetRotationWithTarget(float InYaw);
+	void DetachFromTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
 
 protected:
 	/** 잡힌 상태에서 벗어납니다. */
 	void ResetCaughtState();
 
+	/** 스턴 상태에서 벗어납니다. */
 	void ResetStunState();
 
-	/** 스턴에서 탈출합니다. */
-	void StunExit();
+protected:
+	UFUNCTION()
+	void OnComplete();
+
+	UFUNCTION()
+	void OnInterrupted();
+
+	/** 스턴이 종료될때 필요한 처리를 합니다.. */
+	void OnStunEnded();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
@@ -57,14 +62,4 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Stun")
 	float StunTime = 6.0f;
-
-protected:
-	UFUNCTION()
-	void OnComplete();
-
-	UFUNCTION()
-	void OnInterrupted();
-
-	/** 스턴이 종료될때 필요한 처리를 합니다.. */
-	void OnStunEnded();
 };

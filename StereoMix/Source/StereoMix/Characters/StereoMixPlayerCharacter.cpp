@@ -335,6 +335,11 @@ void AStereoMixPlayerCharacter::MulticastRPCResetRelativeRotation_Implementation
 	SetActorRelativeRotation(FRotator::ZeroRotator);
 }
 
+void AStereoMixPlayerCharacter::MulticastRPCSetYawRotation_Implementation(float InYaw)
+{
+	SetActorRotation(FRotator(0.0, InYaw, 0.0));
+}
+
 void AStereoMixPlayerCharacter::OnRep_MaxWalkSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
