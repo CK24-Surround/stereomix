@@ -4,10 +4,8 @@
 #include "StereoMixGameplayAbility_Smashed.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
-#include "Characters/StereoMixPlayerCharacter.h"
 #include "Utilities/StereoMixTag.h"
 
 UStereoMixGameplayAbility_Smashed::UStereoMixGameplayAbility_Smashed()
@@ -24,13 +22,16 @@ void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySp
 	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (ensure(SourceASC))
 	{
-		const float Duration = SourceASC->PlayMontage(this, ActivationInfo, SmashedMontage, 1.0f);
-		if (ensure(Duration > 0.0f))
-		{
-			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-		}
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		return;
 	}
 
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-}
+	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, SmashedMontage, 1.0f);
+	if (!ensure(Duration > 0.0f))
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		return;
+	}
 
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+}
