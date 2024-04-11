@@ -24,6 +24,23 @@ protected:
 	UFUNCTION()
 	void OnStunTimeEnded();
 
+	void ResetSmashedState();
+
+	/** 타겟 캐릭터로부터 소스 캐릭터를 디태치합니다. */
+	void DetachToTargetCharacter();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCSetRotationWithTarget(float InYaw);
+
+protected:
+	/** 잡힌 상태에서 벗어납니다. */
+	void ResetCaughtState();
+
+	void ResetStunState();
+
+	/** 스턴에서 탈출합니다. */
+	void StunExit();
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> StunMontage;
@@ -42,23 +59,10 @@ protected:
 	float StunTime = 6.0f;
 
 protected:
-	/** 스매시 직후 호출됩니다. */
-	UFUNCTION()
-	void OnSmash(FGameplayEventData Payload);
 
 protected:
-	/** 잡기에서 탈출합니다. */
-	void CaughtExit();
-
-	/** 타겟 캐릭터로부터 소스 캐릭터를 디태치합니다. */
-	void DetachToTargetCharacter();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCSetRotationWithTarget(float InYaw);
 
 protected:
-	/** 스턴에서 탈출합니다. */
-	void StunExit();
 
 protected:
 	UFUNCTION()

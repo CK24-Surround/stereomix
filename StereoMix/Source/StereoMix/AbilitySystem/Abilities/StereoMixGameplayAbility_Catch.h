@@ -51,9 +51,6 @@ protected:
 
 	/** 대상을 자신에게 어태치합니다. 서버에서만 수행되어야합니다. 만약 실패하면 false를 반환합니다.*/
 	bool AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCRelativeRotationReset(AStereoMixPlayerCharacter* RotatingCharacter);
 	
 protected:
 	FVector StartLocation;

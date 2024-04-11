@@ -8,13 +8,12 @@
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangedTagSignature, const FGameplayTag& /*Tag*/, bool /*TagExists*/);
 
+class AStereoMixPlayerCharacter;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API UStereoMixAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()
-
-public:
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	virtual void OnTagUpdated(const FGameplayTag& Tag, bool TagExists) override;
@@ -23,24 +22,9 @@ public:
 	FOnChangedTagSignature OnChangedTag;
 
 public:
-	// 자신이 잡고 있는 폰을 반환합니다.
-	FORCEINLINE APawn* GetCurrentCatchPawn() { return CurrentCatchPawn.Get(); }
-
-	/** 자신이 잡고 있는 폰을 할당합니다. */
-	FORCEINLINE void SetCurrentCatchPawn(APawn* InPawn) { CurrentCatchPawn = InPawn; }
-
-	// 자신이 잡혀 있는 폰을 반환합니다.
-	FORCEINLINE APawn* GetCurrentCaughtPawn() { return CurrentCaughtPawn.Get(); }
-
-	/** 자신이 잡혀 있는 폰을 할당합니다. 부모액터를 할당한다고 생각하면됩니다. */
-	FORCEINLINE void SetCurrentCaughtPawn(APawn* InPawn) { CurrentCaughtPawn = InPawn; }
-
-protected:
-	// 자신이 잡고 있는 폰을 의미합니다.
-	UPROPERTY(Replicated)
-	TWeakObjectPtr<APawn> CurrentCatchPawn;
-
-	// 자신이 잡혀 있는 폰을 의미합니다.
-	UPROPERTY(Replicated)
-	TWeakObjectPtr<APawn> CurrentCaughtPawn;
+	/** 태그를 추가하고 리플리케이트 합니다. 서버에서만 실행되어야합니다. */
+	void AddTag(const FGameplayTag& InGameplayTag);
+	
+	/** 태그를 제거하고 리플리케이트 합니다. 서버에서만 실행되어야합니다. */
+	void RemoveTag(const FGameplayTag& InGameplayTag);
 };

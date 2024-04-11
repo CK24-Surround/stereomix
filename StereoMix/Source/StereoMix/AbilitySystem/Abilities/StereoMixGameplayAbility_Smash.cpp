@@ -26,7 +26,7 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (ensure(SourceASC))
 	{
-		AStereoMixPlayerCharacter* TargetCharacter = Cast<AStereoMixPlayerCharacter>(SourceASC->GetCurrentCatchPawn());
+		AStereoMixPlayerCharacter* TargetCharacter = Cast<AStereoMixPlayerCharacter>(SourceASC->GetCurrentCatchCharacter());
 		UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 		if (ensure(TargetCharacter && TargetASC))
 		{
@@ -72,7 +72,7 @@ void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (ensure(SourceASC))
 	{
-		AStereoMixPlayerCharacter* TargetCharacter = Cast<AStereoMixPlayerCharacter>(SourceASC->GetCurrentCatchPawn());
+		AStereoMixPlayerCharacter* TargetCharacter = Cast<AStereoMixPlayerCharacter>(SourceASC->GetCurrentCatchCharacter());
 		UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 		if (ensure(TargetCharacter && TargetASC))
 		{
@@ -140,14 +140,14 @@ void UStereoMixGameplayAbility_Smash::ReleaseCatch(AStereoMixPlayerCharacter* Ta
 			{
 				if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Catch))
 				{
-					SourceASC->SetCurrentCatchPawn(nullptr);
+					SourceASC->SetCurrentCatchCharacter(nullptr);
 					SourceASC->RemoveLooseGameplayTag(StereoMixTag::Character::State::Catch);
 					SourceASC->RemoveReplicatedLooseGameplayTag(StereoMixTag::Character::State::Catch);
 				}
 
 				if (TargetASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Caught))
 				{
-					TargetASC->SetCurrentCaughtPawn(nullptr);
+					TargetASC->SetCurrentCaughtCharacter(nullptr);
 					TargetASC->RemoveLooseGameplayTag(StereoMixTag::Character::State::Caught);
 					TargetASC->RemoveReplicatedLooseGameplayTag(StereoMixTag::Character::State::Caught);
 				}

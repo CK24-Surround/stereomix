@@ -6,15 +6,22 @@
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
 
-void UStereoMixAbilitySystemComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UStereoMixAbilitySystemComponent, CurrentCatchPawn);
-	DOREPLIFETIME(UStereoMixAbilitySystemComponent, CurrentCaughtPawn);
-}
-
 void UStereoMixAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
 {
 	OnChangedTag.Broadcast(Tag, TagExists);
+}
+
+void UStereoMixAbilitySystemComponent::AddTag(const FGameplayTag& InGameplayTag)
+{
+	AddLooseGameplayTag(InGameplayTag);
+	AddReplicatedLooseGameplayTag(InGameplayTag);
+}
+
+void UStereoMixAbilitySystemComponent::RemoveTag(const FGameplayTag& InGameplayTag)
+{
+	if (HasMatchingGameplayTag(InGameplayTag))
+	{
+		RemoveLooseGameplayTag(InGameplayTag);
+		RemoveReplicatedLooseGameplayTag(InGameplayTag);
+	}
 }

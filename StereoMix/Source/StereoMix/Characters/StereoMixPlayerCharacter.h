@@ -95,9 +95,6 @@ protected:
 	// 액티브 GA와 바인드 된 함수입니다. 놓을때 트리거됩니다.
 	void GAInputReleased(EActiveAbility InInputID);
 
-	// 부착되는 태그가 변경될때마다 호출됩니다. 서버, 클라이언트 모두 호출됩니다.
-	void OnChangedTag(const FGameplayTag& Tag, bool TagExists);
-
 protected:
 	UPROPERTY()
 	TSoftObjectPtr<UStereoMixAbilitySystemComponent> ASC;
@@ -125,6 +122,9 @@ public:
 
 	void SetMaxWalkSpeed(float InSpeed);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCResetRelativeRotation();
+
 protected:
 	void Move(const FInputActionValue& InputActionValue);
 
@@ -142,7 +142,7 @@ protected:
 // ~State Section
 public:
 	void SetEnableCollision(bool bInEnableCollision);
-	
+
 	void SetUseControllerRotation(bool bInUseControllerRotation);
 
 	void SetEnableMovement(bool bInEnableMovementMode);
@@ -167,4 +167,28 @@ protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableMovement")
 	uint32 bEnableMovement:1 = true;
 // ~State Section
+
+// ~Catch Section
+public:
+	// 자신이 잡고 있는 폰을 반환합니다.
+	FORCEINLINE AStereoMixPlayerCharacter* GetCatchCharacter() { return CatchCharacter.Get(); }
+
+	/** 자신이 잡고 있는 폰을 할당합니다. */
+	FORCEINLINE void SetCatchCharacter(AStereoMixPlayerCharacter* InCatchCharacter) { CatchCharacter = InCatchCharacter; }
+
+	// 자신이 잡혀 있는 폰을 반환합니다.
+	FORCEINLINE AStereoMixPlayerCharacter* GetCaughtCharacter() { return CaughtCharacter.Get(); }
+
+	/** 자신이 잡혀 있는 폰을 할당합니다. 부모액터를 할당한다고 생각하면됩니다. */
+	FORCEINLINE void SetCaughtCharacter(AStereoMixPlayerCharacter* InCaughtCharacter) { CaughtCharacter = InCaughtCharacter; }
+
+protected:
+	// 자신이 잡고 있는 폰을 의미합니다.
+	UPROPERTY(Replicated)
+	TWeakObjectPtr<AStereoMixPlayerCharacter> CatchCharacter;
+
+	// 자신이 잡혀 있는 폰을 의미합니다.
+	UPROPERTY(Replicated)
+	TWeakObjectPtr<AStereoMixPlayerCharacter> CaughtCharacter;
+// ~Catch Section
 };

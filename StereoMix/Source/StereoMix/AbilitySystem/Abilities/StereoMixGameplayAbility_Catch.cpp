@@ -30,22 +30,6 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 		return;
 	}
 
-	// 마우스 커서 정보는 클라이언트에만 존재합니다.
-	// 따라서 클라이언트의 커서정보를 기반으로 서버에 잡기 요청을 하기 위해 해당 로직은 클라이언트에서만 실행되어야합니다.
-	if (!ActorInfo->IsNetAuthority())
-	{
-		StartLocation = SourceCharacter->GetActorLocation();
-		TargetLocation = SourceCharacter->GetCursorTargetingPoint();
-
-		// 애님 노티파이를 기다리고 노티파이가 호출되면 잡기를 요청합니다.
-		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::AnimNotify::Catch);
-		if (WaitGameplayEventTask)
-		{
-			WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnHoldAnimNotify);
-			WaitGameplayEventTask->ReadyForActivation();
-		}
-	}
-
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage);
 	if (ensure(PlayMontageAndWaitTask))
 	{
@@ -58,9 +42,24 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 	}
 	else
 	{
-		// 몽타주 재생에 실패했다면 어빌리티를 즉시 종료합니다.
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
+	}
+
+	// 마우스 커서 정보는 클라이언트에만 존재합니다.
+	// 따라서 클라이언트의 커서정보를 기반으로 서버에 잡기 요청을 하기 위해 해당 로직은 클라이언트에서만 실행되어야합니다.
+	if (!ActorInfo->IsNetAuthority())
+	{
+		StartLocation = SourceCharacter->GetActorLocation();
+		TargetLocation = SourceCharacter->GetCursorTargetingPoint();
+
+		// 애님 노티파이를 기다리고 노티파이가 호출되면 잡기를 요청합니다.
+		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::AnimNotify::Catch);
+		if (ensure(WaitGameplayEventTask))
+		{
+			WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnHoldAnimNotify);
+			WaitGameplayEventTask->ReadyForActivation();
+		}
 	}
 }
 
@@ -111,13 +110,11 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementatio
 				if (ensure(SourceASC && TargetASC))
 				{
 					// 소스는 잡기, 타겟은 잡힌 상태 태그를 추가해줍니다.
-					SourceASC->SetCurrentCatchPawn(TargetCharacter);
-					SourceASC->AddLooseGameplayTag(StereoMixTag::Character::State::Catch);
-					SourceASC->AddReplicatedLooseGameplayTag(StereoMixTag::Character::State::Catch);
+					SourceCharacter->SetCatchCharacter(TargetCharacter);
+					SourceASC->AddTag(StereoMixTag::Character::State::Catch);
 
-					TargetASC->SetCurrentCaughtPawn(SourceCharacter);
-					TargetASC->AddLooseGameplayTag(StereoMixTag::Character::State::Caught);
-					TargetASC->AddReplicatedLooseGameplayTag(StereoMixTag::Character::State::Caught);
+					TargetCharacter->SetCaughtCharacter(SourceCharacter);
+					TargetASC->AddTag(StereoMixTag::Character::State::Caught);
 
 					// 어태치하고 잡힌 대상은 잡히기 GA를 활성화합니다. 만약에 실패한다면 적용사항들을 롤백합니다. 일반적으로 성공해야만 합니다.
 					const bool bSuccessAttach = AttachTargetCharacter(TargetCharacter);
@@ -128,13 +125,11 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementatio
 					}
 					else
 					{
-						SourceASC->SetCurrentCatchPawn(nullptr);
-						SourceASC->RemoveLooseGameplayTag(StereoMixTag::Character::State::Catch);
-						SourceASC->RemoveReplicatedLooseGameplayTag(StereoMixTag::Character::State::Catch);
+						SourceCharacter->SetCatchCharacter(nullptr);
+						SourceASC->RemoveTag(StereoMixTag::Character::State::Catch);
 
-						TargetASC->SetCurrentCaughtPawn(nullptr);
-						TargetASC->RemoveLooseGameplayTag(StereoMixTag::Character::State::Caught);
-						TargetASC->RemoveReplicatedLooseGameplayTag(StereoMixTag::Character::State::Caught);
+						TargetCharacter->SetCaughtCharacter(nullptr);
+						TargetASC->RemoveTag(StereoMixTag::Character::State::Caught);
 					}
 				}
 			}
@@ -210,7 +205,7 @@ bool UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerChar
 			// 충돌판정, 움직임을 잠급니다.
 			InTargetCharacter->SetEnableCollision(false);
 			InTargetCharacter->SetEnableMovement(false);
-			
+
 			// 타겟의 위치 보정 무시를 활성화합니다.
 			UCharacterMovementComponent* TargetMovement = InTargetCharacter->GetCharacterMovement();
 			if (ensure(TargetMovement))
@@ -218,7 +213,7 @@ bool UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerChar
 				TargetMovement->bIgnoreClientMovementErrorChecksAndCorrection = true;
 			}
 
-			MulticastRPCRelativeRotationReset(InTargetCharacter);
+			InTargetCharacter->MulticastRPCResetRelativeRotation();
 
 			// 타겟 플레이어의 카메라 뷰를 소스 캐릭터의 카메라 뷰로 전환합니다.
 			APlayerController* TargetPlayerController = Cast<APlayerController>(InTargetCharacter->GetController());
@@ -234,12 +229,4 @@ bool UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerChar
 	}
 
 	return bSuccess;
-}
-
-void UStereoMixGameplayAbility_Catch::MulticastRPCRelativeRotationReset_Implementation(AStereoMixPlayerCharacter* RotatingCharacter)
-{
-	if (ensure(RotatingCharacter))
-	{
-		RotatingCharacter->SetActorRelativeRotation(FRotator::ZeroRotator);
-	}
 }

@@ -78,6 +78,8 @@ void AStereoMixPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimePrope
 	DOREPLIFETIME(AStereoMixPlayerCharacter, bEnableCollision);
 	DOREPLIFETIME(AStereoMixPlayerCharacter, bUseControllerRotation);
 	DOREPLIFETIME(AStereoMixPlayerCharacter, bEnableMovement);
+	DOREPLIFETIME(AStereoMixPlayerCharacter, CatchCharacter);
+	DOREPLIFETIME(AStereoMixPlayerCharacter, CaughtCharacter);
 }
 
 void AStereoMixPlayerCharacter::OnRep_Controller()
@@ -207,8 +209,6 @@ void AStereoMixPlayerCharacter::InitASC()
 			ASC->GiveAbility(AbilitySpec);
 		}
 	}
-
-	ASC->OnChangedTag.AddUObject(this, &AStereoMixPlayerCharacter::OnChangedTag);
 }
 
 void AStereoMixPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
@@ -248,26 +248,6 @@ void AStereoMixPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
 		{
 			ASC->AbilitySpecInputReleased(*GASpec);
 		}
-	}
-}
-
-void AStereoMixPlayerCharacter::OnChangedTag(const FGameplayTag& Tag, bool TagExists)
-{
-	// TODO: [Deprecated] 태그 추가될때 작업 수행보단 직접 GA에서 수정하도록 변경예정
-	if (Tag == StereoMixTag::Character::State::Stun)
-	{
-		if (TagExists)
-		{}
-		else
-		{}
-	}
-
-	if (Tag == StereoMixTag::Character::State::Caught)
-	{
-		if (TagExists)
-		{}
-		else
-		{}
 	}
 }
 
@@ -348,6 +328,11 @@ void AStereoMixPlayerCharacter::SetMaxWalkSpeed(float InSpeed)
 		MaxWalkSpeed = InSpeed;
 		OnRep_MaxWalkSpeed();
 	}
+}
+
+void AStereoMixPlayerCharacter::MulticastRPCResetRelativeRotation_Implementation()
+{
+	SetActorRelativeRotation(FRotator::ZeroRotator);
 }
 
 void AStereoMixPlayerCharacter::OnRep_MaxWalkSpeed()
