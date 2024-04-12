@@ -7,19 +7,19 @@
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "AbilityTasks/StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
 #include "Characters/StereoMixPlayerCharacter.h"
-#include "Utilities/StereoMixTagName.h"
+#include "Utilities/SMTagName.h"
 
 UStereoMixGameplayAbility_Launch::UStereoMixGameplayAbility_Launch()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
 	FGameplayTagContainer BlockedTags;
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Ability::Activation::Catch));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Caught));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashing));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Stun));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Ability::Activation::Catch));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashing));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Stun));
 	
 	ActivationBlockedTags = BlockedTags;
 }

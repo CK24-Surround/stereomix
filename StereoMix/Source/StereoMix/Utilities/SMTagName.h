@@ -1,7 +1,7 @@
 #pragma once
 #include "GameplayTagContainer.h"
 
-namespace StereoMixTagName
+namespace SMTagName
 {
 	namespace Ability
 	{

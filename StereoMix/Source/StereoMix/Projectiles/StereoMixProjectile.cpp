@@ -8,15 +8,15 @@
 #include "Components/SphereComponent.h"
 #include "Data/StereoMixDesignData.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Utilities/StereoMixAssetPath.h"
-#include "Utilities/StereoMixCollision.h"
-#include "Utilities/StereoMixLog.h"
+#include "Utilities/SMAssetPath.h"
+#include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 
 AStereoMixProjectile::AStereoMixProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	static ConstructorHelpers::FObjectFinder<UStereoMixDesignData> DesignDataRef(StereoMixAssetPath::DesignData);
+	static ConstructorHelpers::FObjectFinder<UStereoMixDesignData> DesignDataRef(SMAssetPath::DesignData);
 	if (DesignDataRef.Object)
 	{
 		DesignData = DesignDataRef.Object;
@@ -30,11 +30,11 @@ AStereoMixProjectile::AStereoMixProjectile()
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	RootComponent = SphereComponent;
-	SphereComponent->SetCollisionProfileName(StereoMixCollisionProfileName::Projectile);
+	SphereComponent->SetCollisionProfileName(SMCollisionProfileName::Projectile);
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(SphereComponent);
-	MeshComponent->SetCollisionProfileName(StereoMixCollisionProfileName::NoCollision);
+	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->InitialSpeed = DesignData->ProjectileSpeed;

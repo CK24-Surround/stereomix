@@ -1,9 +1,9 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixTile.h"
+#include "SMTile.h"
 
-AStereoMixTile::AStereoMixTile()
+ASMTile::ASMTile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 

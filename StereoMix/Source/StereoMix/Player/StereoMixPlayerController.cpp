@@ -5,11 +5,11 @@
 
 #include "EnhancedInputSubsystems.h"
 #include "Data/StereoMixControlData.h"
-#include "Utilities/StereoMixAssetPath.h"
+#include "Utilities/SMAssetPath.h"
 
 AStereoMixPlayerController::AStereoMixPlayerController()
 {
-	static ConstructorHelpers::FObjectFinder<UStereoMixControlData> ControlDataRef(StereoMixAssetPath::ControlData);
+	static ConstructorHelpers::FObjectFinder<UStereoMixControlData> ControlDataRef(SMAssetPath::ControlData);
 	if (ControlDataRef.Object)
 	{
 		ControlData = ControlDataRef.Object;

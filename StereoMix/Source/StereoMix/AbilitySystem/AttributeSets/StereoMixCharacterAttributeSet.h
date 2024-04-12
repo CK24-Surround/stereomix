@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
 #include "StereoMixAttributeSet.h"
-#include "Utilities/StereoMixAttributeAccessor.h"
+#include "Utilities/SMAttributeAccessor.h"
 #include "StereoMixCharacterAttributeSet.generated.h"
 
 /**

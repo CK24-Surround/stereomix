@@ -7,12 +7,12 @@
 #include "GameplayEffectExtension.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
-#include "Utilities/StereoMixLog.h"
-#include "Utilities/StereoMixTagName.h"
+#include "Utilities/SMLog.h"
+#include "Utilities/SMTagName.h"
 
 UStereoMixCharacterAttributeSet::UStereoMixCharacterAttributeSet()
 {
-	StunEventTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Event::Character::Stun);
+	StunEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::Stun);
 
 	Damage = 0.0f;
 

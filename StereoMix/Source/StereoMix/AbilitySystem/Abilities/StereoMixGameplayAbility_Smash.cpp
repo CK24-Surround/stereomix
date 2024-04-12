@@ -10,18 +10,18 @@
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Utilities/StereoMixTagName.h"
+#include "Utilities/SMTagName.h"
 
 UStereoMixGameplayAbility_Smash::UStereoMixGameplayAbility_Smash()
 {
-	SmashNotifyEventTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Event::AnimNotify::Smash);
-	SmashedStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed);
-	SmashedAbilityTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Ability::Smashed);
-	CatchStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch);
-	CaughtStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Caught);
+	SmashNotifyEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::AnimNotify::Smash);
+	SmashedStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed);
+	SmashedAbilityTag = FGameplayTag::RequestGameplayTag(SMTagName::Ability::Smashed);
+	CatchStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch);
+	CaughtStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught);
 	
-	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashing));
-	ActivationRequiredTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch));
+	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashing));
+	ActivationRequiredTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch));
 }
 
 void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

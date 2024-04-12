@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "StereoMixTile.generated.h"
+#include "SMTile.generated.h"
 
 UCLASS()
-class STEREOMIX_API AStereoMixTile : public AActor
+class STEREOMIX_API ASMTile : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	AStereoMixTile();
+	ASMTile();
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")

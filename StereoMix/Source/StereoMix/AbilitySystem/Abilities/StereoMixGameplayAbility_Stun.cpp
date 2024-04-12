@@ -10,23 +10,23 @@
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Utilities/StereoMixLog.h"
-#include "Utilities/StereoMixTagName.h"
+#include "Utilities/SMLog.h"
+#include "Utilities/SMTagName.h"
 
 UStereoMixGameplayAbility_Stun::UStereoMixGameplayAbility_Stun()
 {
-	CatchStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch);
-	CaughtStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Caught);
-	SmashedStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed);
-	OnSmashEventTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed);
-	UncatchableStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Uncatchable);
+	CatchStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch);
+	CaughtStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught);
+	SmashedStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed);
+	OnSmashEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed);
+	UncatchableStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Uncatchable);
 	
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
-	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Stun));
+	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Stun));
 
 	FAbilityTriggerData TriggerData;
-	TriggerData.TriggerTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Event::Character::Stun);
+	TriggerData.TriggerTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::Stun);
 	TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
 	AbilityTriggers.Add(TriggerData);
 }

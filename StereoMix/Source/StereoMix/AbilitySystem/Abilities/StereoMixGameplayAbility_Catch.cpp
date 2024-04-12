@@ -9,27 +9,27 @@
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Utilities/StereoMixCollision.h"
-#include "Utilities/StereoMixTagName.h"
+#include "Utilities/SMCollision.h"
+#include "Utilities/SMTagName.h"
 
 UStereoMixGameplayAbility_Catch::UStereoMixGameplayAbility_Catch()
 {
-	CaughtAbilityTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Ability::Caught);
-	CatchEventTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Event::AnimNotify::Catch);
-	CatchStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch);
-	CaughtStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Caught);
-	UncatchableStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Uncatchable);
+	CaughtAbilityTag = FGameplayTag::RequestGameplayTag(SMTagName::Ability::Caught);
+	CatchEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::AnimNotify::Catch);
+	CatchStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch);
+	CaughtStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught);
+	UncatchableStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Uncatchable);
 	
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Ability::Activation::Catch));
+	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Ability::Activation::Catch));
 
 	FGameplayTagContainer BlockedTags;
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch));
 	BlockedTags.AddTag(CaughtStateTag);
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashing));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Stun));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashing));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Stun));
 	ActivationBlockedTags = BlockedTags;
 }
 
@@ -107,7 +107,7 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementatio
 	const float Distance = 300.0f;
 	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(Distance);
 	const FCollisionQueryParams Params(SCENE_QUERY_STAT(Hold), false, SourceCharacter);
-	bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, InStartLocation, FQuat::Identity, StereoMixCollisionTraceChannel::Action, CollisionShape, Params);
+	bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, InStartLocation, FQuat::Identity, SMCollisionTraceChannel::Action, CollisionShape, Params);
 
 	if (bSuccess)
 	{

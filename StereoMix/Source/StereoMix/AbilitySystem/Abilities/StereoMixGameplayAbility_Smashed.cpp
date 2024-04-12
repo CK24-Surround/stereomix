@@ -7,15 +7,15 @@
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
-#include "Utilities/StereoMixTagName.h"
+#include "Utilities/SMTagName.h"
 
 UStereoMixGameplayAbility_Smashed::UStereoMixGameplayAbility_Smashed()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
-	AbilityTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Ability::Smashed));
+	AbilityTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Ability::Smashed));
 
-	OnSmashEventTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Event::Character::OnSmash);
+	OnSmashEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::OnSmash);
 }
 
 void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

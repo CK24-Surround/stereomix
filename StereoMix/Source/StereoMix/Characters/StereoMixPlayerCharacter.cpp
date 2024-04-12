@@ -14,21 +14,21 @@
 #include "Net/UnrealNetwork.h"
 #include "Player/StereoMixPlayerController.h"
 #include "Player/StereoMixPlayerState.h"
-#include "Utilities/StereoMixAssetPath.h"
-#include "Utilities/StereoMixCollision.h"
-#include "Utilities/StereoMixLog.h"
-#include "Utilities/StereoMixTagName.h"
+#include "Utilities/SMAssetPath.h"
+#include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
+#include "Utilities/SMTagName.h"
 
 
 AStereoMixPlayerCharacter::AStereoMixPlayerCharacter()
 {
-	MoveSpeedTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::AttributeSet::Character::Init::MoveSpeed);
-	ProjectileCooldownTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::AttributeSet::Character::Init::ProjectileCooldown);
-	ProjectileAttackTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::AttributeSet::Character::Init::ProjectileAttack);
+	MoveSpeedTag = FGameplayTag::RequestGameplayTag(SMTagName::AttributeSet::Character::Init::MoveSpeed);
+	ProjectileCooldownTag = FGameplayTag::RequestGameplayTag(SMTagName::AttributeSet::Character::Init::ProjectileCooldown);
+	ProjectileAttackTag = FGameplayTag::RequestGameplayTag(SMTagName::AttributeSet::Character::Init::ProjectileAttack);
 	
 	PrimaryActorTick.bCanEverTick = true;
 	
-	static ConstructorHelpers::FObjectFinder<UStereoMixDesignData> StereoMixDesignDataRef(StereoMixAssetPath::DesignData);
+	static ConstructorHelpers::FObjectFinder<UStereoMixDesignData> StereoMixDesignDataRef(SMAssetPath::DesignData);
 	if (StereoMixDesignDataRef.Object)
 	{
 		DesignData = StereoMixDesignDataRef.Object;
@@ -38,11 +38,11 @@ AStereoMixPlayerCharacter::AStereoMixPlayerCharacter()
 		UE_LOG(LogTemp, Error, TEXT("DesignData 로드에 실패했습니다."));
 	}
 
-	GetMesh()->SetCollisionProfileName(StereoMixCollisionProfileName::NoCollision);
+	GetMesh()->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 
 	HitBox = CreateDefaultSubobject<USphereComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
-	HitBox->SetCollisionProfileName(StereoMixCollisionProfileName::Player);
+	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
