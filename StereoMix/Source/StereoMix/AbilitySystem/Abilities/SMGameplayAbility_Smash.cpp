@@ -96,7 +96,7 @@ void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handl
 
 void USMGameplayAbility_Smash::OnCompleted()
 {
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
 }
 
 // TODO: 종종 서버에서 호출되지 않는 오류가 종종 발생함.
