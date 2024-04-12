@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
-#include "StereoMixPlayerController.generated.h"
+#include "SMPlayerController.generated.h"
 
 class UStereoMixControlData;
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API AStereoMixPlayerController : public APlayerController
+class STEREOMIX_API ASMPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
 public:
-	AStereoMixPlayerController();
+	ASMPlayerController();
 
 protected:
 	virtual void BeginPlay() override;

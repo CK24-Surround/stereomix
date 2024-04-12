@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "StereoMixCharacter.generated.h"
+#include "SMCharacter.generated.h"
 
 UCLASS()
-class STEREOMIX_API AStereoMixCharacter : public ACharacter
+class STEREOMIX_API ASMCharacter : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	AStereoMixCharacter();
+	ASMCharacter();
 
 protected:
 	virtual void BeginPlay() override;

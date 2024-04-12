@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
-#include "StereoMixGameMode.generated.h"
+#include "SMGameMode.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API AStereoMixGameMode : public AGameModeBase
+class STEREOMIX_API ASMGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 };

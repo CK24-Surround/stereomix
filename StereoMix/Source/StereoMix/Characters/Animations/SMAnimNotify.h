@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "StereoMixAnimNotify.generated.h"
+#include "SMAnimNotify.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixAnimNotify : public UAnimNotify
+class STEREOMIX_API USMAnimNotify : public UAnimNotify
 {
 	GENERATED_BODY()
 

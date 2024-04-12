@@ -1,13 +1,13 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixPlayerController.h"
+#include "SMPlayerController.h"
 
 #include "EnhancedInputSubsystems.h"
 #include "Data/StereoMixControlData.h"
 #include "Utilities/SMAssetPath.h"
 
-AStereoMixPlayerController::AStereoMixPlayerController()
+ASMPlayerController::ASMPlayerController()
 {
 	static ConstructorHelpers::FObjectFinder<UStereoMixControlData> ControlDataRef(SMAssetPath::ControlData);
 	if (ControlDataRef.Object)
@@ -22,14 +22,14 @@ AStereoMixPlayerController::AStereoMixPlayerController()
 	bShowMouseCursor = true;
 }
 
-void AStereoMixPlayerController::BeginPlay()
+void ASMPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
 	InitControl();
 }
 
-void AStereoMixPlayerController::InitControl()
+void ASMPlayerController::InitControl()
 {
 	if (!IsLocalController())
 	{

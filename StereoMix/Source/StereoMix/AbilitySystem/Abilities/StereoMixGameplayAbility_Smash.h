@@ -39,5 +39,5 @@ protected:
 	TObjectPtr<UAnimMontage> SmashMontage;
 
 protected:
-	void ReleaseCatch(AStereoMixPlayerCharacter* TargetCharacter);
+	void ReleaseCatch(ASMPlayerCharacter* TargetCharacter);
 };

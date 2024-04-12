@@ -6,7 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "Utilities/SMTagName.h"
 
 UStereoMixGameplayAbility_Smashed::UStereoMixGameplayAbility_Smashed()

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "StereoMixProjectile.generated.h"
+#include "SMProjectile.generated.h"
 
 class UGameplayEffect;
 class UStereoMixDesignData;
@@ -12,12 +12,12 @@ class USphereComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
-class STEREOMIX_API AStereoMixProjectile : public AActor
+class STEREOMIX_API ASMProjectile : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	AStereoMixProjectile();
+	ASMProjectile();
 
 public:
 	virtual void PostInitializeComponents() override;

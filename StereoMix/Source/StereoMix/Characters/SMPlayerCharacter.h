@@ -5,13 +5,13 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
-#include "StereoMixCharacter.h"
-#include "StereoMixPlayerCharacter.generated.h"
+#include "SMCharacter.h"
+#include "SMPlayerCharacter.generated.h"
 
 class UStereoMixAbilitySystemComponent;
 class UGameplayEffect;
 class UGameplayAbility;
-class AStereoMixPlayerController;
+class ASMPlayerController;
 struct FInputActionValue;
 class USphereComponent;
 class UCameraComponent;
@@ -28,12 +28,12 @@ enum class EActiveAbility : uint8
 };
 
 UCLASS()
-class STEREOMIX_API AStereoMixPlayerCharacter : public AStereoMixCharacter, public IAbilitySystemInterface
+class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	AStereoMixPlayerCharacter();
+	ASMPlayerCharacter();
 
 public:
 	virtual void PostInitializeComponents() override;
@@ -82,7 +82,7 @@ protected:
 // ~Caching Section
 protected:
 	UPROPERTY()
-	TObjectPtr<AStereoMixPlayerController> CachedStereoMixPlayerController;
+	TObjectPtr<ASMPlayerController> CachedStereoMixPlayerController;
 // ~Caching Section
 
 // ~GAS Section
@@ -179,24 +179,24 @@ protected:
 // ~Catch Section
 public:
 	// 자신이 잡고 있는 폰을 반환합니다.
-	FORCEINLINE AStereoMixPlayerCharacter* GetCatchCharacter() { return CatchCharacter.Get(); }
+	FORCEINLINE ASMPlayerCharacter* GetCatchCharacter() { return CatchCharacter.Get(); }
 
 	/** 자신이 잡고 있는 폰을 할당합니다. */
-	FORCEINLINE void SetCatchCharacter(AStereoMixPlayerCharacter* InCatchCharacter) { CatchCharacter = InCatchCharacter; }
+	FORCEINLINE void SetCatchCharacter(ASMPlayerCharacter* InCatchCharacter) { CatchCharacter = InCatchCharacter; }
 
 	// 자신이 잡혀 있는 폰을 반환합니다.
-	FORCEINLINE AStereoMixPlayerCharacter* GetCaughtCharacter() { return CaughtCharacter.Get(); }
+	FORCEINLINE ASMPlayerCharacter* GetCaughtCharacter() { return CaughtCharacter.Get(); }
 
 	/** 자신이 잡혀 있는 폰을 할당합니다. 부모액터를 할당한다고 생각하면됩니다. */
-	FORCEINLINE void SetCaughtCharacter(AStereoMixPlayerCharacter* InCaughtCharacter) { CaughtCharacter = InCaughtCharacter; }
+	FORCEINLINE void SetCaughtCharacter(ASMPlayerCharacter* InCaughtCharacter) { CaughtCharacter = InCaughtCharacter; }
 
 protected:
 	// 자신이 잡고 있는 폰을 의미합니다.
 	UPROPERTY(Replicated)
-	TWeakObjectPtr<AStereoMixPlayerCharacter> CatchCharacter;
+	TWeakObjectPtr<ASMPlayerCharacter> CatchCharacter;
 
 	// 자신이 잡혀 있는 폰을 의미합니다.
 	UPROPERTY(Replicated)
-	TWeakObjectPtr<AStereoMixPlayerCharacter> CaughtCharacter;
+	TWeakObjectPtr<ASMPlayerCharacter> CaughtCharacter;
 // ~Catch Section
 };

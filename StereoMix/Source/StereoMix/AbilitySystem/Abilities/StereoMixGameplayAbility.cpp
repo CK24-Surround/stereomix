@@ -4,7 +4,7 @@
 #include "StereoMixGameplayAbility.h"
 
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 
 UStereoMixGameplayAbility::UStereoMixGameplayAbility()
 {
@@ -24,11 +24,11 @@ UStereoMixAbilitySystemComponent* UStereoMixGameplayAbility::GetStereoMixAbility
 	return nullptr;
 }
 
-AStereoMixPlayerCharacter* UStereoMixGameplayAbility::GetStereoMixPlayerCharacterFromActorInfo() const
+ASMPlayerCharacter* UStereoMixGameplayAbility::GetStereoMixPlayerCharacterFromActorInfo() const
 {
 	if (ensure(CurrentActorInfo))
 	{
-		return Cast<AStereoMixPlayerCharacter>(CurrentActorInfo->AvatarActor.Get());
+		return Cast<ASMPlayerCharacter>(CurrentActorInfo->AvatarActor.Get());
 	}
 	
 	return nullptr;

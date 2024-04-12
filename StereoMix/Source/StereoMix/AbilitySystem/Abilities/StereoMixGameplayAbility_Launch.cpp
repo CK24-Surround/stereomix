@@ -6,7 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "AbilityTasks/StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "Utilities/SMTagName.h"
 
 UStereoMixGameplayAbility_Launch::UStereoMixGameplayAbility_Launch()
@@ -28,7 +28,7 @@ void UStereoMixGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpe
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (ensure(SourceCharacter))
 	{
 		// 마우스 커서 정보는 클라이언트에만 존재합니다.

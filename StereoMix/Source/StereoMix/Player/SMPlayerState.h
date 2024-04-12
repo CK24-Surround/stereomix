@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "GameFramework/PlayerState.h"
-#include "StereoMixPlayerState.generated.h"
+#include "SMPlayerState.generated.h"
 
 class UStereoMixAbilitySystemComponent;
 class UStereoMixCharacterAttributeSet;
@@ -13,12 +13,12 @@ class UStereoMixCharacterAttributeSet;
  * 
  */
 UCLASS()
-class STEREOMIX_API AStereoMixPlayerState : public APlayerState, public IAbilitySystemInterface
+class STEREOMIX_API ASMPlayerState : public APlayerState, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
 public:
-	AStereoMixPlayerState();
+	ASMPlayerState();
 
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;

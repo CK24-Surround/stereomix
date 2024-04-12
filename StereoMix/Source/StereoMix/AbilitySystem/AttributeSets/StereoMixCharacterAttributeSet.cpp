@@ -5,7 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 #include "Utilities/SMTagName.h"
@@ -78,7 +78,7 @@ void UStereoMixCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayE
 		const UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
 		if (ASC)
 		{
-			AStereoMixPlayerCharacter* StereoMixCharacter = Cast<AStereoMixPlayerCharacter>(Data.Target.GetAvatarActor());
+			ASMPlayerCharacter* StereoMixCharacter = Cast<ASMPlayerCharacter>(Data.Target.GetAvatarActor());
 			if (StereoMixCharacter)
 			{
 				StereoMixCharacter->SetMaxWalkSpeed(GetMoveSpeed());

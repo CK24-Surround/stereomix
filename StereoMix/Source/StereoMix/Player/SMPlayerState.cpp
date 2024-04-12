@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixPlayerState.h"
+#include "SMPlayerState.h"
 
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "AbilitySystem/AttributeSets/StereoMixCharacterAttributeSet.h"
 
-AStereoMixPlayerState::AStereoMixPlayerState()
+ASMPlayerState::ASMPlayerState()
 {
 	NetUpdateFrequency = 30.0f;
 
@@ -16,7 +16,7 @@ AStereoMixPlayerState::AStereoMixPlayerState()
 	CharacterAttributeSet = CreateDefaultSubobject<UStereoMixCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 }
 
-UAbilitySystemComponent* AStereoMixPlayerState::GetAbilitySystemComponent() const
+UAbilitySystemComponent* ASMPlayerState::GetAbilitySystemComponent() const
 {
 	return ASC;
 }

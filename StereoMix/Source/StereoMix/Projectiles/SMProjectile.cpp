@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixProjectile.h"
+#include "SMProjectile.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
@@ -12,7 +12,7 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
-AStereoMixProjectile::AStereoMixProjectile()
+ASMProjectile::ASMProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -42,7 +42,7 @@ AStereoMixProjectile::AStereoMixProjectile()
 	ProjectileMovementComponent->SetAutoActivate(true);
 }
 
-void AStereoMixProjectile::PostInitializeComponents()
+void ASMProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
@@ -52,14 +52,14 @@ void AStereoMixProjectile::PostInitializeComponents()
 	}
 }
 
-void AStereoMixProjectile::BeginPlay()
+void ASMProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
 	StartLocation = GetActorLocation();
 }
 
-void AStereoMixProjectile::Tick(float DeltaTime)
+void ASMProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
@@ -77,7 +77,7 @@ void AStereoMixProjectile::Tick(float DeltaTime)
 	}
 }
 
-void AStereoMixProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
+void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
@@ -105,7 +105,7 @@ void AStereoMixProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 	}
 }
 
-void AStereoMixProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+void ASMProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 

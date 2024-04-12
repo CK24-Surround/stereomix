@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "StereoMixGameplayAbility.h"
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "StereoMixGameplayAbility_Catch.generated.h"
 
 /**
@@ -51,13 +51,13 @@ protected:
 	void ServerRPCRequestCatchProcess(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation);
 
 	/** TArray<FOverlapResult>에서 잡을 수 있는 캐릭터를 추려냅니다. 잡을 수 있는 캐릭터가 없다면 false를 반환합니다. */
-	bool GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<AStereoMixPlayerCharacter*>& OutCatchableCharacters);
+	bool GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<ASMPlayerCharacter*>& OutCatchableCharacters);
 
 	/** 지정된 위치에 가장 가까운 캐릭터를 얻어냅니다. */
-	AStereoMixPlayerCharacter* GetClosestCharacterFromLocation(const TArray<AStereoMixPlayerCharacter*>& InCharacters, const FVector& InLocation);
+	ASMPlayerCharacter* GetClosestCharacterFromLocation(const TArray<ASMPlayerCharacter*>& InCharacters, const FVector& InLocation);
 
 	/** 대상을 자신에게 어태치합니다. 서버에서만 수행되어야합니다. 만약 실패하면 false를 반환합니다.*/
-	bool AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
+	bool AttachTargetCharacter(ASMPlayerCharacter* InTargetCharacter);
 
 protected:
 	FVector StartLocation;

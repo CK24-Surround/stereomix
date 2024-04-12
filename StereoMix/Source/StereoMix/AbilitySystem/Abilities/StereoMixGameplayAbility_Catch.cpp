@@ -7,7 +7,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMTagName.h"
@@ -37,7 +37,7 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -96,7 +96,7 @@ void UStereoMixGameplayAbility_Catch::OnHoldAnimNotify(FGameplayEventData Payloa
 
 void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation)
 {
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
 		return;
@@ -114,11 +114,11 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementatio
 		bSuccess = false;
 
 		// OverlapResults에서 잡을 수 있는 캐릭터만 추려냅니다. 그리고 잡을 수 있는 대상이 있다면 아래 로직을 진행합니다.
-		TArray<AStereoMixPlayerCharacter*> CatchableCharacters;
+		TArray<ASMPlayerCharacter*> CatchableCharacters;
 		if (GetCatchableCharacters(OverlapResults, CatchableCharacters))
 		{
 			// 커서 위치에 가장 가까운 캐릭터를 TargetCharacter에 담습니다.
-			AStereoMixPlayerCharacter* TargetCharacter = GetClosestCharacterFromLocation(CatchableCharacters, InCursorLocation);
+			ASMPlayerCharacter* TargetCharacter = GetClosestCharacterFromLocation(CatchableCharacters, InCursorLocation);
 			if (ensure(TargetCharacter))
 			{
 				UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
@@ -157,7 +157,7 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementatio
 	DrawDebugSphere(GetWorld(), InStartLocation, Distance, 16, Color, false, 2.0f);
 }
 
-bool UStereoMixGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<AStereoMixPlayerCharacter*>& OutCatchableCharacters)
+bool UStereoMixGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<ASMPlayerCharacter*>& OutCatchableCharacters)
 {
 	OutCatchableCharacters.Empty();
 
@@ -165,7 +165,7 @@ bool UStereoMixGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverl
 	for (const auto& OverlapResult : InOverlapResults)
 	{
 		// 플레이어 캐릭터만 추려냅니다.
-		AStereoMixPlayerCharacter* TargetCharacter = Cast<AStereoMixPlayerCharacter>(OverlapResult.GetActor());
+		ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OverlapResult.GetActor());
 		if (TargetCharacter)
 		{
 			// 태그를 기반으로 추려냅니다. 일반적으로 TargetCharacter는 AStereoMixPlayerCharacter이기 때문에 TargetASC가 유효해야합니다.
@@ -192,9 +192,9 @@ bool UStereoMixGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverl
 	return bIsCanCatchableCharacter;
 }
 
-AStereoMixPlayerCharacter* UStereoMixGameplayAbility_Catch::GetClosestCharacterFromLocation(const TArray<AStereoMixPlayerCharacter*>& InCharacters, const FVector& InLocation)
+ASMPlayerCharacter* UStereoMixGameplayAbility_Catch::GetClosestCharacterFromLocation(const TArray<ASMPlayerCharacter*>& InCharacters, const FVector& InLocation)
 {
-	AStereoMixPlayerCharacter* TargetCharacter = nullptr;
+	ASMPlayerCharacter* TargetCharacter = nullptr;
 	float ClosestDistanceSquaredToCursor = MAX_FLT;
 	for (const auto& Character : InCharacters)
 	{
@@ -209,10 +209,10 @@ AStereoMixPlayerCharacter* UStereoMixGameplayAbility_Catch::GetClosestCharacterF
 	return TargetCharacter;
 }
 
-bool UStereoMixGameplayAbility_Catch::AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter)
+bool UStereoMixGameplayAbility_Catch::AttachTargetCharacter(ASMPlayerCharacter* InTargetCharacter)
 {
 	bool bSuccess = true;
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (ensure(SourceCharacter && InTargetCharacter))
 	{
 		// 어태치합니다. 디버깅을 위해 단언을 수행합니다. 어태치 후 상대 회전을 0으로 정렬해줍니다.

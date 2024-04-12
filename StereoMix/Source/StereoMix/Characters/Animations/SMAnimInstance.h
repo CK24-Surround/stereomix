@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
-#include "StereoMixAnimInstance.generated.h"
+#include "SMAnimInstance.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixAnimInstance : public UAnimInstance
+class STEREOMIX_API USMAnimInstance : public UAnimInstance
 {
 	GENERATED_BODY()
 };

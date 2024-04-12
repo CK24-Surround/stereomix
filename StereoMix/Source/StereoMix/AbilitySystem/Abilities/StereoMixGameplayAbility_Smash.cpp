@@ -8,7 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMTagName.h"
 
@@ -35,14 +35,14 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 		return;
 	}
 
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
-	AStereoMixPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
+	ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
 	if (!ensure(TargetCharacter))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -94,13 +94,13 @@ void UStereoMixGameplayAbility_Smash::OnCompleted()
 
 void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 {
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
 		return;
 	}
 
-	AStereoMixPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
+	ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
 	if (!ensure(TargetCharacter))
 	{
 		return;
@@ -126,7 +126,7 @@ void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SmashedAbilityTag));
 }
 
-void UStereoMixGameplayAbility_Smash::ReleaseCatch(AStereoMixPlayerCharacter* TargetCharacter)
+void UStereoMixGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
 {
 	if (!ensure(TargetCharacter))
 	{
@@ -139,7 +139,7 @@ void UStereoMixGameplayAbility_Smash::ReleaseCatch(AStereoMixPlayerCharacter* Ta
 		return;
 	}
 
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
 		return;

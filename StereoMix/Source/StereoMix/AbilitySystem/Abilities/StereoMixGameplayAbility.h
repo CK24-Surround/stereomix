@@ -7,7 +7,7 @@
 #include "StereoMixGameplayAbility.generated.h"
 
 class UStereoMixAbilitySystemComponent;
-class AStereoMixPlayerCharacter;
+class ASMPlayerCharacter;
 
 /**
  * 
@@ -23,5 +23,5 @@ public:
 public:
 	UStereoMixAbilitySystemComponent* GetStereoMixAbilitySystemComponentFromActorInfo() const;
 	
-	AStereoMixPlayerCharacter* GetStereoMixPlayerCharacterFromActorInfo() const;
+	ASMPlayerCharacter* GetStereoMixPlayerCharacterFromActorInfo() const;
 };

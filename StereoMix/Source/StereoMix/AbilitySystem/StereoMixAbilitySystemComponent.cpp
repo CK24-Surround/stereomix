@@ -3,7 +3,7 @@
 
 #include "StereoMixAbilitySystemComponent.h"
 
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 
 void UStereoMixAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
 {

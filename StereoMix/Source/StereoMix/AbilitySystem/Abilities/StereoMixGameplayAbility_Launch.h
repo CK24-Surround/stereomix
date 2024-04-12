@@ -6,7 +6,7 @@
 #include "StereoMixGameplayAbility.h"
 #include "StereoMixGameplayAbility_Launch.generated.h"
 
-class AStereoMixProjectile;
+class ASMProjectile;
 /**
  * 이 GA를 사용하려면 UStereoMixCharacterAttributeSet을 가지고 있어야합니다.
  */
@@ -23,7 +23,7 @@ protected:
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Projectile")
-	TSubclassOf<AStereoMixProjectile> ProjectileClass;
+	TSubclassOf<ASMProjectile> ProjectileClass;
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> Montage;

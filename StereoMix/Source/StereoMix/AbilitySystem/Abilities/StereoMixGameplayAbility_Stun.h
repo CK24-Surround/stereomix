@@ -43,7 +43,7 @@ protected:
 	void ResetCaughtState();
 
 	/** 타겟 캐릭터로부터 소스 캐릭터를 디태치합니다. */
-	void DetachFromTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
+	void DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter);
 
 	/** 스턴 상태에서 벗어납니다. */
 	void ResetStunState();

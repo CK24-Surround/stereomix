@@ -8,7 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
-#include "Characters/StereoMixPlayerCharacter.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMLog.h"
 #include "Utilities/SMTagName.h"
@@ -51,7 +51,7 @@ void UStereoMixGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecH
 	}
 
 	// 컨트롤 로테이션을 따라 회전하지 않도록 잠급니다.
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (ensure(SourceCharacter))
 	{
 		SourceCharacter->SetUseControllerRotation(false);
@@ -141,10 +141,10 @@ void UStereoMixGameplayAbility_Stun::ResetCaughtState()
 		// Source의 Caught 태그 및 잡고 있는 대상을 제거합니다.
 		SourceASC->RemoveTag(CaughtStateTag);
 
-		AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+		ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 		if (ensure(SourceCharacter))
 		{
-			AStereoMixPlayerCharacter* TargetCharacter = SourceCharacter->GetCaughtCharacter();
+			ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCaughtCharacter();
 			if (ensure(TargetCharacter))
 			{
 				UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
@@ -174,7 +174,7 @@ void UStereoMixGameplayAbility_Stun::ResetCaughtState()
 	}
 }
 
-void UStereoMixGameplayAbility_Stun::DetachFromTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter)
+void UStereoMixGameplayAbility_Stun::DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter)
 {
 	if (!ensure(InTargetCharacter))
 	{
@@ -187,7 +187,7 @@ void UStereoMixGameplayAbility_Stun::DetachFromTargetCharacter(AStereoMixPlayerC
 		return;
 	}
 
-	AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
 		return;
@@ -263,7 +263,7 @@ void UStereoMixGameplayAbility_Stun::OnStunEnded()
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		// 컨트롤 로테이션을 따라가도록 복구해줍니다.
-		AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+		ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 		if (ensure(SourceCharacter))
 		{
 			SourceCharacter->SetUseControllerRotation(true);
