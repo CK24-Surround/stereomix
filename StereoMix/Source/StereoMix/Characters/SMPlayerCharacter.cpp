@@ -4,7 +4,7 @@
 #include "SMPlayerCharacter.h"
 
 #include "EnhancedInputComponent.h"
-#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
 #include "Data/StereoMixControlData.h"
@@ -284,7 +284,7 @@ void ASMPlayerCharacter::FocusToCursor()
 		return;
 	}
 
-	const UStereoMixAbilitySystemComponent* CachedASC = ASC.Get();
+	const USMAbilitySystemComponent* CachedASC = ASC.Get();
 	if (CachedASC)
 	{
 		if (CachedASC->HasAnyMatchingGameplayTags(LockAimTags))

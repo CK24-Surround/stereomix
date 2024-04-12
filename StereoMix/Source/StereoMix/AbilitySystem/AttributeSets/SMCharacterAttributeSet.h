@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
-#include "StereoMixAttributeSet.h"
+#include "SMAttributeSet.h"
 #include "Utilities/SMAttributeAccessor.h"
-#include "StereoMixCharacterAttributeSet.generated.h"
+#include "SMCharacterAttributeSet.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixCharacterAttributeSet : public UStereoMixAttributeSet
+class STEREOMIX_API USMCharacterAttributeSet : public USMAttributeSet
 {
 	GENERATED_BODY()
 
 public:
-	UStereoMixCharacterAttributeSet();
+	USMCharacterAttributeSet();
 
 public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -30,13 +30,13 @@ protected:
 	FGameplayTag StunEventTag;
 
 public:
-	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, PostureGauge);
-	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, MaxPostureGauge);
-	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, MoveSpeed);
-	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, ProjectileAttack);
-	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, ProjectileAttackCooldown);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, PostureGauge);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MaxPostureGauge);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MoveSpeed);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, ProjectileAttack);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, ProjectileAttackCooldown);
 
-	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, Damage);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Damage);
 
 protected:
 	UFUNCTION()

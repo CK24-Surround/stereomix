@@ -3,19 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StereoMixGameplayAbility.h"
-#include "StereoMixGameplayAbility_Stun.generated.h"
+#include "SMGameplayAbility.h"
+#include "SMGameplayAbility_Stun.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility_Stun : public UStereoMixGameplayAbility
+class STEREOMIX_API USMGameplayAbility_Stun : public USMGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UStereoMixGameplayAbility_Stun();
+	USMGameplayAbility_Stun();
 
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

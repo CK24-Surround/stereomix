@@ -7,8 +7,8 @@
 #include "GameFramework/PlayerState.h"
 #include "SMPlayerState.generated.h"
 
-class UStereoMixAbilitySystemComponent;
-class UStereoMixCharacterAttributeSet;
+class USMAbilitySystemComponent;
+class USMCharacterAttributeSet;
 /**
  * 
  */
@@ -25,8 +25,8 @@ public:
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "GAS|ASC")
-	TObjectPtr<UStereoMixAbilitySystemComponent> ASC;
+	TObjectPtr<USMAbilitySystemComponent> ASC;
 
 	UPROPERTY(VisibleAnywhere, Category = "GAS|AttributeSet")
-	TObjectPtr<UStereoMixCharacterAttributeSet> CharacterAttributeSet; 
+	TObjectPtr<USMCharacterAttributeSet> CharacterAttributeSet; 
 };

@@ -1,15 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixGameplayAbility_Smashed.h"
+#include "SMGameplayAbility_Smashed.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
-#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Utilities/SMTagName.h"
 
-UStereoMixGameplayAbility_Smashed::UStereoMixGameplayAbility_Smashed()
+USMGameplayAbility_Smashed::USMGameplayAbility_Smashed()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
@@ -18,11 +18,11 @@ UStereoMixGameplayAbility_Smashed::UStereoMixGameplayAbility_Smashed()
 	OnSmashEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::OnSmash);
 }
 
-void UStereoMixGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void USMGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);

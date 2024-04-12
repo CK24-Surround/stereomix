@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixGameplayAbility_Catch.h"
+#include "SMGameplayAbility_Catch.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
-#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMTagName.h"
 
-UStereoMixGameplayAbility_Catch::UStereoMixGameplayAbility_Catch()
+USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 {
 	CaughtAbilityTag = FGameplayTag::RequestGameplayTag(SMTagName::Ability::Caught);
 	CatchEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::AnimNotify::Catch);
@@ -33,7 +33,7 @@ UStereoMixGameplayAbility_Catch::UStereoMixGameplayAbility_Catch()
 	ActivationBlockedTags = BlockedTags;
 }
 
-void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
@@ -52,9 +52,9 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 	}
 
 	// OnComplete는 EndAbility를 호출하기에 적합하지 않아 제외했습니다. BlendOut에 들어간 시점에 몽타주가 캔슬되면 OnComplete가 호출되지 않고, OnCancelled, OnInterrupted도 호출되지 않아 버그가 생길 수 있습니다. 
-	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
-	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnInterrupted);
-	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnComplete);
+	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &USMGameplayAbility_Catch::OnInterrupted);
+	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &USMGameplayAbility_Catch::OnInterrupted);
+	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Catch::OnComplete);
 	PlayMontageAndWaitTask->ReadyForActivation();
 
 	// 마우스 커서 정보는 클라이언트에만 존재합니다.
@@ -72,29 +72,29 @@ void UStereoMixGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpec
 			return;
 		}
 
-		WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Catch::OnHoldAnimNotify);
+		WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Catch::OnHoldAnimNotify);
 		WaitGameplayEventTask->ReadyForActivation();
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 }
 
-void UStereoMixGameplayAbility_Catch::OnInterrupted()
+void USMGameplayAbility_Catch::OnInterrupted()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
-void UStereoMixGameplayAbility_Catch::OnComplete()
+void USMGameplayAbility_Catch::OnComplete()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
-void UStereoMixGameplayAbility_Catch::OnHoldAnimNotify(FGameplayEventData Payload)
+void USMGameplayAbility_Catch::OnHoldAnimNotify(FGameplayEventData Payload)
 {
 	ServerRPCRequestCatchProcess(StartLocation, TargetLocation);
 }
 
-void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation)
+void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation)
 {
 	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
@@ -121,8 +121,8 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementatio
 			ASMPlayerCharacter* TargetCharacter = GetClosestCharacterFromLocation(CatchableCharacters, InCursorLocation);
 			if (ensure(TargetCharacter))
 			{
-				UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
-				UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+				USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+				USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 				if (ensure(SourceASC && TargetASC))
 				{
 					// 소스는 잡기, 타겟은 잡힌 상태 태그를 추가해줍니다.
@@ -157,7 +157,7 @@ void UStereoMixGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementatio
 	DrawDebugSphere(GetWorld(), InStartLocation, Distance, 16, Color, false, 2.0f);
 }
 
-bool UStereoMixGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<ASMPlayerCharacter*>& OutCatchableCharacters)
+bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<ASMPlayerCharacter*>& OutCatchableCharacters)
 {
 	OutCatchableCharacters.Empty();
 
@@ -192,7 +192,7 @@ bool UStereoMixGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverl
 	return bIsCanCatchableCharacter;
 }
 
-ASMPlayerCharacter* UStereoMixGameplayAbility_Catch::GetClosestCharacterFromLocation(const TArray<ASMPlayerCharacter*>& InCharacters, const FVector& InLocation)
+ASMPlayerCharacter* USMGameplayAbility_Catch::GetClosestCharacterFromLocation(const TArray<ASMPlayerCharacter*>& InCharacters, const FVector& InLocation)
 {
 	ASMPlayerCharacter* TargetCharacter = nullptr;
 	float ClosestDistanceSquaredToCursor = MAX_FLT;
@@ -209,7 +209,7 @@ ASMPlayerCharacter* UStereoMixGameplayAbility_Catch::GetClosestCharacterFromLoca
 	return TargetCharacter;
 }
 
-bool UStereoMixGameplayAbility_Catch::AttachTargetCharacter(ASMPlayerCharacter* InTargetCharacter)
+bool USMGameplayAbility_Catch::AttachTargetCharacter(ASMPlayerCharacter* InTargetCharacter)
 {
 	bool bSuccess = true;
 	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();

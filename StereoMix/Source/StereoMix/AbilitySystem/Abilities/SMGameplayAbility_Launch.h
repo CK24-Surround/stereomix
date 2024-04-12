@@ -3,20 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StereoMixGameplayAbility.h"
-#include "StereoMixGameplayAbility_Launch.generated.h"
+#include "SMGameplayAbility.h"
+#include "SMGameplayAbility_Launch.generated.h"
 
 class ASMProjectile;
 /**
  * 이 GA를 사용하려면 UStereoMixCharacterAttributeSet을 가지고 있어야합니다.
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility_Launch : public UStereoMixGameplayAbility
+class STEREOMIX_API USMGameplayAbility_Launch : public USMGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UStereoMixGameplayAbility_Launch();
+	USMGameplayAbility_Launch();
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

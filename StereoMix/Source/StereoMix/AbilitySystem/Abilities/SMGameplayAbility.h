@@ -4,24 +4,24 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "StereoMixGameplayAbility.generated.h"
+#include "SMGameplayAbility.generated.h"
 
-class UStereoMixAbilitySystemComponent;
+class USMAbilitySystemComponent;
 class ASMPlayerCharacter;
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility : public UGameplayAbility
+class STEREOMIX_API USMGameplayAbility : public UGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UStereoMixGameplayAbility();
+	USMGameplayAbility();
 
 public:
-	UStereoMixAbilitySystemComponent* GetStereoMixAbilitySystemComponentFromActorInfo() const;
+	USMAbilitySystemComponent* GetStereoMixAbilitySystemComponentFromActorInfo() const;
 	
 	ASMPlayerCharacter* GetStereoMixPlayerCharacterFromActorInfo() const;
 };

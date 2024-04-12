@@ -1,23 +1,23 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixGameplayAbility_Caught.h"
+#include "SMGameplayAbility_Caught.h"
 
-#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Utilities/SMTagName.h"
 
-UStereoMixGameplayAbility_Caught::UStereoMixGameplayAbility_Caught()
+USMGameplayAbility_Caught::USMGameplayAbility_Caught()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
 	AbilityTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Ability::Caught));
 }
 
-void UStereoMixGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void USMGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);

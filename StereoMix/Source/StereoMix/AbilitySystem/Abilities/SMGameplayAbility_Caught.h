@@ -3,27 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StereoMixGameplayAbility.h"
-#include "StereoMixGameplayAbility_Smashed.generated.h"
+#include "SMGameplayAbility.h"
+#include "SMGameplayAbility_Caught.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility_Smashed : public UStereoMixGameplayAbility
+class STEREOMIX_API USMGameplayAbility_Caught : public USMGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UStereoMixGameplayAbility_Smashed();
+	USMGameplayAbility_Caught();
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
-	FGameplayTag OnSmashEventTag;
-	
-protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> SmashedMontage;
+	TObjectPtr<UAnimMontage> CaughtMontage;
 };

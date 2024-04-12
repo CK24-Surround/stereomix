@@ -1,18 +1,18 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixGameplayAbility_Smash.h"
+#include "SMGameplayAbility_Smash.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
-#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMTagName.h"
 
-UStereoMixGameplayAbility_Smash::UStereoMixGameplayAbility_Smash()
+USMGameplayAbility_Smash::USMGameplayAbility_Smash()
 {
 	SmashNotifyEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::AnimNotify::Smash);
 	SmashedStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed);
@@ -24,11 +24,11 @@ UStereoMixGameplayAbility_Smash::UStereoMixGameplayAbility_Smash()
 	ActivationRequiredTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch));
 }
 
-void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -49,7 +49,7 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 		return;
 	}
 
-	UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 	if (!ensure(TargetASC))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -64,7 +64,7 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 		return;
 	}
 
-	WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Smash::OnSmash);
+	WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Smash::OnSmash);
 	WaitGameplayEventTask->ReadyForActivation();
 
 	// 스매시 애니메이션을 재생합니다.
@@ -75,7 +75,7 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 		return;
 	}
 
-	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Smash::OnCompleted);
+	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Smash::OnCompleted);
 	PlayMontageAndWaitTask->ReadyForActivation();
 
 	// 타겟 측에 스매시 당하는 중을 표시하는 태그를 부착합니다.
@@ -87,12 +87,12 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 }
 
-void UStereoMixGameplayAbility_Smash::OnCompleted()
+void USMGameplayAbility_Smash::OnCompleted()
 {
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
-void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
+void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 {
 	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
@@ -106,7 +106,7 @@ void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 		return;
 	}
 
-	UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 	if (!ensure(TargetASC))
 	{
 		return;
@@ -126,14 +126,14 @@ void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SmashedAbilityTag));
 }
 
-void UStereoMixGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
+void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
 {
 	if (!ensure(TargetCharacter))
 	{
 		return;
 	}
 
-	UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 	if (!ensure(TargetASC))
 	{
 		return;
@@ -145,7 +145,7 @@ void UStereoMixGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCha
 		return;
 	}
 
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;

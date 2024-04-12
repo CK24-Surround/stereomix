@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "AttributeSet.h"
-#include "StereoMixAttributeSet.generated.h"
+#include "SMAttributeSet.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixAttributeSet : public UAttributeSet
+class STEREOMIX_API USMAttributeSet : public UAttributeSet
 {
 	GENERATED_BODY()
 };

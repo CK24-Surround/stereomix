@@ -3,20 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "StereoMixGameplayAbility.h"
+#include "SMGameplayAbility.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "StereoMixGameplayAbility_Catch.generated.h"
+#include "SMGameplayAbility_Catch.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixGameplayAbility_Catch : public UStereoMixGameplayAbility
+class STEREOMIX_API USMGameplayAbility_Catch : public USMGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	UStereoMixGameplayAbility_Catch();
+	USMGameplayAbility_Catch();
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

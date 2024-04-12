@@ -1,19 +1,19 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixGameplayAbility_Stun.h"
+#include "SMGameplayAbility_Stun.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
-#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMLog.h"
 #include "Utilities/SMTagName.h"
 
-UStereoMixGameplayAbility_Stun::UStereoMixGameplayAbility_Stun()
+USMGameplayAbility_Stun::USMGameplayAbility_Stun()
 {
 	CatchStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch);
 	CaughtStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught);
@@ -31,11 +31,11 @@ UStereoMixGameplayAbility_Stun::UStereoMixGameplayAbility_Stun()
 	AbilityTriggers.Add(TriggerData);
 }
 
-void UStereoMixGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -65,15 +65,15 @@ void UStereoMixGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecH
 		return;
 	}
 
-	WaitDelayTask->OnFinish.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnStunTimeEnded);
+	WaitDelayTask->OnFinish.AddDynamic(this, &USMGameplayAbility_Stun::OnStunTimeEnded);
 	WaitDelayTask->ReadyForActivation();
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 }
 
-void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
+void USMGameplayAbility_Stun::OnStunTimeEnded()
 {
-	const UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	const USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;
@@ -102,32 +102,32 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 	}
 }
 
-void UStereoMixGameplayAbility_Stun::ResetSmashedState()
+void USMGameplayAbility_Stun::ResetSmashedState()
 {
 	// 스매시 이벤트를 기다립니다.
 	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, OnSmashEventTag);
 	if (ensure(WaitGameplayEventTask))
 	{
-		WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnSmashEnded);
+		WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnSmashEnded);
 		WaitGameplayEventTask->ReadyForActivation();
 	}
 }
 
-void UStereoMixGameplayAbility_Stun::OnSmashEnded(FGameplayEventData Payload)
+void USMGameplayAbility_Stun::OnSmashEnded(FGameplayEventData Payload)
 {
 	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("스매시 종료 이벤트 콜"));
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
-		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
+		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}
 }
 
-void UStereoMixGameplayAbility_Stun::ResetCaughtState()
+void USMGameplayAbility_Stun::ResetCaughtState()
 {
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;
@@ -147,7 +147,7 @@ void UStereoMixGameplayAbility_Stun::ResetCaughtState()
 			ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCaughtCharacter();
 			if (ensure(TargetCharacter))
 			{
-				UStereoMixAbilitySystemComponent* TargetASC = Cast<UStereoMixAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+				USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 				if (ensure(TargetASC))
 				{
 					// Target의 Catch 태그 및 잡혀 있는 대상을 제거합니다.
@@ -167,21 +167,21 @@ void UStereoMixGameplayAbility_Stun::ResetCaughtState()
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), CaughtExitMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
-		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
-		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
-		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
+		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
+		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &USMGameplayAbility_Stun::OnInterrupted);
+		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &USMGameplayAbility_Stun::OnInterrupted);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}
 }
 
-void UStereoMixGameplayAbility_Stun::DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter)
+void USMGameplayAbility_Stun::DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter)
 {
 	if (!ensure(InTargetCharacter))
 	{
 		return;
 	}
 
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;
@@ -216,9 +216,9 @@ void UStereoMixGameplayAbility_Stun::DetachFromTargetCharacter(ASMPlayerCharacte
 	}
 }
 
-void UStereoMixGameplayAbility_Stun::ResetStunState()
+void USMGameplayAbility_Stun::ResetStunState()
 {
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;
@@ -233,28 +233,28 @@ void UStereoMixGameplayAbility_Stun::ResetStunState()
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
-		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnComplete);
-		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
-		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnInterrupted);
+		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
+		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &USMGameplayAbility_Stun::OnInterrupted);
+		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &USMGameplayAbility_Stun::OnInterrupted);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}
 }
 
-void UStereoMixGameplayAbility_Stun::OnComplete()
+void USMGameplayAbility_Stun::OnComplete()
 {
 	OnStunEnded();
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
-void UStereoMixGameplayAbility_Stun::OnInterrupted()
+void USMGameplayAbility_Stun::OnInterrupted()
 {
 	OnStunEnded();
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
-void UStereoMixGameplayAbility_Stun::OnStunEnded()
+void USMGameplayAbility_Stun::OnStunEnded()
 {
-	UStereoMixAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;

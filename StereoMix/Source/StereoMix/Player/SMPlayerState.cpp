@@ -3,17 +3,17 @@
 
 #include "SMPlayerState.h"
 
-#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
-#include "AbilitySystem/AttributeSets/StereoMixCharacterAttributeSet.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 
 ASMPlayerState::ASMPlayerState()
 {
 	NetUpdateFrequency = 30.0f;
 
-	ASC = CreateDefaultSubobject<UStereoMixAbilitySystemComponent>(TEXT("ASC"));
+	ASC = CreateDefaultSubobject<USMAbilitySystemComponent>(TEXT("ASC"));
 	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
 	
-	CharacterAttributeSet = CreateDefaultSubobject<UStereoMixCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
+	CharacterAttributeSet = CreateDefaultSubobject<USMCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
 }
 
 UAbilitySystemComponent* ASMPlayerState::GetAbilitySystemComponent() const

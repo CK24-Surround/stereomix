@@ -1,12 +1,12 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixGameplayAbility.h"
+#include "SMGameplayAbility.h"
 
-#include "AbilitySystem/StereoMixAbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 
-UStereoMixGameplayAbility::UStereoMixGameplayAbility()
+USMGameplayAbility::USMGameplayAbility()
 {
 	InstancingPolicy = EGameplayAbilityInstancingPolicy::InstancedPerActor;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateNo;
@@ -14,17 +14,17 @@ UStereoMixGameplayAbility::UStereoMixGameplayAbility()
 	NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ClientOrServer;
 }
 
-UStereoMixAbilitySystemComponent* UStereoMixGameplayAbility::GetStereoMixAbilitySystemComponentFromActorInfo() const
+USMAbilitySystemComponent* USMGameplayAbility::GetStereoMixAbilitySystemComponentFromActorInfo() const
 {
 	if (ensure(CurrentActorInfo))
 	{
-		return Cast<UStereoMixAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get());
+		return Cast<USMAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get());
 	}
 
 	return nullptr;
 }
 
-ASMPlayerCharacter* UStereoMixGameplayAbility::GetStereoMixPlayerCharacterFromActorInfo() const
+ASMPlayerCharacter* USMGameplayAbility::GetStereoMixPlayerCharacterFromActorInfo() const
 {
 	if (ensure(CurrentActorInfo))
 	{

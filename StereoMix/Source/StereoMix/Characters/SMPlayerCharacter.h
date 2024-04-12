@@ -8,7 +8,7 @@
 #include "SMCharacter.h"
 #include "SMPlayerCharacter.generated.h"
 
-class UStereoMixAbilitySystemComponent;
+class USMAbilitySystemComponent;
 class UGameplayEffect;
 class UGameplayAbility;
 class ASMPlayerController;
@@ -102,7 +102,7 @@ protected:
 
 protected:
 	UPROPERTY()
-	TSoftObjectPtr<UStereoMixAbilitySystemComponent> ASC;
+	TSoftObjectPtr<USMAbilitySystemComponent> ASC;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GA")
 	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;

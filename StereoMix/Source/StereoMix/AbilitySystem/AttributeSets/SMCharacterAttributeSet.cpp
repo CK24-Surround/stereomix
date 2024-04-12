@@ -1,7 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "StereoMixCharacterAttributeSet.h"
+#include "SMCharacterAttributeSet.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
@@ -10,7 +10,7 @@
 #include "Utilities/SMLog.h"
 #include "Utilities/SMTagName.h"
 
-UStereoMixCharacterAttributeSet::UStereoMixCharacterAttributeSet()
+USMCharacterAttributeSet::USMCharacterAttributeSet()
 {
 	StunEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::Stun);
 
@@ -25,18 +25,18 @@ UStereoMixCharacterAttributeSet::UStereoMixCharacterAttributeSet()
 	ProjectileAttackCooldown = 0.0f;
 }
 
-void UStereoMixCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void USMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(UStereoMixCharacterAttributeSet, PostureGauge);
-	DOREPLIFETIME(UStereoMixCharacterAttributeSet, MaxPostureGauge);
-	DOREPLIFETIME(UStereoMixCharacterAttributeSet, MoveSpeed);
-	DOREPLIFETIME(UStereoMixCharacterAttributeSet, ProjectileAttack);
-	DOREPLIFETIME(UStereoMixCharacterAttributeSet, ProjectileAttackCooldown);
+	DOREPLIFETIME(USMCharacterAttributeSet, PostureGauge);
+	DOREPLIFETIME(USMCharacterAttributeSet, MaxPostureGauge);
+	DOREPLIFETIME(USMCharacterAttributeSet, MoveSpeed);
+	DOREPLIFETIME(USMCharacterAttributeSet, ProjectileAttack);
+	DOREPLIFETIME(USMCharacterAttributeSet, ProjectileAttackCooldown);
 }
 
-void UStereoMixCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
+void USMCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
 {
 	Super::PreAttributeChange(Attribute, NewValue);
 
@@ -46,7 +46,7 @@ void UStereoMixCharacterAttributeSet::PreAttributeChange(const FGameplayAttribut
 	}
 }
 
-void UStereoMixCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
+void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
 {
 	Super::PostAttributeChange(Attribute, OldValue, NewValue);
 
@@ -63,7 +63,7 @@ void UStereoMixCharacterAttributeSet::PostAttributeChange(const FGameplayAttribu
 	}
 }
 
-void UStereoMixCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
+void USMCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)
 {
 	Super::PostGameplayEffectExecute(Data);
 
@@ -98,27 +98,27 @@ void UStereoMixCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayE
 	}
 }
 
-void UStereoMixCharacterAttributeSet::OnRep_PostureGauge(const FGameplayAttributeData& OldValue)
+void USMCharacterAttributeSet::OnRep_PostureGauge(const FGameplayAttributeData& OldValue)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UStereoMixCharacterAttributeSet, PostureGauge, OldValue);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, PostureGauge, OldValue);
 }
 
-void UStereoMixCharacterAttributeSet::OnRep_MaxPostureGauge(const FGameplayAttributeData& OldValue)
+void USMCharacterAttributeSet::OnRep_MaxPostureGauge(const FGameplayAttributeData& OldValue)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UStereoMixCharacterAttributeSet, MaxPostureGauge, OldValue);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, MaxPostureGauge, OldValue);
 }
 
-void UStereoMixCharacterAttributeSet::OnRep_MoveSpeed(const FGameplayAttributeData& OldValue)
+void USMCharacterAttributeSet::OnRep_MoveSpeed(const FGameplayAttributeData& OldValue)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UStereoMixCharacterAttributeSet, MoveSpeed, OldValue);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, MoveSpeed, OldValue);
 }
 
-void UStereoMixCharacterAttributeSet::OnRep_ProjectileAttack(const FGameplayAttributeData& OldValue)
+void USMCharacterAttributeSet::OnRep_ProjectileAttack(const FGameplayAttributeData& OldValue)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UStereoMixCharacterAttributeSet, ProjectileAttack, OldValue);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, ProjectileAttack, OldValue);
 }
 
-void UStereoMixCharacterAttributeSet::OnRep_ProjectileAttackCooldown(const FGameplayAttributeData& OldValue)
+void USMCharacterAttributeSet::OnRep_ProjectileAttackCooldown(const FGameplayAttributeData& OldValue)
 {
-	GAMEPLAYATTRIBUTE_REPNOTIFY(UStereoMixCharacterAttributeSet, ProjectileAttackCooldown, OldValue);
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, ProjectileAttackCooldown, OldValue);
 }
