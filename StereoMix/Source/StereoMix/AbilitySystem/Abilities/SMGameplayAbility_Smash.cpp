@@ -96,6 +96,7 @@ void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handl
 
 void USMGameplayAbility_Smash::OnCompleted()
 {
+	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("OnCompleted 호출"));
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
 }
 
