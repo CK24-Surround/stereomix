@@ -8,17 +8,19 @@
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/StereoMixLog.h"
-#include "Utilities/StereoMixTag.h"
+#include "Utilities/StereoMixTagName.h"
 
 UStereoMixCharacterAttributeSet::UStereoMixCharacterAttributeSet()
 {
+	StunEventTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Event::Character::Stun);
+
 	Damage = 0.0f;
-	
+
 	MaxPostureGauge = 100.0f;
 	InitPostureGauge(GetMaxPostureGauge());
-	
+
 	MoveSpeed = 0.0f;
-	
+
 	ProjectileAttack = 0.0f;
 	ProjectileAttackCooldown = 0.0f;
 }
@@ -55,7 +57,7 @@ void UStereoMixCharacterAttributeSet::PostAttributeChange(const FGameplayAttribu
 			const UAbilitySystemComponent* SourceASC = GetOwningAbilitySystemComponent();
 			if (ensure(SourceASC))
 			{
-				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), StereoMixTag::Event::Character::Stun, FGameplayEventData());
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), StunEventTag, FGameplayEventData());
 			}
 		}
 	}

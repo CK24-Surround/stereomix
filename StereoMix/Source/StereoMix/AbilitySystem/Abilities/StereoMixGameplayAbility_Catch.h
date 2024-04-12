@@ -22,9 +22,16 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
+	FGameplayTag CaughtAbilityTag;
+	FGameplayTag CatchEventTag;
+	FGameplayTag CatchStateTag;
+	FGameplayTag CaughtStateTag;
+	FGameplayTag UncatchableStateTag;
+
+protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> CatchMontage;
-	
+
 	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer CatchableTags;
 
@@ -51,7 +58,7 @@ protected:
 
 	/** 대상을 자신에게 어태치합니다. 서버에서만 수행되어야합니다. 만약 실패하면 false를 반환합니다.*/
 	bool AttachTargetCharacter(AStereoMixPlayerCharacter* InTargetCharacter);
-	
+
 protected:
 	FVector StartLocation;
 	FVector TargetLocation;

@@ -21,9 +21,16 @@ public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
+	FGameplayTag CatchStateTag;
+	FGameplayTag CaughtStateTag;
+	FGameplayTag SmashedStateTag;
+	FGameplayTag OnSmashEventTag;
+	FGameplayTag UncatchableStateTag;
+
+protected:
 	UFUNCTION()
 	void OnStunTimeEnded();
-	
+
 protected:
 	/** 스턴이 끝나는 시점에 스매시 중이라면 스매시의 이벤트를 기다립니다.*/
 	void ResetSmashedState();

@@ -26,13 +26,16 @@ public:
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
+protected:
+	FGameplayTag StunEventTag;
+
 public:
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, PostureGauge);
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, MaxPostureGauge);
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, MoveSpeed);
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, ProjectileAttack);
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, ProjectileAttackCooldown);
-	
+
 	ATTRIBUTE_ACCESSORS(UStereoMixCharacterAttributeSet, Damage);
 
 protected:

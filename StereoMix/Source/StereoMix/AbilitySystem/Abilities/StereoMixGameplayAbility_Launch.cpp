@@ -7,10 +7,21 @@
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "AbilityTasks/StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
 #include "Characters/StereoMixPlayerCharacter.h"
+#include "Utilities/StereoMixTagName.h"
 
 UStereoMixGameplayAbility_Launch::UStereoMixGameplayAbility_Launch()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
+
+	FGameplayTagContainer BlockedTags;
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Ability::Activation::Catch));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Caught));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashing));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed));
+	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Stun));
+	
+	ActivationBlockedTags = BlockedTags;
 }
 
 void UStereoMixGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

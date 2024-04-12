@@ -10,13 +10,18 @@
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Utilities/StereoMixLog.h"
-#include "Utilities/StereoMixTag.h"
+#include "Utilities/StereoMixTagName.h"
 
 UStereoMixGameplayAbility_Smash::UStereoMixGameplayAbility_Smash()
 {
-	ActivationOwnedTags = FGameplayTagContainer(StereoMixTag::Character::State::Smashing);
-	ActivationRequiredTags = FGameplayTagContainer(StereoMixTag::Character::State::Catch);
+	SmashNotifyEventTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Event::AnimNotify::Smash);
+	SmashedStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed);
+	SmashedAbilityTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Ability::Smashed);
+	CatchStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch);
+	CaughtStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Caught);
+	
+	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashing));
+	ActivationRequiredTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch));
 }
 
 void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -52,7 +57,7 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 	}
 
 	// 애님 노티파이의 이벤트를 기다립니다.
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::AnimNotify::Smash);
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SmashNotifyEventTag);
 	if (!ensure(WaitGameplayEventTask))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -76,7 +81,7 @@ void UStereoMixGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpec
 	// 타겟 측에 스매시 당하는 중을 표시하는 태그를 부착합니다.
 	if (ActorInfo->IsNetAuthority())
 	{
-		TargetASC->AddTag(StereoMixTag::Character::State::Smashed);
+		TargetASC->AddTag(SmashedStateTag);
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
@@ -112,13 +117,13 @@ void UStereoMixGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 		ReleaseCatch(TargetCharacter);
 
 		// 스매시 당하는 상태를 나타내는 태그를 제거해줍니다.
-		TargetASC->RemoveTag(StereoMixTag::Character::State::Smashed);
+		TargetASC->RemoveTag(SmashedStateTag);
 	}
 
 	// TODO: 타일 트리거 로직
 
 	// 타겟의 Smashed 어빌리티를 활성화합니다.
-	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(StereoMixTag::Ability::Smashed));
+	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SmashedAbilityTag));
 }
 
 void UStereoMixGameplayAbility_Smash::ReleaseCatch(AStereoMixPlayerCharacter* TargetCharacter)
@@ -172,8 +177,8 @@ void UStereoMixGameplayAbility_Smash::ReleaseCatch(AStereoMixPlayerCharacter* Ta
 	}
 
 	// 잡기, 잡히기 상태를 나타내는 태그를 제거해줍니다.
-	SourceASC->RemoveTag(StereoMixTag::Character::State::Catch);
-	TargetASC->RemoveTag(StereoMixTag::Character::State::Caught);
+	SourceASC->RemoveTag(CatchStateTag);
+	TargetASC->RemoveTag(CaughtStateTag);
 
 	SourceCharacter->SetCatchCharacter(nullptr);
 	TargetCharacter->SetCaughtCharacter(nullptr);

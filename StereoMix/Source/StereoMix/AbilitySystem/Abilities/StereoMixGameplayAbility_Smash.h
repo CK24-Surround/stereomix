@@ -21,6 +21,13 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
+	FGameplayTag SmashNotifyEventTag;
+	FGameplayTag SmashedStateTag;
+	FGameplayTag SmashedAbilityTag;
+	FGameplayTag CatchStateTag;
+	FGameplayTag CaughtStateTag;
+
+protected:
 	UFUNCTION()
 	void OnCompleted();
 

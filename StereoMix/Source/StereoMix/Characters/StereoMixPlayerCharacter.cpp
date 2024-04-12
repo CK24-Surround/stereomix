@@ -17,13 +17,17 @@
 #include "Utilities/StereoMixAssetPath.h"
 #include "Utilities/StereoMixCollision.h"
 #include "Utilities/StereoMixLog.h"
-#include "Utilities/StereoMixTag.h"
+#include "Utilities/StereoMixTagName.h"
 
 
 AStereoMixPlayerCharacter::AStereoMixPlayerCharacter()
 {
+	MoveSpeedTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::AttributeSet::Character::Init::MoveSpeed);
+	ProjectileCooldownTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::AttributeSet::Character::Init::ProjectileCooldown);
+	ProjectileAttackTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::AttributeSet::Character::Init::ProjectileAttack);
+	
 	PrimaryActorTick.bCanEverTick = true;
-
+	
 	static ConstructorHelpers::FObjectFinder<UStereoMixDesignData> StereoMixDesignDataRef(StereoMixAssetPath::DesignData);
 	if (StereoMixDesignDataRef.Object)
 	{
@@ -190,9 +194,9 @@ void AStereoMixPlayerCharacter::InitASC()
 			const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(ForInitGE, 0, GEContextHandle);
 			if (GESpecHandle.IsValid())
 			{
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(StereoMixTag::AttributeSet::Character::Init::MoveSpeed, DesignData->MoveSpeed);
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(StereoMixTag::AttributeSet::Character::Init::ProjectileCooldown, 1.0f / DesignData->ProjectileRate);
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(StereoMixTag::AttributeSet::Character::Init::ProjectileAttack, DesignData->ProjectileAttack);
+				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(MoveSpeedTag, DesignData->MoveSpeed);
+				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(ProjectileCooldownTag, 1.0f / DesignData->ProjectileRate);
+				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(ProjectileAttackTag, DesignData->ProjectileAttack);
 				ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
 		}

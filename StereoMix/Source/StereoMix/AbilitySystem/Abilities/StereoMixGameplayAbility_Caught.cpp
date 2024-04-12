@@ -4,13 +4,13 @@
 #include "StereoMixGameplayAbility_Caught.h"
 
 #include "AbilitySystem/StereoMixAbilitySystemComponent.h"
-#include "Utilities/StereoMixTag.h"
+#include "Utilities/StereoMixTagName.h"
 
 UStereoMixGameplayAbility_Caught::UStereoMixGameplayAbility_Caught()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
-	AbilityTags = FGameplayTagContainer(StereoMixTag::Ability::Caught);
+	AbilityTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Ability::Caught));
 }
 
 void UStereoMixGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

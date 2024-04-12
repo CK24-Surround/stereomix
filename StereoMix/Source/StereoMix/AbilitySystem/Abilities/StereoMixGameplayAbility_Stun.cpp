@@ -11,16 +11,22 @@
 #include "Characters/StereoMixPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/StereoMixLog.h"
-#include "Utilities/StereoMixTag.h"
+#include "Utilities/StereoMixTagName.h"
 
 UStereoMixGameplayAbility_Stun::UStereoMixGameplayAbility_Stun()
 {
+	CatchStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Catch);
+	CaughtStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Caught);
+	SmashedStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed);
+	OnSmashEventTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Smashed);
+	UncatchableStateTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Uncatchable);
+	
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
-	ActivationOwnedTags = FGameplayTagContainer(StereoMixTag::Character::State::Stun);
+	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(StereoMixTagName::Character::State::Stun));
 
 	FAbilityTriggerData TriggerData;
-	TriggerData.TriggerTag = StereoMixTag::Event::Character::Stun;
+	TriggerData.TriggerTag = FGameplayTag::RequestGameplayTag(StereoMixTagName::Event::Character::Stun);
 	TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
 	AbilityTriggers.Add(TriggerData);
 }
@@ -73,17 +79,17 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 		return;
 	}
 
-	int32 TagCount = SourceASC->GetGameplayTagCount(StereoMixTag::Character::State::Caught);
+	int32 TagCount = SourceASC->GetGameplayTagCount(CaughtStateTag);
 	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("잡힌 상태 태그 수: %d"), TagCount);
 
 	// 스매시 당하는 상태인 경우의 처리입니다.
-	if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Smashed))
+	if (SourceASC->HasMatchingGameplayTag(SmashedStateTag))
 	{
 		ResetSmashedState();
 		return;
 	}
 	// 잡힌 상태인 경우의 처리입니다.
-	else if (SourceASC->HasMatchingGameplayTag(StereoMixTag::Character::State::Caught))
+	else if (SourceASC->HasMatchingGameplayTag(CaughtStateTag))
 	{
 		ResetCaughtState();
 		return;
@@ -99,7 +105,7 @@ void UStereoMixGameplayAbility_Stun::OnStunTimeEnded()
 void UStereoMixGameplayAbility_Stun::ResetSmashedState()
 {
 	// 스매시 이벤트를 기다립니다.
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, StereoMixTag::Event::Character::OnSmash);
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, OnSmashEventTag);
 	if (ensure(WaitGameplayEventTask))
 	{
 		WaitGameplayEventTask->EventReceived.AddDynamic(this, &UStereoMixGameplayAbility_Stun::OnSmashEnded);
@@ -130,10 +136,10 @@ void UStereoMixGameplayAbility_Stun::ResetCaughtState()
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		// 풀려나고 있는 중도 Stun 상태이기 때문에 잡힐 수 있습니다. 이를 방지하고자 UnCatchable 태그를 사용합니다.
-		SourceASC->AddTag(StereoMixTag::Character::State::Uncatchable);
+		SourceASC->AddTag(UncatchableStateTag);
 
 		// Source의 Caught 태그 및 잡고 있는 대상을 제거합니다.
-		SourceASC->RemoveTag(StereoMixTag::Character::State::Caught);
+		SourceASC->RemoveTag(CaughtStateTag);
 
 		AStereoMixPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 		if (ensure(SourceCharacter))
@@ -145,7 +151,7 @@ void UStereoMixGameplayAbility_Stun::ResetCaughtState()
 				if (ensure(TargetASC))
 				{
 					// Target의 Catch 태그 및 잡혀 있는 대상을 제거합니다.
-					TargetASC->RemoveTag(StereoMixTag::Character::State::Catch);
+					TargetASC->RemoveTag(CatchStateTag);
 
 					// 디태치와 필요한 처리를 해줍니다.
 					DetachFromTargetCharacter(TargetCharacter);
@@ -221,7 +227,7 @@ void UStereoMixGameplayAbility_Stun::ResetStunState()
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		// 기상 중에도 Stun 상태이기 때문에 잡힐 수 있습니다. 이를 방지하고자 UnCatchable 태그를 사용합니다.
-		SourceASC->AddTag(StereoMixTag::Character::State::Uncatchable);
+		SourceASC->AddTag(UncatchableStateTag);
 	}
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
@@ -264,7 +270,7 @@ void UStereoMixGameplayAbility_Stun::OnStunEnded()
 		}
 
 		// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거합니다.
-		SourceASC->RemoveTag(StereoMixTag::Character::State::Uncatchable);
+		SourceASC->RemoveTag(UncatchableStateTag);
 
 		// 마지막으로 적용해야할 GE들을 모두 적용합니다.
 		for (const auto& StunEndedGE : StunEndedGEs)
