@@ -18,9 +18,9 @@ USMGameplayAbility_Stun::USMGameplayAbility_Stun()
 	CatchStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch);
 	CaughtStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught);
 	SmashedStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed);
-	OnSmashEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed);
+	BuzzerBeaterSmashEnd = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::BuzzerBeaterSmashEnd);
 	UncatchableStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Uncatchable);
-	
+
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
 	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Stun));
@@ -79,13 +79,10 @@ void USMGameplayAbility_Stun::OnStunTimeEnded()
 		return;
 	}
 
-	int32 TagCount = SourceASC->GetGameplayTagCount(CaughtStateTag);
-	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("잡힌 상태 태그 수: %d"), TagCount);
-
 	// 스매시 당하는 상태인 경우의 처리입니다.
 	if (SourceASC->HasMatchingGameplayTag(SmashedStateTag))
 	{
-		ResetSmashedState();
+		ProcessBuzzerBeaterSmashed();
 		return;
 	}
 	// 잡힌 상태인 경우의 처리입니다.
@@ -102,21 +99,21 @@ void USMGameplayAbility_Stun::OnStunTimeEnded()
 	}
 }
 
-void USMGameplayAbility_Stun::ResetSmashedState()
+void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 {
+	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 상태 진입"));
 	// 스매시 이벤트를 기다립니다.
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, OnSmashEventTag);
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, BuzzerBeaterSmashEnd);
 	if (ensure(WaitGameplayEventTask))
 	{
-		WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnSmashEnded);
+		WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded);
 		WaitGameplayEventTask->ReadyForActivation();
 	}
 }
 
-void USMGameplayAbility_Stun::OnSmashEnded(FGameplayEventData Payload)
+void USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded(FGameplayEventData Payload)
 {
-	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("스매시 종료 이벤트 콜"));
-
+	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 종료"));
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
@@ -127,6 +124,7 @@ void USMGameplayAbility_Stun::OnSmashEnded(FGameplayEventData Payload)
 
 void USMGameplayAbility_Stun::ResetCaughtState()
 {
+	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("잡기 탈출"));
 	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
@@ -164,12 +162,10 @@ void USMGameplayAbility_Stun::ResetCaughtState()
 		}
 	}
 
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), CaughtExitMontage, 1.0f);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("CatchExit"), CatchExitMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
-		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &USMGameplayAbility_Stun::OnInterrupted);
-		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &USMGameplayAbility_Stun::OnInterrupted);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}
 }
@@ -218,6 +214,7 @@ void USMGameplayAbility_Stun::DetachFromTargetCharacter(ASMPlayerCharacter* InTa
 
 void USMGameplayAbility_Stun::ResetStunState()
 {
+	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("스턴 종료"));
 	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
@@ -230,12 +227,10 @@ void USMGameplayAbility_Stun::ResetStunState()
 		SourceASC->AddTag(UncatchableStateTag);
 	}
 
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), StunEndMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
-		PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &USMGameplayAbility_Stun::OnInterrupted);
-		PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &USMGameplayAbility_Stun::OnInterrupted);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}
 }
@@ -243,13 +238,16 @@ void USMGameplayAbility_Stun::ResetStunState()
 void USMGameplayAbility_Stun::OnComplete()
 {
 	OnStunEnded();
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-}
 
-void USMGameplayAbility_Stun::OnInterrupted()
-{
-	OnStunEnded();
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+	// 2루트로 나눈 이유는 만약 클라이언트에서 먼저 EndAbility에 도달한다면 서버의 로직이 끝나지 않아도 서버의 어빌리티를 종료시켜 문제가 발생하기 때문입니다.
+	if (CurrentActorInfo->IsNetAuthority())
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	}
+	else
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+	}
 }
 
 void USMGameplayAbility_Stun::OnStunEnded()

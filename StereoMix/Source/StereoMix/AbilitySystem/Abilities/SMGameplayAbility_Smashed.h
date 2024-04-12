@@ -21,7 +21,7 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
-	FGameplayTag OnSmashEventTag;
+	FGameplayTag BuzzerBeaterSmashEndEventTag;
 	
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")

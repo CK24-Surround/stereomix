@@ -41,7 +41,7 @@ namespace SMTagName
 
 		namespace Character
 		{
-			static FName OnSmash = TEXT("Event.Character.OnSmash");
+			static FName BuzzerBeaterSmashEnd = TEXT("Event.Character.BuzzerBeaterSmashEnd");
 			static FName Stun = TEXT("Event.Character.Stun");
 		}
 	}
