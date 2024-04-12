@@ -11,7 +11,6 @@ namespace StereoMixTagName
 		}
 
 		static FName Caught = TEXT("Ability.Caught");
-		static FName CaughtRecover = TEXT("Ability.CaughtRecover");
 		static FName Smashed = TEXT("Ability.Smashed");
 	}
 
@@ -43,7 +42,6 @@ namespace StereoMixTagName
 		namespace Character
 		{
 			static FName OnSmash = TEXT("Event.Character.OnSmash");
-			static FName SmashEnd = TEXT("Event.Character.SmashEnd");
 			static FName Stun = TEXT("Event.Character.Stun");
 		}
 	}
