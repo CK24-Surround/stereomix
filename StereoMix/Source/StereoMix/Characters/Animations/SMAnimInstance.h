@@ -7,7 +7,7 @@
 #include "SMAnimInstance.generated.h"
 
 UENUM(BlueprintType)
-enum class EDirection
+enum class EDirection : uint8
 {
 	Forward,
 	Backward,
