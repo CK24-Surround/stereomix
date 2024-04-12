@@ -10,6 +10,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Utilities/SMLog.h"
 #include "Utilities/SMTagName.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
@@ -92,8 +93,10 @@ void USMGameplayAbility_Smash::OnCompleted()
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
+// TODO: 호출되지 않는 오류가 종종 발생함.
 void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 {
+	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("OnSmash 호출"));
 	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
