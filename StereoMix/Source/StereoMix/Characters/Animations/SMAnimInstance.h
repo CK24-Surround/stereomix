@@ -6,7 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "SMAnimInstance.generated.h"
 
-UENUM()
+UENUM(BlueprintType)
 enum class EDirection
 {
 	Forward,
