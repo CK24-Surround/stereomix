@@ -7,8 +7,8 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/SphereComponent.h"
-#include "Data/StereoMixControlData.h"
-#include "Data/StereoMixDesignData.h"
+#include "Data/SMControlData.h"
+#include "Data/SMDesignData.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -28,7 +28,7 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	
 	PrimaryActorTick.bCanEverTick = true;
 	
-	static ConstructorHelpers::FObjectFinder<UStereoMixDesignData> StereoMixDesignDataRef(SMAssetPath::DesignData);
+	static ConstructorHelpers::FObjectFinder<USMDesignData> StereoMixDesignDataRef(SMAssetPath::DesignData);
 	if (StereoMixDesignDataRef.Object)
 	{
 		DesignData = StereoMixDesignDataRef.Object;
@@ -127,7 +127,7 @@ void ASMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
 	const ASMPlayerController* PlayerController = CastChecked<ASMPlayerController>(Controller);
-	const UStereoMixControlData* ControlData = PlayerController->GetControlData();
+	const USMControlData* ControlData = PlayerController->GetControlData();
 	if (ControlData)
 	{
 		EnhancedInputComponent->BindAction(ControlData->MoveAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::Move);
@@ -169,7 +169,7 @@ void ASMPlayerCharacter::SetupGASInputComponent()
 {
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	const ASMPlayerController* PlayerController = CastChecked<ASMPlayerController>(Controller);
-	const UStereoMixControlData* ControlData = PlayerController->GetControlData();
+	const USMControlData* ControlData = PlayerController->GetControlData();
 	EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility::Launch);
 	EnhancedInputComponent->BindAction(ControlData->CatchAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility::Catch);
 	EnhancedInputComponent->BindAction(ControlData->SmashAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility::Smash);

@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "StereoMixDesignData.generated.h"
+#include "SMDesignData.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixDesignData : public UDataAsset
+class STEREOMIX_API USMDesignData : public UDataAsset
 {
 	GENERATED_BODY()
 

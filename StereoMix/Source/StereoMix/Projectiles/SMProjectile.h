@@ -7,7 +7,7 @@
 #include "SMProjectile.generated.h"
 
 class UGameplayEffect;
-class UStereoMixDesignData;
+class USMDesignData;
 class USphereComponent;
 class UProjectileMovementComponent;
 
@@ -35,7 +35,7 @@ protected:
 
 protected:
 	UPROPERTY()
-	TObjectPtr<UStereoMixDesignData> DesignData;
+	TObjectPtr<USMDesignData> DesignData;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")

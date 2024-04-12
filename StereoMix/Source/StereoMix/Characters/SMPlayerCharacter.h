@@ -16,7 +16,7 @@ struct FInputActionValue;
 class USphereComponent;
 class UCameraComponent;
 class USpringArmComponent;
-class UStereoMixDesignData;
+class USMDesignData;
 
 UENUM(BlueprintType)
 enum class EActiveAbility : uint8
@@ -76,7 +76,7 @@ protected:
 // ~Data Section
 protected:
 	UPROPERTY()
-	TObjectPtr<const UStereoMixDesignData> DesignData;
+	TObjectPtr<const USMDesignData> DesignData;
 // ~Data Section
 
 // ~Caching Section

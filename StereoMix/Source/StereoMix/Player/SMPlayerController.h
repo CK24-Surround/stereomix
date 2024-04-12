@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "SMPlayerController.generated.h"
 
-class UStereoMixControlData;
+class USMControlData;
 /**
  * 
  */
@@ -25,9 +25,9 @@ protected:
 	void InitControl();
 
 public:
-	FORCEINLINE const UStereoMixControlData* GetControlData() const { return ControlData; }
+	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
 
 protected:
 	UPROPERTY()
-	TObjectPtr<const UStereoMixControlData> ControlData;
+	TObjectPtr<const USMControlData> ControlData;
 };

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "StereoMixControlData.generated.h"
+#include "SMControlData.generated.h"
 
 class UInputAction;
 class UInputMappingContext;
@@ -12,7 +12,7 @@ class UInputMappingContext;
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixControlData : public UDataAsset
+class STEREOMIX_API USMControlData : public UDataAsset
 {
 	GENERATED_BODY()
 

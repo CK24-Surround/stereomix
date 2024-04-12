@@ -4,12 +4,12 @@
 #include "SMPlayerController.h"
 
 #include "EnhancedInputSubsystems.h"
-#include "Data/StereoMixControlData.h"
+#include "Data/SMControlData.h"
 #include "Utilities/SMAssetPath.h"
 
 ASMPlayerController::ASMPlayerController()
 {
-	static ConstructorHelpers::FObjectFinder<UStereoMixControlData> ControlDataRef(SMAssetPath::ControlData);
+	static ConstructorHelpers::FObjectFinder<USMControlData> ControlDataRef(SMAssetPath::ControlData);
 	if (ControlDataRef.Object)
 	{
 		ControlData = ControlDataRef.Object;

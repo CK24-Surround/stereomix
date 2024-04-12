@@ -6,7 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
-#include "Data/StereoMixDesignData.h"
+#include "Data/SMDesignData.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
@@ -16,7 +16,7 @@ ASMProjectile::ASMProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	static ConstructorHelpers::FObjectFinder<UStereoMixDesignData> DesignDataRef(SMAssetPath::DesignData);
+	static ConstructorHelpers::FObjectFinder<USMDesignData> DesignDataRef(SMAssetPath::DesignData);
 	if (DesignDataRef.Object)
 	{
 		DesignData = DesignDataRef.Object;
