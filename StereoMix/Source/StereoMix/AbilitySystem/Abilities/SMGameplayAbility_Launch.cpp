@@ -5,7 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "AbilityTasks/StereoMixAbilityTask_SpawnAndLaunchProjectile.h"
+#include "AbilityTasks/SMAbilityTask_SpawnAndLaunchProjectile.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Utilities/SMTagName.h"
 
@@ -56,7 +56,7 @@ void USMGameplayAbility_Launch::ServerRPCRequestProjectile_Implementation(const 
 {
 	const FVector Direction = (CursorLocation - StartLocation).GetSafeNormal();
 	const FRotator StartRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-	UStereoMixAbilityTask_SpawnAndLaunchProjectile* ProjectileTask = UStereoMixAbilityTask_SpawnAndLaunchProjectile::CreateTask(this, ProjectileClass, StartLocation, StartRotation);
+	USMAbilityTask_SpawnAndLaunchProjectile* ProjectileTask = USMAbilityTask_SpawnAndLaunchProjectile::CreateTask(this, ProjectileClass, StartLocation, StartRotation);
 	if (ProjectileTask)
 	{
 		ProjectileTask->ReadyForActivation();

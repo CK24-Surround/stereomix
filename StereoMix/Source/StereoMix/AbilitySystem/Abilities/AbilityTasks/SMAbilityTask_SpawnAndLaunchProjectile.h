@@ -4,20 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/Tasks/AbilityTask.h"
-#include "StereoMixAbilityTask_SpawnAndLaunchProjectile.generated.h"
+#include "SMAbilityTask_SpawnAndLaunchProjectile.generated.h"
 
 class ASMProjectile;
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API UStereoMixAbilityTask_SpawnAndLaunchProjectile : public UAbilityTask
+class STEREOMIX_API USMAbilityTask_SpawnAndLaunchProjectile : public UAbilityTask
 {
 	GENERATED_BODY()
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", DisplayName = "Spawn Projectile", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "true"))
-	static UStereoMixAbilityTask_SpawnAndLaunchProjectile* CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<ASMProjectile> ProjectileClass, const FVector& StartLocation, const FRotator& StartRotation);
+	static USMAbilityTask_SpawnAndLaunchProjectile* CreateTask(UGameplayAbility* OwningAbility, TSubclassOf<ASMProjectile> ProjectileClass, const FVector& StartLocation, const FRotator& StartRotation);
 
 protected:
 	virtual void Activate() override;
