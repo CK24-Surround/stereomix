@@ -90,20 +90,16 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 
 void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("EndAbility 호출"));
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void USMGameplayAbility_Smash::OnCompleted()
 {
-	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("OnCompleted 호출"));
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
-// TODO: 종종 서버에서 호출되지 않는 오류가 종종 발생함.
 void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 {
-	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("OnSmash 호출"));
 	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
