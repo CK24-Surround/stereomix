@@ -60,6 +60,20 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
+	// 잡고 있던 캐릭터가 있다면 놓아줍니다.
+	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Catch))
+	{
+		ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
+		if (ensure(TargetCharacter))
+		{
+			UAbilitySystemComponent* TargetASC = TargetCharacter->GetAbilitySystemComponent();
+			if (ensure(TargetASC))
+			{
+				TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit));
+			}
+		}
+	}
+
 	WaitDelayTask->OnFinish.AddDynamic(this, &USMGameplayAbility_Stun::OnStunTimeEnded);
 	WaitDelayTask->ReadyForActivation();
 	

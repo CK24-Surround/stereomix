@@ -74,6 +74,7 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 
 	ClientRPCPlayMontage(CaughtExitMontage);
 	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_CaughtExit::OnCaughtExitEnded);
+	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &USMGameplayAbility_CaughtExit::OnCaughtExitEnded);
 	PlayMontageAndWaitTask->ReadyForActivation();
 }
 
