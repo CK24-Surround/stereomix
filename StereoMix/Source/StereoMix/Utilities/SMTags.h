@@ -13,6 +13,7 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Caught);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smashed);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExit);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExitOnStunEnd);
 	}
 
 	namespace AttributeSet::Character::Init

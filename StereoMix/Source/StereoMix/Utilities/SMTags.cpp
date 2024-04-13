@@ -12,6 +12,7 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Caught, "Ability.Caught", "Caugh의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Ability.Smashed", "Smashed의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExit, "Ability.CaughtExit", "CaughtExit의 어빌리티 태그를 나타냅니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExitOnStunEnd, "Ability.CaughtExitOnStunEnd", "CaughtExitOnStunEnd의 어빌리티 태그를 나타냅니다.");
 	}
 
 	namespace AttributeSet::Character::Init

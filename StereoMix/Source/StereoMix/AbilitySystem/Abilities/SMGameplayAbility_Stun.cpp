@@ -59,15 +59,16 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-	
+
 	WaitDelayTask->OnFinish.AddDynamic(this, &USMGameplayAbility_Stun::OnStunTimeEnded);
 	WaitDelayTask->ReadyForActivation();
-
+	
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 }
 
 void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	OnStunEnded();
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -80,10 +81,7 @@ void USMGameplayAbility_Stun::OnStunTimeEnded()
 	}
 
 	// 잡을 수 없는 태그를 부착합니다. 추가 잡기를 방지합니다.
-	if (CurrentActorInfo->IsNetAuthority())
-	{
-		SourceASC->AddTag(SMTags::Character::State::Uncatchable);
-	}
+	SourceASC->AddTag(SMTags::Character::State::Uncatchable);
 
 	// 스매시 당하는 상태인 경우의 처리입니다.
 	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Smashed))
@@ -137,11 +135,8 @@ void USMGameplayAbility_Stun::ProcessCaughtExit()
 		return;
 	}
 
-	if (CurrentActorInfo->IsNetAuthority())
-	{
-		// 잡기 탈출 GA를 활성화합니다.
-		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit));
-	}
+	// 잡기 탈출 GA를 활성화합니다.
+	SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExitOnStunEnd));
 
 	UAbilityTask_WaitGameplayEvent* WatiGameplayEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::CaughtExitEnd);
 	if (ensure(WatiGameplayEvent))
@@ -175,17 +170,7 @@ void USMGameplayAbility_Stun::ResetStunState()
 
 void USMGameplayAbility_Stun::OnComplete()
 {
-	OnStunEnded();
-
-	// 2루트로 나눈 이유는 만약 클라이언트에서 먼저 EndAbility에 도달한다면 서버의 로직이 끝나지 않아도 서버의 어빌리티를 종료시켜 문제가 발생하기 때문입니다.
-	if (CurrentActorInfo->IsNetAuthority())
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-	}
-	else
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, false, false);
-	}
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 
 void USMGameplayAbility_Stun::OnStunEnded()

@@ -9,14 +9,14 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Utilities/SMLog.h"
 #include "Utilities/SMTags.h"
 
 USMGameplayAbility_CaughtExit::USMGameplayAbility_CaughtExit()
 {
-	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	AbilityTags.AddTag(SMTags::Ability::CaughtExit);
+	AbilityTags = FGameplayTagContainer(SMTags::Ability::CaughtExit);
 }
 
 void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -72,23 +72,9 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 		return;
 	}
 
+	ClientRPCPlayMontage(CaughtExitMontage);
 	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_CaughtExit::OnCaughtExitEnded);
 	PlayMontageAndWaitTask->ReadyForActivation();
-}
-
-void USMGameplayAbility_CaughtExit::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
-{
-	if (!bWasCancelled)
-	{
-		ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-		if (ensure(SourceCharacter))
-		{
-			// 스턴 어빌리티에게 잡기 탈출이 끝났음을 알립니다.
-			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceCharacter, SMTags::Event::Character::CaughtExitEnd, FGameplayEventData());
-		}
-	}
-
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void USMGameplayAbility_CaughtExit::DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter)

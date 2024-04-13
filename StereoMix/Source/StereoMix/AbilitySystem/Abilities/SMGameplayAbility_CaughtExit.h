@@ -34,8 +34,6 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-
 protected:
 	/** 디태치와 필요한 처리들을 수행합니다. 서버에서만 수행되어야합니다. */
 	void DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter);
