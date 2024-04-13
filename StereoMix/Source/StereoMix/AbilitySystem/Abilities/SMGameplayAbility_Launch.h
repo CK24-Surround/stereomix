@@ -7,8 +7,9 @@
 #include "SMGameplayAbility_Launch.generated.h"
 
 class ASMProjectile;
+
 /**
- * 이 GA를 사용하려면 UStereoMixCharacterAttributeSet을 가지고 있어야합니다.
+ * 클라이언트의 마우스 위치를 서버로 전송해 이 데이터를 기반으로 서버에서 투사체를 생성하는 어빌리티입니다.
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility_Launch : public USMGameplayAbility

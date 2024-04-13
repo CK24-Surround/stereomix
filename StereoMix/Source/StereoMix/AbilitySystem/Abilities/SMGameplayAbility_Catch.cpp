@@ -66,7 +66,7 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 			return;
 		}
 
-		WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Catch::OnHoldAnimNotify);
+		WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Catch::OnCatchAnimNotify);
 		WaitGameplayEventTask->ReadyForActivation();
 	}
 
@@ -83,7 +83,7 @@ void USMGameplayAbility_Catch::OnComplete()
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 }
 
-void USMGameplayAbility_Catch::OnHoldAnimNotify(FGameplayEventData Payload)
+void USMGameplayAbility_Catch::OnCatchAnimNotify(FGameplayEventData Payload)
 {
 	ServerRPCRequestCatchProcess(StartLocation, TargetLocation);
 }

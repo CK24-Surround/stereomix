@@ -7,7 +7,8 @@
 #include "SMGameplayAbility_Caught.generated.h"
 
 /**
- * 
+ * 잡힌 상태 애니메이션을 재생하는 어빌리티입니다.
+ * 잡혀 있는 동안 잡힌 애니메이션을 재생하기 위해서 사용됩니다.
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility_Caught : public USMGameplayAbility
