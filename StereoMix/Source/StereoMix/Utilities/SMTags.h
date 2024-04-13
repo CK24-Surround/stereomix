@@ -12,6 +12,7 @@ namespace SMTags
 
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Caught);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smashed);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExit);
 	}
 
 	namespace AttributeSet::Character::Init
@@ -42,6 +43,7 @@ namespace SMTags
 		namespace Character
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(BuzzerBeaterSmashEnd);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExitEnd);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stun);
 		}
 	}

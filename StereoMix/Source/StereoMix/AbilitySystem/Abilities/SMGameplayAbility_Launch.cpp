@@ -28,7 +28,7 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (ensure(SourceCharacter))
 	{
 		// 마우스 커서 정보는 클라이언트에만 존재합니다.
@@ -42,7 +42,7 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 
 		CommitAbility(Handle, ActorInfo, ActivationInfo);
 
-		USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+		USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 		if (ensure(SourceASC))
 		{
 			SourceASC->PlayMontage(this, ActivationInfo, Montage, 1.0f);

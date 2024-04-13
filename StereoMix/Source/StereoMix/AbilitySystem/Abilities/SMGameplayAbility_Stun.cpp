@@ -9,13 +9,13 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMLog.h"
 #include "Utilities/SMTags.h"
 
 USMGameplayAbility_Stun::USMGameplayAbility_Stun()
 {
-	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
+	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
 	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::Stun);
 
@@ -29,7 +29,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -38,6 +38,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 
 	// 스턴 몽타주가 정상적으로 실행되면 0.0f 이상의 값을 반환합니다.
 	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, StunMontage, 1.0f);
+	ClientRPCPlayMontage(StunMontage);
 	if (!ensure(Duration > 0.0f))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -45,7 +46,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	}
 
 	// 컨트롤 로테이션을 따라 회전하지 않도록 잠급니다.
-	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (ensure(SourceCharacter))
 	{
 		SourceCharacter->SetUseControllerRotation(false);
@@ -58,19 +59,30 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-
+	
 	WaitDelayTask->OnFinish.AddDynamic(this, &USMGameplayAbility_Stun::OnStunTimeEnded);
 	WaitDelayTask->ReadyForActivation();
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 }
 
+void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
 void USMGameplayAbility_Stun::OnStunTimeEnded()
 {
-	const USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;
+	}
+
+	// 잡을 수 없는 태그를 부착합니다. 추가 잡기를 방지합니다.
+	if (CurrentActorInfo->IsNetAuthority())
+	{
+		SourceASC->AddTag(SMTags::Character::State::Uncatchable);
 	}
 
 	// 스매시 당하는 상태인 경우의 처리입니다.
@@ -82,7 +94,7 @@ void USMGameplayAbility_Stun::OnStunTimeEnded()
 	// 잡힌 상태인 경우의 처리입니다.
 	else if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Caught))
 	{
-		ResetCaughtState();
+		ProcessCaughtExit();
 		return;
 	}
 	// 기절 상태인 경우의 처리입니다.
@@ -95,7 +107,7 @@ void USMGameplayAbility_Stun::OnStunTimeEnded()
 
 void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 {
-	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 상태 진입"));
+	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 상태 진입"));
 	// 스매시 이벤트를 기다립니다.
 	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterSmashEnd);
 	if (ensure(WaitGameplayEventTask))
@@ -107,19 +119,19 @@ void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 
 void USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded(FGameplayEventData Payload)
 {
-	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 종료"));
+	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 종료"));
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
+		ClientRPCPlayMontage(StandUpMontage);
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}
 }
 
-void USMGameplayAbility_Stun::ResetCaughtState()
+void USMGameplayAbility_Stun::ProcessCaughtExit()
 {
-	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("잡기 탈출"));
-	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;
@@ -127,103 +139,35 @@ void USMGameplayAbility_Stun::ResetCaughtState()
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{
-		// 풀려나고 있는 중도 Stun 상태이기 때문에 잡힐 수 있습니다. 이를 방지하고자 UnCatchable 태그를 사용합니다.
-		SourceASC->AddTag(SMTags::Character::State::Uncatchable);
-
-		// Source의 Caught 태그 및 잡고 있는 대상을 제거합니다.
-		SourceASC->RemoveTag(SMTags::Character::State::Caught);
-
-		ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
-		if (ensure(SourceCharacter))
-		{
-			ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCaughtCharacter();
-			if (ensure(TargetCharacter))
-			{
-				USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-				if (ensure(TargetASC))
-				{
-					// Target의 Catch 태그 및 잡혀 있는 대상을 제거합니다.
-					TargetASC->RemoveTag(SMTags::Character::State::Catch);
-
-					// 디태치와 필요한 처리를 해줍니다.
-					DetachFromTargetCharacter(TargetCharacter);
-				}
-
-				// 마지막으로 Catch 및 Caught 폰을 초기화해줍니다.
-				SourceCharacter->SetCaughtCharacter(nullptr);
-				TargetCharacter->SetCatchCharacter(nullptr);
-			}
-		}
+		// 잡기 탈출 GA를 활성화합니다.
+		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit));
 	}
 
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("CatchExit"), CatchExitMontage, 1.0f);
-	if (ensure(PlayMontageAndWaitTask))
+	UAbilityTask_WaitGameplayEvent* WatiGameplayEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::CaughtExitEnd);
+	if (ensure(WatiGameplayEvent))
 	{
-		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
-		PlayMontageAndWaitTask->ReadyForActivation();
+		WatiGameplayEvent->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnCaughtExitEnded);
+		WatiGameplayEvent->ReadyForActivation();
 	}
 }
 
-void USMGameplayAbility_Stun::DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter)
+void USMGameplayAbility_Stun::OnCaughtExitEnded(FGameplayEventData Payload)
 {
-	if (!ensure(InTargetCharacter))
-	{
-		return;
-	}
-
-	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
-	{
-		return;
-	}
-
-	ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
-	if (!ensure(SourceCharacter))
-	{
-		return;
-	}
-
-	SourceCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-	// 콜리전, 움직임을 복구합니다.
-	SourceCharacter->SetEnableCollision(true);
-	SourceCharacter->SetEnableMovement(true);
-
-	// 회전을 재지정합니다.
-	const float TargetYaw = InTargetCharacter->GetActorRotation().Yaw;
-	SourceCharacter->MulticastRPCSetYawRotation(TargetYaw);
-
-	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
-	if (ensure(SourceMovement))
-	{
-		SourceMovement->bIgnoreClientMovementErrorChecksAndCorrection = false;
-	}
-
-	APlayerController* SourcePlayerController = Cast<APlayerController>(SourceCharacter->GetController());
-	if (ensure(SourcePlayerController))
-	{
-		SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
-	}
+	OnComplete();
 }
 
 void USMGameplayAbility_Stun::ResetStunState()
 {
-	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("스턴 종료"));
-	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;
-	}
-
-	if (CurrentActorInfo->IsNetAuthority())
-	{
-		// 기상 중에도 Stun 상태이기 때문에 잡힐 수 있습니다. 이를 방지하고자 UnCatchable 태그를 사용합니다.
-		SourceASC->AddTag(SMTags::Character::State::Uncatchable);
 	}
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), StunEndMontage, 1.0f);
 	if (ensure(PlayMontageAndWaitTask))
 	{
+		ClientRPCPlayMontage(StunEndMontage);
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}
@@ -246,7 +190,7 @@ void USMGameplayAbility_Stun::OnComplete()
 
 void USMGameplayAbility_Stun::OnStunEnded()
 {
-	USMAbilitySystemComponent* SourceASC = GetStereoMixAbilitySystemComponentFromActorInfo();
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
 		return;
@@ -255,7 +199,7 @@ void USMGameplayAbility_Stun::OnStunEnded()
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		// 컨트롤 로테이션을 따라가도록 복구해줍니다.
-		ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
+		ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 		if (ensure(SourceCharacter))
 		{
 			SourceCharacter->SetUseControllerRotation(true);

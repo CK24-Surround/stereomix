@@ -43,6 +43,8 @@ public:
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
 protected:
 	UFUNCTION()
 	void OnStunTimeEnded();
@@ -54,12 +56,11 @@ protected:
 	/** ResetSmashedState에서 이어집니다. 스매시가 종료된 경우 호출됩니다.*/
 	UFUNCTION()
 	void OnBuzzerBeaterSmashEnded(FGameplayEventData Payload);
+	
+	void ProcessCaughtExit();
 
-	/** 잡힌 상태에서 벗어납니다. */
-	void ResetCaughtState();
-
-	/** 타겟 캐릭터로부터 소스 캐릭터를 디태치합니다. */
-	void DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter);
+	UFUNCTION()
+	void OnCaughtExitEnded(FGameplayEventData Payload);
 	
 	/** 스턴 상태에서 벗어납니다. */
 	void ResetStunState();

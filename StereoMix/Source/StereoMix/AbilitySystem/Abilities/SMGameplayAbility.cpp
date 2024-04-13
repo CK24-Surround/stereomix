@@ -14,7 +14,7 @@ USMGameplayAbility::USMGameplayAbility()
 	NetSecurityPolicy = EGameplayAbilityNetSecurityPolicy::ClientOrServer;
 }
 
-USMAbilitySystemComponent* USMGameplayAbility::GetStereoMixAbilitySystemComponentFromActorInfo() const
+USMAbilitySystemComponent* USMGameplayAbility::GetSMAbilitySystemComponentFromActorInfo() const
 {
 	if (ensure(CurrentActorInfo))
 	{
@@ -24,12 +24,25 @@ USMAbilitySystemComponent* USMGameplayAbility::GetStereoMixAbilitySystemComponen
 	return nullptr;
 }
 
-ASMPlayerCharacter* USMGameplayAbility::GetStereoMixPlayerCharacterFromActorInfo() const
+ASMPlayerCharacter* USMGameplayAbility::GetSMPlayerCharacterFromActorInfo() const
 {
 	if (ensure(CurrentActorInfo))
 	{
 		return Cast<ASMPlayerCharacter>(CurrentActorInfo->AvatarActor.Get());
 	}
-	
+
 	return nullptr;
+}
+
+void USMGameplayAbility::ClientRPCPlayMontage_Implementation(UAnimMontage* InMontage, float InPlayRate)
+{
+	if (ensure(ReplicationPolicy == EGameplayAbilityReplicationPolicy::ReplicateYes))
+	{
+		USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+		if (ensure(SourceASC))
+		{
+			const float Duration = SourceASC->PlayMontage(this, CurrentActivationInfo, InMontage, InPlayRate);
+			ensure(Duration > 0.0f);
+		}
+	}
 }
