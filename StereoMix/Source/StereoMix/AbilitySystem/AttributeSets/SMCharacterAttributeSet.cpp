@@ -21,6 +21,11 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 
 	ProjectileAttack = 0.0f;
 	ProjectileAttackCooldown = 0.0f;
+
+	FGameplayTagContainer InitInvincibleStateTags;
+	InitInvincibleStateTags.AddTag(SMTags::Character::State::Stun);
+	InitInvincibleStateTags.AddTag(SMTags::Character::State::Smashing);
+	InvincibleStateTags = InitInvincibleStateTags;
 }
 
 void USMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -59,6 +64,25 @@ void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Att
 			}
 		}
 	}
+}
+
+bool USMCharacterAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)
+{
+	if (!Super::PreGameplayEffectExecute(Data))
+	{
+		return false;
+	}
+
+	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
+	{
+		if (Data.Target.HasAnyMatchingGameplayTags(InvincibleStateTags))
+		{
+			Data.EvaluatedData.Magnitude = 0.0f;
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void USMCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data)

@@ -29,5 +29,5 @@ public:
 	float ProjectileSpeed = 2250.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerCharacter|Projectile", DisplayName = "투사체 사정거리")
-	float ProjectileMaxDistance = 2250.0f;
+	float ProjectileMaxDistance = 1000.0f;
 };
