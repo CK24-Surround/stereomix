@@ -10,19 +10,12 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Utilities/SMLog.h"
-#include "Utilities/SMTagName.h"
+#include "Utilities/SMTags.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
 {
-	SmashNotifyEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::AnimNotify::Smash);
-	SmashedStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed);
-	SmashedAbilityTag = FGameplayTag::RequestGameplayTag(SMTagName::Ability::Smashed);
-	CatchStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch);
-	CaughtStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught);
-	
-	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashing));
-	ActivationRequiredTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch));
+	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::Smashing);
+	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Catch);
 }
 
 void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -58,7 +51,7 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 	}
 
 	// 애님 노티파이의 이벤트를 기다립니다.
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SmashNotifyEventTag);
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Smash);
 	if (!ensure(WaitGameplayEventTask))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -82,7 +75,7 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 	// 타겟 측에 스매시 당하는 중을 표시하는 태그를 부착합니다.
 	if (ActorInfo->IsNetAuthority())
 	{
-		TargetASC->AddTag(SmashedStateTag);
+		TargetASC->AddTag(SMTags::Character::State::Smashed);
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
@@ -123,13 +116,13 @@ void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 		ReleaseCatch(TargetCharacter);
 
 		// 스매시 당하는 상태를 나타내는 태그를 제거해줍니다.
-		TargetASC->RemoveTag(SmashedStateTag);
+		TargetASC->RemoveTag(SMTags::Character::State::Smashed);
 	}
 
 	// TODO: 타일 트리거 로직
 
 	// 타겟의 Smashed 어빌리티를 활성화합니다.
-	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SmashedAbilityTag));
+	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
 }
 
 void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
@@ -183,8 +176,8 @@ void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
 	}
 
 	// 잡기, 잡히기 상태를 나타내는 태그를 제거해줍니다.
-	SourceASC->RemoveTag(CatchStateTag);
-	TargetASC->RemoveTag(CaughtStateTag);
+	SourceASC->RemoveTag(SMTags::Character::State::Catch);
+	TargetASC->RemoveTag(SMTags::Character::State::Caught);
 
 	SourceCharacter->SetCatchCharacter(nullptr);
 	TargetCharacter->SetCaughtCharacter(nullptr);

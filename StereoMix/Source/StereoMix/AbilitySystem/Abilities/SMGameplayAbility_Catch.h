@@ -22,13 +22,6 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
-	FGameplayTag CaughtAbilityTag;
-	FGameplayTag CatchEventTag;
-	FGameplayTag CatchStateTag;
-	FGameplayTag CaughtStateTag;
-	FGameplayTag UncatchableStateTag;
-
-protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> CatchMontage;
 

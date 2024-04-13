@@ -55,11 +55,6 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 protected:
-	FGameplayTag MoveSpeedTag;
-	FGameplayTag ProjectileCooldownTag;
-	FGameplayTag ProjectileAttackTag;
-
-protected:
 	// 카메라 관련 데이터를 초기화합니다.
 	void InitCamera();
 

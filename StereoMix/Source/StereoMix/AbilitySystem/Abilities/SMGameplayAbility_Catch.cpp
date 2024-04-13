@@ -10,26 +10,20 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
-#include "Utilities/SMTagName.h"
+#include "Utilities/SMTags.h"
 
 USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 {
-	CaughtAbilityTag = FGameplayTag::RequestGameplayTag(SMTagName::Ability::Caught);
-	CatchEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::AnimNotify::Catch);
-	CatchStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch);
-	CaughtStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught);
-	UncatchableStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Uncatchable);
-	
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Ability::Activation::Catch));
+	ActivationOwnedTags = FGameplayTagContainer(SMTags::Ability::Activation::Catch);
 
 	FGameplayTagContainer BlockedTags;
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch));
-	BlockedTags.AddTag(CaughtStateTag);
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashing));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Stun));
+	BlockedTags.AddTag(SMTags::Character::State::Catch);
+	BlockedTags.AddTag(SMTags::Character::State::Caught);
+	BlockedTags.AddTag(SMTags::Character::State::Smashed);
+	BlockedTags.AddTag(SMTags::Character::State::Smashing);
+	BlockedTags.AddTag(SMTags::Character::State::Stun);
 	ActivationBlockedTags = BlockedTags;
 }
 
@@ -65,7 +59,7 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 		TargetLocation = SourceCharacter->GetCursorTargetingPoint();
 
 		// 애님 노티파이를 기다리고 노티파이가 호출되면 잡기를 요청합니다.
-		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, CatchEventTag);
+		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Catch);
 		if (!ensure(WaitGameplayEventTask))
 		{
 			EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
@@ -127,25 +121,25 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 				{
 					// 소스는 잡기, 타겟은 잡힌 상태 태그를 추가해줍니다.
 					SourceCharacter->SetCatchCharacter(TargetCharacter);
-					SourceASC->AddTag(CatchStateTag);
+					SourceASC->AddTag(SMTags::Character::State::Catch);
 
 					TargetCharacter->SetCaughtCharacter(SourceCharacter);
-					TargetASC->AddTag(CaughtStateTag);
+					TargetASC->AddTag(SMTags::Character::State::Caught);
 
 					// 어태치하고 잡힌 대상은 잡히기 GA를 활성화합니다. 만약에 실패한다면 적용사항들을 롤백합니다. 일반적으로 성공해야만 합니다.
 					const bool bSuccessAttach = AttachTargetCharacter(TargetCharacter);
 					if (ensure(bSuccessAttach))
 					{
-						TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(CaughtAbilityTag));
+						TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Caught));
 						bSuccess = true;
 					}
 					else
 					{
 						SourceCharacter->SetCatchCharacter(nullptr);
-						SourceASC->RemoveTag(CatchStateTag);
+						SourceASC->RemoveTag(SMTags::Character::State::Catch);
 
 						TargetCharacter->SetCaughtCharacter(nullptr);
-						TargetASC->RemoveTag(CaughtStateTag);
+						TargetASC->RemoveTag(SMTags::Character::State::Caught);
 					}
 				}
 			}
@@ -174,7 +168,7 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 			{
 				// TODO: 여기서 팀이 다르면 걸러줘야합니다.
 
-				if (TargetASC->HasMatchingGameplayTag(UncatchableStateTag))
+				if (TargetASC->HasMatchingGameplayTag(SMTags::Character::State::Uncatchable))
 				{
 					continue;
 				}

@@ -17,15 +17,10 @@
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
-#include "Utilities/SMTagName.h"
-
+#include "Utilities/SMTags.h"
 
 ASMPlayerCharacter::ASMPlayerCharacter()
 {
-	MoveSpeedTag = FGameplayTag::RequestGameplayTag(SMTagName::AttributeSet::Character::Init::MoveSpeed);
-	ProjectileCooldownTag = FGameplayTag::RequestGameplayTag(SMTagName::AttributeSet::Character::Init::ProjectileCooldown);
-	ProjectileAttackTag = FGameplayTag::RequestGameplayTag(SMTagName::AttributeSet::Character::Init::ProjectileAttack);
-	
 	PrimaryActorTick.bCanEverTick = true;
 	
 	static ConstructorHelpers::FObjectFinder<USMDesignData> StereoMixDesignDataRef(SMAssetPath::DesignData);
@@ -194,9 +189,9 @@ void ASMPlayerCharacter::InitASC()
 			const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(ForInitGE, 0, GEContextHandle);
 			if (GESpecHandle.IsValid())
 			{
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(MoveSpeedTag, DesignData->MoveSpeed);
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(ProjectileCooldownTag, 1.0f / DesignData->ProjectileRate);
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(ProjectileAttackTag, DesignData->ProjectileAttack);
+				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MoveSpeed, DesignData->MoveSpeed);
+				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::ProjectileCooldown, 1.0f / DesignData->ProjectileRate);
+				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::ProjectileAttack, DesignData->ProjectileAttack);
 				ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
 		}

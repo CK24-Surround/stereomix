@@ -8,12 +8,10 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
-#include "Utilities/SMTagName.h"
+#include "Utilities/SMTags.h"
 
 USMCharacterAttributeSet::USMCharacterAttributeSet()
 {
-	StunEventTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::Stun);
-
 	Damage = 0.0f;
 
 	MaxPostureGauge = 100.0f;
@@ -57,7 +55,7 @@ void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Att
 			const UAbilitySystemComponent* SourceASC = GetOwningAbilitySystemComponent();
 			if (ensure(SourceASC))
 			{
-				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), StunEventTag, FGameplayEventData());
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), SMTags::Event::Character::Stun, FGameplayEventData());
 			}
 		}
 	}

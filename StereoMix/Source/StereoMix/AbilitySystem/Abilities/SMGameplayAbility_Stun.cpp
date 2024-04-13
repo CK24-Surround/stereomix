@@ -11,22 +11,16 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMLog.h"
-#include "Utilities/SMTagName.h"
+#include "Utilities/SMTags.h"
 
 USMGameplayAbility_Stun::USMGameplayAbility_Stun()
 {
-	CatchStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch);
-	CaughtStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught);
-	SmashedStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed);
-	BuzzerBeaterSmashEnd = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::BuzzerBeaterSmashEnd);
-	UncatchableStateTag = FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Uncatchable);
-
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
-	ActivationOwnedTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Stun));
+	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::Stun);
 
 	FAbilityTriggerData TriggerData;
-	TriggerData.TriggerTag = FGameplayTag::RequestGameplayTag(SMTagName::Event::Character::Stun);
+	TriggerData.TriggerTag = SMTags::Event::Character::Stun;
 	TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
 	AbilityTriggers.Add(TriggerData);
 }
@@ -80,13 +74,13 @@ void USMGameplayAbility_Stun::OnStunTimeEnded()
 	}
 
 	// 스매시 당하는 상태인 경우의 처리입니다.
-	if (SourceASC->HasMatchingGameplayTag(SmashedStateTag))
+	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Smashed))
 	{
 		ProcessBuzzerBeaterSmashed();
 		return;
 	}
 	// 잡힌 상태인 경우의 처리입니다.
-	else if (SourceASC->HasMatchingGameplayTag(CaughtStateTag))
+	else if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Caught))
 	{
 		ResetCaughtState();
 		return;
@@ -103,7 +97,7 @@ void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 {
 	NET_LOG(GetStereoMixPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 상태 진입"));
 	// 스매시 이벤트를 기다립니다.
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, BuzzerBeaterSmashEnd);
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterSmashEnd);
 	if (ensure(WaitGameplayEventTask))
 	{
 		WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded);
@@ -134,10 +128,10 @@ void USMGameplayAbility_Stun::ResetCaughtState()
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		// 풀려나고 있는 중도 Stun 상태이기 때문에 잡힐 수 있습니다. 이를 방지하고자 UnCatchable 태그를 사용합니다.
-		SourceASC->AddTag(UncatchableStateTag);
+		SourceASC->AddTag(SMTags::Character::State::Uncatchable);
 
 		// Source의 Caught 태그 및 잡고 있는 대상을 제거합니다.
-		SourceASC->RemoveTag(CaughtStateTag);
+		SourceASC->RemoveTag(SMTags::Character::State::Caught);
 
 		ASMPlayerCharacter* SourceCharacter = GetStereoMixPlayerCharacterFromActorInfo();
 		if (ensure(SourceCharacter))
@@ -149,7 +143,7 @@ void USMGameplayAbility_Stun::ResetCaughtState()
 				if (ensure(TargetASC))
 				{
 					// Target의 Catch 태그 및 잡혀 있는 대상을 제거합니다.
-					TargetASC->RemoveTag(CatchStateTag);
+					TargetASC->RemoveTag(SMTags::Character::State::Catch);
 
 					// 디태치와 필요한 처리를 해줍니다.
 					DetachFromTargetCharacter(TargetCharacter);
@@ -224,7 +218,7 @@ void USMGameplayAbility_Stun::ResetStunState()
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		// 기상 중에도 Stun 상태이기 때문에 잡힐 수 있습니다. 이를 방지하고자 UnCatchable 태그를 사용합니다.
-		SourceASC->AddTag(UncatchableStateTag);
+		SourceASC->AddTag(SMTags::Character::State::Uncatchable);
 	}
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), StunEndMontage, 1.0f);
@@ -268,7 +262,7 @@ void USMGameplayAbility_Stun::OnStunEnded()
 		}
 
 		// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거합니다.
-		SourceASC->RemoveTag(UncatchableStateTag);
+		SourceASC->RemoveTag(SMTags::Character::State::Uncatchable);
 
 		// 마지막으로 적용해야할 GE들을 모두 적용합니다.
 		for (const auto& StunEndedGE : StunEndedGEs)

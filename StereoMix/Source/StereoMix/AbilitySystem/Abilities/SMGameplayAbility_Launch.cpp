@@ -7,19 +7,19 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilityTasks/SMAbilityTask_SpawnAndLaunchProjectile.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "Utilities/SMTagName.h"
+#include "Utilities/SMTags.h"
 
 USMGameplayAbility_Launch::USMGameplayAbility_Launch()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
 	FGameplayTagContainer BlockedTags;
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Ability::Activation::Catch));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Catch));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Caught));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashing));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Smashed));
-	BlockedTags.AddTag(FGameplayTag::RequestGameplayTag(SMTagName::Character::State::Stun));
+	BlockedTags.AddTag(SMTags::Ability::Activation::Catch);
+	BlockedTags.AddTag(SMTags::Character::State::Catch);
+	BlockedTags.AddTag(SMTags::Character::State::Caught);
+	BlockedTags.AddTag(SMTags::Character::State::Smashing);
+	BlockedTags.AddTag(SMTags::Character::State::Smashed);
+	BlockedTags.AddTag(SMTags::Character::State::Stun);
 	
 	ActivationBlockedTags = BlockedTags;
 }

@@ -4,13 +4,13 @@
 #include "SMGameplayAbility_Caught.h"
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "Utilities/SMTagName.h"
+#include "Utilities/SMTags.h"
 
 USMGameplayAbility_Caught::USMGameplayAbility_Caught()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
-	AbilityTags = FGameplayTagContainer(FGameplayTag::RequestGameplayTag(SMTagName::Ability::Caught));
+	AbilityTags = FGameplayTagContainer(SMTags::Ability::Caught);
 }
 
 void USMGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

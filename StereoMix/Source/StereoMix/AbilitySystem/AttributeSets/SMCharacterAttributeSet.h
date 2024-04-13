@@ -26,9 +26,6 @@ public:
 	virtual void PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
-protected:
-	FGameplayTag StunEventTag;
-
 public:
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, PostureGauge);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MaxPostureGauge);
