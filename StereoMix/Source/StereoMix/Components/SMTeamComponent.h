@@ -7,7 +7,7 @@
 #include "Utilities/SMTeam.h"
 #include "SMTeamComponent.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnChangeTeamSignature, ESMTeam, NewTeam);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangeTeamSignature);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMTeamComponent : public UActorComponent

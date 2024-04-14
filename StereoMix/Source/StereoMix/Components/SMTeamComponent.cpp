@@ -31,5 +31,5 @@ void USMTeamComponent::SetTeam(ESMTeam InTeam)
 
 void USMTeamComponent::OnRep_Team()
 {
-	OnChangeTeam.Broadcast(Team);
+	OnChangeTeam.Broadcast();
 }

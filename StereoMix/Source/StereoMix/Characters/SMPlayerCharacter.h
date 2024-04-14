@@ -207,5 +207,5 @@ protected:
 
 protected:
 	UFUNCTION()
-	void SetTeamColor(ESMTeam NewTeam);
+	void SetTeamColor();
 };

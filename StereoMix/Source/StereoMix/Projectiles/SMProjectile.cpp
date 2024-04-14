@@ -5,8 +5,11 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Characters/SMPlayerCharacter.h"
+#include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
 #include "Data/SMDesignData.h"
+#include "Data/SMProjectileAssetData.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
@@ -26,6 +29,16 @@ ASMProjectile::ASMProjectile()
 		NET_LOG(nullptr, Error, TEXT("DesignData 로드에 실패했습니다."));
 	}
 
+	static ConstructorHelpers::FObjectFinder<USMProjectileAssetData> ProjectileAssetDataRef(SMAssetPath::ProjectileAssetData);
+	if (ProjectileAssetDataRef.Object)
+	{
+		AssetData = ProjectileAssetDataRef.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AssetData 로드에 실패했습니다."));
+	}
+
 	bReplicates = true;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
@@ -40,13 +53,15 @@ ASMProjectile::ASMProjectile()
 	ProjectileMovementComponent->InitialSpeed = DesignData->ProjectileSpeed;
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
 	ProjectileMovementComponent->SetAutoActivate(true);
+
+	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 }
 
 void ASMProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	
+	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMProjectile::SetTeamMaterial);
 }
 
 void ASMProjectile::BeginPlay()
@@ -116,7 +131,32 @@ void ASMProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimi
 	}
 }
 
-void ASMProjectile::SetProjectileColor_Implementation(UMaterialInstance* InMaterial)
+void ASMProjectile::SetOwner(AActor* NewOwner)
 {
-	MeshComponent->SetMaterial(0, InMaterial);
+	Super::SetOwner(NewOwner);
+
+	ASMPlayerCharacter* OwnerCharacter = Cast<ASMPlayerCharacter>(NewOwner);
+	if (OwnerCharacter)
+	{
+		if (HasAuthority())
+		{
+			USMTeamComponent* OwnerTeamComponent = OwnerCharacter->GetTeamComponent();
+			if (ensure(OwnerTeamComponent))
+			{
+				TeamComponent->SetTeam(OwnerTeamComponent->GetTeam());
+			}
+		}
+	}
+}
+
+void ASMProjectile::SetTeamMaterial()
+{
+	if (TeamComponent->GetTeam() == ESMTeam::FutureBass)
+	{
+		MeshComponent->SetMaterial(0, AssetData->FutureBassMaterial);
+	}
+	else if (TeamComponent->GetTeam() == ESMTeam::EDM)
+	{
+		MeshComponent->SetMaterial(0, AssetData->EDMMaterial);
+	}
 }

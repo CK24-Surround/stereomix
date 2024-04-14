@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "SMProjectile.generated.h"
 
+class USMProjectileAssetData;
+class USMTeamComponent;
 class UGameplayEffect;
 class USMDesignData;
 class USphereComponent;
@@ -33,9 +35,15 @@ protected:
 	
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
+public:
+	virtual void SetOwner(AActor* NewOwner) override;
+
 protected:
 	UPROPERTY()
 	TObjectPtr<USMDesignData> DesignData;
+
+	UPROPERTY()
+	TObjectPtr<USMProjectileAssetData> AssetData;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
@@ -47,6 +55,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Team")
+	TObjectPtr<USMTeamComponent> TeamComponent;
+
 protected:
 	FVector StartLocation;
 
@@ -55,6 +66,6 @@ protected:
 	TSubclassOf<UGameplayEffect> HitGE;
 
 public:
-	UFUNCTION(NetMulticast, Unreliable)
-	void SetProjectileColor(UMaterialInstance* InMaterial);
+	UFUNCTION()
+	void SetTeamMaterial();
 };

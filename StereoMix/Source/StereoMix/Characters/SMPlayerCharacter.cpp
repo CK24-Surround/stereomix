@@ -398,13 +398,13 @@ void ASMPlayerCharacter::OnRep_EnableMovement()
 	}
 }
 
-void ASMPlayerCharacter::SetTeamColor(ESMTeam NewTeam)
+void ASMPlayerCharacter::SetTeamColor()
 {
-	if (NewTeam == ESMTeam::FutureBass)
+	if (TeamComponent->GetTeam() == ESMTeam::FutureBass)
 	{
 		GetMesh()->SetMaterial(0, AssetData->FutureBassMaterial);
 	}
-	else if (NewTeam == ESMTeam::EDM)
+	else if (TeamComponent->GetTeam() == ESMTeam::EDM)
 	{
 		GetMesh()->SetMaterial(0, AssetData->EDMMaterial);
 	}
