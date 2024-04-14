@@ -104,8 +104,15 @@ void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		USMTeamComponent* OtherTeamComponent = OtherTeamComponentInterface->GetTeamComponent();
 		if (ensure(OtherTeamComponent))
 		{
+			// 적중 대상이 무소속인 경우 무시합니다.
+			const ESMTeam OtherTeam = OtherTeamComponent->GetTeam();
+			if (OtherTeam == ESMTeam::None)
+			{
+				return;
+			}
+			
 			// 같은 팀의 투사체라면 무시합니다.
-			if (TeamComponent->GetTeam() == OtherTeamComponent->GetTeam())
+			if (TeamComponent->GetTeam() == OtherTeam)
 			{
 				return;
 			}

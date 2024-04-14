@@ -167,6 +167,12 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 	}
 
 	ESMTeam SourceCharacterTeam = SourceTeamComponent->GetTeam();
+
+	// 만약 잡기 시전하는 캐릭터가 무소속이면 아무도 잡지 않습니다.
+	if (SourceCharacterTeam == ESMTeam::None)
+	{
+		return false;
+	}
 	
 	OutCatchableCharacters.Empty();
 
@@ -187,7 +193,17 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 					continue;
 				}
 
-				if (TargetTeamComponent->GetTeam() == SourceCharacterTeam)
+				const ESMTeam TargetTeam = TargetTeamComponent->GetTeam();
+
+				// 대상이 무소속이라면 잡기를 무시합니다. 사실상 무소속은 대미지를 받지 않기 때문에 기절할 일은 없긴하지만 만약을 위한 예외처리입니다.
+				if (TargetTeam == ESMTeam::None)
+				{
+					continue;
+				}
+				
+				
+				// 팀이 같다면 잡기를 무시합니다.
+				if (SourceCharacterTeam == TargetTeam)
 				{
 					continue;
 				}
