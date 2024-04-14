@@ -107,6 +107,9 @@ void USMGameplayAbility_CaughtExit::DetachFromTargetCharacter(ASMPlayerCharacter
 	const float TargetYaw = InTargetCharacter->GetActorRotation().Yaw;
 	SourceCharacter->MulticastRPCSetYawRotation(TargetYaw);
 
+	// TODO: 애니메이션 불일치에 따른 임시 위치 조정 코드입니다. 추후 제거되어야합니다.
+	SourceCharacter->ServerRPCPreventGroundEmbedding();
+
 	// 위치보정을 활성화해줍니다.
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (ensure(SourceMovement))

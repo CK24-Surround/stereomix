@@ -133,6 +133,13 @@ public:
 
 	void SetMaxWalkSpeed(float InSpeed);
 
+	/** 땅에 박히는 것을 방지하기 위한 코드입니다. 서버에서 호출되어야합니다. */
+	UFUNCTION(Server, Reliable)
+	void ServerRPCPreventGroundEmbedding();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCSetLocation(const FVector_NetQuantize10 InLocation);
+
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCResetRelativeRotation();
 

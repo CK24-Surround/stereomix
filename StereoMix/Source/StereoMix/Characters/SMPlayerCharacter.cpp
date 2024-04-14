@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
 #include "Data/SMCharacterAssetData.h"
@@ -330,6 +331,35 @@ void ASMPlayerCharacter::SetMaxWalkSpeed(float InSpeed)
 		MaxWalkSpeed = InSpeed;
 		OnRep_MaxWalkSpeed();
 	}
+}
+
+void ASMPlayerCharacter::ServerRPCPreventGroundEmbedding_Implementation()
+{
+	FVector Location = GetActorLocation();
+	float CapusleHalfHeight;
+	float CapusleRadius;
+	GetCapsuleComponent()->GetScaledCapsuleSize(CapusleRadius, CapusleHalfHeight);
+
+	FHitResult HitResult;
+	const FVector Start = Location + (FVector::UpVector * CapusleHalfHeight * 2.0f);
+	const FVector End = Location + (-FVector::UpVector * CapusleHalfHeight * 2.0f);
+	FCollisionObjectQueryParams Params;
+	Params.AddObjectTypesToQuery(ECC_WorldStatic);
+	Params.AddObjectTypesToQuery(ECC_WorldDynamic);
+	FCollisionShape CollisionShape = FCollisionShape::MakeSphere(CapusleRadius);
+	const bool bSuccess = GetWorld()->SweepSingleByObjectType(HitResult, Start, End, FQuat::Identity, Params, CollisionShape);
+	if (bSuccess)
+	{
+		MulticastRPCSetLocation(HitResult.Location + (FVector::UpVector * CapusleHalfHeight));
+	}
+
+	FColor DebugColor = bSuccess ? FColor::Cyan : FColor::Red;
+	DrawDebugLine(GetWorld(), Start, End, DebugColor, false, 1.0f);
+}
+
+void ASMPlayerCharacter::MulticastRPCSetLocation_Implementation(const FVector_NetQuantize10 InLocation)
+{
+	SetActorLocation(InLocation);
 }
 
 void ASMPlayerCharacter::MulticastRPCResetRelativeRotation_Implementation()

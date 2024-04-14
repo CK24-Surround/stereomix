@@ -55,6 +55,7 @@ protected:
 	void ReleaseCatch(ASMPlayerCharacter* TargetCharacter);
 
 protected:
+	// 타일을 트리거합니다. 서버에서 호출되어야합니다.
 	void TileTrigger(ASMPlayerCharacter* InTargetCharacter);
 
 	void ProcessContinuousTileTrigger();

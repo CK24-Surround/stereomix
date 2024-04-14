@@ -9,6 +9,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Tiles/SMTile.h"
@@ -117,7 +118,7 @@ void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{
-		// TODO: 타일 트리거 로직
+		// 타일 트리거 로직
 		TileTrigger(TargetCharacter);
 
 		// 잡기 풀기 로직
@@ -166,6 +167,9 @@ void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
 	// 회전을 소스의 방향에 맞게 리셋해줍니다.
 	const float SourceYaw = SourceCharacter->GetActorRotation().Yaw;
 	TargetCharacter->MulticastRPCSetYawRotation(SourceYaw);
+
+	// TODO: 애니메이션 불일치에 따른 임시 위치 조정 코드입니다. 추후 제거되어야합니다.
+	TargetCharacter->ServerRPCPreventGroundEmbedding();
 
 	// 다시 서버로부터 위치 보정을 수행하도록 변경합니다.
 	UCharacterMovementComponent* TargetMovement = TargetCharacter->GetCharacterMovement();
@@ -251,7 +255,7 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 		}
 	}
 
-	DrawDebugBox(GetWorld(), TileTriggerData.TriggerStartLocation, HalfExtend, FColor::Cyan, false, 2.0f);
+	DrawDebugBox(GetWorld(), TileTriggerData.TriggerStartLocation, HalfExtend, FColor::Turquoise, false, 2.0f);
 	// TileData.SourceTeam;
 
 	// -1을 통해 원하는 횟수만큼 타이머를 동작 시킬 수 있습니다.
