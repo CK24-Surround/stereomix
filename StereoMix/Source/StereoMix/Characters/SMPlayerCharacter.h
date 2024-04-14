@@ -8,6 +8,7 @@
 #include "SMCharacter.h"
 #include "SMPlayerCharacter.generated.h"
 
+class USMTeamComponent;
 class USMAbilitySystemComponent;
 class UGameplayEffect;
 class UGameplayAbility;
@@ -58,6 +59,10 @@ protected:
 	// 카메라 관련 데이터를 초기화합니다.
 	void InitCamera();
 
+// ~Component Section
+public:
+	FORCEINLINE USMTeamComponent* GetTeamComponent() { return TeamComponent; }
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component|HitBox")
 	TObjectPtr<USphereComponent> HitBox;
@@ -67,6 +72,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Component|Camera")
 	TObjectPtr<UCameraComponent> Camera;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component|Team")
+	TObjectPtr<USMTeamComponent> TeamComponent;
+// ~Component Section
 
 // ~Data Section
 protected:

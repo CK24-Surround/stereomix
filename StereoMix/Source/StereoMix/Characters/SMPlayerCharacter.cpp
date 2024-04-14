@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
+#include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
 #include "Data/SMControlData.h"
 #include "Data/SMDesignData.h"
@@ -22,7 +23,7 @@
 ASMPlayerCharacter::ASMPlayerCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	static ConstructorHelpers::FObjectFinder<USMDesignData> StereoMixDesignDataRef(SMAssetPath::DesignData);
 	if (StereoMixDesignDataRef.Object)
 	{
@@ -44,6 +45,8 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraBoom);
+
+	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
 	MaxWalkSpeed = 0.0f;
 
