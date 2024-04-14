@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "SMCharacter.h"
+#include "Interfaces/SMTeamComponentInterface.h"
 #include "Utilities/SMTeam.h"
 #include "SMPlayerCharacter.generated.h"
 
@@ -30,7 +31,7 @@ enum class EActiveAbility : uint8
 };
 
 UCLASS()
-class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface
+class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamComponentInterface
 {
 	GENERATED_BODY()
 
@@ -62,7 +63,7 @@ protected:
 
 // ~Component Section
 public:
-	FORCEINLINE USMTeamComponent* GetTeamComponent() { return TeamComponent; }
+	FORCEINLINE USMTeamComponent* GetTeamComponent() const { return TeamComponent; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component|HitBox")

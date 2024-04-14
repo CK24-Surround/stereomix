@@ -5,12 +5,12 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "Characters/SMPlayerCharacter.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
 #include "Data/SMDesignData.h"
 #include "Data/SMProjectileAssetData.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Interfaces/SMTeamComponentInterface.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -98,6 +98,20 @@ void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		return;
 	}
 
+	ISMTeamComponentInterface* OtherTeamComponentInterface = Cast<ISMTeamComponentInterface>(OtherActor);
+	if (OtherTeamComponentInterface)
+	{
+		USMTeamComponent* OtherTeamComponent = OtherTeamComponentInterface->GetTeamComponent();
+		if (ensure(OtherTeamComponent))
+		{
+			// 같은 팀의 투사체라면 무시합니다.
+			if (TeamComponent->GetTeam() == OtherTeamComponent->GetTeam())
+			{
+				return;
+			}
+		}
+	}
+
 	if (HasAuthority())
 	{
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
@@ -135,12 +149,12 @@ void ASMProjectile::SetOwner(AActor* NewOwner)
 {
 	Super::SetOwner(NewOwner);
 
-	ASMPlayerCharacter* OwnerCharacter = Cast<ASMPlayerCharacter>(NewOwner);
-	if (OwnerCharacter)
+	ISMTeamComponentInterface* OwnerTeamComponentInterface = Cast<ISMTeamComponentInterface>(NewOwner);
+	if (OwnerTeamComponentInterface)
 	{
 		if (HasAuthority())
 		{
-			USMTeamComponent* OwnerTeamComponent = OwnerCharacter->GetTeamComponent();
+			USMTeamComponent* OwnerTeamComponent = OwnerTeamComponentInterface->GetTeamComponent();
 			if (ensure(OwnerTeamComponent))
 			{
 				TeamComponent->SetTeam(OwnerTeamComponent->GetTeam());

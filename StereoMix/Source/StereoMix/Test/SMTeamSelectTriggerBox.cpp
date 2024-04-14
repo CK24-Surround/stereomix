@@ -3,11 +3,13 @@
 
 #include "SMTeamSelectTriggerBox.h"
 
-#include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/SMTeamComponent.h"
+#include "Interfaces/SMTeamComponentInterface.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
+
+class ISMTeamComponentInterface;
 
 ASMTeamSelectTriggerBox::ASMTeamSelectTriggerBox()
 {
@@ -43,17 +45,16 @@ void ASMTeamSelectTriggerBox::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	// 테스트 용 액터기 때문에 인터페이스는 구현하지 않았습니다.
-	ASMPlayerCharacter* OtherCharacter = Cast<ASMPlayerCharacter>(OtherActor);
-	if (OtherCharacter)
+	ISMTeamComponentInterface* OtherTeamComponentInterface = Cast<ISMTeamComponentInterface>(OtherActor);
+	if (OtherTeamComponentInterface)
 	{
-		USMTeamComponent* OtherTeamComponent = OtherCharacter->GetTeamComponent();
+		USMTeamComponent* OtherTeamComponent = OtherTeamComponentInterface->GetTeamComponent();
 		if (OtherTeamComponent)
 		{
 			OtherTeamComponent->SetTeam(TeamComponent->GetTeam());
 
 			const FString TeamName = UEnum::GetValueAsString(TEXT("StereoMix.ESMTeam"), TeamComponent->GetTeam());
-			NET_LOG(this, Log, TEXT("%s의 팀이 %s로 변경되었습니다."), *OtherCharacter->GetName(), *TeamName);
+			NET_LOG(this, Log, TEXT("%s의 팀이 %s로 변경되었습니다."), *OtherActor->GetName(), *TeamName);
 		}
 	}
 }

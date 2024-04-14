@@ -21,7 +21,7 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	FORCEINLINE ESMTeam GetTeam() { return Team; }
+	FORCEINLINE ESMTeam GetTeam() const { return Team; }
 	
 	void SetTeam(ESMTeam InTeam);
 
