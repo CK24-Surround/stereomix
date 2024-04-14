@@ -6,6 +6,7 @@ namespace SMCollisionProfileName
 	static FName NoCollision = TEXT("NoCollision");
 	static FName Player = TEXT("Player");
 	static FName Projectile = TEXT("Projectile");
+	static FName Tile = TEXT("Tile");
 }
 
 namespace SMCollisionObjectChannel
@@ -16,4 +17,5 @@ namespace SMCollisionObjectChannel
 namespace SMCollisionTraceChannel
 {
 	static ECollisionChannel Action = ECC_GameTraceChannel2;
+	static ECollisionChannel TileAction = ECC_GameTraceChannel4;
 }
