@@ -26,7 +26,7 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> BaseMesh;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "TriggerBox")
 	TObjectPtr<UBoxComponent> TriggerBox;
 

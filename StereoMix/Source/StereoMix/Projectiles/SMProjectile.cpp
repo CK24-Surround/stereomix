@@ -46,10 +46,7 @@ void ASMProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	if (!HasAuthority())
-	{
-		// SphereComponent->SetCollisionProfileName(StereoMixCollisionProfileName::NoCollision);
-	}
+	
 }
 
 void ASMProjectile::BeginPlay()
@@ -117,4 +114,9 @@ void ASMProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimi
 	{
 		SetActorHiddenInGame(true);
 	}
+}
+
+void ASMProjectile::SetProjectileColor_Implementation(UMaterialInstance* InMaterial)
+{
+	MeshComponent->SetMaterial(0, InMaterial);
 }

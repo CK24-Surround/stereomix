@@ -3,16 +3,28 @@
 
 #include "SMCharacter.h"
 
+#include "Data/SMCharacterAssetData.h"
+#include "Utilities/SMAssetPath.h"
+
 
 ASMCharacter::ASMCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	static ConstructorHelpers::FObjectFinder<USMCharacterAssetData> SMCharacterAssetDataRef(SMAssetPath::CharacterAssetData);
+	if (SMCharacterAssetDataRef.Object)
+	{
+		AssetData = SMCharacterAssetDataRef.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("SMCharacterAssetData 로드에 실패했습니다."));
+	}
 }
 
 void ASMCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ASMCharacter::Tick(float DeltaTime)
@@ -24,4 +36,3 @@ void ASMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompone
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }
-

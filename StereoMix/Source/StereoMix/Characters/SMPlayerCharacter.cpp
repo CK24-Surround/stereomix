@@ -8,6 +8,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
+#include "Data/SMCharacterAssetData.h"
 #include "Data/SMControlData.h"
 #include "Data/SMDesignData.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -22,8 +23,6 @@
 
 ASMPlayerCharacter::ASMPlayerCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
 	static ConstructorHelpers::FObjectFinder<USMDesignData> StereoMixDesignDataRef(SMAssetPath::DesignData);
 	if (StereoMixDesignDataRef.Object)
 	{
@@ -60,6 +59,7 @@ void ASMPlayerCharacter::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	InitCamera();
+	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMPlayerCharacter::SetTeamColor);
 }
 
 void ASMPlayerCharacter::PossessedBy(AController* NewController)
@@ -395,5 +395,17 @@ void ASMPlayerCharacter::OnRep_EnableMovement()
 	else
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_None);
+	}
+}
+
+void ASMPlayerCharacter::SetTeamColor(ESMTeam NewTeam)
+{
+	if (NewTeam == ESMTeam::FutureBass)
+	{
+		GetMesh()->SetMaterial(0, AssetData->FutureBassMaterial);
+	}
+	else if (NewTeam == ESMTeam::EDM)
+	{
+		GetMesh()->SetMaterial(0, AssetData->EDMMaterial);
 	}
 }

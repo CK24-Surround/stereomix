@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "SMCharacter.generated.h"
 
+class USMCharacterAssetData;
+
 UCLASS()
 class STEREOMIX_API ASMCharacter : public ACharacter
 {
@@ -21,4 +23,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+	UPROPERTY()
+	TObjectPtr<const USMCharacterAssetData> AssetData;
 };

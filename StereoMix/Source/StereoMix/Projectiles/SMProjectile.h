@@ -27,7 +27,7 @@ protected:
 
 public:
 	virtual void Tick(float DeltaTime) override;
-
+	
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 	
@@ -53,4 +53,8 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> HitGE;
+
+public:
+	UFUNCTION(NetMulticast, Unreliable)
+	void SetProjectileColor(UMaterialInstance* InMaterial);
 };

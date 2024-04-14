@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "SMCharacter.h"
+#include "Utilities/SMTeam.h"
 #include "SMPlayerCharacter.generated.h"
 
 class USMTeamComponent;
@@ -203,4 +204,8 @@ protected:
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<ASMPlayerCharacter> CaughtCharacter;
 // ~Catch Section
+
+protected:
+	UFUNCTION()
+	void SetTeamColor(ESMTeam NewTeam);
 };
