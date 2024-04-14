@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
+#include "Utilities/SMTeam.h"
 #include "SMGameplayAbility_Smash.generated.h"
 
+class ASMTile;
 /**
  * 24.04.13 수정
  * 잡고 있는 상태에서만 활성화 가능하며 잡고 있는 대상을 매치는 어빌리티입니다.
@@ -51,4 +53,23 @@ protected:
 
 protected:
 	void ReleaseCatch(ASMPlayerCharacter* TargetCharacter);
+
+protected:
+	void TileTrigger(ASMPlayerCharacter* InTargetCharacter);
+
+	void ProcessContinuousTileTrigger();
+
+protected:
+	struct FTileTriggerData
+	{
+		int32 TriggerCount = 0;
+		int32 MaxTriggerCount = 4;
+		// TotalTriggerTime는 총 몇 초에 걸쳐 타일 트리거가 마무리 되어야할지를 나타냅니다.
+		float TotalTriggerTime = 0.2f;
+		FVector TriggerStartLocation;
+		ESMTeam SourceTeam = ESMTeam::None;
+		float Range = 0.0f;
+	};
+
+	FTileTriggerData TileTriggerData;
 };

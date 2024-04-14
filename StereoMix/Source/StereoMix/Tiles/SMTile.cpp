@@ -4,12 +4,25 @@
 #include "SMTile.h"
 
 #include "Components/BoxComponent.h"
+#include "Components/SMTeamComponent.h"
+#include "Data/SMTileAssetData.h"
+#include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
 ASMTile::ASMTile()
 {
 	bReplicates = true;
+
+	static ConstructorHelpers::FObjectFinder<USMTileAssetData> TileAssetDataRef(SMAssetPath::TileAssetData);
+	if (TileAssetDataRef.Object)
+	{
+		AssetData = TileAssetDataRef.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("TileAssetDataRef 로드에 실패했습니다."));
+	}
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
@@ -34,10 +47,45 @@ ASMTile::ASMTile()
 	TileMesh->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	TileMesh->SetGenerateOverlapEvents(false);
 	TileMesh->SetRelativeLocation(FVector(0.0, 0.0, 100.0));
+
+	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
+}
+
+void ASMTile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMTile::OnChangeTeamCallback);
 }
 
 void ASMTile::TileTrigger(ESMTeam InTeam)
 {
-	FString TeamString = UEnum::GetValueAsString(TEXT("StereoMix.ESMTeam"), InTeam);
-	NET_LOG(this, Warning, TEXT("%s팀이 타일을 트리거했습니다."), *TeamString);
+	if (HasAuthority())
+	{
+		TeamComponent->SetTeam(InTeam);
+	}
+}
+
+void ASMTile::OnChangeTeamCallback()
+{
+	ESMTeam Team = TeamComponent->GetTeam();
+
+	switch (Team)
+	{
+		case ESMTeam::None:
+		{
+			TileMesh->SetMaterial(0, AssetData->NoneMaterial);
+			break;
+		}
+		case ESMTeam::FutureBass:
+		{
+			TileMesh->SetMaterial(0, AssetData->FutureBassMaterial);
+			break;
+		}
+		case ESMTeam::EDM:
+		{
+			TileMesh->SetMaterial(0, AssetData->EDMMaterial);
+			break;
+		}
+	}
 }

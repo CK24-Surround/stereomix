@@ -9,7 +9,11 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Tiles/SMTile.h"
+#include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 #include "Utilities/SMTags.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
@@ -113,13 +117,15 @@ void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{
+		// TODO: 타일 트리거 로직
+		TileTrigger(TargetCharacter);
+
+		// 잡기 풀기 로직
 		ReleaseCatch(TargetCharacter);
 
 		// 스매시 당하는 상태를 나타내는 태그를 제거해줍니다.
 		TargetASC->RemoveTag(SMTags::Character::State::Smashed);
 	}
-
-	// TODO: 타일 트리거 로직
 
 	// 타겟의 Smashed 어빌리티를 활성화합니다.
 	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
@@ -181,4 +187,83 @@ void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
 
 	SourceCharacter->SetCatchCharacter(nullptr);
 	TargetCharacter->SetCaughtCharacter(nullptr);
+}
+
+void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter)
+{
+	if (!ensure(InTargetCharacter))
+	{
+		return;
+	}
+
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensure(SourceCharacter))
+	{
+		return;
+	}
+
+	FHitResult HitResult;
+	const FVector Start = InTargetCharacter->GetActorLocation();
+	const FVector End = Start + (-InTargetCharacter->GetActorUpVector() * 1000.0f);
+	const FCollisionQueryParams Param(SCENE_QUERY_STAT(TileTrace), false);
+	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(25.0f);
+	const bool bSuccess = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, SMCollisionTraceChannel::TileAction, CollisionShape, Param);
+
+	if (bSuccess)
+	{
+		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
+		if (Tile)
+		{
+			FVector Center = Tile->GetActorLocation() + FVector(50.0, 50.0, 55.0);
+			// DrawDebugSphere(GetWorld(), Center, 200.0f, 16, FColor::Cyan, false, 1.0f);
+			NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("%s타일을 트리거 했습니다."), *Tile->GetName());
+
+			const USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
+			if (ensure(SourceTeamComponent))
+			{
+				TileTriggerData.TriggerCount = 0;
+				TileTriggerData.TriggerStartLocation = Center;
+				TileTriggerData.SourceTeam = SourceTeamComponent->GetTeam();
+				TileTriggerData.Range = 25.0f;
+				ProcessContinuousTileTrigger();
+			}
+		}
+	}
+}
+
+void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
+{
+	// 타일 트리거 영역입니다.
+	FVector HalfExtend(TileTriggerData.Range, TileTriggerData.Range, 100.0);
+
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionShape CollisionShape = FCollisionShape::MakeBox(HalfExtend);
+	const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, TileTriggerData.TriggerStartLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, CollisionShape);
+	if (bSuccess)
+	{
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			ASMTile* Tile = Cast<ASMTile>(OverlapResult.GetActor());
+			if (Tile)
+			{
+				Tile->TileTrigger(TileTriggerData.SourceTeam);
+			}
+		}
+	}
+
+	DrawDebugBox(GetWorld(), TileTriggerData.TriggerStartLocation, HalfExtend, FColor::Cyan, false, 2.0f);
+	// TileData.SourceTeam;
+
+	// -1을 통해 원하는 횟수만큼 타이머를 동작 시킬 수 있습니다.
+	if (TileTriggerData.TriggerCount < TileTriggerData.MaxTriggerCount - 1)
+	{
+		// 다음 트리거를 위해 값을 더해줍니다.
+		TileTriggerData.Range += 100.0f;
+		++TileTriggerData.TriggerCount;
+
+		FTimerHandle TimerHandle;
+		// 아래 수식으로 몇 초 뒤에 다시 트리거되어야하는지 구해서 타이머에 적용합니다.
+		const float TimeAdd = TileTriggerData.TotalTriggerTime / (TileTriggerData.MaxTriggerCount - 1);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_Smash::ProcessContinuousTileTrigger, TimeAdd, false);
+	}
 }

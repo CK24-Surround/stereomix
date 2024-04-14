@@ -7,6 +7,8 @@
 #include "Utilities/SMTeam.h"
 #include "SMTile.generated.h"
 
+class USMTeamComponent;
+class USMTileAssetData;
 class UBoxComponent;
 
 UCLASS()
@@ -17,8 +19,15 @@ class STEREOMIX_API ASMTile : public AActor
 public:
 	ASMTile();
 
+protected:
+	virtual void PostInitializeComponents() override;
+	
 public:
 	void TileTrigger(ESMTeam InTeam);
+
+protected:
+	UFUNCTION()
+	void OnChangeTeamCallback();
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
@@ -32,4 +41,10 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> TileMesh;
+
+	UPROPERTY(VisibleAnywhere, Category = "Team")
+	TObjectPtr<USMTeamComponent> TeamComponent;
+
+	UPROPERTY()
+	TObjectPtr<USMTileAssetData> AssetData;
 };
