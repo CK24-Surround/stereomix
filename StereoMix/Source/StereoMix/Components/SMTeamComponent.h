@@ -26,7 +26,11 @@ public:
 	void SetTeam(ESMTeam InTeam);
 
 protected:
-	UPROPERTY(Replicated)
+	UFUNCTION()
+	void OnRep_Team();
+
+protected:
+	UPROPERTY(EditAnywhere, ReplicatedUsing = "OnRep_Team")
 	ESMTeam Team;
 
 public:

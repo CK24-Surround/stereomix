@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "SMTeamSelectTriggerBox.generated.h"
 
+class USMTeamComponent;
 class UBoxComponent;
 
 UCLASS()
@@ -17,12 +18,18 @@ public:
 	ASMTeamSelectTriggerBox();
 
 protected:
+	virtual void PostInitializeComponents() override;
+
+protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<UStaticMeshComponent> BaseMesh;
+	
 	UPROPERTY(VisibleAnywhere, Category = "TriggerBox")
 	TObjectPtr<UBoxComponent> TriggerBox;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<UStaticMeshComponent> BaseMesh;
+	UPROPERTY(VisibleAnywhere, Category = "Team")
+	TObjectPtr<USMTeamComponent> TeamComponent;
 };

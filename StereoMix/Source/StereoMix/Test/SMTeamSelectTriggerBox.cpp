@@ -5,20 +5,38 @@
 
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Components/SMTeamComponent.h"
 #include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 
 ASMTeamSelectTriggerBox::ASMTeamSelectTriggerBox()
 {
+	bReplicates = true;
+
+	RootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
+
+	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
+	BaseMesh->SetupAttachment(RootComponent);
+	BaseMesh->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	
 	TriggerBox = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerBox"));
-	RootComponent = TriggerBox;
+	TriggerBox->SetupAttachment(RootComponent);
 	TriggerBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	TriggerBox->SetCollisionObjectType(ECC_WorldDynamic);
 	TriggerBox->SetCollisionResponseToAllChannels(ECR_Ignore);
-	TriggerBox->SetCollisionResponseToChannel(SMCollisionObjectChannel::Player, ECR_Overlap);
+	TriggerBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 
-	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BaseMesh"));
-	BaseMesh->SetupAttachment(TriggerBox);
-	BaseMesh->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
+}
+
+void ASMTeamSelectTriggerBox::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	if (!HasAuthority())
+	{
+		TriggerBox->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	}
 }
 
 void ASMTeamSelectTriggerBox::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -29,5 +47,13 @@ void ASMTeamSelectTriggerBox::NotifyActorBeginOverlap(AActor* OtherActor)
 	ASMPlayerCharacter* OtherCharacter = Cast<ASMPlayerCharacter>(OtherActor);
 	if (OtherCharacter)
 	{
+		USMTeamComponent* OtherTeamComponent = OtherCharacter->GetTeamComponent();
+		if (OtherTeamComponent)
+		{
+			OtherTeamComponent->SetTeam(TeamComponent->GetTeam());
+
+			const FString TeamName = UEnum::GetValueAsString(TEXT("StereoMix.ESMTeam"), TeamComponent->GetTeam());
+			NET_LOG(this, Log, TEXT("%s의 팀이 %s로 변경되었습니다."), *OtherCharacter->GetName(), *TeamName);
+		}
 	}
 }

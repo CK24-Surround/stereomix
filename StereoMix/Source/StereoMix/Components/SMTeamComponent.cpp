@@ -9,7 +9,7 @@
 USMTeamComponent::USMTeamComponent()
 {
 	SetIsReplicatedByDefault(true);
-	
+
 	Team = ESMTeam::None;
 }
 
@@ -22,6 +22,14 @@ void USMTeamComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 
 void USMTeamComponent::SetTeam(ESMTeam InTeam)
 {
-	Team = InTeam;
+	if (GetOwnerRole() == ROLE_Authority)
+	{
+		Team = InTeam;
+		OnRep_Team();
+	}
+}
+
+void USMTeamComponent::OnRep_Team()
+{
 	OnChangeTeam.Broadcast(Team);
 }
