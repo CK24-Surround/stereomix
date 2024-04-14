@@ -8,6 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMTags.h"
@@ -153,6 +154,20 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 
 bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<ASMPlayerCharacter*>& OutCatchableCharacters)
 {
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensure(SourceCharacter))
+	{
+		return false;
+	}
+
+	USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
+	if (!ensure(SourceTeamComponent))
+	{
+		return false;	
+	}
+
+	ESMTeam SourceCharacterTeam = SourceTeamComponent->GetTeam();
+	
 	OutCatchableCharacters.Empty();
 
 	bool bIsCanCatchableCharacter = false;
@@ -166,7 +181,16 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 			const UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
 			if (ensure(TargetASC))
 			{
-				// TODO: 여기서 팀이 다르면 걸러줘야합니다.
+				USMTeamComponent* TargetTeamComponent = TargetCharacter->GetTeamComponent();
+				if (!ensure(TargetTeamComponent))
+				{
+					continue;
+				}
+
+				if (TargetTeamComponent->GetTeam() == SourceCharacterTeam)
+				{
+					continue;
+				}
 
 				if (TargetASC->HasMatchingGameplayTag(SMTags::Character::State::Uncatchable))
 				{
