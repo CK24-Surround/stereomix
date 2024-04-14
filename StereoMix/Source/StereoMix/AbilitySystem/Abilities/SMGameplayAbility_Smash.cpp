@@ -256,7 +256,6 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 	}
 
 	DrawDebugBox(GetWorld(), TileTriggerData.TriggerStartLocation, HalfExtend, FColor::Turquoise, false, 2.0f);
-	// TileData.SourceTeam;
 
 	// -1을 통해 원하는 횟수만큼 타이머를 동작 시킬 수 있습니다.
 	if (TileTriggerData.TriggerCount < TileTriggerData.MaxTriggerCount - 1)
