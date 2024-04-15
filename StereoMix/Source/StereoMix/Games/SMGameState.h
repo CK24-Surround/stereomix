@@ -7,6 +7,7 @@
 #include "Utilities/SMTeam.h"
 #include "SMGameState.generated.h"
 
+class USMDesignData;
 /**
  * 
  */
@@ -20,7 +21,15 @@ public:
 
 public:
 	virtual void PostInitializeComponents() override;
-	
+
+protected:
+	virtual void BeginPlay() override;
+
+protected:
+	UPROPERTY()
+	TObjectPtr<USMDesignData> DesignData;
+
+// ~Score Section
 public:
 	FORCEINLINE int32 GetFutureBaseTeamScore() { return TeamScores[ESMTeam::FutureBass]; }
 	FORCEINLINE int32 GetEDMTeamScore() { return TeamScores[ESMTeam::EDM]; }
@@ -40,4 +49,13 @@ protected:
 	TMap<ESMTeam, int32> TeamScores;
 
 	int32 TotalTileCount = 0;
+// ~Score Section
+
+protected:
+	void PerformRoundTime();
+	
+protected:
+	FTimerHandle RoundTimerHandle;
+	int32 RoundTime = 0.0f;
+	int32 RemainRoundTime = 0.0f;
 };

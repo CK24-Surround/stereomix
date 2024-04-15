@@ -4,11 +4,23 @@
 #include "SMGameState.h"
 
 #include "EngineUtils.h"
+#include "Data/SMDesignData.h"
 #include "Tiles/SMTile.h"
+#include "Utilities/SMAssetPath.h"
 #include "Utilities/SMLog.h"
 
 ASMGameState::ASMGameState()
 {
+	static ConstructorHelpers::FObjectFinder<USMDesignData> DesignDataRef(SMAssetPath::DesignData);
+	if (DesignDataRef.Object)
+	{
+		DesignData = DesignDataRef.Object;
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("DesignData 로드에 실패했습니다."));
+	}
+
 	TeamScores.Add(ESMTeam::FutureBass, 0);
 	TeamScores.Add(ESMTeam::EDM, 0);
 }
@@ -31,6 +43,20 @@ void ASMGameState::PostInitializeComponents()
 		}
 
 		NET_LOG(this, Warning, TEXT("현재 타일 개수: %d"), TotalTileCount);
+
+		RoundTime = DesignData->RoundTime;
+		RemainRoundTime = RoundTime;
+	}
+}
+
+void ASMGameState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (HasAuthority())
+	{
+		const float OneSecond = GetWorldSettings()->GetEffectiveTimeDilation();
+		GetWorld()->GetTimerManager().SetTimer(RoundTimerHandle, this, &ASMGameState::PerformRoundTime, OneSecond, true);
 	}
 }
 
@@ -73,5 +99,11 @@ void ASMGameState::SwapScore(ESMTeam PreviousTeam, ESMTeam NewTeam)
 
 void ASMGameState::PrintScore()
 {
-	NET_LOG(this, Warning, TEXT("FutureBase팀 스코어: %d EDM팀 스코어: %d"), TeamScores[ESMTeam::FutureBass], TeamScores[ESMTeam::EDM]);
+	NET_LOG(this, Log, TEXT("FutureBase팀 스코어: %d EDM팀 스코어: %d"), TeamScores[ESMTeam::FutureBass], TeamScores[ESMTeam::EDM]);
+}
+
+void ASMGameState::PerformRoundTime()
+{
+	--RemainRoundTime;
+	NET_LOG(this, Log, TEXT("남은시간: %d"), RemainRoundTime);
 }
