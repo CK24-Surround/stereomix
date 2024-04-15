@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/SMTeamComponentInterface.h"
 #include "Utilities/SMTeam.h"
 #include "SMTile.generated.h"
 
@@ -11,8 +12,10 @@ class USMTeamComponent;
 class USMTileAssetData;
 class UBoxComponent;
 
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangeTileSignature, ESMTeam /*PreviousTeam*/, ESMTeam /*NewTeam*/);
+
 UCLASS()
-class STEREOMIX_API ASMTile : public AActor
+class STEREOMIX_API ASMTile : public AActor, public ISMTeamComponentInterface
 {
 	GENERATED_BODY()
 
@@ -21,13 +24,16 @@ public:
 
 protected:
 	virtual void PostInitializeComponents() override;
-	
+
 public:
 	void TileTrigger(ESMTeam InTeam);
 
 protected:
 	UFUNCTION()
 	void OnChangeTeamCallback();
+
+public:
+	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
@@ -38,7 +44,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> FrameMesh;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> TileMesh;
 
@@ -47,4 +53,7 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMTileAssetData> AssetData;
+
+public:
+	FOnChangeTileSignature OnChangeTile;
 };

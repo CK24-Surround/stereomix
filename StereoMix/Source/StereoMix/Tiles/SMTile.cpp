@@ -62,7 +62,12 @@ void ASMTile::TileTrigger(ESMTeam InTeam)
 {
 	if (HasAuthority())
 	{
-		TeamComponent->SetTeam(InTeam);
+		const ESMTeam CurrentTeam = TeamComponent->GetTeam();
+		if (CurrentTeam != InTeam)
+		{
+			TeamComponent->SetTeam(InTeam);
+			OnChangeTile.Broadcast(CurrentTeam, InTeam);
+		}
 	}
 }
 

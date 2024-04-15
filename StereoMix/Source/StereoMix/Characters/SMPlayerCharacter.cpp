@@ -45,6 +45,7 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->SetupAttachment(CameraBoom);
+	InitCamera();
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
@@ -58,8 +59,7 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 void ASMPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	InitCamera();
+	
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMPlayerCharacter::SetTeamColor);
 }
 
@@ -151,6 +151,7 @@ void ASMPlayerCharacter::InitCamera()
 {
 	const FRotator CameraRotation(-50.0f, 0.0, 0.0);
 	const float CameraDistance = 1800.0f;
+	const FVector CameraTargetOffset(-50.0, 0.0, 0.0);
 	const float CameraFOV = 75.0f;
 
 	CameraBoom->SetRelativeRotation(CameraRotation);
@@ -158,6 +159,7 @@ void ASMPlayerCharacter::InitCamera()
 	CameraBoom->bInheritRoll = false;
 	CameraBoom->bInheritYaw = false;
 	CameraBoom->TargetArmLength = CameraDistance;
+	CameraBoom->TargetOffset = CameraTargetOffset;
 	CameraBoom->bDoCollisionTest = false;
 	CameraBoom->bEnableCameraLag = true;
 

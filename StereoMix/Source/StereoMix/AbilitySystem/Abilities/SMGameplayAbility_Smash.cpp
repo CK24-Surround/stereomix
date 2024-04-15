@@ -219,8 +219,7 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 		if (Tile)
 		{
 			FVector Center = Tile->GetActorLocation() + FVector(50.0, 50.0, 55.0);
-			// DrawDebugSphere(GetWorld(), Center, 200.0f, 16, FColor::Cyan, false, 1.0f);
-			NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("%s타일을 트리거 했습니다."), *Tile->GetName());
+			NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("%s타일을 트리거 했습니다."), *Tile->GetName());
 
 			const USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
 			if (ensure(SourceTeamComponent))
