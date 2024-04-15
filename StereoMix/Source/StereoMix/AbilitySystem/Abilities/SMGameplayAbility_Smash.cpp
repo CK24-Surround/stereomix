@@ -9,6 +9,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -218,7 +219,7 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
 		if (Tile)
 		{
-			FVector Center = Tile->GetActorLocation() + FVector(50.0, 50.0, 55.0);
+			FVector Center = Tile->GetTileLocation();
 			NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("%s타일을 트리거 했습니다."), *Tile->GetName());
 
 			const USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
@@ -227,7 +228,14 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 				TileTriggerData.TriggerCount = 0;
 				TileTriggerData.TriggerStartLocation = Center;
 				TileTriggerData.SourceTeam = SourceTeamComponent->GetTeam();
-				TileTriggerData.Range = 25.0f;
+				// 충돌 박스의 크기를 0.0으로 하면 오류가 생길 수 있ㄴ으니 1.0으로 설정해두었습니다.
+				TileTriggerData.Range = 1.0f;
+				const UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
+				if (ensure(TileBoxComponent))
+				{
+					const float TileHorizenSize = TileBoxComponent->GetScaledBoxExtent().X * 2.0;
+					TileTriggerData.TileHorizenSize = TileHorizenSize;
+				}
 				ProcessContinuousTileTrigger();
 			}
 		}
@@ -260,7 +268,7 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 	if (TileTriggerData.TriggerCount < TileTriggerData.MaxTriggerCount - 1)
 	{
 		// 다음 트리거를 위해 값을 더해줍니다.
-		TileTriggerData.Range += 100.0f;
+		TileTriggerData.Range += TileTriggerData.TileHorizenSize;
 		++TileTriggerData.TriggerCount;
 
 		FTimerHandle TimerHandle;

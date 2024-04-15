@@ -31,22 +31,22 @@ ASMTile::ASMTile()
 	BoxComponent->SetupAttachment(SceneComponent);
 	BoxComponent->SetComponentTickEnabled(false);
 	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Tile);
-	BoxComponent->SetRelativeLocation(FVector(50.0, 50.0, 55.0));
-	BoxComponent->InitBoxExtent(FVector(50.0, 50.0, 55.0));
+	BoxComponent->SetRelativeLocation(FVector(75.0, 75.0, 55.0));
+	BoxComponent->InitBoxExtent(FVector(75.0, 75.0, 55.0));
 
 	FrameMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("FrameMeshComponent"));
 	FrameMesh->SetupAttachment(SceneComponent);
 	FrameMesh->SetComponentTickEnabled(false);
 	FrameMesh->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	FrameMesh->SetGenerateOverlapEvents(false);
-	FrameMesh->SetRelativeLocation(FVector(50.0, 50.0, 0.0));
+	FrameMesh->SetRelativeLocation(FVector(75.0, 75.0, 0.0));
 
 	TileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TileMeshComponent"));
 	TileMesh->SetupAttachment(FrameMesh);
 	TileMesh->SetComponentTickEnabled(false);
 	TileMesh->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	TileMesh->SetGenerateOverlapEvents(false);
-	TileMesh->SetRelativeLocation(FVector(0.0, 0.0, 100.0));
+	TileMesh->SetRelativeLocation(FVector(0.0, 0.0, 110.0));
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
 }
@@ -93,4 +93,9 @@ void ASMTile::OnChangeTeamCallback()
 			break;
 		}
 	}
+}
+
+FVector ASMTile::GetTileLocation()
+{
+	return TileMesh->GetComponentLocation();
 }

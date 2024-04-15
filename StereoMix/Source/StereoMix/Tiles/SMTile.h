@@ -34,6 +34,9 @@ protected:
 
 public:
 	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
+	FORCEINLINE UBoxComponent* GetBoxComponent() const { return BoxComponent; }
+
+	FVector GetTileLocation();
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")

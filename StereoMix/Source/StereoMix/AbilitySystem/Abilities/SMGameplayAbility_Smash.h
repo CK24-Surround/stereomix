@@ -64,11 +64,12 @@ protected:
 	struct FTileTriggerData
 	{
 		int32 TriggerCount = 0;
-		int32 MaxTriggerCount = 4;
+		int32 MaxTriggerCount = 3;
 		// TotalTriggerTime는 총 몇 초에 걸쳐 타일 트리거가 마무리 되어야할지를 나타냅니다.
 		float TotalTriggerTime = 0.2f;
 		FVector TriggerStartLocation;
 		ESMTeam SourceTeam = ESMTeam::None;
+		float TileHorizenSize = 0.0f;
 		float Range = 0.0f;
 	};
 
