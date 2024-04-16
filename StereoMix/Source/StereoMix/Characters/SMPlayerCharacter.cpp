@@ -256,14 +256,13 @@ void ASMPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
 	}
 }
 
-void ASMPlayerCharacter::MulticastRPCSetRelativeLocation_Implementation()
+void ASMPlayerCharacter::MulticastRPCApplyAttachOffset_Implementation()
 {
-	// TODO: 개선 필요
 	// 메시의 오프셋만큼 다시 회복시켜주는 로직입니다.
 	FVector MeshLocation = GetMesh()->GetRelativeLocation();
 	FRotator MeshRotation = GetMesh()->GetRelativeRotation();
 
-	SetActorRelativeLocation(MeshLocation * -1);
+	SetActorRelativeLocation(-MeshLocation);
 	SetActorRelativeRotation(FRotator::ZeroRotator - MeshRotation);
 }
 

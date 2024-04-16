@@ -97,6 +97,7 @@ void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handl
 
 void USMGameplayAbility_Smash::OnCompleted()
 {
+	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("엔드 어빌리티"))
 	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
 }
 

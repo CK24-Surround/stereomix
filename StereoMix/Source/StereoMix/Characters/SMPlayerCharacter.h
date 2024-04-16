@@ -103,7 +103,6 @@ protected:
 	void GAInputPressed(EActiveAbility InInputID);
 
 	// 액티브 GA와 바인드 된 함수입니다. 놓을때 트리거됩니다.
-	// 액티브 GA와 바인드 된 함수입니다. 놓을때 트리거됩니다.
 	void GAInputReleased(EActiveAbility InInputID);
 
 protected:
@@ -146,8 +145,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCSetYawRotation(float InYaw);
 
+	/** 어태치할 경우 루트컴포넌트를 기준으로 어태치 되다보니 메시와는 어긋나게됩니다. 이때 오프셋을 맞춰주는 함수입니다.*/
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCSetRelativeLocation();
+	void MulticastRPCApplyAttachOffset();
 
 protected:
 	void Move(const FInputActionValue& InputActionValue);

@@ -40,6 +40,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
 	TObjectPtr<UAnimSequence> Idle;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
+	TObjectPtr<UAnimSequence> CatchIdle;
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
 	TObjectPtr<UAnimSequence> ForwardWalk;
 
