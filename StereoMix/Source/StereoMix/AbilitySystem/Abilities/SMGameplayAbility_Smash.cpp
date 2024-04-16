@@ -6,11 +6,9 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
-#include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Tiles/SMTile.h"
@@ -56,16 +54,8 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 		return;
 	}
 
-	// 애님 노티파이의 이벤트를 기다립니다.
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Smash);
-	if (!ensure(WaitGameplayEventTask))
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
-	}
-
-	WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Smash::OnSmash);
-	WaitGameplayEventTask->ReadyForActivation();
+	// 착지 델리게이트를 기다립니다.
+	SourceCharacter->OnLanded.AddUObject(this, &USMGameplayAbility_Smash::OnSmash);
 
 	// 스매시 애니메이션을 재생합니다.
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashMontage"), SmashMontage);
@@ -75,7 +65,6 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 		return;
 	}
 
-	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Smash::OnCompleted);
 	PlayMontageAndWaitTask->ReadyForActivation();
 
 	// 타겟 측에 스매시 당하는 중을 표시하는 태그를 부착합니다.
@@ -86,7 +75,14 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
-	const FVector LaunchVelocity(0.0, 0.0, 800.0);
+	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
+	if (ensure(SourceMovement))
+	{
+		OriginalGravityScale = SourceMovement->GravityScale;
+		SourceMovement->GravityScale = SmashGravityScale;
+	}
+	
+	const FVector LaunchVelocity(0.0, 0.0, SmashJumpPower);
 	SourceCharacter->LaunchCharacter(LaunchVelocity, false, true);
 }
 
@@ -95,13 +91,7 @@ void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handl
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void USMGameplayAbility_Smash::OnCompleted()
-{
-	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("엔드 어빌리티"))
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-}
-
-void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
+void USMGameplayAbility_Smash::OnSmash()
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
@@ -121,6 +111,25 @@ void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 		return;
 	}
 
+	SourceCharacter->OnLanded.RemoveAll(this);
+	
+	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
+	if (ensure(SourceMovement))
+	{
+		SourceMovement->GravityScale = OriginalGravityScale;
+	}
+	
+	// 스매시 종료 애니메이션을 재생합니다.
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashEndMontage"), SmashMontage, 1.0f, TEXT("End"));
+	if (!ensure(PlayMontageAndWaitTask))
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		return;
+	}
+
+	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &USMGameplayAbility_Smash::OnCompleted);
+	PlayMontageAndWaitTask->ReadyForActivation();
+
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		// 타일 트리거 로직
@@ -131,10 +140,18 @@ void USMGameplayAbility_Smash::OnSmash(FGameplayEventData Payload)
 
 		// 스매시 당하는 상태를 나타내는 태그를 제거해줍니다.
 		TargetASC->RemoveTag(SMTags::Character::State::Smashed);
-	}
 
-	// 타겟의 Smashed 어빌리티를 활성화합니다.
-	TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
+		// 타겟의 Smashed 어빌리티를 활성화합니다.
+		TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
+	}
+}
+
+void USMGameplayAbility_Smash::OnCompleted()
+{
+	if (CurrentActorInfo->IsNetAuthority())
+	{
+		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+	}
 }
 
 void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
@@ -249,7 +266,6 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 
 void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 {
-	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT(""));
 	// 타일 트리거 영역입니다.
 	FVector HalfExtend(TileTriggerData.Range, TileTriggerData.Range, 100.0);
 
@@ -276,11 +292,11 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 		// 다음 트리거를 위해 값을 더해줍니다.
 		TileTriggerData.Range += TileTriggerData.TileHorizonSize;
 		++TileTriggerData.TriggerCount;
-		
+
 		// 아래 수식으로 몇 초 뒤에 다시 트리거되어야하는지 구해서 타이머에 적용합니다.
 		FTimerHandle TimerHandle;
 		const float TimeAdd = TileTriggerData.TotalTriggerTime / (TileTriggerData.MaxTriggerCount - 1);
-		NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("TimeAdd: %f"), TimeAdd);
+		// NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("타일 트리거 시작 TimeAdd: %f"), TimeAdd);
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_Smash::ProcessContinuousTileTrigger, TimeAdd, false);
 	}
 }

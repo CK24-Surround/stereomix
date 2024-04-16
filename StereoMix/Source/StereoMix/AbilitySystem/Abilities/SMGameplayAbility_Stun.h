@@ -90,5 +90,5 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Stun")
-	float StunTime = 6.0f;
+	float StunTime = 8.0f;
 };

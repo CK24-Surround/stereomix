@@ -35,7 +35,7 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	}
 
 	GetMesh()->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-
+	
 	HitBox = CreateDefaultSubobject<USphereComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
@@ -387,6 +387,13 @@ void ASMPlayerCharacter::MulticastRPCSetYawRotation_Implementation(float InYaw)
 void ASMPlayerCharacter::OnRep_MaxWalkSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+}
+
+void ASMPlayerCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	OnLanded.Broadcast();
 }
 
 void ASMPlayerCharacter::SetEnableCollision(bool bInEnableCollision)

@@ -42,10 +42,10 @@ protected:
 
 protected:
 	UFUNCTION()
-	void OnCompleted();
+	void OnSmash();
 
 	UFUNCTION()
-	void OnSmash(FGameplayEventData Payload);
+	void OnCompleted();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
@@ -59,6 +59,15 @@ protected:
 	void TileTrigger(ASMPlayerCharacter* InTargetCharacter);
 
 	void ProcessContinuousTileTrigger();
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Smash")
+	float SmashJumpPower = 2000.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Smash")
+	float SmashGravityScale = 3.0f;
+	
+	float OriginalGravityScale = 0.0f;
 
 protected:
 	struct FTileTriggerData

@@ -10,6 +10,8 @@
 #include "Utilities/SMTeam.h"
 #include "SMPlayerCharacter.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnLandedSignature);
+
 class USMTeamComponent;
 class USMAbilitySystemComponent;
 class UGameplayEffect;
@@ -149,6 +151,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCApplyAttachOffset();
 
+public:
+	FOnLandedSignature OnLanded;
+
 protected:
 	void Move(const FInputActionValue& InputActionValue);
 
@@ -156,6 +161,8 @@ protected:
 
 	UFUNCTION()
 	void OnRep_MaxWalkSpeed();
+
+	virtual void Landed(const FHitResult& Hit) override;
 
 protected:
 	// 이동속도 리플리케이션을 위한 변수로 직접 수정되어서는 안됩니다. SetMaxWalkSpeed를 사용해 수정해주세요.
