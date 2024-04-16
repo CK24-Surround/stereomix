@@ -32,11 +32,11 @@ void USMAnimInstance::UpdateMovementInfo()
 	{
 		if (ensure(SourceMovement.Get()))
 		{
-			Acceleration = SourceMovement->GetCurrentAcceleration();
+			const FVector Acceleration = SourceMovement->GetCurrentAcceleration();
 			Acceleration2D = FVector(Acceleration.X, Acceleration.Y, 0.0);
 			bHasAcceleration = !Acceleration2D.IsNearlyZero();
 
-			Velocity = SourceMovement->Velocity;
+			const FVector Velocity = SourceMovement->Velocity;
 			Velocity2D = FVector(Velocity.X, Velocity.Y, 0.0);
 			bHasVeloicity = !Velocity2D.IsNearlyZero();
 
@@ -78,18 +78,4 @@ void USMAnimInstance::UpdateDirection()
 	{
 		Direction = EDirection::Left;
 	}
-}
-
-float USMAnimInstance::K2_GetDistanceToTarget() const
-{
-	if (!ensure(SourceMovement.Get()))
-	{
-		return 0.0f;
-	}
-	
-	const FVector PredictedStopLocation = UAnimCharacterMovementLibrary::PredictGroundMovementStopLocation(Velocity2D, SourceMovement->bUseSeparateBrakingFriction, SourceMovement->BrakingFriction, SourceMovement->GroundFriction, SourceMovement->BrakingFrictionFactor, SourceMovement->BrakingDecelerationWalking);
-
-	const float DistanceToTarget = PredictedStopLocation.Size();
-	
-	return DistanceToTarget;
 }

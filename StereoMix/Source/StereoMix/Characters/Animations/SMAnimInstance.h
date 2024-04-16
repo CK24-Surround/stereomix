@@ -37,10 +37,6 @@ protected:
 	void UpdateDirection();
 
 protected:
-	UFUNCTION(BlueprintCallable, Category = "Movement", DisplayName = "Get Distance To Target")
-	float K2_GetDistanceToTarget() const;
-
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
 	TObjectPtr<UAnimSequence> Idle;
 
@@ -81,9 +77,10 @@ protected:
 	TObjectPtr<UAnimSequence> LeftWalkEnd;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	UPROPERTY(BlueprintReadOnly, Category = "Reference")
 	TWeakObjectPtr<ASMPlayerCharacter> SourceCharacter;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Reference")
 	TWeakObjectPtr<UCharacterMovementComponent> SourceMovement;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
@@ -92,15 +89,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector Acceleration2D;
 
-	FVector Acceleration;
-
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	uint32 bHasVeloicity:1 = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector Velocity2D;
-	
-	FVector Velocity;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float DisplacementSinceLastUpdate = 0.0f;
