@@ -3,16 +3,20 @@
 
 #include "SMAnimInstance.h"
 
+#include "AnimCharacterMovementLibrary.h"
 #include "KismetAnimationLibrary.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Utilities/SMLog.h"
 
 void USMAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
 	SourceCharacter = Cast<ASMPlayerCharacter>(TryGetPawnOwner());
+	if (SourceCharacter.Get())
+	{
+		SourceMovement = SourceCharacter->GetCharacterMovement();
+	}
 }
 
 void USMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
@@ -26,17 +30,32 @@ void USMAnimInstance::UpdateMovementInfo()
 {
 	if (SourceCharacter.Get())
 	{
-		UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
-		if (ensure(SourceMovement))
+		if (ensure(SourceMovement.Get()))
 		{
-			Velocity = SourceMovement->Velocity;
-			DeltaSpeed = Velocity.Size() - LastSpeed;
 			Acceleration = SourceMovement->GetCurrentAcceleration();
-			bHasAcceleration = Acceleration != FVector::ZeroVector;
-			LocalVelocityDirectionAngle = UKismetAnimationLibrary::CalculateDirection(Velocity, SourceCharacter->GetActorRotation());
-			UpdateDirection();
+			const FVector Acceleration2D(Acceleration.X, Acceleration.Y, 0.0);
+			bHasAcceleration = !Acceleration2D.IsNearlyZero();
 
-			LastSpeed = Velocity.Size();
+			Velocity = SourceMovement->Velocity;
+			const FVector Velocity2D(Velocity.X, Velocity.Y, 0.0);
+			bHasVeloicity = !Velocity2D.IsNearlyZero();
+
+			const FVector CurrentLocation = SourceCharacter->GetActorLocation();
+			DisplacementSinceLastUpdate = (CurrentLocation - PreviousLocation).Size();
+			PreviousLocation = CurrentLocation;
+
+			const float DeltaSeconds = GetDeltaSeconds();
+			if (DeltaSeconds >= UE_KINDA_SMALL_NUMBER)
+			{
+				DisplacementSpeed = DisplacementSinceLastUpdate / DeltaSeconds;
+			}
+			else
+			{
+				DisplacementSpeed = 0.0f;
+			}
+
+			LocalVelocityDirectionAngle = UKismetAnimationLibrary::CalculateDirection(Velocity2D, SourceCharacter->GetActorRotation());
+			UpdateDirection();
 		}
 	}
 }
@@ -59,4 +78,19 @@ void USMAnimInstance::UpdateDirection()
 	{
 		Direction = EDirection::Left;
 	}
+}
+
+float USMAnimInstance::K2_GetDistanceToTarget() const
+{
+	if (!ensure(SourceMovement.Get()))
+	{
+		return 0.0f;
+	}
+	
+	const FVector Velocity2D(Velocity.X, Velocity.Y, 0.0);
+	const FVector PredictedStopLocation = UAnimCharacterMovementLibrary::PredictGroundMovementStopLocation(Velocity2D, SourceMovement->bUseSeparateBrakingFriction, SourceMovement->BrakingFriction, SourceMovement->GroundFriction, SourceMovement->BrakingFrictionFactor, SourceMovement->BrakingDecelerationWalking);
+
+	const float DistanceToTarget = PredictedStopLocation.Size();
+	
+	return DistanceToTarget;
 }

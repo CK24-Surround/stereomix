@@ -6,6 +6,8 @@
 #include "Animation/AnimInstance.h"
 #include "SMAnimInstance.generated.h"
 
+class UCharacterMovementComponent;
+
 UENUM(BlueprintType)
 enum class EDirection : uint8
 {
@@ -35,30 +37,77 @@ protected:
 	void UpdateDirection();
 
 protected:
-	UPROPERTY()
+	UFUNCTION(BlueprintCallable, Category = "Movement", DisplayName = "Get Distance To Target")
+	float K2_GetDistanceToTarget() const;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
+	TObjectPtr<UAnimSequence> Idle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkStart")
+	TObjectPtr<UAnimSequence> ForwardStart;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkStart")
+	TObjectPtr<UAnimSequence> BackStart;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkStart")
+	TObjectPtr<UAnimSequence> RightStart;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkStart")
+	TObjectPtr<UAnimSequence> LeftStart;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
+	TObjectPtr<UAnimSequence> ForwardWalkCycle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
+	TObjectPtr<UAnimSequence> BackWalkCycle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
+	TObjectPtr<UAnimSequence> RightWalkCycle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
+	TObjectPtr<UAnimSequence> LeftWalkCycle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkEnd")
+	TObjectPtr<UAnimSequence> ForwardWalkEnd;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkEnd")
+	TObjectPtr<UAnimSequence> BackWalkEnd;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkEnd")
+	TObjectPtr<UAnimSequence> RightWalkEnd;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkEnd")
+	TObjectPtr<UAnimSequence> LeftWalkEnd;
+
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	TWeakObjectPtr<ASMPlayerCharacter> SourceCharacter;
+
+	TWeakObjectPtr<UCharacterMovementComponent> SourceMovement;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	uint32 bHasAcceleration:1 = false;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector Acceleration;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	uint32 bHasVeloicity:1 = false;
+
 	FVector Velocity;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float DisplacementSinceLastUpdate = 0.0f;
+
+	FVector PreviousLocation;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float DisplacementSpeed = 0.0f;
 
 	/** 현재 움직이는 방향 기준 회전 각도를 나태냅니다. */
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	float LocalVelocityDirectionAngle = 0.0f;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	float DeltaSpeed = 0.0f;
-
-	float LastSpeed = 0.0f;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	EDirection Direction;
-
-	// TODO: 4방향체크
-	// TODO: 지난 프레임부터 현재 프레임까지 이동속도(이전 프레임의 속도와 현재 프레임의 속도 차이)
 };
