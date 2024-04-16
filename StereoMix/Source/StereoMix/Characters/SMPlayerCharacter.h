@@ -146,6 +146,9 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCSetYawRotation(float InYaw);
 
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCSetRelativeLocation();
+
 protected:
 	void Move(const FInputActionValue& InputActionValue);
 

@@ -252,6 +252,8 @@ bool USMGameplayAbility_Catch::AttachTargetCharacter(ASMPlayerCharacter* InTarge
 		// 어태치합니다. 디버깅을 위해 단언을 수행합니다. 어태치 후 상대 회전을 0으로 정렬해줍니다.
 		if (InTargetCharacter->AttachToComponent(SourceCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSlotSocket")))
 		{
+			InTargetCharacter->MulticastRPCSetRelativeLocation();
+			
 			// 충돌판정, 움직임을 잠급니다.
 			InTargetCharacter->SetEnableCollision(false);
 			InTargetCharacter->SetEnableMovement(false);
@@ -263,7 +265,8 @@ bool USMGameplayAbility_Catch::AttachTargetCharacter(ASMPlayerCharacter* InTarge
 				TargetMovement->bIgnoreClientMovementErrorChecksAndCorrection = true;
 			}
 
-			InTargetCharacter->MulticastRPCResetRelativeRotation();
+			// TODO: 개선 필요
+			// InTargetCharacter->MulticastRPCResetRelativeRotation();
 
 			// 타겟 플레이어의 카메라 뷰를 소스 캐릭터의 카메라 뷰로 전환합니다.
 			APlayerController* TargetPlayerController = Cast<APlayerController>(InTargetCharacter->GetController());

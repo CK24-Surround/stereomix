@@ -59,7 +59,7 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 void ASMPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	
+
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMPlayerCharacter::SetTeamColor);
 }
 
@@ -254,6 +254,17 @@ void ASMPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
 			ASC->AbilitySpecInputReleased(*GASpec);
 		}
 	}
+}
+
+void ASMPlayerCharacter::MulticastRPCSetRelativeLocation_Implementation()
+{
+	// TODO: 개선 필요
+	// 메시의 오프셋만큼 다시 회복시켜주는 로직입니다.
+	FVector MeshLocation = GetMesh()->GetRelativeLocation();
+	FRotator MeshRotation = GetMesh()->GetRelativeRotation();
+
+	SetActorRelativeLocation(MeshLocation * -1);
+	SetActorRelativeRotation(FRotator::ZeroRotator - MeshRotation);
 }
 
 void ASMPlayerCharacter::Move(const FInputActionValue& InputActionValue)
