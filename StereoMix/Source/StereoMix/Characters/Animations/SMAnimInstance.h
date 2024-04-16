@@ -89,11 +89,17 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	uint32 bHasAcceleration:1 = false;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FVector Acceleration2D;
+
 	FVector Acceleration;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	uint32 bHasVeloicity:1 = false;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	FVector Velocity2D;
+	
 	FVector Velocity;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
