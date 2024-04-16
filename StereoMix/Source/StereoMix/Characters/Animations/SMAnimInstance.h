@@ -78,10 +78,10 @@ protected:
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Reference")
-	TWeakObjectPtr<ASMPlayerCharacter> SourceCharacter;
+	TObjectPtr<ASMPlayerCharacter> SourceCharacter;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Reference")
-	TWeakObjectPtr<UCharacterMovementComponent> SourceMovement;
+	TObjectPtr<UCharacterMovementComponent> SourceMovement;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	uint32 bHasAcceleration:1 = false;

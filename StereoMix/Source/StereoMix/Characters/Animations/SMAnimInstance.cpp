@@ -3,10 +3,10 @@
 
 #include "SMAnimInstance.h"
 
-#include "AnimCharacterMovementLibrary.h"
 #include "KismetAnimationLibrary.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Utilities/SMLog.h"
 
 void USMAnimInstance::NativeInitializeAnimation()
 {
@@ -28,9 +28,9 @@ void USMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 void USMAnimInstance::UpdateMovementInfo()
 {
-	if (SourceCharacter.Get())
+	if (SourceCharacter)
 	{
-		if (ensure(SourceMovement.Get()))
+		if (ensure(SourceMovement))
 		{
 			const FVector Acceleration = SourceMovement->GetCurrentAcceleration();
 			Acceleration2D = FVector(Acceleration.X, Acceleration.Y, 0.0);
