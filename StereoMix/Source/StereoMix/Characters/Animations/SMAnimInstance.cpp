@@ -56,6 +56,8 @@ void USMAnimInstance::UpdateMovementInfo()
 
 			LocalVelocityDirectionAngle = UKismetAnimationLibrary::CalculateDirection(Velocity2D, SourceCharacter->GetActorRotation());
 			UpdateDirection();
+
+			bIsCatching = SourceCharacter->GetCatchCharacter() ? true : false;
 		}
 	}
 }

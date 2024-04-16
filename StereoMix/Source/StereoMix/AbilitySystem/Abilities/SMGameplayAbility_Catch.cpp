@@ -250,7 +250,7 @@ bool USMGameplayAbility_Catch::AttachTargetCharacter(ASMPlayerCharacter* InTarge
 	if (ensure(SourceCharacter && InTargetCharacter))
 	{
 		// 어태치합니다. 디버깅을 위해 단언을 수행합니다. 어태치 후 상대 회전을 0으로 정렬해줍니다.
-		if (InTargetCharacter->AttachToComponent(SourceCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSocket")))
+		if (InTargetCharacter->AttachToComponent(SourceCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSlotSocket")))
 		{
 			// 충돌판정, 움직임을 잠급니다.
 			InTargetCharacter->SetEnableCollision(false);

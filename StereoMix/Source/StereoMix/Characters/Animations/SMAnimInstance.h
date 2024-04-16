@@ -40,41 +40,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
 	TObjectPtr<UAnimSequence> Idle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkStart")
-	TObjectPtr<UAnimSequence> ForwardStart;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkStart")
-	TObjectPtr<UAnimSequence> BackStart;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkStart")
-	TObjectPtr<UAnimSequence> RightStart;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkStart")
-	TObjectPtr<UAnimSequence> LeftStart;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
-	TObjectPtr<UAnimSequence> ForwardWalkCycle;
+	TObjectPtr<UAnimSequence> ForwardWalk;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
-	TObjectPtr<UAnimSequence> BackWalkCycle;
+	TObjectPtr<UAnimSequence> BackWalk;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
-	TObjectPtr<UAnimSequence> RightWalkCycle;
+	TObjectPtr<UAnimSequence> RightWalk;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
-	TObjectPtr<UAnimSequence> LeftWalkCycle;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkEnd")
-	TObjectPtr<UAnimSequence> ForwardWalkEnd;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkEnd")
-	TObjectPtr<UAnimSequence> BackWalkEnd;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkEnd")
-	TObjectPtr<UAnimSequence> RightWalkEnd;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkEnd")
-	TObjectPtr<UAnimSequence> LeftWalkEnd;
+	TObjectPtr<UAnimSequence> LeftWalk;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Reference")
@@ -109,4 +85,11 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	EDirection Direction;
+
+// ~State Section
+protected:
+	UPROPERTY(BlueprintReadOnly, Category = "State")
+	uint32 bIsCatching:1 = false;
+// ~State Section
+	
 };
