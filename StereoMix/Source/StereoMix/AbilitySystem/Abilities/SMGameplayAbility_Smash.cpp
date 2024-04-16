@@ -85,6 +85,9 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
+
+	const FVector LaunchVelocity(0.0, 0.0, 800.0);
+	SourceCharacter->LaunchCharacter(LaunchVelocity, false, true);
 }
 
 void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -209,10 +212,11 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 
 	FHitResult HitResult;
 	const FVector Start = InTargetCharacter->GetActorLocation();
-	const FVector End = Start + (-InTargetCharacter->GetActorUpVector() * 1000.0f);
+	const FVector End = Start + (-FVector::UpVector * 1000.0f);
 	const FCollisionQueryParams Param(SCENE_QUERY_STAT(TileTrace), false);
 	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(25.0f);
 	const bool bSuccess = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, SMCollisionTraceChannel::TileAction, CollisionShape, Param);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Silver, false, 3.0f);
 
 	if (bSuccess)
 	{
@@ -234,7 +238,7 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 				if (ensure(TileBoxComponent))
 				{
 					const float TileHorizenSize = TileBoxComponent->GetScaledBoxExtent().X * 2.0;
-					TileTriggerData.TileHorizenSize = TileHorizenSize;
+					TileTriggerData.TileHorizonSize = TileHorizenSize;
 				}
 				ProcessContinuousTileTrigger();
 			}
@@ -244,6 +248,7 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 
 void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 {
+	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT(""));
 	// 타일 트리거 영역입니다.
 	FVector HalfExtend(TileTriggerData.Range, TileTriggerData.Range, 100.0);
 
@@ -268,12 +273,13 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 	if (TileTriggerData.TriggerCount < TileTriggerData.MaxTriggerCount - 1)
 	{
 		// 다음 트리거를 위해 값을 더해줍니다.
-		TileTriggerData.Range += TileTriggerData.TileHorizenSize;
+		TileTriggerData.Range += TileTriggerData.TileHorizonSize;
 		++TileTriggerData.TriggerCount;
-
-		FTimerHandle TimerHandle;
+		
 		// 아래 수식으로 몇 초 뒤에 다시 트리거되어야하는지 구해서 타이머에 적용합니다.
+		FTimerHandle TimerHandle;
 		const float TimeAdd = TileTriggerData.TotalTriggerTime / (TileTriggerData.MaxTriggerCount - 1);
+		NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("TimeAdd: %f"), TimeAdd);
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_Smash::ProcessContinuousTileTrigger, TimeAdd, false);
 	}
 }

@@ -69,7 +69,7 @@ protected:
 		float TotalTriggerTime = 0.2f;
 		FVector TriggerStartLocation;
 		ESMTeam SourceTeam = ESMTeam::None;
-		float TileHorizenSize = 0.0f;
+		float TileHorizonSize = 0.0f;
 		float Range = 0.0f;
 	};
 
