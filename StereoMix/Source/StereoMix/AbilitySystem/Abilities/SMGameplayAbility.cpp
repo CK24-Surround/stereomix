@@ -34,14 +34,14 @@ ASMPlayerCharacter* USMGameplayAbility::GetSMPlayerCharacterFromActorInfo() cons
 	return nullptr;
 }
 
-void USMGameplayAbility::ClientRPCPlayMontage_Implementation(UAnimMontage* InMontage, float InPlayRate)
+void USMGameplayAbility::ClientRPCPlayMontage_Implementation(UAnimMontage* InMontage, float InPlayRate, FName StartSection)
 {
 	if (ensure(ReplicationPolicy == EGameplayAbilityReplicationPolicy::ReplicateYes))
 	{
 		USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 		if (ensure(SourceASC))
 		{
-			const float Duration = SourceASC->PlayMontage(this, CurrentActivationInfo, InMontage, InPlayRate);
+			const float Duration = SourceASC->PlayMontage(this, CurrentActivationInfo, InMontage, InPlayRate, StartSection);
 			ensure(Duration > 0.0f);
 		}
 	}

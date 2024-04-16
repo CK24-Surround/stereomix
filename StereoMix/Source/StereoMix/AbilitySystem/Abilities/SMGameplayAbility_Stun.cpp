@@ -132,10 +132,10 @@ void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 void USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded(FGameplayEventData Payload)
 {
 	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 종료"));
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), StandUpMontage, 1.0f);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), SmashedMontage, 1.0f, TEXT("End"));
 	if (ensure(PlayMontageAndWaitTask))
 	{
-		ClientRPCPlayMontage(StandUpMontage);
+		ClientRPCPlayMontage(SmashedMontage, 1.0f, TEXT("End"));
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}
@@ -173,10 +173,25 @@ void USMGameplayAbility_Stun::ResetStunState()
 		return;
 	}
 
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), StunEndMontage, 1.0f);
+	// 매쳐졌는지 아닌지 확인하고 그에 맞는 스턴 종료 애니메이션을 재생시킵니다.
+	UAnimMontage* EndMontage = StunMontage;
+	UAnimInstance* SourceAnimInstace = CurrentActorInfo->GetAnimInstance();
+	if (ensure(SourceAnimInstace))
+	{
+		FAnimMontageInstance* MontageInstance = SourceAnimInstace->GetActiveMontageInstance();
+		if (MontageInstance)
+		{
+			if (MontageInstance->Montage == SmashedMontage)
+			{
+				EndMontage = SmashedMontage;
+			}
+		}
+	}
+	
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), EndMontage, 1.0f, TEXT("End"));
 	if (ensure(PlayMontageAndWaitTask))
 	{
-		ClientRPCPlayMontage(StunEndMontage);
+		ClientRPCPlayMontage(EndMontage, 1.0f, TEXT("End"));
 		PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
 		PlayMontageAndWaitTask->ReadyForActivation();
 	}

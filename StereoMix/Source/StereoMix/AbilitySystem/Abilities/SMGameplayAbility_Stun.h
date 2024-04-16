@@ -77,13 +77,10 @@ protected:
 	TObjectPtr<UAnimMontage> StunMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> StandUpMontage;
+	TObjectPtr<UAnimMontage> SmashedMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> CatchExitMontage;
-
-	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> StunEndMontage;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TArray<TSubclassOf<UGameplayEffect>> StunEndedGEs;
