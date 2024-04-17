@@ -48,4 +48,9 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stun);
 		}
 	}
+
+	namespace GameplayCue
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(PlayNiagara)
+	}
 }

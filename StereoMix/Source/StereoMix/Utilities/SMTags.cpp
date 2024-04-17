@@ -47,4 +47,9 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Event.Character.Stun", "체력이 모두 소모되어 기절상태에 들어가야함을 알리는데 사용됩니다.");
 		}
 	}
+
+	namespace GameplayCue
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(PlayNiagara, "GameplayCue.PlayNiagara", "파라미터의 위치와 소스 오브젝트를 통해 나이아가라 시스템을 재생시키는 게임플레이 큐 태그입니다. 소스 오브젝트에 나이아가라 시스템을 담아 사용합니다.");
+	}
 }

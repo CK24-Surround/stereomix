@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Utilities/SMTeam.h"
 #include "SMCharacterAssetData.generated.h"
 
 /**
@@ -15,9 +16,14 @@ class STEREOMIX_API USMCharacterAssetData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Material")
-	TObjectPtr<UMaterialInterface> FutureBassMaterial;
+	USMCharacterAssetData()
+	{
+		CharacterMaterial.Add(ESMTeam::None, nullptr);
+		CharacterMaterial.Add(ESMTeam::EDM, nullptr);
+		CharacterMaterial.Add(ESMTeam::FutureBass, nullptr);
+	}
 
+public:
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TObjectPtr<UMaterialInterface> EDMMaterial;
+	TMap<ESMTeam, TObjectPtr<UMaterialInstance>> CharacterMaterial;
 };

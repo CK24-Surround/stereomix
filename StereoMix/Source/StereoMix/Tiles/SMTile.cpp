@@ -3,6 +3,7 @@
 
 #include "SMTile.h"
 
+#include "NiagaraFunctionLibrary.h"
 #include "Components/BoxComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Data/SMTileAssetData.h"
@@ -73,25 +74,12 @@ void ASMTile::TileTrigger(ESMTeam InTeam)
 
 void ASMTile::OnChangeTeamCallback()
 {
-	ESMTeam Team = TeamComponent->GetTeam();
+	const ESMTeam Team = TeamComponent->GetTeam();
 
-	switch (Team)
+	if (!HasAuthority())
 	{
-		case ESMTeam::None:
-		{
-			TileMesh->SetMaterial(0, AssetData->NoneMaterial);
-			break;
-		}
-		case ESMTeam::FutureBass:
-		{
-			TileMesh->SetMaterial(0, AssetData->FutureBassMaterial);
-			break;
-		}
-		case ESMTeam::EDM:
-		{
-			TileMesh->SetMaterial(0, AssetData->EDMMaterial);
-			break;
-		}
+		TileMesh->SetMaterial(0, AssetData->TileMaterial[Team]);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AssetData->TileChangeFX[Team], TileMesh->GetComponentLocation());
 	}
 }
 

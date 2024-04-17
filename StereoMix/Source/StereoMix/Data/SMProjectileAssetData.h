@@ -15,9 +15,14 @@ class STEREOMIX_API USMProjectileAssetData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Material")
-	TObjectPtr<UMaterialInterface> FutureBassMaterial;
+	USMProjectileAssetData()
+	{
+		ProjectileMaterial.Add(ESMTeam::None, nullptr);
+		ProjectileMaterial.Add(ESMTeam::EDM, nullptr);
+		ProjectileMaterial.Add(ESMTeam::FutureBass, nullptr);
+	}
 
+public:
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TObjectPtr<UMaterialInterface> EDMMaterial;
+	TMap<ESMTeam, TObjectPtr<UMaterialInstance>> ProjectileMaterial;
 };

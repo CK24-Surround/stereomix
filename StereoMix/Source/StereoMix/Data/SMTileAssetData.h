@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+#include "Utilities/SMTeam.h"
 #include "SMTileAssetData.generated.h"
+
+class UNiagaraSystem;
 
 /**
  * 
@@ -15,12 +18,21 @@ class STEREOMIX_API USMTileAssetData : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+	USMTileAssetData()
+	{
+		TileMaterial.Add(ESMTeam::None, nullptr);
+		TileMaterial.Add(ESMTeam::EDM, nullptr);
+		TileMaterial.Add(ESMTeam::FutureBass, nullptr);
+
+		TileChangeFX.Add(ESMTeam::None, nullptr);
+		TileChangeFX.Add(ESMTeam::EDM, nullptr);
+		TileChangeFX.Add(ESMTeam::FutureBass, nullptr);
+	}
+
+public:
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TObjectPtr<UMaterialInterface> NoneMaterial;
-	
-	UPROPERTY(EditAnywhere, Category = "Material")
-	TObjectPtr<UMaterialInterface> FutureBassMaterial;
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> TileMaterial;
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TObjectPtr<UMaterialInterface> EDMMaterial;
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> TileChangeFX;
 };

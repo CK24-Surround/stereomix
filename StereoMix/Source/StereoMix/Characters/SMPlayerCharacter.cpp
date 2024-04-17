@@ -35,7 +35,7 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	}
 
 	GetMesh()->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	
+
 	HitBox = CreateDefaultSubobject<USphereComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
@@ -60,7 +60,7 @@ void ASMPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMPlayerCharacter::SetTeamColor);
+	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMPlayerCharacter::OnTeamChangeCallback);
 }
 
 void ASMPlayerCharacter::PossessedBy(AController* NewController)
@@ -447,14 +447,12 @@ void ASMPlayerCharacter::OnRep_EnableMovement()
 	}
 }
 
-void ASMPlayerCharacter::SetTeamColor()
+void ASMPlayerCharacter::OnTeamChangeCallback()
 {
-	if (TeamComponent->GetTeam() == ESMTeam::FutureBass)
+	const ESMTeam Team = TeamComponent->GetTeam();
+
+	if (!HasAuthority())
 	{
-		GetMesh()->SetMaterial(0, AssetData->FutureBassMaterial);
-	}
-	else if (TeamComponent->GetTeam() == ESMTeam::EDM)
-	{
-		GetMesh()->SetMaterial(0, AssetData->EDMMaterial);
+		GetMesh()->SetMaterial(0, AssetData->CharacterMaterial[Team]);
 	}
 }

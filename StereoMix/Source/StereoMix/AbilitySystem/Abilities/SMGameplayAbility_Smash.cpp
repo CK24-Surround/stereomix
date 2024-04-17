@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "NiagaraSystem.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
@@ -20,6 +21,10 @@ USMGameplayAbility_Smash::USMGameplayAbility_Smash()
 {
 	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::Smashing);
 	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Catch);
+
+	OnSmashFX.Add(ESMTeam::None, nullptr);
+	OnSmashFX.Add(ESMTeam::EDM, nullptr);
+	OnSmashFX.Add(ESMTeam::FutureBass, nullptr);
 }
 
 void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -81,7 +86,7 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 		OriginalGravityScale = SourceMovement->GravityScale;
 		SourceMovement->GravityScale = SmashGravityScale;
 	}
-	
+
 	const FVector LaunchVelocity(0.0, 0.0, SmashJumpPower);
 	SourceCharacter->LaunchCharacter(LaunchVelocity, false, true);
 }
@@ -93,6 +98,12 @@ void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handl
 
 void USMGameplayAbility_Smash::OnSmash()
 {
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensure(SourceASC))
+	{
+		return;
+	}
+
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
@@ -112,13 +123,13 @@ void USMGameplayAbility_Smash::OnSmash()
 	}
 
 	SourceCharacter->OnLanded.RemoveAll(this);
-	
+
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (ensure(SourceMovement))
 	{
 		SourceMovement->GravityScale = OriginalGravityScale;
 	}
-	
+
 	// 스매시 종료 애니메이션을 재생합니다.
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashEndMontage"), SmashMontage, 1.0f, TEXT("End"));
 	if (!ensure(PlayMontageAndWaitTask))
@@ -247,9 +258,10 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 			const USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
 			if (ensure(SourceTeamComponent))
 			{
+				const ESMTeam Team = SourceTeamComponent->GetTeam();
 				TileTriggerData.TriggerCount = 0;
 				TileTriggerData.TriggerStartLocation = Center;
-				TileTriggerData.SourceTeam = SourceTeamComponent->GetTeam();
+				TileTriggerData.SourceTeam = Team;
 				// 충돌 박스의 크기를 0.0으로 하면 오류가 생길 수 있ㄴ으니 1.0으로 설정해두었습니다.
 				TileTriggerData.Range = 1.0f;
 				const UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
@@ -259,6 +271,17 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 					TileTriggerData.TileHorizonSize = TileHorizenSize;
 				}
 				ProcessContinuousTileTrigger();
+
+				// TODO: 게임플레이 큐 재생
+				FGameplayCueParameters GCParams;
+				GCParams.Location = Center;
+				GCParams.SourceObject = OnSmashFX[Team];
+
+				USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+				if (ensure(SourceASC))
+				{
+					SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
+				}
 			}
 		}
 	}

@@ -67,5 +67,5 @@ protected:
 
 public:
 	UFUNCTION()
-	void SetTeamMaterial();
+	void OnChangeTeamCallback();
 };

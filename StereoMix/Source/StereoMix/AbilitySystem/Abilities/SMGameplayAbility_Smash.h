@@ -7,6 +7,7 @@
 #include "Utilities/SMTeam.h"
 #include "SMGameplayAbility_Smash.generated.h"
 
+class UNiagaraSystem;
 class ASMTile;
 /**
  * 24.04.13 수정
@@ -48,10 +49,6 @@ protected:
 	void OnCompleted();
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> SmashMontage;
-
-protected:
 	void ReleaseCatch(ASMPlayerCharacter* TargetCharacter);
 
 protected:
@@ -59,6 +56,13 @@ protected:
 	void TileTrigger(ASMPlayerCharacter* InTargetCharacter);
 
 	void ProcessContinuousTileTrigger();
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<UAnimMontage> SmashMontage;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> OnSmashFX;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Smash")

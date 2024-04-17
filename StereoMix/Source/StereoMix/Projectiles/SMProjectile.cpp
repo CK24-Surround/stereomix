@@ -61,7 +61,7 @@ void ASMProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMProjectile::SetTeamMaterial);
+	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMProjectile::OnChangeTeamCallback);
 }
 
 void ASMProjectile::BeginPlay()
@@ -110,7 +110,7 @@ void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 			{
 				return;
 			}
-			
+
 			// 같은 팀의 투사체라면 무시합니다.
 			if (TeamComponent->GetTeam() == OtherTeam)
 			{
@@ -170,14 +170,12 @@ void ASMProjectile::SetOwner(AActor* NewOwner)
 	}
 }
 
-void ASMProjectile::SetTeamMaterial()
+void ASMProjectile::OnChangeTeamCallback()
 {
-	if (TeamComponent->GetTeam() == ESMTeam::FutureBass)
+	const ESMTeam Team = TeamComponent->GetTeam();
+
+	if (!HasAuthority())
 	{
-		MeshComponent->SetMaterial(0, AssetData->FutureBassMaterial);
-	}
-	else if (TeamComponent->GetTeam() == ESMTeam::EDM)
-	{
-		MeshComponent->SetMaterial(0, AssetData->EDMMaterial);
+		MeshComponent->SetMaterial(0, AssetData->ProjectileMaterial[Team]);
 	}
 }

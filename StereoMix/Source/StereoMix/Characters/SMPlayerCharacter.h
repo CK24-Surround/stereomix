@@ -225,5 +225,5 @@ protected:
 
 protected:
 	UFUNCTION()
-	void SetTeamColor();
+	void OnTeamChangeCallback();
 };
