@@ -267,8 +267,8 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 				const UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
 				if (ensure(TileBoxComponent))
 				{
-					const float TileHorizenSize = TileBoxComponent->GetScaledBoxExtent().X * 2.0;
-					TileTriggerData.TileHorizonSize = TileHorizenSize;
+					const float TileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X * 2.0;
+					TileTriggerData.TileHorizonSize = TileHorizonSize;
 				}
 				ProcessContinuousTileTrigger();
 
