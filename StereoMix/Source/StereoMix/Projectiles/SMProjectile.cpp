@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "Data/SMDesignData.h"
 #include "Data/SMProjectileAssetData.h"
@@ -15,6 +16,7 @@
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
+#include "Utilities/SMTags.h"
 
 ASMProjectile::ASMProjectile()
 {
@@ -61,12 +63,16 @@ ASMProjectile::ASMProjectile()
 	ProjectileFX.Add(ESMTeam::None, nullptr);
 	ProjectileFX.Add(ESMTeam::EDM, nullptr);
 	ProjectileFX.Add(ESMTeam::FutureBass, nullptr);
+
+	ProjectileHitFX.Add(ESMTeam::None, nullptr);
+	ProjectileHitFX.Add(ESMTeam::EDM, nullptr);
+	ProjectileHitFX.Add(ESMTeam::FutureBass, nullptr);
 }
 
 void ASMProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-	
+
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMProjectile::OnChangeTeamCallback);
 }
 
@@ -134,6 +140,16 @@ void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 			if (GEContext.IsValid())
 			{
 				TargetASC->BP_ApplyGameplayEffectToSelf(HitGE, 0, GEContext);
+
+				const AActor* TargetActor = TargetASC->GetAvatarActor();
+				if (ensure(TargetActor))
+				{
+					FGameplayCueParameters GCParams;
+					GCParams.Location = TargetActor->GetActorLocation();
+					GCParams.SourceObject = ProjectileHitFX[TeamComponent->GetTeam()];
+					TargetASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
+				}
+
 				Destroy();
 			}
 		}

@@ -64,6 +64,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ProjectileFX;
 
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ProjectileHitFX;
+
 protected:
 	FVector StartLocation;
 
