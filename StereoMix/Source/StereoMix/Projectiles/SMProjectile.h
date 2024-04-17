@@ -4,8 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Utilities/SMTeam.h"
 #include "SMProjectile.generated.h"
 
+class UNiagaraComponent;
+class UNiagaraSystem;
 class USMProjectileAssetData;
 class USMTeamComponent;
 class UGameplayEffect;
@@ -23,16 +26,16 @@ public:
 
 public:
 	virtual void PostInitializeComponents() override;
-	
+
 protected:
 	virtual void BeginPlay() override;
 
 public:
 	virtual void Tick(float DeltaTime) override;
-	
+
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
-	
+
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
 public:
@@ -48,15 +51,18 @@ protected:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereComponent;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<UStaticMeshComponent> MeshComponent;
-	
+
+	UPROPERTY(VisibleAnywhere, Category = "FX")
+	TObjectPtr<UNiagaraComponent> ProjectileFXComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Projectile")
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovementComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ProjectileFX;
 
 protected:
 	FVector StartLocation;

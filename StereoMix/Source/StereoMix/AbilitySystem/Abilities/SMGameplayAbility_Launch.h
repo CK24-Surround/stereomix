@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
+#include "Utilities/SMTeam.h"
 #include "SMGameplayAbility_Launch.generated.h"
 
+class UNiagaraSystem;
 class ASMProjectile;
 
 /**
@@ -33,4 +35,8 @@ protected:
 	/** 서버에 투사체 생성 및 발사를 요청합니다. */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCRequestProjectile(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& CursorLocation);
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> LaunchFX;
 };

@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
+#include "NiagaraComponent.h"
 #include "Data/SMDesignData.h"
 #include "Data/SMProjectileAssetData.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -45,9 +46,10 @@ ASMProjectile::ASMProjectile()
 	RootComponent = SphereComponent;
 	SphereComponent->SetCollisionProfileName(SMCollisionProfileName::Projectile);
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	MeshComponent->SetupAttachment(SphereComponent);
-	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	ProjectileFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
+	ProjectileFXComponent->SetupAttachment(SphereComponent);
+	ProjectileFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	ProjectileFXComponent->SetAutoActivate(false);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->InitialSpeed = DesignData->ProjectileSpeed;
@@ -55,12 +57,16 @@ ASMProjectile::ASMProjectile()
 	ProjectileMovementComponent->SetAutoActivate(true);
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
+
+	ProjectileFX.Add(ESMTeam::None, nullptr);
+	ProjectileFX.Add(ESMTeam::EDM, nullptr);
+	ProjectileFX.Add(ESMTeam::FutureBass, nullptr);
 }
 
 void ASMProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
+	
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMProjectile::OnChangeTeamCallback);
 }
 
@@ -176,6 +182,7 @@ void ASMProjectile::OnChangeTeamCallback()
 
 	if (!HasAuthority())
 	{
-		MeshComponent->SetMaterial(0, AssetData->ProjectileMaterial[Team]);
+		ProjectileFXComponent->SetAsset(ProjectileFX[Team]);
+		ProjectileFXComponent->ActivateSystem();
 	}
 }
