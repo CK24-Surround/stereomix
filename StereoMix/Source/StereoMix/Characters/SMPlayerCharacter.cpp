@@ -374,11 +374,6 @@ void ASMPlayerCharacter::MulticastRPCSetLocation_Implementation(const FVector_Ne
 	SetActorLocation(InLocation);
 }
 
-void ASMPlayerCharacter::MulticastRPCResetRelativeRotation_Implementation()
-{
-	SetActorRelativeRotation(FRotator::ZeroRotator);
-}
-
 void ASMPlayerCharacter::MulticastRPCSetYawRotation_Implementation(float InYaw)
 {
 	SetActorRotation(FRotator(0.0, InYaw, 0.0));

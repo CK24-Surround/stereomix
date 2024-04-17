@@ -272,7 +272,6 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 				}
 				ProcessContinuousTileTrigger();
 
-				// TODO: 게임플레이 큐 재생
 				FGameplayCueParameters GCParams;
 				GCParams.Location = Center;
 				GCParams.SourceObject = OnSmashFX[Team];

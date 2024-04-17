@@ -142,9 +142,6 @@ public:
 	void MulticastRPCSetLocation(const FVector_NetQuantize10 InLocation);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCResetRelativeRotation();
-
-	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCSetYawRotation(float InYaw);
 
 	/** 어태치할 경우 루트컴포넌트를 기준으로 어태치 되다보니 메시와는 어긋나게됩니다. 이때 오프셋을 맞춰주는 함수입니다.*/
