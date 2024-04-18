@@ -2,3 +2,9 @@
 
 
 #include "SMUserWidget_Scoreboard.h"
+
+void USMUserWidget_Scoreboard::SetASC(UAbilitySystemComponent* InASC)
+{
+	Super::SetASC(InASC);
+	
+}
