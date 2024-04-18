@@ -110,6 +110,20 @@ void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		return;
 	}
 
+	// 투사체가 무소속인 경우 무시합니다.
+	ISMTeamComponentInterface* SourceTeamComponentInterface = Cast<ISMTeamComponentInterface>(GetOwner());
+	if (SourceTeamComponentInterface)
+	{
+		USMTeamComponent* SourceTeamComponent = SourceTeamComponentInterface->GetTeamComponent();
+		if (ensure(SourceTeamComponent))
+		{
+			if (SourceTeamComponent->GetTeam() == ESMTeam::None)
+			{
+				return;
+			}
+		}
+	}
+
 	ISMTeamComponentInterface* OtherTeamComponentInterface = Cast<ISMTeamComponentInterface>(OtherActor);
 	if (OtherTeamComponentInterface)
 	{
