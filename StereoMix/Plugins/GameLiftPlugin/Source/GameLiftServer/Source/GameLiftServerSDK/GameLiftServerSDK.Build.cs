@@ -55,6 +55,12 @@ public class GameLiftServerSDK : ModuleRules
                     PublicDelayLoadDLLs.Add("aws-cpp-sdk-gamelift-server.dll");
                     string SDKLibWindows = System.IO.Path.Combine(SDKDirectory, "aws-cpp-sdk-gamelift-server.dll");
                     RuntimeDependencies.Add(SDKLibWindows);
+
+                    // string OpenSSLPath = System.IO.Path.Combine(SDKDirectory, "libssl-3-x64");
+                    // RuntimeDependencies.Add(OpenSSLPath);
+                    //
+                    // string SecureOpenSSLPath = System.IO.Path.Combine(SDKDirectory, "libcrypto-3-x64.dll");
+                    // RuntimeDependencies.Add(SecureOpenSSLPath);
                 }
             }
             else

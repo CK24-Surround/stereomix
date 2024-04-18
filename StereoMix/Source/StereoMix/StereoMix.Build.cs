@@ -17,7 +17,7 @@ public class StereoMix : ModuleRules
 		});
 		PrivateDependencyModuleNames.AddRange(new[]
 		{
-			"GameplayAbilities", "GameplayTasks", "GameplayTags"
+			"GameplayAbilities", "GameplayTasks", "GameplayTags", "RenderDoc"
 		});
 
 		// Uncomment if you are using Slate UI

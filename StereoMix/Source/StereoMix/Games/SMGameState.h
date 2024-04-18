@@ -15,7 +15,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnEndRoundSignature, ESMTeam /*VictoryTeam*
 
 class USMDesignData;
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMGameState : public AGameState
@@ -48,7 +48,7 @@ protected:
 	int32 ReplicatedRemainRoundTime = 0;
 // ~Round Time Section
 
-// ~Score Section
+	// ~Score Section
 public:
 	void SetTeamScores(ESMTeam InTeam, int32 InScore);
 

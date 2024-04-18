@@ -3,14 +3,45 @@
 
 #include "SMGameMode.h"
 
+#include "API/GameLift.h"
 #include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Utilities/SMLog.h"
 
+#if WITH_GAMELIFT
+#include "GameLiftServerSDK.h"
+#endif
+
 ASMGameMode::ASMGameMode()
 {
 	bUseSeamlessTravel = true;
+}
+
+void ASMGameMode::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	BindToGameState();
+}
+
+void ASMGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+#if WITH_GAMELIFT
+	UE_LOG(LogStereoMixGameMode, Log, TEXT("Initializing GameLift..."));
+	GetGameInstance()->GetSubsystem<UGameLift>()->InitGameLift();
+#endif
+}
+
+void ASMGameMode::OnMatchStateSet()
+{
+	Super::OnMatchStateSet();
+
+	if (MatchState == MatchState::WaitingToStart)
+	{
+	}
 }
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
@@ -26,13 +57,6 @@ FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const
 	ChangeName(NewPlayerController, InNickname, false);
 
 	return ErrorMessage;
-}
-
-void ASMGameMode::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	BindToGameState();
 }
 
 void ASMGameMode::StartMatch()
@@ -78,7 +102,7 @@ void ASMGameMode::BindToGameState()
 
 void ASMGameMode::EndVictoryDefeatTimer()
 {
-	// TODO: 임시로 현재 레벨을 재시작하도록 구성했습니다. 
+	// TODO: 임시로 현재 레벨을 재시작하도록 구성했습니다.
 	FString CurrentLevelPath = TEXT("/Game/StereoMix/Levels/Main/L_Main");
 	GetWorld()->ServerTravel(CurrentLevelPath);
 }
@@ -132,7 +156,7 @@ void ASMGameMode::PerformPhaseTime()
 
 	if (RemainPhaseTime <= 0)
 	{
-		// 한 페이즈 종료시 마다 처리됩니다. 
+		// 한 페이즈 종료시 마다 처리됩니다.
 		SetCurrentPhaseNumber(CurrentPhaseNumber + 1);
 		SetRemainPhaseTime(PhaseTime);
 
