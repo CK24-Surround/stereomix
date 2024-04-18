@@ -18,6 +18,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Player/SMPlayerController.h"
 #include "Player/SMPlayerState.h"
+#include "UI/SMCharacterStateWidget.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -49,8 +50,9 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	InitCamera();
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
-	
+
 	CharacterStateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("CharacterStateWidget"));
+	CharacterStateWidgetComponent->SetupAttachment(RootComponent);
 	CharacterStateWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 200.0));
 	CharacterStateWidgetComponent->SetDrawAtDesiredSize(true);
@@ -151,6 +153,14 @@ void ASMPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 
 	InitASC();
+
+	// TODO: 위젯 닉네임 업데이트
+	USMCharacterStateWidget* CharacterStateWidget = Cast<USMCharacterStateWidget>(CharacterStateWidgetComponent->GetWidget());
+	if (ensure(CharacterStateWidget))
+	{
+		APlayerState* CachedPlayerState = GetPlayerState();
+		CharacterStateWidget->UpdateNickname(CachedPlayerState->GetPlayerName());
+	}
 }
 
 void ASMPlayerCharacter::InitCamera()
