@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
+#include "SMUserWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "SMCharacterStateWidget.generated.h"
 
@@ -12,14 +14,19 @@ class UTextBlock;
  * 
  */
 UCLASS()
-class STEREOMIX_API USMCharacterStateWidget : public UUserWidget
+class STEREOMIX_API USMCharacterStateWidget : public USMUserWidget
 {
 	GENERATED_BODY()
 
 public:
+	virtual void SetASC(UAbilitySystemComponent* InASC) override;
+	
 	void UpdateNickname(const FString& InNickname);
 
-	void UpdateHealth(float CurrentHealth, float MaxHealth);
+	void OnChangeCurrentHealth(const FOnAttributeChangeData& OnAttributeChangeData);
+	void OnChangeMaxHealth(const FOnAttributeChangeData& OnAttributeChangeData);
+
+	void UpdateHealth();
 
 protected:
 	UPROPERTY(meta = (BindWidget))
@@ -27,4 +34,8 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> PB_Health;
+
+protected:
+	float CurrentHealth = 0.0f;
+	float MaxHealth = 0.0f;
 };
