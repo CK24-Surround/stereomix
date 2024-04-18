@@ -6,6 +6,7 @@
 #include "AbilitySystemComponent.h"
 #include "Components/TextBlock.h"
 #include "Games/SMGameState.h"
+#include "Utilities/SMLog.h"
 
 void USMUserWidget_Scoreboard::SetASC(UAbilitySystemComponent* InASC)
 {
@@ -20,5 +21,6 @@ void USMUserWidget_Scoreboard::SetASC(UAbilitySystemComponent* InASC)
 
 void USMUserWidget_Scoreboard::OnChangeRoundTime(int32 RoundTime)
 {
+	NET_LOG(nullptr, Warning, TEXT("%d"), RoundTime);
 	Timer->SetText(FText::FromString(FString::FromInt(RoundTime)));
 }

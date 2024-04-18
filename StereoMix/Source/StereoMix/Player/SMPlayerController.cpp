@@ -4,7 +4,10 @@
 #include "SMPlayerController.h"
 
 #include "EnhancedInputSubsystems.h"
+#include "SMPlayerState.h"
+#include "Blueprint/UserWidget.h"
 #include "Data/SMControlData.h"
+#include "UI/SMUserWidget_HUD.h"
 #include "Utilities/SMAssetPath.h"
 
 ASMPlayerController::ASMPlayerController()
@@ -27,6 +30,19 @@ void ASMPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	InitControl();
+}
+
+void ASMPlayerController::OnRep_PlayerState()
+{
+	Super::OnRep_PlayerState();
+
+	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, Cast<UClass>(HUDWidgetClass));
+	HUDWidget->AddToViewport(0);
+	ASMPlayerState* SMPlayerState = GetPlayerState<ASMPlayerState>();
+	if (ensure(SMPlayerState))
+	{
+		HUDWidget->SetASC(SMPlayerState->GetAbilitySystemComponent());
+	}
 }
 
 void ASMPlayerController::InitControl()
