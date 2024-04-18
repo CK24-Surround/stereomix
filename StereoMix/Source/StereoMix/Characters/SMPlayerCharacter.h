@@ -7,7 +7,6 @@
 #include "GameplayTagContainer.h"
 #include "SMCharacter.h"
 #include "Interfaces/SMTeamComponentInterface.h"
-#include "Utilities/SMTeam.h"
 #include "SMPlayerCharacter.generated.h"
 
 class UWidgetComponent;
@@ -23,6 +22,7 @@ class USphereComponent;
 class UCameraComponent;
 class USpringArmComponent;
 class USMDesignData;
+class USMWidgetComponent;
 
 UENUM(BlueprintType)
 enum class EActiveAbility : uint8
@@ -82,7 +82,7 @@ protected:
 	TObjectPtr<USMTeamComponent> TeamComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "UI|PlayerState")
-	TObjectPtr<UWidgetComponent> CharacterStateWidgetComponent;
+	TObjectPtr<USMWidgetComponent> CharacterStateWidgetComponent;
 // ~Component Section
 
 // ~Data Section
@@ -227,6 +227,4 @@ protected:
 protected:
 	UFUNCTION()
 	void OnTeamChangeCallback();
-
-	void InitCharacterStateWidget();
 };

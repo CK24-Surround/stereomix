@@ -19,6 +19,7 @@
 #include "Player/SMPlayerController.h"
 #include "Player/SMPlayerState.h"
 #include "UI/SMCharacterStateWidget.h"
+#include "UI/SMWidgetComponent.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -51,7 +52,7 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
-	CharacterStateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("CharacterStateWidget"));
+	CharacterStateWidgetComponent = CreateDefaultSubobject<USMWidgetComponent>(TEXT("CharacterStateWidget"));
 	CharacterStateWidgetComponent->SetupAttachment(RootComponent);
 	CharacterStateWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 200.0));
@@ -153,6 +154,9 @@ void ASMPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 
 	InitASC();
+
+	// TODO: 추후 게임 시작 시점에 이미 팀이 정해져 있는경우 여기서 플레이어 상태 위젯을 업데이트 하도록 해야합니다.
+	// 닉네임 세팅 때문입니다.
 }
 
 void ASMPlayerCharacter::InitCamera()
@@ -457,17 +461,6 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 	if (!HasAuthority())
 	{
 		GetMesh()->SetMaterial(0, AssetData->CharacterMaterial[Team]);
-		CharacterStateWidgetComponent->SetWidgetClass(AssetData->CharacterStateWidget[Team]);
-		InitCharacterStateWidget();
-	}
-}
-
-void ASMPlayerCharacter::InitCharacterStateWidget()
-{
-	USMCharacterStateWidget* CharacterStateWidget = Cast<USMCharacterStateWidget>(CharacterStateWidgetComponent->GetWidget());
-	if (CharacterStateWidget)
-	{
-		APlayerState* CachedPlayerState = GetPlayerState();
-		CharacterStateWidget->UpdateNickname(CachedPlayerState->GetPlayerName());
+		CharacterStateWidgetComponent->SetWidgetClass(AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
 	}
 }
