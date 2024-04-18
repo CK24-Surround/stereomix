@@ -23,7 +23,7 @@ protected:
 
 public:
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> Timer;
+	TObjectPtr<UTextBlock> RoundTimer;
 	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> EDMScore;

@@ -24,5 +24,5 @@ void USMUserWidget_Scoreboard::OnChangeRoundTime(int32 RoundTime)
 	const int32 Minutes = RoundTime / 60;
 	const int32 Seconds =  RoundTime % 60;
 	const FString RoundTimerString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds); 
-	Timer->SetText(FText::FromString(RoundTimerString));
+	RoundTimer->SetText(FText::FromString(RoundTimerString));
 }
