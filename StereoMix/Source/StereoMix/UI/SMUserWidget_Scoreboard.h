@@ -15,7 +15,7 @@ class STEREOMIX_API USMUserWidget_Scoreboard : public USMUserWidget
 {
 	GENERATED_BODY()
 
-protected:
+public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
 
 protected:
