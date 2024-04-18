@@ -11,7 +11,7 @@ void USMWidgetComponent::SetWidget(UUserWidget* InWidget)
 	Super::SetWidget(InWidget);
 
 	USMUserWidget* SMUserWidget = Cast<USMUserWidget>(GetWidget());
-	if (ensure(SMUserWidget))
+	if (SMUserWidget)
 	{
 		UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
 		if (ensure(SourceASC))
