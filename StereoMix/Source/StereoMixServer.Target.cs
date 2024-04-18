@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class StereoMixServerTarget : TargetRules
 {
-	public StereoMixServerTarget( TargetInfo Target) : base(Target)
+	public StereoMixServerTarget(TargetInfo target) : base(target)
 	{
 		Type = TargetType.Server;
 		DefaultBuildSettings = BuildSettingsVersion.V4;

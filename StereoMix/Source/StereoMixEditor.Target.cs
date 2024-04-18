@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 public class StereoMixEditorTarget : TargetRules
 {
-	public StereoMixEditorTarget( TargetInfo Target) : base(Target)
+	public StereoMixEditorTarget(TargetInfo target) : base(target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V4;

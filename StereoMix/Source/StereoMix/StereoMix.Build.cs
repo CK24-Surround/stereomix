@@ -4,14 +4,21 @@ using UnrealBuildTool;
 
 public class StereoMix : ModuleRules
 {
-	public StereoMix(ReadOnlyTargetRules Target) : base(Target)
+	public StereoMix(ReadOnlyTargetRules target) : base(target)
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicIncludePaths.Add("StereoMix");
 
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "AnimGraphRuntime", "Niagara" });
-		PrivateDependencyModuleNames.AddRange(new string[] { "GameplayAbilities", "GameplayTasks", "GameplayTags" });
+		PublicDependencyModuleNames.AddRange(new[]
+		{
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "AnimGraphRuntime", "Niagara",
+			"GameLiftServerSDK"
+		});
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
+			"GameplayAbilities", "GameplayTasks", "GameplayTags"
+		});
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
