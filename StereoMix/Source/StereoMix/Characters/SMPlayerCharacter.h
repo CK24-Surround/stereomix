@@ -171,6 +171,14 @@ protected:
 	float MaxWalkSpeed;
 // ~Movement Section
 
+// ~Widget Section
+public:
+	/** 캐릭터 상태 위젯의 가시성을 조절합니다. */
+	UFUNCTION(NetMulticast, Unreliable)
+	void SetCharacterStateVisibility(bool bEnable);
+	
+// ~Widget Section
+
 // ~State Section
 public:
 	void SetEnableCollision(bool bInEnableCollision);

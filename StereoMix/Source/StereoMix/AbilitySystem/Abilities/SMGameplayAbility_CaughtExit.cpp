@@ -123,6 +123,9 @@ void USMGameplayAbility_CaughtExit::DetachFromTargetCharacter(ASMPlayerCharacter
 	{
 		SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
 	}
+
+	// 캐릭터 상태 위젯을 다시 보이게합니다.
+	SourceCharacter->SetCharacterStateVisibility(true);
 }
 
 void USMGameplayAbility_CaughtExit::OnCaughtExitEnded()

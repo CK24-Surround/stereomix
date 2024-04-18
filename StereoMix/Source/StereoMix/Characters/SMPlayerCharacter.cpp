@@ -403,6 +403,11 @@ void ASMPlayerCharacter::Landed(const FHitResult& Hit)
 	OnLanded.Broadcast();
 }
 
+void ASMPlayerCharacter::SetCharacterStateVisibility_Implementation(bool bEnable)
+{
+	CharacterStateWidgetComponent->SetVisibility(bEnable);
+}
+
 void ASMPlayerCharacter::SetEnableCollision(bool bInEnableCollision)
 {
 	if (HasAuthority())

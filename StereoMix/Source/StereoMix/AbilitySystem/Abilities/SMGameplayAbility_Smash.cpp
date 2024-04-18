@@ -218,6 +218,9 @@ void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
 		SourcePlayerController->SetViewTargetWithBlend(TargetCharacter, 1.0f, VTBlend_Cubic);
 	}
 
+	// 캐릭터 상태 위젯을 다시 보이게합니다.
+	TargetCharacter->SetCharacterStateVisibility(true);
+
 	// 잡기, 잡히기 상태를 나타내는 태그를 제거해줍니다.
 	SourceASC->RemoveTag(SMTags::Character::State::Catch);
 	TargetASC->RemoveTag(SMTags::Character::State::Caught);
