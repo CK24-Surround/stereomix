@@ -15,23 +15,24 @@ enum class EBootstrapMessageState : int
 
 constexpr auto EBootstrapMessageStateFromInt(int State)
 {
-	if (State < int(EBootstrapMessageState::NoBootstrappedMessage) || State > int(EBootstrapMessageState::ActiveMessage))
+	if (State < static_cast<int>(EBootstrapMessageState::NoBootstrappedMessage) || State > static_cast<int>(
+		EBootstrapMessageState::ActiveMessage))
 	{
 		return EBootstrapMessageState::NoBootstrappedMessage;
 	}
-	return EBootstrapMessageState(State);
+	return static_cast<EBootstrapMessageState>(State);
 }
 
-FText EBootstrapMessageStateToString(EBootstrapMessageState State)
+inline FText EBootstrapMessageStateToString(EBootstrapMessageState State)
 {
 	switch (State)
 	{
-		case EBootstrapMessageState::NoBootstrappedMessage: return Settings::AwsAccount::kNoBootstrapMessage;
-		case EBootstrapMessageState::InProgressMessage: return Settings::AwsAccount::kBootstrapInProgressMessage;
-		case EBootstrapMessageState::FailureMessage: return Settings::AwsAccount::kFailedBootstrapMessage;
-		case EBootstrapMessageState::ActiveMessage: return Settings::AwsAccount::kActiveBootstrapMessage;
-		default:
-			break;
+	case EBootstrapMessageState::NoBootstrappedMessage: return Settings::AwsAccount::kNoBootstrapMessage;
+	case EBootstrapMessageState::InProgressMessage: return Settings::AwsAccount::kBootstrapInProgressMessage;
+	case EBootstrapMessageState::FailureMessage: return Settings::AwsAccount::kFailedBootstrapMessage;
+	case EBootstrapMessageState::ActiveMessage: return Settings::AwsAccount::kActiveBootstrapMessage;
+	default:
+		break;
 	}
 	ensure(false);
 
@@ -44,15 +45,15 @@ inline EBootstrapMessageState EBootstrapMessageStateFromString(const FString& St
 	{
 		return EBootstrapMessageState::NoBootstrappedMessage;
 	}
-	else if (StateString.Compare(Settings::AwsAccount::kBootstrapInProgressMessage.ToString()) == 0)
+	if (StateString.Compare(Settings::AwsAccount::kBootstrapInProgressMessage.ToString()) == 0)
 	{
 		return EBootstrapMessageState::InProgressMessage;
 	}
-	else if (StateString.Compare(Settings::AwsAccount::kFailedBootstrapMessage.ToString()) == 0)
+	if (StateString.Compare(Settings::AwsAccount::kFailedBootstrapMessage.ToString()) == 0)
 	{
 		return EBootstrapMessageState::FailureMessage;
 	}
-	else if (StateString.Compare(Settings::AwsAccount::kActiveBootstrapMessage.ToString()) == 0)
+	if (StateString.Compare(Settings::AwsAccount::kActiveBootstrapMessage.ToString()) == 0)
 	{
 		return EBootstrapMessageState::ActiveMessage;
 	}

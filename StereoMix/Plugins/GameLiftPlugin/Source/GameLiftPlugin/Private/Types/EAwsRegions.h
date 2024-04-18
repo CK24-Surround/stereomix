@@ -6,6 +6,7 @@
 #include <string>
 #include <unordered_map>
 
+
 namespace Aws
 {
 	namespace Regions
@@ -92,28 +93,32 @@ namespace Aws
 
 		switch (InRegion)
 		{
-			CASE_REGION(us_east_2);
-			CASE_REGION(us_east_1);
-			CASE_REGION(us_west_1);
-			CASE_REGION(us_west_2);
-			CASE_REGION(af_south_1);
-			CASE_REGION(ap_east_1);
-			CASE_REGION(ap_southeast_3);
-			CASE_REGION(ap_south_1);
-			CASE_REGION(ap_northeast_3);
-			CASE_REGION(ap_northeast_2);
-			CASE_REGION(ap_southeast_1);
-			CASE_REGION(ap_southeast_2);
-			CASE_REGION(ap_northeast_1);
-			CASE_REGION(ca_central_1);
-			CASE_REGION(eu_central_1);
-			CASE_REGION(eu_west_1);
-			CASE_REGION(eu_west_2);
-			CASE_REGION(eu_south_1);
-			CASE_REGION(eu_west_3);
-			CASE_REGION(eu_north_1);
-			CASE_REGION(me_south_1);
-			CASE_REGION(sa_east_1);
+			_Pragma("warning(disable:5103)")
+		//C5103: Pasting <token1> and <token2> does not result in a valid preprocessing token
+		CASE_REGION(us_east_2);
+		CASE_REGION(us_east_1);
+		CASE_REGION(us_west_1);
+		CASE_REGION(us_west_2);
+		CASE_REGION(af_south_1);
+		CASE_REGION(ap_east_1);
+		CASE_REGION(ap_southeast_3);
+		CASE_REGION(ap_south_1);
+		CASE_REGION(ap_northeast_3);
+		CASE_REGION(ap_northeast_2);
+		CASE_REGION(ap_southeast_1);
+		CASE_REGION(ap_southeast_2);
+		CASE_REGION(ap_northeast_1);
+		CASE_REGION(ca_central_1);
+		CASE_REGION(eu_central_1);
+		CASE_REGION(eu_west_1);
+		CASE_REGION(eu_west_2);
+		CASE_REGION(eu_south_1);
+		CASE_REGION(eu_west_3);
+		CASE_REGION(eu_north_1);
+		CASE_REGION(me_south_1);
+		CASE_REGION(sa_east_1);
+			_Pragma("warning(disable:5103)")
+		//C5103: Pasting <token1> and <token2> does not result in a valid preprocessing token
 		default:
 			break;
 		}
@@ -129,28 +134,32 @@ namespace Aws
 
 		switch (InRegion)
 		{
-			CASE_REGION(us_east_2);
-			CASE_REGION(us_east_1);
-			CASE_REGION(us_west_1);
-			CASE_REGION(us_west_2);
-			CASE_REGION(af_south_1);
-			CASE_REGION(ap_east_1);
-			CASE_REGION(ap_southeast_3);
-			CASE_REGION(ap_south_1);
-			CASE_REGION(ap_northeast_3);
-			CASE_REGION(ap_northeast_2);
-			CASE_REGION(ap_southeast_1);
-			CASE_REGION(ap_southeast_2);
-			CASE_REGION(ap_northeast_1);
-			CASE_REGION(ca_central_1);
-			CASE_REGION(eu_central_1);
-			CASE_REGION(eu_west_1);
-			CASE_REGION(eu_west_2);
-			CASE_REGION(eu_south_1);
-			CASE_REGION(eu_west_3);
-			CASE_REGION(eu_north_1);
-			CASE_REGION(me_south_1);
-			CASE_REGION(sa_east_1);
+			_Pragma("warning(disable:5103)")
+		//C5103: Pasting <token1> and <token2> does not result in a valid preprocessing token
+		CASE_REGION(us_east_2);
+		CASE_REGION(us_east_1);
+		CASE_REGION(us_west_1);
+		CASE_REGION(us_west_2);
+		CASE_REGION(af_south_1);
+		CASE_REGION(ap_east_1);
+		CASE_REGION(ap_southeast_3);
+		CASE_REGION(ap_south_1);
+		CASE_REGION(ap_northeast_3);
+		CASE_REGION(ap_northeast_2);
+		CASE_REGION(ap_southeast_1);
+		CASE_REGION(ap_southeast_2);
+		CASE_REGION(ap_northeast_1);
+		CASE_REGION(ca_central_1);
+		CASE_REGION(eu_central_1);
+		CASE_REGION(eu_west_1);
+		CASE_REGION(eu_west_2);
+		CASE_REGION(eu_south_1);
+		CASE_REGION(eu_west_3);
+		CASE_REGION(eu_north_1);
+		CASE_REGION(me_south_1);
+		CASE_REGION(sa_east_1);
+			_Pragma("warning(disable:5103)")
+		//C5103: Pasting <token1> and <token2> does not result in a valid preprocessing token
 		default:
 			break;
 		}
@@ -166,6 +175,8 @@ namespace Aws
 
 		static std::unordered_map<std::wstring, ERegions> RegionMap
 		{
+			_Pragma("warning(disable:5103)")
+			//C5103: Pasting <token1> and <token2> does not result in a valid preprocessing token
 			ADD_REGION(us_east_2),
 			ADD_REGION(us_east_1),
 			ADD_REGION(us_west_1),
@@ -188,11 +199,12 @@ namespace Aws
 			ADD_REGION(eu_north_1),
 			ADD_REGION(me_south_1),
 			ADD_REGION(sa_east_1)
+			_Pragma("warning(disable:5103)")
+			//C5103: Pasting <token1> and <token2> does not result in a valid preprocessing token
 		};
 		auto It = RegionMap.find(*InRegionString);
 		return It != RegionMap.end() ? It->second : ERegions::us_east_2;
 
 #undef ADD_REGION
 	}
-
 } // namespace Aws

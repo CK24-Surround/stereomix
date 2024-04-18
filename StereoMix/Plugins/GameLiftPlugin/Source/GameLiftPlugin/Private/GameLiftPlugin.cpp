@@ -46,8 +46,9 @@ void FGameLiftPluginModule::StartupModule()
 
 	DeployAnywhereTab->Register();
 	DeployManagedEC2Tab->Register();
-	
-	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FGameLiftPluginModule::RegisterMenus));
+
+	UToolMenus::RegisterStartupCallback(
+		FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FGameLiftPluginModule::RegisterMenus));
 	FCoreDelegates::OnPostEngineInit.AddRaw(this, &FGameLiftPluginModule::OnPostEngineInit);
 
 	RestoreAccount();
@@ -65,11 +66,11 @@ void FGameLiftPluginModule::OnPostEngineInit()
 
 	if (ISettingsModule* SettingsModule = FModuleManager::GetModulePtr<ISettingsModule>("Settings"))
 	{
-		SettingsModule->RegisterSettings("Project", "Plugins", 
-			Settings::kSettingsSectionName,
-			Plugin::kGameLiftProductName, // display name
-			Settings::kSettingsSectionTooltip,
-			GetMutableDefault<UGameLiftSettings>());
+		SettingsModule->RegisterSettings("Project", "Plugins",
+		                                 Settings::kSettingsSectionName,
+		                                 Plugin::kGameLiftProductName, // display name
+		                                 Settings::kSettingsSectionTooltip,
+		                                 GetMutableDefault<UGameLiftSettings>());
 	}
 }
 
@@ -82,10 +83,11 @@ void FGameLiftPluginModule::RestoreAccount()
 	{
 		auto& Bootstrapper = IGameLiftCoreModule::Get().GetProfileBootstrap();
 		auto IsConfigured = Bootstrapper.ConfigureAccount(Settings->ProfileName.ToString(),
-			IGameLiftCoreModule::Get().MakeAWSConfigFileProfile(), Settings->S3Bucket.ToString());
+		                                                  IGameLiftCoreModule::Get().MakeAWSConfigFileProfile(),
+		                                                  Settings->S3Bucket.ToString());
 		if (!IsConfigured)
 		{
-			Settings->BootstrapStatus = int(EBootstrapMessageState::FailureMessage);
+			Settings->BootstrapStatus = static_cast<int>(EBootstrapMessageState::FailureMessage);
 		}
 	}
 }
@@ -99,7 +101,8 @@ void FGameLiftPluginModule::ResetDeploymentStatus()
 	{
 		auto& Deployer = IGameLiftCoreModule::Get().GetScenarioDeployer();
 		Deployer.StopDeployment(IGameLiftCoreModule::Get().GetProfileBootstrap().GetAccountInstance());
-		DeploySettings->Status = FText::FromString(EDeploymentMessageStateToString(EDeploymentMessageState::FailureMessage));
+		DeploySettings->Status = FText::FromString(
+			EDeploymentMessageStateToString(EDeploymentMessageState::FailureMessage));
 		DeploySettings->LatestError = Utils::BuildLastestErrorMessage(Deployer);
 		DeploySettings->SaveConfig();
 	}
@@ -123,7 +126,6 @@ void FGameLiftPluginModule::ShutdownModule()
 	{
 		SettingsModule->UnregisterSettings("Project", "Plugins", Settings::kSettingsSectionName);
 	}
-
 }
 
 void FGameLiftPluginModule::DeployManagedEC2ButtonClicked()
@@ -168,6 +170,7 @@ void FGameLiftPluginModule::RegisterMenuExtensions()
 		}), \
 		FCanExecuteAction())
 
+#pragma warning(disable:5103) //C5103: Pasting <token1> and <token2> does not result in a valid preprocessing token
 	MAP_ACTION(OpenSettings);
 	MAP_ACTION(DeployAnywhere);
 	MAP_ACTION(DeployManagedEC2);
@@ -177,7 +180,7 @@ void FGameLiftPluginModule::RegisterMenuExtensions()
 	MAP_HELP_URL_ACTION(ReportIssues);
 	MAP_HELP_URL_ACTION(OpenServiceAPIReference);
 	MAP_HELP_URL_ACTION(OpenServerSDKReference);
-
+#pragma warning(disable:5103) //C5103: Pasting <token1> and <token2> does not result in a valid preprocessing token
 #undef MAP_ACTION
 #undef MAP_HELP_ACTION
 }
@@ -197,16 +200,19 @@ void FGameLiftPluginModule::RegisterLevelEditorExtensions()
 	{
 		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu(kToolsMenu);
 		{
-			FToolMenuSection& Section = Menu->AddSection("AmazonSection", ContextMenu::kAmazonSectionText, FToolMenuInsert(NAME_None, EToolMenuInsertType::First));
+			FToolMenuSection& Section = Menu->AddSection("AmazonSection", ContextMenu::kAmazonSectionText,
+			                                             FToolMenuInsert(NAME_None, EToolMenuInsertType::First));
 			FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitSubMenu(
 				"GameLiftPlugin",
 				ContextMenu::kPluginMainMenuText,
 				ContextMenu::kPluginMainMenuTooltip,
-				FNewToolMenuDelegate::CreateStatic(&FGameLiftPluginModule::GenerateWindowMenu, PluginCommands.ToSharedRef()),
+				FNewToolMenuDelegate::CreateStatic(&FGameLiftPluginModule::GenerateWindowMenu,
+				                                   PluginCommands.ToSharedRef()),
 				false,
 				FSlateIcon(Style::kGameLiftPluginStyleName, Style::Brush::kGameLiftToolbarIconName)
 			));
-			FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>(TEXT("LevelEditor"));
+			FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>(
+				TEXT("LevelEditor"));
 			LevelEditorModule.GetGlobalLevelEditorActions()->Append(PluginCommands.ToSharedRef());
 		}
 	}
@@ -219,7 +225,8 @@ void FGameLiftPluginModule::RegisterLevelEditorExtensions()
 				FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitComboButton(
 					"GameLiftPluginAction",
 					FUIAction(),
-					FOnGetContent::CreateStatic(&FGameLiftPluginModule::GenerateToolBarMenu, PluginCommands.ToSharedRef()),
+					FOnGetContent::CreateStatic(&FGameLiftPluginModule::GenerateToolBarMenu,
+					                            PluginCommands.ToSharedRef()),
 					ContextMenu::kPluginMainMenuText,
 					ContextMenu::kPluginMainMenuTooltip,
 					FSlateIcon(Style::kGameLiftPluginStyleName, Style::Brush::kGameLiftToolbarIconName),
@@ -240,7 +247,8 @@ TSharedRef<SWidget> FGameLiftPluginModule::GenerateToolBarMenu(TSharedRef<FUICom
 {
 	// Get all menu extenders for this context menu from the level editor module
 	FLevelEditorModule& LevelEditorModule = FModuleManager::GetModuleChecked<FLevelEditorModule>(TEXT("LevelEditor"));
-	TSharedPtr<FExtender> MenuExtender = LevelEditorModule.AssembleExtenders(InCommandList, LevelEditorModule.GetAllLevelEditorToolbarViewMenuExtenders());
+	TSharedPtr<FExtender> MenuExtender = LevelEditorModule.AssembleExtenders(
+		InCommandList, LevelEditorModule.GetAllLevelEditorToolbarViewMenuExtenders());
 
 	FToolMenuContext MenuContext(InCommandList, MenuExtender);
 	UObject* obj = NewObject<UGameLiftToolbarMenuContext>();
@@ -260,7 +268,8 @@ void FGameLiftPluginModule::RegisterToolBarMenu()
 void FGameLiftPluginModule::GenerateMainMenu(UToolMenu* InMenu)
 {
 	{
-		FToolMenuSection& Section = InMenu->AddSection("GameLiftPlugin_Deployment", ContextMenu::kDeploymentSectionText);
+		FToolMenuSection& Section = InMenu->
+			AddSection("GameLiftPlugin_Deployment", ContextMenu::kDeploymentSectionText);
 		Section.AddMenuEntry(FGameLiftPluginCommands::Get().OpenSettings);
 		Section.AddMenuEntry(FGameLiftPluginCommands::Get().DeployAnywhere);
 		Section.AddMenuEntry(FGameLiftPluginCommands::Get().DeployManagedEC2);
@@ -269,16 +278,17 @@ void FGameLiftPluginModule::GenerateMainMenu(UToolMenu* InMenu)
 	{
 		FToolMenuSection& Section = InMenu->AddSection("GameLiftPlugin_Help", ContextMenu::kHelpSectionText);
 		Section.AddSubMenu("Help", ContextMenu::kHelpSubMenuText, ContextMenu::kHelpSubMenuTooltip,
-			FNewToolMenuDelegate::CreateStatic(&FGameLiftPluginModule::GenerateHelpMenu),
-			FUIAction(FExecuteAction(), FCanExecuteAction(), FIsActionChecked()),
-			EUserInterfaceActionType::Button);
+		                   FNewToolMenuDelegate::CreateStatic(&FGameLiftPluginModule::GenerateHelpMenu),
+		                   FUIAction(FExecuteAction(), FCanExecuteAction(), FIsActionChecked()),
+		                   EUserInterfaceActionType::Button);
 	}
 }
 
 void FGameLiftPluginModule::GenerateHelpMenu(UToolMenu* InMenu)
 {
 	{
-		FToolMenuSection& Section = InMenu->AddSection("GameLiftPlugin_HelpDocumentation", ContextMenu::kHelpDocumentationSectionText);
+		FToolMenuSection& Section = InMenu->AddSection("GameLiftPlugin_HelpDocumentation",
+		                                               ContextMenu::kHelpDocumentationSectionText);
 		Section.AddMenuEntry(FGameLiftPluginCommands::Get().OpenGameLiftDocumentation);
 		Section.AddMenuEntry(FGameLiftPluginCommands::Get().OpenAwsGameTechForum);
 		Section.AddMenuEntry(FGameLiftPluginCommands::Get().ReportIssues);
