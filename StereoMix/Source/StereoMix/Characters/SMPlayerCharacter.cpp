@@ -18,7 +18,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Player/SMPlayerController.h"
 #include "Player/SMPlayerState.h"
-#include "UI/SMCharacterStateWidget.h"
+#include "UI/SMUserWidget_CharacterState.h"
 #include "UI/SMWidgetComponent.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
@@ -155,7 +155,7 @@ void ASMPlayerCharacter::OnRep_PlayerState()
 
 	InitASC();
 
-	USMCharacterStateWidget* NewWidget = CreateWidget<USMCharacterStateWidget>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
+	USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
 	CharacterStateWidgetComponent->SetWidget(NewWidget);
 }
 
@@ -470,7 +470,7 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 
 		if (ASC.Get())
 		{
-			USMCharacterStateWidget* NewWidget = CreateWidget<USMCharacterStateWidget>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
+			USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
 			CharacterStateWidgetComponent->SetWidget(NewWidget);
 		}
 	}

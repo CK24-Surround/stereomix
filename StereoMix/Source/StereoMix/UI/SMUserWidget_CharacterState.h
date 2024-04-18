@@ -6,7 +6,7 @@
 #include "GameplayEffectTypes.h"
 #include "SMUserWidget.h"
 #include "Blueprint/UserWidget.h"
-#include "SMCharacterStateWidget.generated.h"
+#include "SMUserWidget_CharacterState.generated.h"
 
 class UProgressBar;
 class UTextBlock;
@@ -14,7 +14,7 @@ class UTextBlock;
  * 
  */
 UCLASS()
-class STEREOMIX_API USMCharacterStateWidget : public USMUserWidget
+class STEREOMIX_API USMUserWidget_CharacterState : public USMUserWidget
 {
 	GENERATED_BODY()
 
