@@ -53,9 +53,9 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
 	CharacterStateWidgetComponent = CreateDefaultSubobject<USMWidgetComponent>(TEXT("CharacterStateWidget"));
-	CharacterStateWidgetComponent->SetupAttachment(RootComponent);
+	CharacterStateWidgetComponent->SetupAttachment(GetMesh());
 	CharacterStateWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
-	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 200.0));
+	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 300.0));
 	CharacterStateWidgetComponent->SetDrawAtDesiredSize(true);
 
 	MaxWalkSpeed = 0.0f;
