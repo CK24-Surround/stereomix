@@ -5,6 +5,7 @@
 
 #include "EngineUtils.h"
 #include "Data/SMDesignData.h"
+#include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMLog.h"
@@ -47,6 +48,13 @@ void ASMGameState::PostInitializeComponents()
 		RoundTime = DesignData->RoundTime;
 		RemainRoundTime = RoundTime;
 	}
+}
+
+void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASMGameState, RemainRoundTime);
 }
 
 void ASMGameState::BeginPlay()
@@ -102,8 +110,18 @@ void ASMGameState::PrintScore()
 	NET_LOG(this, Log, TEXT("FutureBase팀 스코어: %d EDM팀 스코어: %d"), TeamScores[ESMTeam::FutureBass], TeamScores[ESMTeam::EDM]);
 }
 
+void ASMGameState::SetRemainRoundTime(int32 InRemainRoundTime)
+{
+	RemainRoundTime = InRemainRoundTime;
+	OnRep_RemainRoundTime();
+}
+
 void ASMGameState::PerformRoundTime()
 {
-	--RemainRoundTime;
+	SetRemainRoundTime(RemainRoundTime - 1);
+}
+
+void ASMGameState::OnRep_RemainRoundTime()
+{
 	(void)OnChangeRoundTime.ExecuteIfBound(RemainRoundTime);
 }

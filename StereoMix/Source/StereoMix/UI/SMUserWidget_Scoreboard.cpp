@@ -21,6 +21,8 @@ void USMUserWidget_Scoreboard::SetASC(UAbilitySystemComponent* InASC)
 
 void USMUserWidget_Scoreboard::OnChangeRoundTime(int32 RoundTime)
 {
-	NET_LOG(nullptr, Warning, TEXT("%d"), RoundTime);
-	Timer->SetText(FText::FromString(FString::FromInt(RoundTime)));
+	const int32 Minutes = RoundTime / 60;
+	const int32 Seconds =  RoundTime % 60;
+	const FString RoundTimerString = FString::Printf(TEXT("%02d:%02d"), Minutes, Seconds); 
+	Timer->SetText(FText::FromString(RoundTimerString));
 }

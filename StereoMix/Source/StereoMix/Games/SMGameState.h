@@ -23,6 +23,7 @@ public:
 
 public:
 	virtual void PostInitializeComponents() override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -55,14 +56,22 @@ protected:
 
 // ~Round Time Section
 public:
+	void SetRemainRoundTime(int32 InRemainRoundTime);
+	
+public:
 	FOnChangeRoundTime OnChangeRoundTime;
 
 protected:
 	void PerformRoundTime();
 
+	UFUNCTION()
+	void OnRep_RemainRoundTime();
+
 protected:
 	FTimerHandle RoundTimerHandle;
 	int32 RoundTime = 0.0f;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_RemainRoundTime")
 	int32 RemainRoundTime = 0.0f;
 // ~Round Time Section
 };
