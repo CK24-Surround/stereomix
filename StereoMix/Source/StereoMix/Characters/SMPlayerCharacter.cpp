@@ -155,8 +155,8 @@ void ASMPlayerCharacter::OnRep_PlayerState()
 
 	InitASC();
 
-	// TODO: 추후 게임 시작 시점에 이미 팀이 정해져 있는경우 여기서 플레이어 상태 위젯을 업데이트 하도록 해야합니다.
-	// 닉네임 세팅 때문입니다.
+	USMCharacterStateWidget* NewWidget = CreateWidget<USMCharacterStateWidget>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
+	CharacterStateWidgetComponent->SetWidget(NewWidget);
 }
 
 void ASMPlayerCharacter::InitCamera()
@@ -191,7 +191,7 @@ void ASMPlayerCharacter::SetupGASInputComponent()
 void ASMPlayerCharacter::InitASC()
 {
 	ASMPlayerState* StereoMixPlayerState = GetPlayerStateChecked<ASMPlayerState>();
-	ASC = StereoMixPlayerState->GetAbilitySystemComponent();
+	ASC = Cast<USMAbilitySystemComponent>(StereoMixPlayerState->GetAbilitySystemComponent());
 	if (!ASC.Get())
 	{
 		return;
@@ -463,9 +463,15 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 {
 	const ESMTeam Team = TeamComponent->GetTeam();
 
+	// 팀이 바뀔일은 없어야하지만 테스트 시에는 충분히 있는 상황으로 이에 대한 처리입니다.
 	if (!HasAuthority())
 	{
 		GetMesh()->SetMaterial(0, AssetData->CharacterMaterial[Team]);
-		CharacterStateWidgetComponent->SetWidgetClass(AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
+
+		if (ASC.Get())
+		{
+			USMCharacterStateWidget* NewWidget = CreateWidget<USMCharacterStateWidget>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
+			CharacterStateWidgetComponent->SetWidget(NewWidget);
+		}
 	}
 }

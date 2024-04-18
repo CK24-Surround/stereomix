@@ -113,7 +113,7 @@ protected:
 
 protected:
 	UPROPERTY()
-	TSoftObjectPtr<USMAbilitySystemComponent> ASC;
+	TWeakObjectPtr<USMAbilitySystemComponent> ASC;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GA")
 	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
@@ -176,7 +176,7 @@ public:
 	/** 캐릭터 상태 위젯의 가시성을 조절합니다. */
 	UFUNCTION(NetMulticast, Unreliable)
 	void SetCharacterStateVisibility(bool bEnable);
-	
+
 // ~Widget Section
 
 // ~State Section
