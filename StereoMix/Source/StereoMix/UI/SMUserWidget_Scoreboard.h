@@ -18,6 +18,9 @@ class STEREOMIX_API USMUserWidget_Scoreboard : public USMUserWidget
 protected:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
 
+protected:
+	void OnChangeRoundTime(int32 RoundTime);
+
 public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> Timer;

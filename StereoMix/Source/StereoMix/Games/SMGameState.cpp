@@ -105,5 +105,5 @@ void ASMGameState::PrintScore()
 void ASMGameState::PerformRoundTime()
 {
 	--RemainRoundTime;
-	NET_LOG(this, Log, TEXT("남은시간: %d"), RemainRoundTime);
+	(void)OnChangeRoundTime.ExecuteIfBound(RemainRoundTime);
 }

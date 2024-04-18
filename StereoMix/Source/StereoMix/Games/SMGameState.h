@@ -7,6 +7,8 @@
 #include "Utilities/SMTeam.h"
 #include "SMGameState.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnChangeRoundTime, int32 /*RoundTime*/);
+
 class USMDesignData;
 /**
  * 
@@ -51,11 +53,16 @@ protected:
 	int32 TotalTileCount = 0;
 // ~Score Section
 
+// ~Round Time Section
+public:
+	FOnChangeRoundTime OnChangeRoundTime;
+
 protected:
 	void PerformRoundTime();
-	
+
 protected:
 	FTimerHandle RoundTimerHandle;
 	int32 RoundTime = 0.0f;
 	int32 RemainRoundTime = 0.0f;
+// ~Round Time Section
 };
