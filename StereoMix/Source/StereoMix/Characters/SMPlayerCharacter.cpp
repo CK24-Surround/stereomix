@@ -9,6 +9,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Data/SMCharacterAssetData.h"
 #include "Data/SMControlData.h"
 #include "Data/SMDesignData.h"
@@ -48,6 +49,11 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	InitCamera();
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
+	
+	CharacterStateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("CharacterStateWidget"));
+	CharacterStateWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 200.0));
+	CharacterStateWidgetComponent->SetDrawAtDesiredSize(true);
 
 	MaxWalkSpeed = 0.0f;
 
@@ -449,5 +455,6 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 	if (!HasAuthority())
 	{
 		GetMesh()->SetMaterial(0, AssetData->CharacterMaterial[Team]);
+		CharacterStateWidgetComponent->SetWidgetClass(AssetData->CharacterStateWidget[Team]);
 	}
 }

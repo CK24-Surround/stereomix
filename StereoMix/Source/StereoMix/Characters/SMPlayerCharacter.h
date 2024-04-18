@@ -10,6 +10,7 @@
 #include "Utilities/SMTeam.h"
 #include "SMPlayerCharacter.generated.h"
 
+class UWidgetComponent;
 DECLARE_MULTICAST_DELEGATE(FOnLandedSignature);
 
 class USMTeamComponent;
@@ -79,6 +80,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Component|Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "UI|PlayerState")
+	TObjectPtr<UWidgetComponent> CharacterStateWidgetComponent;
 // ~Component Section
 
 // ~Data Section
