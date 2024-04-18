@@ -23,7 +23,7 @@ public:
 
 protected:
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> TB_Health;
+	TObjectPtr<UTextBlock> TB_Nickname;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> PB_Health;

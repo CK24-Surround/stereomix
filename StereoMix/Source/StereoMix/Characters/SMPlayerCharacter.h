@@ -227,4 +227,6 @@ protected:
 protected:
 	UFUNCTION()
 	void OnTeamChangeCallback();
+
+	void InitCharacterStateWidget();
 };

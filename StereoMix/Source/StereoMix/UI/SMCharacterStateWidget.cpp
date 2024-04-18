@@ -7,7 +7,10 @@
 
 void USMCharacterStateWidget::UpdateNickname(const FString& InNickname)
 {
-	TB_Health->SetText(FText::FromString(InNickname));
+	TB_Nickname->SetText(FText::FromString(InNickname));
 }
 
-void USMCharacterStateWidget::UpdateHealth(float CurrentHealth, float MaxHealth) {}
+void USMCharacterStateWidget::UpdateHealth(float CurrentHealth, float MaxHealth)
+{
+	
+}

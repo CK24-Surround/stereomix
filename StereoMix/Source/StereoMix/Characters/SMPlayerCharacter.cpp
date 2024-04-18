@@ -153,14 +153,6 @@ void ASMPlayerCharacter::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 
 	InitASC();
-
-	// TODO: 위젯 닉네임 업데이트
-	USMCharacterStateWidget* CharacterStateWidget = Cast<USMCharacterStateWidget>(CharacterStateWidgetComponent->GetWidget());
-	if (ensure(CharacterStateWidget))
-	{
-		APlayerState* CachedPlayerState = GetPlayerState();
-		CharacterStateWidget->UpdateNickname(CachedPlayerState->GetPlayerName());
-	}
 }
 
 void ASMPlayerCharacter::InitCamera()
@@ -466,5 +458,16 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 	{
 		GetMesh()->SetMaterial(0, AssetData->CharacterMaterial[Team]);
 		CharacterStateWidgetComponent->SetWidgetClass(AssetData->CharacterStateWidget[Team]);
+		InitCharacterStateWidget();
+	}
+}
+
+void ASMPlayerCharacter::InitCharacterStateWidget()
+{
+	USMCharacterStateWidget* CharacterStateWidget = Cast<USMCharacterStateWidget>(CharacterStateWidgetComponent->GetWidget());
+	if (CharacterStateWidget)
+	{
+		APlayerState* CachedPlayerState = GetPlayerState();
+		CharacterStateWidget->UpdateNickname(CachedPlayerState->GetPlayerName());
 	}
 }
