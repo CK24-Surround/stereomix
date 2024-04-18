@@ -6,9 +6,9 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "SMUserWidget.h"
 
-void USMWidgetComponent::InitWidget()
+void USMWidgetComponent::SetWidget(UUserWidget* InWidget)
 {
-	Super::InitWidget();
+	Super::SetWidget(InWidget);
 
 	USMUserWidget* SMUserWidget = Cast<USMUserWidget>(GetWidget());
 	if (ensure(SMUserWidget))

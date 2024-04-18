@@ -13,5 +13,5 @@ class STEREOMIX_API USMWidgetComponent : public UWidgetComponent
 	GENERATED_BODY()
 
 public:
-	virtual void InitWidget() override;
+	virtual void SetWidget(UUserWidget* Widget) override;
 };
