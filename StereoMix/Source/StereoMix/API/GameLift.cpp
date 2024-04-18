@@ -28,12 +28,11 @@ UGameLift::UGameLift()
 #else
 	ProcessParameters = nullptr;
 #endif
-
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
 // ReSharper disable once CppMemberFunctionMayBeStatic
-void UGameLift::InitGameLift()
+void UGameLift::InitSDK()
 {
 #if WITH_GAMELIFT
 	if (bInitialized)
@@ -45,7 +44,7 @@ void UGameLift::InitGameLift()
 	UE_LOG(LogGameLift, Log, TEXT("Calling InitGameLift..."));
 
 	// Getting the module first.
-	FGameLiftServerSDKModule* GameLiftSdkModule = GetModule();
+	FGameLiftServerSDKModule* GameLiftSdkModule = GetSDK();
 
 	//Define the server parameters for a GameLift Anywhere fleet. These are not needed for a GameLift managed EC2 fleet.
 	FServerParameters ServerParametersForAnywhere;
@@ -135,20 +134,20 @@ void UGameLift::InitGameLift()
 	//Here is where a game server should take action based on the game session object.
 	//Once the game server is ready to receive incoming player connections, it should invoke GameLiftServerAPI.ActivateGameSession()
 	ProcessParameters->OnStartGameSession.BindLambda([=](const Aws::GameLift::Server::Model::GameSession& InGameSession)
-		{
-			const FString GameSessionId = FString(InGameSession.GetGameSessionId());
-			UE_LOG(LogGameLift, Log, TEXT("GameSession Initializing: %s"), *GameSessionId);
-			GameLiftSdkModule->ActivateGameSession();
-		});
+	{
+		const FString GameSessionId = FString(InGameSession.GetGameSessionId());
+		UE_LOG(LogGameLift, Log, TEXT("GameSession Initializing: %s"), *GameSessionId);
+		GameLiftSdkModule->ActivateGameSession();
+	});
 
 	//OnProcessTerminate callback. GameLift will invoke this callback before shutting down an instance hosting this game server.
 	//It gives this game server a chance to save its state, communicate with services, etc., before being shut down.
 	//In this case, we simply tell GameLift we are indeed going to shut down.
 	ProcessParameters->OnTerminate.BindLambda([=]()
-		{
-			UE_LOG(LogGameLift, Log, TEXT("Game Server Process is terminating"));
-			GameLiftSdkModule->ProcessEnding();
-		});
+	{
+		UE_LOG(LogGameLift, Log, TEXT("Game Server Process is terminating"));
+		GameLiftSdkModule->ProcessEnding();
+	});
 
 	//This is the HealthCheck callback.
 	//GameLift will invoke this callback every 60 seconds or so.
@@ -157,10 +156,10 @@ void UGameLift::InitGameLift()
 	//The game server has 60 seconds to respond with its health status. GameLift will default to 'false' if the game server doesn't respond in time.
 	//In this case, we're always healthy!
 	ProcessParameters->OnHealthCheck.BindLambda([]()
-		{
-			UE_LOG(LogGameLift, Log, TEXT("Performing Health Check"));
-			return true;
-		});
+	{
+		UE_LOG(LogGameLift, Log, TEXT("Performing Health Check"));
+		return true;
+	});
 
 	//GameServer.exe -port=7777 LOG=server.mylog
 	ProcessParameters->port = FURL::UrlConfig.DefaultPort;

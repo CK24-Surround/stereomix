@@ -30,10 +30,10 @@ public:
 
 	UGameLift();
 	FORCEINLINE bool IsInitialized() const { return bInitialized; }
-	FORCEINLINE FGameLiftServerSDKModule* GetModule() const { return SdkModule; }
+	FORCEINLINE FGameLiftServerSDKModule* GetSDK() const { return SdkModule; }
 
 	/**
 	 * Initialize GameLift
 	 */
-	void InitGameLift();
+	void InitSDK();
 };

@@ -3,6 +3,7 @@
 
 #include "SMGameMode.h"
 
+#include "SMGameSession.h"
 #include "API/GameLift.h"
 #include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
@@ -13,9 +14,11 @@
 #include "GameLiftServerSDK.h"
 #endif
 
+
 ASMGameMode::ASMGameMode()
 {
 	bUseSeamlessTravel = true;
+	GameSession = CreateDefaultSubobject<ASMGameSession>("SMGameSession");
 }
 
 void ASMGameMode::PostInitializeComponents()
@@ -30,18 +33,25 @@ void ASMGameMode::BeginPlay()
 	Super::BeginPlay();
 
 #if WITH_GAMELIFT
-	UE_LOG(LogStereoMixGameMode, Log, TEXT("Initializing GameLift..."));
-	GetGameInstance()->GetSubsystem<UGameLift>()->InitGameLift();
+	UE_LOG(LogSMGameMode, Log, TEXT("Initializing GameLift..."));
+
+	UGameLift* GameLiftModule = GetGameInstance()->GetSubsystem<UGameLift>();
+	FGameLiftServerSDKModule* GameLiftSDK = GameLiftModule->GetSDK();
+	GameLiftModule->InitSDK();
 #endif
 }
 
 void ASMGameMode::OnMatchStateSet()
 {
 	Super::OnMatchStateSet();
+}
 
-	if (MatchState == MatchState::WaitingToStart)
-	{
-	}
+APlayerController* ASMGameMode::Login(
+	UPlayer* NewPlayer, ENetRole InRemoteRole, const FString& Portal,
+	const FString& Options, const FUniqueNetIdRepl& UniqueId, FString& ErrorMessage)
+{
+	UE_LOG(LogSMGameMode, Log, TEXT("Login: %s"), *Options);
+	return Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
 }
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
