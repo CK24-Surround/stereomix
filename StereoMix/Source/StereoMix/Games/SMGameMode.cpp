@@ -53,7 +53,7 @@ void ASMGameMode::BindToGameState()
 
 void ASMGameMode::OnEndRoundTimer()
 {
-	SetMatchState(MatchState::WaitingPostMatch);
+	EndMatch();
 }
 
 void ASMGameMode::OnEndVictoryDefeatTimer()
