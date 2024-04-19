@@ -24,7 +24,7 @@ void USMUserWidget_VictoryDefeat::SetASC(UAbilitySystemComponent* InASC)
 void USMUserWidget_VictoryDefeat::BindToGameState()
 {
 	ASMGameState* SMGameState = GetWorld()->GetGameState<ASMGameState>();
-	if (ensure(SMGameState))
+	if (SMGameState)
 	{
 		SMGameState->OnEndRound.AddUObject(this, &USMUserWidget_VictoryDefeat::OnEndRound);
 	}
