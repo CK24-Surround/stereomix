@@ -16,7 +16,7 @@ class STEREOMIX_API USMDesignData : public UDataAsset
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "Game|RoundTime", DisplayName = "라운드 당 시간")
-	int32 RoundTime = 180;
+	int32 RoundTime = 240;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Game|RoundTime", DisplayName = "승패 확인 시간")
 	int32 VictoryDefeatTime = 15;
