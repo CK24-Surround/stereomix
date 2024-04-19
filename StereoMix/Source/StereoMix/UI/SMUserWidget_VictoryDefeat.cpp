@@ -4,6 +4,7 @@
 #include "SMUserWidget_VictoryDefeat.h"
 
 #include "AbilitySystemComponent.h"
+#include "Components/Image.h"
 #include "Components/SMTeamComponent.h"
 #include "Games/SMGameState.h"
 #include "Interfaces/SMTeamComponentInterface.h"
@@ -41,7 +42,7 @@ void USMUserWidget_VictoryDefeat::OnEndRound(ESMTeam VictoryTeam)
 		ShowDraw();
 		return;
 	}
-	
+
 	ISMTeamComponentInterface* SourceTeamComponentInterface = Cast<ISMTeamComponentInterface>(ASC->GetAvatarActor());
 	if (!ensure(SourceTeamComponentInterface))
 	{
@@ -55,7 +56,7 @@ void USMUserWidget_VictoryDefeat::OnEndRound(ESMTeam VictoryTeam)
 	}
 
 	const ESMTeam SourceTeam = SourceTeamComponent->GetTeam();
-	
+
 	if (SourceTeam == VictoryTeam)
 	{
 		ShowVictory();
@@ -68,13 +69,15 @@ void USMUserWidget_VictoryDefeat::OnEndRound(ESMTeam VictoryTeam)
 
 void USMUserWidget_VictoryDefeat::ShowVictory()
 {
-	NET_LOG(ASC->GetAvatarActor(), Warning, TEXT("승리"));
+	Victory->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
+
 void USMUserWidget_VictoryDefeat::ShowDefeat()
 {
-	NET_LOG(ASC->GetAvatarActor(), Warning, TEXT("패배"));
+	Defeat->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
+
 void USMUserWidget_VictoryDefeat::ShowDraw()
 {
-	NET_LOG(ASC->GetAvatarActor(), Warning, TEXT("무승부"));
+	Draw->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
