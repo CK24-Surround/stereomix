@@ -18,6 +18,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category = "Game|RoundTime", DisplayName = "라운드 당 시간")
 	int32 RoundTime = 180;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Game|RoundTime", DisplayName = "승패 확인 시간")
+	int32 VictoryDefeatTime = 15;
+
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerCharacter|Movement", DisplayName = "이동속도")
 	float MoveSpeed = 700.0f;

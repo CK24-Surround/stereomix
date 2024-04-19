@@ -49,6 +49,7 @@ void ASMGameState::PostInitializeComponents()
 		NET_LOG(this, Warning, TEXT("현재 타일 개수: %d"), TotalTileCount);
 
 		RoundTime = DesignData->RoundTime;
+		VictoryDefeatTime = DesignData->VictoryDefeatTime;
 		RemainRoundTime = RoundTime;
 	}
 }
@@ -146,6 +147,21 @@ void ASMGameState::SetRemainRoundTime(int32 InRemainRoundTime)
 
 void ASMGameState::PerformRoundTime()
 {
+	// 라운드 타이머 종료 시
+	if (!bIsRoundEnd && RemainRoundTime <= 0)
+	{
+		bIsRoundEnd = true;
+		SetRemainRoundTime(VictoryDefeatTime);
+		(void)OnEndRoundTimer.ExecuteIfBound();
+	}
+
+	// 승패 확인 타이머 종료 시
+	if (bIsRoundEnd && RemainRoundTime <= 0)
+	{
+		(void)OnEndVictoryDefeatTimer.ExecuteIfBound();
+		return;
+	}
+
 	SetRemainRoundTime(RemainRoundTime - 1);
 }
 

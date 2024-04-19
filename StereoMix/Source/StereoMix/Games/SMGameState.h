@@ -7,8 +7,9 @@
 #include "Utilities/SMTeam.h"
 #include "SMGameState.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnChangeRoundTime, int32 /*RoundTime*/);
-DECLARE_DELEGATE_OneParam(FOnChangeTeamScore, int32 /*TeamScore*/);
+DECLARE_DELEGATE_OneParam(FOnChangeRoundTimeSignature, int32 /*RoundTime*/);
+DECLARE_DELEGATE_OneParam(FOnChangeTeamScoreSignature, int32 /*TeamScore*/);
+DECLARE_DELEGATE(FOnEndTimerSignature);
 
 class USMDesignData;
 /**
@@ -40,8 +41,8 @@ public:
 	FORCEINLINE int32 GetReplicatedEDMTeamScore() const { return ReplicatedEDMTeamScore; }
 	FORCEINLINE int32 GetReplicatedFutureBaseTeamScore() const { return ReplicatedFutureBaseTeamScore; }
 
-	FOnChangeTeamScore OnChangeEDMTeamScore;
-	FOnChangeTeamScore OnChangeFutureBaseTeamScore;
+	FOnChangeTeamScoreSignature OnChangeEDMTeamScore;
+	FOnChangeTeamScoreSignature OnChangeFutureBaseTeamScore;
 
 protected:
 	void OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam);
@@ -81,7 +82,12 @@ public:
 	void SetRemainRoundTime(int32 InRemainRoundTime);
 
 public:
-	FOnChangeRoundTime OnChangeRoundTime;
+	FOnEndTimerSignature OnEndRoundTimer;
+	// TODO: 나중에 레벨 내 승패 결과 장소로 이동하는 기능이 생기면 없앨 예정입니다.
+	FOnEndTimerSignature OnEndVictoryDefeatTimer;
+
+public:
+	FOnChangeRoundTimeSignature OnChangeRoundTime;
 
 protected:
 	void PerformRoundTime();
@@ -91,9 +97,13 @@ protected:
 
 protected:
 	FTimerHandle RoundTimerHandle;
-	int32 RoundTime = 0.0f;
+	int32 RoundTime = 0;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_RemainRoundTime")
-	int32 RemainRoundTime = 0.0f;
+	int32 RemainRoundTime = 0;
+
+	int32 VictoryDefeatTime = 0;
+
+	uint32 bIsRoundEnd = false;
 // ~Round Time Section
 };
