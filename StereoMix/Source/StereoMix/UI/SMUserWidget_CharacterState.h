@@ -20,6 +20,9 @@ class STEREOMIX_API USMUserWidget_CharacterState : public USMUserWidget
 
 public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
+
+protected:
+	void BindToPlayerState();
 	
 	void UpdateNickname(const FString& InNickname);
 

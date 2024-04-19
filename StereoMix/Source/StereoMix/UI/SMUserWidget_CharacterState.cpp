@@ -13,13 +13,15 @@ void USMUserWidget_CharacterState::SetASC(UAbilitySystemComponent* InASC)
 {
 	Super::SetASC(InASC);
 
-	APlayerState* PlayerState = Cast<APlayerState>(InASC->GetOwnerActor());
-	if (ensure(PlayerState))
+	if (!ensure(InASC))
 	{
-		UpdateNickname(PlayerState->GetPlayerName());
+		return;
 	}
 
+	BindToPlayerState();
+
 	InASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetPostureGaugeAttribute()).AddUObject(this, &USMUserWidget_CharacterState::OnChangeCurrentHealth);
+	
 	InASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetMaxPostureGaugeAttribute()).AddUObject(this, &USMUserWidget_CharacterState::OnChangeMaxHealth);
 
 	const USMCharacterAttributeSet* SourceAttributeSet = InASC->GetSet<USMCharacterAttributeSet>();
@@ -28,6 +30,20 @@ void USMUserWidget_CharacterState::SetASC(UAbilitySystemComponent* InASC)
 		CurrentHealth = SourceAttributeSet->GetPostureGauge();
 		MaxHealth = SourceAttributeSet->GetMaxPostureGauge();
 		UpdateHealth();
+	}
+}
+
+void USMUserWidget_CharacterState::BindToPlayerState()
+{
+	APlayerState* PlayerState = Cast<APlayerState>(ASC->GetOwnerActor());
+	if (ensure(PlayerState))
+	{
+		UpdateNickname(PlayerState->GetPlayerName());
+	}
+	else
+	{
+		// 만약 플레이어 스테이트가 유효하지 않다면 다음 틱으로 바인드를 미룹니다.
+		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &USMUserWidget_CharacterState::BindToPlayerState);
 	}
 }
 
