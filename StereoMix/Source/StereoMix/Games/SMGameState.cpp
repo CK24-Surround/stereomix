@@ -153,6 +153,7 @@ void ASMGameState::PerformRoundTime()
 		bIsRoundEnd = true;
 		SetRemainRoundTime(VictoryDefeatTime);
 		(void)OnEndRoundTimer.ExecuteIfBound();
+		return;
 	}
 
 	// 승패 확인 타이머 종료 시
