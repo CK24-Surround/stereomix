@@ -19,6 +19,11 @@ public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
 
 protected:
+	void BindToGameState();
+
+	void OnEndRound();
+
+protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Victory;
 
