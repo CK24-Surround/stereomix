@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameStateBase.h"
+#include "GameFramework/GameState.h"
 #include "Utilities/SMTeam.h"
 #include "SMGameState.generated.h"
 
@@ -16,7 +16,7 @@ class USMDesignData;
  * 
  */
 UCLASS()
-class STEREOMIX_API ASMGameState : public AGameStateBase
+class STEREOMIX_API ASMGameState : public AGameState
 {
 	GENERATED_BODY()
 

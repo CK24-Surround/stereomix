@@ -3,8 +3,10 @@
 
 #include "SMGameMode.h"
 
+#include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Utilities/SMLog.h"
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
 {
@@ -19,4 +21,31 @@ FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const
 	ChangeName(NewPlayerController, InNickname, false);
 
 	return ErrorMessage;
+}
+
+void ASMGameMode::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	BindToGameState();
+}
+
+void ASMGameMode::BindToGameState()
+{
+	ASMGameState* SMGameState = GetGameState<ASMGameState>();
+	if (ensure(SMGameState))
+	{
+		SMGameState->OnEndRoundTimer.BindUObject(this, &ASMGameMode::OnEndRoundTimer);
+		SMGameState->OnEndVictoryDefeatTimer.BindUObject(this, &ASMGameMode::OnEndVictoryDefeatTimer);
+	}
+}
+
+void ASMGameMode::OnEndRoundTimer()
+{
+	SetMatchState(MatchState::WaitingPostMatch);
+}
+
+void ASMGameMode::OnEndVictoryDefeatTimer()
+{
+	// TODO: 로드된 맵을 종료하고 새로운 맵 로드
 }
