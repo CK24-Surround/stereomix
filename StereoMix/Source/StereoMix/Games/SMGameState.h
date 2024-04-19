@@ -119,4 +119,10 @@ protected:
 public:
 	FOnEndRoundSignature OnEndRound;
 // ~VictoryDefeat Section
+
+// ~Restart Section
+public:
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCToTile();
+// ~Restart Section
 };

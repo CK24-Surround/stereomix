@@ -6,7 +6,6 @@
 #include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
-#include "Utilities/SMLog.h"
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
 {
@@ -59,4 +58,17 @@ void ASMGameMode::OnEndRoundTimer()
 void ASMGameMode::OnEndVictoryDefeatTimer()
 {
 	// TODO: 로드된 맵을 종료하고 새로운 맵 로드
+	ASMGameState* SMGameState = GetGameState<ASMGameState>();
+	if (ensure(SMGameState))
+	{
+		SMGameState->MulticastRPCToTile();
+	}
+
+	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ASMGameMode::ServerTravel);
+}
+
+void ASMGameMode::ServerTravel()
+{
+	FString CurrentLevelPath = TEXT("/Game/StereoMix/Levels/Main/L_Main");
+	GetWorld()->ServerTravel(CurrentLevelPath);
 }

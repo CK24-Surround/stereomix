@@ -30,4 +30,6 @@ protected:
 	void OnEndRoundTimer();
 
 	void OnEndVictoryDefeatTimer();
+
+	void ServerTravel();
 };
