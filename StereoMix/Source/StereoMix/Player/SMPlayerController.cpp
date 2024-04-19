@@ -8,6 +8,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Data/SMControlData.h"
 #include "UI/SMUserWidget_HUD.h"
+#include "UI/SMUserWidget_VictoryDefeat.h"
 #include "Utilities/SMAssetPath.h"
 
 ASMPlayerController::ASMPlayerController()
@@ -38,10 +39,16 @@ void ASMPlayerController::OnRep_PlayerState()
 
 	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, Cast<UClass>(HUDWidgetClass));
 	HUDWidget->AddToViewport(0);
+
+	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, Cast<UClass>(VictoryDefeatWidgetClass));
+	VictoryDefeatWidget->AddToViewport(1);
+
 	ASMPlayerState* SMPlayerState = GetPlayerState<ASMPlayerState>();
 	if (ensure(SMPlayerState))
 	{
-		HUDWidget->SetASC(SMPlayerState->GetAbilitySystemComponent());
+		UAbilitySystemComponent* SourceASC = SMPlayerState->GetAbilitySystemComponent();
+		HUDWidget->SetASC(SourceASC);
+		VictoryDefeatWidget->SetASC(SourceASC);
 	}
 }
 
