@@ -8,6 +8,7 @@
 #include "SMGameState.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnChangeRoundTime, int32 /*RoundTime*/);
+DECLARE_DELEGATE_OneParam(FOnChangeTeamScore, int32 /*RoundTime*/);
 
 class USMDesignData;
 /**
@@ -34,8 +35,10 @@ protected:
 
 // ~Score Section
 public:
-	FORCEINLINE int32 GetFutureBaseTeamScore() { return TeamScores[ESMTeam::FutureBass]; }
-	FORCEINLINE int32 GetEDMTeamScore() { return TeamScores[ESMTeam::EDM]; }
+	void SetTeamScores(ESMTeam InTeam, int32 InScore);
+
+	FOnChangeTeamScore OnChangeEDMTeamScore;
+	FOnChangeTeamScore OnChangeFutureBaseTeamScore;
 
 protected:
 	void OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam);
@@ -44,6 +47,12 @@ protected:
 
 	void SwapScore(ESMTeam PreviousTeam, ESMTeam NewTeam);
 
+	UFUNCTION()
+	void OnRep_ReplicatedEDMTeamScore();
+
+	UFUNCTION()
+	void OnRep_ReplicatedFutureBaseTeamScore();
+
 	// 점수를 출력하는 임시 코드입니다.
 	void PrintScore();
 
@@ -51,13 +60,21 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
 	TMap<ESMTeam, int32> TeamScores;
 
+	/** TMap은 리플리케이트 되지 않기 때문에 사용됩니다. */
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedEDMTeamScore")
+	int32 ReplicatedEDMTeamScore;
+
+	/** TMap은 리플리케이트 되지 않기 때문에 사용됩니다. */
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedFutureBaseTeamScore")
+	int32 ReplicatedFutureBaseTeamScore;
+
 	int32 TotalTileCount = 0;
 // ~Score Section
 
 // ~Round Time Section
 public:
 	void SetRemainRoundTime(int32 InRemainRoundTime);
-	
+
 public:
 	FOnChangeRoundTime OnChangeRoundTime;
 

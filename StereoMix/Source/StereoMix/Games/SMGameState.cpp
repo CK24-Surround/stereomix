@@ -24,6 +24,9 @@ ASMGameState::ASMGameState()
 
 	TeamScores.Add(ESMTeam::FutureBass, 0);
 	TeamScores.Add(ESMTeam::EDM, 0);
+
+	ReplicatedEDMTeamScore = 0;
+	ReplicatedFutureBaseTeamScore = 0;
 }
 
 void ASMGameState::PostInitializeComponents()
@@ -55,6 +58,7 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASMGameState, RemainRoundTime);
+	DOREPLIFETIME(ASMGameState, TeamScores);
 }
 
 void ASMGameState::BeginPlay()
@@ -66,6 +70,20 @@ void ASMGameState::BeginPlay()
 		const float OneSecond = GetWorldSettings()->GetEffectiveTimeDilation();
 		GetWorld()->GetTimerManager().SetTimer(RoundTimerHandle, this, &ASMGameState::PerformRoundTime, OneSecond, true);
 	}
+}
+
+void ASMGameState::SetTeamScores(ESMTeam InTeam, int32 InScore)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	TeamScores[InTeam] = InScore;
+
+	// 클라이언트에서 점수 정보를 받을 수 있도록 리플리케이션 되는 변수에 할당합니다.
+	ReplicatedEDMTeamScore = TeamScores[ESMTeam::EDM];
+	ReplicatedFutureBaseTeamScore = TeamScores[ESMTeam::FutureBass];
 }
 
 void ASMGameState::OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam)
@@ -96,13 +114,23 @@ void ASMGameState::OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam)
 
 void ASMGameState::AddTeamScore(ESMTeam InTeam)
 {
-	++TeamScores[InTeam];
+	SetTeamScores(InTeam, TeamScores[InTeam] + 1);
 }
 
 void ASMGameState::SwapScore(ESMTeam PreviousTeam, ESMTeam NewTeam)
 {
-	--TeamScores[PreviousTeam];
-	++TeamScores[NewTeam];
+	SetTeamScores(PreviousTeam, TeamScores[PreviousTeam] - 1);
+	SetTeamScores(NewTeam, TeamScores[NewTeam] + 1);
+}
+
+void ASMGameState::OnRep_ReplicatedEDMTeamScore()
+{
+	(void)OnChangeEDMTeamScore.ExecuteIfBound(ReplicatedEDMTeamScore);
+}
+
+void ASMGameState::OnRep_ReplicatedFutureBaseTeamScore()
+{
+	(void)OnChangeFutureBaseTeamScore.ExecuteIfBound(ReplicatedFutureBaseTeamScore);
 }
 
 void ASMGameState::PrintScore()
@@ -113,7 +141,6 @@ void ASMGameState::PrintScore()
 void ASMGameState::SetRemainRoundTime(int32 InRemainRoundTime)
 {
 	RemainRoundTime = InRemainRoundTime;
-	OnRep_RemainRoundTime();
 }
 
 void ASMGameState::PerformRoundTime()
