@@ -8,7 +8,7 @@
 #include "SMGameState.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnChangeRoundTime, int32 /*RoundTime*/);
-DECLARE_DELEGATE_OneParam(FOnChangeTeamScore, int32 /*RoundTime*/);
+DECLARE_DELEGATE_OneParam(FOnChangeTeamScore, int32 /*TeamScore*/);
 
 class USMDesignData;
 /**
