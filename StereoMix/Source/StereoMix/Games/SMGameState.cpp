@@ -173,10 +173,17 @@ void ASMGameState::OnRep_RemainRoundTime()
 
 void ASMGameState::EndRound()
 {
-	MulticastRPCEndRound();
+	// 무승부면 None팀이 승리 팀으로 전달됩니다.
+	ESMTeam VictoryTeam = ESMTeam::None;
+	if (TeamScores[ESMTeam::EDM] != TeamScores[ESMTeam::FutureBass])
+	{
+		VictoryTeam = TeamScores[ESMTeam::EDM] > TeamScores[ESMTeam::FutureBass] ? ESMTeam::EDM : ESMTeam::FutureBass;
+	}
+
+	MulticastRPCEndRound(VictoryTeam);
 }
 
-void ASMGameState::MulticastRPCEndRound_Implementation()
+void ASMGameState::MulticastRPCEndRound_Implementation(ESMTeam VictoryTeam)
 {
-	(void)OnEndRound.ExecuteIfBound();
+	OnEndRound.Broadcast(VictoryTeam);
 }

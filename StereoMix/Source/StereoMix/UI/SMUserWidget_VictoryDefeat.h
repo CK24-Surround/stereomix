@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
+#include "Utilities/SMTeam.h"
 #include "SMUserWidget_VictoryDefeat.generated.h"
 
 class UImage;
@@ -21,7 +22,13 @@ public:
 protected:
 	void BindToGameState();
 
-	void OnEndRound();
+	void OnEndRound(ESMTeam VictoryTeam);
+
+	void ShowVictory();
+
+	void ShowDefeat();
+
+	void ShowDraw();
 
 protected:
 	UPROPERTY(meta = (BindWidget))

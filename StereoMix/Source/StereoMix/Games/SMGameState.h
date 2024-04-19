@@ -10,7 +10,7 @@
 DECLARE_DELEGATE_OneParam(FOnChangeRoundTimeSignature, int32 /*RoundTime*/);
 DECLARE_DELEGATE_OneParam(FOnChangeTeamScoreSignature, int32 /*TeamScore*/);
 DECLARE_DELEGATE(FOnEndTimerSignature);
-DECLARE_DELEGATE(FOnEndRoundSignature);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnEndRoundSignature, ESMTeam /*VictoryTeam*/);
 
 class USMDesignData;
 /**
@@ -114,7 +114,7 @@ public:
 
 protected:
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCEndRound();
+	void MulticastRPCEndRound(ESMTeam VictoryTeam);
 
 public:
 	FOnEndRoundSignature OnEndRound;
