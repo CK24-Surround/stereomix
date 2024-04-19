@@ -37,6 +37,9 @@ protected:
 public:
 	void SetTeamScores(ESMTeam InTeam, int32 InScore);
 
+	FORCEINLINE int32 GetReplicatedEDMTeamScore() const { return ReplicatedEDMTeamScore; }
+	FORCEINLINE int32 GetReplicatedFutureBaseTeamScore() const { return ReplicatedFutureBaseTeamScore; }
+
 	FOnChangeTeamScore OnChangeEDMTeamScore;
 	FOnChangeTeamScore OnChangeFutureBaseTeamScore;
 
@@ -73,6 +76,8 @@ protected:
 
 // ~Round Time Section
 public:
+	FORCEINLINE int32 GetRemainRoundTime() const { return RemainRoundTime; }
+
 	void SetRemainRoundTime(int32 InRemainRoundTime);
 
 public:

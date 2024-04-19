@@ -17,8 +17,13 @@ void USMUserWidget_Scoreboard::SetASC(UAbilitySystemComponent* InASC)
 	if (SMGameState)
 	{
 		SMGameState->OnChangeRoundTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeRoundTime);
+		OnChangeRoundTime(SMGameState->GetRemainRoundTime());
+		
 		SMGameState->OnChangeEDMTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMScore);
+		OnChangeEDMScore(SMGameState->GetReplicatedEDMTeamScore());
+		
 		SMGameState->OnChangeFutureBaseTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBaseScore);
+		OnChangeFutureBaseScore(SMGameState->GetReplicatedFutureBaseTeamScore());
 	}
 }
 
