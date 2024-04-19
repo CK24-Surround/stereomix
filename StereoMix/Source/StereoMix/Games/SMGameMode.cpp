@@ -30,6 +30,17 @@ void ASMGameMode::PostInitializeComponents()
 	BindToGameState();
 }
 
+void ASMGameMode::EndMatch()
+{
+	ASMGameState* SMGameState = GetGameState<ASMGameState>();
+	if (ensure(SMGameState))
+	{
+		SMGameState->EndRound();
+	}
+
+	Super::EndMatch();
+}
+
 void ASMGameMode::BindToGameState()
 {
 	ASMGameState* SMGameState = GetGameState<ASMGameState>();

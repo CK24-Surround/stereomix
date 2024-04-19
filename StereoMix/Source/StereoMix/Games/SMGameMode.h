@@ -22,6 +22,9 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 protected:
+	virtual void EndMatch() override;
+
+protected:
 	void BindToGameState();
 
 	void OnEndRoundTimer();

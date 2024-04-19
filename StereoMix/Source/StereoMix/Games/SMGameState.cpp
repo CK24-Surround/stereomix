@@ -170,3 +170,13 @@ void ASMGameState::OnRep_RemainRoundTime()
 {
 	(void)OnChangeRoundTime.ExecuteIfBound(RemainRoundTime);
 }
+
+void ASMGameState::EndRound()
+{
+	MulticastRPCEndRound();
+}
+
+void ASMGameState::MulticastRPCEndRound_Implementation()
+{
+	(void)OnEndRound.ExecuteIfBound();
+}
