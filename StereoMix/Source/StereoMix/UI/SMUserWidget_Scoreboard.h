@@ -21,10 +21,14 @@ public:
 protected:
 	void OnChangeRoundTime(int32 RoundTime);
 
+	void OnChangeEDMScore(int32 Score);
+
+	void OnChangeFutureBaseScore(int32 Score);
+
 public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> RoundTimer;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> EDMScore;
 

@@ -58,7 +58,8 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASMGameState, RemainRoundTime);
-	DOREPLIFETIME(ASMGameState, TeamScores);
+	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamScore);
+	DOREPLIFETIME(ASMGameState, ReplicatedFutureBaseTeamScore);
 }
 
 void ASMGameState::BeginPlay()

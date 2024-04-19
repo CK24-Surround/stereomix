@@ -25,6 +25,7 @@ protected:
 protected:
 	virtual void OnRep_PlayerState() override;
 
+
 protected:
 	void InitControl();
 
