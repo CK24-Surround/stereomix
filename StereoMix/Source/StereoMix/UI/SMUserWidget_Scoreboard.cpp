@@ -6,24 +6,37 @@
 #include "AbilitySystemComponent.h"
 #include "Components/TextBlock.h"
 #include "Games/SMGameState.h"
-#include "Utilities/SMLog.h"
 
 void USMUserWidget_Scoreboard::SetASC(UAbilitySystemComponent* InASC)
 {
 	Super::SetASC(InASC);
 
-	ASMGameState* SMGameState = InASC->GetWorld()->GetGameState<ASMGameState>();
-	NET_LOG(InASC->GetAvatarActor(), Warning, TEXT("게임 스테이트: %p"), SMGameState);
+	if (!ensure(ASC.Get()))
+	{
+		return;
+	}
+
+	BindToGameState();
+}
+
+void USMUserWidget_Scoreboard::BindToGameState()
+{
+	ASMGameState* SMGameState = ASC->GetWorld()->GetGameState<ASMGameState>();
 	if (SMGameState)
 	{
 		SMGameState->OnChangeRoundTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeRoundTime);
 		OnChangeRoundTime(SMGameState->GetRemainRoundTime());
-		
+
 		SMGameState->OnChangeEDMTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMScore);
 		OnChangeEDMScore(SMGameState->GetReplicatedEDMTeamScore());
-		
+
 		SMGameState->OnChangeFutureBaseTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBaseScore);
 		OnChangeFutureBaseScore(SMGameState->GetReplicatedFutureBaseTeamScore());
+	}
+	else
+	{
+		// 만약 게임스테이트가 유효하지 않다면 바인드 시점을 다음 틱으로 미룹니다. 이는 성공적으로 바인드 될때까지 계속 수행됩니다.
+		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &USMUserWidget_Scoreboard::BindToGameState);
 	}
 }
 

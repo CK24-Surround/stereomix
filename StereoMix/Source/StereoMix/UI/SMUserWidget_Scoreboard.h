@@ -19,6 +19,8 @@ public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
 
 protected:
+	void BindToGameState();
+	
 	void OnChangeRoundTime(int32 RoundTime);
 
 	void OnChangeEDMScore(int32 Score);
