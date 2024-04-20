@@ -58,9 +58,6 @@ protected:
 	UFUNCTION()
 	void OnRep_ReplicatedFutureBaseTeamScore();
 
-	// 점수를 출력하는 임시 코드입니다.
-	void PrintScore();
-
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
 	TMap<ESMTeam, int32> TeamScores;

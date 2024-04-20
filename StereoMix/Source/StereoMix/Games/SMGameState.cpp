@@ -111,8 +111,6 @@ void ASMGameState::OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam)
 	{
 		SwapScore(PreviousTeam, NewTeam);
 	}
-
-	PrintScore();
 }
 
 void ASMGameState::AddTeamScore(ESMTeam InTeam)
@@ -134,11 +132,6 @@ void ASMGameState::OnRep_ReplicatedEDMTeamScore()
 void ASMGameState::OnRep_ReplicatedFutureBaseTeamScore()
 {
 	(void)OnChangeFutureBaseTeamScore.ExecuteIfBound(ReplicatedFutureBaseTeamScore);
-}
-
-void ASMGameState::PrintScore()
-{
-	NET_LOG(this, Log, TEXT("FutureBase팀 스코어: %d EDM팀 스코어: %d"), TeamScores[ESMTeam::FutureBass], TeamScores[ESMTeam::EDM]);
 }
 
 void ASMGameState::SetRemainRoundTime(int32 InRemainRoundTime)
