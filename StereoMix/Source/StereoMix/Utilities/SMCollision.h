@@ -4,6 +4,7 @@
 namespace SMCollisionProfileName
 {
 	static FName NoCollision = TEXT("NoCollision");
+	static FName Trigger = TEXT("Trigger");
 	static FName Player = TEXT("Player");
 	static FName Projectile = TEXT("Projectile");
 	static FName Tile = TEXT("Tile");
