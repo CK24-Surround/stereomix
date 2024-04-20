@@ -4,18 +4,18 @@
 
 #include "CoreMinimal.h"
 
-#include "SMHealPack.generated.h"
+#include "SMChangeAttributeItem.generated.h"
 
 class USphereComponent;
 class UGameplayEffect;
 
 UCLASS(Abstract)
-class STEREOMIX_API ASMHealPack : public AActor
+class STEREOMIX_API ASMChangeAttributeItem : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	ASMHealPack();
+	ASMChangeAttributeItem();
 
 protected:
 	virtual void PostInitializeComponents() override;
@@ -41,7 +41,7 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> HealGE;
+	TSubclassOf<UGameplayEffect> GE;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float RespawnTime = 10.0f;

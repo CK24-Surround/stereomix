@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "SMHealPack.h"
+#include "SMChangeAttributeItem.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "Utilities/SMCollision.h"
 
-ASMHealPack::ASMHealPack()
+ASMChangeAttributeItem::ASMChangeAttributeItem()
 {
 	bReplicates = true;
 
@@ -24,7 +24,7 @@ ASMHealPack::ASMHealPack()
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 }
 
-void ASMHealPack::PostInitializeComponents()
+void ASMChangeAttributeItem::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
@@ -35,29 +35,29 @@ void ASMHealPack::PostInitializeComponents()
 	}
 }
 
-void ASMHealPack::NotifyActorBeginOverlap(AActor* OtherActor)
+void ASMChangeAttributeItem::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
 	if (ensure(TargetASC))
 	{
-		TargetASC->BP_ApplyGameplayEffectToSelf(HealGE, 1.0f, TargetASC->MakeEffectContext());
+		TargetASC->BP_ApplyGameplayEffectToSelf(GE, 1.0f, TargetASC->MakeEffectContext());
 		MulticastRPCSetHidden(true);
 		SetActorEnableCollision(false);
 
 		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ASMHealPack::HealRespawnTimerCallback, RespawnTime);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ASMChangeAttributeItem::HealRespawnTimerCallback, RespawnTime);
 	}
 }
 
-void ASMHealPack::HealRespawnTimerCallback()
+void ASMChangeAttributeItem::HealRespawnTimerCallback()
 {
 	MulticastRPCSetHidden(false);
 	SetActorEnableCollision(true);
 }
 
-void ASMHealPack::MulticastRPCSetHidden_Implementation(bool bNewHidden)
+void ASMChangeAttributeItem::MulticastRPCSetHidden_Implementation(bool bNewHidden)
 {
 	if (!HasAuthority())
 	{
