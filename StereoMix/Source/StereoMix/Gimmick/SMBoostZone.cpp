@@ -69,7 +69,7 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 	Super::NotifyActorEndOverlap(OtherActor);
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
-	if (ensure(TargetASC))
+	if (TargetASC)
 	{
 		TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
 		PlayerASCsInZone.Remove(TargetASC);

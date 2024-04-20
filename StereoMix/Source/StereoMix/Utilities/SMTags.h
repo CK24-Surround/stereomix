@@ -49,6 +49,11 @@ namespace SMTags
 		}
 	}
 
+	namespace GameplayEffect
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(BoostZone);
+	}
+
 	namespace GameplayCue
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(PlayNiagara)
