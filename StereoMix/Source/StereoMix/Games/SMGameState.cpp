@@ -188,16 +188,3 @@ void ASMGameState::MulticastRPCEndRound_Implementation(ESMTeam VictoryTeam)
 {
 	OnEndRound.Broadcast(VictoryTeam);
 }
-
-void ASMGameState::MulticastRPCToTile_Implementation()
-{
-	if (!HasAuthority())
-	{
-		FString TitleLeveltPath = TEXT("/Game/StereoMix/Levels/Title/L_Title");
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		if (ensure(PlayerController))
-		{
-			PlayerController->ClientTravel(TitleLeveltPath, TRAVEL_Absolute);
-		}
-	}
-}

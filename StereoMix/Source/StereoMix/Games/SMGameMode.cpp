@@ -7,6 +7,11 @@
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 
+ASMGameMode::ASMGameMode()
+{
+	bUseSeamlessTravel = true;
+}
+
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
 {
 	const FString ErrorMessage = Super::InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
@@ -56,18 +61,6 @@ void ASMGameMode::OnEndRoundTimer()
 }
 
 void ASMGameMode::OnEndVictoryDefeatTimer()
-{
-	// TODO: 로드된 맵을 종료하고 새로운 맵 로드
-	ASMGameState* SMGameState = GetGameState<ASMGameState>();
-	if (ensure(SMGameState))
-	{
-		SMGameState->MulticastRPCToTile();
-	}
-
-	GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ASMGameMode::ServerTravel);
-}
-
-void ASMGameMode::ServerTravel()
 {
 	FString CurrentLevelPath = TEXT("/Game/StereoMix/Levels/Main/L_Main");
 	GetWorld()->ServerTravel(CurrentLevelPath);
