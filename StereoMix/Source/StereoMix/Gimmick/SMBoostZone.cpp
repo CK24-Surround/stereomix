@@ -13,7 +13,6 @@
 ASMBoostZone::ASMBoostZone()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	SetActorTickInterval(0.1f);
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
