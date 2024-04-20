@@ -47,6 +47,11 @@ void USMCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr
 	{
 		NewValue = NewValue > 0.0f ? NewValue : 0.0f;
 	}
+
+	if (Attribute == GetHealAttribute())
+	{
+		NewValue = NewValue > 0.0f ? NewValue : 0.0f;
+	}
 }
 
 void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
@@ -117,6 +122,14 @@ void USMCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 		const float NewPostureGauge = FMath::Clamp(GetPostureGauge() - GetDamage(), 0.0f, GetMaxPostureGauge());
 		SetPostureGauge(NewPostureGauge);
 		SetDamage(0.0f);
+	}
+
+	if (Data.EvaluatedData.Attribute == GetHealAttribute())
+	{
+		NET_LOG(OwnerActor, Warning, TEXT("힐"));
+		const float NewPostureGauge = FMath::Clamp(GetPostureGauge() + GetHeal(), 0.0f, GetMaxPostureGauge());
+		SetPostureGauge(NewPostureGauge);
+		SetHeal(0.0f);
 	}
 }
 

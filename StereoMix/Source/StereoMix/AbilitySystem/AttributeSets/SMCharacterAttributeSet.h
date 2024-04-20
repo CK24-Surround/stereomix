@@ -35,6 +35,7 @@ public:
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, ProjectileAttackCooldown);
 
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Damage);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Heal);
 
 protected:
 	UFUNCTION()
@@ -71,6 +72,9 @@ protected:
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData Damage;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Heal")
+	FGameplayAttributeData Heal;
 
 protected:
 	FGameplayTagContainer InvincibleStateTags;
