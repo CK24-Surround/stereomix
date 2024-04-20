@@ -126,7 +126,6 @@ void USMCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 
 	if (Data.EvaluatedData.Attribute == GetHealAttribute())
 	{
-		NET_LOG(OwnerActor, Warning, TEXT("힐"));
 		const float NewPostureGauge = FMath::Clamp(GetPostureGauge() + GetHeal(), 0.0f, GetMaxPostureGauge());
 		SetPostureGauge(NewPostureGauge);
 		SetHeal(0.0f);

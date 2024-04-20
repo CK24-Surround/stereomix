@@ -7,7 +7,6 @@
 #include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "Utilities/SMCollision.h"
-#include "Utilities/SMLog.h"
 
 ASMHealPack::ASMHealPack()
 {
@@ -43,7 +42,6 @@ void ASMHealPack::NotifyActorBeginOverlap(AActor* OtherActor)
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
 	if (ensure(TargetASC))
 	{
-		NET_LOG(this, Warning, TEXT("힐팩 오버랩"));
 		TargetASC->BP_ApplyGameplayEffectToSelf(HealGE, 1.0f, TargetASC->MakeEffectContext());
 		MulticastRPCSetHidden(true);
 		SetActorEnableCollision(false);
@@ -63,7 +61,6 @@ void ASMHealPack::MulticastRPCSetHidden_Implementation(bool bNewHidden)
 {
 	if (!HasAuthority())
 	{
-		NET_LOG(this, Warning, TEXT("힐팩 숨기기: %s"), bNewHidden ? TEXT("True") : TEXT("False"));
 		SetActorHiddenInGame(bNewHidden);
 	}
 }
