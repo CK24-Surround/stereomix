@@ -4,7 +4,10 @@
 #include "SMBoostZone.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
 
 ASMBoostZone::ASMBoostZone()
@@ -36,21 +39,27 @@ void ASMBoostZone::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	// TODO: PlayerASCsInZone를 순회하며 방향이 맞는 경우 이동속도를 증가시키는 GE를 적용, 반대인 경우 GE를 제거합니다.
+	for (const auto& PlayerASCInZone : PlayerASCsInZone)
+	{
+		if (PlayerASCInZone.Get())
+		{
+			PerformBoostZone(PlayerASCInZone.Get());
+		}
+	}
 }
 
 void ASMBoostZone::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	if (!IsActorTickEnabled())
-	{
-		SetActorTickEnabled(true);
-	}
-
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
 	if (ensure(TargetASC))
 	{
+		if (!IsActorTickEnabled())
+		{
+			SetActorTickEnabled(true);
+		}
+
 		PlayerASCsInZone.AddUnique(TargetASC);
 	}
 }
@@ -59,5 +68,41 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorEndOverlap(OtherActor);
 
-	// TODO: PlayerASCsInZone에서 해당 ASC를 제거하고 PlayerASCsInZone의 요소가 0이되면 틱을 종료시킵니다.
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	if (ensure(TargetASC))
+	{
+		TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+		PlayerASCsInZone.Remove(TargetASC);
+		if (PlayerASCsInZone.Num() <= 0)
+		{
+			SetActorTickEnabled(false);
+		}
+	}
+}
+
+void ASMBoostZone::PerformBoostZone(UAbilitySystemComponent* TargetASC)
+{
+	// TODO: PlayerASCsInZone를 순회하며 방향이 맞는 경우 이동속도를 증가시키는 GE를 적용, 반대인 경우 GE를 제거합니다.
+	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
+	if (!ensure(TargetCharacter))
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* TargetMovement = TargetCharacter->GetCharacterMovement();
+	if (!ensure(TargetMovement))
+	{
+		return;
+	}
+
+	const FVector BoostZoneDirection = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::X);
+	const FVector TargetMoveDirection = TargetMovement->GetCurrentAcceleration().GetSafeNormal();
+	if (BoostZoneDirection.Dot(TargetMoveDirection) > 0.0f)
+	{
+		TargetASC->BP_ApplyGameplayEffectToSelf(AddBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+	}
+	else
+	{
+		TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+	}
 }
