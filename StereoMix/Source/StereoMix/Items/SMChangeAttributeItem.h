@@ -36,8 +36,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<UStaticMeshComponent> MeshComponent;
+	UPROPERTY(VisibleAnywhere, Category = "SpawnerMesh")
+	TObjectPtr<UStaticMeshComponent> SpawnerMeshComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "ItemMesh")
+	TObjectPtr<UStaticMeshComponent> ItemMeshComponent;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")

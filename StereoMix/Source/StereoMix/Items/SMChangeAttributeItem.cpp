@@ -14,14 +14,18 @@ ASMChangeAttributeItem::ASMChangeAttributeItem()
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
+	
+	SpawnerMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SpawnerMeshComponent"));
+	SpawnerMeshComponent->SetupAttachment(SceneComponent);
+	SpawnerMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	SphereComponent->SetupAttachment(SceneComponent);
+	SphereComponent->SetupAttachment(SpawnerMeshComponent);
 	SphereComponent->SetCollisionProfileName(SMCollisionProfileName::HealPack);
-
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	MeshComponent->SetupAttachment(SphereComponent);
-	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	
+	ItemMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
+	ItemMeshComponent->SetupAttachment(SphereComponent);
+	ItemMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 }
 
 void ASMChangeAttributeItem::PostInitializeComponents()
@@ -61,6 +65,6 @@ void ASMChangeAttributeItem::MulticastRPCSetHidden_Implementation(bool bNewHidde
 {
 	if (!HasAuthority())
 	{
-		SetActorHiddenInGame(bNewHidden);
+		ItemMeshComponent->SetHiddenInGame(bNewHidden);
 	}
 }
