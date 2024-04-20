@@ -18,7 +18,16 @@ public:
 	ASMHealPack();
 
 protected:
+	virtual void PostInitializeComponents() override;
+
+protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+protected:
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCSetHidden(bool bNewHidden);
+
+	void HealRespawnTimerCallback();
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
@@ -31,6 +40,9 @@ protected:
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "GE")
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> HealGE;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float RespawnTime = 10.0f;
 };
