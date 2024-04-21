@@ -76,7 +76,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 
 	WaitDelayTask->OnFinish.AddDynamic(this, &USMGameplayAbility_Stun::OnStunTimeEnded);
 	WaitDelayTask->ReadyForActivation();
-	
+
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 }
 
@@ -187,7 +187,7 @@ void USMGameplayAbility_Stun::ResetStunState()
 			}
 		}
 	}
-	
+
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), EndMontage, 1.0f, TEXT("End"));
 	if (ensure(PlayMontageAndWaitTask))
 	{
@@ -214,13 +214,17 @@ void USMGameplayAbility_Stun::OnStunEnded()
 	{
 		// 컨트롤 로테이션을 따라가도록 복구해줍니다.
 		ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-		if (ensure(SourceCharacter))
+		if (!ensure(SourceCharacter))
 		{
-			SourceCharacter->SetUseControllerRotation(true);
+			return;
 		}
 
+		SourceCharacter->SetUseControllerRotation(true);
+		
 		// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거합니다.
 		SourceASC->RemoveTag(SMTags::Character::State::Uncatchable);
+
+		SourceCharacter->CapturedCharcters.Empty();
 
 		// 마지막으로 적용해야할 GE들을 모두 적용합니다.
 		for (const auto& StunEndedGE : StunEndedGEs)

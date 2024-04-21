@@ -163,7 +163,7 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 	USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
 	if (!ensure(SourceTeamComponent))
 	{
-		return false;	
+		return false;
 	}
 
 	ESMTeam SourceCharacterTeam = SourceTeamComponent->GetTeam();
@@ -173,7 +173,7 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 	{
 		return false;
 	}
-	
+
 	OutCatchableCharacters.Empty();
 
 	bool bIsCanCatchableCharacter = false;
@@ -200,10 +200,30 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 				{
 					continue;
 				}
-				
-				
+
 				// 팀이 같다면 잡기를 무시합니다.
 				if (SourceCharacterTeam == TargetTeam)
+				{
+					continue;
+				}
+
+				// 만약 1번이라도 잡았던 대상이었다면 무시합니다.
+				bool bIsCaptureCharacter = false;
+				for (const auto& CapturedCharcter : TargetCharacter->CapturedCharcters)
+				{
+					if (!CapturedCharcter.Get())
+					{
+						continue;
+					}
+
+					if (CapturedCharcter == SourceCharacter)
+					{
+						bIsCaptureCharacter = true;
+						continue;
+					}
+				}
+
+				if (bIsCaptureCharacter)
 				{
 					continue;
 				}
@@ -252,9 +272,12 @@ bool USMGameplayAbility_Catch::AttachTargetCharacter(ASMPlayerCharacter* InTarge
 		// 어태치합니다. 디버깅을 위해 단언을 수행합니다. 어태치 후 상대 회전을 0으로 정렬해줍니다.
 		if (InTargetCharacter->AttachToComponent(SourceCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSlotSocket")))
 		{
+			// 타겟의 잡힌 목록에 넣습니다.
+			InTargetCharacter->CapturedCharcters.AddUnique(SourceCharacter);
+
 			// 캐릭터 상태 위젯을 숨깁니다.
 			InTargetCharacter->SetCharacterStateVisibility(false);
-			
+
 			// 충돌판정, 움직임을 잠급니다.
 			InTargetCharacter->SetEnableCollision(false);
 			InTargetCharacter->SetEnableMovement(false);

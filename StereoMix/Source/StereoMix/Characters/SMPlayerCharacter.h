@@ -222,6 +222,10 @@ public:
 	/** 자신이 잡혀 있는 폰을 할당합니다. 부모액터를 할당한다고 생각하면됩니다. */
 	FORCEINLINE void SetCaughtCharacter(ASMPlayerCharacter* InCaughtCharacter) { CaughtCharacter = InCaughtCharacter; }
 
+public:
+	UPROPERTY(Replicated)
+	TArray<TWeakObjectPtr<ASMPlayerCharacter>> CapturedCharcters;
+
 protected:
 	// 자신이 잡고 있는 폰을 의미합니다.
 	UPROPERTY(Replicated)
