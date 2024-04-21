@@ -13,6 +13,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraSystem.h"
 #include "Tiles/SMTile.h"
+#include "Utilities/SMCalculateBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "Utilities/SMTags.h"
@@ -87,13 +88,72 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 		SourceMovement->GravityScale = SmashGravityScale;
 	}
 
-	const FVector LaunchVelocity(0.0, 0.0, SmashJumpPower);
-	SourceCharacter->LaunchCharacter(LaunchVelocity, false, true);
+	if (ActorInfo->IsLocallyControlled())
+	{
+		// 시작점과 목표 지점의 위치를 구합니다.
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint(true);
+
+		// 사거리를 제한 합니다.
+		FVector AlignedSourceZ = SourceLocation;
+		AlignedSourceZ.Z = TargetLocation.Z;
+
+		const float Range = 150.0f * 7.0f;
+		if (FVector::DistSquared(AlignedSourceZ, TargetLocation) > FMath::Square(Range))
+		{
+			const FVector SourceToTargetDirection = (TargetLocation - AlignedSourceZ).GetSafeNormal();
+
+			TargetLocation = AlignedSourceZ + (SourceToTargetDirection * Range);
+		}
+
+		// 필요한 위치 데이터들을 타겟 데이터에 저장합니다.
+		FGameplayAbilityTargetData_LocationInfo* TargetData = new FGameplayAbilityTargetData_LocationInfo();
+		TargetData->SourceLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
+		TargetData->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
+		TargetData->SourceLocation.LiteralTransform.SetLocation(SourceLocation);
+		TargetData->TargetLocation.LiteralTransform.SetLocation(TargetLocation);
+
+		// 타겟 데이터를 핸들에 담고 서버로 전송합니다.
+		FGameplayAbilityTargetDataHandle TargetDatahandle(TargetData);
+		SourceASC->CallServerSetReplicatedTargetData(Handle, ActivationInfo.GetActivationPredictionKey(), TargetDatahandle, FGameplayTag(), SourceASC->ScopedPredictionKey);
+
+		// 정점 높이를 기준으로 타겟을 향하는 벨로시티를 구한 후 캐릭터를 도약 시킵니다.
+		const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, SourceLocation, TargetLocation, ApexHeight, SourceMovement->GetGravityZ());
+		SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
+	}
+
+	if (ActorInfo->IsNetAuthority())
+	{
+		// 서버는 데이터를 수신을 준비합니다.
+		SourceASC->AbilityTargetDataSetDelegate(Handle, ActivationInfo.GetActivationPredictionKey()).AddUObject(this, &USMGameplayAbility_Smash::OnReceiveTargetData);
+	}
 }
 
 void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
+void USMGameplayAbility_Smash::OnReceiveTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag)
+{
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
+	if (!ensureAlways(SourceMovement))
+	{
+		return;
+	}
+	
+	const FGameplayAbilityTargetData* TargetData = GameplayAbilityTargetDataHandle.Get(0);
+	const FVector SourceLocation = TargetData->GetOrigin().GetLocation();
+	const FVector TargetLocation = TargetData->GetEndPoint();
+	
+	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, SourceLocation, TargetLocation, ApexHeight, SourceMovement->GetGravityZ());
+	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }
 
 void USMGameplayAbility_Smash::OnSmash()

@@ -42,6 +42,8 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 protected:
+	void OnReceiveTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
+	
 	UFUNCTION()
 	void OnSmash();
 
@@ -66,7 +68,7 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Smash")
-	float SmashJumpPower = 2000.0f;
+	float ApexHeight = 500.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Smash")
 	float SmashGravityScale = 3.0f;
