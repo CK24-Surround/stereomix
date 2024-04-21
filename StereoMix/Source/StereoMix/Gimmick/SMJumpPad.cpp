@@ -20,7 +20,7 @@ ASMJumpPad::ASMJumpPad()
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->SetupAttachment(SceneComponent);
-	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Trigger);
+	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Gimmick);
 	BoxComponent->InitBoxExtent(FVector(75.0, 75.0, 50.0));
 	BoxComponent->SetRelativeLocation(FVector(75.0, 75.0, 50.0));
 

@@ -19,7 +19,7 @@ ASMBoostZone::ASMBoostZone()
 
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->SetupAttachment(SceneComponent);
-	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Trigger);
+	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Gimmick);
 }
 
 void ASMBoostZone::PostInitializeComponents()
