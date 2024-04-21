@@ -27,7 +27,7 @@ ASMJumpPad::ASMJumpPad()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(BoxComponent);
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	MeshComponent->SetRelativeLocation(FVector(0.0, 0.0, -50.0));
+	MeshComponent->SetRelativeLocationAndRotation(FVector(0.0, 0.0, -50.0), FRotator(0.0, 90.0, 0.0));
 
 	DenineTags.AddTag(SMTags::Character::State::Catch);
 	DenineTags.AddTag(SMTags::Character::State::Stun);
