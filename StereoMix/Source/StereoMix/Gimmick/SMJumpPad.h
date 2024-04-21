@@ -17,6 +17,9 @@ public:
 	ASMJumpPad();
 
 protected:
+	virtual void PostInitializeComponents() override;
+
+protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
 protected:
@@ -28,4 +31,13 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<UBoxComponent> BoxComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Jump")
+	FVector LandingLocation = FVector(2775.0, 3375.0, 110.0);
+
+	UPROPERTY(EditAnywhere, Category = "Jump")
+	float GravityScale = 3.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Jump")
+	float ArcRatio = 0.25f;
 };

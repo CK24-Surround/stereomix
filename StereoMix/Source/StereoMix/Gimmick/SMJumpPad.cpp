@@ -5,17 +5,26 @@
 
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 
 ASMJumpPad::ASMJumpPad()
 {
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
-	
+
 	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
 	BoxComponent->SetupAttachment(SceneComponent);
 	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Trigger);
+	BoxComponent->InitBoxExtent(FVector(75.0, 75.0, 50.0));
+	BoxComponent->SetRelativeLocation(FVector(75.0, 75.0, 50.0));
+}
+
+void ASMJumpPad::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
 }
 
 void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -25,28 +34,29 @@ void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
 	ACharacter* TargetCharacter = Cast<ACharacter>(OtherActor);
 	if (ensureAlways(TargetCharacter))
 	{
-		Jump(TargetCharacter, FVector::ZeroVector);
+		if (TargetCharacter->HasAuthority() || TargetCharacter->IsLocallyControlled())
+		{
+			Jump(TargetCharacter, LandingLocation);
+		}
 	}
 }
 
 void ASMJumpPad::Jump(ACharacter* InCharacter, const FVector& TargetLocation)
 {
 	const FVector StartLocation = InCharacter->GetActorLocation();
+	UCharacterMovementComponent* TargetMovement = InCharacter->GetCharacterMovement();
+	if (!ensureAlways(TargetMovement))
+	{
+		return;
+	}
+
+	TargetMovement->GravityScale = GravityScale;
+	// TODO: 임시로 에어컨트롤 비활성화
+	TargetMovement->AirControl = 0.0f;
 
 	FVector LaunchVelocity;
-	UGameplayStatics::SuggestProjectileVelocity(this, LaunchVelocity, StartLocation, TargetLocation, 980.0f, true, 0.0f, 0.0f, ESuggestProjVelocityTraceOption::DoNotTrace);
+	const float Gravity = GetWorld()->GetGravityZ() * TargetMovement->GravityScale;
+	UGameplayStatics::SuggestProjectileVelocity_CustomArc(this, LaunchVelocity, StartLocation, TargetLocation, Gravity, ArcRatio);
 
-	FPredictProjectilePathParams Params;
-	Params.StartLocation = StartLocation;
-	Params.LaunchVelocity = LaunchVelocity;
-	Params.bTraceWithCollision = true;
-	Params.ProjectileRadius = 15.0f;
-	Params.MaxSimTime = 5.0f;
-	Params.OverrideGravityZ = 1.0f;
-	FPredictProjectilePathResult Result;
-
-	if (UGameplayStatics::PredictProjectilePath(this, Params, Result))
-	{
-		InCharacter->LaunchCharacter(LaunchVelocity, true, true);
-	}
+	InCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }
