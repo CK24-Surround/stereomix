@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 
 #include "SMJumpPad.generated.h"
 
@@ -43,4 +44,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Jump")
 	float ArcRatio = 0.25f;
+
+	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
+	FGameplayTagContainer DenineTags;
 };

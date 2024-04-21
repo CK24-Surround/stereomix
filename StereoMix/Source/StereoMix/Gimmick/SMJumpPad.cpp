@@ -3,12 +3,15 @@
 
 #include "SMJumpPad.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
+#include "Utilities/SMTags.h"
 
 ASMJumpPad::ASMJumpPad()
 {
@@ -25,6 +28,9 @@ ASMJumpPad::ASMJumpPad()
 	MeshComponent->SetupAttachment(BoxComponent);
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	MeshComponent->SetRelativeLocation(FVector(0.0, 0.0, -50.0));
+
+	DenineTags.AddTag(SMTags::Character::State::Catch);
+	DenineTags.AddTag(SMTags::Character::State::Stun);
 }
 
 void ASMJumpPad::PostInitializeComponents()
@@ -39,10 +45,23 @@ void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
 	ACharacter* TargetCharacter = Cast<ACharacter>(OtherActor);
 	if (ensureAlways(TargetCharacter))
 	{
-		if (TargetCharacter->HasAuthority() || TargetCharacter->IsLocallyControlled())
+		if (TargetCharacter->GetLocalRole() == ROLE_SimulatedProxy)
 		{
-			Jump(TargetCharacter, LandingLocation);
+			return;
 		}
+
+		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
+		if (!ensureAlways(TargetASC))
+		{
+			return;
+		}
+
+		if (TargetASC->HasAnyMatchingGameplayTags(DenineTags))
+		{
+			return;
+		}
+
+		Jump(TargetCharacter, LandingLocation);
 	}
 }
 
