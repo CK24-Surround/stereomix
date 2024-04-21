@@ -32,6 +32,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<UBoxComponent> BoxComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
 	UPROPERTY(EditAnywhere, Category = "Jump")
 	FVector LandingLocation = FVector(2775.0, 3375.0, 110.0);
 

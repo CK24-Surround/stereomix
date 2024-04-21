@@ -20,6 +20,11 @@ ASMJumpPad::ASMJumpPad()
 	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Trigger);
 	BoxComponent->InitBoxExtent(FVector(75.0, 75.0, 50.0));
 	BoxComponent->SetRelativeLocation(FVector(75.0, 75.0, 50.0));
+
+	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	MeshComponent->SetupAttachment(BoxComponent);
+	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	MeshComponent->SetRelativeLocation(FVector(0.0, 0.0, -50.0));
 }
 
 void ASMJumpPad::PostInitializeComponents()
