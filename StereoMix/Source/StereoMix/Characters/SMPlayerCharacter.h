@@ -133,8 +133,8 @@ protected:
 
 // ~Movement Section
 public:
-	// 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
-	FVector GetCursorTargetingPoint();
+	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다. 기본값은 플레이어 캐릭터의 중심을 기준으로 하는 평면으로 계산됩니다. */
+	FVector GetCursorTargetingPoint(bool bIsZeroBasis = false);
 
 	void SetMaxWalkSpeed(float InSpeed);
 

@@ -322,15 +322,25 @@ void ASMPlayerCharacter::FocusToCursor()
 	Controller->SetControlRotation(NewRotation);
 }
 
-FVector ASMPlayerCharacter::GetCursorTargetingPoint()
+FVector ASMPlayerCharacter::GetCursorTargetingPoint(bool bIsZeroBasis)
 {
-	const FVector CachedActorLocation = GetActorLocation();
-	FVector Result(0.0, 0.0, CachedActorLocation.Z);
+	FVector BasisLocation;
+	if (bIsZeroBasis)
+	{
+		BasisLocation = GetActorLocation() - GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	}
+	else
+	{
+		BasisLocation = GetActorLocation();
+	}
+
+	FVector Result(0.0, 0.0, BasisLocation.Z);
+
 	if (CachedStereoMixPlayerController)
 	{
 		FVector WorldLocation, WorldDirection;
 		CachedStereoMixPlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
-		const FPlane Plane(CachedActorLocation, FVector::UpVector);
+		const FPlane Plane(BasisLocation, FVector::UpVector);
 		const FVector IntersectionPoint = FMath::RayPlaneIntersection(WorldLocation, WorldDirection, Plane);
 		if (!IntersectionPoint.ContainsNaN())
 		{
@@ -338,12 +348,12 @@ FVector ASMPlayerCharacter::GetCursorTargetingPoint()
 		}
 	}
 
-	// 만약 커서위치와 캐릭터의 위치가 평면상에 놓이지 않았다면 경고를 표시합니다. 일반적으로 이런상황이 존재하지는 않을 것으로 예상됩니다.
-	if (!FMath::IsNearlyEqual(CachedActorLocation.Z, Result.Z, KINDA_SMALL_NUMBER))
+	// 만약 커서위치와 평면의 위치가 평면상에 놓이지 않았다면 경고를 표시합니다. 일반적으로 이런상황이 존재하지는 않을 것으로 예상됩니다.
+	if (!FMath::IsNearlyEqual(BasisLocation.Z, Result.Z, KINDA_SMALL_NUMBER))
 	{
 		NET_LOG(this, Warning,
 		        TEXT("캐릭터의 위치와 커서의 위치가 평면상에 놓이지 않았습니다. 캐릭터 Z값: %f 커서 Z값: %f"),
-		        CachedActorLocation.Z, Result.Z);
+		        BasisLocation.Z, Result.Z);
 	}
 
 	return Result;
