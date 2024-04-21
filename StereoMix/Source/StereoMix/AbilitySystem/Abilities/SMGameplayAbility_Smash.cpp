@@ -98,7 +98,7 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 		FVector AlignedSourceZ = SourceLocation;
 		AlignedSourceZ.Z = TargetLocation.Z;
 
-		const float Range = 150.0f * 7.0f;
+		const float Range = 150.0f * SmashRangeByTile;
 		if (FVector::DistSquared(AlignedSourceZ, TargetLocation) > FMath::Square(Range))
 		{
 			const FVector SourceToTargetDirection = (TargetLocation - AlignedSourceZ).GetSafeNormal();
@@ -124,8 +124,9 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 
 	if (ActorInfo->IsNetAuthority())
 	{
-		// 서버는 데이터를 수신을 준비합니다.
-		SourceASC->AbilityTargetDataSetDelegate(Handle, ActivationInfo.GetActivationPredictionKey()).AddUObject(this, &USMGameplayAbility_Smash::OnReceiveTargetData);
+		// 서버는 데이터를 수신을 준비합니다. 수신 후 알아서 바인드 해제됩니다.
+		FAbilityTargetDataSetDelegate& TargetDataSetDelegate = SourceASC->AbilityTargetDataSetDelegate(Handle, ActivationInfo.GetActivationPredictionKey());
+		TargetDataSetDelegate.AddUObject(this, &USMGameplayAbility_Smash::OnReceiveTargetData);
 	}
 }
 
@@ -147,7 +148,7 @@ void USMGameplayAbility_Smash::OnReceiveTargetData(const FGameplayAbilityTargetD
 	{
 		return;
 	}
-	
+
 	const FGameplayAbilityTargetData* TargetData = GameplayAbilityTargetDataHandle.Get(0);
 	const FVector SourceLocation = TargetData->GetOrigin().GetLocation();
 	const FVector TargetLocation = TargetData->GetEndPoint();
@@ -184,6 +185,7 @@ void USMGameplayAbility_Smash::OnSmash()
 
 	SourceCharacter->OnLanded.RemoveAll(this);
 
+	// 기존 중력 스케일로 재설정합니다.
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (ensure(SourceMovement))
 	{

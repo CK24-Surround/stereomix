@@ -68,6 +68,9 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Smash")
+	int32 SmashRangeByTile = 7;
+	
+	UPROPERTY(EditAnywhere, Category = "Smash")
 	float ApexHeight = 500.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Smash")
