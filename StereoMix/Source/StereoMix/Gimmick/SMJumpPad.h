@@ -6,6 +6,8 @@
 
 #include "SMJumpPad.generated.h"
 
+class UBoxComponent;
+
 UCLASS()
 class STEREOMIX_API ASMJumpPad : public AActor
 {
@@ -15,5 +17,15 @@ public:
 	ASMJumpPad();
 
 protected:
+	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+protected:
 	void Jump(ACharacter* InCharacter, const FVector& TargetLocation);
+
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Root")
+	TObjectPtr<USceneComponent> SceneComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	TObjectPtr<UBoxComponent> BoxComponent;
 };

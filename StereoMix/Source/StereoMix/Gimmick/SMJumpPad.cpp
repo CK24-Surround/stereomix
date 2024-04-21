@@ -3,12 +3,30 @@
 
 #include "SMJumpPad.h"
 
+#include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Utilities/SMCollision.h"
 
 ASMJumpPad::ASMJumpPad()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	RootComponent = SceneComponent;
+	
+	BoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxComponent"));
+	BoxComponent->SetupAttachment(SceneComponent);
+	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Trigger);
+}
+
+void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
+{
+	Super::NotifyActorBeginOverlap(OtherActor);
+
+	ACharacter* TargetCharacter = Cast<ACharacter>(OtherActor);
+	if (ensureAlways(TargetCharacter))
+	{
+		Jump(TargetCharacter, FVector::ZeroVector);
+	}
 }
 
 void ASMJumpPad::Jump(ACharacter* InCharacter, const FVector& TargetLocation)
