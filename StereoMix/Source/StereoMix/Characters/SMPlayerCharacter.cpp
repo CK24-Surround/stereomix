@@ -478,6 +478,8 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 	if (!HasAuthority())
 	{
 		GetMesh()->SetMaterial(0, AssetData->CharacterMaterial[Team]);
+		GetMesh()->SetMaterial(2, AssetData->CharacterMaterial[Team]);
+		GetMesh()->SetMaterial(3, AssetData->CharacterMaterial[Team]);
 
 		if (ASC.Get())
 		{
