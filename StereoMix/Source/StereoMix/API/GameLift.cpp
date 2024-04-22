@@ -27,6 +27,13 @@ void UGameLift::Initialize(FSubsystemCollectionBase& Collection)
 
 #if WITH_GAMELIFT
 	SdkModule = &FModuleManager::LoadModuleChecked<FGameLiftServerSDKModule>(FName("GameLiftServerSDK"));
+	FGameLiftStringOutcome GetSdkVersionOutcome = SdkModule->GetSdkVersion();
+	if (!GetSdkVersionOutcome.IsSuccess())
+	{
+		UE_LOG(LogGameLift, Error,
+			TEXT("Failed to get GameLift SDK version: %s"), *GetSdkVersionOutcome.GetError().m_errorMessage);
+	}
+	UE_LOG(LogGameLift, Log, TEXT("GameLift SDK Version: %s"), *GetSdkVersionOutcome.GetResult());
 #endif
 }
 
