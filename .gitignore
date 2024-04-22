@@ -64,3 +64,6 @@ StereoMix/Plugins/KawaiiPhysics/Intermediate
 !StereoMix/Plugins/KawaiiPhysics/Binaries/Win64/UnrealEditor.modules
 !StereoMix/Plugins/KawaiiPhysics/Binaries/Win64/UnrealEditor-KawaiiPhysics.dll
 !StereoMix/Plugins/KawaiiPhysics/Binaries/Win64/UnrealEditor-KawaiiPhysicsEd.dll
+
+# Rider configuration
+.run/
