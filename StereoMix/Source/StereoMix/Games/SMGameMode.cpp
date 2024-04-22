@@ -4,21 +4,22 @@
 #include "SMGameMode.h"
 
 #include "SMGameSession.h"
-#include "API/GameLift.h"
 #include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Utilities/SMLog.h"
+#include "Player/SMPlayerState.h"
 
 #if WITH_GAMELIFT
-#include "GameLiftServerSDK.h"
 #endif
-
 
 ASMGameMode::ASMGameMode()
 {
 	bUseSeamlessTravel = true;
 	GameSession = CreateDefaultSubobject<ASMGameSession>("SMGameSession");
+	GameStateClass = ASMGameState::StaticClass();
+	// 게임모드에서 직접 게임 시작
+	bDelayedStart = true;
 }
 
 void ASMGameMode::PostInitializeComponents()
@@ -31,14 +32,6 @@ void ASMGameMode::PostInitializeComponents()
 void ASMGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
-#if WITH_GAMELIFT
-	UE_LOG(LogSMGameMode, Log, TEXT("Initializing GameLift..."));
-
-	UGameLift* GameLiftModule = GetGameInstance()->GetSubsystem<UGameLift>();
-	FGameLiftServerSDKModule* GameLiftSDK = GameLiftModule->GetSDK();
-	GameLiftModule->InitSDK();
-#endif
 }
 
 void ASMGameMode::OnMatchStateSet()
@@ -54,17 +47,30 @@ APlayerController* ASMGameMode::Login(
 	return Super::Login(NewPlayer, InRemoteRole, Portal, Options, UniqueId, ErrorMessage);
 }
 
-FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
+FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId,
+                                   const FString& Options, const FString& Portal)
 {
 	const FString ErrorMessage = Super::InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
 
 	FString InNickname = UGameplayStatics::ParseOption(Options, TEXT("Nickname")).Left(20);
 	if (InNickname.IsEmpty())
 	{
-		InNickname = FString::Printf(TEXT("%s%i"), *DefaultPlayerName.ToString(), NewPlayerController->PlayerState->GetPlayerId());
+		InNickname = FString::Printf(TEXT("%s%i"), *DefaultPlayerName.ToString(),
+		                             NewPlayerController->PlayerState->GetPlayerId());
 	}
 
 	ChangeName(NewPlayerController, InNickname, false);
+
+	// Set SessionName to PlayerSessionId
+#if WITH_GAMELIFT
+	// SMGameSession의 ApproveLogin에서 PlayerSessionId를 이미 검증한 상태
+	const FString PlayerSessionId = UGameplayStatics::ParseOption(Options, TEXT("PlayerSessionId"));
+	check(!PlayerSessionId.IsEmpty());
+	NewPlayerController->GetPlayerState<ASMPlayerState>()->SetGameLiftPlayerSessionId(PlayerSessionId);
+
+	UE_LOG(LogSMGameSession, Log, TEXT("Set PlayerSessionId for %s: %s"),
+	       *NewPlayerController->PlayerState->GetPlayerName(), *PlayerSessionId);
+#endif
 
 	return ErrorMessage;
 }
@@ -87,6 +93,17 @@ void ASMGameMode::StartMatch()
 	GetWorldTimerManager().SetTimer(PhaseTimerHandle, this, &ASMGameMode::PerformPhaseTime, OneSecond, true);
 }
 
+void ASMGameMode::PostLogin(APlayerController* NewPlayer)
+{
+	Super::PostLogin(NewPlayer);
+	UE_LOG(LogSMGameMode, Log, TEXT("PostLogin: %s"), *NewPlayer->PlayerState->GetPlayerName());
+
+	if (GetNumPlayers() > 0)
+	{
+		StartMatch();
+	}
+}
+
 void ASMGameMode::EndMatch()
 {
 	// 남은 시간을 승패 확인 시간으로 다시 초기화시킵니다.
@@ -97,8 +114,8 @@ void ASMGameMode::EndMatch()
 	{
 		CachedSMGameState->EndRoundVictoryDefeatResult();
 	}
-
 	Super::EndMatch();
+	UE_LOG(LogSMGameMode, Log, TEXT("Match ended"));
 }
 
 void ASMGameMode::BindToGameState()

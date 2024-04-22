@@ -4,6 +4,9 @@
 #include "SMGameState.h"
 
 #include "EngineUtils.h"
+#include "SMGameMode.h"
+#include "Data/SMDesignData.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMLog.h"
@@ -55,6 +58,8 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 void ASMGameState::OnRep_ReplicatedRemainRoundTime()
 {
+	Super::BeginPlay();
+
 	(void)OnChangeRoundTime.ExecuteIfBound(ReplicatedRemainRoundTime);
 }
 

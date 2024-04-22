@@ -1,11 +1,23 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-
 #include "GameLift.h"
+
 #if WITH_GAMELIFT
 #include "GameLiftServerSDK.h"
 #include "GameLiftServerSDKModels.h"
 #endif
+
+UGameLift::UGameLift()
+{
+	bInitialized = false;
+	SdkModule = nullptr;
+
+#if WITH_GAMELIFT
+	ProcessParameters = MakeShared<FProcessParameters>();
+#else
+	ProcessParameters = nullptr;
+#endif
+}
 
 void UGameLift::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -18,36 +30,27 @@ void UGameLift::Initialize(FSubsystemCollectionBase& Collection)
 #endif
 }
 
-UGameLift::UGameLift()
-{
-	SdkModule = nullptr;
-	bInitialized = false;
-
-#if WITH_GAMELIFT
-	ProcessParameters = MakeShared<FProcessParameters>();
-#else
-	ProcessParameters = nullptr;
-#endif
-}
-
 // ReSharper disable once CppMemberFunctionMayBeConst
 // ReSharper disable once CppMemberFunctionMayBeStatic
 void UGameLift::InitSDK()
 {
-#if WITH_GAMELIFT
 	if (bInitialized)
 	{
 		return;
 	}
-	bInitialized = true;
 
-	UE_LOG(LogGameLift, Log, TEXT("Calling InitGameLift..."));
-
+#if WITH_GAMELIFT
 	// Getting the module first.
 	FGameLiftServerSDKModule* GameLiftSdkModule = GetSDK();
 
-	//Define the server parameters for a GameLift Anywhere fleet. These are not needed for a GameLift managed EC2 fleet.
-	FServerParameters ServerParametersForAnywhere;
+	FGameLiftStringOutcome GetSdkVersionOutcome = GameLiftSdkModule->GetSdkVersion();
+	if (!GetSdkVersionOutcome.IsSuccess())
+	{
+		UE_LOG(LogGameLift, Error,
+			TEXT("Failed to get GameLift SDK version: %s"), *GetSdkVersionOutcome.GetError().m_errorMessage);
+	}
+	UE_LOG(LogGameLift, Log, TEXT("GameLift SDK Version: %s"), *GetSdkVersionOutcome.GetResult());
+
 
 	bool bIsAnywhereActive = false;
 	if (FParse::Param(FCommandLine::Get(), TEXT("glAnywhere")))
@@ -55,27 +58,31 @@ void UGameLift::InitSDK()
 		bIsAnywhereActive = true;
 	}
 
+	FGameLiftGenericOutcome InitSdkOutcome;
+
+	// If GameLift Anywhere is enabled, parse command line arguments and pass them in the ServerParameters object.
 	if (bIsAnywhereActive)
 	{
+		//Define the server parameters for a GameLift Anywhere fleet. These are not needed for a GameLift managed EC2 fleet.
+		FServerParameters ServerParametersForAnywhere;
 		UE_LOG(LogGameLift, Log, TEXT("Configuring server parameters for Anywhere..."));
 
-		// If GameLift Anywhere is enabled, parse command line arguments and pass them in the ServerParameters object.
-		FString glAnywhereWebSocketUrl = "";
-		if (FParse::Value(FCommandLine::Get(), TEXT("glAnywhereWebSocketUrl="), glAnywhereWebSocketUrl))
+		if (FString GameLiftAnywhereWebSocketUrl;
+			FParse::Value(FCommandLine::Get(), TEXT("glAnywhereWebSocketUrl="), GameLiftAnywhereWebSocketUrl))
 		{
-			ServerParametersForAnywhere.m_webSocketUrl = TCHAR_TO_UTF8(*glAnywhereWebSocketUrl);
+			ServerParametersForAnywhere.m_webSocketUrl = TCHAR_TO_UTF8(*GameLiftAnywhereWebSocketUrl);
 		}
 
-		FString glAnywhereFleetId = "";
-		if (FParse::Value(FCommandLine::Get(), TEXT("glAnywhereFleetId="), glAnywhereFleetId))
+		if (FString GameLiftAnywhereFleetId;
+			FParse::Value(FCommandLine::Get(), TEXT("glAnywhereFleetId="), GameLiftAnywhereFleetId))
 		{
-			ServerParametersForAnywhere.m_fleetId = TCHAR_TO_UTF8(*glAnywhereFleetId);
+			ServerParametersForAnywhere.m_fleetId = TCHAR_TO_UTF8(*GameLiftAnywhereFleetId);
 		}
 
-		FString glAnywhereProcessId = "";
-		if (FParse::Value(FCommandLine::Get(), TEXT("glAnywhereProcessId="), glAnywhereProcessId))
+		if (FString GameLiftAnywhereProcessId;
+			FParse::Value(FCommandLine::Get(), TEXT("glAnywhereProcessId="), GameLiftAnywhereProcessId))
 		{
-			ServerParametersForAnywhere.m_processId = TCHAR_TO_UTF8(*glAnywhereProcessId);
+			ServerParametersForAnywhere.m_processId = TCHAR_TO_UTF8(*GameLiftAnywhereProcessId);
 		}
 		else
 		{
@@ -89,16 +96,16 @@ void UGameLift::InitSDK()
 				);
 		}
 
-		FString glAnywhereHostId = "";
-		if (FParse::Value(FCommandLine::Get(), TEXT("glAnywhereHostId="), glAnywhereHostId))
+		if (FString GameLiftAnywhereHostId;
+			FParse::Value(FCommandLine::Get(), TEXT("glAnywhereHostId="), GameLiftAnywhereHostId))
 		{
-			ServerParametersForAnywhere.m_hostId = TCHAR_TO_UTF8(*glAnywhereHostId);
+			ServerParametersForAnywhere.m_hostId = TCHAR_TO_UTF8(*GameLiftAnywhereHostId);
 		}
 
-		FString glAnywhereAuthToken = "";
-		if (FParse::Value(FCommandLine::Get(), TEXT("glAnywhereAuthToken="), glAnywhereAuthToken))
+		if (FString GameLiftAnywhereAuthToken;
+			FParse::Value(FCommandLine::Get(), TEXT("glAnywhereAuthToken="), GameLiftAnywhereAuthToken))
 		{
-			ServerParametersForAnywhere.m_authToken = TCHAR_TO_UTF8(*glAnywhereAuthToken);
+			ServerParametersForAnywhere.m_authToken = TCHAR_TO_UTF8(*GameLiftAnywhereAuthToken);
 		}
 
 		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_YELLOW);
@@ -108,19 +115,17 @@ void UGameLift::InitSDK()
 		UE_LOG(LogGameLift, Log, TEXT(">>>> Host ID (Compute Name): %s"), *ServerParametersForAnywhere.m_hostId);
 		UE_LOG(LogGameLift, Log, TEXT(">>>> Auth Token: %s"), *ServerParametersForAnywhere.m_authToken);
 		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
-	}
 
-	UE_LOG(LogGameLift, Log, TEXT("Initializing the GameLift Server..."));
-
-	//InitSDK will establish a local connection with GameLift's agent to enable further communication.
-	FGameLiftGenericOutcome InitSdkOutcome = GameLiftSdkModule->InitSDK(ServerParametersForAnywhere);
-	if (InitSdkOutcome.IsSuccess())
-	{
-		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_GREEN);
-		UE_LOG(LogGameLift, Log, TEXT("GameLift InitSDK succeeded!"));
-		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
+		UE_LOG(LogGameLift, Log, TEXT("Initializing the GameLift Anywhere Server..."));
+		InitSdkOutcome = GameLiftSdkModule->InitSDK(ServerParametersForAnywhere);
 	}
 	else
+	{
+		UE_LOG(LogGameLift, Log, TEXT("Initializing the GameLift Server..."));
+		InitSdkOutcome = GameLiftSdkModule->InitSDK();
+	}
+
+	if (!InitSdkOutcome.IsSuccess())
 	{
 		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_RED);
 		UE_LOG(LogGameLift, Log, TEXT("ERROR: InitSDK failed : ("));
@@ -130,36 +135,38 @@ void UGameLift::InitSDK()
 		return;
 	}
 
-	//When a game session is created, GameLift sends an activation request to the game server and passes along the game session object containing game properties and other settings.
-	//Here is where a game server should take action based on the game session object.
-	//Once the game server is ready to receive incoming player connections, it should invoke GameLiftServerAPI.ActivateGameSession()
-	ProcessParameters->OnStartGameSession.BindLambda([=](const Aws::GameLift::Server::Model::GameSession& InGameSession)
-	{
-		const FString GameSessionId = FString(InGameSession.GetGameSessionId());
-		UE_LOG(LogGameLift, Log, TEXT("GameSession Initializing: %s"), *GameSessionId);
-		GameLiftSdkModule->ActivateGameSession();
-	});
+	UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_GREEN);
+	UE_LOG(LogGameLift, Log, TEXT("GameLift InitSDK succeeded!"));
+	UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
 
-	//OnProcessTerminate callback. GameLift will invoke this callback before shutting down an instance hosting this game server.
-	//It gives this game server a chance to save its state, communicate with services, etc., before being shut down.
-	//In this case, we simply tell GameLift we are indeed going to shut down.
-	ProcessParameters->OnTerminate.BindLambda([=]()
-	{
-		UE_LOG(LogGameLift, Log, TEXT("Game Server Process is terminating"));
-		GameLiftSdkModule->ProcessEnding();
-	});
+	ProcessParameters->OnStartGameSession.BindLambda([=](const GameSession& InGameSession)
+		{
+			const FString GameSessionId = FString(InGameSession.GetGameSessionId());
+			UE_LOG(LogGameLift, Verbose, TEXT("GameSession Initializing: %s"), *GameSessionId);
+			GameLiftSdkModule->ActivateGameSession();
+		});
 
-	//This is the HealthCheck callback.
-	//GameLift will invoke this callback every 60 seconds or so.
-	//Here, a game server might want to check the health of dependencies and such.
-	//Simply return true if healthy, false otherwise.
-	//The game server has 60 seconds to respond with its health status. GameLift will default to 'false' if the game server doesn't respond in time.
-	//In this case, we're always healthy!
-	ProcessParameters->OnHealthCheck.BindLambda([]()
-	{
-		UE_LOG(LogGameLift, Log, TEXT("Performing Health Check"));
-		return true;
-	});
+	ProcessParameters->OnUpdateGameSession.BindLambda([](const UpdateGameSession& InUpdateGameSession)
+		{
+			const FString NewGameSessionId = FString(InUpdateGameSession.GetGameSession().GetGameSessionId());
+			const FString UpdateReason = FString(
+				Aws::GameLift::Server::Model::UpdateReasonMapper::GetNameForUpdateReason(
+					InUpdateGameSession.GetUpdateReason()));
+
+			UE_LOG(LogGameLift, Verbose, TEXT("GameSession Updated: %s, Reason: %s"), *NewGameSessionId, *UpdateReason);
+		});
+
+	ProcessParameters->OnHealthCheck.BindLambda([]
+		{
+			UE_LOG(LogGameLift, Verbose, TEXT("Performing Health Check"));
+			return true;
+		});
+
+	ProcessParameters->OnTerminate = OnTerminateFromGameLift;
+	ProcessParameters->OnTerminate.BindLambda([]
+		{
+			UE_LOG(LogGameLift, Verbose, TEXT("Game Server Process is terminating"));
+		});
 
 	//GameServer.exe -port=7777 LOG=server.mylog
 	ProcessParameters->port = FURL::UrlConfig.DefaultPort;
@@ -191,24 +198,24 @@ void UGameLift::InitSDK()
 
 	//The game server calls ProcessReady() to tell GameLift it's ready to host game sessions.
 	UE_LOG(LogGameLift, Log, TEXT("Calling Process Ready..."));
-	FGameLiftGenericOutcome ProcessReadyOutcome = GameLiftSdkModule->ProcessReady(*ProcessParameters);
 
-	if (ProcessReadyOutcome.IsSuccess())
-	{
-		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_GREEN);
-		UE_LOG(LogGameLift, Log, TEXT("Process Ready!"));
-		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
-	}
-	else
+	if (FGameLiftGenericOutcome ProcessReadyOutcome = GameLiftSdkModule->ProcessReady(*ProcessParameters);
+		!ProcessReadyOutcome.IsSuccess())
 	{
 		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_RED);
 		UE_LOG(LogGameLift, Log, TEXT("ERROR: Process Ready Failed!"));
 		FGameLiftError ProcessReadyError = ProcessReadyOutcome.GetError();
 		UE_LOG(LogGameLift, Log, TEXT("ERROR: %s"), *ProcessReadyError.m_errorMessage);
 		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
+		return;
 	}
 
+	UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_GREEN);
+	UE_LOG(LogGameLift, Log, TEXT("Process Ready!"));
+	UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
+
 	UE_LOG(LogGameLift, Log, TEXT("InitGameLift completed!"));
+	bInitialized = true;
 #else
 	UE_LOG(LogGameLift, Log, TEXT("GameLift SDK is not enabled."))
 #endif

@@ -7,7 +7,7 @@
       <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
       <option name="EXECUTABLE_PATH" value="D:\source\stereo-mix\StereoMix\Binaries\Win64\StereoMixServer.exe" />
       <option name="MANDATORY_PROGRAM_PARAMETERS" value=" &quot;D:\source\stereo-mix\StereoMix\StereoMix.uproject&quot;" />
-      <option name="CUSTOM_PROGRAM_PARAMETERS" value="-log" />
+      <option name="CUSTOM_PROGRAM_PARAMETERS" value="-log -usegamelift" />
       <option name="WORKING_DIRECTORY" value="C:\UnrealEngine_StereoMix_5.3.2" />
       <option name="PASS_PARENT_ENVS" value="1" />
       <option name="USE_EXTERNAL_CONSOLE" value="1" />

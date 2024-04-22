@@ -16,9 +16,19 @@ class STEREOMIX_API ASMGameSession : public AGameSession
 public:
 	ASMGameSession();
 
+	virtual void BeginPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual FString ApproveLogin(const FString& Options) override;
 
-	virtual void OnStartSessionComplete(FName InSessionName, bool bWasSuccessful) override;
+	virtual void UnregisterPlayer(const APlayerController* ExitingPlayer) override;
 
-	virtual void OnEndSessionComplete(FName InSessionName, bool bWasSuccessful) override;
+	virtual bool HandleStartMatchRequest() override;
+
+	virtual void HandleMatchHasEnded() override;
+
+	virtual void HandleMatchHasStarted() override;
+
+	virtual void RegisterServer() override;
 };
