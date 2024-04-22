@@ -477,9 +477,9 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 	// 팀이 바뀔일은 없어야하지만 테스트 시에는 충분히 있는 상황으로 이에 대한 처리입니다.
 	if (!HasAuthority())
 	{
-		GetMesh()->SetMaterial(0, AssetData->CharacterMaterial[Team]);
-		GetMesh()->SetMaterial(2, AssetData->CharacterMaterial[Team]);
-		GetMesh()->SetMaterial(3, AssetData->CharacterMaterial[Team]);
+		GetMesh()->SetMaterial(0, AssetData->HairRingMaterial[Team]);
+		GetMesh()->SetMaterial(2, AssetData->HairFrontMaterial[Team]);
+		GetMesh()->SetMaterial(3, AssetData->HairTailMaterial[Team]);
 
 		if (ASC.Get())
 		{

@@ -22,9 +22,17 @@ public:
 		CharacterStateWidget.Add(ESMTeam::EDM, nullptr);
 		CharacterStateWidget.Add(ESMTeam::FutureBass, nullptr);
 		
-		CharacterMaterial.Add(ESMTeam::None, nullptr);
-		CharacterMaterial.Add(ESMTeam::EDM, nullptr);
-		CharacterMaterial.Add(ESMTeam::FutureBass, nullptr);
+		HairFrontMaterial.Add(ESMTeam::None, nullptr);
+		HairFrontMaterial.Add(ESMTeam::EDM, nullptr);
+		HairFrontMaterial.Add(ESMTeam::FutureBass, nullptr);
+
+		HairRingMaterial.Add(ESMTeam::None, nullptr);
+		HairRingMaterial.Add(ESMTeam::EDM, nullptr);
+		HairRingMaterial.Add(ESMTeam::FutureBass, nullptr);
+
+		HairTailMaterial.Add(ESMTeam::None, nullptr);
+		HairTailMaterial.Add(ESMTeam::EDM, nullptr);
+		HairTailMaterial.Add(ESMTeam::FutureBass, nullptr);
 	}
 
 public:
@@ -32,5 +40,11 @@ public:
 	TMap<ESMTeam, TSubclassOf<UUserWidget>> CharacterStateWidget;
 
 	UPROPERTY(EditAnywhere, Category = "Material")
-	TMap<ESMTeam, TObjectPtr<UMaterialInstance>> CharacterMaterial;
+	TMap<ESMTeam, TObjectPtr<UMaterialInstance>> HairFrontMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "Material")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> HairRingMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "Material")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> HairTailMaterial;
 };
