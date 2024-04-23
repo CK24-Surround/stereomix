@@ -212,9 +212,6 @@ void USMGameplayAbility_Smash::OnSmash()
 		// 타일 트리거 로직
 		TileTrigger(TargetCharacter);
 
-		// 스매시 대미지 로직
-		ApplySmashSplashDamage();
-
 		// 잡기 풀기 로직
 		ReleaseCatch(TargetCharacter);
 
@@ -300,17 +297,24 @@ void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
 
 void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter)
 {
-	if (!ensure(InTargetCharacter))
+	if (!ensureAlways(InTargetCharacter))
 	{
 		return;
 	}
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensure(SourceCharacter))
+	if (!ensureAlways(SourceCharacter))
 	{
 		return;
 	}
 
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
+	{
+		return;
+	}
+
+	// 타일을 트리거합니다.
 	FHitResult HitResult;
 	const FVector Start = InTargetCharacter->GetActorLocation();
 	const FVector End = Start + (-FVector::UpVector * 1000.0f);
@@ -324,78 +328,48 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
 		if (Tile)
 		{
-			FVector Center = Tile->GetTileLocation();
-			NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("%s타일을 트리거 했습니다."), *Tile->GetName());
+			FGameplayAbilityTargetData_SingleTargetHit* TagetData = new FGameplayAbilityTargetData_SingleTargetHit();
+			TagetData->HitResult = HitResult;
+
+			FGameplayAbilityTargetDataHandle TargetDataHandle;
+			TargetDataHandle.Add(TagetData);
+
+			// TargetData에 Tile 액터를, EventMagnitude에 트리거되야하는 규모를 적용합니다.
+			FGameplayEventData Payload;
+			Payload.TargetData = TargetDataHandle;
+			Payload.EventMagnitude = MaxTriggerCount;
+
+			// 이펙트 재생에 필요한 데이터들을 GCParams에 담습니다.
+			FGameplayCueParameters GCParams;
+
+			FVector TileCenter = Tile->GetTileLocation();
+			GCParams.Location = TileCenter;
 
 			const USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
 			if (ensure(SourceTeamComponent))
 			{
 				const ESMTeam Team = SourceTeamComponent->GetTeam();
-				TileTriggerData.TriggerCount = 0;
-				TileTriggerData.TriggerStartLocation = Center;
-				TileTriggerData.SourceTeam = Team;
-				// 충돌 박스의 크기를 0.0으로 하면 오류가 생길 수 있으니 1.0으로 설정해두었습니다.
-				TileTriggerData.Range = 1.0f;
-				const UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
-				if (ensure(TileBoxComponent))
-				{
-					const float TileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X * 2.0;
-					TileTriggerData.TileHorizonSize = TileHorizonSize;
-				}
-				ProcessContinuousTileTrigger();
-
-				FGameplayCueParameters GCParams;
-				GCParams.Location = Center;
-				GCParams.SourceObject = OnSmashFX[Team];
-
-				USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-				if (ensure(SourceASC))
-				{
-					SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
-				}
+				UNiagaraSystem* OnSmashFXWithTeam = OnSmashFX[Team];
+				GCParams.SourceObject = OnSmashFXWithTeam;
 			}
-		}
-	}
-}
 
-void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
-{
-	// 타일 트리거 영역입니다.
-	FVector HalfExtend(TileTriggerData.Range, TileTriggerData.Range, 100.0);
+			// 이펙트를 재생합니다.
+			SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
 
-	TArray<FOverlapResult> OverlapResults;
-	FCollisionShape CollisionShape = FCollisionShape::MakeBox(HalfExtend);
-	const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, TileTriggerData.TriggerStartLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, CollisionShape);
-	if (bSuccess)
-	{
-		for (const auto& OverlapResult : OverlapResults)
-		{
-			ASMTile* Tile = Cast<ASMTile>(OverlapResult.GetActor());
-			if (Tile)
+			// 스플래시 데미지를 적용합니다.
+			UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
+			if (ensureAlways(TileBoxComponent))
 			{
-				Tile->TileTrigger(TileTriggerData.SourceTeam);
+				ApplySmashSplashDamage(TileCenter, TileBoxComponent->GetScaledBoxExtent().X * 2);
 			}
+
+			// 타일 트리거 정보를 가지고 타일 트리거 GA를 활성화합니다.
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceCharacter, SMTags::Event::Tile::TileTrigger, Payload);
 		}
-	}
-
-	DrawDebugBox(GetWorld(), TileTriggerData.TriggerStartLocation, HalfExtend, FColor::Turquoise, false, 2.0f);
-
-	// -1을 통해 원하는 횟수만큼 타이머를 동작 시킬 수 있습니다.
-	if (TileTriggerData.TriggerCount < MaxTriggerCount - 1)
-	{
-		// 다음 트리거를 위해 값을 더해줍니다.
-		TileTriggerData.Range += TileTriggerData.TileHorizonSize;
-		++TileTriggerData.TriggerCount;
-
-		// 아래 수식으로 몇 초 뒤에 다시 트리거되어야하는지 구해서 타이머에 적용합니다.
-		FTimerHandle TimerHandle;
-		const float TimeAdd = TotalTriggerTime / (MaxTriggerCount - 1);
-		// NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("타일 트리거 시작 TimeAdd: %f"), TimeAdd);
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_Smash::ProcessContinuousTileTrigger, TimeAdd, false);
 	}
 }
 
-void USMGameplayAbility_Smash::ApplySmashSplashDamage()
+void USMGameplayAbility_Smash::ApplySmashSplashDamage(const FVector& TileLocation, float TileHorizonSize)
 {
 	const ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
@@ -422,8 +396,8 @@ void USMGameplayAbility_Smash::ApplySmashSplashDamage()
 	}
 
 	TArray<FOverlapResult> OverlapResults;
-	const FVector Start = SourceCharacter->GetActorLocation();
-	const float HorizenSize = (TileTriggerData.TileHorizonSize * (MaxTriggerCount - 1)) + TileTriggerData.TileHorizonSize / 2;
+	const FVector Start = TileLocation;
+	const float HorizenSize = (TileHorizonSize * (MaxTriggerCount - 1)) + TileHorizonSize / 2;
 	const FVector CollisionHalfExtend(HorizenSize, HorizenSize, 100.0);
 	const FCollisionShape CollisionShape = FCollisionShape::MakeBox(CollisionHalfExtend);
 	const FCollisionQueryParams Params(SCENE_QUERY_STAT(SmashSplash), false, SourceCharacter);
@@ -479,5 +453,5 @@ void USMGameplayAbility_Smash::ApplySmashSplashDamage()
 		}
 	}
 
-	DrawDebugBox(GetWorld(), TileTriggerData.TriggerStartLocation, CollisionHalfExtend, FColor::Orange, false, 2.0f);
+	DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, FColor::Orange, false, 2.0f);
 }

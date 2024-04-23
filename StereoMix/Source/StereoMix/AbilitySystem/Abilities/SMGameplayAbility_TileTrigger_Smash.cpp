@@ -3,7 +3,6 @@
 
 #include "SMGameplayAbility_TileTrigger_Smash.h"
 
-#include "NiagaraSystem.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
@@ -12,7 +11,7 @@
 
 class ASMTile;
 
-void USMGameplayAbility_TileTrigger_Smash::TileTrigger(const UObject* TriggerFX)
+void USMGameplayAbility_TileTrigger_Smash::TileTrigger()
 {
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
@@ -21,16 +20,13 @@ void USMGameplayAbility_TileTrigger_Smash::TileTrigger(const UObject* TriggerFX)
 		return;
 	}
 
+	// 타일 트리거 규모를 트리거 횟수로 치환해줍니다.
+	MaxTriggerCount = static_cast<int32>(TileTriggerMagnitude);
+
 	// 타일 트리거마다 딜레이되야할 시간을 구합니다.
 	DelayTime = TotalTriggerTime / (MaxTriggerCount - 1);
 
 	ProcessContinuousTileTrigger();
-
-	FGameplayCueParameters GCParams;
-	GCParams.Location = TriggerdTileLocation;
-	GCParams.SourceObject = Cast<UNiagaraSystem>(TriggerFX);
-
-	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
 }
 
 void USMGameplayAbility_TileTrigger_Smash::ProcessContinuousTileTrigger()
@@ -44,8 +40,6 @@ void USMGameplayAbility_TileTrigger_Smash::ProcessContinuousTileTrigger()
 		const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, Start, FQuat::Identity, SMCollisionTraceChannel::TileAction, CollisionShape);
 		if (bSuccess)
 		{
-			NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("타일 전환"));
-
 			for (const auto& OverlapResult : OverlapResults)
 			{
 				ASMTile* Tile = Cast<ASMTile>(OverlapResult.GetActor());

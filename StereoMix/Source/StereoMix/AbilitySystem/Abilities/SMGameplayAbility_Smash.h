@@ -43,7 +43,7 @@ protected:
 
 protected:
 	void OnReceiveTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
-	
+
 	UFUNCTION()
 	void OnSmash();
 
@@ -57,10 +57,8 @@ protected:
 	// 타일을 트리거합니다. 서버에서 호출되어야합니다.
 	void TileTrigger(ASMPlayerCharacter* InTargetCharacter);
 
-	void ProcessContinuousTileTrigger();
-
 	/** 스플래시 대미지를 적용합니다. */
-	void ApplySmashSplashDamage();
+	void ApplySmashSplashDamage(const FVector& TileLocation, float TileHorizonSize);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
@@ -78,33 +76,19 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Smash", DisplayName = "매치기 대미지")
 	float SmashDamage = 40.0f;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 도약 거리(타일 기준)")
 	int32 SmashRangeByTile = 6;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 정점 높이")
 	float ApexHeight = 500.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 시 적용되는 중력 스케일")
 	float SmashGravityScale = 3.0f;
-	
+
 	float OriginalGravityScale = 0.0f;
 
 protected:
-	struct FTileTriggerData
-	{
-		int32 TriggerCount = 0;
-		FVector TriggerStartLocation;
-		ESMTeam SourceTeam = ESMTeam::None;
-		float TileHorizonSize = 0.0f;
-		float Range = 0.0f;
-	};
-
-	FTileTriggerData TileTriggerData;
-
 	UPROPERTY(EditAnywhere, Category = "Smash|TileTirgger", DisplayName = "매치기 1회에 타일이 트리거 되는 횟수")
 	int32 MaxTriggerCount = 3;
-
-	UPROPERTY(EditAnywhere, Category = "Smash|TileTirgger", DisplayName = "타일이 모두 트리거 되는데 걸리는 시간")
-	float TotalTriggerTime = 0.2f;
 };

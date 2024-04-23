@@ -3,6 +3,7 @@
 
 #include "SMGameplayAbility_TileTrigger.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
@@ -49,42 +50,46 @@ void USMGameplayAbility_TileTrigger::ActivateAbility(const FGameplayAbilitySpecH
 		return;
 	}
 
-	FHitResult HitResult;
-	const FVector Start = TargetData->GetEndPoint();
-	const FVector End = Start + (-FVector::UpVector * 1000.0f);
-	const FCollisionQueryParams Param(SCENE_QUERY_STAT(TileTrace), false);
-	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(25.0f);
-	const bool bSuccess = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, SMCollisionTraceChannel::TileAction, CollisionShape, Param);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Silver, false, 3.0f);
-
-	if (bSuccess)
+	const FHitResult* HitResult = TargetData->GetHitResult();
+	if (!ensureAlways(HitResult))
 	{
-		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
-		if (Tile)
-		{
-			TriggerdTileLocation = Tile->GetTileLocation();
-
-			const UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
-			if (!ensure(TileBoxComponent))
-			{
-				EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-			}
-
-			TileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X * 2;
-
-			USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
-			if (!ensure(SourceTeamComponent))
-			{
-				EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-			}
-
-			SourceTeam = SourceTeamComponent->GetTeam();
-
-			NET_LOG(SourceCharacter, Log, TEXT("%s타일을 트리거 했습니다."), *Tile->GetName());
-			TileTrigger(TriggerEventData->OptionalObject);
-			return;
-		}
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
 	}
 
-	EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+	ASMTile* Tile = Cast<ASMTile>(HitResult->GetActor());
+	if (!ensureAlways(Tile))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	const UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
+	if (!ensure(TileBoxComponent))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
+	if (!ensure(SourceTeamComponent))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	// 트리거된 타일의 위치를 저장합니다.
+	TriggerdTileLocation = Tile->GetTileLocation();
+
+	// 팀을 저장합니다.
+	SourceTeam = SourceTeamComponent->GetTeam();
+
+	// 타일이 트리거 되야할 규모를 저장합니다.
+	TileTriggerMagnitude = TriggerEventData->EventMagnitude;
+
+	// 타일 가로 사이즈로 저장합니다.
+	TileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X * 2;
+
+	NET_LOG(SourceCharacter, Log, TEXT("%s타일을 트리거 했습니다."), *Tile->GetName());
+	TileTrigger();
 }

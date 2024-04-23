@@ -22,11 +22,13 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
-	virtual void TileTrigger(const UObject* TriggerFX) PURE_VIRTUAL(TileTrigger)
+	virtual void TileTrigger() PURE_VIRTUAL(TileTrigger)
 
 protected:
 	FVector TriggerdTileLocation;
 	ESMTeam SourceTeam = ESMTeam::None;
 
+	// 타일이 트리거 되야할 규모입니다.
+	float TileTriggerMagnitude = 0.0f;
 	float TileHorizonSize = 0.0f;
 };
