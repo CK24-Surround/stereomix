@@ -27,7 +27,7 @@ public:
 
 public:
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerCharacter|Projectile", DisplayName = "투사체 공격력")
-	float ProjectileAttack = 16.67f;
+	float ProjectileAttack = 20.0f;
 
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerCharacter|Projectile", DisplayName = "초당 투사체 공격 속도")
 	float ProjectileRate = 4.0f;
