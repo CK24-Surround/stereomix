@@ -71,6 +71,9 @@ protected:
 	FVector TargetLocation;
 
 	UPROPERTY(EditAnywhere, Category = "Catch")
+	float MaxDistance = 300.0f;
+	
+	UPROPERTY(EditAnywhere, Category = "Catch")
 	float LimitDegree = 90.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Catch")

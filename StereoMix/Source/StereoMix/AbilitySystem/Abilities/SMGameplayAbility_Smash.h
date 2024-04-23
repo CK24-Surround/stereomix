@@ -10,11 +10,12 @@
 class UNiagaraSystem;
 class ASMTile;
 /**
- * 24.04.13 수정
+ * 24.04.24 수정
  * 잡고 있는 상태에서만 활성화 가능하며 잡고 있는 대상을 매치는 어빌리티입니다.
  * 대상을 매치며 해당 위치의 타일을 트리거합니다. 매쳐지면 대상은 디태치됩니다.
  *
- * Smashed 태그가 제거되는 시점에 타겟측에 Smashed GA가 활성화됩니다. 
+ * Smashed 태그가 제거되는 시점에 타겟측에 Smashed GA가 활성화됩니다.
+ * 타일 트리거에는 타일 트리거 GA가 사용됩니다.
  *
  * 디태치에서 처리되는 목록입니다.
  *     1. 타겟의 콜리전 활성화
@@ -42,8 +43,10 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 protected:
+	/** 애님 노티파이가 트리거될때 호출됩니다. */
 	void OnReceiveTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
 
+	/** 매치기의 핵심 로직입니다. */
 	UFUNCTION()
 	void OnSmash();
 
@@ -51,6 +54,7 @@ protected:
 	void OnCompleted();
 
 protected:
+	/** 잡은 상대를 풀어줍니다. */
 	void ReleaseCatch(ASMPlayerCharacter* TargetCharacter);
 
 protected:

@@ -104,8 +104,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 
 	// 일정 범위내에 있는 캐릭터를 대상으로 충돌 검사를 수행합니다.
 	TArray<FOverlapResult> OverlapResults;
-	const float Distance = 300.0f;
-	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(Distance);
+	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(MaxDistance);
 	const FCollisionQueryParams Params(SCENE_QUERY_STAT(Hold), false, SourceCharacter);
 	bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, InStartLocation, FQuat::Identity, SMCollisionTraceChannel::Action, CollisionShape, Params);
 
@@ -154,7 +153,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 
 	// 디버거
 	const FColor Color = bSuccess ? FColor::Green : FColor::Red;
-	DrawDebugSphere(GetWorld(), InStartLocation, Distance, 16, Color, false, 2.0f);
+	DrawDebugSphere(GetWorld(), InStartLocation, MaxDistance, 16, Color, false, 2.0f);
 }
 
 bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<ASMPlayerCharacter*>& OutCatchableCharacters)

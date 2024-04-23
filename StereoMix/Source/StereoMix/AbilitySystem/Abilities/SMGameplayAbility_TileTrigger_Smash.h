@@ -21,7 +21,7 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Smash|TileTirgger", DisplayName = "타일이 모두 트리거 되는데 걸리는 시간")
-	float TotalTriggerTime = 0.2f;
+	float TotalTriggerTime = 0.267f;
 
 	int32 CurrentTriggerCount = 0;
 	int32 MaxTriggerCount = 0;
