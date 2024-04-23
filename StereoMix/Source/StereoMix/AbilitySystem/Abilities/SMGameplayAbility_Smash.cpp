@@ -374,7 +374,7 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 	DrawDebugBox(GetWorld(), TileTriggerData.TriggerStartLocation, HalfExtend, FColor::Turquoise, false, 2.0f);
 
 	// -1을 통해 원하는 횟수만큼 타이머를 동작 시킬 수 있습니다.
-	if (TileTriggerData.TriggerCount < TileTriggerData.MaxTriggerCount - 1)
+	if (TileTriggerData.TriggerCount < MaxTriggerCount - 1)
 	{
 		// 다음 트리거를 위해 값을 더해줍니다.
 		TileTriggerData.Range += TileTriggerData.TileHorizonSize;
@@ -382,7 +382,7 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 
 		// 아래 수식으로 몇 초 뒤에 다시 트리거되어야하는지 구해서 타이머에 적용합니다.
 		FTimerHandle TimerHandle;
-		const float TimeAdd = TileTriggerData.TotalTriggerTime / (TileTriggerData.MaxTriggerCount - 1);
+		const float TimeAdd = TotalTriggerTime / (MaxTriggerCount - 1);
 		// NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("타일 트리거 시작 TimeAdd: %f"), TimeAdd);
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_Smash::ProcessContinuousTileTrigger, TimeAdd, false);
 	}

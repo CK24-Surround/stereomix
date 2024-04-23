@@ -67,13 +67,13 @@ protected:
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> OnSmashFX;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Smash")
-	int32 SmashRangeByTile = 7;
+	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 도약 거리(타일 기준)")
+	int32 SmashRangeByTile = 6;
 	
-	UPROPERTY(EditAnywhere, Category = "Smash")
+	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 정점 높이")
 	float ApexHeight = 500.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Smash")
+	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 시 적용되는 중력 스케일")
 	float SmashGravityScale = 3.0f;
 	
 	float OriginalGravityScale = 0.0f;
@@ -82,9 +82,6 @@ protected:
 	struct FTileTriggerData
 	{
 		int32 TriggerCount = 0;
-		int32 MaxTriggerCount = 3;
-		// TotalTriggerTime는 총 몇 초에 걸쳐 타일 트리거가 마무리 되어야할지를 나타냅니다.
-		float TotalTriggerTime = 0.2f;
 		FVector TriggerStartLocation;
 		ESMTeam SourceTeam = ESMTeam::None;
 		float TileHorizonSize = 0.0f;
@@ -92,4 +89,10 @@ protected:
 	};
 
 	FTileTriggerData TileTriggerData;
+
+	UPROPERTY(EditAnywhere, Category = "Smash|TileTirgger", DisplayName = "매치기 1회에 타일이 트리거 되는 횟수")
+	int32 MaxTriggerCount = 3;
+
+	UPROPERTY(EditAnywhere, Category = "Smash|TileTirgger", DisplayName = "타일이 모두 트리거 되는데 걸리는 시간")
+	float TotalTriggerTime = 0.2f;
 };
