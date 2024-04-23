@@ -47,6 +47,7 @@ ASMProjectile::ASMProjectile()
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	RootComponent = SphereComponent;
 	SphereComponent->SetCollisionProfileName(SMCollisionProfileName::Projectile);
+	SphereComponent->InitSphereRadius(1.0f);
 
 	ProjectileFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	ProjectileFXComponent->SetupAttachment(SphereComponent);
