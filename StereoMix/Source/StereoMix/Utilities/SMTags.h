@@ -52,6 +52,11 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExitEnd);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stun);
 		}
+
+		namespace Tile
+		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(TileTrigger);
+		}
 	}
 
 	namespace GameplayCue

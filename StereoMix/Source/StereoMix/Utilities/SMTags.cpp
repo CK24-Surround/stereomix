@@ -51,6 +51,11 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExitEnd, "Event.Character.CaughtExitEnd", "잡힌 상태 탈출이 종료되었음을 알리는데 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Event.Character.Stun", "체력이 모두 소모되어 기절상태에 들어가야함을 알리는데 사용됩니다.");
 		}
+
+		namespace Tile
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(TileTrigger, "Ability.TileTrigger", "TileTrigger의 어빌리티 태그를 나타냅니다.");
+		}
 	}
 
 	namespace GameplayCue
