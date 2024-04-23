@@ -328,13 +328,14 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
 		if (Tile)
 		{
+			// 트리거된 타일을 타겟 데이터에 담습니다. 타일 트리거 GA로 전송하기 위함입니다.
 			FGameplayAbilityTargetData_SingleTargetHit* TagetData = new FGameplayAbilityTargetData_SingleTargetHit();
 			TagetData->HitResult = HitResult;
 
 			FGameplayAbilityTargetDataHandle TargetDataHandle;
 			TargetDataHandle.Add(TagetData);
 
-			// TargetData에 Tile 액터를, EventMagnitude에 트리거되야하는 규모를 적용합니다.
+			// TargetData에 Tile 액터를, EventMagnitude에 트리거되야하는 규모를 적용합니다. 이 데이터 또한 타일 트리거 GA로 전송하기 위해 저장합니다.
 			FGameplayEventData Payload;
 			Payload.TargetData = TargetDataHandle;
 			Payload.EventMagnitude = MaxTriggerCount;
@@ -395,6 +396,7 @@ void USMGameplayAbility_Smash::ApplySmashSplashDamage(const FVector& TileLocatio
 		return;
 	}
 
+	// 트리거된 타일 크기 영역내 적을 검사합니다.
 	TArray<FOverlapResult> OverlapResults;
 	const FVector Start = TileLocation;
 	const float HorizenSize = (TileHorizonSize * (MaxTriggerCount - 1)) + TileHorizonSize / 2;
@@ -425,17 +427,20 @@ void USMGameplayAbility_Smash::ApplySmashSplashDamage(const FVector& TileLocatio
 				continue;
 			}
 
+			// 팀이 없는 경우 대미지를 가하지 않습니다.
 			const ESMTeam TargetTeam = TeamComponent->GetTeam();
 			if (TargetTeam == ESMTeam::None)
 			{
 				continue;
 			}
 
+			// 같은 팀의 경우도 대미지를 가하지 않습니다.
 			if (SourceTeam == TargetTeam)
 			{
 				continue;
 			}
 
+			// 적에게 대미지를 GE로 적용합니다.
 			FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(DamageGE);
 			FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
 			if (ensureAlways(GESpec))
@@ -445,6 +450,7 @@ void USMGameplayAbility_Smash::ApplySmashSplashDamage(const FVector& TileLocatio
 
 			SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 
+			// GC로 피격 이펙트를 재생합니다.
 			FGameplayCueParameters GCParams;
 			GCParams.Location = TargetCharacter->GetActorLocation();
 			GCParams.SourceObject = SplashDamageFX[SourceTeam];
