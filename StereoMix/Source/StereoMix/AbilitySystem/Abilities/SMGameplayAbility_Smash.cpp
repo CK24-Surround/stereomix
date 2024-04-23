@@ -26,6 +26,10 @@ USMGameplayAbility_Smash::USMGameplayAbility_Smash()
 	OnSmashFX.Add(ESMTeam::None, nullptr);
 	OnSmashFX.Add(ESMTeam::EDM, nullptr);
 	OnSmashFX.Add(ESMTeam::FutureBass, nullptr);
+
+	SplashDamageFX.Add(ESMTeam::None, nullptr);
+	SplashDamageFX.Add(ESMTeam::EDM, nullptr);
+	SplashDamageFX.Add(ESMTeam::FutureBass, nullptr);
 }
 
 void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -209,7 +213,7 @@ void USMGameplayAbility_Smash::OnSmash()
 		TileTrigger(TargetCharacter);
 
 		// 스매시 대미지 로직
-		SmashSplash();
+		ApplySmashSplashDamage();
 
 		// 잡기 풀기 로직
 		ReleaseCatch(TargetCharacter);
@@ -391,7 +395,7 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 	}
 }
 
-void USMGameplayAbility_Smash::SmashSplash()
+void USMGameplayAbility_Smash::ApplySmashSplashDamage()
 {
 	const ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
@@ -466,6 +470,12 @@ void USMGameplayAbility_Smash::SmashSplash()
 			}
 
 			SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
+
+			FGameplayCueParameters GCParams;
+			GCParams.Location = TargetCharacter->GetActorLocation();
+			GCParams.SourceObject = SplashDamageFX[SourceTeam];
+
+			TargetASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
 		}
 	}
 

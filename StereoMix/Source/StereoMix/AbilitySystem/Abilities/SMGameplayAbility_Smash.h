@@ -60,7 +60,7 @@ protected:
 	void ProcessContinuousTileTrigger();
 
 	/** 스플래시 대미지를 적용합니다. */
-	void SmashSplash();
+	void ApplySmashSplashDamage();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
@@ -68,6 +68,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> OnSmashFX;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> SplashDamageFX;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> DamageGE;
