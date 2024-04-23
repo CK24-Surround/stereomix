@@ -33,6 +33,11 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Uncatchable);
 	}
 
+	namespace Data
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage);
+	}
+
 	namespace Event
 	{
 		namespace AnimNotify

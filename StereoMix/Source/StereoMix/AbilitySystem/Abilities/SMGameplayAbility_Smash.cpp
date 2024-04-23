@@ -152,7 +152,7 @@ void USMGameplayAbility_Smash::OnReceiveTargetData(const FGameplayAbilityTargetD
 	const FGameplayAbilityTargetData* TargetData = GameplayAbilityTargetDataHandle.Get(0);
 	const FVector SourceLocation = TargetData->GetOrigin().GetLocation();
 	const FVector TargetLocation = TargetData->GetEndPoint();
-	
+
 	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, SourceLocation, TargetLocation, ApexHeight, SourceMovement->GetGravityZ());
 	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }
@@ -207,6 +207,9 @@ void USMGameplayAbility_Smash::OnSmash()
 	{
 		// 타일 트리거 로직
 		TileTrigger(TargetCharacter);
+
+		// 스매시 대미지 로직
+		SmashSplash();
 
 		// 잡기 풀기 로직
 		ReleaseCatch(TargetCharacter);
@@ -327,7 +330,7 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 				TileTriggerData.TriggerCount = 0;
 				TileTriggerData.TriggerStartLocation = Center;
 				TileTriggerData.SourceTeam = Team;
-				// 충돌 박스의 크기를 0.0으로 하면 오류가 생길 수 있ㄴ으니 1.0으로 설정해두었습니다.
+				// 충돌 박스의 크기를 0.0으로 하면 오류가 생길 수 있으니 1.0으로 설정해두었습니다.
 				TileTriggerData.Range = 1.0f;
 				const UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
 				if (ensure(TileBoxComponent))
@@ -386,4 +389,85 @@ void USMGameplayAbility_Smash::ProcessContinuousTileTrigger()
 		// NET_LOG(GetSMPlayerCharacterFromActorInfo(), Warning, TEXT("타일 트리거 시작 TimeAdd: %f"), TimeAdd);
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_Smash::ProcessContinuousTileTrigger, TimeAdd, false);
 	}
+}
+
+void USMGameplayAbility_Smash::SmashSplash()
+{
+	const ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
+	{
+		return;
+	}
+
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
+	{
+		return;
+	}
+
+	const USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
+	if (!ensureAlways(SourceTeamComponent))
+	{
+		return;
+	}
+
+	const ESMTeam SourceTeam = SourceTeamComponent->GetTeam();
+	if (SourceTeam == ESMTeam::None)
+	{
+		return;
+	}
+
+	TArray<FOverlapResult> OverlapResults;
+	const FVector Start = SourceCharacter->GetActorLocation();
+	const float HorizenSize = (TileTriggerData.TileHorizonSize * (MaxTriggerCount - 1)) + TileTriggerData.TileHorizonSize / 2;
+	const FVector CollisionHalfExtend(HorizenSize, HorizenSize, 100.0);
+	const FCollisionShape CollisionShape = FCollisionShape::MakeBox(CollisionHalfExtend);
+	const FCollisionQueryParams Params(SCENE_QUERY_STAT(SmashSplash), false, SourceCharacter);
+	const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, Start, FQuat::Identity, SMCollisionTraceChannel::Action, CollisionShape, Params);
+
+	if (bSuccess)
+	{
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OverlapResult.GetActor());
+			if (!TargetCharacter)
+			{
+				continue;
+			}
+
+			USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+			if (!ensureAlways(TargetASC))
+			{
+				continue;
+			}
+
+			USMTeamComponent* TeamComponent = TargetCharacter->GetTeamComponent();
+			if (!ensureAlways(TeamComponent))
+			{
+				continue;
+			}
+
+			const ESMTeam TargetTeam = TeamComponent->GetTeam();
+			if (TargetTeam == ESMTeam::None)
+			{
+				continue;
+			}
+
+			if (SourceTeam == TargetTeam)
+			{
+				continue;
+			}
+
+			FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(DamageGE);
+			FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
+			if (ensureAlways(GESpec))
+			{
+				GESpec->SetSetByCallerMagnitude(SMTags::Data::Damage, SmashDamage);
+			}
+
+			SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
+		}
+	}
+
+	DrawDebugBox(GetWorld(), TileTriggerData.TriggerStartLocation, CollisionHalfExtend, FColor::Orange, false, 2.0f);
 }

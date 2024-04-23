@@ -32,6 +32,11 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncatchable, "Character.State.Uncatchable", "잡힐 수 없는 상태임을 나타냅니다.");
 	}
 
+	namespace Data
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage, "Data.Damage", "데미지 데이터 태그입니다.");
+	}
+
 	namespace Event
 	{
 		namespace AnimNotify

@@ -59,6 +59,9 @@ protected:
 
 	void ProcessContinuousTileTrigger();
 
+	/** 스플래시 대미지를 적용합니다. */
+	void SmashSplash();
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> SmashMontage;
@@ -66,7 +69,13 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> OnSmashFX;
 
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> DamageGE;
+
 protected:
+	UPROPERTY(EditAnywhere, Category = "Smash", DisplayName = "매치기 대미지")
+	float SmashDamage = 40.0f;
+	
 	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 도약 거리(타일 기준)")
 	int32 SmashRangeByTile = 6;
 	
