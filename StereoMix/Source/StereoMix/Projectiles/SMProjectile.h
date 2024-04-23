@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "Utilities/SMTeam.h"
 #include "SMProjectile.generated.h"
@@ -71,6 +72,9 @@ protected:
 	FVector StartLocation;
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
+	FGameplayTagContainer IgnoreTargetStateTags;
+	
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> HitGE;
 

@@ -67,6 +67,8 @@ ASMProjectile::ASMProjectile()
 	ProjectileHitFX.Add(ESMTeam::None, nullptr);
 	ProjectileHitFX.Add(ESMTeam::EDM, nullptr);
 	ProjectileHitFX.Add(ESMTeam::FutureBass, nullptr);
+
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Stun);
 }
 
 void ASMProjectile::PostInitializeComponents()
@@ -110,6 +112,12 @@ void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		return;
 	}
 
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	if (!TargetASC)
+	{
+		return;
+	}
+
 	// 투사체가 무소속인 경우 무시합니다.
 	ISMTeamComponentInterface* SourceTeamComponentInterface = Cast<ISMTeamComponentInterface>(GetOwner());
 	if (SourceTeamComponentInterface)
@@ -145,9 +153,13 @@ void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		}
 	}
 
+	if (TargetASC->HasAnyMatchingGameplayTags(IgnoreTargetStateTags))
+	{
+		return;
+	}
+
 	if (HasAuthority())
 	{
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
 		if (TargetASC)
 		{
 			const FGameplayEffectContextHandle GEContext = TargetASC->MakeEffectContext();
