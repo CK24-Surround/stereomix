@@ -69,4 +69,10 @@ protected:
 protected:
 	FVector StartLocation;
 	FVector TargetLocation;
+
+	UPROPERTY(EditAnywhere, Category = "Catch")
+	float LimitDegree = 90.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Catch")
+	float UnconditionallyCatchDistance = 150.0f;
 };

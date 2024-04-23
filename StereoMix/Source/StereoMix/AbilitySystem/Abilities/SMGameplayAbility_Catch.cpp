@@ -11,6 +11,7 @@
 #include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 #include "Utilities/SMTags.h"
 
 USMGameplayAbility_Catch::USMGameplayAbility_Catch()
@@ -91,6 +92,10 @@ void USMGameplayAbility_Catch::OnCatchAnimNotify(FGameplayEventData Payload)
 
 void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation)
 {
+	// 클라이언트와 동일한 값을 사용할 수 있도록 저장합니다.
+	StartLocation = InStartLocation;
+	TargetLocation = InCursorLocation;
+
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
@@ -183,6 +188,20 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 		ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OverlapResult.GetActor());
 		if (TargetCharacter)
 		{
+			// 무조건 잡을 수 있는 거리 밖에 있다면 각도로 잡을 수 있는지 없는지 추려냅니다.
+			const float DistanceSqaured = FVector::DistSquared(StartLocation, TargetCharacter->GetActorLocation());
+			if (DistanceSqaured > FMath::Square(UnconditionallyCatchDistance))
+			{
+				const FVector SourceDirection = (TargetLocation - StartLocation).GetSafeNormal();
+				const FVector TargetDirection = (TargetCharacter->GetActorLocation() - StartLocation).GetSafeNormal();
+				const float Radian = FMath::Acos(SourceDirection.Dot(TargetDirection));
+				const float HalfLimitRadian = FMath::DegreesToRadians(LimitDegree / 2.0f);
+				if (Radian > HalfLimitRadian)
+				{
+					continue;
+				}
+			}
+
 			// 태그를 기반으로 추려냅니다. 일반적으로 TargetCharacter는 AStereoMixPlayerCharacter이기 때문에 TargetASC가 유효해야합니다.
 			const UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
 			if (ensure(TargetASC))
