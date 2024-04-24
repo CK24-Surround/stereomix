@@ -6,6 +6,7 @@
 #include "GameLiftServerSDK.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Player/SMPlayerState.h"
 
 #if WITH_GAMELIFT
 #include "API/GameLift.h"
@@ -21,6 +22,8 @@ void ASMGameSession::RegisterServer()
 	UE_LOG(LogSMGameSession, Log, TEXT("RegisterServer"));
 
 #if WITH_GAMELIFT
+	UE_LOG(LogSMGameSession, Log, TEXT("Initializing GameLift..."));
+
 	if (FParse::Param(FCommandLine::Get(), TEXT("gamelift")))
 	{
 		UE_LOG(LogSMGameSession, Log, TEXT("Initializing GameLift..."));
@@ -68,7 +71,6 @@ FString ASMGameSession::ApproveLogin(const FString& Options)
 	const FGameLiftStringOutcome GetGameSessionIdOutcome = GameLiftSDK->GetGameSessionId();
 	// Check GameLift GameSession is initialized
 
-
 	// Options="PlayerSessionId=[PlayerSessionId]"
 	const FString PlayerSessionId = UGameplayStatics::ParseOption(Options, TEXT("PlayerSessionId"));
 	if (PlayerSessionId.IsEmpty())
@@ -77,13 +79,14 @@ FString ASMGameSession::ApproveLogin(const FString& Options)
 	}
 
 	UE_LOG(LogSMGameSession, Log, TEXT("Accepting new GameLift player session: %s"), *PlayerSessionId);
-	if (const FGameLiftGenericOutcome AcceptPlayerSessionOutcome = GameLiftSDK->AcceptPlayerSession(Options);
+	if (const FGameLiftGenericOutcome AcceptPlayerSessionOutcome = GameLiftSDK->AcceptPlayerSession(PlayerSessionId);
 		!AcceptPlayerSessionOutcome.IsSuccess())
 	{
 		UE_LOG(LogSMGameSession, Error,
 		       TEXT("Failed to accept player session: %s"), *AcceptPlayerSessionOutcome.GetError().m_errorMessage);
 
-		return TEXT("GameLift AcceptPlayerSession failed.");
+		return FString::Printf(
+			TEXT("GameLift AcceptPlayerSession failed: %s"), *AcceptPlayerSessionOutcome.GetError().m_errorMessage);
 	}
 
 	UE_LOG(LogSMGameSession, Log, TEXT("Player session accepted: %s"), *PlayerSessionId);
@@ -104,16 +107,15 @@ void ASMGameSession::UnregisterPlayer(const APlayerController* ExitingPlayer)
 	FGameLiftServerSDKModule* GameLiftSDK = GetGameInstance()->GetSubsystem<UGameLift>()->GetSDK();
 	check(GameLiftSDK);
 
-	const FName PlayerSessionId = ExitingPlayer->PlayerState->SessionName;
-	const FString PlayerSessionIdStr = PlayerSessionId.ToString();
-	if (const FGameLiftGenericOutcome RemovePlayerSessionOutcome = GameLiftSDK->RemovePlayerSession(PlayerSessionIdStr);
+	const FString PlayerSessionId = ExitingPlayer->GetPlayerState<ASMPlayerState>()->GetGameLiftPlayerSessionId();
+	if (const FGameLiftGenericOutcome RemovePlayerSessionOutcome = GameLiftSDK->RemovePlayerSession(PlayerSessionId);
 		!RemovePlayerSessionOutcome.IsSuccess())
 	{
 		UE_LOG(LogSMGameSession, Error, TEXT("Failed to remove player(%s) session: %s"),
-		       *PlayerSessionIdStr, *RemovePlayerSessionOutcome.GetError().m_errorMessage);
+		       *PlayerSessionId, *RemovePlayerSessionOutcome.GetError().m_errorMessage);
 		return;
 	}
-	UE_LOG(LogSMGameSession, Log, TEXT("Player session removed: %s"), *PlayerSessionId.ToString());
+	UE_LOG(LogSMGameSession, Log, TEXT("Player session removed: %s"), *PlayerSessionId);
 #endif
 }
 

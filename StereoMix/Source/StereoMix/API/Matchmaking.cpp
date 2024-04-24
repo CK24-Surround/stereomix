@@ -59,7 +59,7 @@ void UMatchmaking::GetMatchStatus(const FString& MatchId, const FOnGetMatchStatu
 	Request->SetVerb(TEXT("GET"));
 	// Request->SetHeader(TEXT("Content-Type"), TEXT("application/x-www-form-urlencoded"));
 
-	const FString Uri = FString::Printf(TEXT("%s?matchId=%s"), *StereoMix::Matchmaking::GMatchStatusUri, *MatchId);
+	const FString Uri = FString::Printf(TEXT("%s?ticketId=%s"), *StereoMix::Matchmaking::GMatchStatusUri, *MatchId);
 
 	UE_LOG(LogMatchmaking, Log, TEXT("GetMatchStatus Uri: %s"), *Uri);
 	Request->SetURL(Uri);

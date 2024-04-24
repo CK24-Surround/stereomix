@@ -88,7 +88,7 @@ struct FMatchStatus
 	UPROPERTY(BlueprintReadWrite)
 	FString PlayerSessionId;
 	UPROPERTY(BlueprintReadWrite)
-	FDateTime Timestamp;
+	FDateTime UpdatedTime;
 	UPROPERTY(BlueprintReadWrite)
 	EMatchStatusTypes Status{EMatchStatusTypes::Unknown};
 };

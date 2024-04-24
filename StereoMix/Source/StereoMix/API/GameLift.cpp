@@ -2,6 +2,8 @@
 
 #include "GameLift.h"
 
+#include "Kismet/GameplayStatics.h"
+
 #if WITH_GAMELIFT
 #include "GameLiftServerSDK.h"
 #include "GameLiftServerSDKModels.h"
@@ -31,7 +33,7 @@ void UGameLift::Initialize(FSubsystemCollectionBase& Collection)
 	if (!GetSdkVersionOutcome.IsSuccess())
 	{
 		UE_LOG(LogGameLift, Error,
-			TEXT("Failed to get GameLift SDK version: %s"), *GetSdkVersionOutcome.GetError().m_errorMessage);
+		       TEXT("Failed to get GameLift SDK version: %s"), *GetSdkVersionOutcome.GetError().m_errorMessage);
 	}
 	UE_LOG(LogGameLift, Log, TEXT("GameLift SDK Version: %s"), *GetSdkVersionOutcome.GetResult());
 #endif
@@ -41,10 +43,10 @@ void UGameLift::Initialize(FSubsystemCollectionBase& Collection)
 // ReSharper disable once CppMemberFunctionMayBeStatic
 void UGameLift::InitSDK()
 {
-	if (bInitialized)
-	{
-		return;
-	}
+	// if (bInitialized)
+	// {
+	// 	return;
+	// }
 
 #if WITH_GAMELIFT
 	// Getting the module first.
@@ -54,7 +56,7 @@ void UGameLift::InitSDK()
 	if (!GetSdkVersionOutcome.IsSuccess())
 	{
 		UE_LOG(LogGameLift, Error,
-			TEXT("Failed to get GameLift SDK version: %s"), *GetSdkVersionOutcome.GetError().m_errorMessage);
+		       TEXT("Failed to get GameLift SDK version: %s"), *GetSdkVersionOutcome.GetError().m_errorMessage);
 	}
 	UE_LOG(LogGameLift, Log, TEXT("GameLift SDK Version: %s"), *GetSdkVersionOutcome.GetResult());
 
@@ -147,60 +149,47 @@ void UGameLift::InitSDK()
 	UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
 
 	ProcessParameters->OnStartGameSession.BindLambda([=](const GameSession& InGameSession)
-		{
-			const FString GameSessionId = FString(InGameSession.GetGameSessionId());
-			UE_LOG(LogGameLift, Verbose, TEXT("GameSession Initializing: %s"), *GameSessionId);
-			GameLiftSdkModule->ActivateGameSession();
-		});
+	{
+		const FString GameSessionId = FString(InGameSession.GetGameSessionId());
+		UE_LOG(LogGameLift, Verbose, TEXT("GameSession Initializing: %s"), *GameSessionId);
+		GameLiftSdkModule->ActivateGameSession();
+	});
 
 	ProcessParameters->OnUpdateGameSession.BindLambda([](const UpdateGameSession& InUpdateGameSession)
-		{
-			const FString NewGameSessionId = FString(InUpdateGameSession.GetGameSession().GetGameSessionId());
-			const FString UpdateReason = FString(
-				Aws::GameLift::Server::Model::UpdateReasonMapper::GetNameForUpdateReason(
-					InUpdateGameSession.GetUpdateReason()));
+	{
+		const FString NewGameSessionId = FString(InUpdateGameSession.GetGameSession().GetGameSessionId());
+		const FString UpdateReason = FString(
+			Aws::GameLift::Server::Model::UpdateReasonMapper::GetNameForUpdateReason(
+				InUpdateGameSession.GetUpdateReason()));
 
-			UE_LOG(LogGameLift, Verbose, TEXT("GameSession Updated: %s, Reason: %s"), *NewGameSessionId, *UpdateReason);
-		});
+		UE_LOG(LogGameLift, Verbose, TEXT("GameSession Updated: %s, Reason: %s"), *NewGameSessionId, *UpdateReason);
+	});
 
 	ProcessParameters->OnHealthCheck.BindLambda([]
-		{
-			UE_LOG(LogGameLift, Verbose, TEXT("Performing Health Check"));
-			return true;
-		});
+	{
+		UE_LOG(LogGameLift, Verbose, TEXT("Performing Health Check"));
+		return true;
+	});
 
 	ProcessParameters->OnTerminate = OnTerminateFromGameLift;
 	ProcessParameters->OnTerminate.BindLambda([]
-		{
-			UE_LOG(LogGameLift, Verbose, TEXT("Game Server Process is terminating"));
-		});
+	{
+		UE_LOG(LogGameLift, Verbose, TEXT("Game Server Process is terminating"));
+	});
 
 	//GameServer.exe -port=7777 LOG=server.mylog
 	ProcessParameters->port = FURL::UrlConfig.DefaultPort;
-	TArray<FString> CommandLineTokens;
-	TArray<FString> CommandLineSwitches;
 
-	FCommandLine::Parse(FCommandLine::Get(), CommandLineTokens, CommandLineSwitches);
-
-	for (FString SwitchStr : CommandLineSwitches)
+	if (!FParse::Value(FCommandLine::Get(), TEXT("port="), ProcessParameters->port))
 	{
-		FString Key;
-		FString Value;
-
-		if (SwitchStr.Split("=", &Key, &Value))
-		{
-			if (Key.Equals("port"))
-			{
-				ProcessParameters->port = FCString::Atoi(*Value);
-			}
-		}
+		ProcessParameters->port = 7777;
 	}
 
 	//Here, the game server tells GameLift where to find game session log files.
 	//At the end of a game session, GameLift uploads everything in the specified
 	//location and stores it in the cloud for access later.
 	TArray<FString> Logfiles;
-	Logfiles.Add(TEXT("GameServerLog/Saved/Logs/GameServerLog.log"));
+	Logfiles.Add(TEXT("StereoMix/Saved/Logs/StereoMix.log"));
 	ProcessParameters->logParameters = Logfiles;
 
 	//The game server calls ProcessReady() to tell GameLift it's ready to host game sessions.

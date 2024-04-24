@@ -5,13 +5,11 @@
 
 #include "SMGameSession.h"
 #include "SMGameState.h"
+#include "API/GameLift.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Utilities/SMLog.h"
 #include "Player/SMPlayerState.h"
-
-#if WITH_GAMELIFT
-#endif
 
 ASMGameMode::ASMGameMode()
 {
@@ -132,6 +130,7 @@ void ASMGameMode::EndVictoryDefeatTimer()
 	// TODO: 임시로 현재 레벨을 재시작하도록 구성했습니다.
 	FString CurrentLevelPath = TEXT("/Game/StereoMix/Levels/Main/L_Main");
 	GetWorld()->ServerTravel(CurrentLevelPath);
+	// EndMatch();
 }
 
 void ASMGameMode::SetRemainRoundTime(int32 InRemainRoundTime)

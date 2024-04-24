@@ -4,6 +4,7 @@
 #include "SMMatchmakingWidget.h"
 
 #include "API/Matchmaking.h"
+#include "Kismet/GameplayStatics.h"
 
 void USMMatchmakingWidget::NativeOnInitialized()
 {
@@ -25,7 +26,7 @@ void USMMatchmakingWidget::NativeDestruct()
 void USMMatchmakingWidget::StartMatchmaking(const FString& PlayerName)
 {
 	UMatchmaking* Matchmaking = GetGameInstance()->GetSubsystem<UMatchmaking>();
-	const FString Mode = "Default";
+	const FString Mode = "test";
 	UE_LOG(LogMatchmakingUI, Log, TEXT("RequestMatch: PlayerName=%s, Mode=%s"), *PlayerName, *Mode);
 	Matchmaking->RequestMatch(PlayerName, Mode, OnRequestMatchComplete);
 }
@@ -57,19 +58,13 @@ void USMMatchmakingWidget::HandleGetMatchStatusComplete_Implementation(const boo
 
 	UE_LOG(LogMatchmakingUI, Log, TEXT("MatchStatus: %s"), *UEnum::GetValueAsString(Response.MatchStatus.Status));
 
-	if (Response.MatchStatus.Status == EMatchStatusTypes::Searching)
+	switch (Response.MatchStatus.Status)
 	{
-		UE_LOG(LogMatchmakingUI, Log, TEXT("Continue Matchmaking..."));
-	}
-	else if (Response.MatchStatus.Status == EMatchStatusTypes::Succeeded)
-	{
+	case EMatchStatusTypes::Succeeded:
 		GetWorld()->GetTimerManager().ClearTimer(MatchStatusTimerHandle);
-		UE_LOG(LogMatchmakingUI, Log, TEXT("Match Completed"));
-	}
-	else
-	{
-		GetWorld()->GetTimerManager().ClearTimer(MatchStatusTimerHandle);
-		UE_LOG(LogMatchmakingUI, Log, TEXT("Match Unknown"));
+		break;
+	default:
+		break;
 	}
 }
 
@@ -77,4 +72,14 @@ void USMMatchmakingWidget::OnMatchStatusCheckTick() const
 {
 	UMatchmaking* Matchmaking = GetGameInstance()->GetSubsystem<UMatchmaking>();
 	Matchmaking->GetMatchStatus(MatchId, OnGetMatchStatusComplete);
+}
+
+void USMMatchmakingWidget::ConnectToServer(const FString& IpAddress, int32 Port,
+                                           const FString& PlayerSessionId, const FString& PlayerName)
+{
+	FString Uri = FString::Printf(TEXT("%s:%d?playerSessionId=%s&Nickname=%s"),
+	                              *IpAddress, Port, *PlayerSessionId, *PlayerName);
+
+	UE_LOG(LogMatchmakingUI, Log, TEXT("Start Game: %s"), *Uri);
+	UGameplayStatics::OpenLevel(GetWorld(), *Uri);
 }

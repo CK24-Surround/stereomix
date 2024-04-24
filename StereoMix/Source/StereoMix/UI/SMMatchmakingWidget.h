@@ -42,4 +42,8 @@ public:
 	void HandleGetMatchStatusComplete(bool bSuccess, const FGetMatchStatusResponse& Response);
 
 	void OnMatchStatusCheckTick() const;
+
+	UFUNCTION(BlueprintCallable)
+	void ConnectToServer(const FString& IpAddress, int32 Port, const FString& PlayerSessionId,
+	                     const FString& PlayerName);
 };
