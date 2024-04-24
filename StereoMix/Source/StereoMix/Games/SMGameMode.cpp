@@ -127,5 +127,10 @@ void ASMGameMode::SetRemainPhaseTime(int32 InRemainPhaseTime)
 
 void ASMGameMode::PerformPhaseTime()
 {
+	if (RemainPhaseTime <= 0)
+	{
+		
+	}
+	
 	SetRemainPhaseTime(RemainPhaseTime - 1);
 }
