@@ -4,8 +4,18 @@
 #include "SMUserWidget_Scoreboard.h"
 
 #include "AbilitySystemComponent.h"
+#include "SMUserWidget_PhaseTimerBar.h"
 #include "Components/TextBlock.h"
 #include "Games/SMGameState.h"
+
+USMUserWidget_Scoreboard::USMUserWidget_Scoreboard() {}
+
+void USMUserWidget_Scoreboard::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	Super::NativeTick(MyGeometry, InDeltaTime);
+
+	UpdatePhaseTime();
+}
 
 void USMUserWidget_Scoreboard::SetASC(UAbilitySystemComponent* InASC)
 {
@@ -32,6 +42,9 @@ void USMUserWidget_Scoreboard::BindToGameState()
 
 		SMGameState->OnChangeFutureBaseTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBaseScore);
 		OnChangeFutureBaseScore(SMGameState->GetReplicatedFutureBaseTeamScore());
+
+		SMGameState->OnChangePhaseTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhaseTime);
+		OnChangePhaseTime(SMGameState->GetReplicatedRemainPhaseTime(), SMGameState->GetReplicatedPhaseTime());
 	}
 	else
 	{
@@ -58,4 +71,17 @@ void USMUserWidget_Scoreboard::OnChangeFutureBaseScore(int32 Score)
 {
 	const FString ScoreString = FString::Printf(TEXT("%03d"), Score);
 	FutureBaseScore->SetText(FText::FromString(ScoreString));
+}
+
+void USMUserWidget_Scoreboard::OnChangePhaseTime(int32 RemainPhaseTime, int32 PhaseTime)
+{
+	PhaseTimerBarRemainPhaseTime = RemainPhaseTime;
+	PhaseTimerBarPhaseTime = PhaseTime;
+	PhaseTimerBarElapsedTime = 0.0f;
+	PhaseTimerBar->SetRatio(PhaseTimerBarRemainPhaseTime / PhaseTimerBarPhaseTime);
+}
+
+void USMUserWidget_Scoreboard::UpdatePhaseTime()
+{
+	PhaseTimerBarElapsedTime += GetWorld()->GetDeltaSeconds();
 }

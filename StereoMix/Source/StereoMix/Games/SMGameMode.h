@@ -64,6 +64,8 @@ protected:
 
 // ~Phase Section
 protected:
+	FORCEINLINE int32 GetPhaseTime() { return PhaseTime; }
+
 	void SetRemainPhaseTime(int32 InRemainPhaseTime);
 
 	void PerformPhaseTime();

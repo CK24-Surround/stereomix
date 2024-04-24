@@ -69,6 +69,10 @@ void ASMGameMode::EndMatch()
 void ASMGameMode::BindToGameState()
 {
 	CachedSMGameState = GetGameState<ASMGameState>();
+	if (ensureAlways(CachedSMGameState.Get()))
+	{
+		CachedSMGameState->SetReplicatedPhaseTime(PhaseTime);
+	}
 }
 
 void ASMGameMode::EndVictoryDefeatTimer()

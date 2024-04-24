@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
+#include "Components/Image.h"
 #include "SMUserWidget_Scoreboard.generated.h"
 
+class USMUserWidget_PhaseTimerBar;
 class UTextBlock;
 /**
  * 
@@ -16,16 +18,26 @@ class STEREOMIX_API USMUserWidget_Scoreboard : public USMUserWidget
 	GENERATED_BODY()
 
 public:
+	USMUserWidget_Scoreboard();
+
+protected:
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
+
+public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
 
 protected:
 	void BindToGameState();
-	
+
 	void OnChangeRoundTime(int32 RoundTime);
 
 	void OnChangeEDMScore(int32 Score);
 
 	void OnChangeFutureBaseScore(int32 Score);
+
+	void OnChangePhaseTime(int32 RemainPhaseTime, int32 PhaseTime);
+
+	void UpdatePhaseTime();
 
 public:
 	UPROPERTY(meta = (BindWidget))
@@ -36,4 +48,14 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> FutureBaseScore;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USMUserWidget_PhaseTimerBar> PhaseTimerBar;
+
+protected:
+	float PhaseTimerBarRemainPhaseTime = 0.0f;
+
+	float PhaseTimerBarPhaseTime = 0.0f;
+
+	float PhaseTimerBarElapsedTime = 0.0f;
 };

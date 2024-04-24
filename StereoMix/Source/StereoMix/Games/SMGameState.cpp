@@ -46,6 +46,7 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedFutureBaseTeamScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedRemainPhaseTime);
+	DOREPLIFETIME(ASMGameState, ReplicatedPhaseTime);
 }
 
 void ASMGameState::OnRep_ReplicatedRemainRoundTime()
@@ -116,7 +117,7 @@ void ASMGameState::OnRep_ReplicatedFutureBaseTeamScore()
 
 void ASMGameState::OnRep_ReplicatedRemainPhaseTime()
 {
-	(void)OnchangePhaseTime.ExecuteIfBound(ReplicatedRemainPhaseTime);
+	(void)OnChangePhaseTime.ExecuteIfBound(ReplicatedRemainPhaseTime, ReplicatedPhaseTime);
 }
 
 ESMTeam ASMGameState::CalculateVictoryTeam()
