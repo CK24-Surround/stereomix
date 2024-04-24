@@ -49,6 +49,7 @@ void ASMGameMode::StartMatch()
 
 	// 남은 페이즈 시간을 초기화해줍니다.
 	SetRemainPhaseTime(PhaseTime);
+	SetCurrentPhaseNumber(1);
 	GetWorldTimerManager().SetTimer(PhaseTimerHandle, this, &ASMGameMode::PerformPhaseTime, OneSecond, true);
 }
 

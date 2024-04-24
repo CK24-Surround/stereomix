@@ -23,5 +23,5 @@ bool USMUserWidget_PhaseTimerBar::Initialize()
 
 void USMUserWidget_PhaseTimerBar::SetRatio(float InRatio)
 {
-	PhaseTimerBarMaterialInstanceDynamic->SetScalarParameterValue(TEXT("Ratio"), InRatio);
+	PhaseTimerBarMaterialInstanceDynamic->SetScalarParameterValue(TEXT("Theshold"), InRatio);
 }

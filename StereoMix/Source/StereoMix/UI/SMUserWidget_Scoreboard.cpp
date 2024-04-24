@@ -45,6 +45,9 @@ void USMUserWidget_Scoreboard::BindToGameState()
 
 		SMGameState->OnChangePhaseTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhaseTime);
 		OnChangePhaseTime(SMGameState->GetReplicatedRemainPhaseTime(), SMGameState->GetReplicatedPhaseTime());
+
+		SMGameState->OnChangePhase.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhase);
+		OnChangePhase(SMGameState->GetReplicatedCurrentPhaseNumber());
 	}
 	else
 	{
@@ -87,4 +90,10 @@ void USMUserWidget_Scoreboard::UpdatePhaseTime()
 	const float Ratio = RemainTime / PhaseTimerBarPhaseTime;
 
 	PhaseTimerBar->SetRatio(Ratio);
+}
+
+void USMUserWidget_Scoreboard::OnChangePhase(int32 CurrentPhaseNumber)
+{
+	const FString PhaseNumberString = FString::Printf(TEXT("Phase%d"), CurrentPhaseNumber);
+	PhaseNumber->SetText(FText::FromString(PhaseNumberString));
 }

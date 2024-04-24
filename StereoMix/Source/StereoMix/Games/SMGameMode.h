@@ -81,7 +81,5 @@ protected:
 	int32 PhaseTime = 60;
 
 	int32 CurrentPhaseNumber = 0;
-
-	int32 MaxPhaseNumber = 5;
 // ~Phase Section
 };

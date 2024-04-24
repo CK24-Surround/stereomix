@@ -39,6 +39,8 @@ protected:
 
 	void UpdatePhaseTime();
 
+	void OnChangePhase(int32 CurrentPhaseNumber);
+
 public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> RoundTimer;
@@ -51,6 +53,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USMUserWidget_PhaseTimerBar> PhaseTimerBar;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UTextBlock> PhaseNumber;
 
 protected:
 	float PhaseTimerBarRemainPhaseTime = 0.0f;
