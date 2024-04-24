@@ -70,6 +70,8 @@ protected:
 
 	void PerformPhaseTime();
 
+	void SetCurrentPhaseNumber(int32 InCurrentPhaseNumber);
+
 protected:
 	FTimerHandle PhaseTimerHandle;
 

@@ -85,7 +85,6 @@ void USMUserWidget_Scoreboard::UpdatePhaseTime()
 	PhaseTimerBarElapsedTime += GetWorld()->GetDeltaSeconds();
 	const float RemainTime = PhaseTimerBarRemainPhaseTime - PhaseTimerBarElapsedTime;
 	const float Ratio = RemainTime / PhaseTimerBarPhaseTime;
-	UE_LOG(LogTemp, Warning, TEXT("%f"), Ratio);
 
 	PhaseTimerBar->SetRatio(Ratio);
 }

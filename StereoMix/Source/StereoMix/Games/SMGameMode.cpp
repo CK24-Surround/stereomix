@@ -127,10 +127,21 @@ void ASMGameMode::SetRemainPhaseTime(int32 InRemainPhaseTime)
 
 void ASMGameMode::PerformPhaseTime()
 {
+	SetRemainPhaseTime(RemainPhaseTime - 1);
+
 	if (RemainPhaseTime <= 0)
 	{
-		
+		SetCurrentPhaseNumber(CurrentPhaseNumber + 1);
+		SetRemainPhaseTime(PhaseTime);
 	}
-	
-	SetRemainPhaseTime(RemainPhaseTime - 1);
+}
+
+void ASMGameMode::SetCurrentPhaseNumber(int32 InCurrentPhaseNumber)
+{
+	CurrentPhaseNumber = InCurrentPhaseNumber;
+
+	if (ensureAlways(CachedSMGameState.Get()))
+	{
+		CachedSMGameState->SetReplicatedCurrentPhaseNumber(CurrentPhaseNumber);
+	}
 }

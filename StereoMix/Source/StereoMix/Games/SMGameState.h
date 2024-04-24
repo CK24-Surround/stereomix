@@ -9,6 +9,7 @@
 
 DECLARE_DELEGATE_OneParam(FOnChangeTimeSignature, int32 /*RemainTime*/);
 DECLARE_DELEGATE_TwoParams(FOnChangeTimeWithRatioSignature, int32 /*RemainTime*/, int32 /*Time*/);
+DECLARE_DELEGATE_OneParam(FOnChangePhaseSignature, int32 /*PhaseNumber*/);
 DECLARE_DELEGATE_OneParam(FOnChangeTeamScoreSignature, int32 /*TeamScore*/);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEndRoundSignature, ESMTeam /*VictoryTeam*/);
 
@@ -95,12 +96,21 @@ public:
 
 	FORCEINLINE void SetReplicatedPhaseTime(int32 InReplicatedPhaseTime) { ReplicatedPhaseTime = InReplicatedPhaseTime; }
 
+	FORCEINLINE int32 GetReplicatedCurrentPhaseNumber() { return ReplicatedCurrentPhaseNumber; }
+
+	FORCEINLINE void SetReplicatedCurrentPhaseNumber(int32 InReplicatedCurrentPhaseNumber) { ReplicatedCurrentPhaseNumber = InReplicatedCurrentPhaseNumber; }
+
 public:
 	FOnChangeTimeWithRatioSignature OnChangePhaseTime;
+
+	FOnChangePhaseSignature OnChangePhase;
 
 protected:
 	UFUNCTION()
 	void OnRep_ReplicatedRemainPhaseTime();
+
+	UFUNCTION()
+	void OnRep_ReplicatedCurrentPhaseNumber();
 
 protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedRemainPhaseTime")
@@ -108,6 +118,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	int32 ReplicatedPhaseTime = 0;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedCurrentPhaseNumber")
+	int32 ReplicatedCurrentPhaseNumber;
 // ~Phase Section
 
 // ~VictoryDefeat Section
