@@ -66,10 +66,13 @@ protected:
 protected:
 	FORCEINLINE int32 GetPhaseTime() { return PhaseTime; }
 
+	/** 페이즈의 남은 시간을 설정합니다. */
 	void SetRemainPhaseTime(int32 InRemainPhaseTime);
 
+	/** 1초 주기로 페이즈 타임과 관련된 처리를 합니다. */
 	void PerformPhaseTime();
 
+	/** 현재 페이즈 수를 설정합니다. */
 	void SetCurrentPhaseNumber(int32 InCurrentPhaseNumber);
 
 protected:

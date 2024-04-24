@@ -132,8 +132,14 @@ void ASMGameMode::PerformPhaseTime()
 
 	if (RemainPhaseTime <= 0)
 	{
+		// 한 페이즈 종료시 마다 처리됩니다. 
 		SetCurrentPhaseNumber(CurrentPhaseNumber + 1);
 		SetRemainPhaseTime(PhaseTime);
+
+		if (ensureAlways(CachedSMGameState.Get()))
+		{
+			CachedSMGameState->EndPhase();
+		}
 	}
 }
 
@@ -143,6 +149,7 @@ void ASMGameMode::SetCurrentPhaseNumber(int32 InCurrentPhaseNumber)
 
 	if (ensureAlways(CachedSMGameState.Get()))
 	{
+		// 게임 스테이트에 복제해줍니다.
 		CachedSMGameState->SetReplicatedCurrentPhaseNumber(CurrentPhaseNumber);
 	}
 }

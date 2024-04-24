@@ -10,6 +10,27 @@
 
 USMUserWidget_Scoreboard::USMUserWidget_Scoreboard() {}
 
+bool USMUserWidget_Scoreboard::Initialize()
+{
+	if (!Super::Initialize())
+	{
+		return false;
+	}
+
+	TArray<TWeakObjectPtr<UImage>> EDMTeamPhases;
+	EDMTeamPhases.AddUnique(EDMPhaseScore1);
+	EDMTeamPhases.AddUnique(EDMPhaseScore2);
+
+	TArray<TWeakObjectPtr<UImage>> FutureBassTeamPhases;
+	FutureBassTeamPhases.AddUnique(FutureBassPhase1);
+	FutureBassTeamPhases.AddUnique(FutureBassPhase2);
+
+	PhaseScores.Add(ESMTeam::EDM, EDMTeamPhases);
+	PhaseScores.Add(ESMTeam::FutureBass, FutureBassTeamPhases);
+
+	return true;
+}
+
 void USMUserWidget_Scoreboard::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
@@ -40,7 +61,7 @@ void USMUserWidget_Scoreboard::BindToGameState()
 		SMGameState->OnChangeEDMTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMScore);
 		OnChangeEDMScore(SMGameState->GetReplicatedEDMTeamScore());
 
-		SMGameState->OnChangeFutureBaseTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBaseScore);
+		SMGameState->OnChangeFutureBassTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBaseScore);
 		OnChangeFutureBaseScore(SMGameState->GetReplicatedFutureBaseTeamScore());
 
 		SMGameState->OnChangePhaseTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhaseTime);
@@ -48,6 +69,12 @@ void USMUserWidget_Scoreboard::BindToGameState()
 
 		SMGameState->OnChangePhase.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhase);
 		OnChangePhase(SMGameState->GetReplicatedCurrentPhaseNumber());
+
+		SMGameState->OnChangeEDMTeamPhaseScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMPhaseScore);
+		OnChangeEDMPhaseScore(SMGameState->GetReplicatedEDMTeamPhaseScore());
+
+		SMGameState->OnChangeFutureBassTeamPhaseScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBassPhaseScore);
+		OnChangeFutureBassPhaseScore(SMGameState->GetReplicatedFutureBaseTeamPhaseScore());
 	}
 	else
 	{
@@ -73,7 +100,7 @@ void USMUserWidget_Scoreboard::OnChangeEDMScore(int32 Score)
 void USMUserWidget_Scoreboard::OnChangeFutureBaseScore(int32 Score)
 {
 	const FString ScoreString = FString::Printf(TEXT("%03d"), Score);
-	FutureBaseScore->SetText(FText::FromString(ScoreString));
+	FutureBassScore->SetText(FText::FromString(ScoreString));
 }
 
 void USMUserWidget_Scoreboard::OnChangePhaseTime(int32 RemainPhaseTime, int32 PhaseTime)
@@ -96,4 +123,34 @@ void USMUserWidget_Scoreboard::OnChangePhase(int32 CurrentPhaseNumber)
 {
 	const FString PhaseNumberString = FString::Printf(TEXT("Phase%d"), CurrentPhaseNumber);
 	PhaseNumber->SetText(FText::FromString(PhaseNumberString));
+}
+
+void USMUserWidget_Scoreboard::OnChangeEDMPhaseScore(int32 Score)
+{
+	// 만약 페이즈 스코어 수가 UI상의 스코어 칸 개수보다 많으면 무시합니다.
+	if (PhaseScores[ESMTeam::EDM].Num() < Score)
+	{
+		return;
+	}
+
+	// 순회하며 해당 스코어 수 만큼 활성화 시킵니다.
+	for (int32 i = 0; i < Score; ++i)
+	{
+		PhaseScores[ESMTeam::EDM][i]->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
+}
+
+void USMUserWidget_Scoreboard::OnChangeFutureBassPhaseScore(int32 Score)
+{
+	// 만약 페이즈 스코어 수가 UI상의 스코어 칸 개수보다 많으면 무시합니다.
+	if (PhaseScores[ESMTeam::FutureBass].Num() < Score)
+	{
+		return;
+	}
+
+	// 순회하며 해당 스코어 수 만큼 활성화 시킵니다.
+	for (int32 i = 0; i < Score; ++i)
+	{
+		PhaseScores[ESMTeam::FutureBass][i]->SetVisibility(ESlateVisibility::HitTestInvisible);
+	}
 }

@@ -10,11 +10,12 @@
 
 ASMGameState::ASMGameState()
 {
-	TeamScores.Add(ESMTeam::FutureBass, 0);
 	TeamScores.Add(ESMTeam::EDM, 0);
+	TeamScores.Add(ESMTeam::FutureBass, 0);
 
-	ReplicatedEDMTeamScore = 0;
-	ReplicatedFutureBaseTeamScore = 0;
+	TeamPhaseScores.Add(ESMTeam::None, 0);
+	TeamPhaseScores.Add(ESMTeam::EDM, 0);
+	TeamPhaseScores.Add(ESMTeam::FutureBass, 0);
 }
 
 void ASMGameState::PostInitializeComponents()
@@ -44,10 +45,12 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 	DOREPLIFETIME(ASMGameState, ReplicatedRemainRoundTime);
 	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamScore);
-	DOREPLIFETIME(ASMGameState, ReplicatedFutureBaseTeamScore);
+	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedRemainPhaseTime);
 	DOREPLIFETIME(ASMGameState, ReplicatedPhaseTime);
 	DOREPLIFETIME(ASMGameState, ReplicatedCurrentPhaseNumber);
+	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamPhaseScore);
+	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamPhaseScore);
 }
 
 void ASMGameState::OnRep_ReplicatedRemainRoundTime()
@@ -66,7 +69,21 @@ void ASMGameState::SetTeamScores(ESMTeam InTeam, int32 InScore)
 
 	// 클라이언트에서 점수 정보를 받을 수 있도록 리플리케이션 되는 변수에 할당합니다.
 	ReplicatedEDMTeamScore = TeamScores[ESMTeam::EDM];
-	ReplicatedFutureBaseTeamScore = TeamScores[ESMTeam::FutureBass];
+	ReplicatedFutureBassTeamScore = TeamScores[ESMTeam::FutureBass];
+}
+
+void ASMGameState::SetTeamPhaseScores(ESMTeam InTeam, int32 InScore)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	TeamPhaseScores[InTeam] = InScore;
+
+	// 클라이언트에서 점수 정보를 받을 수 있도록 리플리케이션 되는 변수에 할당합니다.
+	ReplicatedEDMTeamPhaseScore = TeamPhaseScores[ESMTeam::EDM];
+	ReplicatedFutureBassTeamPhaseScore = TeamPhaseScores[ESMTeam::FutureBass];
 }
 
 void ASMGameState::OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam)
@@ -111,9 +128,25 @@ void ASMGameState::OnRep_ReplicatedEDMTeamScore()
 	(void)OnChangeEDMTeamScore.ExecuteIfBound(ReplicatedEDMTeamScore);
 }
 
-void ASMGameState::OnRep_ReplicatedFutureBaseTeamScore()
+void ASMGameState::OnRep_ReplicatedFutureBassTeamScore()
 {
-	(void)OnChangeFutureBaseTeamScore.ExecuteIfBound(ReplicatedFutureBaseTeamScore);
+	(void)OnChangeFutureBassTeamScore.ExecuteIfBound(ReplicatedFutureBassTeamScore);
+}
+
+void ASMGameState::OnRep_ReplicatedEDMTeamPhaseScore()
+{
+	(void)OnChangeEDMTeamPhaseScore.ExecuteIfBound(ReplicatedEDMTeamPhaseScore);
+}
+
+void ASMGameState::OnRep_ReplicatedFutureBassTeamPhaseScore()
+{
+	(void)OnChangeFutureBassTeamPhaseScore.ExecuteIfBound(ReplicatedFutureBassTeamPhaseScore);
+}
+
+void ASMGameState::EndPhase()
+{
+	const ESMTeam VictoryTeam = CalculateVictoryTeam();
+	SetTeamPhaseScores(VictoryTeam, TeamPhaseScores[VictoryTeam] + 1);
 }
 
 void ASMGameState::OnRep_ReplicatedRemainPhaseTime()

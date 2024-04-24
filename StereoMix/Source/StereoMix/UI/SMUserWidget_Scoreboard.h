@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
 #include "Components/Image.h"
+#include "Utilities/SMTeam.h"
 #include "SMUserWidget_Scoreboard.generated.h"
 
 class USMUserWidget_PhaseTimerBar;
@@ -19,6 +20,7 @@ class STEREOMIX_API USMUserWidget_Scoreboard : public USMUserWidget
 
 public:
 	USMUserWidget_Scoreboard();
+	virtual bool Initialize() override;
 
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
@@ -41,6 +43,10 @@ protected:
 
 	void OnChangePhase(int32 CurrentPhaseNumber);
 
+	void OnChangeEDMPhaseScore(int32 Score);
+	
+	void OnChangeFutureBassPhaseScore(int32 Score);
+
 public:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> RoundTimer;
@@ -49,13 +55,27 @@ public:
 	TObjectPtr<UTextBlock> EDMScore;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UTextBlock> FutureBaseScore;
+	TObjectPtr<UTextBlock> FutureBassScore;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USMUserWidget_PhaseTimerBar> PhaseTimerBar;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> PhaseNumber;
+
+	TMap<ESMTeam, TArray<TWeakObjectPtr<UImage>>> PhaseScores;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> EDMPhaseScore1;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> EDMPhaseScore2;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> FutureBassPhase1;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> FutureBassPhase2;
 
 protected:
 	float PhaseTimerBarRemainPhaseTime = 0.0f;

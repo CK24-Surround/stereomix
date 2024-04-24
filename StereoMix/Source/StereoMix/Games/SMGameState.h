@@ -53,10 +53,19 @@ public:
 	void SetTeamScores(ESMTeam InTeam, int32 InScore);
 
 	FORCEINLINE int32 GetReplicatedEDMTeamScore() const { return ReplicatedEDMTeamScore; }
-	FORCEINLINE int32 GetReplicatedFutureBaseTeamScore() const { return ReplicatedFutureBaseTeamScore; }
+	FORCEINLINE int32 GetReplicatedFutureBaseTeamScore() const { return ReplicatedFutureBassTeamScore; }
 
+	void SetTeamPhaseScores(ESMTeam InTeam, int32 InScore);
+
+	FORCEINLINE int32 GetReplicatedEDMTeamPhaseScore() const { return ReplicatedEDMTeamPhaseScore; }
+	FORCEINLINE int32 GetReplicatedFutureBaseTeamPhaseScore() const { return ReplicatedFutureBassTeamPhaseScore; }
+
+public:
 	FOnChangeTeamScoreSignature OnChangeEDMTeamScore;
-	FOnChangeTeamScoreSignature OnChangeFutureBaseTeamScore;
+	FOnChangeTeamScoreSignature OnChangeFutureBassTeamScore;
+
+	FOnChangeTeamScoreSignature OnChangeEDMTeamPhaseScore;
+	FOnChangeTeamScoreSignature OnChangeFutureBassTeamPhaseScore;
 
 protected:
 	void OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam);
@@ -69,7 +78,13 @@ protected:
 	void OnRep_ReplicatedEDMTeamScore();
 
 	UFUNCTION()
-	void OnRep_ReplicatedFutureBaseTeamScore();
+	void OnRep_ReplicatedFutureBassTeamScore();
+
+	UFUNCTION()
+	void OnRep_ReplicatedEDMTeamPhaseScore();
+
+	UFUNCTION()
+	void OnRep_ReplicatedFutureBassTeamPhaseScore();
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
@@ -77,13 +92,24 @@ protected:
 
 	/** TMap은 리플리케이트 되지 않기 때문에 int32를 대신 사용합니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedEDMTeamScore")
-	int32 ReplicatedEDMTeamScore;
+	int32 ReplicatedEDMTeamScore = 0;
 
 	/** TMap은 리플리케이트 되지 않기 때문에 int32를 대신 사용합니다. */
-	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedFutureBaseTeamScore")
-	int32 ReplicatedFutureBaseTeamScore;
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedFutureBassTeamScore")
+	int32 ReplicatedFutureBassTeamScore = 0;
 
 	int32 TotalTileCount = 0;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Score")
+	TMap<ESMTeam, int32> TeamPhaseScores;
+
+	/** TMap은 리플리케이트 되지 않기 때문에 int32를 대신 사용합니다. */
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedEDMTeamPhaseScore")
+	int32 ReplicatedEDMTeamPhaseScore = 0;
+
+	/** TMap은 리플리케이트 되지 않기 때문에 int32를 대신 사용합니다. */
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedFutureBassTeamPhaseScore")
+	int32 ReplicatedFutureBassTeamPhaseScore = 0;
 // ~Score Section
 
 // ~Phase Section
@@ -99,6 +125,8 @@ public:
 	FORCEINLINE int32 GetReplicatedCurrentPhaseNumber() { return ReplicatedCurrentPhaseNumber; }
 
 	FORCEINLINE void SetReplicatedCurrentPhaseNumber(int32 InReplicatedCurrentPhaseNumber) { ReplicatedCurrentPhaseNumber = InReplicatedCurrentPhaseNumber; }
+
+	void EndPhase();
 
 public:
 	FOnChangeTimeWithRatioSignature OnChangePhaseTime;
@@ -120,7 +148,7 @@ protected:
 	int32 ReplicatedPhaseTime = 0;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedCurrentPhaseNumber")
-	int32 ReplicatedCurrentPhaseNumber;
+	int32 ReplicatedCurrentPhaseNumber = 0;
 // ~Phase Section
 
 // ~VictoryDefeat Section
