@@ -7,7 +7,7 @@
 #include "Utilities/SMTeam.h"
 #include "SMGameState.generated.h"
 
-DECLARE_DELEGATE_OneParam(FOnChangeRoundTimeSignature, int32 /*RoundTime*/);
+DECLARE_DELEGATE_OneParam(FOnChangeTimeSignature, int32 /*Time*/);
 DECLARE_DELEGATE_OneParam(FOnChangeTeamScoreSignature, int32 /*TeamScore*/);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEndRoundSignature, ESMTeam /*VictoryTeam*/);
 
@@ -35,7 +35,7 @@ public:
 	FORCEINLINE void SetReplicatedRemainRoundTime(int32 InReplicatedRemainRoundTime) { ReplicatedRemainRoundTime = InReplicatedRemainRoundTime; }
 
 public:
-	FOnChangeRoundTimeSignature OnChangeRoundTime;
+	FOnChangeTimeSignature OnChangeRoundTime;
 
 protected:
 	UFUNCTION()
@@ -83,6 +83,24 @@ protected:
 
 	int32 TotalTileCount = 0;
 // ~Score Section
+
+// ~Phase Section
+public:
+	FORCEINLINE int32 GetReplicatedRemainPhaseTime() { return ReplicatedRemainPhaseTime; }
+
+	FORCEINLINE void SetReplicatedRemainPhaseTime(int32 InReplicatedRemainPhaseTime) { ReplicatedRemainPhaseTime = InReplicatedRemainPhaseTime; }
+
+public:
+	FOnChangeTimeSignature OnchangePhaseTime;
+
+protected:
+	UFUNCTION()
+	void OnRep_ReplicatedRemainPhaseTime();
+
+protected:
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedRemainPhaseTime")
+	int32 ReplicatedRemainPhaseTime = 0;
+// ~Phase Section
 
 // ~VictoryDefeat Section
 public:

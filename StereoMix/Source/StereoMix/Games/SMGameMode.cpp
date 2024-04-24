@@ -41,10 +41,15 @@ void ASMGameMode::StartMatch()
 
 	NET_LOG(this, Warning, TEXT("게임 시작"));
 
-	// 남은 라운드 시간을 라운드 시간으로 초기화해줍니다.
-	SetRemainRoundTime(RoundTime);
 	const float OneSecond = GetWorldSettings()->GetEffectiveTimeDilation();
+
+	// 남은 라운드 시간을 초기화해줍니다.
+	SetRemainRoundTime(RoundTime);
 	GetWorldTimerManager().SetTimer(RoundTimerHandle, this, &ASMGameMode::PerformRoundTime, OneSecond, true);
+
+	// 남은 페이즈 시간을 초기화해줍니다.
+	SetRemainPhaseTime(PhaseTime);
+	GetWorldTimerManager().SetTimer(PhaseTimerHandle, this, &ASMGameMode::PerformPhaseTime, OneSecond, true);
 }
 
 void ASMGameMode::EndMatch()
@@ -103,4 +108,20 @@ void ASMGameMode::PerformRoundTime()
 
 	// 매 초 남은 시간을 감소시킵니다.
 	SetRemainRoundTime(RemainRoundTime - 1);
+}
+
+void ASMGameMode::SetRemainPhaseTime(int32 InRemainPhaseTime)
+{
+	RemainPhaseTime = InRemainPhaseTime;
+
+	// 게임 스테이트로 복제합니다.
+	if (ensure(CachedSMGameState.Get()))
+	{
+		CachedSMGameState->SetReplicatedRemainPhaseTime(RemainPhaseTime);
+	}
+}
+
+void ASMGameMode::PerformPhaseTime()
+{
+	SetRemainPhaseTime(RemainPhaseTime - 1);
 }

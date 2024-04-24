@@ -62,8 +62,22 @@ protected:
 	uint32 bIsRoundEnd = false;
 // ~Round Time Section
 
+// ~Phase Section
 protected:
+	void SetRemainPhaseTime(int32 InRemainPhaseTime);
+
+	void PerformPhaseTime();
+
+protected:
+	FTimerHandle PhaseTimerHandle;
+
+	int32 RemainPhaseTime = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Rule|Phase", DisplayName = "페이즈 당 시간(초)")
+	int32 PhaseTime = 60;
+
 	int32 CurrentPhaseNumber = 0;
 
 	int32 MaxPhaseNumber = 5;
+// ~Phase Section
 };
