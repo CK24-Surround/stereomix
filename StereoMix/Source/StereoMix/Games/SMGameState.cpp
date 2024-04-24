@@ -4,25 +4,12 @@
 #include "SMGameState.h"
 
 #include "EngineUtils.h"
-#include "Data/SMDesignData.h"
-#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"
-#include "Utilities/SMAssetPath.h"
 #include "Utilities/SMLog.h"
 
 ASMGameState::ASMGameState()
 {
-	static ConstructorHelpers::FObjectFinder<USMDesignData> DesignDataRef(SMAssetPath::DesignData);
-	if (DesignDataRef.Object)
-	{
-		DesignData = DesignDataRef.Object;
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("DesignData 로드에 실패했습니다."));
-	}
-
 	TeamScores.Add(ESMTeam::FutureBass, 0);
 	TeamScores.Add(ESMTeam::EDM, 0);
 
@@ -48,10 +35,6 @@ void ASMGameState::PostInitializeComponents()
 		}
 
 		NET_LOG(this, Warning, TEXT("현재 타일 개수: %d"), TotalTileCount);
-
-		RoundTime = DesignData->RoundTime;
-		VictoryDefeatTime = DesignData->VictoryDefeatTime;
-		RemainRoundTime = RoundTime;
 	}
 }
 
@@ -59,20 +42,14 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ASMGameState, RemainRoundTime);
+	DOREPLIFETIME(ASMGameState, ReplicatedRemainRoundTime);
 	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedFutureBaseTeamScore);
 }
 
-void ASMGameState::BeginPlay()
+void ASMGameState::OnRep_ReplicatedRemainRoundTime()
 {
-	Super::BeginPlay();
-
-	if (HasAuthority())
-	{
-		const float OneSecond = GetWorldSettings()->GetEffectiveTimeDilation();
-		GetWorld()->GetTimerManager().SetTimer(RoundTimerHandle, this, &ASMGameState::PerformRoundTime, OneSecond, true);
-	}
+	(void)OnChangeRoundTime.ExecuteIfBound(ReplicatedRemainRoundTime);
 }
 
 void ASMGameState::SetTeamScores(ESMTeam InTeam, int32 InScore)
@@ -91,7 +68,7 @@ void ASMGameState::SetTeamScores(ESMTeam InTeam, int32 InScore)
 
 void ASMGameState::OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam)
 {
-	// 이런 경우는 없어야하지만 만약을 위한 방어 코드입니다.
+	// 이미 타일 측에서 팀이 변경되지 않은 경우 처리되지 않도록 예외처리를 진행해두었지만 만약을 위한 방어코드입니다.
 	if (PreviousTeam == NewTeam)
 	{
 		return;
@@ -105,10 +82,12 @@ void ASMGameState::OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam)
 
 	if (PreviousTeam == ESMTeam::None)
 	{
+		// 중립 타일을 점령하는 경우 스코어에 그대로 더해줍니다.
 		AddTeamScore(NewTeam);
 	}
 	else
 	{
+		// 이미 다른팀이 점령한 타일을 점령하는 경우 스코어를 스왑해줍니다.
 		SwapScore(PreviousTeam, NewTeam);
 	}
 }
@@ -134,38 +113,7 @@ void ASMGameState::OnRep_ReplicatedFutureBaseTeamScore()
 	(void)OnChangeFutureBaseTeamScore.ExecuteIfBound(ReplicatedFutureBaseTeamScore);
 }
 
-void ASMGameState::SetRemainRoundTime(int32 InRemainRoundTime)
-{
-	RemainRoundTime = InRemainRoundTime;
-}
-
-void ASMGameState::PerformRoundTime()
-{
-	// 라운드 타이머 종료 시
-	if (!bIsRoundEnd && RemainRoundTime <= 0)
-	{
-		bIsRoundEnd = true;
-		SetRemainRoundTime(VictoryDefeatTime);
-		(void)OnEndRoundTimer.ExecuteIfBound();
-		return;
-	}
-
-	// 승패 확인 타이머 종료 시
-	if (bIsRoundEnd && RemainRoundTime <= 0)
-	{
-		(void)OnEndVictoryDefeatTimer.ExecuteIfBound();
-		return;
-	}
-
-	SetRemainRoundTime(RemainRoundTime - 1);
-}
-
-void ASMGameState::OnRep_RemainRoundTime()
-{
-	(void)OnChangeRoundTime.ExecuteIfBound(RemainRoundTime);
-}
-
-void ASMGameState::EndRound()
+ESMTeam ASMGameState::CalculateVictoryTeam()
 {
 	// 무승부면 None팀이 승리 팀으로 전달됩니다.
 	ESMTeam VictoryTeam = ESMTeam::None;
@@ -174,10 +122,15 @@ void ASMGameState::EndRound()
 		VictoryTeam = TeamScores[ESMTeam::EDM] > TeamScores[ESMTeam::FutureBass] ? ESMTeam::EDM : ESMTeam::FutureBass;
 	}
 
-	MulticastRPCEndRound(VictoryTeam);
+	return VictoryTeam;
 }
 
-void ASMGameState::MulticastRPCEndRound_Implementation(ESMTeam VictoryTeam)
+void ASMGameState::EndRoundVictoryDefeatResult()
+{
+	MulticastRPCSendEndRoundResult(CalculateVictoryTeam());
+}
+
+void ASMGameState::MulticastRPCSendEndRoundResult_Implementation(ESMTeam VictoryTeam)
 {
 	OnEndRound.Broadcast(VictoryTeam);
 }

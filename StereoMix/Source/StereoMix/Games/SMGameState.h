@@ -9,7 +9,6 @@
 
 DECLARE_DELEGATE_OneParam(FOnChangeRoundTimeSignature, int32 /*RoundTime*/);
 DECLARE_DELEGATE_OneParam(FOnChangeTeamScoreSignature, int32 /*TeamScore*/);
-DECLARE_DELEGATE(FOnEndTimerSignature);
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnEndRoundSignature, ESMTeam /*VictoryTeam*/);
 
 class USMDesignData;
@@ -28,12 +27,24 @@ public:
 	virtual void PostInitializeComponents() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-protected:
-	virtual void BeginPlay() override;
+// ~Round Time Section
+public:
+	FORCEINLINE int32 GetReplicatedRemainRoundTime() const { return ReplicatedRemainRoundTime; }
+
+	/** 게임모드에서 게임 스테이트의 남은 라운드 타임을 변경할때 사용합니다. 이외 용도로 사용되면 안 됩니다. */
+	FORCEINLINE void SetReplicatedRemainRoundTime(int32 InReplicatedRemainRoundTime) { ReplicatedRemainRoundTime = InReplicatedRemainRoundTime; }
+
+public:
+	FOnChangeRoundTimeSignature OnChangeRoundTime;
 
 protected:
-	UPROPERTY()
-	TObjectPtr<USMDesignData> DesignData;
+	UFUNCTION()
+	void OnRep_ReplicatedRemainRoundTime();
+
+protected:
+	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedRemainRoundTime")
+	int32 ReplicatedRemainRoundTime = 0;
+// ~Round Time Section
 
 // ~Score Section
 public:
@@ -62,56 +73,29 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
 	TMap<ESMTeam, int32> TeamScores;
 
-	/** TMap은 리플리케이트 되지 않기 때문에 사용됩니다. */
+	/** TMap은 리플리케이트 되지 않기 때문에 int32를 대신 사용합니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedEDMTeamScore")
 	int32 ReplicatedEDMTeamScore;
 
-	/** TMap은 리플리케이트 되지 않기 때문에 사용됩니다. */
+	/** TMap은 리플리케이트 되지 않기 때문에 int32를 대신 사용합니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedFutureBaseTeamScore")
 	int32 ReplicatedFutureBaseTeamScore;
 
 	int32 TotalTileCount = 0;
 // ~Score Section
 
-// ~Round Time Section
-public:
-	FORCEINLINE int32 GetRemainRoundTime() const { return RemainRoundTime; }
-
-	void SetRemainRoundTime(int32 InRemainRoundTime);
-
-public:
-	FOnEndTimerSignature OnEndRoundTimer;
-	// TODO: 나중에 레벨 내 승패 결과 장소로 이동하는 기능이 생기면 없앨 예정입니다.
-	FOnEndTimerSignature OnEndVictoryDefeatTimer;
-
-public:
-	FOnChangeRoundTimeSignature OnChangeRoundTime;
-
-protected:
-	void PerformRoundTime();
-
-	UFUNCTION()
-	void OnRep_RemainRoundTime();
-
-protected:
-	FTimerHandle RoundTimerHandle;
-	int32 RoundTime = 0;
-
-	UPROPERTY(ReplicatedUsing = "OnRep_RemainRoundTime")
-	int32 RemainRoundTime = 0;
-
-	int32 VictoryDefeatTime = 0;
-
-	uint32 bIsRoundEnd = false;
-// ~Round Time Section
-
 // ~VictoryDefeat Section
 public:
-	void EndRound();
+	/** 현재 스코어로 승패 결과를 계산하여 이긴 팀을 반환합니다. */
+	ESMTeam CalculateVictoryTeam();
+
+	/** 승패 결과를 출력합니다. 게임모드에서 매치가 종료될때 호출됩니다.*/
+	void EndRoundVictoryDefeatResult();
 
 protected:
+	/** 클라이언트에서 승패 결과를 확인할 수 있도록 MulticastRPC로 모든 클라이언트에게 전송합니다.*/
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCEndRound(ESMTeam VictoryTeam);
+	void MulticastRPCSendEndRoundResult(ESMTeam VictoryTeam);
 
 public:
 	FOnEndRoundSignature OnEndRound;

@@ -25,7 +25,7 @@ void USMUserWidget_Scoreboard::BindToGameState()
 	if (SMGameState)
 	{
 		SMGameState->OnChangeRoundTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeRoundTime);
-		OnChangeRoundTime(SMGameState->GetRemainRoundTime());
+		OnChangeRoundTime(SMGameState->GetReplicatedRemainRoundTime());
 
 		SMGameState->OnChangeEDMTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMScore);
 		OnChangeEDMScore(SMGameState->GetReplicatedEDMTeamScore());

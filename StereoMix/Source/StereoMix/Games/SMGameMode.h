@@ -6,6 +6,7 @@
 #include "GameFramework/GameMode.h"
 #include "SMGameMode.generated.h"
 
+class ASMGameState;
 /**
  * 
  */
@@ -25,12 +26,44 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 protected:
+	virtual void StartMatch() override;
+
 	virtual void EndMatch() override;
 
 protected:
 	void BindToGameState();
 
-	void OnEndRoundTimer();
+	/** 승패 확인 타이머가 만료된 후 처리를 합니다. */
+	void EndVictoryDefeatTimer();
 
-	void OnEndVictoryDefeatTimer();
+protected:
+	UPROPERTY()
+	TWeakObjectPtr<ASMGameState> CachedSMGameState;
+
+// ~Round Time Section
+protected:
+	/** 남은 라운스 타임을 설정합니다. GameState에 복제됩니다. */
+	void SetRemainRoundTime(int32 InRemainRoundTime);
+
+	/** 1초 주기로 라운드 타임과 관련된 처리를 합니다. */
+	void PerformRoundTime();
+
+protected:
+	FTimerHandle RoundTimerHandle;
+
+	int32 RemainRoundTime = 0;
+
+	UPROPERTY(EditAnywhere, Category = "Rule|Round", DisplayName = "라운드 당 시간(초)")
+	int32 RoundTime = 240;
+
+	UPROPERTY(EditAnywhere, Category = "Rule|Result", DisplayName = "결과 확인 시간(초)")
+	int32 VictoryDefeatTime = 15;
+
+	uint32 bIsRoundEnd = false;
+// ~Round Time Section
+
+protected:
+	int32 CurrentPhaseNumber = 0;
+
+	int32 MaxPhaseNumber = 5;
 };
