@@ -10,6 +10,7 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "NiagaraSystem.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "Utilities/SMTags.h"
@@ -27,6 +28,14 @@ USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 	BlockedTags.AddTag(SMTags::Character::State::Smashing);
 	BlockedTags.AddTag(SMTags::Character::State::Stun);
 	ActivationBlockedTags = BlockedTags;
+
+	CatchFX.Add(ESMTeam::None, nullptr);
+	CatchFX.Add(ESMTeam::EDM, nullptr);
+	CatchFX.Add(ESMTeam::FutureBass, nullptr);
+
+	CatchHitFX.Add(ESMTeam::None, nullptr);
+	CatchHitFX.Add(ESMTeam::EDM, nullptr);
+	CatchHitFX.Add(ESMTeam::FutureBass, nullptr);
 }
 
 void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -35,6 +44,13 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
+	{
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensure(SourceASC))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
@@ -73,6 +89,20 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
+
+	// FGameplayCueParameters GCParams;
+	// GCParams.Location = SourceCharacter->GetActorLocation();
+	// GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
+	// USMTeamComponent* TeamComponent = SourceCharacter->GetTeamComponent();
+	// if (!ensureAlways(TeamComponent))
+	// {
+	// 	EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+	// 	return;
+	// }
+	//
+	// GCParams.SourceObject = CatchFX[TeamComponent->GetTeam()];
+	//
+	// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
 }
 
 void USMGameplayAbility_Catch::OnInterrupted()
@@ -124,6 +154,9 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 				USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 				if (ensure(SourceASC && TargetASC))
 				{
+					// 이펙트 재생을 위한 어태치 전에 타겟의 위치를 저장해둡니다.
+					const FVector BeforeAttachTargetLocation = TargetCharacter->GetActorLocation();
+
 					// 소스는 잡기, 타겟은 잡힌 상태 태그를 추가해줍니다.
 					SourceCharacter->SetCatchCharacter(TargetCharacter);
 					SourceASC->AddTag(SMTags::Character::State::Catch);
@@ -146,6 +179,23 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 						TargetCharacter->SetCaughtCharacter(nullptr);
 						TargetASC->RemoveTag(SMTags::Character::State::Caught);
 					}
+
+					// 이펙트 재생을 위한 코드입니다.
+					FGameplayCueParameters GCParams;
+					const FVector SourceLocation = SourceCharacter->GetActorLocation();
+					GCParams.Location = SourceLocation;
+					const FVector Direction = (BeforeAttachTargetLocation - SourceLocation).GetSafeNormal();
+					GCParams.Normal = Direction;
+					NET_LOG(SourceCharacter, Warning, TEXT("%s%s"), *Direction.ToString(), *FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X).ToString());
+					USMTeamComponent* TeamComponent = SourceCharacter->GetTeamComponent();
+					if (!ensureAlways(TeamComponent))
+					{
+						return;
+					}
+
+					GCParams.SourceObject = CatchHitFX[TeamComponent->GetTeam()];
+
+					SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
 				}
 			}
 		}

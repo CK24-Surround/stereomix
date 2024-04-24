@@ -5,7 +5,10 @@
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "Utilities/SMTeam.h"
 #include "SMGameplayAbility_Catch.generated.h"
+
+class UNiagaraSystem;
 
 /**
  * 24.04.13 수정
@@ -42,6 +45,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer CatchableTags;
 
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> CatchFX;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> CatchHitFX;
+
 protected:
 	UFUNCTION()
 	void OnInterrupted();
@@ -72,7 +81,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Catch")
 	float MaxDistance = 300.0f;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Catch")
 	float LimitDegree = 90.0f;
 
