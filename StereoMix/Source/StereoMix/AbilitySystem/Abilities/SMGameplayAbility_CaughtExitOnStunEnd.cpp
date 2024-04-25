@@ -5,7 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "Utilities/SMTags.h"
+#include "AbilitySystem/SMTags.h"
 
 USMGameplayAbility_CaughtExitOnStunEnd::USMGameplayAbility_CaughtExitOnStunEnd()
 {

@@ -7,7 +7,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "Utilities/SMTags.h"
+#include "AbilitySystem/SMTags.h"
 
 USMGameplayAbility_Smashed::USMGameplayAbility_Smashed()
 {

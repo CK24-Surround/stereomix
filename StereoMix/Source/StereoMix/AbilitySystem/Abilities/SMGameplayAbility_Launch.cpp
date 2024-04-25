@@ -9,7 +9,7 @@
 #include "NiagaraSystem.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/SMTeamComponent.h"
-#include "Utilities/SMTags.h"
+#include "AbilitySystem/SMTags.h"
 
 USMGameplayAbility_Launch::USMGameplayAbility_Launch()
 {

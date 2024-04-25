@@ -8,7 +8,7 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
-#include "Utilities/SMTags.h"
+#include "AbilitySystem/SMTags.h"
 
 USMCharacterAttributeSet::USMCharacterAttributeSet()
 {

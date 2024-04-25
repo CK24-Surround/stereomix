@@ -13,7 +13,7 @@
 #include "NiagaraSystem.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
-#include "Utilities/SMTags.h"
+#include "AbilitySystem/SMTags.h"
 
 USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 {

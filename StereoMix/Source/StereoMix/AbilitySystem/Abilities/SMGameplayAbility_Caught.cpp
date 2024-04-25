@@ -4,7 +4,7 @@
 #include "SMGameplayAbility_Caught.h"
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "Utilities/SMTags.h"
+#include "AbilitySystem/SMTags.h"
 
 USMGameplayAbility_Caught::USMGameplayAbility_Caught()
 {
