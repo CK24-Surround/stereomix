@@ -2,22 +2,16 @@
 
 
 #include "SMGameMode.h"
-
-#include "SMGameSession.h"
 #include "SMGameState.h"
 #include "API/GameLift.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
-#include "Utilities/SMLog.h"
 #include "Player/SMPlayerState.h"
+#include "Utilities/SMLog.h"
 
 ASMGameMode::ASMGameMode()
 {
 	bUseSeamlessTravel = true;
-	GameSession = CreateDefaultSubobject<ASMGameSession>("SMGameSession");
-	GameStateClass = ASMGameState::StaticClass();
-	// 게임모드에서 직접 게임 시작
-	bDelayedStart = true;
 }
 
 void ASMGameMode::PostInitializeComponents()
@@ -58,18 +52,6 @@ FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const
 	}
 
 	ChangeName(NewPlayerController, InNickname, false);
-
-	// Set SessionName to PlayerSessionId
-#if WITH_GAMELIFT
-	// SMGameSession의 ApproveLogin에서 PlayerSessionId를 이미 검증한 상태
-	const FString PlayerSessionId = UGameplayStatics::ParseOption(Options, TEXT("PlayerSessionId"));
-	check(!PlayerSessionId.IsEmpty());
-	NewPlayerController->GetPlayerState<ASMPlayerState>()->SetGameLiftPlayerSessionId(PlayerSessionId);
-
-	UE_LOG(LogSMGameSession, Log, TEXT("Set PlayerSessionId for %s: %s"),
-	       *NewPlayerController->PlayerState->GetPlayerName(), *PlayerSessionId);
-#endif
-
 	return ErrorMessage;
 }
 

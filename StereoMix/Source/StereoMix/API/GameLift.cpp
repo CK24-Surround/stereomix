@@ -2,22 +2,18 @@
 
 #include "GameLift.h"
 
-#include "Kismet/GameplayStatics.h"
-
 #if WITH_GAMELIFT
+#include "Kismet/GameplayStatics.h"
 #include "GameLiftServerSDK.h"
 #include "GameLiftServerSDKModels.h"
 #endif
 
 UGameLift::UGameLift()
 {
+#if WITH_GAMELIFT
 	bInitialized = false;
 	SdkModule = nullptr;
-
-#if WITH_GAMELIFT
 	ProcessParameters = MakeShared<FProcessParameters>();
-#else
-	ProcessParameters = nullptr;
 #endif
 }
 
@@ -39,15 +35,35 @@ void UGameLift::Initialize(FSubsystemCollectionBase& Collection)
 #endif
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
+#if WITH_GAMELIFT
+void UGameLift::PrintGameSessionInfo(const GameSession& GameSessionInfo)
+{
+	UE_LOG(LogGameLift, Log, TEXT("\tName: %hs"), GameSessionInfo.GetName());
+	UE_LOG(LogGameLift, Log, TEXT("\tIpAddress: %hs"), GameSessionInfo.GetIpAddress());
+	UE_LOG(LogGameLift, Log, TEXT("\tPort: %d"), GameSessionInfo.GetPort());
+	UE_LOG(LogGameLift, Log, TEXT("\tDnsName: %hs"), GameSessionInfo.GetDnsName());
+	UE_LOG(LogGameLift, Log, TEXT("\tFleetId: %hs"), GameSessionInfo.GetFleetId());
+	UE_LOG(LogGameLift, Log, TEXT("\tGameSessionId: %hs"), GameSessionInfo.GetGameSessionId());
+	UE_LOG(LogGameLift, Log, TEXT("\tMaximumPlayerSessionCount: %d"), GameSessionInfo.GetMaximumPlayerSessionCount());
+	UE_LOG(LogGameLift, Log, TEXT("\tMatchmakerData: %hs"), GameSessionInfo.GetMatchmakerData());
+	UE_LOG(LogGameLift, Log, TEXT("\tGameSessionData: %hs"), GameSessionInfo.GetGameSessionData());
+
+	int32 GamePropertiesCount = 0;
+	const Aws::GameLift::Server::Model::GameProperty* GameProperties
+		= GameSessionInfo.GetGameProperties(GamePropertiesCount);
+
+	UE_LOG(LogGameLift, Log, TEXT("\tGamePropertiesCount: %d"), GamePropertiesCount);
+	// for (int32 i = 0; i < GamePropertiesCount; i++)
+	// {
+	// 	UE_LOG(LogGameLift, Log,
+	// 	       TEXT("\tGameProperty%d: %hs = %hs"), i, GameProperties[i].GetKey(), GameProperties[i].GetValue());
+	// }
+}
+#endif
+
 // ReSharper disable once CppMemberFunctionMayBeStatic
 void UGameLift::InitSDK()
 {
-	// if (bInitialized)
-	// {
-	// 	return;
-	// }
-
 #if WITH_GAMELIFT
 	// Getting the module first.
 	FGameLiftServerSDKModule* GameLiftSdkModule = GetSDK();
@@ -60,7 +76,7 @@ void UGameLift::InitSDK()
 	}
 	UE_LOG(LogGameLift, Log, TEXT("GameLift SDK Version: %s"), *GetSdkVersionOutcome.GetResult());
 
-
+	// Anywhere fleet
 	bool bIsAnywhereActive = false;
 	if (FParse::Param(FCommandLine::Get(), TEXT("glAnywhere")))
 	{
@@ -148,33 +164,70 @@ void UGameLift::InitSDK()
 	UE_LOG(LogGameLift, Log, TEXT("GameLift InitSDK succeeded!"));
 	UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
 
-	ProcessParameters->OnStartGameSession.BindLambda([=](const GameSession& InGameSession)
+
+	bInitialized = true;
+#else
+	UE_LOG(LogGameLift, Log, TEXT("GameLift SDK is not enabled."))
+#endif
+}
+
+// ReSharper disable once CppMemberFunctionMayBeStatic
+void UGameLift::ProcessReady() const
+{
+#if WITH_GAMELIFT
+	FGameLiftServerSDKModule* GameLiftSdkModule = GetSDK();
+
+	ProcessParameters->OnStartGameSession.BindLambda([&](const GameSession& InGameSession)
 	{
 		const FString GameSessionId = FString(InGameSession.GetGameSessionId());
-		UE_LOG(LogGameLift, Verbose, TEXT("GameSession Initializing: %s"), *GameSessionId);
-		GameLiftSdkModule->ActivateGameSession();
+		UE_LOG(LogGameLift, Verbose, TEXT("GameLift GameSession started.: %s"), *GameSessionId);
+		PrintGameSessionInfo(InGameSession);
+
+		FGameLiftGenericOutcome ActivateOutcome = GameLiftSdkModule->ActivateGameSession();
+		if (!ActivateOutcome.IsSuccess())
+		{
+			UE_LOG(LogGameLift, Error,
+			       TEXT("Failed to activate game session: %s"), *ActivateOutcome.GetError().m_errorMessage);
+		}
+		UE_LOG(LogGameLift, Log, TEXT("GameLift GameSession activated."));
 	});
 
-	ProcessParameters->OnUpdateGameSession.BindLambda([](const UpdateGameSession& InUpdateGameSession)
+	ProcessParameters->OnUpdateGameSession.BindLambda([&](const UpdateGameSession& InUpdateGameSession)
 	{
-		const FString NewGameSessionId = FString(InUpdateGameSession.GetGameSession().GetGameSessionId());
-		const FString UpdateReason = FString(
-			Aws::GameLift::Server::Model::UpdateReasonMapper::GetNameForUpdateReason(
-				InUpdateGameSession.GetUpdateReason()));
+		UE_LOG(LogGameLift, Log, TEXT("GameLift GameSession updated."));
+		switch (InUpdateGameSession.GetUpdateReason())
+		{
+		case Aws::GameLift::Server::Model::UpdateReason::UNKNOWN:
+			UE_LOG(LogGameLift, Log, TEXT("\tReason: UNKNOWN"));
+			break;
+		case Aws::GameLift::Server::Model::UpdateReason::MATCHMAKING_DATA_UPDATED:
+			UE_LOG(LogGameLift, Log, TEXT("\tReason: MATCHMAKING_DATA_UPDATED"));
+			break;
+		case Aws::GameLift::Server::Model::UpdateReason::BACKFILL_FAILED:
+			UE_LOG(LogGameLift, Log, TEXT("\tReason: BACKFILL_FAILED"));
+			break;
+		case Aws::GameLift::Server::Model::UpdateReason::BACKFILL_TIMED_OUT:
+			UE_LOG(LogGameLift, Log, TEXT("\tReason: BACKFILL_TIMED_OUT"));
+			break;
+		case Aws::GameLift::Server::Model::UpdateReason::BACKFILL_CANCELLED:
+			UE_LOG(LogGameLift, Log, TEXT("\tReason: BACKFILL_CANCELLED"));
+			break;
+		}
 
-		UE_LOG(LogGameLift, Verbose, TEXT("GameSession Updated: %s, Reason: %s"), *NewGameSessionId, *UpdateReason);
+		const GameSession GameSessionInfo = InUpdateGameSession.GetGameSession();
+		PrintGameSessionInfo(GameSessionInfo);
+	});
+
+	ProcessParameters->OnTerminate.BindLambda([&]
+	{
+		UE_LOG(LogGameLift, Verbose, TEXT("Game Server Process is terminating"));
+		bool _ = OnTerminateFromGameLift.ExecuteIfBound();
 	});
 
 	ProcessParameters->OnHealthCheck.BindLambda([]
 	{
 		UE_LOG(LogGameLift, Verbose, TEXT("Performing Health Check"));
 		return true;
-	});
-
-	ProcessParameters->OnTerminate = OnTerminateFromGameLift;
-	ProcessParameters->OnTerminate.BindLambda([]
-	{
-		UE_LOG(LogGameLift, Verbose, TEXT("Game Server Process is terminating"));
 	});
 
 	//GameServer.exe -port=7777 LOG=server.mylog
@@ -195,8 +248,8 @@ void UGameLift::InitSDK()
 	//The game server calls ProcessReady() to tell GameLift it's ready to host game sessions.
 	UE_LOG(LogGameLift, Log, TEXT("Calling Process Ready..."));
 
-	if (FGameLiftGenericOutcome ProcessReadyOutcome = GameLiftSdkModule->ProcessReady(*ProcessParameters);
-		!ProcessReadyOutcome.IsSuccess())
+	FGameLiftGenericOutcome ProcessReadyOutcome = GameLiftSdkModule->ProcessReady(*ProcessParameters);
+	if (!ProcessReadyOutcome.IsSuccess())
 	{
 		UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_RED);
 		UE_LOG(LogGameLift, Log, TEXT("ERROR: Process Ready Failed!"));
@@ -209,10 +262,5 @@ void UGameLift::InitSDK()
 	UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_GREEN);
 	UE_LOG(LogGameLift, Log, TEXT("Process Ready!"));
 	UE_LOG(LogGameLift, SetColor, TEXT("%s"), COLOR_NONE);
-
-	UE_LOG(LogGameLift, Log, TEXT("InitGameLift completed!"));
-	bInitialized = true;
-#else
-	UE_LOG(LogGameLift, Log, TEXT("GameLift SDK is not enabled."))
 #endif
 }

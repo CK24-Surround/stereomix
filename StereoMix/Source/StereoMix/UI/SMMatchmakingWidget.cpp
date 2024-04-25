@@ -61,6 +61,9 @@ void USMMatchmakingWidget::HandleGetMatchStatusComplete_Implementation(const boo
 	switch (Response.MatchStatus.Status)
 	{
 	case EMatchStatusTypes::Succeeded:
+	case EMatchStatusTypes::Failed:
+	case EMatchStatusTypes::Cancelled:
+	case EMatchStatusTypes::TimedOut:
 		GetWorld()->GetTimerManager().ClearTimer(MatchStatusTimerHandle);
 		break;
 	default:

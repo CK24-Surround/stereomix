@@ -31,7 +31,6 @@ public:
 		GameLiftPlayerSessionId = InGameLiftPlayerSessionId;
 	}
 
-
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:

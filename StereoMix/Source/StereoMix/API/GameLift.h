@@ -3,18 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameLiftServerSDK.h"
 #include "Subsystems/GameInstanceSubsystem.h"
 #include "GameLift.generated.h"
 
-//class Aws::GameLift::Server::Model::GameSession;
+#if WITH_GAMELIFT
+namespace Aws::GameLift::Server::Model
+{
+	class GameSession;
+	class UpdateGameSession;
+}
+
 class FGameLiftServerSDKModule;
 struct FProcessParameters;
 
-DECLARE_LOG_CATEGORY_CLASS(LogGameLift, Log, All);
+using  Aws::GameLift::Server::Model::GameSession;
+using  Aws::GameLift::Server::Model::UpdateGameSession;
+#endif
 
-using Aws::GameLift::Server::Model::GameSession;
-using Aws::GameLift::Server::Model::UpdateGameSession;
+DECLARE_LOG_CATEGORY_CLASS(LogGameLift, Log, All);
 
 /**
  * GameLift Subsystem
@@ -24,32 +30,42 @@ class STEREOMIX_API UGameLift : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
 
-	bool bInitialized;
-	TSharedPtr<FProcessParameters> ProcessParameters;
-	FGameLiftServerSDKModule* SdkModule;
-
+public:
+	UGameLift();
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+
+#if WITH_GAMELIFT
+
+private:
+	bool bInitialized;
+	FGameLiftServerSDKModule* SdkModule;
+	TSharedPtr<FProcessParameters> ProcessParameters;
+
+	static void PrintGameSessionInfo(const GameSession& GameSessionInfo);
 
 public:
 	FSimpleDelegate OnTerminateFromGameLift;
 
-	FORCEINLINE static bool IsAvailable()
+	FORCEINLINE FGameLiftServerSDKModule* GetSDK() const
+	{
+		return SdkModule;
+	}
+#endif
+
+	// ReSharper disable once CppMemberFunctionMayBeStatic
+	FORCEINLINE bool IsInitialized() const
 	{
 #if WITH_GAMELIFT
-		return true;
+		return bInitialized;
 #else
 		return false;
 #endif
 	}
 
-	UGameLift();
-
-	FORCEINLINE bool IsInitialized() const { return bInitialized; }
-
-	FGameLiftServerSDKModule* GetSDK() const { return SdkModule; }
-
 	/**
 	 * Initialize GameLift
 	 */
 	void InitSDK();
+
+	void ProcessReady() const;
 };
