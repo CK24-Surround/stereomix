@@ -10,7 +10,6 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "NiagaraSystem.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
@@ -82,19 +81,10 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
-	// FGameplayCueParameters GCParams;
-	// GCParams.Location = SourceCharacter->GetActorLocation();
-	// GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
-	// USMTeamComponent* TeamComponent = SourceCharacter->GetTeamComponent();
-	// if (!ensureAlways(TeamComponent))
-	// {
-	// 	EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-	// 	return;
-	// }
-	//
-	// GCParams.SourceObject = CatchFX[TeamComponent->GetTeam()];
-	//
-	// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
+	FGameplayCueParameters GCParams;
+	GCParams.Location = SourceCharacter->GetActorLocation();
+	GCParams.Normal = SourceCharacter->GetActorRotation().Vector();
+	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::Catch, GCParams);
 }
 
 void USMGameplayAbility_Catch::OnInterrupted()
@@ -177,12 +167,6 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 					const FVector SourceLocation = SourceCharacter->GetActorLocation();
 					GCParams.Location = SourceLocation;
 					GCParams.Normal = (BeforeAttachTargetLocation - SourceLocation).GetSafeNormal();
-					USMTeamComponent* TeamComponent = SourceCharacter->GetTeamComponent();
-					if (!ensureAlways(TeamComponent))
-					{
-						return;
-					}
-
 					K2_ExecuteGameplayCueWithParams(SMTags::GameplayCue::CatchHit, GCParams);
 				}
 			}

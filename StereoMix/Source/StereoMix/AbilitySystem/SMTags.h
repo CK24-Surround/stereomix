@@ -62,6 +62,7 @@ namespace SMTags
 	namespace GameplayCue
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(PlayNiagara)
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Catch)
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CatchHit)
 	}
 }
