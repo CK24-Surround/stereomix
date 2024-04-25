@@ -45,12 +45,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer CatchableTags;
 
-	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> CatchFX;
-
-	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> CatchHitFX;
-
 protected:
 	UFUNCTION()
 	void OnInterrupted();

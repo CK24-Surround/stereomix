@@ -28,14 +28,6 @@ USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 	BlockedTags.AddTag(SMTags::Character::State::Smashing);
 	BlockedTags.AddTag(SMTags::Character::State::Stun);
 	ActivationBlockedTags = BlockedTags;
-
-	CatchFX.Add(ESMTeam::None, nullptr);
-	CatchFX.Add(ESMTeam::EDM, nullptr);
-	CatchFX.Add(ESMTeam::FutureBass, nullptr);
-
-	CatchHitFX.Add(ESMTeam::None, nullptr);
-	CatchHitFX.Add(ESMTeam::EDM, nullptr);
-	CatchHitFX.Add(ESMTeam::FutureBass, nullptr);
 }
 
 void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -184,18 +176,14 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 					FGameplayCueParameters GCParams;
 					const FVector SourceLocation = SourceCharacter->GetActorLocation();
 					GCParams.Location = SourceLocation;
-					const FVector Direction = (BeforeAttachTargetLocation - SourceLocation).GetSafeNormal();
-					GCParams.Normal = Direction;
-					NET_LOG(SourceCharacter, Warning, TEXT("%s%s"), *Direction.ToString(), *FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X).ToString());
+					GCParams.Normal = (BeforeAttachTargetLocation - SourceLocation).GetSafeNormal();
 					USMTeamComponent* TeamComponent = SourceCharacter->GetTeamComponent();
 					if (!ensureAlways(TeamComponent))
 					{
 						return;
 					}
 
-					GCParams.SourceObject = CatchHitFX[TeamComponent->GetTeam()];
-
-					SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
+					K2_ExecuteGameplayCueWithParams(SMTags::GameplayCue::CatchHit, GCParams);
 				}
 			}
 		}
