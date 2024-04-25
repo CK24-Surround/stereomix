@@ -165,17 +165,17 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 					// 이펙트 재생을 위한 코드입니다.
 					FGameplayCueParameters GCParams;
 					const FVector SourceLocation = SourceCharacter->GetActorLocation();
-					GCParams.Location = SourceLocation;
+					GCParams.Location = SourceCharacter->GetActorLocation();
 					GCParams.Normal = (BeforeAttachTargetLocation - SourceLocation).GetSafeNormal();
-					K2_ExecuteGameplayCueWithParams(SMTags::GameplayCue::CatchHit, GCParams);
+					SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::CatchHit, GCParams);
 				}
 			}
 		}
 	}
 
-	// 디버거
-	const FColor Color = bSuccess ? FColor::Green : FColor::Red;
-	DrawDebugSphere(GetWorld(), InStartLocation, MaxDistance, 16, Color, false, 2.0f);
+	// TODO: 이펙트를 위해 임시 주석 처리 디버거 
+	// const FColor Color = bSuccess ? FColor::Green : FColor::Red;
+	// DrawDebugSphere(GetWorld(), InStartLocation, MaxDistance, 16, Color, false, 2.0f);
 }
 
 bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<ASMPlayerCharacter*>& OutCatchableCharacters)
