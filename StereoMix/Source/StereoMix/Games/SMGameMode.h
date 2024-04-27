@@ -6,6 +6,7 @@
 #include "GameFramework/GameMode.h"
 #include "SMGameMode.generated.h"
 
+class USMProjectilPool;
 class ASMGameState;
 /**
  * 
@@ -85,4 +86,10 @@ protected:
 
 	int32 CurrentPhaseNumber = 0;
 // ~Phase Section
+
+// ~Object Polling Section
+protected:
+	UPROPERTY()
+	TObjectPtr<USMProjectilPool> ProjectilePool;
+// ~Object Polling Section
 };

@@ -6,6 +6,7 @@
 #include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Projectiles/SMProjectilPool.h"
 #include "Utilities/SMLog.h"
 
 ASMGameMode::ASMGameMode()
@@ -33,6 +34,10 @@ void ASMGameMode::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	BindToGameState();
+
+	// 투사체 풀을 생성합니다.
+	ProjectilePool = NewObject<USMProjectilPool>();
+	ensure(ProjectilePool);
 }
 
 void ASMGameMode::StartMatch()
