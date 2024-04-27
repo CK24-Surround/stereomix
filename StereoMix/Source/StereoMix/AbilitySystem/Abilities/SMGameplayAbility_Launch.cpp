@@ -5,7 +5,6 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "AbilityTasks/SMAbilityTask_SpawnAndLaunchProjectile.h"
 #include "NiagaraSystem.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/SMTeamComponent.h"
@@ -137,6 +136,6 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 		return;
 	}
 
-	NewProjectile->Launch(SourceCharacter, StartLocation, ProjectileDirection, ProjectileSpeed, MaxDistance);
+	NewProjectile->Launch(SourceCharacter, StartLocation, ProjectileDirection, ProjectileSpeed, MaxDistance, Damage);
 	K2_EndAbility();
 }
