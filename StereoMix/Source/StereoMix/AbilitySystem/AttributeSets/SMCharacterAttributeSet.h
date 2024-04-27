@@ -31,8 +31,6 @@ public:
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, PostureGauge);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MaxPostureGauge);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MoveSpeed);
-	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, ProjectileAttack);
-	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, ProjectileAttackCooldown);
 
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Damage);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Heal);
@@ -47,12 +45,6 @@ protected:
 	UFUNCTION()
 	void OnRep_MoveSpeed(const FGameplayAttributeData& OldValue);
 
-	UFUNCTION()
-	void OnRep_ProjectileAttack(const FGameplayAttributeData& OldValue);
-
-	UFUNCTION()
-	void OnRep_ProjectileAttackCooldown(const FGameplayAttributeData& OldValue);
-
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Posture", ReplicatedUsing = "OnRep_PostureGauge")
 	FGameplayAttributeData PostureGauge;
@@ -62,12 +54,6 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Posture", ReplicatedUsing = "OnRep_MoveSpeed")
 	FGameplayAttributeData MoveSpeed;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Posture", ReplicatedUsing = "OnRep_ProjectileAttack")
-	FGameplayAttributeData ProjectileAttack;
-
-	UPROPERTY(BlueprintReadOnly, Category = "Posture", ReplicatedUsing = "OnRep_ProjectileAttackCooldown")
-	FGameplayAttributeData ProjectileAttackCooldown;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")

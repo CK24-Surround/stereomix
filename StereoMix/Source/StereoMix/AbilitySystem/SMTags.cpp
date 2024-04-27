@@ -18,8 +18,6 @@ namespace SMTags
 	namespace AttributeSet::Character::Init
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MoveSpeed, "AttributeSet.Character.Init.MoveSpeed", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileCooldown, "AttributeSet.Character.Init.ProjectileCooldown", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileAttack, "AttributeSet.Character.Init.ProjectileAttack", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
 	}
 
 	namespace Character::State

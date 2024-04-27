@@ -19,9 +19,6 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 
 	MoveSpeed = 0.0f;
 
-	ProjectileAttack = 0.0f;
-	ProjectileAttackCooldown = 0.0f;
-
 	FGameplayTagContainer InitInvincibleStateTags;
 	InitInvincibleStateTags.AddTag(SMTags::Character::State::Stun);
 	InitInvincibleStateTags.AddTag(SMTags::Character::State::Smashing);
@@ -35,8 +32,6 @@ void USMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(USMCharacterAttributeSet, PostureGauge);
 	DOREPLIFETIME(USMCharacterAttributeSet, MaxPostureGauge);
 	DOREPLIFETIME(USMCharacterAttributeSet, MoveSpeed);
-	DOREPLIFETIME(USMCharacterAttributeSet, ProjectileAttack);
-	DOREPLIFETIME(USMCharacterAttributeSet, ProjectileAttackCooldown);
 }
 
 void USMCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -145,14 +140,4 @@ void USMCharacterAttributeSet::OnRep_MaxPostureGauge(const FGameplayAttributeDat
 void USMCharacterAttributeSet::OnRep_MoveSpeed(const FGameplayAttributeData& OldValue)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, MoveSpeed, OldValue);
-}
-
-void USMCharacterAttributeSet::OnRep_ProjectileAttack(const FGameplayAttributeData& OldValue)
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, ProjectileAttack, OldValue);
-}
-
-void USMCharacterAttributeSet::OnRep_ProjectileAttackCooldown(const FGameplayAttributeData& OldValue)
-{
-	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, ProjectileAttackCooldown, OldValue);
 }

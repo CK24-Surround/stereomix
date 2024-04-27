@@ -210,8 +210,6 @@ void ASMPlayerCharacter::InitASC()
 			if (GESpecHandle.IsValid())
 			{
 				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MoveSpeed, DesignData->MoveSpeed);
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::ProjectileCooldown, 1.0f / DesignData->ProjectileRate);
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::ProjectileAttack, DesignData->ProjectileAttack);
 				ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
 		}

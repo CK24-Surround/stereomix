@@ -19,8 +19,6 @@ namespace SMTags
 	namespace AttributeSet::Character::Init
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(MoveSpeed);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ProjectileCooldown);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ProjectileAttack);
 	}
 
 	namespace Character::State
