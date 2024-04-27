@@ -6,7 +6,8 @@
 #include "GameFramework/GameMode.h"
 #include "SMGameMode.generated.h"
 
-class USMProjectilPool;
+class ASMProjectile;
+class USMProjectilePool;
 class ASMGameState;
 /**
  * 
@@ -88,8 +89,17 @@ protected:
 // ~Phase Section
 
 // ~Object Polling Section
+public:
+	FORCEINLINE USMProjectilePool* GetProjectilePool() { return ProjectilePool; };
+
 protected:
+	UPROPERTY(EditAnywhere, Category = "Pool")
+	TSubclassOf<USMProjectilePool> ProjectilePoolClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Pool")
+	TSubclassOf<ASMProjectile> ProjectileClass;
+	
 	UPROPERTY()
-	TObjectPtr<USMProjectilPool> ProjectilePool;
+	TObjectPtr<USMProjectilePool> ProjectilePool;
 // ~Object Polling Section
 };

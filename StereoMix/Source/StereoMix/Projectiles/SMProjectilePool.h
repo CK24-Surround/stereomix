@@ -4,19 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "SMProjectilPool.generated.h"
+#include "SMProjectilePool.generated.h"
 
 class ASMProjectile;
 /**
  * 
  */
-UCLASS()
-class STEREOMIX_API USMProjectilPool : public UObject
+UCLASS(BlueprintType, Blueprintable)
+class STEREOMIX_API USMProjectilePool : public UObject
 {
 	GENERATED_BODY()
 
 public:
-	USMProjectilPool();
+	USMProjectilePool();
 
 public:
 	void Init(const TSubclassOf<ASMProjectile>& InProjectileClassToSpawn);
@@ -35,7 +35,7 @@ protected:
 	TArray<TObjectPtr<ASMProjectile>> Pool;
 
 	UPROPERTY(EditAnywhere, Category = "Pool|Size")
-	int32 InitPoolSize = 100;
+	int32 InitPoolSize = 3;
 
 	UPROPERTY(EditAnywhere, Category = "Pool|Size")
 	int32 ExpandSize = 3;

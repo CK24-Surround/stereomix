@@ -85,8 +85,6 @@ void ASMProjectile::PostInitializeComponents()
 void ASMProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	StartLocation = GetActorLocation();
 }
 
 void ASMProjectile::Tick(float DeltaTime)
@@ -98,7 +96,7 @@ void ASMProjectile::Tick(float DeltaTime)
 	{
 		if (HasAuthority())
 		{
-			Destroy();
+			MulticastRPCEndLifeTime();
 		}
 		else
 		{
@@ -180,7 +178,7 @@ void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 					TargetASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
 				}
 
-				Destroy();
+				MulticastRPCEndLifeTime();
 			}
 		}
 	}
@@ -196,7 +194,7 @@ void ASMProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimi
 
 	if (HasAuthority())
 	{
-		Destroy();
+		MulticastRPCEndLifeTime();
 	}
 	else
 	{
@@ -223,7 +221,38 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 		}
 	}
 
-	// TODO: 발사 로직 구현
+	MulticastRPCLaunch(InStartLocation, InNormal, InSpeed);
+}
+
+void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed)
+{
+	StartLocation = InStartLocation;
+	SetActorLocationAndRotation(InStartLocation, InNormal.Rotation());
+
+	MulticastRPCStartLifeTime();
+	ProjectileMovementComponent->Activate(true);
+	ProjectileMovementComponent->SetUpdatedComponent(GetRootComponent());
+	ProjectileMovementComponent->SetComponentTickEnabled(true);
+	ProjectileMovementComponent->Velocity = InNormal * InSpeed;
+}
+
+void ASMProjectile::MulticastRPCStartLifeTime_Implementation()
+{
+	ProjectileFXComponent->ActivateSystem();
+	SetActorTickEnabled(true);
+	SetActorEnableCollision(true);
+	SetActorHiddenInGame(false);
+}
+
+void ASMProjectile::MulticastRPCEndLifeTime_Implementation()
+{
+	ProjectileFXComponent->DeactivateImmediate();
+	ProjectileMovementComponent->Deactivate();
+	SetActorTickEnabled(false);
+	SetActorEnableCollision(false);
+	SetActorHiddenInGame(true);
+
+	(void)OnEndLifeTime.ExecuteIfBound(this);
 }
 
 void ASMProjectile::OnChangeTeamCallback()
@@ -233,6 +262,6 @@ void ASMProjectile::OnChangeTeamCallback()
 	if (!HasAuthority())
 	{
 		ProjectileFXComponent->SetAsset(ProjectileFX[Team]);
-		ProjectileFXComponent->ActivateSystem();
+		// ProjectileFXComponent->ActivateSystem();
 	}
 }

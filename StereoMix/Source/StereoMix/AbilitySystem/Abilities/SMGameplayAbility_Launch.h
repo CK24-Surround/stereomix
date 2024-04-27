@@ -23,7 +23,7 @@ public:
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<ASMProjectile> ProjectileClass;
@@ -32,11 +32,12 @@ protected:
 	TObjectPtr<UAnimMontage> Montage;
 
 protected:
-	/** 서버에 투사체 생성 및 발사를 요청합니다. */
-	UFUNCTION(Server, Reliable)
-	void ServerRPCRequestProjectile(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& CursorLocation);
+	virtual void OnReceiveProjectileTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	float ProjectileSpeed = 2500.0f;
+
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> LaunchFX;
 };

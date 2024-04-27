@@ -8,6 +8,8 @@
 #include "Utilities/SMTeam.h"
 #include "SMProjectile.generated.h"
 
+DECLARE_DELEGATE_OneParam(FOnProjectileLifeTimeSignature, ASMProjectile* /*Projectile*/);
+
 class UNiagaraComponent;
 class UNiagaraSystem;
 class USMProjectileAssetData;
@@ -40,7 +42,17 @@ protected:
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
 public:
-	virtual void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed);
+	void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed);
+
+protected:
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastRPCLaunch(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed);
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastRPCStartLifeTime();
+
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastRPCEndLifeTime();
 
 protected:
 	UPROPERTY()
@@ -67,6 +79,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ProjectileHitFX;
+
+public:
+	/** 생명 주기가 끝나 회수되야할때 호출됩니다. Destroy를 대체합니다. */
+	FOnProjectileLifeTimeSignature OnEndLifeTime;
 
 protected:
 	FVector StartLocation;
