@@ -12,6 +12,7 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "Utilities/SMCalculateBlueprintLibrary.h"
 
 ASMJumpPad::ASMJumpPad()
 {
@@ -28,6 +29,9 @@ ASMJumpPad::ASMJumpPad()
 	MeshComponent->SetupAttachment(BoxComponent);
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	MeshComponent->SetRelativeLocationAndRotation(FVector(0.0, 0.0, -50.0), FRotator(0.0, 90.0, 0.0));
+
+	JumpTarget = CreateDefaultSubobject<USceneComponent>(TEXT("JumpTarget"));
+	JumpTarget->SetupAttachment(SceneComponent);
 
 	DenineTags.AddTag(SMTags::Character::State::Catch);
 	DenineTags.AddTag(SMTags::Character::State::Stun);
@@ -61,7 +65,7 @@ void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
 			return;
 		}
 
-		Jump(TargetCharacter, LandingLocation);
+		Jump(TargetCharacter, JumpTarget->GetComponentLocation());
 	}
 }
 
@@ -74,13 +78,12 @@ void ASMJumpPad::Jump(ACharacter* InCharacter, const FVector& TargetLocation)
 		return;
 	}
 
-	TargetMovement->GravityScale = GravityScale;
 	// TODO: 임시로 에어컨트롤 비활성화
 	TargetMovement->AirControl = 0.0f;
 
-	FVector LaunchVelocity;
-	const float Gravity = GetWorld()->GetGravityZ() * TargetMovement->GravityScale;
-	UGameplayStatics::SuggestProjectileVelocity_CustomArc(this, LaunchVelocity, StartLocation, TargetLocation, Gravity, ArcRatio);
+	TargetMovement->GravityScale = GravityScale;
+	const float Gravity = TargetMovement->GetGravityZ();
+	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight2(this, StartLocation, TargetLocation, ApexHeight, Gravity);
 
 	InCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }

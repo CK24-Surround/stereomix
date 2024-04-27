@@ -36,14 +36,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Jump")
-	FVector LandingLocation = FVector(3075.0, 3375.0, 110.0);
+	UPROPERTY(VisibleAnywhere, Category = "JumpTarget")
+	TObjectPtr<USceneComponent> JumpTarget;
 
+protected:
 	UPROPERTY(EditAnywhere, Category = "Jump")
 	float GravityScale = 4.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Jump")
-	float ArcRatio = 0.2f;
+	float ApexHeight = 500.0f;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
 	FGameplayTagContainer DenineTags;
