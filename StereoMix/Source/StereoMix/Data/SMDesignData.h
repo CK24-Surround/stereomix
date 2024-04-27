@@ -31,10 +31,4 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, Category = "PlayerCharacter|Projectile", DisplayName = "초당 투사체 공격 속도")
 	float ProjectileRate = 4.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "PlayerCharacter|Projectile", DisplayName = "투사체 속도")
-	float ProjectileSpeed = 2250.0f;
-
-	UPROPERTY(EditDefaultsOnly, Category = "PlayerCharacter|Projectile", DisplayName = "투사체 사정거리")
-	float ProjectileMaxDistance = 1000.0f;
 };

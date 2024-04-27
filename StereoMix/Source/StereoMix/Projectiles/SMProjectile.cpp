@@ -80,6 +80,11 @@ void ASMProjectile::PostInitializeComponents()
 	SetActorHiddenInGame(true);
 
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMProjectile::OnChangeTeamCallback);
+
+	if (!HasAuthority())
+	{
+		NET_LOG(this, Warning, TEXT("투사체 생성"));
+	}
 }
 
 void ASMProjectile::BeginPlay()
@@ -92,7 +97,7 @@ void ASMProjectile::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	const float DistanceSquaredFromStartLocation = FVector::DistSquared(StartLocation, GetActorLocation());
-	if (DistanceSquaredFromStartLocation > FMath::Square(DesignData->ProjectileMaxDistance))
+	if (DistanceSquaredFromStartLocation > FMath::Square(MaxDistance))
 	{
 		if (HasAuthority())
 		{
@@ -202,7 +207,7 @@ void ASMProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimi
 	}
 }
 
-void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed)
+void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed, float InMaxDistance)
 {
 	if (!HasAuthority())
 	{
@@ -221,12 +226,13 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 		}
 	}
 
-	MulticastRPCLaunch(InStartLocation, InNormal, InSpeed);
+	MulticastRPCLaunch(InStartLocation, InNormal, InSpeed, InMaxDistance);
 }
 
-void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed)
+void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed, float InMaxDistance)
 {
 	StartLocation = InStartLocation;
+	MaxDistance = InMaxDistance;
 	SetActorLocationAndRotation(InStartLocation, InNormal.Rotation());
 
 	MulticastRPCStartLifeTime();
@@ -262,6 +268,5 @@ void ASMProjectile::OnChangeTeamCallback()
 	if (!HasAuthority())
 	{
 		ProjectileFXComponent->SetAsset(ProjectileFX[Team]);
-		// ProjectileFXComponent->ActivateSystem();
 	}
 }

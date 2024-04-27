@@ -38,6 +38,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	float ProjectileSpeed = 2500.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	float MaxDistance = 1250.0f;
+
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> LaunchFX;
 };

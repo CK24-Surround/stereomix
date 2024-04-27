@@ -42,11 +42,11 @@ protected:
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
 public:
-	void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed);
+	void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed, float InMaxDistance);
 
 protected:
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastRPCLaunch(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed);
+	virtual void MulticastRPCLaunch(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed, float InMaxDistance);
 
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastRPCStartLifeTime();
@@ -86,6 +86,7 @@ public:
 
 protected:
 	FVector StartLocation;
+	float MaxDistance;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
