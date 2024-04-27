@@ -37,7 +37,7 @@ void ASMGameMode::PostInitializeComponents()
 
 	// 투사체 풀을 생성합니다.
 	ProjectilePool = NewObject<USMProjectilPool>();
-	ensure(ProjectilePool);
+	ensureAlways(ProjectilePool);
 }
 
 void ASMGameMode::StartMatch()

@@ -55,9 +55,8 @@ ASMProjectile::ASMProjectile()
 	ProjectileFXComponent->SetAutoActivate(false);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
-	ProjectileMovementComponent->InitialSpeed = DesignData->ProjectileSpeed;
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
-	ProjectileMovementComponent->SetAutoActivate(true);
+	ProjectileMovementComponent->SetAutoActivate(false);
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
@@ -75,6 +74,10 @@ ASMProjectile::ASMProjectile()
 void ASMProjectile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	SetActorTickEnabled(false);
+	SetActorEnableCollision(false);
+	SetActorHiddenInGame(true);
 
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMProjectile::OnChangeTeamCallback);
 }
@@ -201,22 +204,26 @@ void ASMProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimi
 	}
 }
 
-void ASMProjectile::SetOwner(AActor* NewOwner)
+void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed)
 {
-	Super::SetOwner(NewOwner);
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SetOwner(NewOwner);
 
 	ISMTeamComponentInterface* OwnerTeamComponentInterface = Cast<ISMTeamComponentInterface>(NewOwner);
 	if (OwnerTeamComponentInterface)
 	{
-		if (HasAuthority())
+		USMTeamComponent* OwnerTeamComponent = OwnerTeamComponentInterface->GetTeamComponent();
+		if (ensure(OwnerTeamComponent))
 		{
-			USMTeamComponent* OwnerTeamComponent = OwnerTeamComponentInterface->GetTeamComponent();
-			if (ensure(OwnerTeamComponent))
-			{
-				TeamComponent->SetTeam(OwnerTeamComponent->GetTeam());
-			}
+			TeamComponent->SetTeam(OwnerTeamComponent->GetTeam());
 		}
 	}
+
+	// TODO: 발사 로직 구현
 }
 
 void ASMProjectile::OnChangeTeamCallback()

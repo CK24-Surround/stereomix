@@ -40,7 +40,7 @@ protected:
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
 public:
-	virtual void SetOwner(AActor* NewOwner) override;
+	virtual void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed);
 
 protected:
 	UPROPERTY()
@@ -74,7 +74,7 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
 	FGameplayTagContainer IgnoreTargetStateTags;
-	
+
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> HitGE;
 
