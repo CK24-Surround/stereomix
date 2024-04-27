@@ -13,6 +13,7 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "Engine/OverlapResult.h"
 
 USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 {
