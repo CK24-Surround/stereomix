@@ -97,8 +97,8 @@ protected:
 
 // ~FX Section
 protected:
-	UPROPERTY(EditAnywhere, Category = "FX", DisplayName = "투사체 FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ProjectileFX;
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ProjectileBodyFX;
 // ~FX Section
 
 public:

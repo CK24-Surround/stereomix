@@ -37,9 +37,9 @@ ASMProjectile::ASMProjectile()
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
-	ProjectileFX.Add(ESMTeam::None, nullptr);
-	ProjectileFX.Add(ESMTeam::EDM, nullptr);
-	ProjectileFX.Add(ESMTeam::FutureBass, nullptr);
+	ProjectileBodyFX.Add(ESMTeam::None, nullptr);
+	ProjectileBodyFX.Add(ESMTeam::EDM, nullptr);
+	ProjectileBodyFX.Add(ESMTeam::FutureBass, nullptr);
 
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Stun);
 }
@@ -313,6 +313,6 @@ void ASMProjectile::OnChangeTeamCallback()
 
 	if (!HasAuthority())
 	{
-		ProjectileFXComponent->SetAsset(ProjectileFX[Team]);
+		ProjectileFXComponent->SetAsset(ProjectileBodyFX[Team]);
 	}
 }

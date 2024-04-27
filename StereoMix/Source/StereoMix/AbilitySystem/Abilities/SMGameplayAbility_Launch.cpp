@@ -5,9 +5,7 @@
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "NiagaraSystem.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "Components/SMTeamComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Games/SMGameMode.h"
 #include "Projectiles/SMProjectile.h"
@@ -25,10 +23,6 @@ USMGameplayAbility_Launch::USMGameplayAbility_Launch()
 	BlockedTags.AddTag(SMTags::Character::State::Stun);
 
 	ActivationBlockedTags = BlockedTags;
-
-	LaunchFX.Add(ESMTeam::None, nullptr);
-	LaunchFX.Add(ESMTeam::EDM, nullptr);
-	LaunchFX.Add(ESMTeam::FutureBass, nullptr);
 }
 
 void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -72,27 +66,18 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 		FAbilityTargetDataSetDelegate& TargetDataDelegate = SourceASC->AbilityTargetDataSetDelegate(Handle, ActivationInfo.GetActivationPredictionKey());
 		TargetDataDelegate.AddUObject(this, &ThisClass::OnReceiveProjectileTargetData);
 	}
-
+	
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
 	// 발사 애니메이션을 재생합니다.
 	SourceASC->PlayMontage(this, ActivationInfo, Montage, 1.0f);
 
-	// 이후 이펙트를 재생합니다. 리모트의 경우는 서버에서 타겟 데이터를 수신할때 전파하여 재생하도록합니다.
-	USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
-	if (ensure(SourceTeamComponent))
-	{
-		const ESMTeam Team = SourceTeamComponent->GetTeam();
-		FGameplayCueParameters GCParams;
-		GCParams.Location = SourceCharacter->GetActorLocation() + SourceCharacter->GetActorForwardVector() * 100.0f;
-		GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
-		GCParams.SourceObject = LaunchFX[Team];
+	// FX를 재생합니다.
+	FGameplayCueParameters GCParams;
+	GCParams.Location = SourceCharacter->GetActorLocation() + SourceCharacter->GetActorForwardVector() * 100.0f;
+	GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
 
-		if (SourceASC)
-		{
-			SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
-		}
-	}
+	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
 }
 
 void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag)
@@ -136,6 +121,7 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 		return;
 	}
 
+	// 투사체를 발사합니다.
 	NewProjectile->Launch(SourceCharacter, StartLocation, ProjectileDirection, ProjectileSpeed, MaxDistance, Damage);
 	K2_EndAbility();
 }

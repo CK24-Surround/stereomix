@@ -25,26 +25,19 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Projectile")
-	TSubclassOf<ASMProjectile> ProjectileClass;
-
-	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> Montage;
-
-protected:
+	/** 클라이언트의 조준 값을 받아오는데 사용합니다. */
 	virtual void OnReceiveProjectileTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Projectile")
+	UPROPERTY(EditAnywhere, Category = "Montage")
+	TObjectPtr<UAnimMontage> Montage;
+
+	UPROPERTY(EditAnywhere, Category = "Projectile", DisplayName = "탄속")
 	float ProjectileSpeed = 2500.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Projectile")
+	UPROPERTY(EditAnywhere, Category = "Projectile", DisplayName = "최대사거리")
 	float MaxDistance = 1250.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Projectile")
+	UPROPERTY(EditAnywhere, Category = "Projectile", DisplayName = "대미지")
 	float Damage = 20.0f;
-
-	// TODO: 제거 예정
-	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> LaunchFX;
 };
