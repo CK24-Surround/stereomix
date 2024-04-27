@@ -35,6 +35,7 @@ namespace SMTags
 	namespace Data
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage, "Data.Damage", "데미지 데이터 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cooldown, "Data.Cooldown", "쿨다운 데이터 태그입니다.");
 	}
 
 	namespace Event

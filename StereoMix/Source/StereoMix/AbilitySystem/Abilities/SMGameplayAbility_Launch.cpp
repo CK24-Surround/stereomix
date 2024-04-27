@@ -66,7 +66,7 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 		FAbilityTargetDataSetDelegate& TargetDataDelegate = SourceASC->AbilityTargetDataSetDelegate(Handle, ActivationInfo.GetActivationPredictionKey());
 		TargetDataDelegate.AddUObject(this, &ThisClass::OnReceiveProjectileTargetData);
 	}
-	
+
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
 	// 발사 애니메이션을 재생합니다.
@@ -78,6 +78,29 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 	GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
 
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
+}
+
+void USMGameplayAbility_Launch::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+{
+	UGameplayEffect* CooldownGE = GetCooldownGameplayEffect();
+	if (CooldownGE)
+	{
+		const FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(CooldownGE->GetClass(), 1.0f);
+		if (!ensureAlways(GESpecHandle.IsValid()))
+		{
+			return;
+		}
+
+		FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
+		if (!ensureAlways(GESpec))
+		{
+			return;
+		}
+
+		const float Cooldown = 1.0f / LaunchRate;
+		GESpec->SetSetByCallerMagnitude(SMTags::Data::Cooldown, Cooldown);
+		(void)ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, GESpecHandle);
+	}
 }
 
 void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag)

@@ -36,6 +36,7 @@ namespace SMTags
 	namespace Data
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cooldown);
 	}
 
 	namespace Event
