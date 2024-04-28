@@ -20,7 +20,12 @@ StereoMix/Binaries/Win64/*
 !StereoMix/Binaries/Win64/UnrealEditor.modules
 !StereoMix/Binaries/Win64/UnrealEditor-StereoMix.dll
 
-StereoMix/Build/
+StereoMix/Build/Windows/*
+StereoMix/Build/WindowsServer/*
+StereoMix/Build/LinuxServer/*
+StereoMix/Build/LinuxArm64Server/*
+!StereoMix/Build/**/Application.ico
+
 StereoMix/DerivedDataCache/
 StereoMix/Intermediate/
 StereoMix/Platforms/
