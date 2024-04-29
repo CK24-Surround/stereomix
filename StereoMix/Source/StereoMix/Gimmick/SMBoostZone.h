@@ -39,11 +39,18 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> AddBoostZoneGE;
+	TSubclassOf<UGameplayEffect> ApplyBoostZoneGE;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> RemoveBoostZoneGE;
 
 protected:
-	TArray<TWeakObjectPtr<UAbilitySystemComponent>> PlayerASCsInZone;
+	struct FBoostZoneDirectionData
+	{
+		uint32 bOldIsCurrectDirection:1 = false;
+		uint32 bNewIsCurrectDirection:1 = false;
+	};
+
+	/** 부스트 존 안에 들어온 플레이어의 ASC와 방향정보를 갖고 있는 맵입니다. */
+	TMap<TWeakObjectPtr<UAbilitySystemComponent>, FBoostZoneDirectionData> InZoneMap;
 };

@@ -9,10 +9,13 @@
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 
 ASMBoostZone::ASMBoostZone()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	bReplicates = true;
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
@@ -28,21 +31,21 @@ void ASMBoostZone::PostInitializeComponents()
 
 	SetActorTickEnabled(false);
 
-	if (!HasAuthority())
-	{
-		SetActorEnableCollision(false);
-	}
+	// if (!HasAuthority())
+	// {
+	// 	SetActorEnableCollision(false);
+	// }
 }
 
 void ASMBoostZone::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	for (const auto& PlayerASCInZone : PlayerASCsInZone)
+	for (const auto& InZonePair : InZoneMap)
 	{
-		if (PlayerASCInZone.Get())
+		if (InZonePair.Key.Get())
 		{
-			PerformBoostZone(PlayerASCInZone.Get());
+			PerformBoostZone(InZonePair.Key.Get());
 		}
 	}
 }
@@ -59,7 +62,7 @@ void ASMBoostZone::NotifyActorBeginOverlap(AActor* OtherActor)
 			SetActorTickEnabled(true);
 		}
 
-		PlayerASCsInZone.AddUnique(TargetASC);
+		InZoneMap.FindOrAdd(TargetASC);
 	}
 }
 
@@ -68,14 +71,23 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 	Super::NotifyActorEndOverlap(OtherActor);
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
-	if (TargetASC)
+	if (!ensureAlways(TargetASC))
 	{
-		TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
-		PlayerASCsInZone.Remove(TargetASC);
-		if (PlayerASCsInZone.Num() <= 0)
-		{
-			SetActorTickEnabled(false);
-		}
+		return;
+	}
+
+	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
+	if (TargetCharacter->IsLocallyControlled())
+	{
+		TargetCharacter->GetCharacterMovement()->MaxWalkSpeed = 700.0f;
+	}
+	
+	TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+	InZoneMap.Remove(TargetASC);
+
+	if (InZoneMap.Num() <= 0)
+	{
+		SetActorTickEnabled(false);
 	}
 }
 
@@ -94,14 +106,37 @@ void ASMBoostZone::PerformBoostZone(UAbilitySystemComponent* TargetASC)
 		return;
 	}
 
+	FBoostZoneDirectionData& TargetBoostZoneDirectionData = InZoneMap[TargetASC];
 	const FVector BoostZoneDirection = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::X);
 	const FVector TargetMoveDirection = TargetMovement->GetCurrentAcceleration().GetSafeNormal();
 	if (BoostZoneDirection.Dot(TargetMoveDirection) > 0.0f)
 	{
-		TargetASC->BP_ApplyGameplayEffectToSelf(AddBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+		TargetBoostZoneDirectionData.bNewIsCurrectDirection = true;
+		if (TargetBoostZoneDirectionData.bOldIsCurrectDirection != TargetBoostZoneDirectionData.bNewIsCurrectDirection)
+		{
+			if (TargetCharacter->IsLocallyControlled())
+			{
+				TargetMovement->MaxWalkSpeed = TargetMovement->MaxWalkSpeed * 1.5;
+			}
+
+			TargetASC->BP_ApplyGameplayEffectToSelf(ApplyBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+		}
+
+		TargetBoostZoneDirectionData.bOldIsCurrectDirection = true;
 	}
 	else
 	{
-		TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+		TargetBoostZoneDirectionData.bNewIsCurrectDirection = false;
+		if (TargetBoostZoneDirectionData.bOldIsCurrectDirection != TargetBoostZoneDirectionData.bNewIsCurrectDirection)
+		{
+			if (TargetCharacter->IsLocallyControlled())
+			{
+				TargetMovement->MaxWalkSpeed = 700.0f;
+			}
+
+			TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+		}
+
+		TargetBoostZoneDirectionData.bOldIsCurrectDirection = false;
 	}
 }
