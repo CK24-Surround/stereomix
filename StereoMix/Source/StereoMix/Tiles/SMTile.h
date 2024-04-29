@@ -46,9 +46,6 @@ protected:
 	TObjectPtr<UBoxComponent> BoxComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<UStaticMeshComponent> FrameMesh;
-
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> TileMesh;
 
 	UPROPERTY(VisibleAnywhere, Category = "Team")
