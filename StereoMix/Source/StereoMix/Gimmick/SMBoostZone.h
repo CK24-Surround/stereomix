@@ -30,6 +30,10 @@ protected:
 protected:
 	void PerformBoostZone(UAbilitySystemComponent* TargetASC);
 
+	void ApplyBoostZone(UAbilitySystemComponent* TargetASC);
+
+	void RemoveBoostZone(UAbilitySystemComponent* TargetASC);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Scene")
 	TObjectPtr<USceneComponent> SceneComponent;
@@ -43,6 +47,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> RemoveBoostZoneGE;
+
+	UPROPERTY(EditAnywhere, Category = "Boost")
+	float MoveSpeedToApplyMultiply = 1.5f;
 
 protected:
 	struct FBoostZoneDirectionData

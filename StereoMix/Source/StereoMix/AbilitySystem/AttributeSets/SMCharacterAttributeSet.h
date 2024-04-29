@@ -35,6 +35,9 @@ public:
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Damage);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Heal);
 
+public:
+	float GetBaseMoveSpeed() const { return MoveSpeed.GetBaseValue(); }
+
 protected:
 	UFUNCTION()
 	void OnRep_PostureGauge(const FGameplayAttributeData& OldValue);

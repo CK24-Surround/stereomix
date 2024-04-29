@@ -5,6 +5,8 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -76,13 +78,7 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 		return;
 	}
 
-	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
-	if (TargetCharacter->IsLocallyControlled())
-	{
-		TargetCharacter->GetCharacterMovement()->MaxWalkSpeed = 700.0f;
-	}
-	
-	TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+	RemoveBoostZone(TargetASC);
 	InZoneMap.Remove(TargetASC);
 
 	if (InZoneMap.Num() <= 0)
@@ -114,12 +110,7 @@ void ASMBoostZone::PerformBoostZone(UAbilitySystemComponent* TargetASC)
 		TargetBoostZoneDirectionData.bNewIsCurrectDirection = true;
 		if (TargetBoostZoneDirectionData.bOldIsCurrectDirection != TargetBoostZoneDirectionData.bNewIsCurrectDirection)
 		{
-			if (TargetCharacter->IsLocallyControlled())
-			{
-				TargetMovement->MaxWalkSpeed = TargetMovement->MaxWalkSpeed * 1.5;
-			}
-
-			TargetASC->BP_ApplyGameplayEffectToSelf(ApplyBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+			ApplyBoostZone(TargetASC);
 		}
 
 		TargetBoostZoneDirectionData.bOldIsCurrectDirection = true;
@@ -129,14 +120,78 @@ void ASMBoostZone::PerformBoostZone(UAbilitySystemComponent* TargetASC)
 		TargetBoostZoneDirectionData.bNewIsCurrectDirection = false;
 		if (TargetBoostZoneDirectionData.bOldIsCurrectDirection != TargetBoostZoneDirectionData.bNewIsCurrectDirection)
 		{
-			if (TargetCharacter->IsLocallyControlled())
-			{
-				TargetMovement->MaxWalkSpeed = 700.0f;
-			}
-
-			TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+			RemoveBoostZone(TargetASC);
 		}
 
 		TargetBoostZoneDirectionData.bOldIsCurrectDirection = false;
 	}
+}
+
+void ASMBoostZone::ApplyBoostZone(UAbilitySystemComponent* TargetASC)
+{
+	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
+	if (!ensure(TargetCharacter))
+	{
+		return;
+	}
+
+	const USMCharacterAttributeSet* TargetAttributeSet = TargetASC->GetSet<USMCharacterAttributeSet>();
+	if (!ensureAlways(TargetAttributeSet))
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* TargetMovement = TargetCharacter->GetCharacterMovement();
+	if (!ensure(TargetMovement))
+	{
+		return;
+	}
+
+	FGameplayEffectSpecHandle GESpecHandle = TargetASC->MakeOutgoingSpec(ApplyBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
+	if (!ensureAlways(GESpecHandle.IsValid()))
+	{
+		return;
+	}
+
+	FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
+	if (!ensureAlways(GESpec))
+	{
+		return;
+	}
+
+	GESpec->SetSetByCallerMagnitude(SMTags::Data::MoveSpeed, MoveSpeedToApplyMultiply);
+
+	if (TargetCharacter->IsLocallyControlled())
+	{
+		const float MoveSpeedToAdd = (TargetAttributeSet->GetBaseMoveSpeed() * MoveSpeedToApplyMultiply) - TargetAttributeSet->GetBaseMoveSpeed();
+		TargetMovement->MaxWalkSpeed = TargetMovement->MaxWalkSpeed + MoveSpeedToAdd;
+	}
+	TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+}
+
+void ASMBoostZone::RemoveBoostZone(UAbilitySystemComponent* TargetASC)
+{
+	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
+	if (!ensure(TargetCharacter))
+	{
+		return;
+	}
+
+	const USMCharacterAttributeSet* TargetAttributeSet = TargetASC->GetSet<USMCharacterAttributeSet>();
+	if (!ensureAlways(TargetAttributeSet))
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* TargetMovement = TargetCharacter->GetCharacterMovement();
+	if (!ensure(TargetMovement))
+	{
+		return;
+	}
+
+	if (TargetCharacter->IsLocallyControlled())
+	{
+		TargetMovement->MaxWalkSpeed = TargetAttributeSet->GetBaseMoveSpeed();
+	}
+	TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
 }
