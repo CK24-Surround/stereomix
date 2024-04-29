@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
+#include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "SMCharacter.h"
 #include "Interfaces/SMTeamComponentInterface.h"
@@ -105,6 +106,8 @@ protected:
 	// ASC를 초기화하고 기본 GA들을 부여합니다.
 	void InitASC();
 
+	void GiveDefaultAbilities();
+
 	// 액티브 GA와 바인드 된 함수입니다. 입력할때 트리거됩니다.
 	void GAInputPressed(EActiveAbility InInputID);
 
@@ -162,6 +165,8 @@ protected:
 
 	UFUNCTION()
 	void OnRep_MaxWalkSpeed();
+
+	void OnChangeMoveSpeed(const FOnAttributeChangeData& OnAttributeChangeData);
 
 	virtual void Landed(const FHitResult& Hit) override;
 

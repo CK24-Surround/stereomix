@@ -24,6 +24,7 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 
 ASMPlayerCharacter::ASMPlayerCharacter()
 {
@@ -192,9 +193,14 @@ void ASMPlayerCharacter::SetupGASInputComponent()
 
 void ASMPlayerCharacter::InitASC()
 {
-	ASMPlayerState* StereoMixPlayerState = GetPlayerStateChecked<ASMPlayerState>();
+	ASMPlayerState* StereoMixPlayerState = GetPlayerState<ASMPlayerState>();
+	if (!ensureAlways(StereoMixPlayerState))
+	{
+		return;
+	}
+
 	ASC = Cast<USMAbilitySystemComponent>(StereoMixPlayerState->GetAbilitySystemComponent());
-	if (!ASC.Get())
+	if (!ensureAlways(ASC.Get()))
 	{
 		return;
 	}
@@ -202,29 +208,54 @@ void ASMPlayerCharacter::InitASC()
 	if (HasAuthority())
 	{
 		ASC->InitAbilityActorInfo(StereoMixPlayerState, this);
+		GiveDefaultAbilities();
+	}
 
-		const FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
-		if (GEContextHandle.IsValid())
-		{
-			const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(ForInitGE, 0, GEContextHandle);
-			if (GESpecHandle.IsValid())
-			{
-				GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MoveSpeed, DesignData->MoveSpeed);
-				ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
-			}
-		}
+	ASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetMoveSpeedAttribute()).AddUObject(this, &ThisClass::OnChangeMoveSpeed);
+	const USMCharacterAttributeSet* AttributeSet = ASC->GetSet<USMCharacterAttributeSet>();
+	if (!ensureAlways(AttributeSet))
+	{
+		return;
+	}
 
-		for (const auto& DefaultActiveAbility : DefaultActiveAbilities)
-		{
-			FGameplayAbilitySpec AbilitySpec(DefaultActiveAbility.Value, 1, static_cast<int32>(DefaultActiveAbility.Key));
-			ASC->GiveAbility(AbilitySpec);
-		}
+	FOnAttributeChangeData NewData;
+	NewData.NewValue = AttributeSet->GetMoveSpeed();
+	OnChangeMoveSpeed(NewData);
+}
 
-		for (const auto& DefaultAbility : DefaultAbilities)
+void ASMPlayerCharacter::GiveDefaultAbilities()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!ensureAlways(ASC.Get()))
+	{
+		return;
+	}
+
+	const FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
+	if (GEContextHandle.IsValid())
+	{
+		const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(ForInitGE, 0, GEContextHandle);
+		if (GESpecHandle.IsValid())
 		{
-			FGameplayAbilitySpec AbilitySpec(DefaultAbility);
-			ASC->GiveAbility(AbilitySpec);
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MoveSpeed, DesignData->MoveSpeed);
+			ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
+	}
+
+	for (const auto& DefaultActiveAbility : DefaultActiveAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec(DefaultActiveAbility.Value, 1, static_cast<int32>(DefaultActiveAbility.Key));
+		ASC->GiveAbility(AbilitySpec);
+	}
+
+	for (const auto& DefaultAbility : DefaultAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec(DefaultAbility);
+		ASC->GiveAbility(AbilitySpec);
 	}
 }
 
@@ -350,9 +381,7 @@ FVector ASMPlayerCharacter::GetCursorTargetingPoint(bool bIsZeroBasis)
 	// 만약 커서위치와 평면의 위치가 평면상에 놓이지 않았다면 경고를 표시합니다. 일반적으로 이런상황이 존재하지는 않을 것으로 예상됩니다.
 	if (!FMath::IsNearlyEqual(BasisLocation.Z, Result.Z, KINDA_SMALL_NUMBER))
 	{
-		NET_LOG(this, Warning,
-		        TEXT("캐릭터의 위치와 커서의 위치가 평면상에 놓이지 않았습니다. 캐릭터 Z값: %f 커서 Z값: %f"),
-		        BasisLocation.Z, Result.Z);
+		NET_LOG(this, Warning, TEXT("캐릭터의 위치와 커서의 위치가 평면상에 놓이지 않았습니다. 캐릭터 Z값: %f 커서 Z값: %f"), BasisLocation.Z, Result.Z);
 	}
 
 	return Result;
@@ -404,6 +433,11 @@ void ASMPlayerCharacter::MulticastRPCSetYawRotation_Implementation(float InYaw)
 void ASMPlayerCharacter::OnRep_MaxWalkSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed = MaxWalkSpeed;
+}
+
+void ASMPlayerCharacter::OnChangeMoveSpeed(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	GetCharacterMovement()->MaxWalkSpeed = OnAttributeChangeData.NewValue;
 }
 
 void ASMPlayerCharacter::Landed(const FHitResult& Hit)
