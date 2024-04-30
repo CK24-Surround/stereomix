@@ -5,8 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/SMTags.h"
-#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -30,13 +29,13 @@ ASMBoostZone::ASMBoostZone()
 void ASMBoostZone::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+}
+
+void ASMBoostZone::BeginPlay()
+{
+	Super::BeginPlay();
 
 	SetActorTickEnabled(false);
-
-	// if (!HasAuthority())
-	// {
-	// 	SetActorEnableCollision(false);
-	// }
 }
 
 void ASMBoostZone::Tick(float DeltaSeconds)
@@ -56,7 +55,7 @@ void ASMBoostZone::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor));
 	if (ensure(TargetASC))
 	{
 		if (!IsActorTickEnabled())
@@ -72,7 +71,7 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorEndOverlap(OtherActor);
 
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor));
 	if (!ensureAlways(TargetASC))
 	{
 		return;
@@ -87,7 +86,7 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 	}
 }
 
-void ASMBoostZone::PerformBoostZone(UAbilitySystemComponent* TargetASC)
+void ASMBoostZone::PerformBoostZone(USMAbilitySystemComponent* TargetASC)
 {
 	// TODO: PlayerASCsInZone를 순회하며 방향이 맞는 경우 이동속도를 증가시키는 GE를 적용, 반대인 경우 GE를 제거합니다.
 	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
@@ -127,71 +126,18 @@ void ASMBoostZone::PerformBoostZone(UAbilitySystemComponent* TargetASC)
 	}
 }
 
-void ASMBoostZone::ApplyBoostZone(UAbilitySystemComponent* TargetASC)
+void ASMBoostZone::ApplyBoostZone(USMAbilitySystemComponent* TargetASC)
 {
-	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
-	if (!ensure(TargetCharacter))
+	if (ensureAlways(TargetASC && BoostZoneGE))
 	{
-		return;
+		TargetASC->ApplyMoveSpeedMultiplyInfinite(BoostZoneGE, MoveSpeedToApplyMultiply);
 	}
-
-	const USMCharacterAttributeSet* TargetAttributeSet = TargetASC->GetSet<USMCharacterAttributeSet>();
-	if (!ensureAlways(TargetAttributeSet))
-	{
-		return;
-	}
-
-	UCharacterMovementComponent* TargetMovement = TargetCharacter->GetCharacterMovement();
-	if (!ensure(TargetMovement))
-	{
-		return;
-	}
-
-	FGameplayEffectSpecHandle GESpecHandle = TargetASC->MakeOutgoingSpec(ApplyBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
-	if (!ensureAlways(GESpecHandle.IsValid()))
-	{
-		return;
-	}
-
-	FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
-	if (!ensureAlways(GESpec))
-	{
-		return;
-	}
-
-	GESpec->SetSetByCallerMagnitude(SMTags::Data::MoveSpeed, MoveSpeedToApplyMultiply);
-
-	if (TargetCharacter->IsLocallyControlled())
-	{
-		const float MoveSpeedToAdd = (TargetAttributeSet->GetBaseMoveSpeed() * MoveSpeedToApplyMultiply) - TargetAttributeSet->GetBaseMoveSpeed();
-		TargetMovement->MaxWalkSpeed = TargetMovement->MaxWalkSpeed + MoveSpeedToAdd;
-	}
-	TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 }
 
-void ASMBoostZone::RemoveBoostZone(UAbilitySystemComponent* TargetASC)
+void ASMBoostZone::RemoveBoostZone(USMAbilitySystemComponent* TargetASC)
 {
-	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
-	if (!ensure(TargetCharacter))
+	if (ensureAlways(TargetASC && BoostZoneGE))
 	{
-		return;
+		TargetASC->RemoveMoveSpeedMultiply(BoostZoneGE, MoveSpeedToApplyMultiply);
 	}
-
-	const USMCharacterAttributeSet* TargetAttributeSet = TargetASC->GetSet<USMCharacterAttributeSet>();
-	if (!ensureAlways(TargetAttributeSet))
-	{
-		return;
-	}
-
-	UCharacterMovementComponent* TargetMovement = TargetCharacter->GetCharacterMovement();
-	if (!ensure(TargetMovement))
-	{
-		return;
-	}
-
-	if (TargetCharacter->IsLocallyControlled())
-	{
-		TargetMovement->MaxWalkSpeed = TargetAttributeSet->GetBaseMoveSpeed();
-	}
-	TargetASC->BP_ApplyGameplayEffectToSelf(RemoveBoostZoneGE, 1.0f, TargetASC->MakeEffectContext());
 }
