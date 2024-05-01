@@ -138,6 +138,6 @@ void ASMBoostZone::RemoveBoostZone(USMAbilitySystemComponent* TargetASC)
 {
 	if (ensureAlways(TargetASC && BoostZoneGE))
 	{
-		TargetASC->RemoveMoveSpeedMultiply(BoostZoneGE, MoveSpeedToApplyMultiply);
+		TargetASC->RemoveMoveSpeedMultiply(BoostZoneGE);
 	}
 }

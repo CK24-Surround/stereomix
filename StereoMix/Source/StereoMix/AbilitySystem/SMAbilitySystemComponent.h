@@ -37,11 +37,10 @@ public:
 
 	/** ApplyMoveSpeedMultiplyInfinite를 제거하는데 사용합니다.
 	 * @param RemoveMoveSpeedGE 제거할 GE입니다. 적용했던 GE를 그대로 넣어주면됩니다.
-	 * @param MoveSpeedMagnitudeToRemove 예측을 위한 이동속도 감소치입니다. 적용할때 사용한 이동속도 증가치를 그대로 넣어주면됩니다.
 	 */
-	void RemoveMoveSpeedMultiply(const TSubclassOf<UGameplayEffect>& RemoveMoveSpeedGE, float MoveSpeedMagnitudeToRemove);
+	void RemoveMoveSpeedMultiply(const TSubclassOf<UGameplayEffect>& RemoveMoveSpeedGE);
 
 protected:
-	/** MoveSpeedMultiplyInfinite의 예측 실행을 수행했는지 여부를 담고 있는 맵입니다. */
-	TMap<TSubclassOf<UGameplayEffect>, bool> MoveSpeedMultiplyInfiniteLocalPredictMap;
+	/** MoveSpeedMultiplyInfinite가 로컬에서 적용되었는지 여부와 적용할때 사용한 속도를 저장합니다. */
+	TMap<TSubclassOf<UGameplayEffect>, float> LocalMoveSpeedMultiplyInfiniteMap;
 };

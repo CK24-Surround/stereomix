@@ -72,17 +72,22 @@ void USMAbilitySystemComponent::ApplyMoveSpeedMultiplyInfinite(const TSubclassOf
 			return;
 		}
 
-		if (!MoveSpeedMultiplyInfiniteLocalPredictMap.FindOrAdd(MultiplyMoveSpeedGE))
+		// 맵에 현재 적용되는 GE가 로컬에서 실행되었었는지 체크합니다. 여러번 중복 적용되는 상황을 막습니다.
+		if (!LocalMoveSpeedMultiplyInfiniteMap.Find(MultiplyMoveSpeedGE))
 		{
-			const float MoveSpeedToAdd = (SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMagnitude) - SourceAttributeSet->GetBaseMoveSpeed();
-			SourceMovement->MaxWalkSpeed = SourceMovement->MaxWalkSpeed + MoveSpeedToAdd;
-			MoveSpeedMultiplyInfiniteLocalPredictMap[MultiplyMoveSpeedGE] = true;
+			// 곱해졌을때 추가될 이동 속도를 구합니다. 그리고 맵에 저장합니다.
+			float MoveSpeedToAdd = (SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMagnitude) - SourceAttributeSet->GetBaseMoveSpeed();
+			LocalMoveSpeedMultiplyInfiniteMap.Add(MultiplyMoveSpeedGE, MoveSpeedToAdd);
+
+			SourceMovement->MaxWalkSpeed += MoveSpeedToAdd;
+			NET_LOG(SourceCharacter, Warning, TEXT("[예측 적용] 현재 키 개수: %d 현재 이동 속도: %f 추가된 이동 속도: %f"), LocalMoveSpeedMultiplyInfiniteMap.Num(), SourceMovement->MaxWalkSpeed, MoveSpeedToAdd);
 		}
 	}
 
 	// 실제 적용을 위한 로직입니다.
 	if (SourceCharacter->HasAuthority())
 	{
+		// MoveSpeedMagnitude값을 SetByCaller로 사용합니다. 
 		UGameplayEffect* GEInstance = MultiplyMoveSpeedGE->GetDefaultObject<UGameplayEffect>();
 		FGameplayEffectSpec GESpec(GEInstance, MakeEffectContext(), 1.0f);
 		GESpec.SetSetByCallerMagnitude(SMTags::Data::MoveSpeed, MoveSpeedMagnitude);
@@ -90,7 +95,7 @@ void USMAbilitySystemComponent::ApplyMoveSpeedMultiplyInfinite(const TSubclassOf
 	}
 }
 
-void USMAbilitySystemComponent::RemoveMoveSpeedMultiply(const TSubclassOf<UGameplayEffect>& RemoveMoveSpeedGE, float MoveSpeedMagnitudeToRemove)
+void USMAbilitySystemComponent::RemoveMoveSpeedMultiply(const TSubclassOf<UGameplayEffect>& RemoveMoveSpeedGE)
 {
 	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
 	if (!ensure(SourceCharacter))
@@ -113,11 +118,17 @@ void USMAbilitySystemComponent::RemoveMoveSpeedMultiply(const TSubclassOf<UGamep
 			return;
 		}
 
-		if (MoveSpeedMultiplyInfiniteLocalPredictMap.FindOrAdd(RemoveMoveSpeedGE))
+		// 로컬에서 실행된 적이 있을때만 적용합니다. 중복 적용되거나 적용되지도 않았는데 이동속도가 내려가는 상황을 막습니다.
+		if (float* RemoveMoveSpeedMagnitudePtr = LocalMoveSpeedMultiplyInfiniteMap.Find(RemoveMoveSpeedGE))
 		{
-			const float MoveSpeedToAdd = (SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMagnitudeToRemove) - SourceAttributeSet->GetBaseMoveSpeed();
-			SourceMovement->MaxWalkSpeed = SourceMovement->MaxWalkSpeed - MoveSpeedToAdd;
-			MoveSpeedMultiplyInfiniteLocalPredictMap[RemoveMoveSpeedGE] = false;
+			float RemoveMoveSpeedMagnitude = *RemoveMoveSpeedMagnitudePtr;
+
+			// 이동속도가 증가되었던 양 만큼 감소시킵니다.
+			SourceMovement->MaxWalkSpeed = SourceMovement->MaxWalkSpeed - RemoveMoveSpeedMagnitude;
+
+			// GE가 제거되었으므로 맵에서도 제거해줍니다.
+			LocalMoveSpeedMultiplyInfiniteMap.Remove(RemoveMoveSpeedGE);
+			NET_LOG(SourceCharacter, Warning, TEXT("[예측 제거] 현재 키 개수: %d 현재 이동 속도: %f 제거된 이동 속도: %f"), LocalMoveSpeedMultiplyInfiniteMap.Num(), SourceMovement->MaxWalkSpeed, RemoveMoveSpeedMagnitude);
 		}
 	}
 
