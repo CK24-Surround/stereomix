@@ -27,6 +27,7 @@ USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 	BlockedTags.AddTag(SMTags::Character::State::Smashed);
 	BlockedTags.AddTag(SMTags::Character::State::Smashing);
 	BlockedTags.AddTag(SMTags::Character::State::Stun);
+	BlockedTags.AddTag(SMTags::Character::State::Immune);
 	ActivationBlockedTags = BlockedTags;
 }
 
@@ -175,7 +176,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 	}
 
 	// TODO: 이펙트를 위해 임시 주석 처리 디버거 
-	// const FColor Color = bSuccess ? FColor::Green : FColor::Red;
+	const FColor Color = bSuccess ? FColor::Green : FColor::Red;
 	// DrawDebugSphere(GetWorld(), InStartLocation, MaxDistance, 16, Color, false, 2.0f);
 }
 

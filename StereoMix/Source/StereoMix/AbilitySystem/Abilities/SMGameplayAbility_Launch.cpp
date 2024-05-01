@@ -21,6 +21,7 @@ USMGameplayAbility_Launch::USMGameplayAbility_Launch()
 	BlockedTags.AddTag(SMTags::Character::State::Smashing);
 	BlockedTags.AddTag(SMTags::Character::State::Smashed);
 	BlockedTags.AddTag(SMTags::Character::State::Stun);
+	BlockedTags.AddTag(SMTags::Character::State::Immune);
 
 	ActivationBlockedTags = BlockedTags;
 }

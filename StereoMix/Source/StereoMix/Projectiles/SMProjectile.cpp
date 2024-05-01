@@ -42,6 +42,7 @@ ASMProjectile::ASMProjectile()
 	ProjectileBodyFX.Add(ESMTeam::FutureBass, nullptr);
 
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Stun);
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
 }
 
 void ASMProjectile::PostInitializeComponents()
