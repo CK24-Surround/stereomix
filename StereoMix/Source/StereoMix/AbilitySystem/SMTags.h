@@ -14,6 +14,7 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smashed);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExit);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExitOnStunEnd);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
 	}
 
 	namespace AttributeSet::Character::Init
@@ -29,6 +30,7 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smashing);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smashed);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Uncatchable);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
 	}
 
 	namespace Data

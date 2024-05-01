@@ -83,6 +83,10 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	OnStunEnded();
+
+	// 면역상태로 진입합니다.
+	GetSMAbilitySystemComponentFromActorInfo()->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -220,7 +224,7 @@ void USMGameplayAbility_Stun::OnStunEnded()
 		}
 
 		SourceCharacter->SetUseControllerRotation(true);
-		
+
 		// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거합니다.
 		SourceASC->RemoveTag(SMTags::Character::State::Uncatchable);
 
