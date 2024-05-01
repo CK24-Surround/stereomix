@@ -438,6 +438,7 @@ void ASMPlayerCharacter::OnRep_MaxWalkSpeed()
 void ASMPlayerCharacter::OnChangeMoveSpeed(const FOnAttributeChangeData& OnAttributeChangeData)
 {
 	GetCharacterMovement()->MaxWalkSpeed = OnAttributeChangeData.NewValue;
+	NET_LOG(this, Warning, TEXT("이동 속도: %f"), GetCharacterMovement()->MaxWalkSpeed);
 }
 
 void ASMPlayerCharacter::Landed(const FHitResult& Hit)

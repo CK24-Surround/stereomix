@@ -21,5 +21,16 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
-	
+	UFUNCTION()
+	void OnFinishDelay();
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> MoveSpeedChangeGE;
+
+	UPROPERTY(EditAnywhere, Category = "Immune")
+	float MoveSpeedMultiply = 1.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Immune")
+	float ImmuneTime = 3.0f;
 };

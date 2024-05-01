@@ -88,7 +88,7 @@ void USMAbilitySystemComponent::ApplyMoveSpeedMultiplyInfinite(const TSubclassOf
 	if (SourceCharacter->HasAuthority())
 	{
 		// MoveSpeedMagnitude값을 SetByCaller로 사용합니다. 
-		UGameplayEffect* GEInstance = MultiplyMoveSpeedGE->GetDefaultObject<UGameplayEffect>();
+		const UGameplayEffect* GEInstance = MultiplyMoveSpeedGE->GetDefaultObject<UGameplayEffect>();
 		FGameplayEffectSpec GESpec(GEInstance, MakeEffectContext(), 1.0f);
 		GESpec.SetSetByCallerMagnitude(SMTags::Data::MoveSpeed, MoveSpeedMagnitude);
 		ApplyGameplayEffectSpecToSelf(GESpec);
@@ -142,7 +142,12 @@ void USMAbilitySystemComponent::RemoveMoveSpeedMultiply(const TSubclassOf<UGamep
 			return;
 		}
 
-		UGameplayEffect* NewGE = UGameplayEffect::StaticClass()->GetDefaultObject<UGameplayEffect>();
+		UGameplayEffect* NewGE = NewObject<UGameplayEffect>();
+		if (!ensureAlways(NewGE))
+		{
+			return;
+		}
+
 		NewGE->DurationPolicy = EGameplayEffectDurationType::Instant;
 
 		URemoveOtherGameplayEffectComponent& RemoveGEComponent = NewGE->AddComponent<URemoveOtherGameplayEffectComponent>();
