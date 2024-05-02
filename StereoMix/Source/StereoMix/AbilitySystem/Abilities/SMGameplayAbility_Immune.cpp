@@ -49,25 +49,23 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 		return;
 	}
 
-	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("면역 진입"));
+	const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
+	if (!ensureAlways(SourceAttributeSet))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
+	const float MoveSpeedToAdd = (SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMultiply) - SourceAttributeSet->GetBaseMoveSpeed();
+
 	if (ActorInfo->IsLocallyControlled())
 	{
-		const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
-		if (ensureAlways(SourceAttributeSet))
-		{
-			SourceMovement->MaxWalkSpeed += (SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMultiply) - SourceAttributeSet->GetBaseMoveSpeed();
-		}
+		SourceMovement->MaxWalkSpeed += MoveSpeedToAdd;
 	}
 
 	if (ActorInfo->IsNetAuthority())
 	{
-		const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
-		if (ensureAlways(SourceAttributeSet))
-		{
-			const float NewSpeed = SourceMovement->MaxWalkSpeed + ((SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMultiply) - SourceAttributeSet->GetBaseMoveSpeed());
-			NET_LOG(SourceCharacter, Warning, TEXT("%f"), NewSpeed);
-			SourceCharacter->SetMaxWalkSpeed(NewSpeed);
-		}
+		SourceCharacter->SetMaxWalkSpeed(SourceMovement->MaxWalkSpeed + MoveSpeedToAdd);
 	}
 }
 
@@ -94,30 +92,24 @@ void USMGameplayAbility_Immune::OnFinishDelay()
 		return;
 	}
 
-	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("면역 해제"));
+	const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
+	if (!ensureAlways(SourceAttributeSet))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
+	const float MoveSpeedToAdd = (SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMultiply) - SourceAttributeSet->GetBaseMoveSpeed();
+
 	if (CurrentActorInfo->IsLocallyControlled())
 	{
-		const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
-		if (ensureAlways(SourceAttributeSet))
-		{
-			SourceMovement->MaxWalkSpeed -= (SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMultiply) - SourceAttributeSet->GetBaseMoveSpeed();
-		}
+		SourceMovement->MaxWalkSpeed -= MoveSpeedToAdd;
 	}
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{
-		const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
-		if (ensureAlways(SourceAttributeSet))
-		{
-			const float NewSpeed = SourceMovement->MaxWalkSpeed - ((SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMultiply) - SourceAttributeSet->GetBaseMoveSpeed());
-			NET_LOG(SourceCharacter, Warning, TEXT("%f"), NewSpeed);
-			SourceCharacter->SetMaxWalkSpeed(NewSpeed);
-		}
-	}
-
-	if (CurrentActorInfo->IsNetAuthority())
-	{
-		GetSMAbilitySystemComponentFromActorInfo()->RemoveTag(SMTags::Character::State::Immune);
+		SourceCharacter->SetMaxWalkSpeed(SourceMovement->MaxWalkSpeed - MoveSpeedToAdd);
+		SourceASC->RemoveTag(SMTags::Character::State::Immune);
 	}
 
 	K2_EndAbilityLocally();

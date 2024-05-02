@@ -3,11 +3,10 @@
 
 #include "SMBoostZone.h"
 
-#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -55,15 +54,15 @@ void ASMBoostZone::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor));
-	if (ensure(TargetASC))
+	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OtherActor);
+	if (ensure(TargetCharacter))
 	{
 		if (!IsActorTickEnabled())
 		{
 			SetActorTickEnabled(true);
 		}
 
-		InZoneMap.FindOrAdd(TargetASC);
+		InZoneMap.FindOrAdd(TargetCharacter);
 	}
 }
 
@@ -71,14 +70,18 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorEndOverlap(OtherActor);
 
-	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor));
-	if (!ensureAlways(TargetASC))
+	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OtherActor);
+	if (!ensureAlways(TargetCharacter))
 	{
 		return;
 	}
 
-	RemoveBoostZone(TargetASC);
-	InZoneMap.Remove(TargetASC);
+	if (InZoneMap[TargetCharacter].bNewIsCurrectDirection)
+	{
+		RemoveBoostZone(TargetCharacter);
+	}
+
+	InZoneMap.Remove(TargetCharacter);
 
 	if (InZoneMap.Num() <= 0)
 	{
@@ -86,10 +89,8 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 	}
 }
 
-void ASMBoostZone::PerformBoostZone(USMAbilitySystemComponent* TargetASC)
+void ASMBoostZone::PerformBoostZone(ASMPlayerCharacter* TargetCharacter)
 {
-	// TODO: PlayerASCsInZone를 순회하며 방향이 맞는 경우 이동속도를 증가시키는 GE를 적용, 반대인 경우 GE를 제거합니다.
-	ACharacter* TargetCharacter = Cast<ACharacter>(TargetASC->GetAvatarActor());
 	if (!ensure(TargetCharacter))
 	{
 		return;
@@ -101,7 +102,7 @@ void ASMBoostZone::PerformBoostZone(USMAbilitySystemComponent* TargetASC)
 		return;
 	}
 
-	FBoostZoneDirectionData& TargetBoostZoneDirectionData = InZoneMap[TargetASC];
+	FBoostZoneDirectionData& TargetBoostZoneDirectionData = InZoneMap[TargetCharacter];
 	const FVector BoostZoneDirection = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::X);
 	const FVector TargetMoveDirection = TargetMovement->GetCurrentAcceleration().GetSafeNormal();
 	if (BoostZoneDirection.Dot(TargetMoveDirection) > 0.0f)
@@ -109,7 +110,7 @@ void ASMBoostZone::PerformBoostZone(USMAbilitySystemComponent* TargetASC)
 		TargetBoostZoneDirectionData.bNewIsCurrectDirection = true;
 		if (TargetBoostZoneDirectionData.bOldIsCurrectDirection != TargetBoostZoneDirectionData.bNewIsCurrectDirection)
 		{
-			ApplyBoostZone(TargetASC);
+			ApplyBoostZone(TargetCharacter);
 		}
 
 		TargetBoostZoneDirectionData.bOldIsCurrectDirection = true;
@@ -119,25 +120,79 @@ void ASMBoostZone::PerformBoostZone(USMAbilitySystemComponent* TargetASC)
 		TargetBoostZoneDirectionData.bNewIsCurrectDirection = false;
 		if (TargetBoostZoneDirectionData.bOldIsCurrectDirection != TargetBoostZoneDirectionData.bNewIsCurrectDirection)
 		{
-			RemoveBoostZone(TargetASC);
+			RemoveBoostZone(TargetCharacter);
 		}
 
 		TargetBoostZoneDirectionData.bOldIsCurrectDirection = false;
 	}
 }
 
-void ASMBoostZone::ApplyBoostZone(USMAbilitySystemComponent* TargetASC)
+void ASMBoostZone::ApplyBoostZone(ASMPlayerCharacter* TargetCharacter)
 {
-	if (ensureAlways(TargetASC && BoostZoneGE))
+	if (!ensureAlways(TargetCharacter))
 	{
-		TargetASC->ApplyMoveSpeedMultiplyInfinite(BoostZoneGE, MoveSpeedToApplyMultiply);
+		return;
 	}
+
+	UAbilitySystemComponent* TargetASC = TargetCharacter->GetAbilitySystemComponent();
+	if (!ensureAlways(TargetASC))
+	{
+		return;
+	}
+
+	const USMCharacterAttributeSet* TargetAttributeSet = TargetASC->GetSet<USMCharacterAttributeSet>();
+	if (!ensureAlways(TargetAttributeSet))
+	{
+		return;
+	}
+
+	const float MoveSpeedToAdd = (TargetAttributeSet->GetBaseMoveSpeed() * MoveSpeedToApplyMultiply) - TargetAttributeSet->GetBaseMoveSpeed();
+	AddMoveSpeed(TargetCharacter, MoveSpeedToAdd);
 }
 
-void ASMBoostZone::RemoveBoostZone(USMAbilitySystemComponent* TargetASC)
+void ASMBoostZone::RemoveBoostZone(ASMPlayerCharacter* TargetCharacter)
 {
-	if (ensureAlways(TargetASC && BoostZoneGE))
+	if (!ensureAlways(TargetCharacter))
 	{
-		TargetASC->RemoveMoveSpeedMultiply(BoostZoneGE);
+		return;
+	}
+
+	UAbilitySystemComponent* TargetASC = TargetCharacter->GetAbilitySystemComponent();
+	if (!ensureAlways(TargetASC))
+	{
+		return;
+	}
+
+	const USMCharacterAttributeSet* TargetAttributeSet = TargetASC->GetSet<USMCharacterAttributeSet>();
+	if (!ensureAlways(TargetAttributeSet))
+	{
+		return;
+	}
+
+	const float MoveSpeedToAdd = (TargetAttributeSet->GetBaseMoveSpeed() * MoveSpeedToApplyMultiply) - TargetAttributeSet->GetBaseMoveSpeed();
+	AddMoveSpeed(TargetCharacter, -MoveSpeedToAdd);
+}
+
+void ASMBoostZone::AddMoveSpeed(ASMPlayerCharacter* TargetCharacter, float MoveSpeedToAdd)
+{
+	if (!ensureAlways(TargetCharacter))
+	{
+		return;
+	}
+
+	UCharacterMovementComponent* TargetMovement = TargetCharacter->GetCharacterMovement();
+	if (!ensureAlways(TargetMovement))
+	{
+		return;
+	}
+
+	if (TargetCharacter->IsLocallyControlled())
+	{
+		TargetMovement->MaxWalkSpeed += MoveSpeedToAdd;
+	}
+
+	if (TargetCharacter->HasAuthority())
+	{
+		TargetCharacter->SetMaxWalkSpeed(TargetMovement->MaxWalkSpeed + MoveSpeedToAdd);
 	}
 }

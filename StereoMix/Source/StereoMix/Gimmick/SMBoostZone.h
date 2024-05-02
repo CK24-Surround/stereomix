@@ -30,11 +30,13 @@ protected:
 	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
 
 protected:
-	void PerformBoostZone(USMAbilitySystemComponent* TargetASC);
+	void PerformBoostZone(ASMPlayerCharacter* TargetCharacter);
 
-	void ApplyBoostZone(USMAbilitySystemComponent* TargetASC);
+	void ApplyBoostZone(ASMPlayerCharacter* TargetCharacter);
 
-	void RemoveBoostZone(USMAbilitySystemComponent* TargetASC);
+	void RemoveBoostZone(ASMPlayerCharacter* TargetCharacter);
+	
+	void AddMoveSpeed(ASMPlayerCharacter* TargetCharacter, float MoveSpeedToAdd);
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Scene")
@@ -44,9 +46,6 @@ protected:
 	TObjectPtr<UBoxComponent> BoxComponent;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> BoostZoneGE;
-
 	UPROPERTY(EditAnywhere, Category = "Boost")
 	float MoveSpeedToApplyMultiply = 1.5f;
 
@@ -58,5 +57,5 @@ protected:
 	};
 
 	/** 부스트 존 안에 들어온 플레이어의 ASC와 방향정보를 갖고 있는 맵입니다. */
-	TMap<TWeakObjectPtr<USMAbilitySystemComponent>, FBoostZoneDirectionData> InZoneMap;
+	TMap<TWeakObjectPtr<ASMPlayerCharacter>, FBoostZoneDirectionData> InZoneMap;
 };
