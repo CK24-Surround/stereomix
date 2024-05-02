@@ -41,6 +41,8 @@ void ASMBoostZone::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
+	// 매 틱마다 부스트존 내의 캐릭터들의 상태를 추적하고 필요한 로직을 처리해줍니다.
+	// 이 캐릭터들은 Map에 오버렙 시작 시 추가되고, 종료 시 제거됩니다.
 	for (const auto& InZonePair : InZoneMap)
 	{
 		if (InZonePair.Key.Get())
@@ -55,15 +57,19 @@ void ASMBoostZone::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OtherActor);
-	if (ensure(TargetCharacter))
+	if (!ensureAlways(TargetCharacter))
 	{
-		if (!IsActorTickEnabled())
-		{
-			SetActorTickEnabled(true);
-		}
-
-		InZoneMap.FindOrAdd(TargetCharacter);
+		return;
 	}
+
+	// 만약 틱이 비활성화되어 있다면 틱을 활성화합니다. 즉 평상시에는 비활성화해 자원을 아깝니다.
+	if (!IsActorTickEnabled())
+	{
+		SetActorTickEnabled(true);
+	}
+
+	// 캐릭터를 부스트존에 추가합니다.
+	InZoneMap.FindOrAdd(TargetCharacter);
 }
 
 void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
@@ -81,8 +87,10 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 		RemoveBoostZone(TargetCharacter);
 	}
 
+	// 캐릭터를 부스트존에서 제거합니다.
 	InZoneMap.Remove(TargetCharacter);
 
+	// 부스트 존 내의 캐릭터가 수가 0이라면 틱을 비활성화합니다.
 	if (InZoneMap.Num() <= 0)
 	{
 		SetActorTickEnabled(false);
@@ -102,6 +110,7 @@ void ASMBoostZone::PerformBoostZone(ASMPlayerCharacter* TargetCharacter)
 		return;
 	}
 
+	// 부스트존의 방향과 일치하면 캐릭터를 가속, 불일치하면 원상복구 시킵니다.
 	FBoostZoneDirectionData& TargetBoostZoneDirectionData = InZoneMap[TargetCharacter];
 	const FVector BoostZoneDirection = FRotationMatrix(GetActorRotation()).GetUnitAxis(EAxis::X);
 	const FVector TargetMoveDirection = TargetMovement->GetCurrentAcceleration().GetSafeNormal();
@@ -146,6 +155,7 @@ void ASMBoostZone::ApplyBoostZone(ASMPlayerCharacter* TargetCharacter)
 		return;
 	}
 
+	// 더해저야할 이동속도를 구합니다.
 	const float MoveSpeedToAdd = (TargetAttributeSet->GetBaseMoveSpeed() * MoveSpeedToApplyMultiply) - TargetAttributeSet->GetBaseMoveSpeed();
 	AddMoveSpeed(TargetCharacter, MoveSpeedToAdd);
 }
@@ -169,6 +179,7 @@ void ASMBoostZone::RemoveBoostZone(ASMPlayerCharacter* TargetCharacter)
 		return;
 	}
 
+	// 감소되야할 이동속도를 구합니다.
 	const float MoveSpeedToAdd = (TargetAttributeSet->GetBaseMoveSpeed() * MoveSpeedToApplyMultiply) - TargetAttributeSet->GetBaseMoveSpeed();
 	AddMoveSpeed(TargetCharacter, -MoveSpeedToAdd);
 }
@@ -186,11 +197,13 @@ void ASMBoostZone::AddMoveSpeed(ASMPlayerCharacter* TargetCharacter, float MoveS
 		return;
 	}
 
+	// 클라이언트인 경우 예측 적용합니다.
 	if (TargetCharacter->IsLocallyControlled())
 	{
 		TargetMovement->MaxWalkSpeed += MoveSpeedToAdd;
 	}
 
+	// 서버인 경우 실제로 적용합니다.
 	if (TargetCharacter->HasAuthority())
 	{
 		TargetCharacter->SetMaxWalkSpeed(TargetMovement->MaxWalkSpeed + MoveSpeedToAdd);
