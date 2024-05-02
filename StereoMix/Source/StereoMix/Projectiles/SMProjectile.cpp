@@ -61,6 +61,12 @@ void ASMProjectile::BeginPlay()
 	SetActorTickEnabled(false);
 	SetActorEnableCollision(false);
 	SetActorHiddenInGame(true);
+
+	// TODO: 투사체 바디 이펙트 씹힘 현상 디버깅용
+	if (!HasAuthority())
+	{
+		NET_LOG(this, Warning, TEXT(""));
+	}
 }
 
 void ASMProjectile::Tick(float DeltaTime)
@@ -151,6 +157,12 @@ void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize1
 	ProjectileMovementComponent->SetUpdatedComponent(GetRootComponent());
 	ProjectileMovementComponent->SetComponentTickEnabled(true);
 	ProjectileMovementComponent->Velocity = InNormal * InSpeed;
+
+	// TODO: 투사체 바디 이펙트 씹힘 현상 디버깅용
+	if (!HasAuthority())
+	{
+		NET_LOG(this, Warning, TEXT(""));
+	}
 }
 
 void ASMProjectile::MulticastRPCStartLifeTime_Implementation()
