@@ -25,9 +25,6 @@ protected:
 	void OnFinishDelay();
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> MoveSpeedChangeGE;
-
 	UPROPERTY(EditAnywhere, Category = "Immune")
 	float MoveSpeedMultiply = 1.5f;
 

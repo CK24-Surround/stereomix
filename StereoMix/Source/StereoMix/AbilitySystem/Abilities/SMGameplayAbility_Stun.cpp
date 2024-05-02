@@ -84,8 +84,13 @@ void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle
 {
 	OnStunEnded();
 
-	// 면역상태로 진입합니다.
-	GetSMAbilitySystemComponentFromActorInfo()->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (ensureAlways(SourceASC))
+	{
+		// 면역상태로 진입합니다. 딜레이로 인해 데미지를 받을 수도 있으니 GA실행 전에 먼저 면역태그를 추가합니다.
+		SourceASC->AddTag(SMTags::Character::State::Immune);
+		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
+	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
