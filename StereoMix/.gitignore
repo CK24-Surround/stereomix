@@ -52,6 +52,13 @@ Content/**/*.tga
 Binaries/*
 Plugins/*/Binaries/*
 
+# Precompiled Editor Binaries
+!Binaries/Win64
+Binaries/Win64/*
+!Binaries/Win64/StereoMixEditor.target
+!Binaries/Win64/UnrealEditor.modules
+!Binaries/Win64/UnrealEditor-StereoMix.dll
+
 # Builds
 Build/*
 
