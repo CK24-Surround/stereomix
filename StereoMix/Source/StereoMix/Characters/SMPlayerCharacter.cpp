@@ -95,6 +95,7 @@ void ASMPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(ASMPlayerCharacter, CatchCharacter);
 	DOREPLIFETIME(ASMPlayerCharacter, CaughtCharacter);
 	DOREPLIFETIME(ASMPlayerCharacter, CapturedCharcters);
+	DOREPLIFETIME(ASMPlayerCharacter, LastAttackInstigator);
 }
 
 void ASMPlayerCharacter::OnRep_Controller()

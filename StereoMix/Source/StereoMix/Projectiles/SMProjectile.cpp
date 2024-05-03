@@ -14,6 +14,7 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "Interfaces/SMDamageInterface.h"
 
 ASMProjectile::ASMProjectile()
 {
@@ -265,12 +266,6 @@ void ASMProjectile::ApplyDamage(AActor* InTarget)
 		return;
 	}
 
-	const FGameplayEffectContextHandle GEContext = TargetASC->MakeEffectContext();
-	if (!ensureAlways(GEContext.IsValid()))
-	{
-		return;
-	}
-
 	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
 	if (!ensureAlways(SourceASC))
 	{
@@ -283,15 +278,16 @@ void ASMProjectile::ApplyDamage(AActor* InTarget)
 		return;
 	}
 
-	FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
-	if (!ensureAlways(GESpec))
-	{
-		return;
-	}
-
 	// SetByCaller를 통해 매개변수로 전달받은 Damage로 GE를 적용합니다.
-	GESpec->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+	GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
 	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
+
+	// 공격자 정보도 저장합니다.
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetASC->GetAvatarActor());
+	if (ensureAlways(TargetDamageInterface))
+	{
+		TargetDamageInterface->SetLastAttackInstigator(SourceASC->GetAvatarActor());
+	}
 }
 
 void ASMProjectile::ApplyFX(AActor* InTarget)

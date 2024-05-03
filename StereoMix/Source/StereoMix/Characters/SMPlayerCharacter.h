@@ -7,6 +7,7 @@
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "SMCharacter.h"
+#include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMTeamComponentInterface.h"
 #include "SMPlayerCharacter.generated.h"
 
@@ -35,7 +36,7 @@ enum class EActiveAbility : uint8
 };
 
 UCLASS()
-class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamComponentInterface
+class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamComponentInterface, public ISMDamageInterface
 {
 	GENERATED_BODY()
 
@@ -227,6 +228,7 @@ public:
 	FORCEINLINE void SetCaughtCharacter(ASMPlayerCharacter* InCaughtCharacter) { CaughtCharacter = InCaughtCharacter; }
 
 public:
+	/** 한 캐릭터에게 여러번 잡히지 않도록 잡았던 캐릭터들을 담아둡니다. */
 	UPROPERTY(Replicated)
 	TArray<TWeakObjectPtr<ASMPlayerCharacter>> CapturedCharcters;
 
@@ -239,6 +241,17 @@ protected:
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<ASMPlayerCharacter> CaughtCharacter;
 // ~Catch Section
+
+// ~Damage Section
+public:
+	FORCEINLINE virtual AActor* GetLastAttackInstigator() override { return LastAttackInstigator.Get(); };
+
+	FORCEINLINE virtual void SetLastAttackInstigator(AActor* NewStunInstigator) override { LastAttackInstigator = NewStunInstigator; }
+
+protected:
+	UPROPERTY(Replicated)
+	TWeakObjectPtr<AActor> LastAttackInstigator;
+// ~Damage Section
 
 protected:
 	UFUNCTION()
