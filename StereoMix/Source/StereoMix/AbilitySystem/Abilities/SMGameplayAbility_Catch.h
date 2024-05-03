@@ -81,4 +81,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Catch")
 	float UnconditionallyCatchDistance = 150.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Debug")
+	uint32 bShowDebug:1 = false;
 };

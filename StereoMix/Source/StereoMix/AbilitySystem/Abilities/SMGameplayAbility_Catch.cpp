@@ -83,6 +83,7 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
+	// 잡기 시전 시 이펙트 입니다.
 	FGameplayCueParameters GCParams;
 	GCParams.Location = SourceCharacter->GetActorLocation();
 	GCParams.Normal = SourceCharacter->GetActorRotation().Vector();
@@ -164,7 +165,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 						TargetASC->RemoveTag(SMTags::Character::State::Caught);
 					}
 
-					// 이펙트 재생을 위한 코드입니다.
+					// 잡기 적중 성공 시 이펙트입니다.
 					FGameplayCueParameters GCParams;
 					const FVector SourceLocation = SourceCharacter->GetActorLocation();
 					GCParams.Location = SourceCharacter->GetActorLocation();
@@ -175,9 +176,13 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 		}
 	}
 
-	// TODO: 이펙트를 위해 임시 주석 처리 디버거 
-	const FColor Color = bSuccess ? FColor::Green : FColor::Red;
-	// DrawDebugSphere(GetWorld(), InStartLocation, MaxDistance, 16, Color, false, 2.0f);
+#if UE_ENABLE_DEBUG_DRAWING
+	if (bShowDebug)
+	{
+		const FColor Color = bSuccess ? FColor::Green : FColor::Red;
+		DrawDebugSphere(GetWorld(), InStartLocation, MaxDistance, 16, Color, false, 2.0f);
+	}
+#endif
 }
 
 bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResult>& InOverlapResults, TArray<ASMPlayerCharacter*>& OutCatchableCharacters)
