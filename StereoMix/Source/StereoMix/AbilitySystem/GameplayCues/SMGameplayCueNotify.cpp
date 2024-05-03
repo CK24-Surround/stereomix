@@ -5,7 +5,14 @@
 
 bool USMGameplayCueNotify::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
 {
-	PlayNiagaraSystem(MyTarget, Parameters);
+	if (bIsAttach)
+	{
+		PlayNiagaraSystemWithAttach(MyTarget, Parameters);
+	}
+	else
+	{
+		PlayNiagaraSystem(MyTarget, Parameters);
+	}
 
 	return true;
 }

@@ -22,7 +22,18 @@ public:
 protected:
 	virtual void PlayNiagaraSystem(AActor* SourceActor, const FGameplayCueParameters& Parameters) const override;
 
+	virtual void PlayNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const override;
+
+protected:
+	void GetLocationAndRotation(const FGameplayCueParameters& Parameters, FVector& OutLocation, FRotator& OutRotation) const;
+
+	ESMTeam GetTeamForSource(const AActor* SourceActor) const;
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> FX;
+
+	/** 가해자 팀의 이펙트 사용 여부입니다. false인 경우 자신의 팀 이펙트를 사용합니다. */
+	UPROPERTY(EditAnywhere, Category = "FX")
+	uint32 bUseInstigatorTeam:1 = false;
 };

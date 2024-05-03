@@ -17,5 +17,12 @@ class STEREOMIX_API USMGameplayCueNotify : public UGameplayCueNotify_Static
 protected:
 	virtual bool OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const override;
 
-	virtual void PlayNiagaraSystem(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::OnBurst);
+	virtual void PlayNiagaraSystem(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystem);
+
+	virtual void PlayNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystemWithAttach);
+
+protected:
+	/** 어태치 수행 여부를 결정합니다. */
+	UPROPERTY(EditAnywhere, Category = "FX")
+	uint32 bIsAttach:1 = false;
 };
