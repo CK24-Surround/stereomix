@@ -78,6 +78,11 @@ void ASMGameplayCueNotify_Actor_WithTeam::PlayOnLoopingStartNiagaraSystemWithAtt
 
 void ASMGameplayCueNotify_Actor_WithTeam::PlayOnRemoveNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
+	if (!ensureAlways(SourceActor))
+	{
+		return;
+	}
+
 	FVector Location;
 	FRotator Rotation;
 	GetLocationAndRotation(Parameters, Location, Rotation);
