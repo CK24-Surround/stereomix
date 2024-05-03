@@ -45,6 +45,9 @@
 Content/**/*.png
 Content/**/*.tga
 
+# Slash images
+!Content/Splash/*.png
+
 # Binary Files
 Binaries/*
 Plugins/*/Binaries/*
