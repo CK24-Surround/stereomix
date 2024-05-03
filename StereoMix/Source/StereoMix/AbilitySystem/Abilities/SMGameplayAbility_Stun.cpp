@@ -30,7 +30,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
+	if (!ensureAlways(SourceASC))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
@@ -39,7 +39,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	// 스턴 몽타주가 정상적으로 실행되면 0.0f 이상의 값을 반환합니다.
 	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, StunMontage, 1.0f);
 	ClientRPCPlayMontage(StunMontage);
-	if (!ensure(Duration > 0.0f))
+	if (!ensureAlways(Duration > 0.0f))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
@@ -47,14 +47,17 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 
 	// 컨트롤 로테이션을 따라 회전하지 않도록 잠급니다.
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (ensure(SourceCharacter))
+	if (!ensureAlways(SourceCharacter))
 	{
-		SourceCharacter->SetUseControllerRotation(false);
+		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
 	}
+
+	SourceCharacter->SetUseControllerRotation(false);
 
 	// 스턴 시간 만큼 기다립니다.
 	UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, StunTime);
-	if (!ensure(WaitDelayTask))
+	if (!ensureAlways(WaitDelayTask))
 	{
 		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
@@ -64,10 +67,10 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Catch))
 	{
 		ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
-		if (ensure(TargetCharacter))
+		if (ensureAlways(TargetCharacter))
 		{
 			UAbilitySystemComponent* TargetASC = TargetCharacter->GetAbilitySystemComponent();
-			if (ensure(TargetASC))
+			if (ensureAlways(TargetASC))
 			{
 				TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit));
 			}
@@ -78,6 +81,14 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	WaitDelayTask->ReadyForActivation();
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
+
+	// 스턴 즉시 이펙트를 재생합니다.
+	FGameplayCueParameters GCParams;
+	GCParams.Instigator = SourceCharacter->GetLastAttackInstigator();
+
+	GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
+
+	SourceASC->AddGameplayCue(SMTags::GameplayCue::Stun, GCParams);
 }
 
 void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -90,6 +101,9 @@ void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle
 		// 면역상태로 진입합니다. 딜레이로 인해 데미지를 받을 수도 있으니 GA실행 전에 먼저 면역태그를 추가합니다.
 		SourceASC->AddTag(SMTags::Character::State::Immune);
 		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
+
+		// 스턴 이펙트를 종료합니다.
+		SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Stun);
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

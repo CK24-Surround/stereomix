@@ -21,9 +21,13 @@ protected:
 	virtual bool OnRemove_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) override;
 
 protected:
-	virtual void PlayNiagaraSystemWithAttachOnActivate(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystemWithAttach);
+	virtual void PlayOnActivateNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystemWithAttach);
 
-	virtual void PlayNiagaraSystemWithAttachOnLoopingStart(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystemWithAttach);
+	virtual void PlayOnLoopingStartNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystemWithAttach);
 
-	virtual void PlayNiagaraSystemOnRemove(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystem);
+	virtual void PlayOnRemoveNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystem);
+
+protected:
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> LoopingFXComponent;
 };

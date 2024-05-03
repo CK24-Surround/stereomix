@@ -3,9 +3,11 @@
 
 #include "SMGameplayCueNotify_Actor.h"
 
+#include "NiagaraComponent.h"
+
 bool ASMGameplayCueNotify_Actor::OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
-	PlayNiagaraSystemWithAttachOnActivate(MyTarget, Parameters);
+	PlayOnActivateNiagaraSystemWithAttach(MyTarget, Parameters);
 
 	return true;
 }
@@ -17,19 +19,24 @@ bool ASMGameplayCueNotify_Actor::WhileActive_Implementation(AActor* MyTarget, co
 		SetActorHiddenInGame(false);
 	}
 
-	PlayNiagaraSystemWithAttachOnLoopingStart(MyTarget, Parameters);
+	PlayOnLoopingStartNiagaraSystemWithAttach(MyTarget, Parameters);
 
 	return true;
 }
 
 bool ASMGameplayCueNotify_Actor::OnRemove_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
+	if (LoopingFXComponent)
+	{
+		LoopingFXComponent->DeactivateImmediate();
+	}
+
 	if (!IsHidden())
 	{
 		SetActorHiddenInGame(true);
 	}
 
-	PlayNiagaraSystemOnRemove(MyTarget, Parameters);
+	PlayOnRemoveNiagaraSystemWithAttach(MyTarget, Parameters);
 
 	return true;
 }
