@@ -13,7 +13,7 @@ class ASMProjectile;
 /**
  * 클라이언트의 마우스 위치를 서버로 전송해 이 데이터를 기반으로 서버에서 투사체를 생성하는 어빌리티입니다.
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGameplayAbility_Launch : public USMGameplayAbility
 {
 	GENERATED_BODY()
@@ -31,13 +31,16 @@ protected:
 	/** 클라이언트의 조준 값을 받아오는데 사용합니다. */
 	virtual void OnReceiveProjectileTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
 
+	/** 투사체를 발사시킵니다. 서버에서 호출됩니다. */
+	virtual void LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal) PURE_VIRTUAL(USMGameplayAbility_Launch::LaunchProjectile);
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TObjectPtr<UAnimMontage> Montage;
 
 	UPROPERTY(EditAnywhere, Category = "Projectile", DisplayName = "탄속")
 	float ProjectileSpeed = 2500.0f;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Projectile", DisplayName = "초당 발사 속도")
 	float LaunchRate = 2.5f;
 

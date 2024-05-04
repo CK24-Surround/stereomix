@@ -7,9 +7,6 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "AbilitySystem/SMTags.h"
-#include "Games/SMGameMode.h"
-#include "Projectiles/SMProjectile.h"
-#include "Projectiles/SMProjectilePool.h"
 #include "Utilities/SMLog.h"
 
 USMGameplayAbility_Launch::USMGameplayAbility_Launch()
@@ -106,20 +103,6 @@ void USMGameplayAbility_Launch::ApplyCooldown(const FGameplayAbilitySpecHandle H
 
 void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag)
 {
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
-	}
-
-	ASMGameMode* CachedSMGameMode = GetWorld()->GetAuthGameMode<ASMGameMode>();
-	if (!ensureAlways(CachedSMGameMode))
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
-	}
-
 	const FGameplayAbilityTargetData* ProjectileDataHandle = GameplayAbilityTargetDataHandle.Get(0);
 	if (!ensureAlways(ProjectileDataHandle))
 	{
@@ -131,21 +114,7 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 	const FVector StartLocation = ProjectileDataHandle->GetOrigin().GetLocation();
 	const FVector ProjectileDirection = ProjectileDataHandle->GetEndPoint();
 
-	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceCharacter->GetTeam());
-	if (!ensureAlways(ProjectilePool))
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
-	}
+	LaunchProjectile(StartLocation, ProjectileDirection);
 
-	ASMProjectile* NewProjectile = ProjectilePool->GetProjectile();
-	if (!NewProjectile)
-	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
-		return;
-	}
-
-	// 투사체를 발사합니다.
-	NewProjectile->Launch(SourceCharacter, StartLocation, ProjectileDirection, ProjectileSpeed, MaxDistance, Damage);
 	K2_EndAbility();
 }
