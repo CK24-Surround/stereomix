@@ -64,7 +64,7 @@ protected:
 	/** 투사체가 최대 사정거리를 벗어나는 경우 투사체를 풀로 반환합니다. 사정거리 구현을 위해 사용됩니다. */
 	void ReturnToPoolIfOutOfMaxDistance();
 
-	/** 타겟이 유효한지 확인합니다. 타겟의 유효성을 검증해야할때 사용합니다. */
+	/** 타겟이 유효한지 확인합니다. 타겟의 유효성을 검증해야할때 사용합니다. 서버에서만 사용되어야합니다. */
 	virtual bool IsValidateTarget(AActor* InTarget);
 
 public:
@@ -85,12 +85,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
 // ~Component Section
-
-// ~FX Section
-protected:
-	UPROPERTY(EditAnywhere, Category = "FX")
-	TObjectPtr<UNiagaraSystem> ProjectileBodyFX;
-// ~FX Section
 
 public:
 	/** 생명 주기가 끝나 회수되야할때 브로드캐스트합니다. */

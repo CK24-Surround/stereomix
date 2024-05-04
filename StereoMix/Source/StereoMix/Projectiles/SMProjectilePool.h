@@ -16,7 +16,7 @@ class STEREOMIX_API USMProjectilePool : public UObject
 
 public:
 	/** 풀을 채우고 사용할 준비를 합니다. 투사체 풀을 사용하기전에 꼭 호출해줘야합니다. */
-	void Init(const TSubclassOf<ASMProjectile>& InProjectileClassToSpawn);
+	void Init();
 
 	/** 투사체를 풀에서 꺼냅니다. */
 	ASMProjectile* GetProjectile();
@@ -32,15 +32,15 @@ protected:
 	void SpawnProjectile();
 
 protected:
-	UPROPERTY()
-	TSubclassOf<ASMProjectile> ProjectileClassToSpawn;
+	UPROPERTY(EditAnywhere, Category = "Projectile")
+	TSubclassOf<ASMProjectile> ProjectileClass;
 
 	UPROPERTY()
 	TArray<TObjectPtr<ASMProjectile>> Pool;
 
-	UPROPERTY(EditAnywhere, Category = "Pool|Size", DisplayName = "기본 풀 사이즈")
-	int32 InitPoolSize = 30;
+	UPROPERTY(EditAnywhere, Category = "Size", DisplayName = "기본 풀 사이즈")
+	int32 InitPoolSize = 10;
 
-	UPROPERTY(EditAnywhere, Category = "Pool|Size", DisplayName = "확장 시 추가할 풀 사이즈")
+	UPROPERTY(EditAnywhere, Category = "Size", DisplayName = "확장 시 추가할 풀 사이즈")
 	int32 ExpandSize = 5;
 };

@@ -13,10 +13,4 @@ class STEREOMIX_API ASMDamageProjectile_ElectricGuitar : public ASMDamageProject
 
 public:
 	ASMDamageProjectile_ElectricGuitar();
-
-protected:
-	virtual void BeginPlay() override;
-
-public:
-	virtual void Tick(float DeltaTime) override;
 };

@@ -19,6 +19,7 @@ ASMProjectile::ASMProjectile()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	bAlwaysRelevant = true;
 	bReplicates = true;
 
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
@@ -29,7 +30,6 @@ ASMProjectile::ASMProjectile()
 	ProjectileBodyFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	ProjectileBodyFXComponent->SetupAttachment(SphereComponent);
 	ProjectileBodyFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	ProjectileBodyFXComponent->SetAsset(ProjectileBodyFX);
 	ProjectileBodyFXComponent->SetAutoActivate(false);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
@@ -88,11 +88,11 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 	// 투사체의 데미지는 서버에만 저장해줍니다. 클라이언트에선 쓰이지 않기 때문입니다.
 	Magnitude = InMagnitude;
 
-	// 투사체를 활성화합니다.
-	StartLifeTime();
-
 	// 클라이언트의 투사체도 발사합니다.
 	MulticastRPCLaunchInternal(InStartLocation, InNormal, InSpeed, InMaxDistance);
+
+	// 투사체를 활성화합니다.
+	StartLifeTime();
 }
 
 void ASMProjectile::StartLifeTime()
@@ -133,8 +133,8 @@ void ASMProjectile::MulticastRPCStartLifeTimeInternal_Implementation()
 {
 	if (!HasAuthority())
 	{
-		ProjectileBodyFXComponent->ActivateSystem();
 		SetActorHiddenInGame(false);
+		ProjectileBodyFXComponent->Activate(true);
 	}
 
 	SetActorTickEnabled(true);
@@ -145,8 +145,8 @@ void ASMProjectile::MulticastRPCEndLifeTimeInternal_Implementation()
 {
 	if (!HasAuthority())
 	{
-		ProjectileBodyFXComponent->DeactivateImmediate();
 		SetActorHiddenInGame(true);
+		ProjectileBodyFXComponent->DeactivateImmediate();
 	}
 
 	ProjectileMovementComponent->Deactivate();

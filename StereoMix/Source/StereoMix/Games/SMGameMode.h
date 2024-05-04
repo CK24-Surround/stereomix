@@ -88,18 +88,15 @@ protected:
 	int32 CurrentPhaseNumber = 0;
 // ~Phase Section
 
-// ~Object Polling Section
+// ~Object Pooling Section
 public:
-	FORCEINLINE USMProjectilePool* GetProjectilePool() { return ProjectilePool; };
+	FORCEINLINE USMProjectilePool* GetProjectilePool() { return EletricGuitarProjectilePoolFutureBass; };
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Pool")
-	TSubclassOf<USMProjectilePool> ProjectilePoolClass;
-	
-	UPROPERTY(EditAnywhere, Category = "Pool")
-	TSubclassOf<ASMProjectile> ProjectileClass;
-	
+	UPROPERTY(EditAnywhere, Category = "Pool|Class")
+	TSubclassOf<USMProjectilePool> EletricGuitarProjectilePoolFutureBassClass;
+
 	UPROPERTY()
-	TObjectPtr<USMProjectilePool> ProjectilePool;
-// ~Object Polling Section
+	TObjectPtr<USMProjectilePool> EletricGuitarProjectilePoolFutureBass;
+// ~Object Pooling Section
 };

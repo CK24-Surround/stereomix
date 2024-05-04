@@ -8,12 +8,10 @@
 #include "AbilitySystem/SMTags.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMTeamInterface.h"
+#include "Utilities/SMLog.h"
 
 
-ASMDamageProjectile::ASMDamageProjectile()
-{
-	PrimaryActorTick.bCanEverTick = true;
-}
+ASMDamageProjectile::ASMDamageProjectile() {}
 
 void ASMDamageProjectile::BeginPlay()
 {
@@ -29,23 +27,19 @@ void ASMDamageProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	// 유효한 타겟인지 검증합니다.
-	if (!IsValidateTarget(OtherActor))
-	{
-		return;
-	}
-
 	if (HasAuthority())
 	{
+		// 유효한 타겟인지 검증합니다.
+		if (!IsValidateTarget(OtherActor))
+		{
+			return;
+		}
+
 		ApplyDamage(OtherActor);
 		ApplyFX(OtherActor);
 
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		MulticastRPCEndLifeTimeInternal();
-	}
-	else
-	{
-		SetActorHiddenInGame(true);
+		EndLifeTime();
 	}
 }
 
@@ -56,7 +50,7 @@ void ASMDamageProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, 
 	if (HasAuthority())
 	{
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		MulticastRPCEndLifeTimeInternal();
+		EndLifeTime();
 	}
 	else
 	{

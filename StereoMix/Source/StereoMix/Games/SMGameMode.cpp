@@ -37,12 +37,12 @@ void ASMGameMode::PostInitializeComponents()
 	BindToGameState();
 
 	// 투사체 풀을 생성합니다.
-	if (ensureAlways(ProjectilePoolClass))
+	if (ensureAlways(EletricGuitarProjectilePoolFutureBassClass))
 	{
-		ProjectilePool = NewObject<USMProjectilePool>(this, ProjectilePoolClass);
-		if (ensureAlways(ProjectilePool))
+		EletricGuitarProjectilePoolFutureBass = NewObject<USMProjectilePool>(this, EletricGuitarProjectilePoolFutureBassClass);
+		if (ensureAlways(EletricGuitarProjectilePoolFutureBass))
 		{
-			ProjectilePool->Init(ProjectileClass);
+			EletricGuitarProjectilePoolFutureBass->Init();
 		}
 	}
 }
