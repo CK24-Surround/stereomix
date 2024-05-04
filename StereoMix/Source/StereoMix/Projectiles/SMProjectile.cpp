@@ -4,15 +4,16 @@
 #include "SMProjectile.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Components/SMTeamComponent.h"
+#include "AbilitySystemComponent.h"
 #include "Components/SphereComponent.h"
 #include "NiagaraSystem.h"
 #include "NiagaraComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "Interfaces/SMTeamComponentInterface.h"
+#include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "Components/SMTeamComponent.h"
 
 ASMProjectile::ASMProjectile()
 {
@@ -69,19 +70,19 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 	// 오너와 팀을 지정해줍니다.
 	SetOwner(NewOwner);
 
-	ISMTeamComponentInterface* OwnerTeamComponentInterface = Cast<ISMTeamComponentInterface>(NewOwner);
-	if (!ensureAlways(OwnerTeamComponentInterface))
+	ISMTeamInterface* OwnerTeamInterface = Cast<ISMTeamInterface>(NewOwner);
+	if (!ensureAlways(OwnerTeamInterface))
 	{
 		return;
 	}
 
-	USMTeamComponent* OwnerTeamComponent = OwnerTeamComponentInterface->GetTeamComponent();
+	USMTeamComponent* OwnerTeamComponent = OwnerTeamInterface->GetTeamComponent();
 	if (!ensureAlways(OwnerTeamComponent))
 	{
 		return;
 	}
 
-	const ESMTeam OwnerTeam = OwnerTeamComponent->GetTeam();
+	const ESMTeam OwnerTeam = OwnerTeamInterface->GetTeam();
 	TeamComponent->SetTeam(OwnerTeam);
 
 	// 투사체의 데미지는 서버에만 저장해줍니다. 클라이언트에선 쓰이지 않기 때문입니다.
@@ -171,4 +172,32 @@ void ASMProjectile::ReturnToPoolIfOutOfMaxDistance()
 			SetActorHiddenInGame(true);
 		}
 	}
+}
+
+bool ASMProjectile::IsValidateTarget(AActor* InTarget)
+{
+	// 자신이 발사한 투사체에 적중되지 않도록 합니다. (자살 방지)
+	if (InTarget == GetOwner())
+	{
+		return false;
+	}
+
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
+	if (!ensureAlways(TargetASC))
+	{
+		return false;
+	}
+
+	// 타겟이 되지 않아야하는 상태라면 무시합니다.
+	if (TargetASC->HasAnyMatchingGameplayTags(IgnoreTargetStateTags))
+	{
+		return false;
+	}
+
+	return true;
+}
+
+ESMTeam ASMProjectile::GetTeam() const
+{
+	return TeamComponent->GetTeam();
 }

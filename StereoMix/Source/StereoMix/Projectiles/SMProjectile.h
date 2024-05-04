@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
+#include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMTeam.h"
 #include "SMProjectile.generated.h"
 
@@ -20,7 +21,7 @@ class USphereComponent;
 class UProjectileMovementComponent;
 
 UCLASS()
-class STEREOMIX_API ASMProjectile : public AActor
+class STEREOMIX_API ASMProjectile : public AActor, public ISMTeamInterface
 {
 	GENERATED_BODY()
 
@@ -62,6 +63,14 @@ protected:
 protected:
 	/** 투사체가 최대 사정거리를 벗어나는 경우 투사체를 풀로 반환합니다. 사정거리 구현을 위해 사용됩니다. */
 	void ReturnToPoolIfOutOfMaxDistance();
+
+	/** 타겟이 유효한지 확인합니다. 타겟의 유효성을 검증해야할때 사용합니다. */
+	virtual bool IsValidateTarget(AActor* InTarget);
+
+public:
+	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
+
+	virtual ESMTeam GetTeam() const override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")

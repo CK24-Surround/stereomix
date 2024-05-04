@@ -6,9 +6,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "Components/SMTeamComponent.h"
 #include "Interfaces/SMDamageInterface.h"
-#include "Interfaces/SMTeamComponentInterface.h"
+#include "Interfaces/SMTeamInterface.h"
 
 
 ASMDamageProjectile::ASMDamageProjectile()
@@ -67,52 +66,33 @@ void ASMDamageProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, 
 
 bool ASMDamageProjectile::IsValidateTarget(AActor* InTarget)
 {
-	// 자신이 발사한 투사체에 적중되지 않도록 합니다. (자살 방지)
-	if (InTarget == GetOwner())
+	if (!Super::IsValidateTarget(InTarget))
 	{
 		return false;
 	}
 
 	// 투사체가 무소속인 경우 무시합니다.
-	const ESMTeam SourceTeam = TeamComponent->GetTeam();
+	const ESMTeam SourceTeam = GetTeam();
 	if (SourceTeam == ESMTeam::None)
 	{
 		return false;
 	}
 
-	ISMTeamComponentInterface* TargetTeamComponentInterface = Cast<ISMTeamComponentInterface>(InTarget);
-	if (!TargetTeamComponentInterface)
-	{
-		return false;
-	}
-
-	USMTeamComponent* OtherTeamComponent = TargetTeamComponentInterface->GetTeamComponent();
-	if (!ensureAlways(OtherTeamComponent))
+	ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(InTarget);
+	if (!TargetTeamInterface)
 	{
 		return false;
 	}
 
 	// 타겟이 무소속인 경우 무시합니다.
-	const ESMTeam OtherTeam = OtherTeamComponent->GetTeam();
-	if (OtherTeam == ESMTeam::None)
+	const ESMTeam TargetTeam = TargetTeamInterface->GetTeam();
+	if (TargetTeam == ESMTeam::None)
 	{
 		return false;
 	}
 
 	// 투사체와 타겟이 같은 팀이라면 무시합니다. (팀킬 방지)
-	if (SourceTeam == OtherTeam)
-	{
-		return false;
-	}
-
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
-	if (!ensureAlways(TargetASC))
-	{
-		return false;
-	}
-
-	// 타겟이 되지 않아야하는 상태라면 무시합니다.
-	if (TargetASC->HasAnyMatchingGameplayTags(IgnoreTargetStateTags))
+	if (SourceTeam == TargetTeam)
 	{
 		return false;
 	}

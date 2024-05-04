@@ -28,8 +28,7 @@ protected:
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
 protected:
-	/** 타겟이 유효한지 확인합니다.*/
-	bool IsValidateTarget(AActor* InTarget);
+	virtual bool IsValidateTarget(AActor* InTarget) override;
 
 	/** GE를 통해 데미지를 적용합니다. */
 	void ApplyDamage(AActor* InTarget);
