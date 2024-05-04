@@ -116,5 +116,5 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 
 	LaunchProjectile(StartLocation, ProjectileDirection);
 
-	K2_EndAbility();
+	// K2_EndAbility();
 }
