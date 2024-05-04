@@ -42,7 +42,7 @@ void ASMDamageProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		ApplyFX(OtherActor);
 
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		MulticastRPCEndLifeTime();
+		MulticastRPCEndLifeTimeInternal();
 	}
 	else
 	{
@@ -57,7 +57,7 @@ void ASMDamageProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, 
 	if (HasAuthority())
 	{
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		MulticastRPCEndLifeTime();
+		MulticastRPCEndLifeTimeInternal();
 	}
 	else
 	{
@@ -141,7 +141,7 @@ void ASMDamageProjectile::ApplyDamage(AActor* InTarget)
 	}
 
 	// SetByCaller를 통해 매개변수로 전달받은 Damage로 GE를 적용합니다.
-	GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+	GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Magnitude);
 	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 
 	// 공격자 정보도 저장합니다.

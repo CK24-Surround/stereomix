@@ -4,7 +4,6 @@
 #include "SMProjectile.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
 #include "NiagaraSystem.h"
@@ -14,7 +13,6 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
-#include "Interfaces/SMDamageInterface.h"
 
 ASMProjectile::ASMProjectile()
 {
@@ -27,11 +25,11 @@ ASMProjectile::ASMProjectile()
 	SphereComponent->SetCollisionProfileName(SMCollisionProfileName::Projectile);
 	SphereComponent->InitSphereRadius(1.0f);
 
-	ProjectileFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
-	ProjectileFXComponent->SetupAttachment(SphereComponent);
-	ProjectileFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	ProjectileFXComponent->SetAsset(ProjectileBodyFX);
-	ProjectileFXComponent->SetAutoActivate(false);
+	ProjectileBodyFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
+	ProjectileBodyFXComponent->SetupAttachment(SphereComponent);
+	ProjectileBodyFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	ProjectileBodyFXComponent->SetAsset(ProjectileBodyFX);
+	ProjectileBodyFXComponent->SetAutoActivate(false);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 	ProjectileMovementComponent->ProjectileGravityScale = 0.0f;
@@ -41,14 +39,6 @@ ASMProjectile::ASMProjectile()
 
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Stun);
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
-}
-
-void ASMProjectile::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	// 팀이 변경될 경우 처리해야할 로직을 담은 함수를 바인드해줍니다.
-	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMProjectile::OnChangeTeamCallback);
 }
 
 void ASMProjectile::BeginPlay()
@@ -69,7 +59,7 @@ void ASMProjectile::Tick(float DeltaTime)
 	ReturnToPoolIfOutOfMaxDistance();
 }
 
-void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InDamage)
+void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InMagnitude)
 {
 	if (!HasAuthority())
 	{
@@ -92,37 +82,57 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 	}
 
 	const ESMTeam OwnerTeam = OwnerTeamComponent->GetTeam();
-	TeamComponent->SetTeam(OwnerTeamComponent->GetTeam());
+	TeamComponent->SetTeam(OwnerTeam);
 
 	// 투사체의 데미지는 서버에만 저장해줍니다. 클라이언트에선 쓰이지 않기 때문입니다.
-	Damage = InDamage;
+	Magnitude = InMagnitude;
+
+	// 투사체를 활성화합니다.
+	StartLifeTime();
 
 	// 클라이언트의 투사체도 발사합니다.
-	MulticastRPCLaunch(InStartLocation, InNormal, InSpeed, InMaxDistance);
+	MulticastRPCLaunchInternal(InStartLocation, InNormal, InSpeed, InMaxDistance);
 }
 
-void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance)
+void ASMProjectile::StartLifeTime()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	MulticastRPCStartLifeTimeInternal();
+}
+
+void ASMProjectile::EndLifeTime()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	MulticastRPCEndLifeTimeInternal();
+}
+
+void ASMProjectile::MulticastRPCLaunchInternal_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance)
 {
 	// 투사체에 필요한 데이터들을 저장하고 위치를 초기화해줍니다. 이 시점은 막 투사체 풀에서 투사체를 꺼내온 상황입니다.
 	MaxDistance = InMaxDistance;
 	StartLocation = InStartLocation;
 	SetActorLocationAndRotation(InStartLocation, InNormal.Rotation());
 
-	// 투사체를 활성화 해줍니다.
-	MulticastRPCStartLifeTime();
-
-	// 투사체를 실제로 발사합니다. 블로킹으로 투사체가 마무리된 경우 SetUpdatedComponent가 초기화되기 때문에 재지정해줍니다.
+	// 투사체를 발사합니다. 블로킹으로 투사체가 마무리된 경우 SetUpdatedComponent가 초기화되기 때문에 재지정해줍니다.
 	ProjectileMovementComponent->Activate(true);
 	ProjectileMovementComponent->SetUpdatedComponent(GetRootComponent());
 	ProjectileMovementComponent->SetComponentTickEnabled(true);
 	ProjectileMovementComponent->Velocity = InNormal * InSpeed;
 }
 
-void ASMProjectile::MulticastRPCStartLifeTime_Implementation()
+void ASMProjectile::MulticastRPCStartLifeTimeInternal_Implementation()
 {
 	if (!HasAuthority())
 	{
-		ProjectileFXComponent->ActivateSystem();
+		ProjectileBodyFXComponent->ActivateSystem();
 		SetActorHiddenInGame(false);
 	}
 
@@ -130,14 +140,14 @@ void ASMProjectile::MulticastRPCStartLifeTime_Implementation()
 	SetActorEnableCollision(true);
 }
 
-void ASMProjectile::MulticastRPCEndLifeTime_Implementation()
+void ASMProjectile::MulticastRPCEndLifeTimeInternal_Implementation()
 {
 	if (!HasAuthority())
 	{
+		ProjectileBodyFXComponent->DeactivateImmediate();
 		SetActorHiddenInGame(true);
 	}
 
-	ProjectileFXComponent->DeactivateImmediate();
 	ProjectileMovementComponent->Deactivate();
 	SetActorTickEnabled(false);
 	SetActorEnableCollision(false);
@@ -154,23 +164,11 @@ void ASMProjectile::ReturnToPoolIfOutOfMaxDistance()
 		// 서버는 투사체를 풀로 반환시키지만 클라이언트에서는 가시성만 제거합니다.
 		if (HasAuthority())
 		{
-			MulticastRPCEndLifeTime();
+			EndLifeTime();
 		}
 		else
 		{
 			SetActorHiddenInGame(true);
 		}
 	}
-}
-
-void ASMProjectile::OnChangeTeamCallback()
-{
-	// 투사체 발사 후 팀 리플리케이트 정보가 콜백되어 이펙트가 올바르게 적용되지 않는 현상이 존재합니다.
-	// 따라서 아래 코드는 폐기하고 직접 RPC를 호출할때 Team을 매개변수로 전달해주도록 변경했습니다.
-	// const ESMTeam Team = TeamComponent->GetTeam();
-	//
-	// if (!HasAuthority())
-	// {
-	// 	ProjectileFXComponent->SetAsset(ProjectileBodyFX[Team]);
-	// }
 }
