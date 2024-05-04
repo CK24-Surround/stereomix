@@ -36,15 +36,7 @@ void ASMGameMode::PostInitializeComponents()
 
 	BindToGameState();
 
-	// 투사체 풀을 생성합니다.
-	if (ensureAlways(EletricGuitarProjectilePoolFutureBassClass))
-	{
-		EletricGuitarProjectilePoolFutureBass = NewObject<USMProjectilePool>(this, EletricGuitarProjectilePoolFutureBassClass);
-		if (ensureAlways(EletricGuitarProjectilePoolFutureBass))
-		{
-			EletricGuitarProjectilePoolFutureBass->Init();
-		}
-	}
+	InitProjectilePool();
 }
 
 void ASMGameMode::StartMatch()
@@ -163,5 +155,34 @@ void ASMGameMode::SetCurrentPhaseNumber(int32 InCurrentPhaseNumber)
 	{
 		// 게임 스테이트에 복제해줍니다.
 		CachedSMGameState->SetReplicatedCurrentPhaseNumber(CurrentPhaseNumber);
+	}
+}
+
+USMProjectilePool* ASMGameMode::GetEletricGuitarProjectilePool(ESMTeam SourceTeam)
+{
+	return EletricGuitarProjectilePool[SourceTeam];
+}
+
+void ASMGameMode::InitProjectilePool()
+{
+	// 투사체 풀을 생성합니다.
+	TSubclassOf<USMProjectilePool>* ElectricGuitarProjectilePoolEDMClass = EletricGuitarProjectilePoolClass.Find(ESMTeam::EDM);
+	if (ensureAlways(ElectricGuitarProjectilePoolEDMClass))
+	{
+		EletricGuitarProjectilePool.Add(ESMTeam::EDM, NewObject<USMProjectilePool>(this, *ElectricGuitarProjectilePoolEDMClass));
+		if (ensureAlways(EletricGuitarProjectilePool[ESMTeam::EDM]))
+		{
+			EletricGuitarProjectilePool[ESMTeam::EDM]->Init();
+		}
+	}
+
+	TSubclassOf<USMProjectilePool>* ElectricGuitarProjectilePoolFutureBassClass = EletricGuitarProjectilePoolClass.Find(ESMTeam::FutureBass);
+	if (ensureAlways(ElectricGuitarProjectilePoolFutureBassClass))
+	{
+		EletricGuitarProjectilePool.Add(ESMTeam::FutureBass, NewObject<USMProjectilePool>(this, *ElectricGuitarProjectilePoolFutureBassClass));
+		if (ensureAlways(EletricGuitarProjectilePool[ESMTeam::FutureBass]))
+		{
+			EletricGuitarProjectilePool[ESMTeam::FutureBass]->Init();
+		}
 	}
 }

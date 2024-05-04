@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
+#include "Utilities/SMTeam.h"
 #include "SMGameMode.generated.h"
 
 class ASMProjectile;
@@ -90,13 +91,16 @@ protected:
 
 // ~Object Pooling Section
 public:
-	FORCEINLINE USMProjectilePool* GetProjectilePool() { return EletricGuitarProjectilePoolFutureBass; };
+	USMProjectilePool* GetEletricGuitarProjectilePool(ESMTeam SourceTeam);
+
+protected:
+	void InitProjectilePool();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Pool|Class")
-	TSubclassOf<USMProjectilePool> EletricGuitarProjectilePoolFutureBassClass;
+	TMap<ESMTeam, TSubclassOf<USMProjectilePool>> EletricGuitarProjectilePoolClass;
 
 	UPROPERTY()
-	TObjectPtr<USMProjectilePool> EletricGuitarProjectilePoolFutureBass;
+	TMap<ESMTeam, TObjectPtr<USMProjectilePool>> EletricGuitarProjectilePool;
 // ~Object Pooling Section
 };

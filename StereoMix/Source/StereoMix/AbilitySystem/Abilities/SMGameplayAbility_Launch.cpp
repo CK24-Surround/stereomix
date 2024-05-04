@@ -131,7 +131,7 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 	const FVector StartLocation = ProjectileDataHandle->GetOrigin().GetLocation();
 	const FVector ProjectileDirection = ProjectileDataHandle->GetEndPoint();
 
-	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetProjectilePool();
+	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceCharacter->GetTeam());
 	if (!ensureAlways(ProjectilePool))
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
