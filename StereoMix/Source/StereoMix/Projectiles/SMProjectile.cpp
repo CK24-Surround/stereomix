@@ -119,7 +119,6 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 	}
 
 	// 오너와 팀을 지정해줍니다.
-	// TODO: 추후 오너대신 ASC를 WeakObjectPtr로 갖게 할 계획입니다.
 	SetOwner(NewOwner);
 
 	ISMTeamComponentInterface* OwnerTeamComponentInterface = Cast<ISMTeamComponentInterface>(NewOwner);
@@ -134,11 +133,10 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 		return;
 	}
 
-	// 팀을 저장해줍니다.
 	const ESMTeam OwnerTeam = OwnerTeamComponent->GetTeam();
 	TeamComponent->SetTeam(OwnerTeamComponent->GetTeam());
 
-	// 투사체의 데미지는 서버에서만 쓰이니 미리 저장해줍니다.
+	// 투사체의 데미지는 서버에만 저장해줍니다. 클라이언트에선 쓰이지 않기 때문입니다.
 	Damage = InDamage;
 
 	// 클라이언트의 투사체도 발사합니다.
