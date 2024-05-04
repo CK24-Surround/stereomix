@@ -26,65 +26,56 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
+	// 잡던 도중에 타겟이 사라지질 수도 있으므로(예시: 게임을 종료) 이에 대한 예외처리를 해줍니다.
+	USMAbilitySystemComponent* TargetASC = nullptr;
 	ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCaughtCharacter();
-	if (!ensure(TargetCharacter))
+	if (TargetCharacter)
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
+		TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 	}
 
-	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-	if (!ensure(TargetASC))
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
-	}
+	// 디태치와 필요한 처리를 해줍니다.
+	DetachFromTargetCharacter(TargetCharacter);
 
-	if (ActorInfo->IsNetAuthority())
+	// Source의 Caught 태그와 Target의 Catch 태그를 제거합니다.
+	SourceASC->RemoveTag(SMTags::Character::State::Caught);
+	if (TargetASC)
 	{
-		// 디태치와 필요한 처리를 해줍니다.
-		DetachFromTargetCharacter(TargetCharacter);
-
-		// Source의 Caught 태그와 Target의 Catch 태그를 제거합니다.
-		SourceASC->RemoveTag(SMTags::Character::State::Caught);
 		TargetASC->RemoveTag(SMTags::Character::State::Catch);
+	}
 
-		// 마지막으로 Catch 및 Caught 캐릭터를 초기화해줍니다.
-		SourceCharacter->SetCaughtCharacter(nullptr);
+	// 마지막으로 Catch 및 Caught 캐릭터를 초기화해줍니다.
+	SourceCharacter->SetCaughtCharacter(nullptr);
+	if (TargetCharacter)
+	{
 		TargetCharacter->SetCatchCharacter(nullptr);
 	}
 
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("CaughtExit"), CaughtExitMontage, 1.0f);
 	if (!ensure(PlayMontageAndWaitTask))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
 	ClientRPCPlayMontage(CaughtExitMontage);
-	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &USMGameplayAbility_CaughtExit::OnCaughtExitEnded);
-	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &USMGameplayAbility_CaughtExit::OnCaughtExitEnded);
+	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &USMGameplayAbility_CaughtExit::OnCaughtExitEnded);
 	PlayMontageAndWaitTask->ReadyForActivation();
 }
 
 void USMGameplayAbility_CaughtExit::DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter)
 {
-	if (!ensure(InTargetCharacter))
-	{
-		return;
-	}
-
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
@@ -104,8 +95,12 @@ void USMGameplayAbility_CaughtExit::DetachFromTargetCharacter(ASMPlayerCharacter
 	SourceCharacter->SetEnableMovement(true);
 
 	// 회전을 재지정합니다.
-	const float TargetYaw = InTargetCharacter->GetActorRotation().Yaw;
-	SourceCharacter->MulticastRPCSetYawRotation(TargetYaw);
+	float NewYaw = 0.0f;
+	if (InTargetCharacter)
+	{
+		NewYaw = InTargetCharacter->GetActorRotation().Yaw;
+	}
+	SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
 
 	// TODO: 애니메이션 불일치에 따른 임시 위치 조정 코드입니다. 추후 제거되어야합니다.
 	SourceCharacter->ServerRPCPreventGroundEmbedding();
