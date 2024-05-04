@@ -45,12 +45,12 @@ protected:
 
 public:
 	/** 투사체를 발사합니다. 서버에서 호출되야합니다. */
-	void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed, float InMaxDistance, float InDamage);
+	void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InDamage);
 
 protected:
 	/** 서버, 클라이언트에서 모두 발사되도록 합니다. Launch를 통해 호출됩니다.*/
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastRPCLaunch(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed, float InMaxDistance);
+	virtual void MulticastRPCLaunch(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, ESMTeam InTeam);
 
 	/** 투사체가 활동을 시작할때 꼭 호출해줘야합니다. 투사체 활성화와 관련된 처리를 담당합니다. */
 	UFUNCTION(NetMulticast, Reliable)

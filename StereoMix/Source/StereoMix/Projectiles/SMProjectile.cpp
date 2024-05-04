@@ -62,12 +62,6 @@ void ASMProjectile::BeginPlay()
 	SetActorTickEnabled(false);
 	SetActorEnableCollision(false);
 	SetActorHiddenInGame(true);
-
-	// TODO: 투사체 바디 이펙트 씹힘 현상 디버깅용
-	if (!HasAuthority())
-	{
-		NET_LOG(this, Warning, TEXT(""));
-	}
 }
 
 void ASMProjectile::Tick(float DeltaTime)
@@ -117,7 +111,7 @@ void ASMProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimi
 	}
 }
 
-void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed, float InMaxDistance, float InDamage)
+void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InDamage)
 {
 	if (!HasAuthority())
 	{
@@ -129,25 +123,34 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 	SetOwner(NewOwner);
 
 	ISMTeamComponentInterface* OwnerTeamComponentInterface = Cast<ISMTeamComponentInterface>(NewOwner);
-	if (OwnerTeamComponentInterface)
+	if (!ensureAlways(OwnerTeamComponentInterface))
 	{
-		USMTeamComponent* OwnerTeamComponent = OwnerTeamComponentInterface->GetTeamComponent();
-		if (ensure(OwnerTeamComponent))
-		{
-			TeamComponent->SetTeam(OwnerTeamComponent->GetTeam());
-		}
+		return;
 	}
+
+	USMTeamComponent* OwnerTeamComponent = OwnerTeamComponentInterface->GetTeamComponent();
+	if (!ensureAlways(OwnerTeamComponent))
+	{
+		return;
+	}
+
+	// 팀을 저장해줍니다.
+	const ESMTeam OwnerTeam = OwnerTeamComponent->GetTeam();
+	TeamComponent->SetTeam(OwnerTeamComponent->GetTeam());
 
 	// 투사체의 데미지는 서버에서만 쓰이니 미리 저장해줍니다.
 	Damage = InDamage;
-	MulticastRPCLaunch(InStartLocation, InNormal, InSpeed, InMaxDistance);
+
+	// 클라이언트의 투사체도 발사합니다.
+	MulticastRPCLaunch(InStartLocation, InNormal, InSpeed, InMaxDistance, OwnerTeam);
 }
 
-void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InNormal, float InSpeed, float InMaxDistance)
+void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, ESMTeam InTeam)
 {
 	// 투사체에 필요한 데이터들을 저장하고 위치를 초기화해줍니다. 이 시점은 막 투사체 풀에서 투사체를 꺼내온 상황입니다.
 	MaxDistance = InMaxDistance;
 	StartLocation = InStartLocation;
+	ProjectileFXComponent->SetAsset(ProjectileBodyFX[InTeam]);
 	SetActorLocationAndRotation(InStartLocation, InNormal.Rotation());
 
 	// 투사체를 활성화 해줍니다.
@@ -158,29 +161,31 @@ void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize1
 	ProjectileMovementComponent->SetUpdatedComponent(GetRootComponent());
 	ProjectileMovementComponent->SetComponentTickEnabled(true);
 	ProjectileMovementComponent->Velocity = InNormal * InSpeed;
-
-	// TODO: 투사체 바디 이펙트 씹힘 현상 디버깅용
-	if (!HasAuthority())
-	{
-		NET_LOG(this, Warning, TEXT(""));
-	}
 }
 
 void ASMProjectile::MulticastRPCStartLifeTime_Implementation()
 {
-	ProjectileFXComponent->ActivateSystem();
+	if (!HasAuthority())
+	{
+		ProjectileFXComponent->ActivateSystem();
+		SetActorHiddenInGame(false);
+	}
+
 	SetActorTickEnabled(true);
 	SetActorEnableCollision(true);
-	SetActorHiddenInGame(false);
 }
 
 void ASMProjectile::MulticastRPCEndLifeTime_Implementation()
 {
+	if (!HasAuthority())
+	{
+		SetActorHiddenInGame(true);
+	}
+
 	ProjectileFXComponent->DeactivateImmediate();
 	ProjectileMovementComponent->Deactivate();
 	SetActorTickEnabled(false);
 	SetActorEnableCollision(false);
-	SetActorHiddenInGame(true);
 
 	(void)OnEndLifeTime.ExecuteIfBound(this);
 }
@@ -318,10 +323,12 @@ void ASMProjectile::ApplyFX(AActor* InTarget)
 
 void ASMProjectile::OnChangeTeamCallback()
 {
-	const ESMTeam Team = TeamComponent->GetTeam();
-
-	if (!HasAuthority())
-	{
-		ProjectileFXComponent->SetAsset(ProjectileBodyFX[Team]);
-	}
+	// 투사체 발사 후 팀 리플리케이트 정보가 콜백되어 이펙트가 올바르게 적용되지 않는 현상이 존재합니다.
+	// 따라서 아래 코드는 폐기하고 직접 RPC를 호출할때 Team을 매개변수로 전달해주도록 변경했습니다.
+	// const ESMTeam Team = TeamComponent->GetTeam();
+	//
+	// if (!HasAuthority())
+	// {
+	// 	ProjectileFXComponent->SetAsset(ProjectileBodyFX[Team]);
+	// }
 }
