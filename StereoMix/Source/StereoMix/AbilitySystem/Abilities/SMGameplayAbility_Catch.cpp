@@ -8,7 +8,6 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -193,13 +192,7 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 		return false;
 	}
 
-	USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
-	if (!ensure(SourceTeamComponent))
-	{
-		return false;
-	}
-
-	ESMTeam SourceCharacterTeam = SourceTeamComponent->GetTeam();
+	ESMTeam SourceCharacterTeam = SourceCharacter->GetTeam();
 
 	// 만약 잡기 시전하는 캐릭터가 무소속이면 아무도 잡지 않습니다.
 	if (SourceCharacterTeam == ESMTeam::None)
@@ -234,13 +227,7 @@ bool USMGameplayAbility_Catch::GetCatchableCharacters(const TArray<FOverlapResul
 			const UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
 			if (ensure(TargetASC))
 			{
-				USMTeamComponent* TargetTeamComponent = TargetCharacter->GetTeamComponent();
-				if (!ensure(TargetTeamComponent))
-				{
-					continue;
-				}
-
-				const ESMTeam TargetTeam = TargetTeamComponent->GetTeam();
+				const ESMTeam TargetTeam = TargetCharacter->GetTeam();
 
 				// 대상이 무소속이라면 잡기를 무시합니다. 사실상 무소속은 대미지를 받지 않기 때문에 기절할 일은 없긴하지만 만약을 위한 예외처리입니다.
 				if (TargetTeam == ESMTeam::None)

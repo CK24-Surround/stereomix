@@ -5,11 +5,11 @@
 
 #include "Components/BoxComponent.h"
 #include "Components/SMTeamComponent.h"
-#include "Interfaces/SMTeamComponentInterface.h"
+#include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
-class ISMTeamComponentInterface;
+class ISMTeamInterface;
 
 ASMTeamSelectTriggerBox::ASMTeamSelectTriggerBox()
 {
@@ -48,7 +48,7 @@ void ASMTeamSelectTriggerBox::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	ISMTeamComponentInterface* OtherTeamComponentInterface = Cast<ISMTeamComponentInterface>(OtherActor);
+	ISMTeamInterface* OtherTeamComponentInterface = Cast<ISMTeamInterface>(OtherActor);
 	if (OtherTeamComponentInterface)
 	{
 		USMTeamComponent* OtherTeamComponent = OtherTeamComponentInterface->GetTeamComponent();

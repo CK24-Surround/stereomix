@@ -4,8 +4,7 @@
 #include "SMGameplayCueNotify_WithTeam.h"
 
 #include "NiagaraFunctionLibrary.h"
-#include "Components/SMTeamComponent.h"
-#include "Interfaces/SMTeamComponentInterface.h"
+#include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMLog.h"
 
 USMGameplayCueNotify_WithTeam::USMGameplayCueNotify_WithTeam()
@@ -74,12 +73,12 @@ void USMGameplayCueNotify_WithTeam::GetLocationAndRotation(const FGameplayCuePar
 
 ESMTeam USMGameplayCueNotify_WithTeam::GetTeamForSource(const AActor* SourceActor) const
 {
-	const ISMTeamComponentInterface* SourceTeamComponentInterface = Cast<ISMTeamComponentInterface>(SourceActor);
-	if (!ensureAlways(SourceTeamComponentInterface))
+	const ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(SourceActor);
+	if (!ensureAlways(SourceTeamInterface))
 	{
 		return ESMTeam();
 	}
 
-	ESMTeam Team = SourceTeamComponentInterface->GetTeamComponent()->GetTeam();
+	ESMTeam Team = SourceTeamInterface->GetTeam();
 	return Team;
 }

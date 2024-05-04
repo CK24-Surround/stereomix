@@ -3,8 +3,7 @@
 
 #include "SMGameplayCueNotifyLoopWithTeam.h"
 
-#include "Components/SMTeamComponent.h"
-#include "Interfaces/SMTeamComponentInterface.h"
+#include "Interfaces/SMTeamInterface.h"
 
 
 ASMGameplayCueNotifyLoopWithTeam::ASMGameplayCueNotifyLoopWithTeam()
@@ -41,12 +40,12 @@ void ASMGameplayCueNotifyLoopWithTeam::GetLocationAndRotation(const FGameplayCue
 
 ESMTeam ASMGameplayCueNotifyLoopWithTeam::GetTeamForSource(const AActor* SourceActor) const
 {
-	const ISMTeamComponentInterface* SourceTeamComponentInterface = Cast<ISMTeamComponentInterface>(SourceActor);
-	if (!ensureAlways(SourceTeamComponentInterface))
+	const ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(SourceActor);
+	if (!ensureAlways(SourceTeamInterface))
 	{
 		return ESMTeam();
 	}
 
-	ESMTeam Team = SourceTeamComponentInterface->GetTeamComponent()->GetTeam();
+	ESMTeam Team = SourceTeamInterface->GetTeam();
 	return Team;
 }

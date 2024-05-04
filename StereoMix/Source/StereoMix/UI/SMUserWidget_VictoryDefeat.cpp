@@ -5,9 +5,8 @@
 
 #include "AbilitySystemComponent.h"
 #include "Components/Image.h"
-#include "Components/SMTeamComponent.h"
 #include "Games/SMGameState.h"
-#include "Interfaces/SMTeamComponentInterface.h"
+#include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMLog.h"
 
 void USMUserWidget_VictoryDefeat::SetASC(UAbilitySystemComponent* InASC)
@@ -43,19 +42,13 @@ void USMUserWidget_VictoryDefeat::OnEndRound(ESMTeam VictoryTeam)
 		return;
 	}
 
-	ISMTeamComponentInterface* SourceTeamComponentInterface = Cast<ISMTeamComponentInterface>(ASC->GetAvatarActor());
-	if (!ensure(SourceTeamComponentInterface))
+	ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(ASC->GetAvatarActor());
+	if (!ensure(SourceTeamInterface))
 	{
 		return;
 	}
 
-	USMTeamComponent* SourceTeamComponent = SourceTeamComponentInterface->GetTeamComponent();
-	if (!ensure(SourceTeamComponent))
-	{
-		return;
-	}
-
-	const ESMTeam SourceTeam = SourceTeamComponent->GetTeam();
+	const ESMTeam SourceTeam = SourceTeamInterface->GetTeam();
 
 	if (SourceTeam == VictoryTeam)
 	{

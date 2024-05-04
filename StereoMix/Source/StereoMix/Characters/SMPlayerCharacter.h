@@ -8,7 +8,7 @@
 #include "GameplayTagContainer.h"
 #include "SMCharacter.h"
 #include "Interfaces/SMDamageInterface.h"
-#include "Interfaces/SMTeamComponentInterface.h"
+#include "Interfaces/SMTeamInterface.h"
 #include "SMPlayerCharacter.generated.h"
 
 class UWidgetComponent;
@@ -36,7 +36,7 @@ enum class EActiveAbility : uint8
 };
 
 UCLASS()
-class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamComponentInterface, public ISMDamageInterface
+class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMDamageInterface
 {
 	GENERATED_BODY()
 
@@ -68,7 +68,9 @@ protected:
 
 // ~Component Section
 public:
-	FORCEINLINE USMTeamComponent* GetTeamComponent() const { return TeamComponent; }
+	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
+
+	virtual ESMTeam GetTeam() const override;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component|HitBox")

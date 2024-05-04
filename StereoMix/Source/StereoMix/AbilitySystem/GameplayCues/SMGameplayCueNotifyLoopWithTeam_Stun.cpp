@@ -4,7 +4,6 @@
 #include "SMGameplayCueNotifyLoopWithTeam_Stun.h"
 
 #include "NiagaraFunctionLibrary.h"
-#include "Components/SMTeamComponent.h"
 
 void ASMGameplayCueNotifyLoopWithTeam_Stun::OnStartFX(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {

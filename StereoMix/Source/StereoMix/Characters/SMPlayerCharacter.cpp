@@ -182,6 +182,11 @@ void ASMPlayerCharacter::InitCamera()
 	Camera->SetFieldOfView(CameraFOV);
 }
 
+ESMTeam ASMPlayerCharacter::GetTeam() const
+{
+	return TeamComponent->GetTeam();
+}
+
 void ASMPlayerCharacter::SetupGASInputComponent()
 {
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/SMTeamComponentInterface.h"
+#include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMTeam.h"
 #include "SMTile.generated.h"
 
@@ -15,7 +15,7 @@ class UBoxComponent;
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangeTileSignature, ESMTeam /*PreviousTeam*/, ESMTeam /*NewTeam*/);
 
 UCLASS()
-class STEREOMIX_API ASMTile : public AActor, public ISMTeamComponentInterface
+class STEREOMIX_API ASMTile : public AActor, public ISMTeamInterface
 {
 	GENERATED_BODY()
 
@@ -34,6 +34,9 @@ protected:
 
 public:
 	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
+
+	virtual ESMTeam GetTeam() const override;
+
 	FORCEINLINE UBoxComponent* GetBoxComponent() const { return BoxComponent; }
 
 	FVector GetTileLocation();

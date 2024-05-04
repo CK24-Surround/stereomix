@@ -9,7 +9,6 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
-#include "Components/SMTeamComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraSystem.h"
 #include "Tiles/SMTile.h"
@@ -347,13 +346,9 @@ void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter
 			FVector TileCenter = Tile->GetTileLocation();
 			GCParams.Location = TileCenter;
 
-			const USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
-			if (ensure(SourceTeamComponent))
-			{
-				const ESMTeam Team = SourceTeamComponent->GetTeam();
-				UNiagaraSystem* OnSmashFXWithTeam = OnSmashFX[Team];
-				GCParams.SourceObject = OnSmashFXWithTeam;
-			}
+			const ESMTeam Team = SourceCharacter->GetTeam();
+			UNiagaraSystem* OnSmashFXWithTeam = OnSmashFX[Team];
+			GCParams.SourceObject = OnSmashFXWithTeam;
 
 			// 이펙트를 재생합니다.
 			SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
@@ -385,13 +380,7 @@ void USMGameplayAbility_Smash::ApplySmashSplashDamage(const FVector& TileLocatio
 		return;
 	}
 
-	const USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
-	if (!ensureAlways(SourceTeamComponent))
-	{
-		return;
-	}
-
-	const ESMTeam SourceTeam = SourceTeamComponent->GetTeam();
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	if (SourceTeam == ESMTeam::None)
 	{
 		return;
@@ -422,14 +411,8 @@ void USMGameplayAbility_Smash::ApplySmashSplashDamage(const FVector& TileLocatio
 				continue;
 			}
 
-			USMTeamComponent* TeamComponent = TargetCharacter->GetTeamComponent();
-			if (!ensureAlways(TeamComponent))
-			{
-				continue;
-			}
-
 			// 팀이 없는 경우 대미지를 가하지 않습니다.
-			const ESMTeam TargetTeam = TeamComponent->GetTeam();
+			const ESMTeam TargetTeam = TargetCharacter->GetTeam();
 			if (TargetTeam == ESMTeam::None)
 			{
 				continue;

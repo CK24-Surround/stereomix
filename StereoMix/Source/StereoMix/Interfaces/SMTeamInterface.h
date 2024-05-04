@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "SMTeamComponentInterface.generated.h"
+#include "Utilities/SMTeam.h"
+#include "SMTeamInterface.generated.h"
 
 class USMTeamComponent;
 // This class does not need to be modified.
 UINTERFACE()
-class USMTeamComponentInterface : public UInterface
+class USMTeamInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -17,11 +18,15 @@ class USMTeamComponentInterface : public UInterface
 /**
  * 
  */
-class STEREOMIX_API ISMTeamComponentInterface
+class STEREOMIX_API ISMTeamInterface
 {
 	GENERATED_BODY()
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	/** 팀 컴포넌트를 반환합니다. */
 	virtual USMTeamComponent* GetTeamComponent() const = 0;
+
+	/** 팀을 반환합니다. */
+	virtual ESMTeam GetTeam() const = 0;
 };

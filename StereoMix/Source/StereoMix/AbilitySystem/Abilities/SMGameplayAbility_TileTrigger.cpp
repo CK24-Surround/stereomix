@@ -7,7 +7,6 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
-#include "Components/SMTeamComponent.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -71,18 +70,11 @@ void USMGameplayAbility_TileTrigger::ActivateAbility(const FGameplayAbilitySpecH
 		return;
 	}
 
-	USMTeamComponent* SourceTeamComponent = SourceCharacter->GetTeamComponent();
-	if (!ensure(SourceTeamComponent))
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
-	}
-
 	// 트리거된 타일의 위치를 저장합니다.
 	TriggerdTileLocation = Tile->GetTileLocation();
 
 	// 팀을 저장합니다.
-	SourceTeam = SourceTeamComponent->GetTeam();
+	SourceTeam = SourceCharacter->GetTeam();
 
 	// 타일이 트리거 되야할 규모를 저장합니다.
 	TileTriggerMagnitude = TriggerEventData->EventMagnitude;
