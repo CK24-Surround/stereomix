@@ -30,6 +30,7 @@ ASMProjectile::ASMProjectile()
 	ProjectileFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	ProjectileFXComponent->SetupAttachment(SphereComponent);
 	ProjectileFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	ProjectileFXComponent->SetAsset(ProjectileBodyFX);
 	ProjectileFXComponent->SetAutoActivate(false);
 
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
@@ -37,10 +38,6 @@ ASMProjectile::ASMProjectile()
 	ProjectileMovementComponent->SetAutoActivate(false);
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
-
-	ProjectileBodyFX.Add(ESMTeam::None, nullptr);
-	ProjectileBodyFX.Add(ESMTeam::EDM, nullptr);
-	ProjectileBodyFX.Add(ESMTeam::FutureBass, nullptr);
 
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Stun);
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
@@ -72,45 +69,6 @@ void ASMProjectile::Tick(float DeltaTime)
 	ReturnToPoolIfOutOfMaxDistance();
 }
 
-void ASMProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
-{
-	Super::NotifyActorBeginOverlap(OtherActor);
-
-	// 유효한 타겟인지 검증합니다.
-	if (!IsValidateTarget(OtherActor))
-	{
-		return;
-	}
-
-	if (HasAuthority())
-	{
-		ApplyDamage(OtherActor);
-		ApplyFX(OtherActor);
-
-		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		MulticastRPCEndLifeTime();
-	}
-	else
-	{
-		SetActorHiddenInGame(true);
-	}
-}
-
-void ASMProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
-{
-	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-
-	if (HasAuthority())
-	{
-		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		MulticastRPCEndLifeTime();
-	}
-	else
-	{
-		SetActorHiddenInGame(true);
-	}
-}
-
 void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InDamage)
 {
 	if (!HasAuthority())
@@ -140,15 +98,14 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 	Damage = InDamage;
 
 	// 클라이언트의 투사체도 발사합니다.
-	MulticastRPCLaunch(InStartLocation, InNormal, InSpeed, InMaxDistance, OwnerTeam);
+	MulticastRPCLaunch(InStartLocation, InNormal, InSpeed, InMaxDistance);
 }
 
-void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, ESMTeam InTeam)
+void ASMProjectile::MulticastRPCLaunch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance)
 {
 	// 투사체에 필요한 데이터들을 저장하고 위치를 초기화해줍니다. 이 시점은 막 투사체 풀에서 투사체를 꺼내온 상황입니다.
 	MaxDistance = InMaxDistance;
 	StartLocation = InStartLocation;
-	ProjectileFXComponent->SetAsset(ProjectileBodyFX[InTeam]);
 	SetActorLocationAndRotation(InStartLocation, InNormal.Rotation());
 
 	// 투사체를 활성화 해줍니다.
@@ -204,119 +161,6 @@ void ASMProjectile::ReturnToPoolIfOutOfMaxDistance()
 			SetActorHiddenInGame(true);
 		}
 	}
-}
-
-bool ASMProjectile::IsValidateTarget(AActor* InTarget)
-{
-	// 자신이 발사한 투사체에 적중되지 않도록 합니다. (자살 방지)
-	if (InTarget == GetOwner())
-	{
-		return false;
-	}
-
-	// 투사체가 무소속인 경우 무시합니다.
-	const ESMTeam SourceTeam = TeamComponent->GetTeam();
-	if (SourceTeam == ESMTeam::None)
-	{
-		return false;
-	}
-
-	ISMTeamComponentInterface* TargetTeamComponentInterface = Cast<ISMTeamComponentInterface>(InTarget);
-	if (!TargetTeamComponentInterface)
-	{
-		return false;
-	}
-
-	USMTeamComponent* OtherTeamComponent = TargetTeamComponentInterface->GetTeamComponent();
-	if (!ensureAlways(OtherTeamComponent))
-	{
-		return false;
-	}
-
-	// 타겟이 무소속인 경우 무시합니다.
-	const ESMTeam OtherTeam = OtherTeamComponent->GetTeam();
-	if (OtherTeam == ESMTeam::None)
-	{
-		return false;
-	}
-
-	// 투사체와 타겟이 같은 팀이라면 무시합니다. (팀킬 방지)
-	if (SourceTeam == OtherTeam)
-	{
-		return false;
-	}
-
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
-	if (!ensureAlways(TargetASC))
-	{
-		return false;
-	}
-
-	// 타겟이 되지 않아야하는 상태라면 무시합니다.
-	if (TargetASC->HasAnyMatchingGameplayTags(IgnoreTargetStateTags))
-	{
-		return false;
-	}
-
-	return true;
-}
-
-void ASMProjectile::ApplyDamage(AActor* InTarget)
-{
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
-	if (!ensureAlways(TargetASC))
-	{
-		return;
-	}
-
-	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
-	if (!ensureAlways(SourceASC))
-	{
-		return;
-	}
-
-	FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DamageGE, 1.0f, SourceASC->MakeEffectContext());
-	if (!ensureAlways(GESpecHandle.IsValid()))
-	{
-		return;
-	}
-
-	// SetByCaller를 통해 매개변수로 전달받은 Damage로 GE를 적용합니다.
-	GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
-	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
-
-	// 공격자 정보도 저장합니다.
-	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetASC->GetAvatarActor());
-	if (ensureAlways(TargetDamageInterface))
-	{
-		TargetDamageInterface->SetLastAttackInstigator(SourceASC->GetAvatarActor());
-	}
-}
-
-void ASMProjectile::ApplyFX(AActor* InTarget)
-{
-	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
-	if (!ensureAlways(SourceASC))
-	{
-		return;
-	}
-
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
-	if (!ensureAlways(TargetASC))
-	{
-		return;
-	}
-
-	const AActor* TargetActor = TargetASC->GetAvatarActor();
-	if (!ensureAlways(TargetActor))
-	{
-		return;
-	}
-
-	// 적중한 타겟에게 FX를 재생시킵니다.
-	FGameplayCueParameters GCParams;
-	GCParams.Location = TargetActor->GetActorLocation();
-	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileHit, GCParams);
 }
 
 void ASMProjectile::OnChangeTeamCallback()
