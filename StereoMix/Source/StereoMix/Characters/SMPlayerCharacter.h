@@ -217,7 +217,7 @@ protected:
 
 // ~Catch Section
 public:
-	// 자신이 잡고 있는 폰을 반환합니다.
+	/** 자신이 잡고 있는 폰을 반환합니다. */
 	FORCEINLINE ASMPlayerCharacter* GetCatchCharacter() { return CatchCharacter.Get(); }
 
 	/** 자신이 잡고 있는 폰을 할당합니다. */
