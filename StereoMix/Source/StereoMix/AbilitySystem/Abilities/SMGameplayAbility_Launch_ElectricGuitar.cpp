@@ -70,7 +70,14 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchTimerCallback()
 		return;
 	}
 
-	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceCharacter->GetTeam());
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	if (SourceTeam == ESMTeam::None)
+	{
+		K2_CancelAbility();
+		return;
+	}
+
+	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceTeam);
 	if (!ensureAlways(ProjectilePool))
 	{
 		K2_CancelAbility();
