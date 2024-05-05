@@ -7,6 +7,7 @@
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "SMCharacter.h"
+#include "Interfaces/SMCatchableInterface.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "SMPlayerCharacter.generated.h"
@@ -36,7 +37,7 @@ enum class EActiveAbility : uint8
 };
 
 UCLASS()
-class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMDamageInterface
+class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMCatchableInterface, public ISMDamageInterface
 {
 	GENERATED_BODY()
 
@@ -217,23 +218,29 @@ protected:
 
 // ~Catch Section
 public:
-	/** 자신이 잡고 있는 폰을 반환합니다. */
-	FORCEINLINE ASMPlayerCharacter* GetCatchCharacter() { return CatchCharacter.Get(); }
+	FORCEINLINE AActor* GetMyCaughtActor() { return MyCaughtActor.Get(); }
 
-	/** 자신이 잡고 있는 폰을 할당합니다. */
-	FORCEINLINE void SetCatchCharacter(ASMPlayerCharacter* InCatchCharacter) { CatchCharacter = InCatchCharacter; }
+	FORCEINLINE void SetMyCaughtActor(AActor* InMyCaughtActor) { MyCaughtActor = InMyCaughtActor; }
 
-	// 자신을 잡고 있는 폰을 반환합니다.
-	FORCEINLINE ASMPlayerCharacter* GetCaughtCharacter() { return CaughtCharacter.Get(); }
+	FORCEINLINE virtual AActor* GetCatchingMeActor() override { return CatchingMeActor.Get(); }
 
-	/** 자신을 잡고 있는 폰을 할당합니다. 부모액터를 할당한다고 생각하면됩니다. */
-	FORCEINLINE void SetCaughtCharacter(ASMPlayerCharacter* InCaughtCharacter) { CaughtCharacter = InCaughtCharacter; }
+	FORCEINLINE virtual void SetCatchingMeActor(AActor* InCatchingMeActor) override { CatchingMeActor = InCatchingMeActor; }
 
-public:
-	/** 한 캐릭터에게 여러번 잡히지 않도록 잡았던 캐릭터들을 담아둡니다. */
-	UPROPERTY(Replicated)
+	virtual bool OnCaught(AActor* TargetActor) override;
+
+	virtual bool OnReleasedCatch(AActor* TargetActor) override;
+
+	virtual bool IsCatchble(AActor* TargetActor) override;
+
+protected:
+	TWeakObjectPtr<AActor> MyCaughtActor;
+
+	TWeakObjectPtr<AActor> CatchingMeActor;
+	
+	/** 한 캐릭터에게 여러번 잡히지 않도록 자신을 잡았던 캐릭터들을 담아둡니다. 서버에서만 유효합니다. */
 	TArray<TWeakObjectPtr<ASMPlayerCharacter>> CapturedCharcters;
 
+// TODO: 제거 예정
 protected:
 	// 자신이 잡고 있는 폰을 의미합니다.
 	UPROPERTY(Replicated)
@@ -242,6 +249,7 @@ protected:
 	// 자신이 잡혀 있는 폰을 의미합니다.
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<ASMPlayerCharacter> CaughtCharacter;
+// TODO: 제거 예정
 // ~Catch Section
 
 // ~Damage Section
