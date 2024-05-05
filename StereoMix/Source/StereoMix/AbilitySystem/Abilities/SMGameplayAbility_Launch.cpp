@@ -30,14 +30,14 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
@@ -106,7 +106,7 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 	const FGameplayAbilityTargetData* ProjectileDataHandle = GameplayAbilityTargetDataHandle.Get(0);
 	if (!ensureAlways(ProjectileDataHandle))
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
@@ -115,6 +115,9 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 	const FVector ProjectileDirection = ProjectileDataHandle->GetEndPoint();
 
 	LaunchProjectile(StartLocation, ProjectileDirection);
+}
 
-	// K2_EndAbility();
+void USMGameplayAbility_Launch::LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal)
+{
+	K2_EndAbility();
 }
