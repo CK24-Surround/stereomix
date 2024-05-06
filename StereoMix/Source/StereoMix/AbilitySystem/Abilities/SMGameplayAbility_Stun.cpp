@@ -29,6 +29,13 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
@@ -46,13 +53,6 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	}
 
 	// 컨트롤 로테이션을 따라 회전하지 않도록 잠급니다.
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
-	{
-		K2_CancelAbility();
-		return;
-	}
-
 	SourceCharacter->SetUseControllerRotation(false);
 
 	// 스턴 시간 만큼 기다립니다.
@@ -62,23 +62,19 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		K2_CancelAbility();
 		return;
 	}
+	WaitDelayTask->OnFinish.AddDynamic(this, &ThisClass::OnStunTimeEnd);
+	WaitDelayTask->ReadyForActivation();
 
-	// 잡고 있던 캐릭터가 있다면 놓아줍니다.
+	// 잡고 있던 액터가 있다면 놓아줍니다.
 	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Catch))
 	{
-		ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
-		if (ensureAlways(TargetCharacter))
+		AActor* TargetActor = SourceCharacter->GetActorIAmCatching();
+		ISMCatchInteractionInterface* TargetCatchInteractionInterface = Cast<ISMCatchInteractionInterface>(TargetActor);
+		if (ensureAlways(TargetCatchInteractionInterface))
 		{
-			UAbilitySystemComponent* TargetASC = TargetCharacter->GetAbilitySystemComponent();
-			if (ensureAlways(TargetASC))
-			{
-				TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit));
-			}
+			TargetCatchInteractionInterface->OnCaughtReleased(SourceCharacter, false);
 		}
 	}
-
-	WaitDelayTask->OnFinish.AddDynamic(this, &USMGameplayAbility_Stun::OnStunTimeEnded);
-	WaitDelayTask->ReadyForActivation();
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
@@ -93,8 +89,6 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 
 void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	OnStunEnded();
-
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (ensureAlways(SourceASC))
 	{
@@ -112,10 +106,10 @@ void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void USMGameplayAbility_Stun::OnStunTimeEnded()
+void USMGameplayAbility_Stun::OnStunTimeEnd()
 {
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
+	if (!ensureAlways(SourceASC))
 	{
 		K2_CancelAbility();
 		return;
@@ -128,26 +122,23 @@ void USMGameplayAbility_Stun::OnStunTimeEnded()
 	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Smashed))
 	{
 		ProcessBuzzerBeaterSmashed();
-		return;
 	}
 	// 잡힌 상태인 경우의 처리입니다.
 	else if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Caught))
 	{
 		ProcessCaughtExit();
-		return;
 	}
 	// 기절 상태인 경우의 처리입니다.
 	else
 	{
 		ResetStunState();
-		return;
 	}
 }
 
 void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 {
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
+	if (!ensureAlways(SourceASC))
 	{
 		K2_CancelAbility();
 		return;
@@ -161,67 +152,67 @@ void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 	}
 
 	// 만약 어떤 이유로 자신을 잡고 있는 캐릭터가 제거된 경우의 예외처리입니다.
-	if (!SourceCharacter->GetCaughtCharacter())
+	if (!SourceCharacter->GetActorCatchingMe())
 	{
 		SourceASC->RemoveTag(SMTags::Character::State::Smashed);
-		OnStunTimeEnded();
+		// 즉시 잡기 탈출 로직을 호출합니다.
+		ProcessCaughtExit();
 		return;
 	}
 
-	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 상태 진입"));
 	// 스매시 이벤트를 기다립니다.
+	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 진입"));
 	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterSmashEnd);
-	if (!ensure(WaitGameplayEventTask))
+	if (!ensureAlways(WaitGameplayEventTask))
 	{
 		K2_CancelAbility();
 		return;
 	}
-
-	WaitGameplayEventTask->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded);
+	WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnBuzzerBeaterSmashEnded);
 	WaitGameplayEventTask->ReadyForActivation();
 }
 
 void USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded(FGameplayEventData Payload)
 {
+	// 버저비터 종료 애니메이션을 재생하고 이 애니메이션이 종료되면 스턴을 종료합니다. 이미 잡기는 풀린 상태입니다.
 	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 종료"));
+	ClientRPCPlayMontage(SmashedMontage, 1.0f, TEXT("End"));
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), SmashedMontage, 1.0f, TEXT("End"));
-	if (!ensure(PlayMontageAndWaitTask))
+	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		K2_CancelAbility();
 		return;
 	}
-
-	ClientRPCPlayMontage(SmashedMontage, 1.0f, TEXT("End"));
-	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
+	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::OnStunEnd);
 	PlayMontageAndWaitTask->ReadyForActivation();
 }
 
 void USMGameplayAbility_Stun::ProcessCaughtExit()
 {
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
+	if (!ensureAlways(SourceASC))
 	{
 		K2_CancelAbility();
 		return;
 	}
 
-	// 잡기 탈출 GA를 활성화합니다.
+	// 잡기 탈출 GA를 활성화합니다. 잡기 탈출 및 잡기 탈출 애니메이션이 재생됩니다.
 	SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExitOnStunEnd));
 
+	// 잡기 탈출이 완료되기까지 기다립니다. 이후 스턴을 종료합니다.
 	UAbilityTask_WaitGameplayEvent* WatiGameplayEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::CaughtExitEnd);
-	if (!ensure(WatiGameplayEvent))
+	if (!ensureAlways(WatiGameplayEvent))
 	{
 		K2_CancelAbility();
 		return;
 	}
-
-	WatiGameplayEvent->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnCaughtExitEnded);
+	WatiGameplayEvent->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnCaughtExitEnd);
 	WatiGameplayEvent->ReadyForActivation();
 }
 
-void USMGameplayAbility_Stun::OnCaughtExitEnded(FGameplayEventData Payload)
+void USMGameplayAbility_Stun::OnCaughtExitEnd(FGameplayEventData Payload)
 {
-	OnComplete();
+	OnStunEnd();
 }
 
 void USMGameplayAbility_Stun::ResetStunState()
@@ -233,14 +224,17 @@ void USMGameplayAbility_Stun::ResetStunState()
 		return;
 	}
 
-	// 매쳐졌는지 아닌지 확인하고 그에 맞는 스턴 종료 애니메이션을 재생시킵니다.
+	// 한번이라도 특수 액션을 당하면 캐릭터가 넘어진 상태가 됩니다. 이 상태에서는 스턴 종료 애니메이션 달라져야하는데, 이를 구분하기위한 코드입니다.
+	// 특수 액션을 당하면 특수 액션 피격 애니메이션으로 무한루프 되고 있는 상태이므로 아래의 로직으로 구분할 수 있습니다.
 	UAnimMontage* EndMontage = StunMontage;
 	UAnimInstance* SourceAnimInstace = CurrentActorInfo->GetAnimInstance();
-	if (ensure(SourceAnimInstace))
+	if (ensureAlways(SourceAnimInstace))
 	{
+		// 현재 재생중인 몽타주 인스턴스를 반환합니다.
 		FAnimMontageInstance* MontageInstance = SourceAnimInstace->GetActiveMontageInstance();
 		if (MontageInstance)
 		{
+			// 몽타주 인스턴스의 몽타주가 특수 액션의 몽타주와 동일한지 체크합니다.
 			if (MontageInstance->Montage == SmashedMontage)
 			{
 				EndMontage = SmashedMontage;
@@ -248,46 +242,39 @@ void USMGameplayAbility_Stun::ResetStunState()
 		}
 	}
 
+	// 위에서 구분된 몽타주로 스턴 종료 애니메이션을 재생합니다. 애니메이션 재생이 완료되면 스턴을 종료합니다.
+	ClientRPCPlayMontage(EndMontage, 1.0f, TEXT("End"));
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), EndMontage, 1.0f, TEXT("End"));
-	if (!ensure(PlayMontageAndWaitTask))
+	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		K2_CancelAbility();
 		return;
 	}
-
-	ClientRPCPlayMontage(EndMontage, 1.0f, TEXT("End"));
-	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &USMGameplayAbility_Stun::OnComplete);
+	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::OnStunEnd);
 	PlayMontageAndWaitTask->ReadyForActivation();
 }
 
-void USMGameplayAbility_Stun::OnComplete()
-{
-	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
-}
-
-void USMGameplayAbility_Stun::OnStunEnded()
+void USMGameplayAbility_Stun::OnStunEnd()
 {
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
+	if (!ensureAlways(SourceASC))
 	{
 		return;
 	}
 
 	// 컨트롤 로테이션을 따라가도록 복구해줍니다.
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensure(SourceCharacter))
+	if (!ensureAlways(SourceCharacter))
 	{
 		return;
 	}
-
 	SourceCharacter->SetUseControllerRotation(true);
 
-	// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거합니다.
+	// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거하고 자신을 잡았던 캐릭터 리스트를 초기화합니다.
 	SourceASC->RemoveTag(SMTags::Character::State::Uncatchable);
+	SourceCharacter->GetCapturedMeCharcters().Empty();
 
-	SourceCharacter->CapturedCharcters.Empty();
-
-	// 마지막으로 적용해야할 GE들을 모두 적용합니다.
+	// 스턴 종료 시 적용해야할 GE들을 적용합니다.
 	for (const auto& StunEndedGE : StunEndedGEs)
 	{
 		if (ensure(StunEndedGE))
@@ -295,4 +282,6 @@ void USMGameplayAbility_Stun::OnStunEnded()
 			BP_ApplyGameplayEffectToOwner(StunEndedGE);
 		}
 	}
+
+	K2_EndAbility();
 }

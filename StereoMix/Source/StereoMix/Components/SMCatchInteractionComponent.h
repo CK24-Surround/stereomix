@@ -17,15 +17,15 @@ public:
 	USMCatchInteractionComponent();
 
 public:
-	FORCEINLINE virtual AActor* GetActorCatchingMe() override { return CatchingMeActor.Get(); }
+	FORCEINLINE virtual AActor* GetActorCatchingMe() const override { return CatchingMeActor.Get(); }
 
 	FORCEINLINE virtual void SetActorCatchingMe(AActor* NewActorCatchingMe) override { CatchingMeActor = NewActorCatchingMe; }
 
-	virtual bool IsCatchble(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
+	virtual bool IsCatchble(AActor* TargetActor) const override PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
 
 	virtual bool OnCaught(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
 
-	virtual bool OnCaughtReleased(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
+	virtual bool OnCaughtReleased(AActor* TargetActor, bool bIsStunTimeOut) override PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
 
 	virtual void OnSpecialActionPerformed(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionPerformed)
 

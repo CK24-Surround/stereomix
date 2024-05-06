@@ -23,11 +23,11 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual bool IsCatchble(AActor* TargetActor) override;
+	virtual bool IsCatchble(AActor* TargetActor) const override;
 
 	virtual bool OnCaught(AActor* TargetActor) override;
 
-	virtual bool OnCaughtReleased(AActor* TargetActor) override;
+	virtual bool OnCaughtReleased(AActor* TargetActor, bool bIsStunEnd) override;
 
 	virtual void OnSpecialActionPerformed(AActor* TargetActor) override;
 
@@ -38,7 +38,10 @@ public:
 
 	FORCEINLINE void SetActorIAmCatching(AActor* NewIAmCathingActor) { IAmCatchingActor = NewIAmCathingActor; }
 
-	FORCEINLINE const TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharcters() { return CapturedMeCharcters; }
+	FORCEINLINE TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharcters() { return CapturedMeCharcters; }
+
+protected:
+	bool HandleCaughtReleased(AActor* TargetActor);
 
 protected:
 	/** 자신이 잡고 있는 액터입니다. */

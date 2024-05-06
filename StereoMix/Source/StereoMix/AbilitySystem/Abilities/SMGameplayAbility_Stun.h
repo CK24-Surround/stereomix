@@ -47,7 +47,7 @@ public:
 
 protected:
 	UFUNCTION()
-	void OnStunTimeEnded();
+	void OnStunTimeEnd();
 
 protected:
 	/** 스턴이 끝나는 시점에 스매시 중이라면 스매시의 이벤트를 기다립니다.*/
@@ -59,18 +59,17 @@ protected:
 	
 	void ProcessCaughtExit();
 
+	/** 잡기가 풀리면 호출됩니다. */
 	UFUNCTION()
-	void OnCaughtExitEnded(FGameplayEventData Payload);
+	void OnCaughtExitEnd(FGameplayEventData Payload);
 	
 	/** 스턴 상태에서 벗어납니다. */
 	void ResetStunState();
 
 protected:
-	UFUNCTION()
-	void OnComplete();
-
 	/** 스턴이 종료될때 필요한 처리를 합니다.. */
-	void OnStunEnded();
+	UFUNCTION()
+	void OnStunEnd();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
@@ -87,5 +86,5 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Stun")
-	float StunTime = 8.0f;
+	float StunTime = 6.5f;
 };

@@ -509,12 +509,17 @@ void ASMPlayerCharacter::OnRep_EnableMovement()
 	}
 }
 
+AActor* ASMPlayerCharacter::GetActorCatchingMe() const
+{
+	return CatchInteractionComponent->GetActorCatchingMe();
+}
+
 void ASMPlayerCharacter::SetActorCatchingMe(AActor* NewActorCatchingMe)
 {
 	CatchInteractionComponent->SetActorCatchingMe(NewActorCatchingMe);
 }
 
-bool ASMPlayerCharacter::IsCatchble(AActor* TargetActor)
+bool ASMPlayerCharacter::IsCatchble(AActor* TargetActor) const
 {
 	return CatchInteractionComponent->IsCatchble(TargetActor);
 }
@@ -524,9 +529,9 @@ bool ASMPlayerCharacter::OnCaught(AActor* TargetActor)
 	return CatchInteractionComponent->OnCaught(TargetActor);
 }
 
-bool ASMPlayerCharacter::OnCaughtReleased(AActor* TargetActor)
+bool ASMPlayerCharacter::OnCaughtReleased(AActor* TargetActor, bool bIsStunTimeOut)
 {
-	return CatchInteractionComponent->OnCaughtReleased(TargetActor);
+	return CatchInteractionComponent->OnCaughtReleased(TargetActor, bIsStunTimeOut);
 }
 
 void ASMPlayerCharacter::OnSpecialActionPerformed(AActor* TargetActor)
@@ -539,7 +544,7 @@ void ASMPlayerCharacter::OnSpecialActionEnded(AActor* TargetActor)
 	CatchInteractionComponent->OnSpecialActionEnded(TargetActor);
 }
 
-AActor* ASMPlayerCharacter::GetActorCatchingMe()
+AActor* ASMPlayerCharacter::GetActorIAmCatching() const
 {
 	return CatchInteractionComponent->GetActorCatchingMe();
 }
@@ -547,6 +552,11 @@ AActor* ASMPlayerCharacter::GetActorCatchingMe()
 void ASMPlayerCharacter::SetActorIAmCatching(AActor* TargetActor)
 {
 	CatchInteractionComponent->SetActorIAmCatching(TargetActor);
+}
+
+TArray<TWeakObjectPtr<ASMPlayerCharacter>>& ASMPlayerCharacter::GetCapturedMeCharcters()
+{
+	return CatchInteractionComponent->GetCapturedMeCharcters();
 }
 
 void ASMPlayerCharacter::OnTeamChangeCallback()

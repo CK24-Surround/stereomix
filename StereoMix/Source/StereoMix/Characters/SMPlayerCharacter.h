@@ -222,13 +222,15 @@ protected:
 
 // ~Catch Interaction Section
 public:
+	virtual AActor* GetActorCatchingMe() const override;
+
 	virtual void SetActorCatchingMe(AActor* NewActorCatchingMe);
 
-	virtual bool IsCatchble(AActor* TargetActor) override;
+	virtual bool IsCatchble(AActor* TargetActor) const override;
 
 	virtual bool OnCaught(AActor* TargetActor) override;
 
-	virtual bool OnCaughtReleased(AActor* TargetActor) override;
+	virtual bool OnCaughtReleased(AActor* TargetActor, bool bIsStunTimeOut) override;
 
 	virtual void OnSpecialActionPerformed(AActor* TargetActor) override;
 
@@ -236,9 +238,11 @@ public:
 
 // Component
 public:
-	AActor* GetActorCatchingMe() override;
+	AActor* GetActorIAmCatching() const;
 
 	void SetActorIAmCatching(AActor* TargetActor);
+
+	TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharcters();
 // ~Catch Interaction Section
 
 // ~Damage Section
