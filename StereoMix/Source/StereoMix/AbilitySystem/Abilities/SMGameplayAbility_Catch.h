@@ -48,7 +48,7 @@ protected:
 
 protected:
 	UFUNCTION(Server, Reliable)
-	void ServerRPCRequestCatchProcess(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation);
+	void ServerRPCRequestCatch(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation);
 
 	/** 잡을 수 있는 가장 적합한 타겟을 반환합니다.*/
 	AActor* GetMostSuitableCatchableActor(const TArray<FOverlapResult>& InOverlapResults);

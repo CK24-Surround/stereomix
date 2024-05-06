@@ -8,7 +8,6 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
@@ -55,7 +54,6 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 		K2_CancelAbility();
 		return;
 	}
-
 	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &ThisClass::K2_CancelAbility);
 	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &ThisClass::K2_CancelAbility);
 	// 클라이언트와 서버 각각 애니메이션이 종료되면 스스로 종료하도록 합니다.
@@ -91,7 +89,6 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 			K2_CancelAbility();
 			return;
 		}
-
 		WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnCatchAnimNotify);
 		WaitGameplayEventTask->ReadyForActivation();
 	}
@@ -106,12 +103,12 @@ void USMGameplayAbility_Catch::OnCatchAnimNotify(FGameplayEventData Payload)
 		return;
 	}
 
-	// 시작 위치를 저장합니다.
+	// 시전 위치를 저장하고 서버에 잡기 요청을 보냅니다.
 	StartLocation = SourceCharacter->GetActorLocation();
-	ServerRPCRequestCatchProcess(StartLocation, TargetLocation);
+	ServerRPCRequestCatch(StartLocation, TargetLocation);
 }
 
-void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation)
+void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation)
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
@@ -136,7 +133,6 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(MaxDistance);
 	const FCollisionQueryParams Params(SCENE_QUERY_STAT(Hold), false, SourceCharacter);
 	bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::Action, CollisionShape, Params);
-
 	if (bSuccess)
 	{
 		bSuccess = false;
@@ -144,18 +140,13 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 		AActor* TargetActor = GetMostSuitableCatchableActor(OverlapResults);
 		if (TargetActor)
 		{
-			// 만약을 위해 다시 한번 더 잡기 가능한 대상인지 확인합니다.
+			// 이미 잡기 가능한 대상이므로 null체크를 다시 수행할 필요는 없습니다.
 			ISMCatchInteractionInterface* TargetCatchableInterface = Cast<ISMCatchInteractionInterface>(TargetActor);
-			if (!ensureAlways(TargetCatchableInterface))
-			{
-				K2_CancelAbility();
-				return;
-			}
 
 			// 이펙트 재생을 위해 잡기 전 타겟의 위치를 저장해둡니다.
 			const FVector TargetLocationBeforeCatch = TargetActor->GetActorLocation();
 
-			// 타겟에게 자신을 잡은 대상을 저장하고 잡힐때 필요한 로직을 수행합니다.
+			// 타겟의 잡히기 로직을 실행합니다.
 			if (!TargetCatchableInterface->OnCaught(SourceCharacter))
 			{
 				K2_CancelAbility();
@@ -163,7 +154,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 			}
 
 			// 잡은 대상을 저장하고 자신의 상태를 잡기로 변경합니다.
-			SourceCharacter->SetMyCaughtActor(TargetActor);
+			SourceCharacter->SetActorIAmCatching(TargetActor);
 			SourceASC->AddTag(SMTags::Character::State::Catch);
 
 			// 잡기 적중에 성공하여 성공 이펙트를 재생합니다.
