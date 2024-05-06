@@ -145,7 +145,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatchProcess_Implementation(const
 		if (TargetActor)
 		{
 			// 만약을 위해 다시 한번 더 잡기 가능한 대상인지 확인합니다.
-			ISMCatchableInterface* TargetCatchableInterface = Cast<ISMCatchableInterface>(TargetActor);
+			ISMCatchInteractionInterface* TargetCatchableInterface = Cast<ISMCatchInteractionInterface>(TargetActor);
 			if (!ensureAlways(TargetCatchableInterface))
 			{
 				K2_CancelAbility();
@@ -222,7 +222,7 @@ bool USMGameplayAbility_Catch::GetCatchableActors(const TArray<FOverlapResult>& 
 	{
 		// 잡을 수 있는 액터만 추려냅니다.
 		AActor* TargetActor = OverlapResult.GetActor();
-		ISMCatchableInterface* TargetCatchableInterface = Cast<ISMCatchableInterface>(TargetActor);
+		ISMCatchInteractionInterface* TargetCatchableInterface = Cast<ISMCatchInteractionInterface>(TargetActor);
 		if (TargetCatchableInterface)
 		{
 			// 유효한 각도내에 있는지 체크합니다.

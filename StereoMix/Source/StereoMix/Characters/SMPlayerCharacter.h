@@ -37,7 +37,7 @@ enum class EActiveAbility : uint8
 };
 
 UCLASS()
-class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMCatchableInterface, public ISMDamageInterface
+class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMCatchInteractionInterface, public ISMDamageInterface
 {
 	GENERATED_BODY()
 
@@ -222,13 +222,13 @@ public:
 
 	FORCEINLINE void SetMyCaughtActor(AActor* InMyCaughtActor) { MyCaughtActor = InMyCaughtActor; }
 
-	FORCEINLINE virtual AActor* GetCatchingMeActor() override { return CatchingMeActor.Get(); }
+	FORCEINLINE virtual AActor* GetActorCatchingMe() override { return CatchingMeActor.Get(); }
 
-	FORCEINLINE virtual void SetCatchingMeActor(AActor* InCatchingMeActor) override { CatchingMeActor = InCatchingMeActor; }
+	FORCEINLINE virtual void SetActorCatchingMe(AActor* InCatchingMeActor) override { CatchingMeActor = InCatchingMeActor; }
 
 	virtual bool OnCaught(AActor* TargetActor) override;
 
-	virtual bool OnReleasedCatch(AActor* TargetActor) override;
+	virtual bool OnCaughtReleased(AActor* TargetActor) override;
 
 	virtual bool IsCatchble(AActor* TargetActor) override;
 

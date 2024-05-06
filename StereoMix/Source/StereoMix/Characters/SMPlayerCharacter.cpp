@@ -529,7 +529,7 @@ bool ASMPlayerCharacter::OnCaught(AActor* TargetActor)
 	}
 
 	// 자신을 잡은 캐릭터를 저장하고 잡힌 상태 태그를 부착합니다.
-	SetCatchingMeActor(TargetActor);
+	SetActorCatchingMe(TargetActor);
 	ASC->AddTag(SMTags::Character::State::Caught);
 
 	// 자신을 잡았던 캐릭터 목록을 업데이트 해줍니다.
@@ -565,7 +565,7 @@ bool ASMPlayerCharacter::OnCaught(AActor* TargetActor)
 	return true;
 }
 
-bool ASMPlayerCharacter::OnReleasedCatch(AActor* TargetActor)
+bool ASMPlayerCharacter::OnCaughtReleased(AActor* TargetActor)
 {
 	return false;
 }
