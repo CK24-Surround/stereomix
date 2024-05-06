@@ -220,11 +220,9 @@ protected:
 	uint32 bEnableMovement:1 = true;
 // ~State Section
 
-// ~Catch Section
+// ~Catch Interaction Section
 public:
-	virtual AActor* GetActorCatchingMe() override { return MyCaughtActor.Get(); }
-
-	virtual void SetActorCatchingMe(AActor* NewActorCatchingMe) override { MyCaughtActor = NewActorCatchingMe; }
+	virtual void SetActorCatchingMe(AActor* NewActorCatchingMe);
 
 	virtual bool IsCatchble(AActor* TargetActor) override;
 
@@ -236,15 +234,12 @@ public:
 
 	virtual void OnSpecialActionEnded(AActor* TargetActor) override;
 
-protected:
-	UPROPERTY(Replicated)
-	TWeakObjectPtr<AActor> MyCaughtActor;
+// Component
+public:
+	AActor* GetActorCatchingMe() override;
 
-	TWeakObjectPtr<AActor> CatchingMeActor;
-
-	/** 한 캐릭터에게 여러번 잡히지 않도록 자신을 잡았던 캐릭터들을 담아둡니다. 서버에서만 유효합니다. */
-	TArray<TWeakObjectPtr<ASMPlayerCharacter>> CapturedCharcters;
-// ~Catch Section
+	void SetActorIAmCatching(AActor* TargetActor);
+// ~Catch Interaction Section
 
 // ~Damage Section
 public:

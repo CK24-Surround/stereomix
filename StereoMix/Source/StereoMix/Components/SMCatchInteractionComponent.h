@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Interfaces/SMCatchableInterface.h"
 #include "SMCatchInteractionComponent.generated.h"
 
 
 UCLASS(Abstract, ClassGroup=(CatchInteraction), meta=(BlueprintSpawnableComponent))
-class STEREOMIX_API USMCatchInteractionComponent : public UActorComponent
+class STEREOMIX_API USMCatchInteractionComponent : public UActorComponent, public ISMCatchInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -16,15 +17,19 @@ public:
 	USMCatchInteractionComponent();
 
 public:
-	AActor* GetActorCatchingMe() { return CatchingMeActor.Get(); }
+	FORCEINLINE virtual AActor* GetActorCatchingMe() override { return CatchingMeActor.Get(); }
 
-	void SetActorCatchingMe(AActor* NewActorCatchingMe) { CatchingMeActor = NewActorCatchingMe; }
+	FORCEINLINE virtual void SetActorCatchingMe(AActor* NewActorCatchingMe) override { CatchingMeActor = NewActorCatchingMe; }
 
-	virtual bool IsCatchble(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
+	virtual bool IsCatchble(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
 
-	virtual void OnSpecialActionPerformed(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionPerformed)
+	virtual bool OnCaught(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
 
-	virtual void OnSpecialActionEnded(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionEnded)
+	virtual bool OnCaughtReleased(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
+
+	virtual void OnSpecialActionPerformed(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionPerformed)
+
+	virtual void OnSpecialActionEnded(AActor* TargetActor) override PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionEnded)
 
 protected:
 	/** 자신을 잡고 있는 액터입니다. */
