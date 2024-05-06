@@ -25,6 +25,7 @@
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
+#include "Components/SMCatchInteractionComponent_Character.h"
 
 ASMPlayerCharacter::ASMPlayerCharacter()
 {
@@ -53,6 +54,8 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	InitCamera();
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
+
+	CatchInteractionComponent = CreateDefaultSubobject<USMCatchInteractionComponent_Character>(TEXT("CatchInteractionComponent"));
 
 	CharacterStateWidgetComponent = CreateDefaultSubobject<USMWidgetComponent>(TEXT("CharacterStateWidget"));
 	CharacterStateWidgetComponent->SetupAttachment(GetMesh());

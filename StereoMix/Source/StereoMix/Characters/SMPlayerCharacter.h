@@ -12,6 +12,7 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMPlayerCharacter.generated.h"
 
+class USMCatchInteractionComponent_Character;
 class UWidgetComponent;
 DECLARE_MULTICAST_DELEGATE(FOnLandedSignature);
 
@@ -85,6 +86,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Component|Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Component|CatchInteraction")
+	TObjectPtr<USMCatchInteractionComponent_Character> CatchInteractionComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "UI|PlayerState")
 	TObjectPtr<USMWidgetComponent> CharacterStateWidgetComponent;
