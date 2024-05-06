@@ -508,6 +508,62 @@ void ASMPlayerCharacter::OnRep_EnableMovement()
 	}
 }
 
+bool ASMPlayerCharacter::IsCatchble(AActor* TargetActor)
+{
+	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
+	if (!ensureAlways(TargetCharacter))
+	{
+		return false;
+	}
+
+	if (!ensureAlways(ASC.Get()))
+	{
+		return false;
+	}
+
+	// 무소속이라면 잡을 수 없습니다.
+	// 사실상 무소속은 대미지를 받지 않기 때문에 기절할 일은 없긴하지만 만약을 위한 예외처리입니다.
+	const ESMTeam SourceTeam = GetTeam();
+	if (SourceTeam == ESMTeam::None)
+	{
+		return false;
+	}
+
+	// 팀이 같다면 잡을 수 없습니다.
+	if (SourceTeam == TargetCharacter->GetTeam())
+	{
+		return false;
+	}
+
+	// 자신을 잡았던 캐릭터들을 순회하며 한 번이라도 자신을 잡았던 대상인지 확인합니다.
+	bool bIsCaptureCharacter = false;
+	for (const auto& CapturedCharcter : CapturedCharcters)
+	{
+		if (CapturedCharcter.Get())
+		{
+			if (CapturedCharcter == TargetCharacter)
+			{
+				bIsCaptureCharacter = true;
+				break;
+			}
+		}
+	}
+
+	// 자신을 잡았던 타겟이라면 다시 잡을 수 없습니다.
+	if (bIsCaptureCharacter)
+	{
+		return false;
+	}
+
+	// 잡을 수 없는 상태 태그가 부착되어 있다면 잡을 수 없습니다.
+	if (ASC->HasMatchingGameplayTag(SMTags::Character::State::Uncatchable))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 bool ASMPlayerCharacter::OnCaught(AActor* TargetActor)
 {
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
@@ -568,62 +624,6 @@ bool ASMPlayerCharacter::OnCaught(AActor* TargetActor)
 bool ASMPlayerCharacter::OnCaughtReleased(AActor* TargetActor)
 {
 	return false;
-}
-
-bool ASMPlayerCharacter::IsCatchble(AActor* TargetActor)
-{
-	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
-	if (!ensureAlways(TargetCharacter))
-	{
-		return false;
-	}
-
-	if (!ensureAlways(ASC.Get()))
-	{
-		return false;
-	}
-
-	// 무소속이라면 잡을 수 없습니다.
-	// 사실상 무소속은 대미지를 받지 않기 때문에 기절할 일은 없긴하지만 만약을 위한 예외처리입니다.
-	const ESMTeam SourceTeam = GetTeam();
-	if (SourceTeam == ESMTeam::None)
-	{
-		return false;
-	}
-
-	// 팀이 같다면 잡을 수 없습니다.
-	if (SourceTeam == TargetCharacter->GetTeam())
-	{
-		return false;
-	}
-
-	// 자신을 잡았던 캐릭터들을 순회하며 한 번이라도 자신을 잡았던 대상인지 확인합니다.
-	bool bIsCaptureCharacter = false;
-	for (const auto& CapturedCharcter : CapturedCharcters)
-	{
-		if (CapturedCharcter.Get())
-		{
-			if (CapturedCharcter == TargetCharacter)
-			{
-				bIsCaptureCharacter = true;
-				break;
-			}
-		}
-	}
-
-	// 자신을 잡았던 타겟이라면 다시 잡을 수 없습니다.
-	if (bIsCaptureCharacter)
-	{
-		return false;
-	}
-
-	// 잡을 수 없는 상태 태그가 부착되어 있다면 잡을 수 없습니다.
-	if (ASC->HasMatchingGameplayTag(SMTags::Character::State::Uncatchable))
-	{
-		return false;
-	}
-
-	return true;
 }
 
 void ASMPlayerCharacter::OnTeamChangeCallback()

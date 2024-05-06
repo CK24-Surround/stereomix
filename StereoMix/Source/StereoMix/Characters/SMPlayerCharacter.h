@@ -218,38 +218,28 @@ protected:
 
 // ~Catch Section
 public:
-	FORCEINLINE AActor* GetMyCaughtActor() { return MyCaughtActor.Get(); }
+	virtual AActor* GetActorCatchingMe() override { return MyCaughtActor.Get(); }
 
-	FORCEINLINE void SetMyCaughtActor(AActor* InMyCaughtActor) { MyCaughtActor = InMyCaughtActor; }
+	virtual void SetActorCatchingMe(AActor* NewActorCatchingMe) override { MyCaughtActor = NewActorCatchingMe; }
 
-	FORCEINLINE virtual AActor* GetActorCatchingMe() override { return CatchingMeActor.Get(); }
-
-	FORCEINLINE virtual void SetActorCatchingMe(AActor* InCatchingMeActor) override { CatchingMeActor = InCatchingMeActor; }
+	virtual bool IsCatchble(AActor* TargetActor) override;
 
 	virtual bool OnCaught(AActor* TargetActor) override;
 
 	virtual bool OnCaughtReleased(AActor* TargetActor) override;
 
-	virtual bool IsCatchble(AActor* TargetActor) override;
+	virtual void OnSpecialActionPerformed(AActor* TargetActor) override;
+
+	virtual void OnSpecialActionEnded(AActor* TargetActor) override;
 
 protected:
+	UPROPERTY(Replicated)
 	TWeakObjectPtr<AActor> MyCaughtActor;
 
 	TWeakObjectPtr<AActor> CatchingMeActor;
-	
+
 	/** 한 캐릭터에게 여러번 잡히지 않도록 자신을 잡았던 캐릭터들을 담아둡니다. 서버에서만 유효합니다. */
 	TArray<TWeakObjectPtr<ASMPlayerCharacter>> CapturedCharcters;
-
-// TODO: 제거 예정
-protected:
-	// 자신이 잡고 있는 폰을 의미합니다.
-	UPROPERTY(Replicated)
-	TWeakObjectPtr<ASMPlayerCharacter> CatchCharacter;
-
-	// 자신이 잡혀 있는 폰을 의미합니다.
-	UPROPERTY(Replicated)
-	TWeakObjectPtr<ASMPlayerCharacter> CaughtCharacter;
-// TODO: 제거 예정
 // ~Catch Section
 
 // ~Damage Section
