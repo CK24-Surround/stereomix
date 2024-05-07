@@ -41,6 +41,7 @@ public:
 	FORCEINLINE TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharcters() { return CapturedMeCharcters; }
 
 public:
+	/** 타겟으로 부터 잡기상태를 탈출합니다. 타겟이 null이면 타겟과 관련된 처리만 제외하고 모두 처리됩니다. */
 	bool HandleCaughtReleased(AActor* TargetActor);
 
 protected:

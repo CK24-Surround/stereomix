@@ -7,7 +7,7 @@
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
 #include "SMCharacter.h"
-#include "Interfaces/SMCatchableInterface.h"
+#include "Interfaces/SMCatchInteractionInterface.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "SMPlayerCharacter.generated.h"

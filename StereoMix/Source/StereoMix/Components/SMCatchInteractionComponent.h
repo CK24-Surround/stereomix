@@ -4,12 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Interfaces/SMCatchInteractionInterface.h"
 #include "SMCatchInteractionComponent.generated.h"
 
 
 UCLASS(Abstract, ClassGroup=(CatchInteraction), meta=(BlueprintSpawnableComponent))
-class STEREOMIX_API USMCatchInteractionComponent : public UActorComponent, public ISMCatchInteractionInterface
+class STEREOMIX_API USMCatchInteractionComponent : public UActorComponent
 {
 	GENERATED_BODY()
 

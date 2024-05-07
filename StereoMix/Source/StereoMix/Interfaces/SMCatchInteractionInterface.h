@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "SMCatchInteractionInterface.generated.h"
 
+class USMCatchInteractionComponent;
+
 // This class does not need to be modified.
 UINTERFACE()
 class USMCatchInteractionInterface : public UInterface
