@@ -532,3 +532,8 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 		}
 	}
 }
+
+bool ASMPlayerCharacter::bAmICatching()
+{
+	return CatchInteractionComponent->GetActorIAmCatching() != nullptr;
+}

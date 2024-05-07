@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffect.h"
 #include "Components/ActorComponent.h"
+#include "Data/SMSpecialAction.h"
 #include "SMCatchInteractionComponent.generated.h"
 
 
@@ -32,10 +34,10 @@ public:
 	virtual bool OnCaughtReleased(AActor* TargetActor, bool bIsStunTimeOut) PURE_VIRTUAL(USMCatchInteractionComponent::IsCatchble, return false;)
 
 	/** 특수 액션 실행 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnSpecialActionPerformed(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionPerformed)
+	virtual void OnSpecialActionPerformed(AActor* Instigator, ESpecialAction InSpecialAction) PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionPerformed)
 
 	/** 특수 액션 종료 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnSpecialActionEnded(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionEnded)
+	virtual void OnSpecialActionEnded(AActor* Instigator, ESpecialAction InSpecialAction, float InMagnitude, TSubclassOf<UGameplayEffect> DamageGE, float DamageAmount) PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionEnded)
 
 protected:
 	/** 자신을 잡고 있는 액터입니다. */

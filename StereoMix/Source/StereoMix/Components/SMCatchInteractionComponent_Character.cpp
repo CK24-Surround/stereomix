@@ -3,11 +3,17 @@
 
 #include "SMCatchInteractionComponent_Character.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "Components/BoxComponent.h"
+#include "Data/SMSpecialAction.h"
+#include "Engine/OverlapResult.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Tiles/SMTile.h"
+#include "Utilities/SMCollision.h"
 
 
 void USMCatchInteractionComponent_Character::InitializeComponent()
@@ -33,6 +39,11 @@ void USMCatchInteractionComponent_Character::BeginPlay()
 
 bool USMCatchInteractionComponent_Character::IsCatchable(AActor* TargetActor) const
 {
+	if (!SourceCharacter->HasAuthority())
+	{
+		return false;
+	}
+
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
 	if (!ensureAlways(TargetCharacter))
 	{
@@ -84,6 +95,11 @@ bool USMCatchInteractionComponent_Character::IsCatchable(AActor* TargetActor) co
 
 bool USMCatchInteractionComponent_Character::OnCaught(AActor* TargetActor)
 {
+	if (!SourceCharacter->HasAuthority())
+	{
+		return false;
+	}
+
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
 	if (!ensureAlways(TargetActor))
 	{
@@ -136,6 +152,12 @@ bool USMCatchInteractionComponent_Character::OnCaught(AActor* TargetActor)
 
 bool USMCatchInteractionComponent_Character::OnCaughtReleased(AActor* TargetActor, bool bIsStunEnd)
 {
+	if (!SourceCharacter->HasAuthority())
+	{
+		return false;
+	}
+
+	// 아래 GA에서 잡히기 탈출와 애니메이션을 재생해줍니다. 완료되면 완료 이벤트를 전송합니다.
 	if (!bIsStunEnd)
 	{
 		if (SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit)))
@@ -145,20 +167,50 @@ bool USMCatchInteractionComponent_Character::OnCaughtReleased(AActor* TargetActo
 	}
 	else
 	{
-		if (true)
+		if (SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExitOnStunEnd)))
 		{
-			
+			return true;
 		}
 	}
 
 	return false;
 }
 
-void USMCatchInteractionComponent_Character::OnSpecialActionPerformed(AActor* TargetActor) {}
+void USMCatchInteractionComponent_Character::OnSpecialActionPerformed(AActor* Instigator, ESpecialAction InSpecialAction)
+{
+	if (!SourceCharacter->HasAuthority())
+	{
+		return;
+	}
 
-void USMCatchInteractionComponent_Character::OnSpecialActionEnded(AActor* TargetActor) {}
+	switch (InSpecialAction)
+	{
+		case ESpecialAction::Smash:
+		{
+			InternalSmashed();
+			break;
+		}
+	}
+}
 
-bool USMCatchInteractionComponent_Character::HandleCaughtReleased(AActor* TargetActor)
+void USMCatchInteractionComponent_Character::OnSpecialActionEnded(AActor* Instigator, ESpecialAction InSpecialAction, float InMagnitude, TSubclassOf<UGameplayEffect> DamageGE, float InDamageAmount)
+{
+	if (!SourceCharacter->HasAuthority())
+	{
+		return;
+	}
+
+	switch (InSpecialAction)
+	{
+		case ESpecialAction::Smash:
+		{
+			InternalSmashedEnded(Instigator, InMagnitude, DamageGE, InDamageAmount);
+			break;
+		}
+	}
+}
+
+bool USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
 {
 	// 이 함수는 만약 타겟이 null이어도 수행해야할 작업을 수행해줘야합니다.
 
@@ -198,6 +250,181 @@ bool USMCatchInteractionComponent_Character::HandleCaughtReleased(AActor* Target
 	if (ensureAlways(SourcePlayerController))
 	{
 		SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
+	}
+
+	return true;
+}
+
+void USMCatchInteractionComponent_Character::InternalSmashed()
+{
+	// 스매시 당하는 중을 표시하는 태그를 부착합니다. 버저비터와 연결됩니다.
+	SourceASC->AddTag(SMTags::Character::State::Smashed);
+}
+
+void USMCatchInteractionComponent_Character::InternalSmashedEnded(AActor* Instigator, float Magnitude, TSubclassOf<UGameplayEffect> DamageGE, float DamageAmount)
+{
+	InternalTileTriggerdBySmash(Instigator, Magnitude, DamageGE, DamageAmount);
+
+	CaughtReleased(Instigator);
+
+	SourceASC->RemoveTag(SMTags::Character::State::Smashed);
+	SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
+}
+
+void USMCatchInteractionComponent_Character::InternalTileTriggerdBySmash(AActor* Instigator, float Magnitude, TSubclassOf<UGameplayEffect> DamageGE, float DamageAmount)
+{
+	ASMPlayerCharacter* InstigatorCharacter = Cast<ASMPlayerCharacter>(Instigator);
+	if (!ensureAlways(InstigatorCharacter))
+	{
+		return;
+	}
+
+	USMAbilitySystemComponent* InstigatorASC = Cast<USMAbilitySystemComponent>(InstigatorCharacter);
+	if (!ensureAlways(InstigatorASC))
+	{
+		return;
+	}
+
+	// 타일을 트리거합니다.
+	FHitResult HitResult;
+	const FVector Start = SourceCharacter->GetActorLocation();
+	const FVector End = Start + (-FVector::UpVector * 1000.0f);
+	const FCollisionQueryParams Param(SCENE_QUERY_STAT(TileTrace), false);
+	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(25.0f);
+	const bool bSuccess = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, SMCollisionTraceChannel::TileAction, CollisionShape, Param);
+	DrawDebugLine(GetWorld(), Start, End, FColor::Silver, false, 3.0f);
+
+	if (bSuccess)
+	{
+		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
+		if (Tile)
+		{
+			// 트리거된 타일을 타겟 데이터에 담습니다. 타일 트리거 GA로 전송하기 위함입니다.
+			FGameplayAbilityTargetData_SingleTargetHit* TagetData = new FGameplayAbilityTargetData_SingleTargetHit();
+			TagetData->HitResult = HitResult;
+
+			FGameplayAbilityTargetDataHandle TargetDataHandle;
+			TargetDataHandle.Add(TagetData);
+
+			// TargetData에 Tile 액터를, EventMagnitude에 트리거되야하는 규모를 적용합니다. 이 데이터 또한 타일 트리거 GA로 전송하기 위해 저장합니다.
+			FGameplayEventData Payload;
+			Payload.TargetData = TargetDataHandle;
+			Payload.EventMagnitude = Magnitude;
+
+			// 이펙트를 재생합니다.
+			FGameplayCueParameters GCParams;
+			GCParams.Location = Tile->GetTileLocation();
+			InstigatorASC->ExecuteGameplayCue(SMTags::GameplayCue::Smash, GCParams);
+
+			// 스플래시 데미지를 적용합니다.
+			UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
+			if (ensureAlways(TileBoxComponent))
+			{
+				InternalApplySmashSplashDamage(GCParams.Location, TileBoxComponent->GetScaledBoxExtent().X * 2, Magnitude, InstigatorCharacter, DamageGE, DamageAmount);
+			}
+
+			// 타일 트리거 정보를 가지고 인스티게이터의 타일 트리거 GA를 활성화합니다.
+			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(InstigatorCharacter, SMTags::Event::Tile::TileTrigger, Payload);
+		}
+	}
+}
+
+void USMCatchInteractionComponent_Character::InternalApplySmashSplashDamage(const FVector& TileLocation, float TileHorizonSize, float Magnitude, AActor* Instigator, TSubclassOf<UGameplayEffect> DamageGE, float DamageAmount)
+{
+	ASMPlayerCharacter* InstigatorCharacter = Cast<ASMPlayerCharacter>(Instigator);
+	if (!ensureAlways(InstigatorCharacter))
+	{
+		return;
+	}
+
+	USMAbilitySystemComponent* InstigatorASC = Cast<USMAbilitySystemComponent>(InstigatorCharacter->GetAbilitySystemComponent());
+	if (!ensureAlways(InstigatorASC))
+	{
+		return;
+	}
+
+	const ESMTeam InstigatorTeam = InstigatorCharacter->GetTeam();
+
+	// 트리거된 타일 크기 영역내 적을 검사합니다.
+	TArray<FOverlapResult> OverlapResults;
+	const FVector Start = TileLocation;
+	const float HalfHorizenSize = (TileHorizonSize * (Magnitude - 1)) + (TileHorizonSize / 2);
+
+	FVector CollisionHalfExtend;
+	if (HalfHorizenSize > 0.0f)
+	{
+		CollisionHalfExtend = FVector(HalfHorizenSize, HalfHorizenSize, 100.0);
+	}
+
+	const FCollisionShape CollisionShape = FCollisionShape::MakeBox(CollisionHalfExtend);
+	const FCollisionQueryParams Params(SCENE_QUERY_STAT(SmashSplash), false, SourceCharacter);
+	const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, Start, FQuat::Identity, SMCollisionTraceChannel::Action, CollisionShape, Params);
+
+	if (bSuccess)
+	{
+		for (const auto& OverlapResult : OverlapResults)
+		{
+			ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OverlapResult.GetActor());
+			if (!ensureAlways(TargetCharacter))
+			{
+				return;
+			}
+
+			USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(TargetCharacter->GetAbilitySystemComponent());
+			if (!ensureAlways(TargetASC))
+			{
+				return;
+			}
+
+			if (!IsValidateTargetForSmashSplashDamage(TargetCharacter, InstigatorTeam))
+			{
+				continue;
+			}
+
+			// 대미지를 GE로 적용합니다.
+			FGameplayEffectSpecHandle GESpecHandle = InstigatorASC->MakeOutgoingSpec(DamageGE, 1.0f, InstigatorASC->MakeEffectContext());
+			if (ensureAlways(GESpecHandle.IsValid()))
+			{
+				GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, DamageAmount);
+			}
+			InstigatorASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
+
+			// GC로 피격 이펙트를 재생합니다.
+			FGameplayCueParameters GCParams;
+			GCParams.Location = TargetCharacter->GetActorLocation();
+			InstigatorASC->ExecuteGameplayCue(SMTags::GameplayCue::SmashSplashHit, GCParams);
+		}
+	}
+
+	DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, FColor::Orange, false, 2.0f);
+}
+
+bool USMCatchInteractionComponent_Character::IsValidateTargetForSmashSplashDamage(const ASMPlayerCharacter* TargetActor, ESMTeam InstigatorTeam)
+{
+	// 타겟이 캐릭터가 아니라면 제외합니다.
+	const ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
+	if (!TargetCharacter)
+	{
+		return false;
+	}
+
+	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(TargetCharacter->GetAbilitySystemComponent());
+	if (!ensureAlways(TargetASC))
+	{
+		return false;
+	}
+
+	// 팀이 없는 경우 대미지를 가하지 않습니다.
+	const ESMTeam TargetTeam = TargetCharacter->GetTeam();
+	if (TargetTeam == ESMTeam::None)
+	{
+		return false;
+	}
+
+	// 인스티게이터와 같은 팀의 경우 대미지를 가하지 않습니다.
+	if (InstigatorTeam == TargetTeam)
+	{
+		return false;
 	}
 
 	return true;

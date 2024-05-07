@@ -40,29 +40,23 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
-
 protected:
-	/** 애님 노티파이가 트리거될때 호출됩니다. */
+	/** 타겟데이터를 수신 받으면 호출됩니다. */
 	void OnReceiveTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
 
-	/** 매치기의 핵심 로직입니다. */
+	/** 매치기의 핵심 로직입니다. 착지 시 호출됩니다. */
 	UFUNCTION()
 	void OnSmash();
 
-	UFUNCTION()
-	void OnCompleted();
-
 protected:
-	/** 잡은 상대를 풀어줍니다. */
-	void ReleaseCatch(ASMPlayerCharacter* TargetCharacter);
+	/** 사거리 내를 타게팅 했다면 InTargetLocation이 그대로, 사거리 밖을 타게팅 했다면 사거리에 맞게 조정된 InTargetLocation이 반환됩니다. */
+	FVector CalculateMaxDistanceLocation(const FVector& InStartLocation, const FVector& InTargetLocation);
 
-protected:
-	// 타일을 트리거합니다. 서버에서 호출되어야합니다.
-	void TileTrigger(ASMPlayerCharacter* InTargetCharacter);
+	/** 서버로 시전위치와 타겟 위치를 전송합니다. */
+	void SendToServerLocationData(const FVector& InStartLocation, const FVector& InTargetLocation);
 
-	/** 스플래시 대미지를 적용합니다. */
-	void ApplySmashSplashDamage(const FVector& TileLocation, float TileHorizonSize);
+	/** 정점 높이를 기준으로 타겟을 향하는 벨로시티를 통해 캐릭터를 도약 시킵니다. */
+	void LaunchCharacterToTargetWithApex(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")

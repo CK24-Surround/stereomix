@@ -205,6 +205,13 @@ void USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded(FGameplayEventData Payloa
 
 void USMGameplayAbility_Stun::ProcessCaughtExit()
 {
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
@@ -212,8 +219,15 @@ void USMGameplayAbility_Stun::ProcessCaughtExit()
 		return;
 	}
 
-	// 잡기 탈출 GA를 활성화합니다. 잡기 탈출 및 잡기 탈출 애니메이션이 재생됩니다.
-	SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExitOnStunEnd));
+	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
+	if (!ensureAlways(SourceCIC))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
+	// 잡히기 탈출을 합니다.
+	SourceCIC->OnCaughtReleased(SourceCIC->GetActorCatchingMe(), true);
 
 	// 잡기 탈출이 완료되기까지 기다립니다. 이후 스턴을 종료합니다.
 	UAbilityTask_WaitGameplayEvent* WatiGameplayEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::CaughtExitEnd);
@@ -295,7 +309,7 @@ void USMGameplayAbility_Stun::OnStunEnd()
 
 	// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거하고 자신을 잡았던 캐릭터 리스트를 초기화합니다.
 	SourceASC->RemoveTag(SMTags::Character::State::Uncatchable);
-	SourceCIC->GetCapturedMeCharcters().Empty();
+	SourceCIC->GetCapturedMeCharacters().Empty();
 
 	// 스턴 종료 시 적용해야할 GE들을 적용합니다.
 	for (const auto& StunEndedGE : StunEndedGEs)

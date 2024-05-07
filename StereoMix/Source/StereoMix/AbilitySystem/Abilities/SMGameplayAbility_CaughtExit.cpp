@@ -67,7 +67,7 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 	}
 
 	// 잡기 상태에서 벗어납니다.
-	if (SourceCIC->HandleCaughtReleased(TargetCharacter))
+	if (SourceCIC->CaughtReleased(TargetCharacter))
 	{
 		K2_CancelAbility();
 		return;

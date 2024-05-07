@@ -92,7 +92,7 @@ protected:
 // ~State Section
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "State")
-	uint32 bIsCatching:1 = false;
+	uint32 bAmICatching:1 = false;
 // ~State Section
 	
 };

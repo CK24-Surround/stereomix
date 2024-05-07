@@ -68,7 +68,7 @@ protected:
 	// 카메라 관련 데이터를 초기화합니다.
 	void InitCamera();
 
-	// ~Component Section
+// ~Component Section
 public:
 	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
@@ -94,21 +94,21 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "UI|PlayerState")
 	TObjectPtr<USMWidgetComponent> CharacterStateWidgetComponent;
-	// ~Component Section
+// ~Component Section
 
-	// ~Data Section
+// ~Data Section
 protected:
 	UPROPERTY()
 	TObjectPtr<const USMDesignData> DesignData;
-	// ~Data Section
+// ~Data Section
 
-	// ~Caching Section
+// ~Caching Section
 protected:
 	UPROPERTY()
 	TObjectPtr<ASMPlayerController> CachedStereoMixPlayerController;
-	// ~Caching Section
+// ~Caching Section
 
-	// ~GAS Section
+// ~GAS Section
 protected:
 	// GAS에서 사용할 액티브 GA들을 바인드합니다.
 	void SetupGASInputComponent();
@@ -142,9 +142,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
 	FGameplayTagContainer LockMovementTags;
-	// ~GAS Section
+// ~GAS Section
 
-	// ~Movement Section
+// ~Movement Section
 public:
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다. 기본값은 플레이어 캐릭터의 중심을 기준으로 하는 평면으로 계산됩니다. */
 	FVector GetCursorTargetingPoint(bool bIsZeroBasis = false);
@@ -184,16 +184,16 @@ protected:
 	// 이동속도 리플리케이션을 위한 변수로 직접 수정되어서는 안됩니다. SetMaxWalkSpeed를 사용해 수정해주세요.
 	UPROPERTY(ReplicatedUsing = "OnRep_MaxWalkSpeed")
 	float MaxWalkSpeed;
-	// ~Movement Section
+// ~Movement Section
 
-	// ~Widget Section
+// ~Widget Section
 public:
 	/** 캐릭터 상태 위젯의 가시성을 조절합니다. */
 	UFUNCTION(NetMulticast, Unreliable)
 	void SetCharacterStateVisibility(bool bEnable);
-	// ~Widget Section
+// ~Widget Section
 
-	// ~State Section
+// ~State Section
 public:
 	void SetEnableCollision(bool bInEnableCollision);
 
@@ -213,16 +213,16 @@ protected:
 
 protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableCollision")
-	uint32 bEnableCollision : 1 = true;
+	uint32 bEnableCollision:1 = true;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_UseControllerRotation")
-	uint32 bUseControllerRotation : 1 = true;
+	uint32 bUseControllerRotation:1 = true;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableMovement")
-	uint32 bEnableMovement : 1 = true;
-	// ~State Section
+	uint32 bEnableMovement:1 = true;
+// ~State Section
 
-	// ~Damage Section
+// ~Damage Section
 public:
 	FORCEINLINE virtual AActor* GetLastAttackInstigator() override { return LastAttackInstigator.Get(); };
 
@@ -231,9 +231,14 @@ public:
 protected:
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<AActor> LastAttackInstigator;
-	// ~Damage Section
+// ~Damage Section
 
 protected:
 	UFUNCTION()
 	void OnTeamChangeCallback();
+
+// ~Animation Section
+public:
+	bool bAmICatching();
+// ~Animation Section
 };

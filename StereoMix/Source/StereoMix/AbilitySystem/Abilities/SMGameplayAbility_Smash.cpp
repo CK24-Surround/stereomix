@@ -16,7 +16,10 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "Components/SMCatchInteractionComponent_Character.h"
+#include "Data/SMSpecialAction.h"
 #include "Engine/OverlapResult.h"
+#include "Utilities/SMCatchInteractionBlueprintLibrary.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
 {
@@ -37,54 +40,67 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
+	if (!ensureAlways(SourceASC))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensure(SourceCharacter))
+	if (!ensureAlways(SourceCharacter))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
-	ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
-	if (!ensure(TargetCharacter))
+	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
+	if (!ensureAlways(SourceCIC))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
 
-	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-	if (!ensure(TargetASC))
+	AActor* TargetActor = SourceCIC->GetActorIAmCatching();
+	USMAbilitySystemComponent* TargetASC = nullptr;
+	USMCatchInteractionComponent* TargetICI = nullptr;
+	if (TargetActor)
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-		return;
+		TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+		if (!ensureAlways(TargetASC))
+		{
+			K2_CancelAbility();
+			return;
+		}
+
+		TargetICI = Cast<USMCatchInteractionComponent>(USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetActor));
+		if (!ensureAlways(TargetICI))
+		{
+			K2_CancelAbility();
+			return;
+		}
 	}
 
-	// 착지 델리게이트를 기다립니다.
-	SourceCharacter->OnLanded.AddUObject(this, &USMGameplayAbility_Smash::OnSmash);
+	// 스매시는 착지 시 판정이 발생하고 이에 대한 처리가 수행되어야합니다. 착지 델리게이트를 기다립니다.
+	SourceCharacter->OnLanded.AddUObject(this, &ThisClass::OnSmash);
 
 	// 스매시 애니메이션을 재생합니다.
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashMontage"), SmashMontage);
-	if (!ensure(PlayMontageAndWaitTask))
+	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
-
 	PlayMontageAndWaitTask->ReadyForActivation();
 
-	// 타겟 측에 스매시 당하는 중을 표시하는 태그를 부착합니다.
+	// 타겟 측에 스매시가 시작됨을 알립니다.
 	if (ActorInfo->IsNetAuthority())
 	{
-		TargetASC->AddTag(SMTags::Character::State::Smashed);
+		TargetICI->OnSpecialActionPerformed(SourceCharacter, ESpecialAction::Smash);
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
+	// 스매시 중 필요한 중력 값을 적용합니다. 착지 후 복구해줘야합니다.
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (ensure(SourceMovement))
 	{
@@ -96,47 +112,21 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 	{
 		// 시작점과 목표 지점의 위치를 구합니다.
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint(true);
+		const FVector TargetLocation = CalculateMaxDistanceLocation(SourceLocation, SourceCharacter->GetCursorTargetingPoint(true));
 
-		// 사거리를 제한 합니다.
-		FVector AlignedSourceZ = SourceLocation;
-		AlignedSourceZ.Z = TargetLocation.Z;
-
-		const float Range = 150.0f * SmashRangeByTile;
-		if (FVector::DistSquared(AlignedSourceZ, TargetLocation) > FMath::Square(Range))
-		{
-			const FVector SourceToTargetDirection = (TargetLocation - AlignedSourceZ).GetSafeNormal();
-
-			TargetLocation = AlignedSourceZ + (SourceToTargetDirection * Range);
-		}
-
-		// 필요한 위치 데이터들을 타겟 데이터에 저장합니다.
-		FGameplayAbilityTargetData_LocationInfo* TargetData = new FGameplayAbilityTargetData_LocationInfo();
-		TargetData->SourceLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
-		TargetData->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
-		TargetData->SourceLocation.LiteralTransform.SetLocation(SourceLocation);
-		TargetData->TargetLocation.LiteralTransform.SetLocation(TargetLocation);
-
-		// 타겟 데이터를 핸들에 담고 서버로 전송합니다.
-		FGameplayAbilityTargetDataHandle TargetDatahandle(TargetData);
-		SourceASC->CallServerSetReplicatedTargetData(Handle, ActivationInfo.GetActivationPredictionKey(), TargetDatahandle, FGameplayTag(), SourceASC->ScopedPredictionKey);
+		// 서버로 타겟 위치를전송합니다.
+		SendToServerLocationData(SourceLocation, TargetLocation);
 
 		// 정점 높이를 기준으로 타겟을 향하는 벨로시티를 구한 후 캐릭터를 도약 시킵니다.
-		const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, SourceLocation, TargetLocation, ApexHeight, SourceMovement->GetGravityZ());
-		SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
+		LaunchCharacterToTargetWithApex(SourceLocation, TargetLocation, SourceMovement->GetGravityZ());
 	}
 
 	if (ActorInfo->IsNetAuthority())
 	{
 		// 서버는 데이터를 수신을 준비합니다. 수신 후 알아서 바인드 해제됩니다.
 		FAbilityTargetDataSetDelegate& TargetDataSetDelegate = SourceASC->AbilityTargetDataSetDelegate(Handle, ActivationInfo.GetActivationPredictionKey());
-		TargetDataSetDelegate.AddUObject(this, &USMGameplayAbility_Smash::OnReceiveTargetData);
+		TargetDataSetDelegate.AddUObject(this, &ThisClass::OnReceiveTargetData);
 	}
-}
-
-void USMGameplayAbility_Smash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
-{
-	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void USMGameplayAbility_Smash::OnReceiveTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag)
@@ -144,304 +134,153 @@ void USMGameplayAbility_Smash::OnReceiveTargetData(const FGameplayAbilityTargetD
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
+		K2_CancelAbility();
 		return;
 	}
 
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (!ensureAlways(SourceMovement))
 	{
+		K2_CancelAbility();
 		return;
 	}
 
 	const FGameplayAbilityTargetData* TargetData = GameplayAbilityTargetDataHandle.Get(0);
+	if (!ensureAlways(TargetData))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
+	// 서버에서도 클라이언트와 동일한 방향으로 캐릭터를 도약시킵니다.
 	const FVector SourceLocation = TargetData->GetOrigin().GetLocation();
 	const FVector TargetLocation = TargetData->GetEndPoint();
-
-	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, SourceLocation, TargetLocation, ApexHeight, SourceMovement->GetGravityZ());
-	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
+	LaunchCharacterToTargetWithApex(SourceLocation, TargetLocation, SourceMovement->GetGravityZ());
 }
 
 void USMGameplayAbility_Smash::OnSmash()
 {
-	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
-	{
-		return;
-	}
-
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensure(SourceCharacter))
+	if (!ensureAlways(SourceCharacter))
 	{
+		K2_CancelAbility();
 		return;
 	}
 
-	ASMPlayerCharacter* TargetCharacter = SourceCharacter->GetCatchCharacter();
-	if (!ensure(TargetCharacter))
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
 	{
+		K2_CancelAbility();
 		return;
 	}
 
-	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-	if (!ensure(TargetASC))
+	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
+	if (!ensureAlways(SourceCIC))
 	{
+		K2_CancelAbility();
 		return;
 	}
 
+	AActor* TargetActor = SourceCIC->GetActorIAmCatching();
+	USMAbilitySystemComponent* TargetASC = nullptr;
+	USMCatchInteractionComponent* TargetCIC = nullptr;
+	if (TargetActor)
+	{
+		TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
+		if (!ensureAlways(TargetASC))
+		{
+			K2_CancelAbility();
+			return;
+		}
+
+		TargetCIC = Cast<USMCatchInteractionComponent>(USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetActor));
+		if (!ensureAlways(TargetCIC))
+		{
+			K2_CancelAbility();
+			return;
+		}
+	}
+
+	// 착지 완료 했으니 델리게이트는 제거해줍니다.
 	SourceCharacter->OnLanded.RemoveAll(this);
 
 	// 기존 중력 스케일로 재설정합니다.
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
-	if (ensure(SourceMovement))
+	if (ensureAlways(SourceMovement))
 	{
 		SourceMovement->GravityScale = OriginalGravityScale;
 	}
 
-	// 스매시 종료 애니메이션을 재생합니다.
+	// 스매시 종료 애니메이션을 재생합니다. 이 애니메이션이 종료되면 스매시가 종료됩니다. 종료는 서버에서 수행하게 됩니다.
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashEndMontage"), SmashMontage, 1.0f, TEXT("End"));
-	if (!ensure(PlayMontageAndWaitTask))
+	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		K2_CancelAbility();
 		return;
 	}
-
-	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &USMGameplayAbility_Smash::OnCompleted);
+	if (CurrentActorInfo->IsNetAuthority())
+	{
+		PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
+	}
 	PlayMontageAndWaitTask->ReadyForActivation();
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{
-		// 타일 트리거 로직
-		TileTrigger(TargetCharacter);
-
-		// 잡기 풀기 로직
-		ReleaseCatch(TargetCharacter);
-
-		// 스매시 당하는 상태를 나타내는 태그를 제거해줍니다.
-		TargetASC->RemoveTag(SMTags::Character::State::Smashed);
-
-		// 타겟의 Smashed 어빌리티를 활성화합니다.
-		TargetASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
+		TargetCIC->OnSpecialActionEnded(SourceCharacter, ESpecialAction::Smash, MaxTriggerCount, DamageGE, SmashDamage);
 	}
 }
 
-void USMGameplayAbility_Smash::OnCompleted()
+FVector USMGameplayAbility_Smash::CalculateMaxDistanceLocation(const FVector& InStartLocation, const FVector& InTargetLocation)
 {
-	if (CurrentActorInfo->IsNetAuthority())
+	// 시작 위치의 Z값을 타겟의 Z값으로 정렬합니다. 타겟의 Z는 바닥과 동일한 높이이기 때문입니다. 이렇게하면 소스 위치가 소스의 중심에서 소스의 바닥으로 재정렬됩니다.
+	FVector AlignedSourceZ = InStartLocation;
+	AlignedSourceZ.Z = InTargetLocation.Z;
+
+	// 사거리를 제한 합니다.
+	// TODO: 임시로 150으로 타일 사이즈를 하드코딩 해두었습니다.
+	const float TileSize = 150.0f;
+	const float Range = TileSize * SmashRangeByTile;
+	if (FVector::DistSquared(AlignedSourceZ, InTargetLocation) > FMath::Square(Range))
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+		const FVector SourceToTargetDirection = (InTargetLocation - AlignedSourceZ).GetSafeNormal();
+
+		const FVector Result = AlignedSourceZ + (SourceToTargetDirection * Range);
+		return Result;
 	}
+
+	return InTargetLocation;
 }
 
-void USMGameplayAbility_Smash::ReleaseCatch(ASMPlayerCharacter* TargetCharacter)
+void USMGameplayAbility_Smash::SendToServerLocationData(const FVector& InStartLocation, const FVector& InTargetLocation)
 {
-	if (!ensure(TargetCharacter))
-	{
-		return;
-	}
-
-	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-	if (!ensure(TargetASC))
-	{
-		return;
-	}
-
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensure(SourceCharacter))
-	{
-		return;
-	}
-
-	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
-	{
-		return;
-	}
-
-	// 디태치합니다.
-	TargetCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-	// 콜리전, 움직임을 복구합니다.
-	TargetCharacter->SetEnableCollision(true);
-	TargetCharacter->SetEnableMovement(true);
-
-	// 회전을 소스의 방향에 맞게 리셋해줍니다.
-	const float SourceYaw = SourceCharacter->GetActorRotation().Yaw;
-	TargetCharacter->MulticastRPCSetYawRotation(SourceYaw);
-
-	// TODO: 애니메이션 불일치에 따른 임시 위치 조정 코드입니다. 추후 제거되어야합니다.
-	TargetCharacter->ServerRPCPreventGroundEmbedding();
-
-	// 다시 서버로부터 위치 보정을 수행하도록 변경합니다.
-	UCharacterMovementComponent* TargetMovement = TargetCharacter->GetCharacterMovement();
-	if (ensure(TargetMovement))
-	{
-		TargetMovement->bIgnoreClientMovementErrorChecksAndCorrection = false;
-	}
-
-	// 카메라 뷰도 원래대로 되돌려줍니다.
-	APlayerController* SourcePlayerController = Cast<APlayerController>(TargetCharacter->GetController());
-	if (ensure(SourcePlayerController))
-	{
-		SourcePlayerController->SetViewTargetWithBlend(TargetCharacter, 1.0f, VTBlend_Cubic);
-	}
-
-	// 캐릭터 상태 위젯을 다시 보이게합니다.
-	TargetCharacter->SetCharacterStateVisibility(true);
-
-	// 잡기, 잡히기 상태를 나타내는 태그를 제거해줍니다.
-	SourceASC->RemoveTag(SMTags::Character::State::Catch);
-	TargetASC->RemoveTag(SMTags::Character::State::Caught);
-
-	SourceCharacter->SetCatchCharacter(nullptr);
-	TargetCharacter->SetCaughtCharacter(nullptr);
-}
-
-void USMGameplayAbility_Smash::TileTrigger(ASMPlayerCharacter* InTargetCharacter)
-{
-	if (!ensureAlways(InTargetCharacter))
-	{
-		return;
-	}
-
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
-	{
-		return;
-	}
-
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
+		K2_CancelAbility();
 		return;
 	}
 
-	// 타일을 트리거합니다.
-	FHitResult HitResult;
-	const FVector Start = InTargetCharacter->GetActorLocation();
-	const FVector End = Start + (-FVector::UpVector * 1000.0f);
-	const FCollisionQueryParams Param(SCENE_QUERY_STAT(TileTrace), false);
-	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(25.0f);
-	const bool bSuccess = GetWorld()->SweepSingleByChannel(HitResult, Start, End, FQuat::Identity, SMCollisionTraceChannel::TileAction, CollisionShape, Param);
-	DrawDebugLine(GetWorld(), Start, End, FColor::Silver, false, 3.0f);
+	// 필요한 위치 데이터들을 타겟 데이터에 저장합니다.
+	FGameplayAbilityTargetData_LocationInfo* TargetData = new FGameplayAbilityTargetData_LocationInfo();
+	TargetData->SourceLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
+	TargetData->TargetLocation.LocationType = EGameplayAbilityTargetingLocationType::LiteralTransform;
+	TargetData->SourceLocation.LiteralTransform.SetLocation(InStartLocation);
+	TargetData->TargetLocation.LiteralTransform.SetLocation(InTargetLocation);
 
-	if (bSuccess)
-	{
-		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
-		if (Tile)
-		{
-			// 트리거된 타일을 타겟 데이터에 담습니다. 타일 트리거 GA로 전송하기 위함입니다.
-			FGameplayAbilityTargetData_SingleTargetHit* TagetData = new FGameplayAbilityTargetData_SingleTargetHit();
-			TagetData->HitResult = HitResult;
-
-			FGameplayAbilityTargetDataHandle TargetDataHandle;
-			TargetDataHandle.Add(TagetData);
-
-			// TargetData에 Tile 액터를, EventMagnitude에 트리거되야하는 규모를 적용합니다. 이 데이터 또한 타일 트리거 GA로 전송하기 위해 저장합니다.
-			FGameplayEventData Payload;
-			Payload.TargetData = TargetDataHandle;
-			Payload.EventMagnitude = MaxTriggerCount;
-
-			// 이펙트 재생에 필요한 데이터들을 GCParams에 담습니다.
-			FGameplayCueParameters GCParams;
-
-			FVector TileCenter = Tile->GetTileLocation();
-			GCParams.Location = TileCenter;
-
-			const ESMTeam Team = SourceCharacter->GetTeam();
-			UNiagaraSystem* OnSmashFXWithTeam = OnSmashFX[Team];
-			GCParams.SourceObject = OnSmashFXWithTeam;
-
-			// 이펙트를 재생합니다.
-			SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
-
-			// 스플래시 데미지를 적용합니다.
-			UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
-			if (ensureAlways(TileBoxComponent))
-			{
-				ApplySmashSplashDamage(TileCenter, TileBoxComponent->GetScaledBoxExtent().X * 2);
-			}
-
-			// 타일 트리거 정보를 가지고 타일 트리거 GA를 활성화합니다.
-			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceCharacter, SMTags::Event::Tile::TileTrigger, Payload);
-		}
-	}
+	// 타겟 데이터를 핸들에 담고 서버로 전송합니다.
+	FGameplayAbilityTargetDataHandle TargetDatahandle(TargetData);
+	SourceASC->CallServerSetReplicatedTargetData(CurrentSpecHandle, CurrentActivationInfo.GetActivationPredictionKey(), TargetDatahandle, FGameplayTag(), SourceASC->ScopedPredictionKey);
 }
 
-void USMGameplayAbility_Smash::ApplySmashSplashDamage(const FVector& TileLocation, float TileHorizonSize)
+void USMGameplayAbility_Smash::LaunchCharacterToTargetWithApex(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ)
 {
-	const ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
+		K2_CancelAbility();
 		return;
 	}
 
-	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensureAlways(SourceASC))
-	{
-		return;
-	}
-
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	if (SourceTeam == ESMTeam::None)
-	{
-		return;
-	}
-
-	// 트리거된 타일 크기 영역내 적을 검사합니다.
-	TArray<FOverlapResult> OverlapResults;
-	const FVector Start = TileLocation;
-	const float HorizenSize = (TileHorizonSize * (MaxTriggerCount - 1)) + TileHorizonSize / 2;
-	const FVector CollisionHalfExtend(HorizenSize, HorizenSize, 100.0);
-	const FCollisionShape CollisionShape = FCollisionShape::MakeBox(CollisionHalfExtend);
-	const FCollisionQueryParams Params(SCENE_QUERY_STAT(SmashSplash), false, SourceCharacter);
-	const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, Start, FQuat::Identity, SMCollisionTraceChannel::Action, CollisionShape, Params);
-
-	if (bSuccess)
-	{
-		for (const auto& OverlapResult : OverlapResults)
-		{
-			ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OverlapResult.GetActor());
-			if (!TargetCharacter)
-			{
-				continue;
-			}
-
-			USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-			if (!ensureAlways(TargetASC))
-			{
-				continue;
-			}
-
-			// 팀이 없는 경우 대미지를 가하지 않습니다.
-			const ESMTeam TargetTeam = TargetCharacter->GetTeam();
-			if (TargetTeam == ESMTeam::None)
-			{
-				continue;
-			}
-
-			// 같은 팀의 경우도 대미지를 가하지 않습니다.
-			if (SourceTeam == TargetTeam)
-			{
-				continue;
-			}
-
-			// 적에게 대미지를 GE로 적용합니다.
-			FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(DamageGE);
-			FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
-			if (ensureAlways(GESpec))
-			{
-				GESpec->SetSetByCallerMagnitude(SMTags::Data::Damage, SmashDamage);
-			}
-
-			SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
-
-			// GC로 피격 이펙트를 재생합니다.
-			FGameplayCueParameters GCParams;
-			GCParams.Location = TargetCharacter->GetActorLocation();
-			GCParams.SourceObject = SplashDamageFX[SourceTeam];
-
-			TargetASC->ExecuteGameplayCue(SMTags::GameplayCue::PlayNiagara, GCParams);
-		}
-	}
-
-	DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, FColor::Orange, false, 2.0f);
+	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, InStartLocation, InTargetLocation, ApexHeight, InGravityZ);
+	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }
