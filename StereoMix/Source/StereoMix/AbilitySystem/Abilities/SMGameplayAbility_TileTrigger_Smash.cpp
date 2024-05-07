@@ -17,7 +17,7 @@ void USMGameplayAbility_TileTrigger_Smash::TileTrigger()
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -63,7 +63,7 @@ void USMGameplayAbility_TileTrigger_Smash::ProcessContinuousTileTrigger()
 		}
 		else
 		{
-			EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+			EndAbilityByCancel();
 		}
 	}
 }

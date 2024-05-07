@@ -216,6 +216,8 @@ void ASMPlayerCharacter::InitASC()
 		return;
 	}
 
+	CatchInteractionComponent->InitASC(ASC.Get());
+
 	if (HasAuthority())
 	{
 		ASC->InitAbilityActorInfo(StereoMixPlayerState, this);

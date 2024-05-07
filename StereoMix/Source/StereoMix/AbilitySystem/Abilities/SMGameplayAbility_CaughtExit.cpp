@@ -27,21 +27,21 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
 	if (!ensureAlways(SourceCIC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -54,24 +54,20 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 		TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
 		if (!ensureAlways(TargetASC))
 		{
-			K2_CancelAbility();
+			EndAbilityByCancel();
 			return;
 		}
 
 		TargetCIC = Cast<USMCatchInteractionComponent_Character>(USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetCharacter));
 		if (!ensureAlways(TargetCIC))
 		{
-			K2_CancelAbility();
+			EndAbilityByCancel();
 			return;
 		}
 	}
 
 	// 잡기 상태에서 벗어납니다.
-	if (SourceCIC->CaughtReleased(TargetCharacter))
-	{
-		K2_CancelAbility();
-		return;
-	}
+	SourceCIC->CaughtReleased(TargetCharacter);
 
 	// 타겟이 있다면 타겟에 필요한 처리를 해줍니다.
 	if (TargetCharacter)
@@ -80,13 +76,13 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 		TargetCIC->SetActorIAmCatching(nullptr);
 	}
 
+	ClientRPCPlayMontage(CaughtExitMontage);
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("CaughtExit"), CaughtExitMontage, 1.0f);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
-	ClientRPCPlayMontage(CaughtExitMontage);
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	PlayMontageAndWaitTask->ReadyForActivation();
 }

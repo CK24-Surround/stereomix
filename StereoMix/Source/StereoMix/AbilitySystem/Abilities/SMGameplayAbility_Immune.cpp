@@ -24,28 +24,28 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (!ensureAlways(SourceMovement))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
 	if (!ensureAlways(SourceAttributeSet))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -78,28 +78,28 @@ void USMGameplayAbility_Immune::OnFinishDelay()
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (!ensureAlways(SourceMovement))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
 	if (!ensureAlways(SourceAttributeSet))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 

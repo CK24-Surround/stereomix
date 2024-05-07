@@ -30,14 +30,14 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -106,7 +106,7 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 	const FGameplayAbilityTargetData* ProjectileDataHandle = GameplayAbilityTargetDataHandle.Get(0);
 	if (!ensureAlways(ProjectileDataHandle))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 

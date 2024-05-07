@@ -24,6 +24,9 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
+	void InitASC(USMAbilitySystemComponent* NewASC);
+
+public:
 	virtual bool IsCatchable(AActor* TargetActor) const override;
 
 	virtual bool OnCaught(AActor* TargetActor) override;

@@ -19,8 +19,6 @@
 void USMCatchInteractionComponent_Character::InitializeComponent()
 {
 	Super::InitializeComponent();
-
-	SourceCharacter = CastChecked<ASMPlayerCharacter>(GetOwner());
 }
 
 void USMCatchInteractionComponent_Character::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -34,7 +32,12 @@ void USMCatchInteractionComponent_Character::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SourceASC = CastChecked<USMAbilitySystemComponent>(SourceCharacter->GetAbilitySystemComponent());
+	SourceCharacter = CastChecked<ASMPlayerCharacter>(GetOwner());
+}
+
+void USMCatchInteractionComponent_Character::InitASC(USMAbilitySystemComponent* NewASC)
+{
+	SourceASC = CastChecked<USMAbilitySystemComponent>(NewASC);
 }
 
 bool USMCatchInteractionComponent_Character::IsCatchable(AActor* TargetActor) const
@@ -279,7 +282,7 @@ void USMCatchInteractionComponent_Character::InternalTileTriggerdBySmash(AActor*
 		return;
 	}
 
-	USMAbilitySystemComponent* InstigatorASC = Cast<USMAbilitySystemComponent>(InstigatorCharacter);
+	USMAbilitySystemComponent* InstigatorASC = Cast<USMAbilitySystemComponent>(InstigatorCharacter->GetAbilitySystemComponent());
 	if (!ensureAlways(InstigatorASC))
 	{
 		return;

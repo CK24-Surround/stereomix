@@ -20,7 +20,7 @@ void USMGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -28,18 +28,11 @@ void USMGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle
 	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, CaughtMontage, 1.0f);
 	if (!ensure(Duration > 0.0f))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
-	if (ActorInfo->IsNetAuthority())
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
-	}
-	else
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, false, false);
-	}
+	K2_EndAbilityLocally();
 }

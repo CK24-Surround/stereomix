@@ -59,35 +59,35 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchTimerCallback()
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	ASMGameMode* CachedSMGameMode = GetWorld()->GetAuthGameMode<ASMGameMode>();
 	if (!ensureAlways(CachedSMGameMode))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	if (SourceTeam == ESMTeam::None)
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceTeam);
 	if (!ensureAlways(ProjectilePool))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	ASMProjectile* NewProjectile = ProjectilePool->GetProjectile();
 	if (!NewProjectile)
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 

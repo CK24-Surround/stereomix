@@ -32,41 +32,41 @@ void USMGameplayAbility_TileTrigger::ActivateAbility(const FGameplayAbilitySpecH
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 
 	if (!ensureAlways(TriggerEventData))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 
 	const FGameplayAbilityTargetData* TargetData = TriggerEventData->TargetData.Get(0);
 	if (!ensureAlways(TargetData))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 
 	const FHitResult* HitResult = TargetData->GetHitResult();
 	if (!ensureAlways(HitResult))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 
 	ASMTile* Tile = Cast<ASMTile>(HitResult->GetActor());
 	if (!ensureAlways(Tile))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 
 	const UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
 	if (!ensure(TileBoxComponent))
 	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbilityByCancel();
 		return;
 	}
 

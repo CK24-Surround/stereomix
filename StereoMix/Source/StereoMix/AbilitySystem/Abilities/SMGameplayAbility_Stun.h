@@ -56,13 +56,13 @@ protected:
 	/** ResetSmashedState에서 이어집니다. 스매시가 종료된 경우 호출됩니다.*/
 	UFUNCTION()
 	void OnBuzzerBeaterSmashEnded(FGameplayEventData Payload);
-	
+
 	void ProcessCaughtExit();
 
 	/** 잡기가 풀리면 호출됩니다. */
 	UFUNCTION()
 	void OnCaughtExitEnd(FGameplayEventData Payload);
-	
+
 	/** 스턴 상태에서 벗어납니다. */
 	void ResetStunState();
 

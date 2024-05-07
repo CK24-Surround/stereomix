@@ -34,6 +34,13 @@ ASMPlayerCharacter* USMGameplayAbility::GetSMPlayerCharacterFromActorInfo() cons
 	return nullptr;
 }
 
+void USMGameplayAbility::EndAbilityByCancel()
+{
+	check(CurrentActorInfo);
+
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
+}
+
 void USMGameplayAbility::ClientRPCPlayMontage_Implementation(UAnimMontage* InMontage, float InPlayRate, FName StartSection)
 {
 	if (ensure(ReplicationPolicy == EGameplayAbilityReplicationPolicy::ReplicateYes))

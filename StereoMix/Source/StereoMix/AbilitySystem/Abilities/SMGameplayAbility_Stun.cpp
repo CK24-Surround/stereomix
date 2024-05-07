@@ -34,21 +34,21 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
 	if (!ensureAlways(SourceCIC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -57,7 +57,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	ClientRPCPlayMontage(StunMontage);
 	if (!ensureAlways(Duration > 0.0f))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -68,7 +68,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	UAbilityTask_WaitDelay* WaitDelayTask = UAbilityTask_WaitDelay::WaitDelay(this, StunTime);
 	if (!ensureAlways(WaitDelayTask))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 	WaitDelayTask->OnFinish.AddDynamic(this, &ThisClass::OnStunTimeEnd);
@@ -120,7 +120,7 @@ void USMGameplayAbility_Stun::OnStunTimeEnd()
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -149,21 +149,21 @@ void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
 	if (!ensureAlways(SourceCIC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -181,7 +181,7 @@ void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterSmashEnd);
 	if (!ensureAlways(WaitGameplayEventTask))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 	WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnBuzzerBeaterSmashEnded);
@@ -196,7 +196,7 @@ void USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded(FGameplayEventData Payloa
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), SmashedMontage, 1.0f, TEXT("End"));
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::OnStunEnd);
@@ -208,21 +208,21 @@ void USMGameplayAbility_Stun::ProcessCaughtExit()
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
 	if (!ensureAlways(SourceCIC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -233,10 +233,10 @@ void USMGameplayAbility_Stun::ProcessCaughtExit()
 	UAbilityTask_WaitGameplayEvent* WatiGameplayEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::CaughtExitEnd);
 	if (!ensureAlways(WatiGameplayEvent))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
-	WatiGameplayEvent->EventReceived.AddDynamic(this, &USMGameplayAbility_Stun::OnCaughtExitEnd);
+	WatiGameplayEvent->EventReceived.AddDynamic(this, &ThisClass::OnCaughtExitEnd);
 	WatiGameplayEvent->ReadyForActivation();
 }
 
@@ -248,9 +248,9 @@ void USMGameplayAbility_Stun::OnCaughtExitEnd(FGameplayEventData Payload)
 void USMGameplayAbility_Stun::ResetStunState()
 {
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensure(SourceASC))
+	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -277,7 +277,7 @@ void USMGameplayAbility_Stun::ResetStunState()
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), EndMontage, 1.0f, TEXT("End"));
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::OnStunEnd);

@@ -38,14 +38,14 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -53,11 +53,11 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage, 1.0f, NAME_None, true, 1.0f, 0.0f, true);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
-	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &ThisClass::K2_CancelAbility);
-	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &ThisClass::K2_CancelAbility);
+	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &ThisClass::EndAbilityByCancel);
+	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &ThisClass::EndAbilityByCancel);
 	// 클라이언트와 서버 각각 애니메이션이 종료되면 스스로 종료하도록 합니다.
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbilityLocally);
 	PlayMontageAndWaitTask->ReadyForActivation();
@@ -73,7 +73,7 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 	// 만약 무소속이라면 뒤의 로직을 실행하지 않습니다. 즉 애니메이션과 이펙트만 실행됩니다.
 	if (SourceCharacter->GetTeam() == ESMTeam::None)
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -88,7 +88,7 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Catch);
 		if (!ensureAlways(WaitGameplayEventTask))
 		{
-			K2_CancelAbility();
+			EndAbilityByCancel();
 			return;
 		}
 		WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnCatchAnimNotify);
@@ -101,7 +101,7 @@ void USMGameplayAbility_Catch::OnCatchAnimNotify(FGameplayEventData Payload)
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -115,24 +115,23 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
 	if (!ensureAlways(SourceCIC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
-
 
 	// 클라이언트와 동일한 값을 사용할 수 있도록 저장합니다.
 	StartLocation = InStartLocation;
@@ -146,7 +145,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 	if (bSuccess)
 	{
 		bSuccess = false;
-		
+
 		AActor* TargetActor = GetMostSuitableCatchableActor(OverlapResults);
 		if (TargetActor)
 		{
@@ -159,7 +158,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 			// 타겟의 잡히기 로직을 실행합니다.
 			if (!TargetCIC->OnCaught(SourceCharacter))
 			{
-				K2_CancelAbility();
+				EndAbilityByCancel();
 				return;
 			}
 

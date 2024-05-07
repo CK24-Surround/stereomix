@@ -8,17 +8,13 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "Components/BoxComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraSystem.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCalculateBlueprintLibrary.h"
-#include "Utilities/SMCollision.h"
-#include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
 #include "Data/SMSpecialAction.h"
-#include "Engine/OverlapResult.h"
 #include "Utilities/SMCatchInteractionBlueprintLibrary.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
@@ -42,40 +38,40 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
 	if (!ensureAlways(SourceCIC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	AActor* TargetActor = SourceCIC->GetActorIAmCatching();
-	USMAbilitySystemComponent* TargetASC = nullptr;
+	USMAbilitySystemComponent* TargetASC;
 	USMCatchInteractionComponent* TargetICI = nullptr;
 	if (TargetActor)
 	{
 		TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
 		if (!ensureAlways(TargetASC))
 		{
-			K2_CancelAbility();
+			EndAbilityByCancel();
 			return;
 		}
 
 		TargetICI = Cast<USMCatchInteractionComponent>(USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetActor));
 		if (!ensureAlways(TargetICI))
 		{
-			K2_CancelAbility();
+			EndAbilityByCancel();
 			return;
 		}
 	}
@@ -87,7 +83,7 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashMontage"), SmashMontage);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 	PlayMontageAndWaitTask->ReadyForActivation();
@@ -134,21 +130,21 @@ void USMGameplayAbility_Smash::OnReceiveTargetData(const FGameplayAbilityTargetD
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (!ensureAlways(SourceMovement))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	const FGameplayAbilityTargetData* TargetData = GameplayAbilityTargetDataHandle.Get(0);
 	if (!ensureAlways(TargetData))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -163,40 +159,32 @@ void USMGameplayAbility_Smash::OnSmash()
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
 	if (!ensureAlways(SourceCIC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
 	AActor* TargetActor = SourceCIC->GetActorIAmCatching();
-	USMAbilitySystemComponent* TargetASC = nullptr;
 	USMCatchInteractionComponent* TargetCIC = nullptr;
 	if (TargetActor)
 	{
-		TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
-		if (!ensureAlways(TargetASC))
-		{
-			K2_CancelAbility();
-			return;
-		}
-
 		TargetCIC = Cast<USMCatchInteractionComponent>(USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetActor));
 		if (!ensureAlways(TargetCIC))
 		{
-			K2_CancelAbility();
+			EndAbilityByCancel();
 			return;
 		}
 	}
@@ -215,7 +203,7 @@ void USMGameplayAbility_Smash::OnSmash()
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashEndMontage"), SmashMontage, 1.0f, TEXT("End"));
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 	if (CurrentActorInfo->IsNetAuthority())
@@ -227,6 +215,9 @@ void USMGameplayAbility_Smash::OnSmash()
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		TargetCIC->OnSpecialActionEnded(SourceCharacter, ESpecialAction::Smash, MaxTriggerCount, DamageGE, SmashDamage);
+
+		SourceCIC->SetActorIAmCatching(nullptr);
+		SourceASC->RemoveTag(SMTags::Character::State::Catch);
 	}
 }
 
@@ -256,7 +247,7 @@ void USMGameplayAbility_Smash::SendToServerLocationData(const FVector& InStartLo
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -277,7 +268,7 @@ void USMGameplayAbility_Smash::LaunchCharacterToTargetWithApex(const FVector& In
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_CancelAbility();
+		EndAbilityByCancel();
 		return;
 	}
 

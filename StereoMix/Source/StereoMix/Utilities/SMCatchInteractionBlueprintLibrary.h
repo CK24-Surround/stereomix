@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Factories/BlueprintFunctionLibraryFactory.h"
 #include "SMCatchInteractionBlueprintLibrary.generated.h"
+
+class USMCatchInteractionComponent;
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API USMCatchInteractionBlueprintLibrary : public UBlueprintFunctionLibraryFactory
+class STEREOMIX_API USMCatchInteractionBlueprintLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 

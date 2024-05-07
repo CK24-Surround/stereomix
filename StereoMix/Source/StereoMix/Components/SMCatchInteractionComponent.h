@@ -8,7 +8,6 @@
 #include "Data/SMSpecialAction.h"
 #include "SMCatchInteractionComponent.generated.h"
 
-
 UCLASS(Abstract, ClassGroup=(CatchInteraction), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMCatchInteractionComponent : public UActorComponent
 {
