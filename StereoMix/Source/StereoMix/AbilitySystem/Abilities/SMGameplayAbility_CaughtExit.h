@@ -36,7 +36,7 @@ protected:
 
 protected:
 	/** 디태치와 필요한 처리들을 수행합니다. 서버에서만 수행되어야합니다. */
-	void DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter);
+	// void DetachFromTargetCharacter(ASMPlayerCharacter* InTargetCharacter);
 
 	UFUNCTION()
 	void OnCaughtExitEnded();

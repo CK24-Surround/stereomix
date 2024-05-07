@@ -31,7 +31,7 @@ void USMCatchInteractionComponent_Character::BeginPlay()
 	SourceASC = CastChecked<USMAbilitySystemComponent>(SourceCharacter->GetAbilitySystemComponent());
 }
 
-bool USMCatchInteractionComponent_Character::IsCatchble(AActor* TargetActor) const
+bool USMCatchInteractionComponent_Character::IsCatchable(AActor* TargetActor) const
 {
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
 	if (!ensureAlways(TargetCharacter))
@@ -141,6 +141,13 @@ bool USMCatchInteractionComponent_Character::OnCaughtReleased(AActor* TargetActo
 		if (SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit)))
 		{
 			return true;
+		}
+	}
+	else
+	{
+		if (true)
+		{
+			
 		}
 	}
 

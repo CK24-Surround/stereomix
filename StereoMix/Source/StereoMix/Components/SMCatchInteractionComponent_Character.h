@@ -23,7 +23,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual bool IsCatchble(AActor* TargetActor) const override;
+	virtual bool IsCatchable(AActor* TargetActor) const override;
 
 	virtual bool OnCaught(AActor* TargetActor) override;
 
@@ -40,7 +40,7 @@ public:
 
 	FORCEINLINE TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharcters() { return CapturedMeCharcters; }
 
-protected:
+public:
 	bool HandleCaughtReleased(AActor* TargetActor);
 
 protected:

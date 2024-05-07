@@ -11,7 +11,9 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "Components/SMCatchInteractionComponent_Character.h"
 #include "Engine/OverlapResult.h"
+#include "Utilities/SMCatchInteractionBlueprintLibrary.h"
 
 USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 {
@@ -124,6 +126,14 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 		return;
 	}
 
+	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
+	if (!ensureAlways(SourceCIC))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
+
 	// 클라이언트와 동일한 값을 사용할 수 있도록 저장합니다.
 	StartLocation = InStartLocation;
 	TargetLocation = InCursorLocation;
@@ -136,25 +146,25 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 	if (bSuccess)
 	{
 		bSuccess = false;
-
+		
 		AActor* TargetActor = GetMostSuitableCatchableActor(OverlapResults);
 		if (TargetActor)
 		{
 			// 이미 잡기 가능한 대상이므로 null체크를 다시 수행할 필요는 없습니다.
-			ISMCatchInteractionInterface* TargetCatchableInterface = Cast<ISMCatchInteractionInterface>(TargetActor);
+			USMCatchInteractionComponent* TargetCIC = USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetActor);
 
 			// 이펙트 재생을 위해 잡기 전 타겟의 위치를 저장해둡니다.
 			const FVector TargetLocationBeforeCatch = TargetActor->GetActorLocation();
 
 			// 타겟의 잡히기 로직을 실행합니다.
-			if (!TargetCatchableInterface->OnCaught(SourceCharacter))
+			if (!TargetCIC->OnCaught(SourceCharacter))
 			{
 				K2_CancelAbility();
 				return;
 			}
 
 			// 잡은 대상을 저장하고 자신의 상태를 잡기로 변경합니다.
-			SourceCharacter->SetActorIAmCatching(TargetActor);
+			SourceCIC->SetActorIAmCatching(TargetActor);
 			SourceASC->AddTag(SMTags::Character::State::Catch);
 
 			// 잡기 적중에 성공하여 성공 이펙트를 재생합니다.
@@ -213,8 +223,8 @@ bool USMGameplayAbility_Catch::GetCatchableActors(const TArray<FOverlapResult>& 
 	{
 		// 잡을 수 있는 액터만 추려냅니다.
 		AActor* TargetActor = OverlapResult.GetActor();
-		ISMCatchInteractionInterface* TargetCatchableInterface = Cast<ISMCatchInteractionInterface>(TargetActor);
-		if (TargetCatchableInterface)
+		USMCatchInteractionComponent* TargetCIC = USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetActor);
+		if (TargetCIC)
 		{
 			// 유효한 각도내에 있는지 체크합니다.
 			if (!IsValidateAngle(TargetActor))
@@ -223,7 +233,7 @@ bool USMGameplayAbility_Catch::GetCatchableActors(const TArray<FOverlapResult>& 
 			}
 
 			// 잡을 수 있는 상태인지 체크합니다.
-			if (!TargetCatchableInterface->IsCatchble(SourceCharacter))
+			if (!TargetCIC->IsCatchable(SourceCharacter))
 			{
 				continue;
 			}

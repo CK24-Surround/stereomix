@@ -187,6 +187,11 @@ ESMTeam ASMPlayerCharacter::GetTeam() const
 	return TeamComponent->GetTeam();
 }
 
+USMCatchInteractionComponent* ASMPlayerCharacter::GetCatchInteractionComponent()
+{
+	return CatchInteractionComponent;
+}
+
 void ASMPlayerCharacter::SetupGASInputComponent()
 {
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
@@ -519,9 +524,9 @@ void ASMPlayerCharacter::SetActorCatchingMe(AActor* NewActorCatchingMe)
 	CatchInteractionComponent->SetActorCatchingMe(NewActorCatchingMe);
 }
 
-bool ASMPlayerCharacter::IsCatchble(AActor* TargetActor) const
+bool ASMPlayerCharacter::IsCatchable(AActor* TargetActor) const
 {
-	return CatchInteractionComponent->IsCatchble(TargetActor);
+	return CatchInteractionComponent->IsCatchable(TargetActor);
 }
 
 bool ASMPlayerCharacter::OnCaught(AActor* TargetActor)

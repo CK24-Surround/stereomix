@@ -11,6 +11,8 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "Components/SMCatchInteractionComponent_Character.h"
+#include "Utilities/SMCatchInteractionBlueprintLibrary.h"
 
 USMGameplayAbility_Stun::USMGameplayAbility_Stun()
 {
@@ -43,6 +45,13 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
+	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
+	if (!ensureAlways(SourceCIC))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
 	// 스턴 몽타주가 정상적으로 실행되면 0.0f 이상의 값을 반환합니다.
 	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, StunMontage, 1.0f);
 	ClientRPCPlayMontage(StunMontage);
@@ -68,11 +77,11 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	// 잡고 있던 액터가 있다면 놓아줍니다.
 	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Catch))
 	{
-		AActor* TargetActor = SourceCharacter->GetActorIAmCatching();
-		ISMCatchInteractionInterface* TargetCatchInteractionInterface = Cast<ISMCatchInteractionInterface>(TargetActor);
-		if (ensureAlways(TargetCatchInteractionInterface))
+		AActor* TargetActor = SourceCIC->GetActorIAmCatching();
+		USMCatchInteractionComponent* TargetCIC = USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetActor);
+		if (ensureAlways(TargetCIC))
 		{
-			TargetCatchInteractionInterface->OnCaughtReleased(SourceCharacter, false);
+			TargetCIC->OnCaughtReleased(SourceCharacter, false);
 		}
 	}
 
@@ -137,13 +146,6 @@ void USMGameplayAbility_Stun::OnStunTimeEnd()
 
 void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 {
-	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensureAlways(SourceASC))
-	{
-		K2_CancelAbility();
-		return;
-	}
-
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
@@ -151,8 +153,22 @@ void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 		return;
 	}
 
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
+	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
+	if (!ensureAlways(SourceCIC))
+	{
+		K2_CancelAbility();
+		return;
+	}
+
 	// 만약 어떤 이유로 자신을 잡고 있는 캐릭터가 제거된 경우의 예외처리입니다.
-	if (!SourceCharacter->GetActorCatchingMe())
+	if (!SourceCIC->GetActorCatchingMe())
 	{
 		SourceASC->RemoveTag(SMTags::Character::State::Smashed);
 		// 즉시 잡기 탈출 로직을 호출합니다.
@@ -256,23 +272,30 @@ void USMGameplayAbility_Stun::ResetStunState()
 
 void USMGameplayAbility_Stun::OnStunEnd()
 {
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
+	{
+		return;
+	}
+
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
 		return;
 	}
 
-	// 컨트롤 로테이션을 따라가도록 복구해줍니다.
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
+	if (!ensureAlways(SourceCIC))
 	{
 		return;
 	}
+
+	// 컨트롤 로테이션을 따라가도록 복구해줍니다.
 	SourceCharacter->SetUseControllerRotation(true);
 
 	// 스턴이 완전히 종료되었기에 Uncatchable 태그를 제거하고 자신을 잡았던 캐릭터 리스트를 초기화합니다.
 	SourceASC->RemoveTag(SMTags::Character::State::Uncatchable);
-	SourceCharacter->GetCapturedMeCharcters().Empty();
+	SourceCIC->GetCapturedMeCharcters().Empty();
 
 	// 스턴 종료 시 적용해야할 GE들을 적용합니다.
 	for (const auto& StunEndedGE : StunEndedGEs)
