@@ -45,14 +45,17 @@ public:
 	FORCEINLINE TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharacters() { return CapturedMeCharcters; }
 
 public:
-	/** 타겟으로 부터 잡기상태를 탈출합니다. 타겟이 null이면 타겟과 관련된 처리만 제외하고 모두 처리됩니다. */
+	/**
+	 * 타겟으로 부터 잡기상태를 탈출합니다. 타겟이 null이면 타겟과 관련된 처리만 제외하고 모두 처리됩니다.
+	 * 외부에서도 사용 가능합니다. 따로 추가적인 애니메이션 같은 비주얼적인 효과 없이 그저 디태치만 수행합니다.
+	 */
 	bool CaughtReleased(AActor* TargetActor);
 
 protected:
 	/** 인스티게이터측에서 매치기를 시전할때 필요한 처리를 합니다.*/
 	void InternalSmashed();
 
-	/** 인스티게이터 측에서 매치기를 종료할때 필요한 처리를 합니다.*/
+	/** 인스티게이터측에서 매치기를 종료할때 필요한 처리를 합니다.*/
 	void InternalSmashedEnded(AActor* Instigator, float Magnitude, TSubclassOf<UGameplayEffect> DamageGE, float DamageAmount);
 
 	/** 타일을 트리거합니다. 내부적으로 트리거 GA가 활성화됩니다. */
