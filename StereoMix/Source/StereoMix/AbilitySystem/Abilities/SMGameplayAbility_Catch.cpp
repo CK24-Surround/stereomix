@@ -50,15 +50,16 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 	}
 
 	// 언제든 다른 상태로 인해 끊길 수 있는 애니메이션이기에 bAllowInterruptAfterBlendOut을 활성화 해 언제 끊기던 OnInterrupted가 브로드 캐스트 되도록합니다.
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage, 1.0f, NAME_None, true, 1.0f, 0.0f, true);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		EndAbilityByCancel();
 		return;
 	}
-	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &ThisClass::EndAbilityByCancel);
-	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &ThisClass::EndAbilityByCancel);
 	// 클라이언트와 서버 각각 애니메이션이 종료되면 스스로 종료하도록 합니다.
+	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbilityLocally);
+	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &ThisClass::K2_EndAbilityLocally);
+	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &ThisClass::K2_EndAbilityLocally);
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbilityLocally);
 	PlayMontageAndWaitTask->ReadyForActivation();
 

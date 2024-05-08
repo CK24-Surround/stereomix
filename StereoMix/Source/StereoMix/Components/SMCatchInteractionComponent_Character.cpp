@@ -93,6 +93,12 @@ bool USMCatchInteractionComponent_Character::IsCatchable(AActor* TargetActor) co
 		return false;
 	}
 
+	// 대상이 스턴 된 상태여야합니다.
+	if (!SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Stun))
+	{
+		return false;
+	}
+
 	return true;
 }
 
