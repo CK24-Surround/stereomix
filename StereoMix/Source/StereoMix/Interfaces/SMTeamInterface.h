@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMTeamInterface.generated.h"
 
 class USMTeamComponent;

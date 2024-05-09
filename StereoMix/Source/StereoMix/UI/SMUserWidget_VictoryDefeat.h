@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMUserWidget_VictoryDefeat.generated.h"
 
 class UImage;

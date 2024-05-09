@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMCatchInteractionComponent.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMCatchInteractionComponent_Character.generated.h"
 
 class USMAbilitySystemComponent;

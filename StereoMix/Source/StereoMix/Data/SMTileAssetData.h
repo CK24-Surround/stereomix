@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMTileAssetData.generated.h"
 
 class UNiagaraSystem;

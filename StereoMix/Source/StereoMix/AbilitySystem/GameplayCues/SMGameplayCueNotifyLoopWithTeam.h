@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayCueNotifyLoop.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMGameplayCueNotifyLoopWithTeam.generated.h"
 
 class UNiagaraSystem;

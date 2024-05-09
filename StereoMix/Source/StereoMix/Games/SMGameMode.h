@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameMode.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMGameMode.generated.h"
 
 class ASMProjectile;

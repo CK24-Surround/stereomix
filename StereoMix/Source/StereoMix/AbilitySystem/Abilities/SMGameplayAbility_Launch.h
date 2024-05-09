@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
-#include "Utilities/SMTeam.h"
 #include "SMGameplayAbility_Launch.generated.h"
 
 class UNiagaraSystem;

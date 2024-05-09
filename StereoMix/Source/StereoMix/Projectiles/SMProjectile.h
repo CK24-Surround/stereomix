@@ -6,7 +6,7 @@
 #include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/SMTeamInterface.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMProjectile.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnProjectileLifeTimeSignature, ASMProjectile* /*Projectile*/);

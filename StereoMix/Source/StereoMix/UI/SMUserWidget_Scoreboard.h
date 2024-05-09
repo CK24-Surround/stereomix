@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
 #include "Components/Image.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMUserWidget_Scoreboard.generated.h"
 
 class USMUserWidget_PhaseTimerBar;

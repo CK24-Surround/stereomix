@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Interfaces/SMTeamInterface.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMTile.generated.h"
 
 class USMTeamComponent;

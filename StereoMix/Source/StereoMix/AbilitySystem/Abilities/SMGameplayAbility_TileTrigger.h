@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMGameplayAbility_TileTrigger.generated.h"
 
 /**

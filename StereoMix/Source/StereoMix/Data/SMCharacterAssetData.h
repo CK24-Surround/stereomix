@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMCharacterAssetData.generated.h"
 
 /**

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
-#include "Utilities/SMTeam.h"
+#include "Data/SMTeam.h"
 #include "SMGameState.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnChangeTimeSignature, int32 /*RemainTime*/);

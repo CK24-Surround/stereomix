@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "Utilities/SMTeam.h"
+#include "Data//SMTeam.h"
 #include "SMTeamComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangeTeamSignature);
