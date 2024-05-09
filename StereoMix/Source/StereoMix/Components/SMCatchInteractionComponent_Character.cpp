@@ -484,7 +484,6 @@ void USMCatchInteractionComponent_Character::OnRep_IAmCatchingActor()
 	/** 잡은 대상을 제거하면 잡기 풀기 델리게이트가 호출됩니다.*/
 	if (!IAmCatchingActor.Get())
 	{
-		NET_LOG(SourceCharacter, Warning, TEXT("잡기 해제"));
 		OnCatchRelease.Broadcast();
 	}
 }

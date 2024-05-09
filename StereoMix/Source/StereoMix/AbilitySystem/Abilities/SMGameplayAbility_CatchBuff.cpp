@@ -5,10 +5,17 @@
 
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Utilities/SMLog.h"
+
+USMGameplayAbility_CatchBuff::USMGameplayAbility_CatchBuff()
+{
+	AbilityTags.AddTag(SMTags::Ability::CatchBuff);
+}
 
 void USMGameplayAbility_CatchBuff::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
@@ -56,6 +63,9 @@ void USMGameplayAbility_CatchBuff::ActivateAbility(const FGameplayAbilitySpecHan
 	if (ActorInfo->IsLocallyControlled())
 	{
 		SourceMovement->MaxWalkSpeed += MoveSpeedToAdd;
+
+		// 버프의 해제도 예측으로 종료되어야하기 때문에 로컬만 바인드합니다. 
+		SourceCIC->OnCatchRelease.AddUObject(this, &ThisClass::K2_EndAbility);
 	}
 
 	// 서버의 경우 실제로 반영합니다.
@@ -63,12 +73,9 @@ void USMGameplayAbility_CatchBuff::ActivateAbility(const FGameplayAbilitySpecHan
 	{
 		SourceCharacter->SetMaxWalkSpeed(SourceMovement->MaxWalkSpeed + MoveSpeedToAdd);
 	}
-
-	// 잡기가 풀릴때까지 버프가 지속됩니다.
-	SourceCIC->OnCatchRelease.AddUObject(this, &ThisClass::OnCatchRelease);
 }
 
-void USMGameplayAbility_CatchBuff::OnCatchRelease()
+void USMGameplayAbility_CatchBuff::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
@@ -113,5 +120,5 @@ void USMGameplayAbility_CatchBuff::OnCatchRelease()
 		SourceCharacter->SetMaxWalkSpeed(SourceMovement->MaxWalkSpeed - MoveSpeedToAdd);
 	}
 
-	K2_EndAbilityLocally();
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
