@@ -226,7 +226,7 @@ void USMGameplayAbility_Stun::ProcessCaughtExit()
 		return;
 	}
 
-	// 잡히기 탈출을 합니다.
+	// 잡히기 상태에서 탈출합니다.
 	SourceCIC->OnCaughtReleased(SourceCIC->GetActorCatchingMe(), true);
 
 	// 잡기 탈출이 완료되기까지 기다립니다. 이후 스턴을 종료합니다.

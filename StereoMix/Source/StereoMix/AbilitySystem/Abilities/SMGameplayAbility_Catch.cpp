@@ -157,11 +157,7 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 			const FVector TargetLocationBeforeCatch = TargetActor->GetActorLocation();
 
 			// 타겟의 잡히기 로직을 실행합니다.
-			if (!TargetCIC->OnCaught(SourceCharacter))
-			{
-				EndAbilityByCancel();
-				return;
-			}
+			TargetCIC->OnCaught(SourceCharacter);
 
 			// 잡은 대상을 저장하고 자신의 상태를 잡기로 변경합니다.
 			SourceCIC->SetActorIAmCatching(TargetActor);

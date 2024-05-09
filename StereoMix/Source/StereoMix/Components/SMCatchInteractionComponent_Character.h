@@ -29,9 +29,9 @@ public:
 public:
 	virtual bool IsCatchable(AActor* TargetActor) const override;
 
-	virtual bool OnCaught(AActor* TargetActor) override;
+	virtual void OnCaught(AActor* TargetActor) override;
 
-	virtual bool OnCaughtReleased(AActor* TargetActor, bool bIsStunEnd) override;
+	virtual void OnCaughtReleased(AActor* TargetActor, bool bIsStunEnd) override;
 
 	virtual void OnSpecialActionPerformed(AActor* Instigator, ESpecialAction InSpecialAction) override;
 
@@ -44,14 +44,19 @@ public:
 
 	FORCEINLINE TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharacters() { return CapturedMeCharcters; }
 
-public:
 	/**
-	 * 타겟으로 부터 잡기상태를 탈출합니다. 타겟이 null이면 타겟과 관련된 처리만 제외하고 모두 처리됩니다.
-	 * 외부에서도 사용 가능합니다. 따로 추가적인 애니메이션 같은 비주얼적인 효과 없이 그저 디태치만 수행합니다.
+	 * 타겟으로부터 잡기상태를 탈출합니다. 타겟이 null이면 타겟과 관련된 처리만 제외하고 모두 처리됩니다.
+	 * 외부에서도 사용할 수 있습니다. 따로 추가적인 애니메이션 같은 비주얼적인 효과 없이 그저 디태치만 수행합니다.
 	 */
-	bool CaughtReleased(AActor* TargetActor);
+	void CaughtReleased(AActor* TargetActor);
 
 protected:
+	/** 타겟으로부터 잡히기 상태가 될때 필요한 처리를 합니다. */
+	void InternalCaught(AActor* TargetActor);
+
+	/** 타겟으로부터 잡기 상태를 탈출하는데 필요한 처리를 합니다. */
+	void InternalCaughtReleased(AActor* TargetActor, bool bIsStunEnd);
+
 	/** 인스티게이터측에서 매치기를 시전할때 필요한 처리를 합니다.*/
 	void InternalSmashed();
 

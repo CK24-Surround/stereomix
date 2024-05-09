@@ -14,6 +14,7 @@
 #include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 
 
 void USMCatchInteractionComponent_Character::InitializeComponent()
@@ -102,24 +103,139 @@ bool USMCatchInteractionComponent_Character::IsCatchable(AActor* TargetActor) co
 	return true;
 }
 
-bool USMCatchInteractionComponent_Character::OnCaught(AActor* TargetActor)
+void USMCatchInteractionComponent_Character::OnCaught(AActor* TargetActor)
 {
 	if (!SourceCharacter->HasAuthority())
 	{
-		return false;
+		NET_LOG(SourceCharacter, Warning, TEXT("서버에서만 호출되야합니다."));
+		return;
+	}
+
+	InternalCaught(TargetActor);
+}
+
+void USMCatchInteractionComponent_Character::OnCaughtReleased(AActor* TargetActor, bool bIsStunEnd)
+{
+	if (!SourceCharacter->HasAuthority())
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버에서만 호출되야합니다."));
+		return;
+	}
+
+	InternalCaughtReleased(TargetActor, bIsStunEnd);
+}
+
+void USMCatchInteractionComponent_Character::OnSpecialActionPerformed(AActor* Instigator, ESpecialAction InSpecialAction)
+{
+	if (!SourceCharacter->HasAuthority())
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버에서만 호출되야합니다."));
+		return;
+	}
+
+	switch (InSpecialAction)
+	{
+		case ESpecialAction::Smash:
+		{
+			InternalSmashed();
+			break;
+		}
+	}
+}
+
+void USMCatchInteractionComponent_Character::OnSpecialActionEnded(AActor* Instigator, ESpecialAction InSpecialAction, float InMagnitude, TSubclassOf<UGameplayEffect> DamageGE, float InDamageAmount)
+{
+	if (!SourceCharacter->HasAuthority())
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버에서만 호출되야합니다."));
+		return;
+	}
+
+	switch (InSpecialAction)
+	{
+		case ESpecialAction::Smash:
+		{
+			InternalSmashedEnded(Instigator, InMagnitude, DamageGE, InDamageAmount);
+			break;
+		}
+	}
+}
+
+void USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
+{
+	// 이 함수는 만약 타겟이 null이어도 수행해야할 작업을 수행해줘야합니다. 따라서 TargetActor가 null이어도 즉시 반환하지 않고 예외처리를 해줍니다.
+
+	if (!SourceCharacter->HasAuthority())
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버에서만 호출되야합니다."));
+		return;
+	}
+
+	// 디태치합니다.
+	SourceCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+
+	// 자신을 잡고 있는 캐릭터를 제거하고 잡히기 상태 태그도 제거합니다.
+	SetActorCatchingMe(nullptr);
+	SourceASC->RemoveTag(SMTags::Character::State::Caught);
+
+	// 캐릭터 상태 위젯을 다시 보이게합니다.
+	SourceCharacter->SetCharacterStateVisibility(true);
+
+	// 충돌판정, 움직임을 복구합니다.
+	SourceCharacter->SetEnableCollision(true);
+	SourceCharacter->SetEnableMovement(true);
+
+	// 위치보정을 활성화해줍니다.
+	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
+	if (ensureAlways(SourceMovement))
+	{
+		SourceMovement->bIgnoreClientMovementErrorChecksAndCorrection = false;
+	}
+
+	// 회전을 재지정합니다. 
+	float NewYaw;
+	if (TargetActor)
+	{
+		NewYaw = TargetActor->GetActorRotation().Yaw;
+	}
+	else
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("타겟이 유효하지 않아 자신의 Yaw를 사용합니다."));
+		NewYaw = SourceCharacter->GetActorRotation().Yaw;
+	}
+	SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
+
+	SourceCharacter->ServerRPCPreventGroundEmbedding();
+
+	// 카메라 뷰를 원래대로 복구합니다.
+	APlayerController* SourcePlayerController = Cast<APlayerController>(SourceCharacter->Controller);
+	if (ensureAlways(SourcePlayerController))
+	{
+		SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
+	}
+
+	return;
+}
+
+void USMCatchInteractionComponent_Character::InternalCaught(AActor* TargetActor)
+{
+	if (!SourceCharacter->HasAuthority())
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버에서만 호출되야합니다."));
+		return;
 	}
 
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
 	if (!ensureAlways(TargetActor))
 	{
-		return false;
+		return;
 	}
 
 	// 대상에게 어태치합니다. 어태치 후 상대 회전을 0으로 정렬해줍니다.
 	const bool bAttachSuccess = SourceCharacter->AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSlotSocket"));
 	if (!ensureAlways(bAttachSuccess))
 	{
-		return false;
+		return;
 	}
 
 	// 자신을 잡은 캐릭터를 저장하고 잡힌 상태 태그를 부착합니다.
@@ -155,113 +271,19 @@ bool USMCatchInteractionComponent_Character::OnCaught(AActor* TargetActor)
 
 	// 잡히기 GA를 활성화합니다.
 	SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Caught));
-
-	return true;
 }
 
-bool USMCatchInteractionComponent_Character::OnCaughtReleased(AActor* TargetActor, bool bIsStunEnd)
+void USMCatchInteractionComponent_Character::InternalCaughtReleased(AActor* TargetActor, bool bIsStunEnd)
 {
-	if (!SourceCharacter->HasAuthority())
-	{
-		return false;
-	}
-
-	// 아래 GA에서 잡히기 탈출와 애니메이션을 재생해줍니다. 완료되면 완료 이벤트를 전송합니다.
+	// 아래 GA에서 잡히기 탈출와 애니메이션을 재생해줍니다. 완료되면 이벤트를 전송합니다.
 	if (!bIsStunEnd)
 	{
-		if (SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit)))
-		{
-			return true;
-		}
+		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExit));
 	}
 	else
 	{
-		if (SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExitOnStunEnd)))
-		{
-			return true;
-		}
+		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CaughtExitOnStunEnd));
 	}
-
-	return false;
-}
-
-void USMCatchInteractionComponent_Character::OnSpecialActionPerformed(AActor* Instigator, ESpecialAction InSpecialAction)
-{
-	if (!SourceCharacter->HasAuthority())
-	{
-		return;
-	}
-
-	switch (InSpecialAction)
-	{
-		case ESpecialAction::Smash:
-		{
-			InternalSmashed();
-			break;
-		}
-	}
-}
-
-void USMCatchInteractionComponent_Character::OnSpecialActionEnded(AActor* Instigator, ESpecialAction InSpecialAction, float InMagnitude, TSubclassOf<UGameplayEffect> DamageGE, float InDamageAmount)
-{
-	if (!SourceCharacter->HasAuthority())
-	{
-		return;
-	}
-
-	switch (InSpecialAction)
-	{
-		case ESpecialAction::Smash:
-		{
-			InternalSmashedEnded(Instigator, InMagnitude, DamageGE, InDamageAmount);
-			break;
-		}
-	}
-}
-
-bool USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
-{
-	// 이 함수는 만약 타겟이 null이어도 수행해야할 작업을 수행해줘야합니다.
-
-	// 디태치합니다.
-	SourceCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-	// 자신을 잡고 있는 캐릭터를 제거하고 잡히기 상태 태그도 제거합니다.
-	SetActorCatchingMe(nullptr);
-	SourceASC->RemoveTag(SMTags::Character::State::Caught);
-
-	// 캐릭터 상태 위젯을 다시 보이게합니다.
-	SourceCharacter->SetCharacterStateVisibility(true);
-
-	// 충돌판정, 움직임을 복구합니다.
-	SourceCharacter->SetEnableCollision(true);
-	SourceCharacter->SetEnableMovement(true);
-
-	// 위치보정을 활성화해줍니다.
-	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
-	if (ensureAlways(SourceMovement))
-	{
-		SourceMovement->bIgnoreClientMovementErrorChecksAndCorrection = false;
-	}
-
-	// 회전을 재지정합니다. 
-	float NewYaw = 0.0f;
-	if (TargetActor)
-	{
-		NewYaw = TargetActor->GetActorRotation().Yaw;
-	}
-	SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
-
-	SourceCharacter->ServerRPCPreventGroundEmbedding();
-
-	// 카메라 뷰를 원래대로 복구합니다.
-	APlayerController* SourcePlayerController = Cast<APlayerController>(SourceCharacter->Controller);
-	if (ensureAlways(SourcePlayerController))
-	{
-		SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
-	}
-
-	return true;
 }
 
 void USMCatchInteractionComponent_Character::InternalSmashed()
@@ -401,6 +423,7 @@ void USMCatchInteractionComponent_Character::InternalApplySmashSplashDamage(cons
 			// GC로 피격 이펙트를 재생합니다.
 			FGameplayCueParameters GCParams;
 			GCParams.Location = TargetCharacter->GetActorLocation();
+			GCParams.Instigator = InstigatorCharacter;
 			InstigatorASC->ExecuteGameplayCue(SMTags::GameplayCue::SmashSplashHit, GCParams);
 		}
 	}
@@ -432,6 +455,12 @@ bool USMCatchInteractionComponent_Character::IsValidateTargetForSmashSplashDamag
 
 	// 인스티게이터와 같은 팀의 경우 대미지를 가하지 않습니다.
 	if (InstigatorTeam == TargetTeam)
+	{
+		return false;
+	}
+
+	// 면역상태인 경우 대미지를 가하지 않습니다.
+	if (TargetASC->HasMatchingGameplayTag(SMTags::Character::State::Immune))
 	{
 		return false;
 	}
