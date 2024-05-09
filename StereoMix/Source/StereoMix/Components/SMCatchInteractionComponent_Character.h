@@ -10,6 +10,8 @@
 class USMAbilitySystemComponent;
 class ASMPlayerCharacter;
 
+DECLARE_MULTICAST_DELEGATE(FOnCatchReleaseSignature);
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMCatchInteractionComponent_Character : public USMCatchInteractionComponent
 {
@@ -40,7 +42,7 @@ public:
 public:
 	FORCEINLINE AActor* GetActorIAmCatching() { return IAmCatchingActor.Get(); }
 
-	FORCEINLINE void SetActorIAmCatching(AActor* NewIAmCatchingActor) { IAmCatchingActor = NewIAmCatchingActor; }
+	void SetActorIAmCatching(AActor* NewIAmCatchingActor);
 
 	FORCEINLINE TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharacters() { return CapturedMeCharcters; }
 
@@ -72,9 +74,17 @@ protected:
 	/** 스플래시 대미지를 받을 수 있는 타겟인지 검사합니다. */
 	bool IsValidateTargetForSmashSplashDamage(const ASMPlayerCharacter* TargetActor, ESMTeam InstigatorTeam);
 
+public:
+	/** 잡기를 놓을때 브로드캐스트합니다.*/
+	FOnCatchReleaseSignature OnCatchRelease;
+
+protected:
+	UFUNCTION()
+	void OnRep_IAmCatchingActor();
+	
 protected:
 	/** 자신이 잡고 있는 액터입니다. */
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = "OnRep_IAmCatchingActor")
 	TWeakObjectPtr<AActor> IAmCatchingActor;
 
 	/** 한 캐릭터에게 여러번 잡히지 않도록 자신을 잡았던 캐릭터들을 담아둡니다. 서버에서만 유효합니다. */

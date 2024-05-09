@@ -171,6 +171,9 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 			SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::CatchHit, GCParams);
 
 			bSuccess = true;
+
+			// 잡기 버프를 활성화합니다. 이동속도가 증가합니다.
+			// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CatchBuff));
 		}
 	}
 

@@ -161,6 +161,17 @@ void USMCatchInteractionComponent_Character::OnSpecialActionEnded(AActor* Instig
 	}
 }
 
+void USMCatchInteractionComponent_Character::SetActorIAmCatching(AActor* NewIAmCatchingActor)
+{
+	if (!SourceCharacter->HasAuthority())
+	{
+		return;
+	}
+
+	IAmCatchingActor = NewIAmCatchingActor;
+	OnRep_IAmCatchingActor();
+}
+
 void USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
 {
 	// 이 함수는 만약 타겟이 null이어도 수행해야할 작업을 수행해줘야합니다. 따라서 TargetActor가 null이어도 즉시 반환하지 않고 예외처리를 해줍니다.
@@ -466,4 +477,14 @@ bool USMCatchInteractionComponent_Character::IsValidateTargetForSmashSplashDamag
 	}
 
 	return true;
+}
+
+void USMCatchInteractionComponent_Character::OnRep_IAmCatchingActor()
+{
+	/** 잡은 대상을 제거하면 잡기 풀기 델리게이트가 호출됩니다.*/
+	if (!IAmCatchingActor.Get())
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("잡기 해제"));
+		OnCatchRelease.Broadcast();
+	}
 }
