@@ -11,11 +11,11 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraSystem.h"
 #include "Tiles/SMTile.h"
-#include "Utilities/SMCalculateBlueprintLibrary.h"
+#include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
 #include "Data/SMSpecialAction.h"
-#include "Utilities/SMCatchInteractionBlueprintLibrary.h"
+#include "FunctionLibraries/SMCatchInteractionBlueprintLibrary.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
 {

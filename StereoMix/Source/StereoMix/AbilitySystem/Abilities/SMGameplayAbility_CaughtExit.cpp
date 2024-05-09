@@ -10,7 +10,6 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
-#include "Utilities/SMCatchInteractionBlueprintLibrary.h"
 
 USMGameplayAbility_CaughtExit::USMGameplayAbility_CaughtExit()
 {
@@ -51,14 +50,14 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(SourceCIC->GetActorCatchingMe());
 	if (TargetCharacter)
 	{
-		TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+		TargetASC = Cast<USMAbilitySystemComponent>(TargetCharacter->GetAbilitySystemComponent());
 		if (!ensureAlways(TargetASC))
 		{
 			EndAbilityByCancel();
 			return;
 		}
 
-		TargetCIC = Cast<USMCatchInteractionComponent_Character>(USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetCharacter));
+		TargetCIC = Cast<USMCatchInteractionComponent_Character>(TargetCharacter->GetCatchInteractionComponent());
 		if (!ensureAlways(TargetCIC))
 		{
 			EndAbilityByCancel();

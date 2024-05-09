@@ -116,8 +116,3 @@ void USMGameplayAbility_Launch::OnReceiveProjectileTargetData(const FGameplayAbi
 
 	LaunchProjectile(StartLocation, ProjectileDirection);
 }
-
-void USMGameplayAbility_Launch::LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal)
-{
-	K2_EndAbility();
-}

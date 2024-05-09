@@ -12,7 +12,7 @@
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
-#include "Utilities/SMCatchInteractionBlueprintLibrary.h"
+#include "FunctionLibraries/SMCatchInteractionBlueprintLibrary.h"
 
 USMGameplayAbility_Stun::USMGameplayAbility_Stun()
 {

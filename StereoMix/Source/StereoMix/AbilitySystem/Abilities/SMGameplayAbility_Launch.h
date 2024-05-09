@@ -31,7 +31,7 @@ protected:
 	virtual void OnReceiveProjectileTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
 
 	/** 투사체를 발사시킵니다. 서버에서 호출됩니다. 이 함수를 오버라이드하여 발사 로직을 구성해야합니다. */
-	virtual void LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal);
+	virtual void LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal) PURE_VIRTUAL(USMGameplayAbility_Launch::LaunchProjectile);
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")

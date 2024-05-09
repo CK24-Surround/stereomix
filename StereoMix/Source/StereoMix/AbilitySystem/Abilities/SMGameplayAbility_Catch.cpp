@@ -13,7 +13,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
 #include "Engine/OverlapResult.h"
-#include "Utilities/SMCatchInteractionBlueprintLibrary.h"
+#include "FunctionLibraries/SMCatchInteractionBlueprintLibrary.h"
 
 USMGameplayAbility_Catch::USMGameplayAbility_Catch()
 {

@@ -12,7 +12,7 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
-#include "Utilities/SMCalculateBlueprintLibrary.h"
+#include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 
 ASMJumpPad::ASMJumpPad()
 {
