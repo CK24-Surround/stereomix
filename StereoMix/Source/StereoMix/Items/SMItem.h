@@ -10,4 +10,7 @@ UCLASS(Abstract)
 class STEREOMIX_API ASMItem : public AActor
 {
 	GENERATED_BODY()
+
+public:
+	ASMItem();
 };

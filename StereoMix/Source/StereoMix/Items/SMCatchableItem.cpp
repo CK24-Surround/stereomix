@@ -3,6 +3,8 @@
 
 #include "SMCatchableItem.h"
 
+#include "Utilities/SMCollision.h"
+
 
 ASMCatchableItem::ASMCatchableItem()
 {
@@ -11,4 +13,5 @@ ASMCatchableItem::ASMCatchableItem()
 
 	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	StaticMeshComponent->SetupAttachment(SceneComponent);
+	StaticMeshComponent->SetCollisionProfileName(SMCollisionProfileName::CatchableItem);
 }

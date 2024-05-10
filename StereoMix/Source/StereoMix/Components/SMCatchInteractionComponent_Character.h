@@ -42,6 +42,7 @@ public:
 public:
 	FORCEINLINE AActor* GetActorIAmCatching() { return IAmCatchingActor.Get(); }
 
+	/** 잡은 대상을 설정할 때 사용합니다. 추가 처리로, 유효한 타겟이면 잡기태그를 추가하고, nullptr이면 잡기 태그를 제거합니다. */
 	void SetActorIAmCatching(AActor* NewIAmCatchingActor);
 
 	FORCEINLINE TArray<TWeakObjectPtr<ASMPlayerCharacter>>& GetCapturedMeCharacters() { return CapturedMeCharcters; }
@@ -81,7 +82,7 @@ public:
 protected:
 	UFUNCTION()
 	void OnRep_IAmCatchingActor();
-	
+
 protected:
 	/** 자신이 잡고 있는 액터입니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_IAmCatchingActor")

@@ -2,3 +2,8 @@
 
 
 #include "SMItem.h"
+
+ASMItem::ASMItem()
+{
+	bReplicates = true;
+}

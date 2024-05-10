@@ -94,7 +94,7 @@ bool USMCatchInteractionComponent_Character::IsCatchable(AActor* TargetActor) co
 		return false;
 	}
 
-	// 대상이 스턴 된 상태여야합니다.
+	// 스턴 된 상태가 아니라면 잡을 수 없습니다.
 	if (!SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Stun))
 	{
 		return false;
@@ -168,8 +168,12 @@ void USMCatchInteractionComponent_Character::SetActorIAmCatching(AActor* NewIAmC
 		return;
 	}
 
-	IAmCatchingActor = NewIAmCatchingActor;
-	OnRep_IAmCatchingActor();
+	// 중복 실행되어도 안전하도록 값이 다른 경우에만 처리됩니다.
+	if (IAmCatchingActor != NewIAmCatchingActor)
+	{
+		IAmCatchingActor = NewIAmCatchingActor;
+		OnRep_IAmCatchingActor();
+	}
 }
 
 void USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
@@ -242,7 +246,7 @@ void USMCatchInteractionComponent_Character::InternalCaught(AActor* TargetActor)
 		return;
 	}
 
-	// 대상에게 어태치합니다. 어태치 후 상대 회전을 0으로 정렬해줍니다.
+	// 대상에게 어태치합니다.
 	const bool bAttachSuccess = SourceCharacter->AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSlotSocket"));
 	if (!ensureAlways(bAttachSuccess))
 	{
@@ -481,9 +485,22 @@ bool USMCatchInteractionComponent_Character::IsValidateTargetForSmashSplashDamag
 
 void USMCatchInteractionComponent_Character::OnRep_IAmCatchingActor()
 {
-	/** 잡은 대상을 제거하면 잡기 풀기 델리게이트가 호출됩니다.*/
-	if (!IAmCatchingActor.Get())
+	// 잡은 대상이 유효하다면 잡기 태그를 붙이고, 유효하지 않거나 nullptr인 경우 잡기 태그를 제거합니다.
+	if (IAmCatchingActor.Get())
 	{
+		if (GetOwnerRole() == ROLE_Authority)
+		{
+			SourceASC->AddTag(SMTags::Character::State::Catch);
+		}
+	}
+	else
+	{
+		if (GetOwnerRole() == ROLE_Authority)
+		{
+			SourceASC->RemoveTag(SMTags::Character::State::Catch);
+		}
+
+		/** 잡은 대상을 제거하면 잡기 풀기 델리게이트가 호출됩니다.*/
 		OnCatchRelease.Broadcast();
 	}
 }

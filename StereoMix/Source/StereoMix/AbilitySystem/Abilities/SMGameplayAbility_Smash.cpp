@@ -217,7 +217,6 @@ void USMGameplayAbility_Smash::OnSmash()
 		TargetCIC->OnSpecialActionEnded(SourceCharacter, ESpecialAction::Smash, MaxTriggerCount, DamageGE, SmashDamage);
 
 		SourceCIC->SetActorIAmCatching(nullptr);
-		SourceASC->RemoveTag(SMTags::Character::State::Catch);
 	}
 }
 

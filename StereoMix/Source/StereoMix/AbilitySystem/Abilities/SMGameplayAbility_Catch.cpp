@@ -161,7 +161,6 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 
 			// 잡은 대상을 저장하고 자신의 상태를 잡기로 변경합니다.
 			SourceCIC->SetActorIAmCatching(TargetActor);
-			SourceASC->AddTag(SMTags::Character::State::Catch);
 
 			// 잡기 적중에 성공하여 성공 이펙트를 재생합니다.
 			FGameplayCueParameters GCParams;

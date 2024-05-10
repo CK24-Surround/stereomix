@@ -83,6 +83,8 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		{
 			TargetCIC->OnCaughtReleased(SourceCharacter, false);
 		}
+
+		SourceCIC->SetActorIAmCatching(nullptr);
 	}
 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);

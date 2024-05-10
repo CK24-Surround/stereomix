@@ -71,7 +71,6 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 	// 타겟이 있다면 타겟에 필요한 처리를 해줍니다.
 	if (TargetCharacter)
 	{
-		TargetASC->RemoveTag(SMTags::Character::State::Catch);
 		TargetCIC->SetActorIAmCatching(nullptr);
 	}
 
