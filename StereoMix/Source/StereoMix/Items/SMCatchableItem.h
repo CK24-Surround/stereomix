@@ -7,7 +7,7 @@
 #include "Interfaces/SMCatchInteractionInterface.h"
 #include "SMCatchableItem.generated.h"
 
-class USMCatchInteractionComponent_CatchableItem_Heal;
+class USMCatchInteractionComponent_CatchableItem_AttributeChanger;
 
 UCLASS(Abstract)
 class STEREOMIX_API ASMCatchableItem : public ASMItem, public ISMCatchInteractionInterface
