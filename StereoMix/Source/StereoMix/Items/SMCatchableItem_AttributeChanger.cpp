@@ -22,7 +22,28 @@ USMCatchInteractionComponent* ASMCatchableItem_AttributeChanger::GetCatchInterac
 
 void ASMCatchableItem_AttributeChanger::ActivateItem()
 {
-	HandleApplyItem();
+	TriggerCount = Duration / Interval;
+	Amount = TotalAmount / TriggerCount;
+
+	TriggerCountTimerStart();
+}
+
+void ASMCatchableItem_AttributeChanger::TriggerCountTimerStart()
+{
+	TriggerData.CurrentTriggerCount = 0;
+
+	TriggerCountTimerCallback();
+}
+
+void ASMCatchableItem_AttributeChanger::TriggerCountTimerCallback()
+{
+	if (TriggerData.CurrentTriggerCount++ < TriggerCount)
+	{
+		HandleApplyItem();
+
+		FTimerHandle TimerHandle;
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::TriggerCountTimerCallback, Interval, false);
+	}
 }
 
 void ASMCatchableItem_AttributeChanger::HandleApplyItem()
@@ -53,7 +74,7 @@ void ASMCatchableItem_AttributeChanger::HandleApplyItem()
 
 		if (bSuccess)
 		{
-			DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, FColor::Green, false, 3.0f);
+			DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, FColor::Green, false, 0.1f);
 		}
 	}
 }
