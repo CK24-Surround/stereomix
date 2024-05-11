@@ -20,6 +20,10 @@ public:
 public:
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override PURE_VIRTUAL(ASMCatchableItem::GetCatchInteractionComponent, return nullptr;)
 
+public:
+	/** 아이템을 활성화합니다. 서브클래스에서 직접 구현해줘야합니다. */
+	virtual void ActivateItem() PURE_VIRTUAL(ASMCatchableItem::ActivateItem)
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;

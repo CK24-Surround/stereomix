@@ -57,17 +57,9 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 	}
 
 	AActor* TargetActor = SourceCIC->GetActorIAmCatching();
-	USMAbilitySystemComponent* TargetASC;
 	USMCatchInteractionComponent* TargetICI = nullptr;
 	if (TargetActor)
 	{
-		TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor));
-		if (!ensureAlways(TargetASC))
-		{
-			EndAbilityByCancel();
-			return;
-		}
-
 		TargetICI = Cast<USMCatchInteractionComponent>(USMCatchInteractionBlueprintLibrary::GetCatchInteractionComponent(TargetActor));
 		if (!ensureAlways(TargetICI))
 		{
