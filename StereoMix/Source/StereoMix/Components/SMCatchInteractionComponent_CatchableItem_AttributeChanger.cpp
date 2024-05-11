@@ -50,7 +50,11 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 	}
 
 	// 아이템을 활성화합니다.
-	SourceItem->ActivateItem();
+	ISMTeamInterface* InstigatorTeamInterface = Cast<ISMTeamInterface>(Instigator);
+	if (InstigatorTeamInterface)
+	{
+		SourceItem->ActivateItem(InstigatorTeamInterface->GetTeam());
+	}
 }
 
 ASMTile* USMCatchInteractionComponent_CatchableItem_AttributeChanger::TileTrigger()

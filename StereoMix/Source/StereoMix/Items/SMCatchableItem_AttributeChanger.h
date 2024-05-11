@@ -6,6 +6,7 @@
 #include "SMCatchableItem.h"
 #include "SMCatchableItem_AttributeChanger.generated.h"
 
+class USMTeamComponent;
 class ASMTile;
 
 UCLASS()
@@ -20,7 +21,7 @@ public:
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override;
 
 public:
-	virtual void ActivateItem() override;
+	virtual void ActivateItem(ESMTeam SourceTeam) override;
 
 protected:
 	void TriggerCountTimerStart();
@@ -30,9 +31,18 @@ protected:
 	/** 버프가 적용될때마다 호출되야합니다. */
 	void HandleApplyItem();
 
+	/** 아이템을 적용해야할 범위 내에 있는 액터들을 찾아내서 반환합니다. */
+	TArray<TWeakObjectPtr<AActor>> ScanActorsToApplyItem();
+
+	/** 아이템을 적용하기에 유효한 타겟인지 검증합니다. */
+	bool IsValidActorToApplyItem(AActor* TargetActor);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "CIC")
 	TObjectPtr<USMCatchInteractionComponent_CatchableItem_AttributeChanger> CIC;
+
+	UPROPERTY(VisibleAnywhere, Category = "TeamComponent")
+	TObjectPtr<USMTeamComponent> TeamComponent;
 
 public:
 	struct FTriggerData
@@ -45,8 +55,6 @@ public:
 	TArray<TWeakObjectPtr<ASMTile>> TriggeredTiles;
 
 protected:
-	TArray<TWeakObjectPtr<AActor>> ApplyActors;
-
 	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "총량")
 	float TotalAmount = 50.0f;
 
