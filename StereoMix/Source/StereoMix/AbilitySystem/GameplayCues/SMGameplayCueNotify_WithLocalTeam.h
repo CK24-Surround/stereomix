@@ -4,16 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayCueNotify.h"
+#include "Data/SMLocalTeam.h"
 #include "SMGameplayCueNotify_WithLocalTeam.generated.h"
 
 class UNiagaraSystem;
-
-UENUM()
-enum class ELocalTeam
-{
-	Equal,
-	different
-};
 
 /**
  * 
@@ -37,5 +31,5 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ELocalTeam, TObjectPtr<UNiagaraSystem>> FX;
+	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> FX;
 };

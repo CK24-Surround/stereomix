@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "SMCatchableItem.h"
+#include "Data/SMLocalTeam.h"
 #include "SMCatchableItem_AttributeChanger.generated.h"
 
+class UNiagaraSystem;
 class UGameplayEffect;
 class USMTeamComponent;
 class ASMTile;
@@ -51,6 +53,13 @@ protected:
 	/** 아이템을 적용하기에 유효한 타겟인지 검증합니다. */
 	bool IsValidActorToApplyItem(AActor* TargetActor);
 
+	/** 이펙트를 재생합니다. */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCPlayActivateHealItemFX(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTrigeredTiles);
+
+	/** 로컬에서 플레이하고 있는 팀과 시전자의 팀이 같은지 확인합니다. 추후 펑션 라이브러리 클래스로 옮길 예정입니다. */
+	bool IsSameTeamWithLocalTeam(AActor* TargetActor) const;
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "CIC")
 	TObjectPtr<USMCatchInteractionComponent_CatchableItem_AttributeChanger> CIC;
@@ -80,6 +89,9 @@ public:
 	FTriggerData TriggerData;
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "Item")
+	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateFX;
+
 	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "지속시간")
 	float Duration = 5.0f;
 

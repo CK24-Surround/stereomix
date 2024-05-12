@@ -126,7 +126,7 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::SaveTriggeredT
 			}
 
 			// 트리거된 타일들을 아이템에게 저장해줍니다.
-			SourceItem->TriggeredTiles.Add(TriggeredTile);
+			SourceItem->TriggeredTiles.AddUnique(TriggeredTile);
 		}
 	}
 }

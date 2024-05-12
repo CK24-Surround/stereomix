@@ -5,11 +5,13 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/BoxComponent.h"
 #include "Components/SMCatchInteractionComponent_CatchableItem_AttributeChanger.h"
 #include "Components/SMTeamComponent.h"
 #include "Engine/OverlapResult.h"
+#include "Kismet/GameplayStatics.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -20,6 +22,9 @@ ASMCatchableItem_AttributeChanger::ASMCatchableItem_AttributeChanger()
 	CIC = CreateDefaultSubobject<USMCatchInteractionComponent_CatchableItem_AttributeChanger>(TEXT("CIC"));
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
+
+	ActivateFX.FindOrAdd(ESMLocalTeam::Equal, nullptr);
+	ActivateFX.FindOrAdd(ESMLocalTeam::different, nullptr);
 }
 
 USMCatchInteractionComponent* ASMCatchableItem_AttributeChanger::GetCatchInteractionComponent()
@@ -114,7 +119,6 @@ void ASMCatchableItem_AttributeChanger::TriggerCountTimerCallback()
 
 void ASMCatchableItem_AttributeChanger::ApplyItemByStart(TArray<AActor*> ActorsToApply)
 {
-	NET_LOG(this, Warning, TEXT("아이템 적용 시작"));
 	for (const auto& ActorToApply : ActorsToApply)
 	{
 		// 활성자는 이 이펙트를 적용받으면 안 됩니다.
@@ -138,14 +142,13 @@ void ASMCatchableItem_AttributeChanger::ApplyItemByStart(TArray<AActor*> ActorsT
 				ActorToApplyASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
 		}
-
-		NET_LOG(this, Warning, TEXT("%s"), *ActorToApply->GetName());
+		
+		NET_LOG(this, Log, TEXT("아이템 적용 액터: %s"), *ActorToApply->GetName());
 	}
 }
 
 void ASMCatchableItem_AttributeChanger::ApplyItemByWhile(TArray<AActor*> ActorsToApply)
 {
-	NET_LOG(this, Warning, TEXT("아이템 적용 중"));
 	for (const auto& ActorToApply : ActorsToApply)
 	{
 		UAbilitySystemComponent* ActorToApplyASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(ActorToApply);
@@ -232,8 +235,6 @@ TArray<AActor*> ASMCatchableItem_AttributeChanger::GetActorsOnTriggeredTiles(ECo
 			}
 		}
 
-		// TODO: 이펙트를 활성화할 곳입니다.
-
 		if (bDrawDebug)
 		{
 			const FColor DebugColor = bSuccess ? FColor::Cyan : FColor::Green;
@@ -241,6 +242,7 @@ TArray<AActor*> ASMCatchableItem_AttributeChanger::GetActorsOnTriggeredTiles(ECo
 		}
 	}
 
+	MulticastRPCPlayActivateHealItemFX(Activator.Get(), TriggeredTiles);
 	return Result;
 }
 
@@ -261,6 +263,56 @@ bool ASMCatchableItem_AttributeChanger::IsValidActorToApplyItem(AActor* TargetAc
 	ESMTeam SourceTeam = TeamComponent->GetTeam();
 	ESMTeam TargetTeam = TargetTeamInterface->GetTeam();
 	if (SourceTeam != TargetTeam)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+void ASMCatchableItem_AttributeChanger::MulticastRPCPlayActivateHealItemFX_Implementation(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTrigeredTiles)
+{
+	ESMLocalTeam LocalTeam = ESMLocalTeam::different;
+	if (IsSameTeamWithLocalTeam(InActivator))
+	{
+		LocalTeam = ESMLocalTeam::Equal;
+	}
+
+	for (const auto& TriggeredTile : InTrigeredTiles)
+	{
+		if (!ensureAlways(TriggeredTile.Get()))
+		{
+			continue;
+		}
+
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ActivateFX[LocalTeam], TriggeredTile->GetTileLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
+	}
+}
+
+bool ASMCatchableItem_AttributeChanger::IsSameTeamWithLocalTeam(AActor* TargetActor) const
+{
+	ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(TargetActor);
+	if (!ensureAlways(TargetTeamInterface))
+	{
+		return false;
+	}
+
+	APlayerController* LocalPlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	if (!ensureAlways(LocalPlayerController))
+	{
+		return false;
+	}
+
+	ISMTeamInterface* LocalTeamInterface = Cast<ISMTeamInterface>(LocalPlayerController->GetPawn());
+	if (!ensureAlways(LocalTeamInterface))
+	{
+		return false;
+	}
+
+	ESMTeam SourceTeam = TargetTeamInterface->GetTeam();
+	ESMTeam LocalTeam = LocalTeamInterface->GetTeam();
+
+	if (SourceTeam != LocalTeam)
 	{
 		return false;
 	}
