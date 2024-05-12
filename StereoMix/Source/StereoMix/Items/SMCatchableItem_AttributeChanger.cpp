@@ -45,7 +45,7 @@ void ASMCatchableItem_AttributeChanger::ActivateItem(AActor* InActivator)
 	ESMTeam SourceTeam = InstigatorTeamInterface->GetTeam();
 	TeamComponent->SetTeam(SourceTeam);
 
-	TriggerCount = TeamDuration / Interval;
+	TriggerCount = Duration / Interval;
 	TeamAmount = TeamTotalAmount / TriggerCount;
 
 	ApplyGEToActivator();
@@ -117,6 +117,28 @@ void ASMCatchableItem_AttributeChanger::ApplyItemByStart(TArray<AActor*> ActorsT
 	NET_LOG(this, Warning, TEXT("아이템 적용 시작"));
 	for (const auto& ActorToApply : ActorsToApply)
 	{
+		// 활성자는 이 이펙트를 적용받으면 안 됩니다.
+		if (ActorToApply == Activator)
+		{
+			continue;
+		}
+
+		UAbilitySystemComponent* ActorToApplyASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(ActorToApply);
+		if (!ensureAlways(ActorToApplyASC))
+		{
+			return;
+		}
+
+		if (TeamInstantGE)
+		{
+			FGameplayEffectSpecHandle GESpecHandle = ActorToApplyASC->MakeOutgoingSpec(TeamInstantGE, 1.0f, ActorToApplyASC->MakeEffectContext());
+			if (ensureAlways(GESpecHandle.IsValid()))
+			{
+				GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Item::AttributeChanger, TeamInstantAmount);
+				ActorToApplyASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+			}
+		}
+
 		NET_LOG(this, Warning, TEXT("%s"), *ActorToApply->GetName());
 	}
 }
@@ -126,6 +148,22 @@ void ASMCatchableItem_AttributeChanger::ApplyItemByWhile(TArray<AActor*> ActorsT
 	NET_LOG(this, Warning, TEXT("아이템 적용 중"));
 	for (const auto& ActorToApply : ActorsToApply)
 	{
+		UAbilitySystemComponent* ActorToApplyASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(ActorToApply);
+		if (!ensureAlways(ActorToApplyASC))
+		{
+			return;
+		}
+
+		if (TeamDurationGE)
+		{
+			FGameplayEffectSpecHandle GESpecHandle = ActorToApplyASC->MakeOutgoingSpec(TeamDurationGE, 1.0f, ActorToApplyASC->MakeEffectContext());
+			if (ensureAlways(GESpecHandle.IsValid()))
+			{
+				GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Item::AttributeChanger, TeamAmount);
+				ActorToApplyASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+			}
+		}
+
 		NET_LOG(this, Warning, TEXT("%s"), *ActorToApply->GetName());
 	}
 }
@@ -196,8 +234,11 @@ TArray<AActor*> ASMCatchableItem_AttributeChanger::GetActorsOnTriggeredTiles(ECo
 
 		// TODO: 이펙트를 활성화할 곳입니다.
 
-		const FColor DebugColor = bSuccess ? FColor::Cyan : FColor::Green;
-		DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, DebugColor, false, Interval / 2);
+		if (bDrawDebug)
+		{
+			const FColor DebugColor = bSuccess ? FColor::Cyan : FColor::Green;
+			DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, DebugColor, false, Interval / 2);
+		}
 	}
 
 	return Result;

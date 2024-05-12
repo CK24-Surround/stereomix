@@ -79,6 +79,16 @@ public:
 	FTriggerData TriggerData;
 
 protected:
+	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "지속시간")
+	float Duration = 5.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "주기")
+	float Interval = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Item")
+	uint32 bDrawDebug:1 = false;
+
+protected:
 	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "즉시 적용 GE")
 	TSubclassOf<UGameplayEffect> ActivatorInstantGE;
 
@@ -86,10 +96,10 @@ protected:
 	TSubclassOf<UGameplayEffect> ActivatorDurationGE;
 
 	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "즉시 적용량")
-	float ActivatorInstantAmount = 50.0f;
+	float ActivatorInstantAmount = 30.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "지속 적용 총량")
-	float ActivatorTotalAmount = 50.0f;
+	float ActivatorTotalAmount = 30.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "지속시간")
 	float ActivatorDuration = 5.0f;
@@ -105,14 +115,8 @@ protected:
 	TSubclassOf<UGameplayEffect> TeamDurationGE;
 
 	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "즉시 적용량")
-	float TeamInstantAmount = 50.0f;
+	float TeamInstantAmount = 20.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "지속 적용 총량")
-	float TeamTotalAmount = 50.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "지속시간")
-	float TeamDuration = 5.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "주기")
-	float Interval = 0.5f;
+	float TeamTotalAmount = 30.0f;
 };
