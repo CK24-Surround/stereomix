@@ -21,18 +21,20 @@ public:
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override;
 
 public:
-	virtual void ActivateItem(ESMTeam SourceTeam) override;
+	virtual void ActivateItem(AActor* Activator) override;
 
 protected:
+	/** 반복 적용을 위한 타이머를 시작합니다. */
 	void TriggerCountTimerStart();
 
+	/** 타이머가 종료될 때 마다 실행됩니다. 이 때 타이머를 재시작해 카운트를 만큼 반복되도록 처리합니다. */
 	void TriggerCountTimerCallback();
 
 	/** 버프가 적용될때마다 호출되야합니다. */
-	void HandleApplyItem();
+	void ApplyItem();
 
-	/** 아이템을 적용해야할 범위 내에 있는 액터들을 찾아내서 반환합니다. */
-	TArray<TWeakObjectPtr<AActor>> ScanActorsToApplyItem();
+	/** 트레이스를 통해 트리거된 타일 위에 있는 액터들을 반환합니다. */
+	TArray<TWeakObjectPtr<AActor>> GetActorsOnTriggeredTiles(ECollisionChannel TraceChannel);
 
 	/** 아이템을 적용하기에 유효한 타겟인지 검증합니다. */
 	bool IsValidActorToApplyItem(AActor* TargetActor);

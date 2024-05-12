@@ -23,7 +23,7 @@ public:
 
 public:
 	/** 아이템을 활성화합니다. 서브클래스에서 직접 구현해줘야합니다. */
-	virtual void ActivateItem(ESMTeam SourceTeam) PURE_VIRTUAL(ASMCatchableItem::ActivateItem)
+	virtual void ActivateItem(AActor* Activator) PURE_VIRTUAL(ASMCatchableItem::ActivateItem)
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")

@@ -24,8 +24,15 @@ USMCatchInteractionComponent* ASMCatchableItem_AttributeChanger::GetCatchInterac
 	return CIC;
 }
 
-void ASMCatchableItem_AttributeChanger::ActivateItem(ESMTeam SourceTeam)
+void ASMCatchableItem_AttributeChanger::ActivateItem(AActor* Activator)
 {
+	ISMTeamInterface* InstigatorTeamInterface = Cast<ISMTeamInterface>(Activator);
+	if (!ensureAlways(InstigatorTeamInterface))
+	{
+		return;
+	}
+
+	ESMTeam SourceTeam = InstigatorTeamInterface->GetTeam();
 	TeamComponent->SetTeam(SourceTeam);
 
 	TriggerCount = Duration / Interval;
@@ -45,28 +52,29 @@ void ASMCatchableItem_AttributeChanger::TriggerCountTimerCallback()
 {
 	if (TriggerData.CurrentTriggerCount++ < TriggerCount)
 	{
-		HandleApplyItem();
+		ApplyItem();
 
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::TriggerCountTimerCallback, Interval, false);
 	}
 }
 
-void ASMCatchableItem_AttributeChanger::HandleApplyItem()
+void ASMCatchableItem_AttributeChanger::ApplyItem()
 {
-	TArray<TWeakObjectPtr<AActor>> ActorsToApplyItem = ScanActorsToApplyItem();
+	TArray<TWeakObjectPtr<AActor>> ActorsOnTriggeredTiles = GetActorsOnTriggeredTiles(SMCollisionTraceChannel::Action);
 
 	TArray<TWeakObjectPtr<AActor>> ConfirmedActorsToApplyItem;
-	for (const auto& ActorToApplyItem : ActorsToApplyItem)
+	for (const auto& ActorOnTriggeredTiles : ActorsOnTriggeredTiles)
 	{
-		if (!ActorToApplyItem.Get())
+		if (!ActorOnTriggeredTiles.Get())
 		{
 			continue;
 		}
 
-		if (IsValidActorToApplyItem(ActorToApplyItem.Get()))
+		if (IsValidActorToApplyItem(ActorOnTriggeredTiles.Get()))
 		{
-			ConfirmedActorsToApplyItem.Add(ActorToApplyItem);
+			// 최종적으로 아이템이 적용될 수 있는 액터만 저장해둡니다.
+			ConfirmedActorsToApplyItem.Add(ActorOnTriggeredTiles);
 		}
 	}
 
@@ -77,7 +85,7 @@ void ASMCatchableItem_AttributeChanger::HandleApplyItem()
 	}
 }
 
-TArray<TWeakObjectPtr<AActor>> ASMCatchableItem_AttributeChanger::ScanActorsToApplyItem()
+TArray<TWeakObjectPtr<AActor>> ASMCatchableItem_AttributeChanger::GetActorsOnTriggeredTiles(ECollisionChannel TraceChannel)
 {
 	TArray<TWeakObjectPtr<AActor>> Result;
 	for (const auto& TriggeredTile : TriggeredTiles)
@@ -88,37 +96,41 @@ TArray<TWeakObjectPtr<AActor>> ASMCatchableItem_AttributeChanger::ScanActorsToAp
 		}
 
 		TArray<FOverlapResult> OverlapResults;
-		FVector Start = TriggeredTile->GetTileLocation();
+		const FVector TileLocation = TriggeredTile->GetTileLocation();
+		FVector Start = TileLocation;
 		UBoxComponent* TileBoxComponent = TriggeredTile->GetBoxComponent();
-		float halfTileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X;
+		float HalfTileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X;
 
 		FVector CollisionHalfExtend;
-		if (halfTileHorizonSize > 0.0f)
+		if (HalfTileHorizonSize > 0.0f)
 		{
 			const float Height = 50.0f;
-			CollisionHalfExtend = FVector(halfTileHorizonSize, halfTileHorizonSize, Height);
+			CollisionHalfExtend = FVector(HalfTileHorizonSize, HalfTileHorizonSize, Height);
 			Start.Z += Height;
 		}
 
 		const FCollisionShape CollisionShape = FCollisionShape::MakeBox(CollisionHalfExtend);
 		const FCollisionQueryParams Params(SCENE_QUERY_STAT(AttributeChanger), false, this);
-		const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, Start, FQuat::Identity, SMCollisionTraceChannel::Action, CollisionShape, Params);
-
+		const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, Start, FQuat::Identity, TraceChannel, CollisionShape, Params);
 		if (bSuccess)
 		{
 			for (const auto& OverlapResult : OverlapResults)
 			{
-				AActor* ActorToApplyItem = OverlapResult.GetActor();
-				if (!ActorToApplyItem)
+				AActor* ActorOnTriggeredTile = OverlapResult.GetActor();
+				if (!ActorOnTriggeredTile)
 				{
 					continue;
 				}
 
-				Result.AddUnique(ActorToApplyItem);
+				// 트리거된 타일 위에 있는 액터를 중복되지 않게 저장합니다.
+				Result.AddUnique(ActorOnTriggeredTile);
 			}
 		}
 
-		DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, FColor::Green, false, 0.1f);
+		// TODO: 이펙트를 활성화할 곳입니다.
+
+		const FColor DebugColor = bSuccess ? FColor::Cyan : FColor::Green;
+		DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, DebugColor, false, Interval / 2);
 	}
 
 	return Result;

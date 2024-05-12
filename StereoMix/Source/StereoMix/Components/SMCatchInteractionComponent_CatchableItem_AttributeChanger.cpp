@@ -46,15 +46,11 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 	ASMTile* TriggeredTile = TileTrigger();
 	if (TriggeredTile)
 	{
-		SaveTriggeredTileLocationsBySmash(TriggeredTile, InMagnitude);
+		SaveTriggeredTilesBySmash(TriggeredTile, InMagnitude);
 	}
 
 	// 아이템을 활성화합니다.
-	ISMTeamInterface* InstigatorTeamInterface = Cast<ISMTeamInterface>(Instigator);
-	if (InstigatorTeamInterface)
-	{
-		SourceItem->ActivateItem(InstigatorTeamInterface->GetTeam());
-	}
+	SourceItem->ActivateItem(Instigator);
 }
 
 ASMTile* USMCatchInteractionComponent_CatchableItem_AttributeChanger::TileTrigger()
@@ -79,8 +75,9 @@ ASMTile* USMCatchInteractionComponent_CatchableItem_AttributeChanger::TileTrigge
 	return nullptr;
 }
 
-void USMCatchInteractionComponent_CatchableItem_AttributeChanger::SaveTriggeredTileLocationsBySmash(ASMTile* InTriggeredTile, float InMagnitude)
+void USMCatchInteractionComponent_CatchableItem_AttributeChanger::SaveTriggeredTilesBySmash(ASMTile* InTriggeredTile, float InMagnitude)
 {
+	// 타일의 가로 사이즈를 구합니다. 타일을 탑뷰 기준으로 정사각형이기 때문에 가로 사이즈만 구하면 세로 사이즈도 알 수 있습니다.
 	UBoxComponent* TileBoxComponent = InTriggeredTile->GetBoxComponent();
 	float TileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X * 2;
 
