@@ -22,6 +22,10 @@ protected:
 	virtual void PlayNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystemWithAttach);
 
 protected:
+	/** 큐 파라미터에서 위치와 회전값을 가져옵니다. */
+	void GetLocationAndRotation(const FGameplayCueParameters& Parameters, FVector& OutLocation, FRotator& OutRotation) const;
+
+protected:
 	/** 어태치 수행 여부를 결정합니다. */
 	UPROPERTY(EditAnywhere, Category = "FX")
 	uint32 bIsAttach:1 = false;

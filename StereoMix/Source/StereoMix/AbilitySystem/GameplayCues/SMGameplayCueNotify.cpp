@@ -16,3 +16,16 @@ bool USMGameplayCueNotify::OnExecute_Implementation(AActor* MyTarget, const FGam
 
 	return true;
 }
+
+void USMGameplayCueNotify::GetLocationAndRotation(const FGameplayCueParameters& Parameters, FVector& OutLocation, FRotator& OutRotation) const
+{
+	OutLocation = Parameters.Location;
+	if (Parameters.Normal.IsNearlyZero())
+	{
+		OutRotation = FRotator::ZeroRotator;
+	}
+	else
+	{
+		OutRotation = Parameters.Normal.Rotation();
+	}
+}

@@ -58,19 +58,6 @@ void USMGameplayCueNotify_WithTeam::PlayNiagaraSystemWithAttach(AActor* SourceAc
 	UNiagaraFunctionLibrary::SpawnSystemAttached(FX[Team], AttachToComponent, NAME_None, Location, Rotation, EAttachLocation::SnapToTarget, false, true, ENCPoolMethod::AutoRelease);
 }
 
-void USMGameplayCueNotify_WithTeam::GetLocationAndRotation(const FGameplayCueParameters& Parameters, FVector& OutLocation, FRotator& OutRotation) const
-{
-	OutLocation = Parameters.Location;
-	if (Parameters.Normal.IsNearlyZero())
-	{
-		OutRotation = FRotator::ZeroRotator;
-	}
-	else
-	{
-		OutRotation = Parameters.Normal.Rotation();
-	}
-}
-
 ESMTeam USMGameplayCueNotify_WithTeam::GetTeamForSource(const AActor* SourceActor) const
 {
 	const ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(SourceActor);

@@ -4,20 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayCueNotify.h"
-#include "Data/SMTeam.h"
-#include "SMGameplayCueNotify_WithTeam.generated.h"
+#include "SMGameplayCueNotify_WithLocalTeam.generated.h"
 
 class UNiagaraSystem;
+
+UENUM()
+enum class ELocalTeam
+{
+	Equal,
+	different
+};
+
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API USMGameplayCueNotify_WithTeam : public USMGameplayCueNotify
+class STEREOMIX_API USMGameplayCueNotify_WithLocalTeam : public USMGameplayCueNotify
 {
 	GENERATED_BODY()
 
 public:
-	USMGameplayCueNotify_WithTeam();
+	USMGameplayCueNotify_WithLocalTeam();
 
 protected:
 	virtual void PlayNiagaraSystem(AActor* SourceActor, const FGameplayCueParameters& Parameters) const override;
@@ -25,13 +32,10 @@ protected:
 	virtual void PlayNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const override;
 
 protected:
-	ESMTeam GetTeamForSource(const AActor* SourceActor) const;
+	/** 로컬에서 플레이하고 있는 팀과 시전자의 팀이 같은지 확인합니다. */
+	bool IsSameTeamWithLocalTeam(AActor* SourceActor) const;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> FX;
-
-	/** 가해자 팀의 이펙트 사용 여부입니다. false인 경우 자신의 팀 이펙트를 사용합니다. */
-	UPROPERTY(EditAnywhere, Category = "FX")
-	uint32 bUseInstigatorTeam:1 = false;
+	TMap<ELocalTeam, TObjectPtr<UNiagaraSystem>> FX;
 };

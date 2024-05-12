@@ -3,6 +3,8 @@
 
 #include "SMCatchInteractionComponent_CatchableItem_AttributeChanger.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
 #include "Engine/OverlapResult.h"
 #include "Items/SMCatchableItem_AttributeChanger.h"
@@ -47,6 +49,15 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 	if (TriggeredTile)
 	{
 		SaveTriggeredTilesBySmash(TriggeredTile, InMagnitude);
+
+		// 스매시 이펙트를 재생합니다.
+		UAbilitySystemComponent* InstigatorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Instigator);
+		if (ensureAlways(InstigatorASC))
+		{
+			FGameplayCueParameters GCParams;
+			GCParams.Location = TriggeredTile->GetTileLocation();
+			InstigatorASC->ExecuteGameplayCue(SourceItem->SmashGCTag, GCParams);
+		}
 	}
 
 	// 아이템을 활성화합니다.

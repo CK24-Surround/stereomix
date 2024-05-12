@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "SMCatchableItem.h"
 #include "SMCatchableItem_AttributeChanger.generated.h"
 
