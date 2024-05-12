@@ -36,8 +36,14 @@ namespace SMTags
 	namespace Data
 	{
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage, "Data.Damage", "데미지 데이터 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Duration, "Data.Duration", "GE의 지속시간 데이터 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cooldown, "Data.Cooldown", "쿨다운 데이터 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MoveSpeed, "Data.MoveSpeed", "이동속도 데이터 태그입니다.");
+	}
+
+	namespace Item
+	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(AttributeChanger, "Item.AttributeChanger", "어트리뷰트 체인저 아이템에 사용되는 태그입니다. 규모를 정해줄때 사용합니다. ");
 	}
 
 	namespace Event

@@ -16,7 +16,6 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExitOnStunEnd);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CatchBuff);
-
 	}
 
 	namespace AttributeSet::Character::Init
@@ -37,9 +36,15 @@ namespace SMTags
 
 	namespace Data
 	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Duration);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cooldown);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(MoveSpeed);
+	}
+
+	namespace Item
+	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(AttributeChanger);
 	}
 
 	namespace Event

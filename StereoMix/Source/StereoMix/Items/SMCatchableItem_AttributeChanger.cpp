@@ -3,6 +3,9 @@
 
 #include "SMCatchableItem_AttributeChanger.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "Components/BoxComponent.h"
 #include "Components/SMCatchInteractionComponent_CatchableItem_AttributeChanger.h"
 #include "Components/SMTeamComponent.h"
@@ -24,9 +27,16 @@ USMCatchInteractionComponent* ASMCatchableItem_AttributeChanger::GetCatchInterac
 	return CIC;
 }
 
-void ASMCatchableItem_AttributeChanger::ActivateItem(AActor* Activator)
+void ASMCatchableItem_AttributeChanger::ActivateItem(AActor* InActivator)
 {
-	ISMTeamInterface* InstigatorTeamInterface = Cast<ISMTeamInterface>(Activator);
+	if (!ensureAlways(InActivator))
+	{
+		return;
+	}
+
+	Activator = InActivator;
+
+	ISMTeamInterface* InstigatorTeamInterface = Cast<ISMTeamInterface>(InActivator);
 	if (!ensureAlways(InstigatorTeamInterface))
 	{
 		return;
@@ -35,59 +45,116 @@ void ASMCatchableItem_AttributeChanger::ActivateItem(AActor* Activator)
 	ESMTeam SourceTeam = InstigatorTeamInterface->GetTeam();
 	TeamComponent->SetTeam(SourceTeam);
 
-	TriggerCount = Duration / Interval;
-	Amount = TotalAmount / TriggerCount;
+	TriggerCount = TeamDuration / Interval;
+	TeamAmount = TeamTotalAmount / TriggerCount;
+
+	ApplyGEToActivator();
 
 	TriggerCountTimerStart();
+}
+
+void ASMCatchableItem_AttributeChanger::ApplyGEToActivator()
+{
+	if (!ensureAlways(Activator.Get()))
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* ActivatorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Activator.Get());
+	if (!ensureAlways(ActivatorASC))
+	{
+		return;
+	}
+
+	if (ActivatorInstantGE)
+	{
+		FGameplayEffectSpecHandle GESpecHandle = ActivatorASC->MakeOutgoingSpec(ActivatorInstantGE, 1.0f, ActivatorASC->MakeEffectContext());
+		if (ensureAlways(GESpecHandle.IsValid()))
+		{
+			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Item::AttributeChanger, ActivatorInstantAmount);
+			ActivatorASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+		}
+	}
+
+	if (ActivatorDurationGE)
+	{
+		FGameplayEffectSpecHandle GESpecHandle = ActivatorASC->MakeOutgoingSpec(ActivatorDurationGE, 1.0f, ActivatorASC->MakeEffectContext());
+		if (ensureAlways(GESpecHandle.IsValid()))
+		{
+			GESpecHandle.Data->Period = ActivatorInterval;
+
+			const float Magnitude = ActivatorTotalAmount / (ActivatorDuration / ActivatorInterval);
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::Data::Duration, ActivatorDuration);
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::Item::AttributeChanger, Magnitude);
+			ActivatorASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+		}
+	}
 }
 
 void ASMCatchableItem_AttributeChanger::TriggerCountTimerStart()
 {
 	TriggerData.CurrentTriggerCount = 0;
 
-	TriggerCountTimerCallback();
+	ApplyItemByStart(GetConfirmedActorsToApplyItem());
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::TriggerCountTimerCallback, Interval, false);
 }
 
 void ASMCatchableItem_AttributeChanger::TriggerCountTimerCallback()
 {
 	if (TriggerData.CurrentTriggerCount++ < TriggerCount)
 	{
-		ApplyItem();
+		ApplyItemByWhile(GetConfirmedActorsToApplyItem());
 
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::TriggerCountTimerCallback, Interval, false);
 	}
 }
 
-void ASMCatchableItem_AttributeChanger::ApplyItem()
+void ASMCatchableItem_AttributeChanger::ApplyItemByStart(TArray<AActor*> ActorsToApply)
 {
-	TArray<TWeakObjectPtr<AActor>> ActorsOnTriggeredTiles = GetActorsOnTriggeredTiles(SMCollisionTraceChannel::Action);
+	NET_LOG(this, Warning, TEXT("아이템 적용 시작"));
+	for (const auto& ActorToApply : ActorsToApply)
+	{
+		NET_LOG(this, Warning, TEXT("%s"), *ActorToApply->GetName());
+	}
+}
 
-	TArray<TWeakObjectPtr<AActor>> ConfirmedActorsToApplyItem;
+void ASMCatchableItem_AttributeChanger::ApplyItemByWhile(TArray<AActor*> ActorsToApply)
+{
+	NET_LOG(this, Warning, TEXT("아이템 적용 중"));
+	for (const auto& ActorToApply : ActorsToApply)
+	{
+		NET_LOG(this, Warning, TEXT("%s"), *ActorToApply->GetName());
+	}
+}
+
+TArray<AActor*> ASMCatchableItem_AttributeChanger::GetConfirmedActorsToApplyItem()
+{
+	TArray<AActor*> ActorsOnTriggeredTiles = GetActorsOnTriggeredTiles(SMCollisionTraceChannel::Action);
+
+	TArray<AActor*> ConfirmedActorsToApplyItem;
 	for (const auto& ActorOnTriggeredTiles : ActorsOnTriggeredTiles)
 	{
-		if (!ActorOnTriggeredTiles.Get())
+		if (!ActorOnTriggeredTiles)
 		{
 			continue;
 		}
 
-		if (IsValidActorToApplyItem(ActorOnTriggeredTiles.Get()))
+		if (IsValidActorToApplyItem(ActorOnTriggeredTiles))
 		{
 			// 최종적으로 아이템이 적용될 수 있는 액터만 저장해둡니다.
 			ConfirmedActorsToApplyItem.Add(ActorOnTriggeredTiles);
 		}
 	}
 
-	NET_LOG(this, Warning, TEXT("아이템이 적용될 캐릭터 리스트"));
-	for (const auto& ConfirmedActorToApplyItem : ConfirmedActorsToApplyItem)
-	{
-		NET_LOG(this, Warning, TEXT("%s"), *ConfirmedActorToApplyItem->GetName());
-	}
+	return ConfirmedActorsToApplyItem;
 }
 
-TArray<TWeakObjectPtr<AActor>> ASMCatchableItem_AttributeChanger::GetActorsOnTriggeredTiles(ECollisionChannel TraceChannel)
+TArray<AActor*> ASMCatchableItem_AttributeChanger::GetActorsOnTriggeredTiles(ECollisionChannel TraceChannel)
 {
-	TArray<TWeakObjectPtr<AActor>> Result;
+	TArray<AActor*> Result;
 	for (const auto& TriggeredTile : TriggeredTiles)
 	{
 		if (!ensureAlways(TriggeredTile.Get()))

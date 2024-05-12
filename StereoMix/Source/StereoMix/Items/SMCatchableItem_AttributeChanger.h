@@ -6,6 +6,7 @@
 #include "SMCatchableItem.h"
 #include "SMCatchableItem_AttributeChanger.generated.h"
 
+class UGameplayEffect;
 class USMTeamComponent;
 class ASMTile;
 
@@ -21,20 +22,30 @@ public:
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override;
 
 public:
-	virtual void ActivateItem(AActor* Activator) override;
+	virtual void ActivateItem(AActor* InActivator) override;
 
 protected:
+	/** 활성자에게 GE를 적용합니다. */
+	void ApplyGEToActivator();
+
 	/** 반복 적용을 위한 타이머를 시작합니다. */
 	void TriggerCountTimerStart();
 
 	/** 타이머가 종료될 때 마다 실행됩니다. 이 때 타이머를 재시작해 카운트를 만큼 반복되도록 처리합니다. */
 	void TriggerCountTimerCallback();
 
-	/** 버프가 적용될때마다 호출되야합니다. */
-	void ApplyItem();
+	/** 아이템 적용 시작 시 호출됩니다. */
+	void ApplyItemByStart(TArray<AActor*> ActorsToApply);
+
+	/** 아이템 적용 중 일정 주기로 지속적으로 호출됩니다. */
+	void ApplyItemByWhile(TArray<AActor*> ActorsToApply);
+
+	/** 아이템 효과를 적용합니다. 효과가 적용될때마다 호출되야합니다. */
+	/** 아이템 효과를 적용할 수 있는 액터들을 반환합니다. */
+	TArray<AActor*> GetConfirmedActorsToApplyItem();
 
 	/** 트레이스를 통해 트리거된 타일 위에 있는 액터들을 반환합니다. */
-	TArray<TWeakObjectPtr<AActor>> GetActorsOnTriggeredTiles(ECollisionChannel TraceChannel);
+	TArray<AActor*> GetActorsOnTriggeredTiles(ECollisionChannel TraceChannel);
 
 	/** 아이템을 적용하기에 유효한 타겟인지 검증합니다. */
 	bool IsValidActorToApplyItem(AActor* TargetActor);
@@ -54,21 +65,54 @@ public:
 	};
 
 public:
+	/** 아이템 활성자입니다. */
+	TWeakObjectPtr<AActor> Activator;
+
 	TArray<TWeakObjectPtr<ASMTile>> TriggeredTiles;
 
-protected:
-	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "총량")
-	float TotalAmount = 50.0f;
+	/** 현재 트리거 횟수입니다. */
+	int32 TriggerCount = 0;
 
-	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "지속시간")
-	float Duration = 5.0f;
+	/** 활성자의 팀원에게 적용할 트리거 당 적용량입니다. */
+	float TeamAmount = 0;
+
+	FTriggerData TriggerData;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "즉시 적용 GE")
+	TSubclassOf<UGameplayEffect> ActivatorInstantGE;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "지속 적용 GE")
+	TSubclassOf<UGameplayEffect> ActivatorDurationGE;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "즉시 적용량")
+	float ActivatorInstantAmount = 50.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "지속 적용 총량")
+	float ActivatorTotalAmount = 50.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "지속시간")
+	float ActivatorDuration = 5.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "주기")
+	float ActivatorInterval = 0.5f;
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "즉시 적용 GE")
+	TSubclassOf<UGameplayEffect> TeamInstantGE;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "지속 적용 GE")
+	TSubclassOf<UGameplayEffect> TeamDurationGE;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "즉시 적용량")
+	float TeamInstantAmount = 50.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "지속 적용 총량")
+	float TeamTotalAmount = 50.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "지속시간")
+	float TeamDuration = 5.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "주기")
 	float Interval = 0.5f;
-
-	int32 TriggerCount = 0;
-
-	float Amount = 0;
-
-	FTriggerData TriggerData;
 };
