@@ -29,4 +29,8 @@ protected:
 
 	/** 스매시에 의해 트리거 된 타일들을 오너 액터(아이템)에 저장합니다. */
 	void SaveTriggeredTilesBySmash(ASMTile* InTriggeredTile, float InMagnitude);
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 bDrawDebug:1 = false;
 };

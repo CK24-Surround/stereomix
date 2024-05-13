@@ -95,9 +95,7 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::SaveTriggeredT
 	// 아이템이 적용되야할 타일의 위치를 구하기 위한 범위입니다.
 	TArray<FOverlapResult> OverlapResults;
 	const FVector Start = InTriggeredTile->GetTileLocation();
-	float HalfHorizenSize = (TileHorizonSize * (InMagnitude - 1)) + (TileHorizonSize / 2);
-	// 정확히 일치해버리면 바깥쪽의 타일까지 트리거되기때문에 약간 작은 크기로 바꿔줘야합니다. 깔끔하게 보이도록 -1.0f 대신 TileHorizonSize를 빼주었습니다.
-	HalfHorizenSize -= TileHorizonSize;
+	float HalfHorizenSize = (TileHorizonSize * (InMagnitude - 1)) + 1.0f;
 
 	FVector CollisionHalfExtend;
 	if (HalfHorizenSize > 0.0f)
@@ -128,5 +126,10 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::SaveTriggeredT
 			// 트리거된 타일들을 아이템에게 저장해줍니다.
 			SourceItem->TriggeredTiles.AddUnique(TriggeredTile);
 		}
+	}
+
+	if (bDrawDebug)
+	{
+		DrawDebugBox(GetWorld(), Start, CollisionHalfExtend, FColor::Purple, false, 1.0f);
 	}
 }
