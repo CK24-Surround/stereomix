@@ -23,10 +23,6 @@ public:
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override PURE_VIRTUAL(ASMCatchableItem::GetCatchInteractionComponent, return nullptr;)
 
 public:
-	/** 아이템을 활성화합니다. 서브클래스에서 직접 구현해줘야합니다. */
-	virtual void ActivateItem(AActor* InActivator) PURE_VIRTUAL(ASMCatchableItem::ActivateItem)
-
-public:
 	/** 게임플레이 큐를 재생할때 사용할 태그입니다.*/
 	UPROPERTY(EditAnywhere, Category = "Item", meta = (Categories = "GameplayCue"))
 	FGameplayTag SmashGCTag;

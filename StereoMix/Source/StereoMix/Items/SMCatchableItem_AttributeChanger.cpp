@@ -34,6 +34,8 @@ USMCatchInteractionComponent* ASMCatchableItem_AttributeChanger::GetCatchInterac
 
 void ASMCatchableItem_AttributeChanger::ActivateItem(AActor* InActivator)
 {
+	Super::ActivateItem(InActivator);
+
 	if (!ensureAlways(InActivator))
 	{
 		return;
@@ -142,7 +144,7 @@ void ASMCatchableItem_AttributeChanger::ApplyItemByStart(TArray<AActor*> ActorsT
 				ActorToApplyASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
 		}
-		
+
 		NET_LOG(this, Log, TEXT("아이템 적용 액터: %s"), *ActorToApply->GetName());
 	}
 }
@@ -254,7 +256,7 @@ bool ASMCatchableItem_AttributeChanger::IsValidActorToApplyItem(AActor* TargetAc
 	}
 
 	ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(TargetActor);
-	if (!ensureAlways(TargetTeamInterface))
+	if (!TargetTeamInterface)
 	{
 		return false;
 	}

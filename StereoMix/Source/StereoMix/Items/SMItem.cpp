@@ -7,3 +7,8 @@ ASMItem::ASMItem()
 {
 	bReplicates = true;
 }
+
+void ASMItem::ActivateItem(AActor* InActivator)
+{
+	(void)OnUsedItem.ExecuteIfBound();
+}
