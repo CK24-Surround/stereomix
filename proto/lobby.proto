@@ -1,0 +1,94 @@
+syntax = "proto3";
+
+package lobby;
+
+option csharp_namespace = "StereoMix.Lobby";
+option cc_enable_arenas = true;
+
+service LobbyService {
+  rpc CreateRoom(CreateRoomRequest) returns (ConnectionInfo);
+  rpc JoinRoom(JoinRoomRequest) returns (ConnectionInfo);
+  rpc GetRoomList(GetRoomListRequest) returns (GetRoomListResponse);
+  rpc UpdateRoomInfo(UpdateRoomInfoRequest) returns (UpdateRoomInfoResponse); // Authoritative server only
+}
+
+enum RoomState {
+  ROOM_STATE_UNSPECIFIED = 0;
+  ROOM_STATE_CREATING = 1;
+  ROOM_STATE_WAITING = 2;
+  ROOM_STATE_PLAYING = 3;
+  ROOM_STATE_CLOSED = 4;
+}
+
+enum RoomVisibility {
+  ROOM_VISIBILITY_UNSPECIFIED = 0;
+  ROOM_VISIBILITY_PUBLIC = 1;
+  ROOM_VISIBILITY_PRIVATE = 2;
+}
+
+enum GameMode {
+  GAMEMODE_UNSPECIFIED = 0;
+  GAMEMODE_DEFAULT = 1;
+}
+
+enum GameMap {
+  GAMEMAP_UNSPECIFIED = 0;
+  GAMEMAP_DEFAULT = 1;
+}
+
+enum Team {
+  TEAM_UNSPECIFIED = 0;
+  TEAM_A = 1;
+  TEAM_B = 2;
+}
+
+message RoomInfo {
+  string room_id = 1;
+  string room_name = 2;
+  RoomVisibility visibility = 3;
+  GameMode mode = 4;
+  GameMap map = 5;
+  int32 max_players = 6;
+  int32 current_players = 7;
+}
+
+message CreateRoomRequest {
+  string room_name = 1;
+  RoomVisibility visibility = 2;
+  string password = 3;
+  GameMode mode = 5;
+  GameMap map = 6;
+}
+
+message JoinRoomRequest {
+  string room_id = 1;
+  string password = 2;
+}
+
+message GetRoomListRequest {
+  RoomVisibility visibility = 1;
+  GameMode mode = 3;
+  GameMap map = 4;
+}
+
+message GetRoomListResponse {
+  repeated RoomInfo rooms = 1;
+}
+
+message UpdateRoomInfoRequest {
+  string room_name = 1;
+  string new_password = 2;
+  RoomVisibility visibility = 3;
+  GameMode mode = 4;
+  GameMap map = 5;
+  int32 current_players = 7;
+}
+
+message UpdateRoomInfoResponse {
+  RoomInfo updated_room_info = 1;
+}
+
+message ConnectionInfo {
+  string host = 1;
+  int32 port = 2;
+}
