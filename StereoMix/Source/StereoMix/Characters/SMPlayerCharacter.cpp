@@ -67,6 +67,17 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	MoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("MoveTrailFXComponent"));
 	MoveTrailFXComponent->SetupAttachment(GetMesh());
 	MoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	MoveTrailFXComponent->SetAutoActivate(false);
+
+	CatchMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("CatchMoveTrailFXComponent"));
+	CatchMoveTrailFXComponent->SetupAttachment(GetMesh());
+	CatchMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	CatchMoveTrailFXComponent->SetAutoActivate(false);
+
+	ImmuneMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ImmuneMoveTrailFXComponent"));
+	ImmuneMoveTrailFXComponent->SetupAttachment(GetMesh());
+	ImmuneMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	ImmuneMoveTrailFXComponent->SetAutoActivate(false);
 
 	MaxWalkSpeed = 0.0f;
 
@@ -77,6 +88,14 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	MoveTrailFX.FindOrAdd(ESMTeam::None, nullptr);
 	MoveTrailFX.FindOrAdd(ESMTeam::EDM, nullptr);
 	MoveTrailFX.FindOrAdd(ESMTeam::FutureBass, nullptr);
+
+	CatchMoveTrailFX.FindOrAdd(ESMTeam::None, nullptr);
+	CatchMoveTrailFX.FindOrAdd(ESMTeam::EDM, nullptr);
+	CatchMoveTrailFX.FindOrAdd(ESMTeam::FutureBass, nullptr);
+
+	ImmuneMoveTrailFX.FindOrAdd(ESMTeam::None, nullptr);
+	ImmuneMoveTrailFX.FindOrAdd(ESMTeam::EDM, nullptr);
+	ImmuneMoveTrailFX.FindOrAdd(ESMTeam::FutureBass, nullptr);
 }
 
 void ASMPlayerCharacter::PostInitializeComponents()
@@ -130,6 +149,9 @@ void ASMPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void ASMPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	CatchInteractionComponent->OnCatch.AddUObject(this, &ThisClass::ActivateCatchMoveTrail);
+	CatchInteractionComponent->OnCatchRelease.AddUObject(this, &ThisClass::ActivateMoveTrail);
 }
 
 void ASMPlayerCharacter::Tick(float DeltaTime)
@@ -543,10 +565,55 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 		}
 
 		MoveTrailFXComponent->SetAsset(MoveTrailFX[Team]);
+		MoveTrailFXComponent->Activate(true);
+
+		CatchMoveTrailFXComponent->SetAsset(CatchMoveTrailFX[Team]);
+		ImmuneMoveTrailFXComponent->SetAsset(ImmuneMoveTrailFX[Team]);
 	}
 }
 
 bool ASMPlayerCharacter::bAmICatching()
 {
 	return CatchInteractionComponent->GetActorIAmCatching() != nullptr;
+}
+
+void ASMPlayerCharacter::DeactivateMoveTrail()
+{
+	MoveTrailFXComponent->DeactivateImmediate();
+	CatchMoveTrailFXComponent->DeactivateImmediate();
+	ImmuneMoveTrailFXComponent->DeactivateImmediate();
+}
+
+void ASMPlayerCharacter::MulticastRPCActivateMoveTrail_Implementation()
+{
+	if (!HasAuthority())
+	{
+		ActivateMoveTrail();
+	}
+}
+
+void ASMPlayerCharacter::ActivateMoveTrail()
+{
+	DeactivateMoveTrail();
+	MoveTrailFXComponent->Activate(true);
+}
+
+void ASMPlayerCharacter::ActivateCatchMoveTrail()
+{
+	DeactivateMoveTrail();
+	CatchMoveTrailFXComponent->Activate(true);
+}
+
+void ASMPlayerCharacter::MulticastRPCActivateImmuneMoveTrail_Implementation()
+{
+	if (!HasAuthority())
+	{
+		ActivateImmuneMoveTrail();
+	}
+}
+
+void ASMPlayerCharacter::ActivateImmuneMoveTrail()
+{
+	DeactivateMoveTrail();
+	ImmuneMoveTrailFXComponent->Activate(true);
 }

@@ -492,6 +492,8 @@ void USMCatchInteractionComponent_Character::OnRep_IAmCatchingActor()
 		{
 			SourceASC->AddTag(SMTags::Character::State::Catch);
 		}
+
+		OnCatch.Broadcast();
 	}
 	else
 	{

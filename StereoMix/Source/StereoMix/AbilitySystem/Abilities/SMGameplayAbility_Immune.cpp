@@ -15,6 +15,8 @@
 USMGameplayAbility_Immune::USMGameplayAbility_Immune()
 {
 	AbilityTags = FGameplayTagContainer(SMTags::Ability::Immune);
+
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 }
 
 void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -71,6 +73,11 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 		WaitdelayTask->OnFinish.AddDynamic(this, &ThisClass::OnFinishDelay);
 		WaitdelayTask->ReadyForActivation();
 	}
+
+	if (ActorInfo->IsNetAuthority())
+	{
+		SourceCharacter->MulticastRPCActivateImmuneMoveTrail();
+	}
 }
 
 void USMGameplayAbility_Immune::OnFinishDelay()
@@ -121,6 +128,7 @@ void USMGameplayAbility_Immune::OnFinishDelay()
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{
+		SourceCharacter->MulticastRPCActivateMoveTrail();
 		K2_EndAbility();
 	}
 	else

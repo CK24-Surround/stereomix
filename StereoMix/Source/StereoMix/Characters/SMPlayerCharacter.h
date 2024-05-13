@@ -97,8 +97,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "UI|PlayerState")
 	TObjectPtr<USMWidgetComponent> CharacterStateWidgetComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "FX")
+	UPROPERTY(VisibleAnywhere, Category = "FX|DefaultMove")
 	TObjectPtr<UNiagaraComponent> MoveTrailFXComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "FX|CatchMove")
+	TObjectPtr<UNiagaraComponent> CatchMoveTrailFXComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "FX|ImmuneMove")
+	TObjectPtr<UNiagaraComponent> ImmuneMoveTrailFXComponent;
 // ~Component Section
 
 // ~Data Section
@@ -247,7 +253,36 @@ public:
 	bool bAmICatching();
 // ~Animation Section
 
+// ~Trail Section
+public:
+	/** 모든 트레일을 비활성화합니다. */
+	void DeactivateMoveTrail();
+
+	/** 면역 GA에서 호출하기 위해 생성한 RPC입니다. */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCActivateMoveTrail();
+
+	/** 무브 트레일을 활성화합니다. */
+	void ActivateMoveTrail();
+
+	/** 잡기 무브 트레일을 활성화합니다. */
+	void ActivateCatchMoveTrail();
+
+	/** 면역 GA에서 호출하기 위해 생성한 RPC입니다. */
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastRPCActivateImmuneMoveTrail();
+
+	/** 면역 무브 트레일을 활성화합니다. */
+	void ActivateImmuneMoveTrail();
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> MoveTrailFX;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> CatchMoveTrailFX;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
+// ~Trail Section
 };

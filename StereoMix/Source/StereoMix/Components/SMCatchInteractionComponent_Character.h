@@ -10,7 +10,7 @@
 class USMAbilitySystemComponent;
 class ASMPlayerCharacter;
 
-DECLARE_MULTICAST_DELEGATE(FOnCatchReleaseSignature);
+DECLARE_MULTICAST_DELEGATE(FOnCatchSignature);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMCatchInteractionComponent_Character : public USMCatchInteractionComponent
@@ -76,8 +76,11 @@ protected:
 	bool IsValidateTargetForSmashSplashDamage(const ASMPlayerCharacter* TargetActor, ESMTeam InstigatorTeam);
 
 public:
+	/** 잡을때 브로드캐스트합니다. */
+	FOnCatchSignature OnCatch;
+
 	/** 잡기를 놓을때 브로드캐스트합니다.*/
-	FOnCatchReleaseSignature OnCatchRelease;
+	FOnCatchSignature OnCatchRelease;
 
 protected:
 	UFUNCTION()
