@@ -20,6 +20,9 @@ public:
 	ASMCatchableItem();
 
 public:
+	virtual void ActivateItem(AActor* InActivator) override;
+
+public:
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override PURE_VIRTUAL(ASMCatchableItem::GetCatchInteractionComponent, return nullptr;)
 
 public:

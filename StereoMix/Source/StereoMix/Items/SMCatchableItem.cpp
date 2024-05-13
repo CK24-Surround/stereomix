@@ -15,3 +15,11 @@ ASMCatchableItem::ASMCatchableItem()
 	StaticMeshComponent->SetupAttachment(SceneComponent);
 	StaticMeshComponent->SetCollisionProfileName(SMCollisionProfileName::CatchableItem);
 }
+
+void ASMCatchableItem::ActivateItem(AActor* InActivator)
+{
+	Super::ActivateItem(InActivator);
+
+	SetActorEnableCollision(false);
+	SetActorHiddenInGame(true);
+}

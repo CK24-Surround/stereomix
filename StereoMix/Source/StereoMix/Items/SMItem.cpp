@@ -6,6 +6,7 @@
 ASMItem::ASMItem()
 {
 	bReplicates = true;
+	bAlwaysRelevant = true;
 }
 
 void ASMItem::ActivateItem(AActor* InActivator)

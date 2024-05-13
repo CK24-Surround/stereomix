@@ -40,8 +40,7 @@ void ASMItemSpawner::BeginPlay()
 
 void ASMItemSpawner::SpawnTimerStart()
 {
-	NET_LOG(this, Warning, TEXT(""));
-	ResetDelegate();
+	ResetSpawnerState();
 
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ThisClass::SpawnTimerCallback, SpawnCooldown, false);
@@ -54,7 +53,6 @@ void ASMItemSpawner::SpawnTimerCallback()
 
 void ASMItemSpawner::SpawnItem()
 {
-	NET_LOG(this, Warning, TEXT(""));
 	Item = GetWorld()->SpawnActor<ASMItem>(SpawnItemClass, ItemSocketComponent->GetComponentTransform());
 	if (ensureAlways(Item))
 	{
@@ -66,22 +64,21 @@ void ASMItemSpawner::SpawnItem()
 
 void ASMItemSpawner::OnUsedItem()
 {
-	NET_LOG(this, Warning, TEXT(""));
 	SpawnTimerStart();
 }
 
 void ASMItemSpawner::OnDestroyedItems(AActor* DestroyedActor)
 {
-	NET_LOG(this, Warning, TEXT(""));
 	SpawnTimerStart();
 }
 
-void ASMItemSpawner::ResetDelegate()
+void ASMItemSpawner::ResetSpawnerState()
 {
 	if (Item)
 	{
-		NET_LOG(this, Warning, TEXT(""));
 		Item->OnUsedItem.Unbind();
 		Item->OnDestroyed.RemoveAll(this);
 	}
+
+	Item = nullptr;
 }

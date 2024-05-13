@@ -117,6 +117,11 @@ void ASMCatchableItem_AttributeChanger::TriggerCountTimerCallback()
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::TriggerCountTimerCallback, Interval, false);
 	}
+	else
+	{
+		// 트리거 횟수를 모두 채우면 파괴합니다.
+		Destroy();
+	}
 }
 
 void ASMCatchableItem_AttributeChanger::ApplyItemByStart(TArray<AActor*> ActorsToApply)
@@ -144,8 +149,6 @@ void ASMCatchableItem_AttributeChanger::ApplyItemByStart(TArray<AActor*> ActorsT
 				ActorToApplyASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
 		}
-
-		NET_LOG(this, Log, TEXT("아이템 적용 액터: %s"), *ActorToApply->GetName());
 	}
 }
 
@@ -169,7 +172,7 @@ void ASMCatchableItem_AttributeChanger::ApplyItemByWhile(TArray<AActor*> ActorsT
 			}
 		}
 
-		NET_LOG(this, Warning, TEXT("%s"), *ActorToApply->GetName());
+		NET_LOG(this, Log, TEXT("아이템 적용 액터: %s"), *ActorToApply->GetName());
 	}
 }
 
@@ -274,6 +277,11 @@ bool ASMCatchableItem_AttributeChanger::IsValidActorToApplyItem(AActor* TargetAc
 
 void ASMCatchableItem_AttributeChanger::MulticastRPCPlayActivateHealItemFX_Implementation(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTrigeredTiles)
 {
+	if (HasAuthority())
+	{
+		return;
+	}
+
 	ESMLocalTeam LocalTeam = ESMLocalTeam::different;
 	if (IsSameTeamWithLocalTeam(InActivator))
 	{

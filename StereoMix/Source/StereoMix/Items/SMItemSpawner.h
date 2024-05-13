@@ -44,8 +44,8 @@ protected:
 	UFUNCTION()
 	void OnDestroyedItems(AActor* DestroyedActor);
 
-	/** 연결된 아이템의 델리게이트를 리셋합니다. */
-	void ResetDelegate();
+	/** 스포너의 상태를 초기화합니다. Item 포인터를 null로, 델리게이트를 해제합니다. */
+	void ResetSpawnerState();
 
 protected:
 	/** 스폰 시킬 아이템 클래스입니다. */
