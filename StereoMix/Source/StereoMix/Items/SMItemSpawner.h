@@ -57,5 +57,9 @@ protected:
 
 	/** 스폰까지 소요되는 시간을 나타냅니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float SpawnCooldown = 5.0f;
+	float SpawnCooldown = 10.0f;
+
+	/** 게임 시작 즉시 스폰할지 여부입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "즉시 스폰")
+	uint32 bUseImmediatelySpawn:1 = false;
 };

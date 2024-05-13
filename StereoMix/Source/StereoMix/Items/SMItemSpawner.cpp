@@ -33,7 +33,14 @@ void ASMItemSpawner::BeginPlay()
 		ASMGameMode* SMGameMode = GetWorld()->GetAuthGameMode<ASMGameMode>();
 		if (ensureAlways(SMGameMode))
 		{
-			SMGameMode->OnStartMatch.AddUObject(this, &ThisClass::SpawnTimerStart);
+			if (bUseImmediatelySpawn)
+			{
+				SMGameMode->OnStartMatch.AddUObject(this, &ThisClass::SpawnItem);
+			}
+			else
+			{
+				SMGameMode->OnStartMatch.AddUObject(this, &ThisClass::SpawnTimerStart);
+			}
 		}
 	}
 }
