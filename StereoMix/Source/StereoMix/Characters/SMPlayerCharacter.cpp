@@ -617,3 +617,33 @@ void ASMPlayerCharacter::ActivateImmuneMoveTrail()
 	DeactivateMoveTrail();
 	ImmuneMoveTrailFXComponent->Activate(true);
 }
+
+void ASMPlayerCharacter::MulticastRPCResetCharacterMaterial_Implementation()
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	ESMTeam SourceTeam = TeamComponent->GetTeam();
+
+	GetMesh()->SetMaterial(0, HairMaterial2.FindOrAdd(SourceTeam));
+	GetMesh()->SetMaterial(1, BodyMaterial.FindOrAdd(SourceTeam));
+	GetMesh()->SetMaterial(2, HairMaterial1.FindOrAdd(SourceTeam));
+	GetMesh()->SetMaterial(3, HairMaterial3.FindOrAdd(SourceTeam));
+}
+
+void ASMPlayerCharacter::MulticastRPCApplyImmuneCharacterMaterial_Implementation()
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	ESMTeam SourceTeam = TeamComponent->GetTeam();
+
+	GetMesh()->SetMaterial(0, ImmuneHairMaterial2.FindOrAdd(SourceTeam));
+	GetMesh()->SetMaterial(1, ImmuneBodyMaterial.FindOrAdd(SourceTeam));
+	GetMesh()->SetMaterial(2, ImmuneHairMaterial1.FindOrAdd(SourceTeam));
+	GetMesh()->SetMaterial(3, ImmuneHairMaterial3.FindOrAdd(SourceTeam));
+}

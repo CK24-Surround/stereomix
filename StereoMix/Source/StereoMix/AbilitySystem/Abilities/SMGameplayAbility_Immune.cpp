@@ -77,6 +77,7 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 	if (ActorInfo->IsNetAuthority())
 	{
 		SourceCharacter->MulticastRPCActivateImmuneMoveTrail();
+		SourceCharacter->MulticastRPCApplyImmuneCharacterMaterial();
 	}
 }
 
@@ -129,6 +130,8 @@ void USMGameplayAbility_Immune::OnFinishDelay()
 	if (CurrentActorInfo->IsNetAuthority())
 	{
 		SourceCharacter->MulticastRPCActivateMoveTrail();
+		SourceCharacter->MulticastRPCResetCharacterMaterial();
+
 		K2_EndAbility();
 	}
 	else

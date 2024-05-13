@@ -285,4 +285,39 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
 // ~Trail Section
+
+// ~Immune Material
+public:
+	/** 머티리얼*/
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCResetCharacterMaterial();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCApplyImmuneCharacterMaterial();
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "DefaultMaterial")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> HairMaterial1;
+
+	UPROPERTY(EditAnywhere, Category = "DefaultMaterial")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> HairMaterial2;
+
+	UPROPERTY(EditAnywhere, Category = "DefaultMaterial")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> HairMaterial3;
+
+	UPROPERTY(EditAnywhere, Category = "DefaultMaterial")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> BodyMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "ImmuneMaterial")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneHairMaterial1;
+
+	UPROPERTY(EditAnywhere, Category = "ImmuneMaterial")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneHairMaterial2;
+
+	UPROPERTY(EditAnywhere, Category = "ImmuneMaterial")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneHairMaterial3;
+
+	UPROPERTY(EditAnywhere, Category = "ImmuneMaterial")
+	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneBodyMaterial;
+// ~Immune Material
 };
