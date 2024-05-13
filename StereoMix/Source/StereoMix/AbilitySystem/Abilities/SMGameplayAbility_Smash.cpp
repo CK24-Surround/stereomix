@@ -21,14 +21,6 @@ USMGameplayAbility_Smash::USMGameplayAbility_Smash()
 {
 	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::Smashing);
 	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Catch);
-
-	OnSmashFX.Add(ESMTeam::None, nullptr);
-	OnSmashFX.Add(ESMTeam::EDM, nullptr);
-	OnSmashFX.Add(ESMTeam::FutureBass, nullptr);
-
-	SplashDamageFX.Add(ESMTeam::None, nullptr);
-	SplashDamageFX.Add(ESMTeam::EDM, nullptr);
-	SplashDamageFX.Add(ESMTeam::FutureBass, nullptr);
 }
 
 void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
