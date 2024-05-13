@@ -7,6 +7,8 @@
 #include "Data/SMTeam.h"
 #include "SMGameMode.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnStartMatchSignature);
+
 class ASMProjectile;
 class USMProjectilePool;
 class ASMGameState;
@@ -32,6 +34,9 @@ protected:
 	virtual void StartMatch() override;
 
 	virtual void EndMatch() override;
+
+public:
+	FOnStartMatchSignature OnStartMatch;
 
 protected:
 	void BindToGameState();

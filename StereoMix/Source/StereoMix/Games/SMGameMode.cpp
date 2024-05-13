@@ -55,6 +55,8 @@ void ASMGameMode::StartMatch()
 	SetRemainPhaseTime(PhaseTime);
 	SetCurrentPhaseNumber(1);
 	GetWorldTimerManager().SetTimer(PhaseTimerHandle, this, &ASMGameMode::PerformPhaseTime, OneSecond, true);
+
+	OnStartMatch.Broadcast();
 }
 
 void ASMGameMode::EndMatch()
