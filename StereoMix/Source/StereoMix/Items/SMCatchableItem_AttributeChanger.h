@@ -89,47 +89,47 @@ public:
 	FTriggerData TriggerData;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Item")
+	UPROPERTY(EditAnywhere, Category = "Design")
 	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateFX;
 
-	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "지속시간")
+	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "지속시간")
 	float Duration = 5.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Item", DisplayName = "주기")
+	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "주기")
 	float Interval = 0.5f;
 
-	UPROPERTY(EditAnywhere, Category = "Item")
+	UPROPERTY(EditAnywhere, Category = "Design")
 	uint32 bDrawDebug:1 = false;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "즉시 적용 GE")
+	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "즉시 적용 GE")
 	TSubclassOf<UGameplayEffect> ActivatorInstantGE;
 
-	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "지속 적용 GE")
+	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "지속 적용 GE")
 	TSubclassOf<UGameplayEffect> ActivatorDurationGE;
 
-	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "즉시 적용량")
+	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "즉시 적용량")
 	float ActivatorInstantAmount = 30.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "지속 적용 총량")
+	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "지속 적용 총량")
 	float ActivatorTotalAmount = 30.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "지속시간")
+	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "지속시간")
 	float ActivatorDuration = 5.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Item|Activator", DisplayName = "주기")
+	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "주기")
 	float ActivatorInterval = 0.5f;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "즉시 적용 GE")
+	UPROPERTY(EditAnywhere, Category = "Design|Team", DisplayName = "즉시 적용 GE")
 	TSubclassOf<UGameplayEffect> TeamInstantGE;
 
-	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "지속 적용 GE")
+	UPROPERTY(EditAnywhere, Category = "Design|Team", DisplayName = "지속 적용 GE")
 	TSubclassOf<UGameplayEffect> TeamDurationGE;
 
-	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "즉시 적용량")
+	UPROPERTY(EditAnywhere, Category = "Design|Team", DisplayName = "즉시 적용량")
 	float TeamInstantAmount = 20.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Item|Team", DisplayName = "지속 적용 총량")
+	UPROPERTY(EditAnywhere, Category = "Design|Team", DisplayName = "지속 적용 총량")
 	float TeamTotalAmount = 30.0f;
 };

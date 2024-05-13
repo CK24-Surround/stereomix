@@ -27,7 +27,7 @@ public:
 
 public:
 	/** 게임플레이 큐를 재생할때 사용할 태그입니다.*/
-	UPROPERTY(EditAnywhere, Category = "Item", meta = (Categories = "GameplayCue"))
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (Categories = "GameplayCue"))
 	FGameplayTag SmashGCTag;
 
 protected:
