@@ -111,3 +111,6 @@ Plugins/FMODStudio/Binaries/**/*
 !Plugins/FMODStudio/Binaries/**/fmodstudioL.dll
 !Plugins/FMODStudio/Binaries/**/fmodstudioL_vc.lib
 !Plugins/FMODStudio/Binaries/**/resonanceaudio.dll
+
+# TurboLink
+Plugins/TurboLink/Source/ThirdParty
