@@ -411,7 +411,7 @@ void USMCatchInteractionComponent_Character::InternalApplySmashSplashDamage(cons
 		for (const auto& OverlapResult : OverlapResults)
 		{
 			ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OverlapResult.GetActor());
-			if (!ensureAlways(TargetCharacter))
+			if (!TargetCharacter)
 			{
 				return;
 			}

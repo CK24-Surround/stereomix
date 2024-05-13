@@ -73,7 +73,7 @@ void ASMTile::OnChangeTeamCallback()
 	{
 		TileMesh->SetMaterial(0, AssetData->TileMaterial[Team]);
 		TileMesh->SetMaterial(1, AssetData->TileMaterial[Team]);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AssetData->TileChangeFX[Team], TileMesh->GetComponentLocation());
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AssetData->TileChangeFX[Team], TileMesh->GetComponentLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
 	}
 }
 
