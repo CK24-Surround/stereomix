@@ -6552,6 +6552,26 @@
 		{
 			"Path": "$(ProjectDir)/Binaries/Win64/UnrealEditor.modules",
 			"Type": "RequiredResource"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkEditor.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkEditor.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkGrpc.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkGrpc.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/TurboLink/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
 		}
 	],
 	"RuntimeDependencies": [
@@ -29588,6 +29608,10 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(ProjectDir)/Plugins/TurboLink/TurboLink.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(ProjectDir)/StereoMix.uproject",
 			"Type": "UFS"
 		}
@@ -29752,6 +29776,7 @@
 		"ToolPresets",
 		"TraceDataFilters",
 		"TraceUtilities",
+		"TurboLink",
 		"UObjectPlugin",
 		"UVEditor",
 		"UdpMessaging",

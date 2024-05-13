@@ -114,3 +114,8 @@ Plugins/FMODStudio/Binaries/**/*
 
 # TurboLink
 Plugins/TurboLink/Source/ThirdParty
+!Plugins/TurboLink/Binaries/Win64
+Plugins/TurboLink/Binaries/Win64/*
+!Plugins/TurboLink/Binaries/Win64/UnrealEditor.modules
+!Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkEditor.dll
+!Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkGrpc.dll
