@@ -132,6 +132,10 @@ void USMGameplayAbility_Immune::OnFinishDelay()
 		SourceCharacter->MulticastRPCActivateMoveTrail();
 		SourceCharacter->MulticastRPCResetCharacterMaterial();
 
+		FGameplayCueParameters GCParams;
+		GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
+		SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneEnd, GCParams);
+
 		K2_EndAbility();
 	}
 	else
