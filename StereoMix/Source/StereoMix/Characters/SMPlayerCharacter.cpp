@@ -4,6 +4,7 @@
 #include "SMPlayerCharacter.h"
 
 #include "EnhancedInputComponent.h"
+#include "NiagaraComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -63,11 +64,19 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 300.0));
 	CharacterStateWidgetComponent->SetDrawAtDesiredSize(true);
 
+	MoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("MoveTrailFXComponent"));
+	MoveTrailFXComponent->SetupAttachment(GetMesh());
+	MoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+
 	MaxWalkSpeed = 0.0f;
 
 	bUseControllerRotationPitch = true;
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = true;
+
+	MoveTrailFX.FindOrAdd(ESMTeam::None, nullptr);
+	MoveTrailFX.FindOrAdd(ESMTeam::EDM, nullptr);
+	MoveTrailFX.FindOrAdd(ESMTeam::FutureBass, nullptr);
 }
 
 void ASMPlayerCharacter::PostInitializeComponents()
@@ -532,6 +541,8 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 			USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
 			CharacterStateWidgetComponent->SetWidget(NewWidget);
 		}
+
+		MoveTrailFXComponent->SetAsset(MoveTrailFX[Team]);
 	}
 }
 

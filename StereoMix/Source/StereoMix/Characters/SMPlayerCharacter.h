@@ -12,10 +12,12 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMPlayerCharacter.generated.h"
 
-class USMCatchInteractionComponent_Character;
-class UWidgetComponent;
+class UNiagaraComponent;
+class UNiagaraSystem;
 DECLARE_MULTICAST_DELEGATE(FOnLandedSignature);
 
+class USMCatchInteractionComponent_Character;
+class UWidgetComponent;
 class USMTeamComponent;
 class USMAbilitySystemComponent;
 class UGameplayEffect;
@@ -94,6 +96,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "UI|PlayerState")
 	TObjectPtr<USMWidgetComponent> CharacterStateWidgetComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "FX")
+	TObjectPtr<UNiagaraComponent> MoveTrailFXComponent;
 // ~Component Section
 
 // ~Data Section
@@ -241,4 +246,8 @@ protected:
 public:
 	bool bAmICatching();
 // ~Animation Section
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> MoveTrailFX;
 };
