@@ -66,16 +66,19 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 
 	MoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("MoveTrailFXComponent"));
 	MoveTrailFXComponent->SetupAttachment(GetMesh());
+	MoveTrailFXComponent->SetRelativeLocation(FVector(0.0, 0.0, 88.0));
 	MoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	MoveTrailFXComponent->SetAutoActivate(false);
 
 	CatchMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("CatchMoveTrailFXComponent"));
 	CatchMoveTrailFXComponent->SetupAttachment(GetMesh());
+	CatchMoveTrailFXComponent->SetRelativeLocation(FVector(0.0, 0.0, 88.0));
 	CatchMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	CatchMoveTrailFXComponent->SetAutoActivate(false);
 
 	ImmuneMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ImmuneMoveTrailFXComponent"));
 	ImmuneMoveTrailFXComponent->SetupAttachment(GetMesh());
+	ImmuneMoveTrailFXComponent->SetRelativeLocation(FVector(0.0, 0.0, 88.0));
 	ImmuneMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	ImmuneMoveTrailFXComponent->SetAutoActivate(false);
 

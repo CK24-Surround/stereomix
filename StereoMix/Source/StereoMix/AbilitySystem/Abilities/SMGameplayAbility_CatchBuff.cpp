@@ -80,28 +80,28 @@ void USMGameplayAbility_CatchBuff::EndAbility(const FGameplayAbilitySpecHandle H
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		EndAbilityByCancel();
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
-		EndAbilityByCancel();
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
 	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
 	if (!ensureAlways(SourceMovement))
 	{
-		EndAbilityByCancel();
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
 	const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
 	if (!ensureAlways(SourceAttributeSet))
 	{
-		EndAbilityByCancel();
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
