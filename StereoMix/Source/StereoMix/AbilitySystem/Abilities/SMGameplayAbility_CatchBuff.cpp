@@ -77,6 +77,13 @@ void USMGameplayAbility_CatchBuff::ActivateAbility(const FGameplayAbilitySpecHan
 
 void USMGameplayAbility_CatchBuff::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
+	{
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		return;
+	}
+
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
@@ -84,8 +91,8 @@ void USMGameplayAbility_CatchBuff::EndAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	USMCatchInteractionComponent_Character* SourceCIC = Cast<USMCatchInteractionComponent_Character>(SourceCharacter->GetCatchInteractionComponent());
+	if (!ensureAlways(SourceCIC))
 	{
 		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
@@ -104,6 +111,9 @@ void USMGameplayAbility_CatchBuff::EndAbility(const FGameplayAbilitySpecHandle H
 		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
+
+	// 이벤트가 호출되었으니 정리해줍니다.
+	SourceCIC->OnCatchRelease.RemoveAll(this);
 
 	// 감소시켜줘야할 이동속도를 구합니다.
 	const float MoveSpeedToAdd = (SourceAttributeSet->GetBaseMoveSpeed() * MoveSpeedMultiply) - SourceAttributeSet->GetBaseMoveSpeed();

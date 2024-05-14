@@ -82,6 +82,20 @@ bool USMCharacterAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallba
 		}
 	}
 
+	// 스턴인 경우 대미지, 힐을 무효화합니다.
+	if (Data.Target.HasMatchingGameplayTag(SMTags::Character::State::Stun))
+	{
+		if (Data.EvaluatedData.Attribute == GetDamageAttribute())
+		{
+			Data.EvaluatedData.Magnitude = 0.0f;
+		}
+
+		if (Data.EvaluatedData.Attribute == GetHealAttribute())
+		{
+			Data.EvaluatedData.Magnitude = 0.0f;
+		}
+	}
+
 	return true;
 }
 
