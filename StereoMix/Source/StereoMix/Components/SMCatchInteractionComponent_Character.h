@@ -97,6 +97,9 @@ protected:
 	TArray<TWeakObjectPtr<ASMPlayerCharacter>> CapturedMeCharcters;
 
 protected:
+	UPROPERTY()
 	TObjectPtr<ASMPlayerCharacter> SourceCharacter;
+
+	UPROPERTY()
 	TObjectPtr<USMAbilitySystemComponent> SourceASC;
 };

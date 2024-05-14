@@ -172,9 +172,8 @@ void USMCatchInteractionComponent_Character::SetActorIAmCatching(AActor* NewIAmC
 	if (IAmCatchingActor != NewIAmCatchingActor)
 	{
 		// nullptr이 매개변수로 넘어왔다면 잡기가 해제된 상황으로 구독했던 이벤트를 해제합니다.
-		if (!NewIAmCatchingActor && IAmCatchingActor.Get())
+		if (IAmCatchingActor.Get() && !NewIAmCatchingActor)
 		{
-			NET_LOG(SourceCharacter, Warning, TEXT("잡기 정상 종료"));
 			IAmCatchingActor->OnDestroyed.RemoveAll(this);
 		}
 
