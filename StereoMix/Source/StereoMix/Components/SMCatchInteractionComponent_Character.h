@@ -10,8 +10,6 @@
 class USMAbilitySystemComponent;
 class ASMPlayerCharacter;
 
-DECLARE_MULTICAST_DELEGATE(FOnCatchSignature);
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMCatchInteractionComponent_Character : public USMCatchInteractionComponent
 {

@@ -8,6 +8,8 @@
 #include "Data/SMSpecialAction.h"
 #include "SMCatchInteractionComponent.generated.h"
 
+DECLARE_MULTICAST_DELEGATE(FOnCatchSignature);
+
 UCLASS(Abstract, ClassGroup=(CatchInteraction), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMCatchInteractionComponent : public UActorComponent
 {
