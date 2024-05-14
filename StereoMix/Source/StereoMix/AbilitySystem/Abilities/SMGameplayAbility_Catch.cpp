@@ -159,8 +159,9 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 			// 타겟의 잡히기 로직을 실행합니다.
 			TargetCIC->OnCaught(SourceCharacter);
 
-			// 잡은 대상을 저장하고 자신의 상태를 잡기로 변경합니다.
+			// 잡은 대상을 저장하고 자신의 상태를 잡기로 변경합니다. 예외처리를 위해 잡은 액터의 파괴 시 이벤트에 바인드합니다.
 			SourceCIC->SetActorIAmCatching(TargetActor);
+			TargetActor->OnDestroyed.AddDynamic(SourceCIC, &USMCatchInteractionComponent_Character::OnDestroyedIAmCatchingActor);
 
 			// 잡기 적중에 성공하여 성공 이펙트를 재생합니다.
 			FGameplayCueParameters GCParams;

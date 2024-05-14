@@ -53,6 +53,10 @@ public:
 	 */
 	void CaughtReleased(AActor* TargetActor);
 
+	/** 잡고 있는 대상이 파괴되는 경우 예외처리를 담는 함수입니다. */
+	UFUNCTION()
+	void OnDestroyedIAmCatchingActor(AActor* DestroyedActor);
+
 protected:
 	/** 타겟으로부터 잡히기 상태가 될때 필요한 처리를 합니다. */
 	void InternalCaught(AActor* TargetActor);

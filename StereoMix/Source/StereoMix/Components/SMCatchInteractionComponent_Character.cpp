@@ -171,6 +171,13 @@ void USMCatchInteractionComponent_Character::SetActorIAmCatching(AActor* NewIAmC
 	// 중복 실행되어도 안전하도록 값이 다른 경우에만 처리됩니다.
 	if (IAmCatchingActor != NewIAmCatchingActor)
 	{
+		// nullptr이 매개변수로 넘어왔다면 잡기가 해제된 상황으로 구독했던 이벤트를 해제합니다.
+		if (!NewIAmCatchingActor && IAmCatchingActor.Get())
+		{
+			NET_LOG(SourceCharacter, Warning, TEXT("잡기 정상 종료"));
+			IAmCatchingActor->OnDestroyed.RemoveAll(this);
+		}
+
 		IAmCatchingActor = NewIAmCatchingActor;
 		OnRep_IAmCatchingActor();
 	}
@@ -230,6 +237,12 @@ void USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
 	}
 
 	return;
+}
+
+void USMCatchInteractionComponent_Character::OnDestroyedIAmCatchingActor(AActor* DestroyedActor)
+{
+	// 대상이 파괴되었으니 잡기를 해제합니다.
+	SetActorIAmCatching(nullptr);
 }
 
 void USMCatchInteractionComponent_Character::InternalCaught(AActor* TargetActor)
