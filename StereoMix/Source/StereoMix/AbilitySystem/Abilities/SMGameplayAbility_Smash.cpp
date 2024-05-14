@@ -16,6 +16,7 @@
 #include "Components/SMCatchInteractionComponent_Character.h"
 #include "Data/SMSpecialAction.h"
 #include "FunctionLibraries/SMCatchInteractionBlueprintLibrary.h"
+#include "Utilities/SMLog.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
 {
@@ -172,6 +173,10 @@ void USMGameplayAbility_Smash::OnSmash()
 			return;
 		}
 	}
+	else
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("타겟 액터가 유효하지 않습니다. "));
+	}
 
 	// 착지 완료 했으니 델리게이트는 제거해줍니다.
 	SourceCharacter->OnLanded.RemoveAll(this);
@@ -198,7 +203,10 @@ void USMGameplayAbility_Smash::OnSmash()
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{
-		TargetCIC->OnSpecialActionEnded(SourceCharacter, ESpecialAction::Smash, MaxTriggerCount, DamageGE, SmashDamage);
+		if (TargetActor)
+		{
+			TargetCIC->OnSpecialActionEnded(SourceCharacter, ESpecialAction::Smash, MaxTriggerCount, DamageGE, SmashDamage);
+		}
 
 		SourceCIC->SetActorIAmCatching(nullptr);
 	}
