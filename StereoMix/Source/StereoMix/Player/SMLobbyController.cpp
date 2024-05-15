@@ -57,32 +57,40 @@ void ASMLobbyController::HandleGuestLoginResponse(FGrpcContextHandle ContextHand
 	OnLoginResponse.Broadcast(true);
 }
 
-void ASMLobbyController::HandleCreateRoomResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyConnectionInfo& Response)
+void ASMLobbyController::HandleCreateRoomResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyCreateRoomResponse& Response)
 {
+	FGrpcLobbyRoomConnectionInfo Connection;
+
 	if (Result.Code != EGrpcResultCode::Ok)
 	{
 		UE_LOG(LogSMLobbyController, Error, TEXT("Failed to create room. (%s)"), *UEnum::GetValueAsString(Result.Code));
-		OnReceiveCreateRoomResponse(false, FGrpcLobbyConnectionInfo());
-		OnCreateRoomResponse.Broadcast(false, FGrpcLobbyConnectionInfo());
+		OnReceiveCreateRoomResponse(false, Connection);
+		OnCreateRoomResponse.Broadcast(false, Connection);
 		return;
 	}
 
-	OnReceiveCreateRoomResponse(true, Response);
-	OnCreateRoomResponse.Broadcast(true, Response);
+	Connection.Host = Response.Connection->Host;
+	Connection.Port = Response.Connection->Port;
+	OnReceiveCreateRoomResponse(true, Connection);
+	OnCreateRoomResponse.Broadcast(true, Connection);
 }
 
-void ASMLobbyController::HandleJoinRoomResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyConnectionInfo& Response)
+void ASMLobbyController::HandleJoinRoomResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyJoinRoomResponse& Response)
 {
+	FGrpcLobbyRoomConnectionInfo Connection;
+
 	if (Result.Code != EGrpcResultCode::Ok)
 	{
 		UE_LOG(LogSMLobbyController, Error, TEXT("Failed to join room. (%s)"), *UEnum::GetValueAsString(Result.Code));
-		OnReceiveJoinRoomResponse(false, FGrpcLobbyConnectionInfo());
-		OnJoinRoomResponse.Broadcast(false, FGrpcLobbyConnectionInfo());
+		OnReceiveJoinRoomResponse(false, Connection);
+		OnJoinRoomResponse.Broadcast(false, Connection);
 		return;
 	}
 
-	OnReceiveJoinRoomResponse(true, Response);
-	OnJoinRoomResponse.Broadcast(true, Response);
+	Connection.Host = Response.Connection->Host;
+	Connection.Port = Response.Connection->Port;
+	OnReceiveJoinRoomResponse(true, Connection);
+	OnJoinRoomResponse.Broadcast(true, Connection);
 }
 
 void ASMLobbyController::HandleGetRoomListResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyGetRoomListResponse& Response)
@@ -90,8 +98,9 @@ void ASMLobbyController::HandleGetRoomListResponse(FGrpcContextHandle ContextHan
 	if (Result.Code != EGrpcResultCode::Ok)
 	{
 		UE_LOG(LogSMLobbyController, Error, TEXT("Failed to get room list. (%s)"), *UEnum::GetValueAsString(Result.Code));
-		OnReceiveRoomListUpdateResponse(false, TArray<FGrpcLobbyRoomInfo>());
-		OnRoomListUpdateResponse.Broadcast(false, TArray<FGrpcLobbyRoomInfo>());
+		TArray<FGrpcLobbyRoomPreview> EmptyRoomList;
+		OnReceiveRoomListUpdateResponse(false, EmptyRoomList);
+		OnRoomListUpdateResponse.Broadcast(false, EmptyRoomList);
 		return;
 	}
 
@@ -209,11 +218,12 @@ void ASMLobbyController::CreateRoom(const FString& RoomName, EGrpcLobbyRoomVisib
 
 	CurrentWidget->SetIsEnabled(false);
 	FGrpcLobbyCreateRoomRequest Request;
-	Request.RoomName = RoomName;
+
+	Request.Config->RoomName = RoomName;
 	Request.Password = Password;
-	Request.Visibility = Visibility;
-	Request.Mode = Mode;
-	Request.Map = Map;
+	Request.Config->Visibility = Visibility;
+	Request.Config->Mode = Mode;
+	Request.Config->Map = Map;
 	CreateRoomContext = LobbyServiceClient->InitCreateRoom();
 	LobbyServiceClient->CreateRoom(CreateRoomContext, Request, UserMetaData);
 }
@@ -274,7 +284,7 @@ void ASMLobbyController::GetRoomList(EGrpcLobbyRoomVisibility Visibility, EGrpcL
 	LobbyServiceClient->GetRoomList(GetRoomListContext, Request, UserMetaData);
 }
 
-void ASMLobbyController::OnReceiveLoginResponse_Implementation(bool Success)
+void ASMLobbyController::OnReceiveLoginResponse(bool Success)
 {
 	CurrentWidget->UpdateEnabled(Success);
 
@@ -288,12 +298,7 @@ void ASMLobbyController::OnReceiveLoginResponse_Implementation(bool Success)
 	}
 }
 
-void ASMLobbyController::OnReceiveJoinRoomResponse_Implementation(bool Success, const FGrpcLobbyConnectionInfo& ConnectionInfo)
-{
-	CurrentWidget->SetIsEnabled(true);
-}
-
-void ASMLobbyController::OnReceiveCreateRoomResponse_Implementation(bool Success, const FGrpcLobbyConnectionInfo& ConnectionInfo)
+void ASMLobbyController::OnReceiveCreateRoomResponse(bool Success, const FGrpcLobbyRoomConnectionInfo& ConnectionInfo)
 {
 	if (!Success)
 	{
@@ -305,7 +310,12 @@ void ASMLobbyController::OnReceiveCreateRoomResponse_Implementation(bool Success
 	ClientTravel(FString::Printf(TEXT("%s:%d"), *ConnectionInfo.Host, ConnectionInfo.Port), TRAVEL_Absolute);
 }
 
-void ASMLobbyController::OnReceiveRoomListUpdateResponse_Implementation(bool Success, const TArray<FGrpcLobbyRoomInfo>& RoomList)
+void ASMLobbyController::OnReceiveJoinRoomResponse(bool Success, const FGrpcLobbyRoomConnectionInfo& ConnectionInfo)
+{
+	CurrentWidget->SetIsEnabled(true);
+}
+
+void ASMLobbyController::OnReceiveRoomListUpdateResponse(bool Success, const TArray<FGrpcLobbyRoomPreview>& RoomList)
 {
 	CurrentWidget->SetIsEnabled(true);
 }

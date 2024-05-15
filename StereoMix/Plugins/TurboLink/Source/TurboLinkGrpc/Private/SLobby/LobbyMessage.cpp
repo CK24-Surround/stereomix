@@ -3,12 +3,155 @@
 #include "SLobby/LobbyMarshaling.h"
 #include "google/protobuf/util/json_util.h"
 
-DEFINE_JSON_FUNCTIONS(FGrpcLobbyRoomInfo, ::lobby::RoomInfo)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyRoomPreview, ::lobby::RoomPreview)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyCreateRoomRequest, ::lobby::CreateRoomRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyCreateRoomResponse, ::lobby::CreateRoomResponse)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyJoinRoomRequest, ::lobby::JoinRoomRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyJoinRoomResponse, ::lobby::JoinRoomResponse)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyGetRoomListRequest, ::lobby::GetRoomListRequest)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyGetRoomListResponse, ::lobby::GetRoomListResponse)
-DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdateRoomInfoRequest, ::lobby::UpdateRoomInfoRequest)
-DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdateRoomInfoResponse, ::lobby::UpdateRoomInfoResponse)
-DEFINE_JSON_FUNCTIONS(FGrpcLobbyConnectionInfo, ::lobby::ConnectionInfo)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyRoomConnectionInfo, ::lobby::RoomConnectionInfo)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyRoomPlayer, ::lobby::RoomPlayer)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyRoom, ::lobby::Room)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyRoomConfig, ::lobby::RoomConfig)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdateRoomStateRequest, ::lobby::UpdateRoomStateRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdateRoomStateResponse, ::lobby::UpdateRoomStateResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdateRoomConfigRequest, ::lobby::UpdateRoomConfigRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdateRoomConfigResponse, ::lobby::UpdateRoomConfigResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdatePlayerStateRequest, ::lobby::UpdatePlayerStateRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdatePlayerStateResponse, ::lobby::UpdatePlayerStateResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyChangeRoomPasswordRequest, ::lobby::ChangeRoomPasswordRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyChangeRoomPasswordResponse, ::lobby::ChangeRoomPasswordResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyChangeRoomOwnerRequest, ::lobby::ChangeRoomOwnerRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyChangeRoomOwnerResponse, ::lobby::ChangeRoomOwnerResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyDeleteRoomRequest, ::lobby::DeleteRoomRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyDeleteRoomResponse, ::lobby::DeleteRoomResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyListenRoomConfigUpdatesRequest, ::lobby::ListenRoomConfigUpdatesRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyListenRoomConfigUpdatesResponse, ::lobby::ListenRoomConfigUpdatesResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyListenPlayerListUpdatesRequest, ::lobby::ListenPlayerListUpdatesRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyListenPlayerListUpdatesResponse, ::lobby::ListenPlayerListUpdatesResponse)
+
+FGrpcLobbyRoomPreview UGrpcLobbyRoomPreviewHelperLibrary::MakeRoomPreview( 
+    FString RoomId, FGrpcLobbyRoomConfig Config, int32 CurrentPlayers 
+)
+{
+    FGrpcLobbyRoomPreview RoomPreview;
+    RoomPreview.RoomId = RoomId;
+    RoomPreview.Config = MakeShareable(new FGrpcLobbyRoomConfig(Config));
+    RoomPreview.CurrentPlayers = CurrentPlayers;
+
+    return RoomPreview;
+}
+
+void UGrpcLobbyRoomPreviewHelperLibrary::BreakRoomPreview(const FGrpcLobbyRoomPreview& RoomPreview,  
+    FString& RoomId, FGrpcLobbyRoomConfig& Config, int32& CurrentPlayers 
+)
+{
+    RoomId = RoomPreview.RoomId;
+    if(RoomPreview.Config.Get()) 
+    {
+        Config = *(RoomPreview.Config.Get());
+    }
+    CurrentPlayers = RoomPreview.CurrentPlayers;
+}
+
+FGrpcLobbyCreateRoomRequest UGrpcLobbyCreateRoomRequestHelperLibrary::MakeCreateRoomRequest( 
+    FGrpcLobbyRoomConfig Config, FString Password 
+)
+{
+    FGrpcLobbyCreateRoomRequest CreateRoomRequest;
+    CreateRoomRequest.Config = MakeShareable(new FGrpcLobbyRoomConfig(Config));
+    CreateRoomRequest.Password = Password;
+
+    return CreateRoomRequest;
+}
+
+void UGrpcLobbyCreateRoomRequestHelperLibrary::BreakCreateRoomRequest(const FGrpcLobbyCreateRoomRequest& CreateRoomRequest,  
+    FGrpcLobbyRoomConfig& Config, FString& Password 
+)
+{
+    if(CreateRoomRequest.Config.Get()) 
+    {
+        Config = *(CreateRoomRequest.Config.Get());
+    }
+    Password = CreateRoomRequest.Password;
+}
+
+FGrpcLobbyCreateRoomResponse UGrpcLobbyCreateRoomResponseHelperLibrary::MakeCreateRoomResponse( 
+    FGrpcLobbyRoomConnectionInfo Connection 
+)
+{
+    FGrpcLobbyCreateRoomResponse CreateRoomResponse;
+    CreateRoomResponse.Connection = MakeShareable(new FGrpcLobbyRoomConnectionInfo(Connection));
+
+    return CreateRoomResponse;
+}
+
+void UGrpcLobbyCreateRoomResponseHelperLibrary::BreakCreateRoomResponse(const FGrpcLobbyCreateRoomResponse& CreateRoomResponse,  
+    FGrpcLobbyRoomConnectionInfo& Connection 
+)
+{
+    if(CreateRoomResponse.Connection.Get()) 
+    {
+        Connection = *(CreateRoomResponse.Connection.Get());
+    }
+}
+
+FGrpcLobbyJoinRoomResponse UGrpcLobbyJoinRoomResponseHelperLibrary::MakeJoinRoomResponse( 
+    FGrpcLobbyRoomConnectionInfo Connection 
+)
+{
+    FGrpcLobbyJoinRoomResponse JoinRoomResponse;
+    JoinRoomResponse.Connection = MakeShareable(new FGrpcLobbyRoomConnectionInfo(Connection));
+
+    return JoinRoomResponse;
+}
+
+void UGrpcLobbyJoinRoomResponseHelperLibrary::BreakJoinRoomResponse(const FGrpcLobbyJoinRoomResponse& JoinRoomResponse,  
+    FGrpcLobbyRoomConnectionInfo& Connection 
+)
+{
+    if(JoinRoomResponse.Connection.Get()) 
+    {
+        Connection = *(JoinRoomResponse.Connection.Get());
+    }
+}
+
+FGrpcLobbyRoom UGrpcLobbyRoomHelperLibrary::MakeRoom( 
+    FString RoomId, FString PasswordEncrypted, EGrpcLobbyRoomState State, 
+    FString OwnerId, FGrpcLobbyRoomConfig Config, TArray<FGrpcLobbyRoomPlayer> Players, 
+    int32 PlayerCount, FGrpcLobbyRoomConnectionInfo Connection 
+)
+{
+    FGrpcLobbyRoom Room;
+    Room.RoomId = RoomId;
+    Room.PasswordEncrypted = PasswordEncrypted;
+    Room.State = State;
+    Room.OwnerId = OwnerId;
+    Room.Config = MakeShareable(new FGrpcLobbyRoomConfig(Config));
+    Room.Players = Players;
+    Room.PlayerCount = PlayerCount;
+    Room.Connection = Connection;
+
+    return Room;
+}
+
+void UGrpcLobbyRoomHelperLibrary::BreakRoom(const FGrpcLobbyRoom& Room,  
+    FString& RoomId, FString& PasswordEncrypted, EGrpcLobbyRoomState& State, 
+    FString& OwnerId, FGrpcLobbyRoomConfig& Config, TArray<FGrpcLobbyRoomPlayer>& Players, 
+    int32& PlayerCount, FGrpcLobbyRoomConnectionInfo& Connection 
+)
+{
+    RoomId = Room.RoomId;
+    PasswordEncrypted = Room.PasswordEncrypted;
+    State = Room.State;
+    OwnerId = Room.OwnerId;
+    if(Room.Config.Get()) 
+    {
+        Config = *(Room.Config.Get());
+    }
+    Players = Room.Players;
+    PlayerCount = Room.PlayerCount;
+    Connection = Room.Connection;
+}
 

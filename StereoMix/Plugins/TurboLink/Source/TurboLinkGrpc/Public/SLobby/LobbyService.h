@@ -26,17 +26,40 @@ private:
 	UPROPERTY()
 	ULobbyServiceClient* InnerClient; 
 public:
-	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyConnectionInfo& Response)> FCreateRoomResponseLambda;
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyCreateRoomResponse& Response)> FCreateRoomResponseLambda;
 	void CallCreateRoom(const FGrpcLobbyCreateRoomRequest& Request, FCreateRoomResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
-	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyConnectionInfo& Response)> FJoinRoomResponseLambda;
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response)> FJoinRoomResponseLambda;
 	void CallJoinRoom(const FGrpcLobbyJoinRoomRequest& Request, FJoinRoomResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyGetRoomListResponse& Response)> FGetRoomListResponseLambda;
 	void CallGetRoomList(const FGrpcLobbyGetRoomListRequest& Request, FGetRoomListResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
-	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomInfoResponse& Response)> FUpdateRoomInfoResponseLambda;
-	void CallUpdateRoomInfo(const FGrpcLobbyUpdateRoomInfoRequest& Request, FUpdateRoomInfoResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomStateResponse& Response)> FUpdateRoomStateResponseLambda;
+	void CallUpdateRoomState(const FGrpcLobbyUpdateRoomStateRequest& Request, FUpdateRoomStateResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomConfigResponse& Response)> FUpdateRoomConfigResponseLambda;
+	void CallUpdateRoomConfig(const FGrpcLobbyUpdateRoomConfigRequest& Request, FUpdateRoomConfigResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyUpdatePlayerStateResponse& Response)> FUpdatePlayerStateResponseLambda;
+	void CallUpdatePlayerState(const FGrpcLobbyUpdatePlayerStateRequest& Request, FUpdatePlayerStateResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyChangeRoomPasswordResponse& Response)> FChangeRoomPasswordResponseLambda;
+	void CallChangeRoomPassword(const FGrpcLobbyChangeRoomPasswordRequest& Request, FChangeRoomPasswordResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyChangeRoomOwnerResponse& Response)> FChangeRoomOwnerResponseLambda;
+	void CallChangeRoomOwner(const FGrpcLobbyChangeRoomOwnerRequest& Request, FChangeRoomOwnerResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyDeleteRoomResponse& Response)> FDeleteRoomResponseLambda;
+	void CallDeleteRoom(const FGrpcLobbyDeleteRoomRequest& Request, FDeleteRoomResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyListenRoomConfigUpdatesResponse& Response)> FUpdateRoomConfigStreamResponseLambda;
+	typedef TFunction<void()> FUpdateRoomConfigStreamFinishLambda;
+	void CallUpdateRoomConfigStream(const FGrpcLobbyListenRoomConfigUpdatesRequest& Request, FUpdateRoomConfigStreamResponseLambda ResponseLambda, FUpdateRoomConfigStreamFinishLambda FinishLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyListenPlayerListUpdatesResponse& Response)> FUpdatePlayerListStreamResponseLambda;
+	typedef TFunction<void()> FUpdatePlayerListStreamFinishLambda;
+	void CallUpdatePlayerListStream(const FGrpcLobbyListenPlayerListUpdatesRequest& Request, FUpdatePlayerListStreamResponseLambda ResponseLambda, FUpdatePlayerListStreamFinishLambda FinishLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 public:
 	class Private;

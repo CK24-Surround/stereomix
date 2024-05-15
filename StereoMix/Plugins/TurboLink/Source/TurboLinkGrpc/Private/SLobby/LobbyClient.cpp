@@ -101,23 +101,23 @@ void ULobbyServiceClient::GetRoomList(FGrpcContextHandle Handle, const FGrpcLobb
 	}
 }
 
-FGrpcContextHandle ULobbyServiceClient::InitUpdateRoomInfo()
+FGrpcContextHandle ULobbyServiceClient::InitUpdateRoomState()
 {
 	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
-	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_UpdateRoomInfo>(handle);
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_UpdateRoomState>(handle);
 	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
 	return context->GetHandle();
 }
 
-void ULobbyServiceClient::UpdateRoomInfo(FGrpcContextHandle Handle, const FGrpcLobbyUpdateRoomInfoRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+void ULobbyServiceClient::UpdateRoomState(FGrpcContextHandle Handle, const FGrpcLobbyUpdateRoomStateRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
 {
 	auto context = UGrpcClient::GetContext(Handle);
 	if (context != nullptr)
 	{
-		auto contextUpdateRoomInfo = StaticCastSharedPtr<GrpcContext_LobbyService_UpdateRoomInfo>(*context);
+		auto contextUpdateRoomState = StaticCastSharedPtr<GrpcContext_LobbyService_UpdateRoomState>(*context);
 		for (const auto& metaDataPair : MetaData.MetaData)
 		{
-			contextUpdateRoomInfo->RpcContext->AddMetadata(
+			contextUpdateRoomState->RpcContext->AddMetadata(
 				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
 				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
 			);
@@ -127,9 +127,233 @@ void ULobbyServiceClient::UpdateRoomInfo(FGrpcContextHandle Handle, const FGrpcL
 		{
 			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
 				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
-			contextUpdateRoomInfo->RpcContext->set_deadline(deadLine);
+			contextUpdateRoomState->RpcContext->set_deadline(deadLine);
 		}
-		contextUpdateRoomInfo->Call(Request);
+		contextUpdateRoomState->Call(Request);
+	}
+}
+
+FGrpcContextHandle ULobbyServiceClient::InitUpdateRoomConfig()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_UpdateRoomConfig>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::UpdateRoomConfig(FGrpcContextHandle Handle, const FGrpcLobbyUpdateRoomConfigRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextUpdateRoomConfig = StaticCastSharedPtr<GrpcContext_LobbyService_UpdateRoomConfig>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextUpdateRoomConfig->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextUpdateRoomConfig->RpcContext->set_deadline(deadLine);
+		}
+		contextUpdateRoomConfig->Call(Request);
+	}
+}
+
+FGrpcContextHandle ULobbyServiceClient::InitUpdatePlayerState()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_UpdatePlayerState>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::UpdatePlayerState(FGrpcContextHandle Handle, const FGrpcLobbyUpdatePlayerStateRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextUpdatePlayerState = StaticCastSharedPtr<GrpcContext_LobbyService_UpdatePlayerState>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextUpdatePlayerState->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextUpdatePlayerState->RpcContext->set_deadline(deadLine);
+		}
+		contextUpdatePlayerState->Call(Request);
+	}
+}
+
+FGrpcContextHandle ULobbyServiceClient::InitChangeRoomPassword()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_ChangeRoomPassword>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::ChangeRoomPassword(FGrpcContextHandle Handle, const FGrpcLobbyChangeRoomPasswordRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextChangeRoomPassword = StaticCastSharedPtr<GrpcContext_LobbyService_ChangeRoomPassword>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextChangeRoomPassword->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextChangeRoomPassword->RpcContext->set_deadline(deadLine);
+		}
+		contextChangeRoomPassword->Call(Request);
+	}
+}
+
+FGrpcContextHandle ULobbyServiceClient::InitChangeRoomOwner()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_ChangeRoomOwner>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::ChangeRoomOwner(FGrpcContextHandle Handle, const FGrpcLobbyChangeRoomOwnerRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextChangeRoomOwner = StaticCastSharedPtr<GrpcContext_LobbyService_ChangeRoomOwner>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextChangeRoomOwner->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextChangeRoomOwner->RpcContext->set_deadline(deadLine);
+		}
+		contextChangeRoomOwner->Call(Request);
+	}
+}
+
+FGrpcContextHandle ULobbyServiceClient::InitDeleteRoom()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_DeleteRoom>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::DeleteRoom(FGrpcContextHandle Handle, const FGrpcLobbyDeleteRoomRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextDeleteRoom = StaticCastSharedPtr<GrpcContext_LobbyService_DeleteRoom>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextDeleteRoom->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextDeleteRoom->RpcContext->set_deadline(deadLine);
+		}
+		contextDeleteRoom->Call(Request);
+	}
+}
+
+FGrpcContextHandle ULobbyServiceClient::InitUpdateRoomConfigStream()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_UpdateRoomConfigStream>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::UpdateRoomConfigStream(FGrpcContextHandle Handle, const FGrpcLobbyListenRoomConfigUpdatesRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextUpdateRoomConfigStream = StaticCastSharedPtr<GrpcContext_LobbyService_UpdateRoomConfigStream>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextUpdateRoomConfigStream->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextUpdateRoomConfigStream->RpcContext->set_deadline(deadLine);
+		}
+		contextUpdateRoomConfigStream->Call(Request);
+	}
+}
+
+FGrpcContextHandle ULobbyServiceClient::InitUpdatePlayerListStream()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_UpdatePlayerListStream>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::UpdatePlayerListStream(FGrpcContextHandle Handle, const FGrpcLobbyListenPlayerListUpdatesRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextUpdatePlayerListStream = StaticCastSharedPtr<GrpcContext_LobbyService_UpdatePlayerListStream>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextUpdatePlayerListStream->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextUpdatePlayerListStream->RpcContext->set_deadline(deadLine);
+		}
+		contextUpdatePlayerListStream->Call(Request);
 	}
 }
 
@@ -147,7 +371,14 @@ void ULobbyServiceClient::Shutdown()
 	OnCreateRoomResponse.Clear();
 	OnJoinRoomResponse.Clear();
 	OnGetRoomListResponse.Clear();
-	OnUpdateRoomInfoResponse.Clear();
+	OnUpdateRoomStateResponse.Clear();
+	OnUpdateRoomConfigResponse.Clear();
+	OnUpdatePlayerStateResponse.Clear();
+	OnChangeRoomPasswordResponse.Clear();
+	OnChangeRoomOwnerResponse.Clear();
+	OnDeleteRoomResponse.Clear();
+	OnUpdateRoomConfigStreamResponse.Clear();
+	OnUpdatePlayerListStreamResponse.Clear();
 	Super::Shutdown();
 }
 

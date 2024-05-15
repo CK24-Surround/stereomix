@@ -3,10 +3,10 @@
 #include "TurboLinkGrpcContext.h"
 #include "SLobby/LobbyMessage.h"
 #include "SLobby/LobbyMarshaling.h"
-class GrpcContext_LobbyService_CreateRoom : public GrpcContext_Ping_Pong<LobbyService_CreateRoom_ReaderWriter, ::lobby::ConnectionInfo>
+class GrpcContext_LobbyService_CreateRoom : public GrpcContext_Ping_Pong<LobbyService_CreateRoom_ReaderWriter, ::lobby::CreateRoomResponse>
 {
 	friend class ULobbyServiceClient;
-	typedef GrpcContext_Ping_Pong<LobbyService_CreateRoom_ReaderWriter, ::lobby::ConnectionInfo> Super;
+	typedef GrpcContext_Ping_Pong<LobbyService_CreateRoom_ReaderWriter, ::lobby::CreateRoomResponse> Super;
 
 private:
 	void Call(const FGrpcLobbyCreateRoomRequest& Request);
@@ -16,10 +16,10 @@ public:
 	GrpcContext_LobbyService_CreateRoom(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
 };
 
-class GrpcContext_LobbyService_JoinRoom : public GrpcContext_Ping_Pong<LobbyService_JoinRoom_ReaderWriter, ::lobby::ConnectionInfo>
+class GrpcContext_LobbyService_JoinRoom : public GrpcContext_Ping_Pong<LobbyService_JoinRoom_ReaderWriter, ::lobby::JoinRoomResponse>
 {
 	friend class ULobbyServiceClient;
-	typedef GrpcContext_Ping_Pong<LobbyService_JoinRoom_ReaderWriter, ::lobby::ConnectionInfo> Super;
+	typedef GrpcContext_Ping_Pong<LobbyService_JoinRoom_ReaderWriter, ::lobby::JoinRoomResponse> Super;
 
 private:
 	void Call(const FGrpcLobbyJoinRoomRequest& Request);
@@ -42,16 +42,107 @@ public:
 	GrpcContext_LobbyService_GetRoomList(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
 };
 
-class GrpcContext_LobbyService_UpdateRoomInfo : public GrpcContext_Ping_Pong<LobbyService_UpdateRoomInfo_ReaderWriter, ::lobby::UpdateRoomInfoResponse>
+class GrpcContext_LobbyService_UpdateRoomState : public GrpcContext_Ping_Pong<LobbyService_UpdateRoomState_ReaderWriter, ::lobby::UpdateRoomStateResponse>
 {
 	friend class ULobbyServiceClient;
-	typedef GrpcContext_Ping_Pong<LobbyService_UpdateRoomInfo_ReaderWriter, ::lobby::UpdateRoomInfoResponse> Super;
+	typedef GrpcContext_Ping_Pong<LobbyService_UpdateRoomState_ReaderWriter, ::lobby::UpdateRoomStateResponse> Super;
 
 private:
-	void Call(const FGrpcLobbyUpdateRoomInfoRequest& Request);
+	void Call(const FGrpcLobbyUpdateRoomStateRequest& Request);
 	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
 
 public:
-	GrpcContext_LobbyService_UpdateRoomInfo(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+	GrpcContext_LobbyService_UpdateRoomState(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_UpdateRoomConfig : public GrpcContext_Ping_Pong<LobbyService_UpdateRoomConfig_ReaderWriter, ::lobby::UpdateRoomConfigResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Pong<LobbyService_UpdateRoomConfig_ReaderWriter, ::lobby::UpdateRoomConfigResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyUpdateRoomConfigRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_UpdateRoomConfig(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_UpdatePlayerState : public GrpcContext_Ping_Pong<LobbyService_UpdatePlayerState_ReaderWriter, ::lobby::UpdatePlayerStateResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Pong<LobbyService_UpdatePlayerState_ReaderWriter, ::lobby::UpdatePlayerStateResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyUpdatePlayerStateRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_UpdatePlayerState(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_ChangeRoomPassword : public GrpcContext_Ping_Pong<LobbyService_ChangeRoomPassword_ReaderWriter, ::lobby::ChangeRoomPasswordResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Pong<LobbyService_ChangeRoomPassword_ReaderWriter, ::lobby::ChangeRoomPasswordResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyChangeRoomPasswordRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_ChangeRoomPassword(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_ChangeRoomOwner : public GrpcContext_Ping_Pong<LobbyService_ChangeRoomOwner_ReaderWriter, ::lobby::ChangeRoomOwnerResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Pong<LobbyService_ChangeRoomOwner_ReaderWriter, ::lobby::ChangeRoomOwnerResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyChangeRoomOwnerRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_ChangeRoomOwner(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_DeleteRoom : public GrpcContext_Ping_Pong<LobbyService_DeleteRoom_ReaderWriter, ::lobby::DeleteRoomResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Pong<LobbyService_DeleteRoom_ReaderWriter, ::lobby::DeleteRoomResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyDeleteRoomRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_DeleteRoom(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_UpdateRoomConfigStream : public GrpcContext_Ping_Stream<LobbyService_UpdateRoomConfigStream_ReaderWriter, ::lobby::ListenRoomConfigUpdatesResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Stream<LobbyService_UpdateRoomConfigStream_ReaderWriter, ::lobby::ListenRoomConfigUpdatesResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyListenRoomConfigUpdatesRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_UpdateRoomConfigStream(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_UpdatePlayerListStream : public GrpcContext_Ping_Stream<LobbyService_UpdatePlayerListStream_ReaderWriter, ::lobby::ListenPlayerListUpdatesResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Stream<LobbyService_UpdatePlayerListStream_ReaderWriter, ::lobby::ListenPlayerListUpdatesResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyListenPlayerListUpdatesRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_UpdatePlayerListStream(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
 };
 

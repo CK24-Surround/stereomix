@@ -41,7 +41,7 @@ void UCallLobbyServiceCreateRoom::OnServiceStateChanged(EGrpcServiceState NewSta
 		FGrpcResult result;
 		result.Code = EGrpcResultCode::ConnectionFailed;
 
-		FGrpcLobbyConnectionInfo response;
+		FGrpcLobbyCreateRoomResponse response;
 		OnFail.Broadcast(result, response);
 
 		Shutdown();
@@ -67,7 +67,7 @@ void UCallLobbyServiceCreateRoom::OnContextStateChange(FGrpcContextHandle Handle
 	}
 }
 
-void UCallLobbyServiceCreateRoom::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyConnectionInfo& Response)
+void UCallLobbyServiceCreateRoom::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyCreateRoomResponse& Response)
 {
 	if (GrpcResult.Code == EGrpcResultCode::Ok)
 	{
@@ -137,7 +137,7 @@ void UCallLobbyServiceJoinRoom::OnServiceStateChanged(EGrpcServiceState NewState
 		FGrpcResult result;
 		result.Code = EGrpcResultCode::ConnectionFailed;
 
-		FGrpcLobbyConnectionInfo response;
+		FGrpcLobbyJoinRoomResponse response;
 		OnFail.Broadcast(result, response);
 
 		Shutdown();
@@ -163,7 +163,7 @@ void UCallLobbyServiceJoinRoom::OnContextStateChange(FGrpcContextHandle Handle, 
 	}
 }
 
-void UCallLobbyServiceJoinRoom::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyConnectionInfo& Response)
+void UCallLobbyServiceJoinRoom::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response)
 {
 	if (GrpcResult.Code == EGrpcResultCode::Ok)
 	{
@@ -295,9 +295,9 @@ void UCallLobbyServiceGetRoomList::Shutdown()
 #endif
 }
 
-UCallLobbyServiceUpdateRoomInfo* UCallLobbyServiceUpdateRoomInfo::UpdateRoomInfo(UObject* WorldContextObject, const FGrpcLobbyUpdateRoomInfoRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+UCallLobbyServiceUpdateRoomState* UCallLobbyServiceUpdateRoomState::UpdateRoomState(UObject* WorldContextObject, const FGrpcLobbyUpdateRoomStateRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
 {
-	UCallLobbyServiceUpdateRoomInfo* node = NewObject<UCallLobbyServiceUpdateRoomInfo>(WorldContextObject);
+	UCallLobbyServiceUpdateRoomState* node = NewObject<UCallLobbyServiceUpdateRoomState>(WorldContextObject);
 	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
 
 	node->LobbyService = Cast<ULobbyService>(turboLinkManager->MakeService("LobbyService"));
@@ -310,16 +310,16 @@ UCallLobbyServiceUpdateRoomInfo* UCallLobbyServiceUpdateRoomInfo::UpdateRoomInfo
 	node->MetaData = metaData;
 	node->DeadLineSeconds = deadLineSeconds;
 
-	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceUpdateRoomInfo::OnServiceStateChanged);
+	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceUpdateRoomState::OnServiceStateChanged);
 	return node;
 }
 
-void UCallLobbyServiceUpdateRoomInfo::Activate()
+void UCallLobbyServiceUpdateRoomState::Activate()
 {
 	LobbyService->Connect();
 }
 
-void UCallLobbyServiceUpdateRoomInfo::OnServiceStateChanged(EGrpcServiceState NewState)
+void UCallLobbyServiceUpdateRoomState::OnServiceStateChanged(EGrpcServiceState NewState)
 {
 	if (ServiceState == NewState) return;
 	ServiceState = NewState;
@@ -329,7 +329,7 @@ void UCallLobbyServiceUpdateRoomInfo::OnServiceStateChanged(EGrpcServiceState Ne
 		FGrpcResult result;
 		result.Code = EGrpcResultCode::ConnectionFailed;
 
-		FGrpcLobbyUpdateRoomInfoResponse response;
+		FGrpcLobbyUpdateRoomStateResponse response;
 		OnFail.Broadcast(result, response);
 
 		Shutdown();
@@ -339,15 +339,15 @@ void UCallLobbyServiceUpdateRoomInfo::OnServiceStateChanged(EGrpcServiceState Ne
 	if (NewState == EGrpcServiceState::Ready)
 	{
 		LobbyServiceClient = LobbyService->MakeClient();
-		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceUpdateRoomInfo::OnContextStateChange);
-		LobbyServiceClient->OnUpdateRoomInfoResponse.AddUniqueDynamic(this, &UCallLobbyServiceUpdateRoomInfo::OnResponse);
+		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceUpdateRoomState::OnContextStateChange);
+		LobbyServiceClient->OnUpdateRoomStateResponse.AddUniqueDynamic(this, &UCallLobbyServiceUpdateRoomState::OnResponse);
 
-		Context = LobbyServiceClient->InitUpdateRoomInfo();
-		LobbyServiceClient->UpdateRoomInfo(Context, Request, MetaData, DeadLineSeconds);
+		Context = LobbyServiceClient->InitUpdateRoomState();
+		LobbyServiceClient->UpdateRoomState(Context, Request, MetaData, DeadLineSeconds);
 	}
 }
 
-void UCallLobbyServiceUpdateRoomInfo::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+void UCallLobbyServiceUpdateRoomState::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
 {
 	if (State == EGrpcContextState::Done)
 	{
@@ -355,11 +355,11 @@ void UCallLobbyServiceUpdateRoomInfo::OnContextStateChange(FGrpcContextHandle Ha
 	}
 }
 
-void UCallLobbyServiceUpdateRoomInfo::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomInfoResponse& Response)
+void UCallLobbyServiceUpdateRoomState::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomStateResponse& Response)
 {
 	if (GrpcResult.Code == EGrpcResultCode::Ok)
 	{
-		OnUpdateRoomInfoResponse.Broadcast(GrpcResult, Response);
+		OnUpdateRoomStateResponse.Broadcast(GrpcResult, Response);
 	}
 	else
 	{
@@ -367,9 +367,683 @@ void UCallLobbyServiceUpdateRoomInfo::OnResponse(FGrpcContextHandle Handle, cons
 	}
 }
 
-void UCallLobbyServiceUpdateRoomInfo::Shutdown()
+void UCallLobbyServiceUpdateRoomState::Shutdown()
 {
-	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceUpdateRoomInfo::OnServiceStateChanged);
+	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceUpdateRoomState::OnServiceStateChanged);
+	if (LobbyServiceClient != nullptr)
+	{
+		LobbyService->RemoveClient(LobbyServiceClient);
+		LobbyServiceClient->Shutdown();
+		LobbyServiceClient = nullptr;
+	}
+
+	if (LobbyService != nullptr)
+	{
+		UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(this)->ReleaseService(LobbyService);
+		LobbyService = nullptr;
+	}
+
+	SetReadyToDestroy();
+#if ENGINE_MAJOR_VERSION>=5
+	MarkAsGarbage();
+#else
+	MarkPendingKill();
+#endif
+}
+
+UCallLobbyServiceUpdateRoomConfig* UCallLobbyServiceUpdateRoomConfig::UpdateRoomConfig(UObject* WorldContextObject, const FGrpcLobbyUpdateRoomConfigRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+{
+	UCallLobbyServiceUpdateRoomConfig* node = NewObject<UCallLobbyServiceUpdateRoomConfig>(WorldContextObject);
+	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
+
+	node->LobbyService = Cast<ULobbyService>(turboLinkManager->MakeService("LobbyService"));
+	if (node->LobbyService == nullptr)
+	{
+		return nullptr;
+	}
+	node->ServiceState = EGrpcServiceState::Idle;
+	node->Request = request;
+	node->MetaData = metaData;
+	node->DeadLineSeconds = deadLineSeconds;
+
+	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceUpdateRoomConfig::OnServiceStateChanged);
+	return node;
+}
+
+void UCallLobbyServiceUpdateRoomConfig::Activate()
+{
+	LobbyService->Connect();
+}
+
+void UCallLobbyServiceUpdateRoomConfig::OnServiceStateChanged(EGrpcServiceState NewState)
+{
+	if (ServiceState == NewState) return;
+	ServiceState = NewState;
+
+	if (NewState == EGrpcServiceState::TransientFailure)
+	{
+		FGrpcResult result;
+		result.Code = EGrpcResultCode::ConnectionFailed;
+
+		FGrpcLobbyUpdateRoomConfigResponse response;
+		OnFail.Broadcast(result, response);
+
+		Shutdown();
+		return;
+	}
+
+	if (NewState == EGrpcServiceState::Ready)
+	{
+		LobbyServiceClient = LobbyService->MakeClient();
+		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceUpdateRoomConfig::OnContextStateChange);
+		LobbyServiceClient->OnUpdateRoomConfigResponse.AddUniqueDynamic(this, &UCallLobbyServiceUpdateRoomConfig::OnResponse);
+
+		Context = LobbyServiceClient->InitUpdateRoomConfig();
+		LobbyServiceClient->UpdateRoomConfig(Context, Request, MetaData, DeadLineSeconds);
+	}
+}
+
+void UCallLobbyServiceUpdateRoomConfig::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+{
+	if (State == EGrpcContextState::Done)
+	{
+		Shutdown();
+	}
+}
+
+void UCallLobbyServiceUpdateRoomConfig::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomConfigResponse& Response)
+{
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		OnUpdateRoomConfigResponse.Broadcast(GrpcResult, Response);
+	}
+	else
+	{
+		OnFail.Broadcast(GrpcResult, Response);
+	}
+}
+
+void UCallLobbyServiceUpdateRoomConfig::Shutdown()
+{
+	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceUpdateRoomConfig::OnServiceStateChanged);
+	if (LobbyServiceClient != nullptr)
+	{
+		LobbyService->RemoveClient(LobbyServiceClient);
+		LobbyServiceClient->Shutdown();
+		LobbyServiceClient = nullptr;
+	}
+
+	if (LobbyService != nullptr)
+	{
+		UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(this)->ReleaseService(LobbyService);
+		LobbyService = nullptr;
+	}
+
+	SetReadyToDestroy();
+#if ENGINE_MAJOR_VERSION>=5
+	MarkAsGarbage();
+#else
+	MarkPendingKill();
+#endif
+}
+
+UCallLobbyServiceUpdatePlayerState* UCallLobbyServiceUpdatePlayerState::UpdatePlayerState(UObject* WorldContextObject, const FGrpcLobbyUpdatePlayerStateRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+{
+	UCallLobbyServiceUpdatePlayerState* node = NewObject<UCallLobbyServiceUpdatePlayerState>(WorldContextObject);
+	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
+
+	node->LobbyService = Cast<ULobbyService>(turboLinkManager->MakeService("LobbyService"));
+	if (node->LobbyService == nullptr)
+	{
+		return nullptr;
+	}
+	node->ServiceState = EGrpcServiceState::Idle;
+	node->Request = request;
+	node->MetaData = metaData;
+	node->DeadLineSeconds = deadLineSeconds;
+
+	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceUpdatePlayerState::OnServiceStateChanged);
+	return node;
+}
+
+void UCallLobbyServiceUpdatePlayerState::Activate()
+{
+	LobbyService->Connect();
+}
+
+void UCallLobbyServiceUpdatePlayerState::OnServiceStateChanged(EGrpcServiceState NewState)
+{
+	if (ServiceState == NewState) return;
+	ServiceState = NewState;
+
+	if (NewState == EGrpcServiceState::TransientFailure)
+	{
+		FGrpcResult result;
+		result.Code = EGrpcResultCode::ConnectionFailed;
+
+		FGrpcLobbyUpdatePlayerStateResponse response;
+		OnFail.Broadcast(result, response);
+
+		Shutdown();
+		return;
+	}
+
+	if (NewState == EGrpcServiceState::Ready)
+	{
+		LobbyServiceClient = LobbyService->MakeClient();
+		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceUpdatePlayerState::OnContextStateChange);
+		LobbyServiceClient->OnUpdatePlayerStateResponse.AddUniqueDynamic(this, &UCallLobbyServiceUpdatePlayerState::OnResponse);
+
+		Context = LobbyServiceClient->InitUpdatePlayerState();
+		LobbyServiceClient->UpdatePlayerState(Context, Request, MetaData, DeadLineSeconds);
+	}
+}
+
+void UCallLobbyServiceUpdatePlayerState::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+{
+	if (State == EGrpcContextState::Done)
+	{
+		Shutdown();
+	}
+}
+
+void UCallLobbyServiceUpdatePlayerState::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdatePlayerStateResponse& Response)
+{
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		OnUpdatePlayerStateResponse.Broadcast(GrpcResult, Response);
+	}
+	else
+	{
+		OnFail.Broadcast(GrpcResult, Response);
+	}
+}
+
+void UCallLobbyServiceUpdatePlayerState::Shutdown()
+{
+	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceUpdatePlayerState::OnServiceStateChanged);
+	if (LobbyServiceClient != nullptr)
+	{
+		LobbyService->RemoveClient(LobbyServiceClient);
+		LobbyServiceClient->Shutdown();
+		LobbyServiceClient = nullptr;
+	}
+
+	if (LobbyService != nullptr)
+	{
+		UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(this)->ReleaseService(LobbyService);
+		LobbyService = nullptr;
+	}
+
+	SetReadyToDestroy();
+#if ENGINE_MAJOR_VERSION>=5
+	MarkAsGarbage();
+#else
+	MarkPendingKill();
+#endif
+}
+
+UCallLobbyServiceChangeRoomPassword* UCallLobbyServiceChangeRoomPassword::ChangeRoomPassword(UObject* WorldContextObject, const FGrpcLobbyChangeRoomPasswordRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+{
+	UCallLobbyServiceChangeRoomPassword* node = NewObject<UCallLobbyServiceChangeRoomPassword>(WorldContextObject);
+	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
+
+	node->LobbyService = Cast<ULobbyService>(turboLinkManager->MakeService("LobbyService"));
+	if (node->LobbyService == nullptr)
+	{
+		return nullptr;
+	}
+	node->ServiceState = EGrpcServiceState::Idle;
+	node->Request = request;
+	node->MetaData = metaData;
+	node->DeadLineSeconds = deadLineSeconds;
+
+	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceChangeRoomPassword::OnServiceStateChanged);
+	return node;
+}
+
+void UCallLobbyServiceChangeRoomPassword::Activate()
+{
+	LobbyService->Connect();
+}
+
+void UCallLobbyServiceChangeRoomPassword::OnServiceStateChanged(EGrpcServiceState NewState)
+{
+	if (ServiceState == NewState) return;
+	ServiceState = NewState;
+
+	if (NewState == EGrpcServiceState::TransientFailure)
+	{
+		FGrpcResult result;
+		result.Code = EGrpcResultCode::ConnectionFailed;
+
+		FGrpcLobbyChangeRoomPasswordResponse response;
+		OnFail.Broadcast(result, response);
+
+		Shutdown();
+		return;
+	}
+
+	if (NewState == EGrpcServiceState::Ready)
+	{
+		LobbyServiceClient = LobbyService->MakeClient();
+		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceChangeRoomPassword::OnContextStateChange);
+		LobbyServiceClient->OnChangeRoomPasswordResponse.AddUniqueDynamic(this, &UCallLobbyServiceChangeRoomPassword::OnResponse);
+
+		Context = LobbyServiceClient->InitChangeRoomPassword();
+		LobbyServiceClient->ChangeRoomPassword(Context, Request, MetaData, DeadLineSeconds);
+	}
+}
+
+void UCallLobbyServiceChangeRoomPassword::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+{
+	if (State == EGrpcContextState::Done)
+	{
+		Shutdown();
+	}
+}
+
+void UCallLobbyServiceChangeRoomPassword::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyChangeRoomPasswordResponse& Response)
+{
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		OnChangeRoomPasswordResponse.Broadcast(GrpcResult, Response);
+	}
+	else
+	{
+		OnFail.Broadcast(GrpcResult, Response);
+	}
+}
+
+void UCallLobbyServiceChangeRoomPassword::Shutdown()
+{
+	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceChangeRoomPassword::OnServiceStateChanged);
+	if (LobbyServiceClient != nullptr)
+	{
+		LobbyService->RemoveClient(LobbyServiceClient);
+		LobbyServiceClient->Shutdown();
+		LobbyServiceClient = nullptr;
+	}
+
+	if (LobbyService != nullptr)
+	{
+		UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(this)->ReleaseService(LobbyService);
+		LobbyService = nullptr;
+	}
+
+	SetReadyToDestroy();
+#if ENGINE_MAJOR_VERSION>=5
+	MarkAsGarbage();
+#else
+	MarkPendingKill();
+#endif
+}
+
+UCallLobbyServiceChangeRoomOwner* UCallLobbyServiceChangeRoomOwner::ChangeRoomOwner(UObject* WorldContextObject, const FGrpcLobbyChangeRoomOwnerRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+{
+	UCallLobbyServiceChangeRoomOwner* node = NewObject<UCallLobbyServiceChangeRoomOwner>(WorldContextObject);
+	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
+
+	node->LobbyService = Cast<ULobbyService>(turboLinkManager->MakeService("LobbyService"));
+	if (node->LobbyService == nullptr)
+	{
+		return nullptr;
+	}
+	node->ServiceState = EGrpcServiceState::Idle;
+	node->Request = request;
+	node->MetaData = metaData;
+	node->DeadLineSeconds = deadLineSeconds;
+
+	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceChangeRoomOwner::OnServiceStateChanged);
+	return node;
+}
+
+void UCallLobbyServiceChangeRoomOwner::Activate()
+{
+	LobbyService->Connect();
+}
+
+void UCallLobbyServiceChangeRoomOwner::OnServiceStateChanged(EGrpcServiceState NewState)
+{
+	if (ServiceState == NewState) return;
+	ServiceState = NewState;
+
+	if (NewState == EGrpcServiceState::TransientFailure)
+	{
+		FGrpcResult result;
+		result.Code = EGrpcResultCode::ConnectionFailed;
+
+		FGrpcLobbyChangeRoomOwnerResponse response;
+		OnFail.Broadcast(result, response);
+
+		Shutdown();
+		return;
+	}
+
+	if (NewState == EGrpcServiceState::Ready)
+	{
+		LobbyServiceClient = LobbyService->MakeClient();
+		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceChangeRoomOwner::OnContextStateChange);
+		LobbyServiceClient->OnChangeRoomOwnerResponse.AddUniqueDynamic(this, &UCallLobbyServiceChangeRoomOwner::OnResponse);
+
+		Context = LobbyServiceClient->InitChangeRoomOwner();
+		LobbyServiceClient->ChangeRoomOwner(Context, Request, MetaData, DeadLineSeconds);
+	}
+}
+
+void UCallLobbyServiceChangeRoomOwner::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+{
+	if (State == EGrpcContextState::Done)
+	{
+		Shutdown();
+	}
+}
+
+void UCallLobbyServiceChangeRoomOwner::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyChangeRoomOwnerResponse& Response)
+{
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		OnChangeRoomOwnerResponse.Broadcast(GrpcResult, Response);
+	}
+	else
+	{
+		OnFail.Broadcast(GrpcResult, Response);
+	}
+}
+
+void UCallLobbyServiceChangeRoomOwner::Shutdown()
+{
+	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceChangeRoomOwner::OnServiceStateChanged);
+	if (LobbyServiceClient != nullptr)
+	{
+		LobbyService->RemoveClient(LobbyServiceClient);
+		LobbyServiceClient->Shutdown();
+		LobbyServiceClient = nullptr;
+	}
+
+	if (LobbyService != nullptr)
+	{
+		UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(this)->ReleaseService(LobbyService);
+		LobbyService = nullptr;
+	}
+
+	SetReadyToDestroy();
+#if ENGINE_MAJOR_VERSION>=5
+	MarkAsGarbage();
+#else
+	MarkPendingKill();
+#endif
+}
+
+UCallLobbyServiceDeleteRoom* UCallLobbyServiceDeleteRoom::DeleteRoom(UObject* WorldContextObject, const FGrpcLobbyDeleteRoomRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+{
+	UCallLobbyServiceDeleteRoom* node = NewObject<UCallLobbyServiceDeleteRoom>(WorldContextObject);
+	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
+
+	node->LobbyService = Cast<ULobbyService>(turboLinkManager->MakeService("LobbyService"));
+	if (node->LobbyService == nullptr)
+	{
+		return nullptr;
+	}
+	node->ServiceState = EGrpcServiceState::Idle;
+	node->Request = request;
+	node->MetaData = metaData;
+	node->DeadLineSeconds = deadLineSeconds;
+
+	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceDeleteRoom::OnServiceStateChanged);
+	return node;
+}
+
+void UCallLobbyServiceDeleteRoom::Activate()
+{
+	LobbyService->Connect();
+}
+
+void UCallLobbyServiceDeleteRoom::OnServiceStateChanged(EGrpcServiceState NewState)
+{
+	if (ServiceState == NewState) return;
+	ServiceState = NewState;
+
+	if (NewState == EGrpcServiceState::TransientFailure)
+	{
+		FGrpcResult result;
+		result.Code = EGrpcResultCode::ConnectionFailed;
+
+		FGrpcLobbyDeleteRoomResponse response;
+		OnFail.Broadcast(result, response);
+
+		Shutdown();
+		return;
+	}
+
+	if (NewState == EGrpcServiceState::Ready)
+	{
+		LobbyServiceClient = LobbyService->MakeClient();
+		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceDeleteRoom::OnContextStateChange);
+		LobbyServiceClient->OnDeleteRoomResponse.AddUniqueDynamic(this, &UCallLobbyServiceDeleteRoom::OnResponse);
+
+		Context = LobbyServiceClient->InitDeleteRoom();
+		LobbyServiceClient->DeleteRoom(Context, Request, MetaData, DeadLineSeconds);
+	}
+}
+
+void UCallLobbyServiceDeleteRoom::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+{
+	if (State == EGrpcContextState::Done)
+	{
+		Shutdown();
+	}
+}
+
+void UCallLobbyServiceDeleteRoom::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyDeleteRoomResponse& Response)
+{
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		OnDeleteRoomResponse.Broadcast(GrpcResult, Response);
+	}
+	else
+	{
+		OnFail.Broadcast(GrpcResult, Response);
+	}
+}
+
+void UCallLobbyServiceDeleteRoom::Shutdown()
+{
+	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceDeleteRoom::OnServiceStateChanged);
+	if (LobbyServiceClient != nullptr)
+	{
+		LobbyService->RemoveClient(LobbyServiceClient);
+		LobbyServiceClient->Shutdown();
+		LobbyServiceClient = nullptr;
+	}
+
+	if (LobbyService != nullptr)
+	{
+		UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(this)->ReleaseService(LobbyService);
+		LobbyService = nullptr;
+	}
+
+	SetReadyToDestroy();
+#if ENGINE_MAJOR_VERSION>=5
+	MarkAsGarbage();
+#else
+	MarkPendingKill();
+#endif
+}
+
+UCallLobbyServiceUpdateRoomConfigStream* UCallLobbyServiceUpdateRoomConfigStream::UpdateRoomConfigStream(UObject* WorldContextObject, const FGrpcLobbyListenRoomConfigUpdatesRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+{
+	UCallLobbyServiceUpdateRoomConfigStream* node = NewObject<UCallLobbyServiceUpdateRoomConfigStream>(WorldContextObject);
+	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
+
+	node->LobbyService = Cast<ULobbyService>(turboLinkManager->MakeService("LobbyService"));
+	if (node->LobbyService == nullptr)
+	{
+		return nullptr;
+	}
+	node->ServiceState = EGrpcServiceState::Idle;
+	node->Request = request;
+	node->MetaData = metaData;
+	node->DeadLineSeconds = deadLineSeconds;
+
+	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceUpdateRoomConfigStream::OnServiceStateChanged);
+	return node;
+}
+
+void UCallLobbyServiceUpdateRoomConfigStream::Activate()
+{
+	LobbyService->Connect();
+}
+
+void UCallLobbyServiceUpdateRoomConfigStream::OnServiceStateChanged(EGrpcServiceState NewState)
+{
+	if (ServiceState == NewState) return;
+	ServiceState = NewState;
+
+	if (NewState == EGrpcServiceState::TransientFailure)
+	{
+		FGrpcResult result;
+		result.Code = EGrpcResultCode::ConnectionFailed;
+
+		FGrpcLobbyListenRoomConfigUpdatesResponse response;
+		OnFail.Broadcast(result, response);
+
+		Shutdown();
+		return;
+	}
+
+	if (NewState == EGrpcServiceState::Ready)
+	{
+		LobbyServiceClient = LobbyService->MakeClient();
+		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceUpdateRoomConfigStream::OnContextStateChange);
+		LobbyServiceClient->OnUpdateRoomConfigStreamResponse.AddUniqueDynamic(this, &UCallLobbyServiceUpdateRoomConfigStream::OnResponse);
+
+		Context = LobbyServiceClient->InitUpdateRoomConfigStream();
+		LobbyServiceClient->UpdateRoomConfigStream(Context, Request, MetaData, DeadLineSeconds);
+	}
+}
+
+void UCallLobbyServiceUpdateRoomConfigStream::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+{
+	if (State == EGrpcContextState::Done)
+	{
+		OnFinished.Broadcast(FGrpcResult{}, FGrpcLobbyListenRoomConfigUpdatesResponse{});
+		Shutdown();
+	}
+}
+
+void UCallLobbyServiceUpdateRoomConfigStream::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyListenRoomConfigUpdatesResponse& Response)
+{
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		OnUpdateRoomConfigStreamResponse.Broadcast(GrpcResult, Response);
+	}
+	else
+	{
+		OnFail.Broadcast(GrpcResult, Response);
+	}
+}
+
+void UCallLobbyServiceUpdateRoomConfigStream::Shutdown()
+{
+	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceUpdateRoomConfigStream::OnServiceStateChanged);
+	if (LobbyServiceClient != nullptr)
+	{
+		LobbyService->RemoveClient(LobbyServiceClient);
+		LobbyServiceClient->Shutdown();
+		LobbyServiceClient = nullptr;
+	}
+
+	if (LobbyService != nullptr)
+	{
+		UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(this)->ReleaseService(LobbyService);
+		LobbyService = nullptr;
+	}
+
+	SetReadyToDestroy();
+#if ENGINE_MAJOR_VERSION>=5
+	MarkAsGarbage();
+#else
+	MarkPendingKill();
+#endif
+}
+
+UCallLobbyServiceUpdatePlayerListStream* UCallLobbyServiceUpdatePlayerListStream::UpdatePlayerListStream(UObject* WorldContextObject, const FGrpcLobbyListenPlayerListUpdatesRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+{
+	UCallLobbyServiceUpdatePlayerListStream* node = NewObject<UCallLobbyServiceUpdatePlayerListStream>(WorldContextObject);
+	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
+
+	node->LobbyService = Cast<ULobbyService>(turboLinkManager->MakeService("LobbyService"));
+	if (node->LobbyService == nullptr)
+	{
+		return nullptr;
+	}
+	node->ServiceState = EGrpcServiceState::Idle;
+	node->Request = request;
+	node->MetaData = metaData;
+	node->DeadLineSeconds = deadLineSeconds;
+
+	node->LobbyService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallLobbyServiceUpdatePlayerListStream::OnServiceStateChanged);
+	return node;
+}
+
+void UCallLobbyServiceUpdatePlayerListStream::Activate()
+{
+	LobbyService->Connect();
+}
+
+void UCallLobbyServiceUpdatePlayerListStream::OnServiceStateChanged(EGrpcServiceState NewState)
+{
+	if (ServiceState == NewState) return;
+	ServiceState = NewState;
+
+	if (NewState == EGrpcServiceState::TransientFailure)
+	{
+		FGrpcResult result;
+		result.Code = EGrpcResultCode::ConnectionFailed;
+
+		FGrpcLobbyListenPlayerListUpdatesResponse response;
+		OnFail.Broadcast(result, response);
+
+		Shutdown();
+		return;
+	}
+
+	if (NewState == EGrpcServiceState::Ready)
+	{
+		LobbyServiceClient = LobbyService->MakeClient();
+		LobbyServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallLobbyServiceUpdatePlayerListStream::OnContextStateChange);
+		LobbyServiceClient->OnUpdatePlayerListStreamResponse.AddUniqueDynamic(this, &UCallLobbyServiceUpdatePlayerListStream::OnResponse);
+
+		Context = LobbyServiceClient->InitUpdatePlayerListStream();
+		LobbyServiceClient->UpdatePlayerListStream(Context, Request, MetaData, DeadLineSeconds);
+	}
+}
+
+void UCallLobbyServiceUpdatePlayerListStream::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+{
+	if (State == EGrpcContextState::Done)
+	{
+		OnFinished.Broadcast(FGrpcResult{}, FGrpcLobbyListenPlayerListUpdatesResponse{});
+		Shutdown();
+	}
+}
+
+void UCallLobbyServiceUpdatePlayerListStream::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyListenPlayerListUpdatesResponse& Response)
+{
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		OnUpdatePlayerListStreamResponse.Broadcast(GrpcResult, Response);
+	}
+	else
+	{
+		OnFail.Broadcast(GrpcResult, Response);
+	}
+}
+
+void UCallLobbyServiceUpdatePlayerListStream::Shutdown()
+{
+	LobbyService->OnServiceStateChanged.RemoveDynamic(this, &UCallLobbyServiceUpdatePlayerListStream::OnServiceStateChanged);
 	if (LobbyServiceClient != nullptr)
 	{
 		LobbyService->RemoveClient(LobbyServiceClient);

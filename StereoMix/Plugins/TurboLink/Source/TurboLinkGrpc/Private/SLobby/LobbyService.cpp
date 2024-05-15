@@ -3,6 +3,7 @@
 #include "SLobby/LobbyClient.h"
 #include "LobbyService_Private.h"
 #include "LobbyMarshaling.h"
+#include "SGoogleProtobuf/TimestampMarshaling.h"
 #include "TurboLinkGrpcManager_Private.h"
 #include "TurboLinkGrpcUtilities.h"
 
@@ -101,16 +102,118 @@ void ULobbyService::CallGetRoomList(const FGrpcLobbyGetRoomListRequest& Request,
 	InnerClient->GetRoomList(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
 }
 
-void ULobbyService::CallUpdateRoomInfo(const FGrpcLobbyUpdateRoomInfoRequest& Request, FUpdateRoomInfoResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+void ULobbyService::CallUpdateRoomState(const FGrpcLobbyUpdateRoomStateRequest& Request, FUpdateRoomStateResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
 {
 	if (InnerClient == nullptr)
 	{
 		InnerClient = MakeClient();
 	}
-	ULobbyServiceUpdateRoomInfoLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceUpdateRoomInfoLambdaWrapper>();
+	ULobbyServiceUpdateRoomStateLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceUpdateRoomStateLambdaWrapper>();
 	lambdaWrapper->InnerClient = InnerClient;
 	lambdaWrapper->ResponseLambda = ResponseLambda;
-	lambdaWrapper->Handle = InnerClient->InitUpdateRoomInfo();
-	InnerClient->OnUpdateRoomInfoResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceUpdateRoomInfoLambdaWrapper::OnResponse);
-	InnerClient->UpdateRoomInfo(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+	lambdaWrapper->Handle = InnerClient->InitUpdateRoomState();
+	InnerClient->OnUpdateRoomStateResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceUpdateRoomStateLambdaWrapper::OnResponse);
+	InnerClient->UpdateRoomState(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallUpdateRoomConfig(const FGrpcLobbyUpdateRoomConfigRequest& Request, FUpdateRoomConfigResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceUpdateRoomConfigLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceUpdateRoomConfigLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->Handle = InnerClient->InitUpdateRoomConfig();
+	InnerClient->OnUpdateRoomConfigResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceUpdateRoomConfigLambdaWrapper::OnResponse);
+	InnerClient->UpdateRoomConfig(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallUpdatePlayerState(const FGrpcLobbyUpdatePlayerStateRequest& Request, FUpdatePlayerStateResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceUpdatePlayerStateLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceUpdatePlayerStateLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->Handle = InnerClient->InitUpdatePlayerState();
+	InnerClient->OnUpdatePlayerStateResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceUpdatePlayerStateLambdaWrapper::OnResponse);
+	InnerClient->UpdatePlayerState(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallChangeRoomPassword(const FGrpcLobbyChangeRoomPasswordRequest& Request, FChangeRoomPasswordResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceChangeRoomPasswordLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceChangeRoomPasswordLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->Handle = InnerClient->InitChangeRoomPassword();
+	InnerClient->OnChangeRoomPasswordResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceChangeRoomPasswordLambdaWrapper::OnResponse);
+	InnerClient->ChangeRoomPassword(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallChangeRoomOwner(const FGrpcLobbyChangeRoomOwnerRequest& Request, FChangeRoomOwnerResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceChangeRoomOwnerLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceChangeRoomOwnerLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->Handle = InnerClient->InitChangeRoomOwner();
+	InnerClient->OnChangeRoomOwnerResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceChangeRoomOwnerLambdaWrapper::OnResponse);
+	InnerClient->ChangeRoomOwner(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallDeleteRoom(const FGrpcLobbyDeleteRoomRequest& Request, FDeleteRoomResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceDeleteRoomLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceDeleteRoomLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->Handle = InnerClient->InitDeleteRoom();
+	InnerClient->OnDeleteRoomResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceDeleteRoomLambdaWrapper::OnResponse);
+	InnerClient->DeleteRoom(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallUpdateRoomConfigStream(const FGrpcLobbyListenRoomConfigUpdatesRequest& Request, FUpdateRoomConfigStreamResponseLambda ResponseLambda, FUpdateRoomConfigStreamFinishLambda FinishLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceUpdateRoomConfigStreamLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceUpdateRoomConfigStreamLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->FinishLambda = FinishLambda;
+	lambdaWrapper->Handle = InnerClient->InitUpdateRoomConfigStream();
+	InnerClient->OnUpdateRoomConfigStreamResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceUpdateRoomConfigStreamLambdaWrapper::OnResponse);
+	InnerClient->OnContextStateChange.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceUpdateRoomConfigStreamLambdaWrapper::OnContextStateChanged);
+	InnerClient->UpdateRoomConfigStream(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallUpdatePlayerListStream(const FGrpcLobbyListenPlayerListUpdatesRequest& Request, FUpdatePlayerListStreamResponseLambda ResponseLambda, FUpdatePlayerListStreamFinishLambda FinishLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceUpdatePlayerListStreamLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceUpdatePlayerListStreamLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->FinishLambda = FinishLambda;
+	lambdaWrapper->Handle = InnerClient->InitUpdatePlayerListStream();
+	InnerClient->OnUpdatePlayerListStreamResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceUpdatePlayerListStreamLambdaWrapper::OnResponse);
+	InnerClient->OnContextStateChange.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceUpdatePlayerListStreamLambdaWrapper::OnContextStateChanged);
+	InnerClient->UpdatePlayerListStream(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
 }
