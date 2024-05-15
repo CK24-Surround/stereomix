@@ -64,21 +64,21 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 300.0));
 	CharacterStateWidgetComponent->SetDrawAtDesiredSize(true);
 
-	MoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("MoveTrailFXComponent"));
-	MoveTrailFXComponent->SetupAttachment(GetMesh());
-	MoveTrailFXComponent->SetRelativeLocation(FVector(0.0, 0.0, 88.0));
-	MoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	MoveTrailFXComponent->SetAutoActivate(false);
+	DefaultMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("MoveTrailFXComponent"));
+	DefaultMoveTrailFXComponent->SetupAttachment(GetMesh());
+	DefaultMoveTrailFXComponent->SetAbsolute(false, true, true);
+	DefaultMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	DefaultMoveTrailFXComponent->SetAutoActivate(false);
 
 	CatchMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("CatchMoveTrailFXComponent"));
 	CatchMoveTrailFXComponent->SetupAttachment(GetMesh());
-	CatchMoveTrailFXComponent->SetRelativeLocation(FVector(0.0, 0.0, 88.0));
+	CatchMoveTrailFXComponent->SetAbsolute(false, true, true);
 	CatchMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	CatchMoveTrailFXComponent->SetAutoActivate(false);
 
 	ImmuneMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ImmuneMoveTrailFXComponent"));
 	ImmuneMoveTrailFXComponent->SetupAttachment(GetMesh());
-	ImmuneMoveTrailFXComponent->SetRelativeLocation(FVector(0.0, 0.0, 88.0));
+	ImmuneMoveTrailFXComponent->SetAbsolute(false, true, true);
 	ImmuneMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	ImmuneMoveTrailFXComponent->SetAutoActivate(false);
 
@@ -88,9 +88,9 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	bUseControllerRotationYaw = true;
 	bUseControllerRotationRoll = true;
 
-	MoveTrailFX.FindOrAdd(ESMTeam::None, nullptr);
-	MoveTrailFX.FindOrAdd(ESMTeam::EDM, nullptr);
-	MoveTrailFX.FindOrAdd(ESMTeam::FutureBass, nullptr);
+	DefaultMoveTrailFX.FindOrAdd(ESMTeam::None, nullptr);
+	DefaultMoveTrailFX.FindOrAdd(ESMTeam::EDM, nullptr);
+	DefaultMoveTrailFX.FindOrAdd(ESMTeam::FutureBass, nullptr);
 
 	CatchMoveTrailFX.FindOrAdd(ESMTeam::None, nullptr);
 	CatchMoveTrailFX.FindOrAdd(ESMTeam::EDM, nullptr);
@@ -104,6 +104,16 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 void ASMPlayerCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	// 트레일 위치를 교정하기 위해 재어태치합니다. 재어태치하는 이유는 생성자에서는 메시가 null이므로 소켓을 찾을 수 없기 때문입니다.
+	DefaultMoveTrailFXComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
+	CatchMoveTrailFXComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
+	ImmuneMoveTrailFXComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
+
+	if (!HasAuthority())
+	{
+		OriginMaterials = GetMesh()->GetMaterials();
+	}
 
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMPlayerCharacter::OnTeamChangeCallback);
 }
@@ -127,6 +137,7 @@ void ASMPlayerCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(ASMPlayerCharacter, bUseControllerRotation);
 	DOREPLIFETIME(ASMPlayerCharacter, bEnableMovement);
 	DOREPLIFETIME(ASMPlayerCharacter, LastAttackInstigator);
+	DOREPLIFETIME(ASMPlayerCharacter, CharacterMoveTrailState);
 }
 
 void ASMPlayerCharacter::OnRep_Controller()
@@ -153,8 +164,8 @@ void ASMPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CatchInteractionComponent->OnCatch.AddUObject(this, &ThisClass::ActivateCatchMoveTrail);
-	CatchInteractionComponent->OnCatchRelease.AddUObject(this, &ThisClass::ActivateMoveTrail);
+	CatchInteractionComponent->OnCatch.AddUObject(this, &ThisClass::OnCatch);
+	CatchInteractionComponent->OnCatchRelease.AddUObject(this, &ThisClass::OnCatchRelease);
 }
 
 void ASMPlayerCharacter::Tick(float DeltaTime)
@@ -550,6 +561,22 @@ void ASMPlayerCharacter::OnRep_EnableMovement()
 	}
 }
 
+void ASMPlayerCharacter::OnCatch()
+{
+	if (HasAuthority())
+	{
+		SetCharacterMoveTrailState(ECharacterMoveTrailState::Catch);
+	}
+}
+
+void ASMPlayerCharacter::OnCatchRelease()
+{
+	if (HasAuthority())
+	{
+		SetCharacterMoveTrailState(ECharacterMoveTrailState::Default);
+	}
+}
+
 void ASMPlayerCharacter::OnTeamChangeCallback()
 {
 	const ESMTeam Team = TeamComponent->GetTeam();
@@ -561,14 +588,17 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 		GetMesh()->SetMaterial(2, AssetData->HairFrontMaterial[Team]);
 		GetMesh()->SetMaterial(3, AssetData->HairTailMaterial[Team]);
 
+		// 기본 머티리얼을 다시 업데이트 해줍니다.
+		OriginMaterials = GetMesh()->GetMaterials();
+
 		if (ASC.Get())
 		{
 			USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
 			CharacterStateWidgetComponent->SetWidget(NewWidget);
 		}
 
-		MoveTrailFXComponent->SetAsset(MoveTrailFX[Team]);
-		MoveTrailFXComponent->Activate(true);
+		DefaultMoveTrailFXComponent->SetAsset(DefaultMoveTrailFX[Team]);
+		DefaultMoveTrailFXComponent->Activate(true);
 
 		CatchMoveTrailFXComponent->SetAsset(CatchMoveTrailFX[Team]);
 		ImmuneMoveTrailFXComponent->SetAsset(ImmuneMoveTrailFX[Team]);
@@ -580,73 +610,68 @@ bool ASMPlayerCharacter::bAmICatching()
 	return CatchInteractionComponent->GetActorIAmCatching() != nullptr;
 }
 
-void ASMPlayerCharacter::DeactivateMoveTrail()
+void ASMPlayerCharacter::SetCharacterMoveTrailState(ECharacterMoveTrailState NewCharacterMoveTrailState)
 {
-	MoveTrailFXComponent->DeactivateImmediate();
+	if (!HasAuthority())
+	{
+		NET_LOG(this, Warning, TEXT("서버에서 실행되어야합니다. "));
+		return;
+	}
+
+	if (CharacterMoveTrailState == NewCharacterMoveTrailState)
+	{
+		return;
+	}
+
+	CharacterMoveTrailState = NewCharacterMoveTrailState;
+}
+
+void ASMPlayerCharacter::OnRep_CharacterMoveTrailState()
+{
+	DeactivateAllMoveTrail();
+
+	switch (CharacterMoveTrailState)
+	{
+		case ECharacterMoveTrailState::None:
+		{
+			break;
+		}
+		case ECharacterMoveTrailState::Default:
+		{
+			ActivateDefaultMoveTrail();
+			break;
+		}
+		case ECharacterMoveTrailState::Catch:
+		{
+			ActivateCatchMoveTrail();
+			break;
+		}
+		case ECharacterMoveTrailState::Immune:
+		{
+			ActivateImmuneMoveTrail();
+			break;
+		}
+	}
+}
+
+void ASMPlayerCharacter::DeactivateAllMoveTrail()
+{
+	DefaultMoveTrailFXComponent->DeactivateImmediate();
 	CatchMoveTrailFXComponent->DeactivateImmediate();
 	ImmuneMoveTrailFXComponent->DeactivateImmediate();
 }
 
-void ASMPlayerCharacter::MulticastRPCActivateMoveTrail_Implementation()
+void ASMPlayerCharacter::ActivateDefaultMoveTrail()
 {
-	if (!HasAuthority())
-	{
-		ActivateMoveTrail();
-	}
-}
-
-void ASMPlayerCharacter::ActivateMoveTrail()
-{
-	DeactivateMoveTrail();
-	MoveTrailFXComponent->Activate(true);
+	DefaultMoveTrailFXComponent->Activate(true);
 }
 
 void ASMPlayerCharacter::ActivateCatchMoveTrail()
 {
-	DeactivateMoveTrail();
 	CatchMoveTrailFXComponent->Activate(true);
-}
-
-void ASMPlayerCharacter::MulticastRPCActivateImmuneMoveTrail_Implementation()
-{
-	if (!HasAuthority())
-	{
-		ActivateImmuneMoveTrail();
-	}
 }
 
 void ASMPlayerCharacter::ActivateImmuneMoveTrail()
 {
-	DeactivateMoveTrail();
 	ImmuneMoveTrailFXComponent->Activate(true);
-}
-
-void ASMPlayerCharacter::MulticastRPCResetCharacterMaterial_Implementation()
-{
-	if (HasAuthority())
-	{
-		return;
-	}
-
-	ESMTeam SourceTeam = TeamComponent->GetTeam();
-
-	GetMesh()->SetMaterial(0, HairMaterial2.FindOrAdd(SourceTeam));
-	GetMesh()->SetMaterial(1, BodyMaterial.FindOrAdd(SourceTeam));
-	GetMesh()->SetMaterial(2, HairMaterial1.FindOrAdd(SourceTeam));
-	GetMesh()->SetMaterial(3, HairMaterial3.FindOrAdd(SourceTeam));
-}
-
-void ASMPlayerCharacter::MulticastRPCApplyImmuneCharacterMaterial_Implementation()
-{
-	if (HasAuthority())
-	{
-		return;
-	}
-
-	ESMTeam SourceTeam = TeamComponent->GetTeam();
-
-	GetMesh()->SetMaterial(0, ImmuneHairMaterial2.FindOrAdd(SourceTeam));
-	GetMesh()->SetMaterial(1, ImmuneBodyMaterial.FindOrAdd(SourceTeam));
-	GetMesh()->SetMaterial(2, ImmuneHairMaterial1.FindOrAdd(SourceTeam));
-	GetMesh()->SetMaterial(3, ImmuneHairMaterial3.FindOrAdd(SourceTeam));
 }

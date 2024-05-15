@@ -15,23 +15,21 @@
 USMGameplayAbility_Immune::USMGameplayAbility_Immune()
 {
 	AbilityTags = FGameplayTagContainer(SMTags::Ability::Immune);
-
-	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 }
 
 void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensureAlways(SourceASC))
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
 	{
 		EndAbilityByCancel();
 		return;
@@ -74,11 +72,13 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 		WaitdelayTask->ReadyForActivation();
 	}
 
+	// 면역 이펙트, 머티리얼을 적용합니다.
 	if (ActorInfo->IsNetAuthority())
 	{
-		SourceCharacter->MulticastRPCActivateImmuneMoveTrail();
-		SourceCharacter->MulticastRPCApplyImmuneCharacterMaterial();
+		SourceCharacter->SetCharacterMoveTrailState(ECharacterMoveTrailState::Immune);
 	}
+
+	K2_ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialApply, MakeEffectContext(Handle, ActorInfo));
 }
 
 void USMGameplayAbility_Immune::OnFinishDelay()
@@ -127,15 +127,20 @@ void USMGameplayAbility_Immune::OnFinishDelay()
 		SourceASC->RemoveTag(SMTags::Character::State::Immune);
 	}
 
+	// 면역 종료 이펙트, 머티리얼을 적용합니다.
 	if (CurrentActorInfo->IsNetAuthority())
 	{
-		SourceCharacter->MulticastRPCActivateMoveTrail();
-		SourceCharacter->MulticastRPCResetCharacterMaterial();
+		SourceCharacter->SetCharacterMoveTrailState(ECharacterMoveTrailState::Default);
+	}
 
-		FGameplayCueParameters GCParams;
-		GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
-		SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneEnd, GCParams);
+	FGameplayCueParameters GCParams;
+	GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
+	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneEnd, GCParams);
 
+	K2_ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialReset, MakeEffectContext(CurrentSpecHandle, CurrentActorInfo));
+
+	if (CurrentActorInfo->IsNetAuthority())
+	{
 		K2_EndAbility();
 	}
 	else

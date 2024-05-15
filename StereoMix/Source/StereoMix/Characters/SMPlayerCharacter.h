@@ -39,6 +39,15 @@ enum class EActiveAbility : uint8
 	Smash
 };
 
+UENUM(BlueprintType)
+enum class ECharacterMoveTrailState : uint8
+{
+	None,
+	Default,
+	Catch,
+	Immune
+};
+
 UCLASS()
 class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMCatchInteractionInterface, public ISMDamageInterface
 {
@@ -98,7 +107,7 @@ protected:
 	TObjectPtr<USMWidgetComponent> CharacterStateWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "FX|DefaultMove")
-	TObjectPtr<UNiagaraComponent> MoveTrailFXComponent;
+	TObjectPtr<UNiagaraComponent> DefaultMoveTrailFXComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "FX|CatchMove")
 	TObjectPtr<UNiagaraComponent> CatchMoveTrailFXComponent;
@@ -108,9 +117,16 @@ protected:
 // ~Component Section
 
 // ~Data Section
+public:
+	const TArray<TObjectPtr<UMaterialInterface>>& GetOriginMaterials() { return OriginMaterials; }
+
 protected:
 	UPROPERTY()
 	TObjectPtr<const USMDesignData> DesignData;
+
+	/** 캐릭터의 기본 머티리얼을 담고 있습니다. */
+	UPROPERTY()
+	TArray<TObjectPtr<UMaterialInterface>> OriginMaterials;
 // ~Data Section
 
 // ~Caching Section
@@ -208,19 +224,25 @@ public:
 public:
 	void SetEnableCollision(bool bInEnableCollision);
 
-	void SetUseControllerRotation(bool bInUseControllerRotation);
-
-	void SetEnableMovement(bool bInEnableMovementMode);
-
-protected:
 	UFUNCTION()
 	void OnRep_EnableCollision();
+
+	void SetUseControllerRotation(bool bInUseControllerRotation);
 
 	UFUNCTION()
 	void OnRep_UseControllerRotation();
 
+	void SetEnableMovement(bool bInEnableMovementMode);
+
 	UFUNCTION()
 	void OnRep_EnableMovement();
+
+protected:
+	/* 무언가를 잡을때 호출됩니다. */
+	void OnCatch();
+
+	/* 무언가를 놓거나 놓칠때 호출됩니다. */
+	void OnCatchRelease();
 
 protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableCollision")
@@ -255,29 +277,31 @@ public:
 
 // ~Trail Section
 public:
-	/** 모든 트레일을 비활성화합니다. */
-	void DeactivateMoveTrail();
+	ECharacterMoveTrailState GetCharacterMoveTrailState() { return CharacterMoveTrailState; }
 
-	/** 면역 GA에서 호출하기 위해 생성한 RPC입니다. */
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCActivateMoveTrail();
+	void SetCharacterMoveTrailState(ECharacterMoveTrailState NewCharacterMoveTrailState);
 
-	/** 무브 트레일을 활성화합니다. */
-	void ActivateMoveTrail();
+	UFUNCTION()
+	void OnRep_CharacterMoveTrailState();
 
-	/** 잡기 무브 트레일을 활성화합니다. */
+protected:
+	void DeactivateAllMoveTrail();
+
+	void ActivateDefaultMoveTrail();
+
 	void ActivateCatchMoveTrail();
 
-	/** 면역 GA에서 호출하기 위해 생성한 RPC입니다. */
-	UFUNCTION(NetMulticast, Unreliable)
-	void MulticastRPCActivateImmuneMoveTrail();
-
-	/** 면역 무브 트레일을 활성화합니다. */
 	void ActivateImmuneMoveTrail();
 
 protected:
+	UPROPERTY(ReplicatedUsing = "OnRep_CharacterMoveTrailState")
+	ECharacterMoveTrailState CharacterMoveTrailState;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	FName TrailSocket = TEXT("Bip001");
+
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> MoveTrailFX;
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> DefaultMoveTrailFX;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> CatchMoveTrailFX;
@@ -285,39 +309,4 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
 // ~Trail Section
-
-// ~Immune Material
-public:
-	/** 머티리얼*/
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCResetCharacterMaterial();
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCApplyImmuneCharacterMaterial();
-
-protected:
-	UPROPERTY(EditAnywhere, Category = "DefaultMaterial")
-	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> HairMaterial1;
-
-	UPROPERTY(EditAnywhere, Category = "DefaultMaterial")
-	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> HairMaterial2;
-
-	UPROPERTY(EditAnywhere, Category = "DefaultMaterial")
-	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> HairMaterial3;
-
-	UPROPERTY(EditAnywhere, Category = "DefaultMaterial")
-	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> BodyMaterial;
-
-	UPROPERTY(EditAnywhere, Category = "ImmuneMaterial")
-	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneHairMaterial1;
-
-	UPROPERTY(EditAnywhere, Category = "ImmuneMaterial")
-	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneHairMaterial2;
-
-	UPROPERTY(EditAnywhere, Category = "ImmuneMaterial")
-	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneHairMaterial3;
-
-	UPROPERTY(EditAnywhere, Category = "ImmuneMaterial")
-	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneBodyMaterial;
-// ~Immune Material
 };
