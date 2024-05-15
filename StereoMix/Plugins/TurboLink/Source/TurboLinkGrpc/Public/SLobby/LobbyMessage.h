@@ -47,8 +47,8 @@ enum class EGrpcLobbyPlayerState : uint8
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Lobby.RoomPreview",
-    HasNativeMake = "TurboLinkGrpc.GrpcLobbyRoomPreviewHelperLibrary.MakeRoomPreview",
-    HasNativeBreak = "TurboLinkGrpc.GrpcLobbyRoomPreviewHelperLibrary.BreakRoomPreview"))
+    HasNativeMake = "/Script/TurboLinkGrpc.GrpcLobbyRoomPreviewHelperLibrary.MakeRoomPreview",
+    HasNativeBreak = "/Script/TurboLinkGrpc.GrpcLobbyRoomPreviewHelperLibrary.BreakRoomPreview"))
 struct FGrpcLobbyRoomPreview : public FGrpcMessage
 {
     GENERATED_BODY()
@@ -64,8 +64,8 @@ struct FGrpcLobbyRoomPreview : public FGrpcMessage
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Lobby.CreateRoomRequest",
-    HasNativeMake = "TurboLinkGrpc.GrpcLobbyCreateRoomRequestHelperLibrary.MakeCreateRoomRequest",
-    HasNativeBreak = "TurboLinkGrpc.GrpcLobbyCreateRoomRequestHelperLibrary.BreakCreateRoomRequest"))
+    HasNativeMake = "/Script/TurboLinkGrpc.GrpcLobbyCreateRoomRequestHelperLibrary.MakeCreateRoomRequest",
+    HasNativeBreak = "/Script/TurboLinkGrpc.GrpcLobbyCreateRoomRequestHelperLibrary.BreakCreateRoomRequest"))
 struct FGrpcLobbyCreateRoomRequest : public FGrpcMessage
 {
     GENERATED_BODY()
@@ -78,8 +78,8 @@ struct FGrpcLobbyCreateRoomRequest : public FGrpcMessage
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Lobby.CreateRoomResponse",
-    HasNativeMake = "TurboLinkGrpc.GrpcLobbyCreateRoomResponseHelperLibrary.MakeCreateRoomResponse",
-    HasNativeBreak = "TurboLinkGrpc.GrpcLobbyCreateRoomResponseHelperLibrary.BreakCreateRoomResponse"))
+    HasNativeMake = "/Script/TurboLinkGrpc.GrpcLobbyCreateRoomResponseHelperLibrary.MakeCreateRoomResponse",
+    HasNativeBreak = "/Script/TurboLinkGrpc.GrpcLobbyCreateRoomResponseHelperLibrary.BreakCreateRoomResponse"))
 struct FGrpcLobbyCreateRoomResponse : public FGrpcMessage
 {
     GENERATED_BODY()
@@ -102,8 +102,8 @@ struct FGrpcLobbyJoinRoomRequest : public FGrpcMessage
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Lobby.JoinRoomResponse",
-    HasNativeMake = "TurboLinkGrpc.GrpcLobbyJoinRoomResponseHelperLibrary.MakeJoinRoomResponse",
-    HasNativeBreak = "TurboLinkGrpc.GrpcLobbyJoinRoomResponseHelperLibrary.BreakJoinRoomResponse"))
+    HasNativeMake = "/Script/TurboLinkGrpc.GrpcLobbyJoinRoomResponseHelperLibrary.MakeJoinRoomResponse",
+    HasNativeBreak = "/Script/TurboLinkGrpc.GrpcLobbyJoinRoomResponseHelperLibrary.BreakJoinRoomResponse"))
 struct FGrpcLobbyJoinRoomResponse : public FGrpcMessage
 {
     GENERATED_BODY()
@@ -174,8 +174,8 @@ struct FGrpcLobbyRoomPlayer : public FGrpcMessage
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Lobby.Room",
-    HasNativeMake = "TurboLinkGrpc.GrpcLobbyRoomHelperLibrary.MakeRoom",
-    HasNativeBreak = "TurboLinkGrpc.GrpcLobbyRoomHelperLibrary.BreakRoom"))
+    HasNativeMake = "/Script/TurboLinkGrpc.GrpcLobbyRoomHelperLibrary.MakeRoom",
+    HasNativeBreak = "/Script/TurboLinkGrpc.GrpcLobbyRoomHelperLibrary.BreakRoom"))
 struct FGrpcLobbyRoom : public FGrpcMessage
 {
     GENERATED_BODY()
