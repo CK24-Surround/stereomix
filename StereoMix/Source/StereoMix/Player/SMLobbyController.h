@@ -15,11 +15,11 @@ DECLARE_LOG_CATEGORY_CLASS(LogSMLobbyController, Log, All);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnLoginResponse, bool, Success);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCreateRoomResponse, bool, Success, const FGrpcLobbyConnectionInfo&, ConnectionInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCreateRoomResponse, bool, Success, const FGrpcLobbyRoomConnectionInfo&, ConnectionInfo);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnJoinRoomResponse, bool, Success, const FGrpcLobbyConnectionInfo&, ConnectionInfo);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnJoinRoomResponse, bool, Success, const FGrpcLobbyRoomConnectionInfo&, ConnectionInfo);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRoomListUpdateResponse, bool, Success, const TArray<FGrpcLobbyRoomInfo>&, RoomList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRoomListUpdateResponse, bool, Success, const TArray<FGrpcLobbyRoomPreview>&, RoomList);
 
 /**
  * PlayerController for Lobby
@@ -75,12 +75,12 @@ class STEREOMIX_API ASMLobbyController : public APlayerController
 	FGrpcContextHandle CreateRoomContext;
 
 	UFUNCTION()
-	void HandleCreateRoomResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyConnectionInfo& Response);
+	void HandleCreateRoomResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyCreateRoomResponse& Response);
 
 	FGrpcContextHandle JoinRoomContext;
 
 	UFUNCTION()
-	void HandleJoinRoomResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyConnectionInfo& Response);
+	void HandleJoinRoomResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcLobbyJoinRoomResponse& Response);
 
 	FGrpcContextHandle GetRoomListContext;
 
@@ -127,23 +127,27 @@ public:
 
 	// Lobby
 	UFUNCTION(BlueprintCallable)
-	void CreateRoom(const FString& RoomName, EGrpcLobbyRoomVisibility Visibility = EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC, EGrpcLobbyGameMode Mode = EGrpcLobbyGameMode::GAMEMODE_DEFAULT, EGrpcLobbyGameMap Map = EGrpcLobbyGameMap::GAMEMAP_DEFAULT, const FString& Password = TEXT(""));
+	void CreateRoom(
+		const FString& RoomName,
+		EGrpcLobbyRoomVisibility Visibility = EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC,
+		EGrpcLobbyGameMode Mode = EGrpcLobbyGameMode::GAME_MODE_DEFAULT,
+		EGrpcLobbyGameMap Map = EGrpcLobbyGameMap::GAME_MAP_DEFAULT,
+		const FString& Password = TEXT(""));
 
 	UFUNCTION(BlueprintCallable)
 	void JoinRoom(const FString& RoomId, const FString& Password = TEXT(""));
 
 	UFUNCTION(BlueprintCallable)
-	void GetRoomList(EGrpcLobbyRoomVisibility Visibility = EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC, EGrpcLobbyGameMode Mode = EGrpcLobbyGameMode::GAMEMODE_DEFAULT, EGrpcLobbyGameMap Map = EGrpcLobbyGameMap::GAMEMAP_DEFAULT);
+	void GetRoomList(
+		EGrpcLobbyRoomVisibility Visibility = EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC,
+		EGrpcLobbyGameMode Mode = EGrpcLobbyGameMode::GAME_MODE_DEFAULT,
+		EGrpcLobbyGameMap Map = EGrpcLobbyGameMap::GAME_MAP_DEFAULT);
 
-	UFUNCTION(BlueprintNativeEvent)
 	void OnReceiveLoginResponse(bool Success);
 
-	UFUNCTION(BlueprintNativeEvent)
-	void OnReceiveCreateRoomResponse(bool Success, const FGrpcLobbyConnectionInfo& ConnectionInfo);
+	void OnReceiveCreateRoomResponse(bool Success, const FGrpcLobbyRoomConnectionInfo& ConnectionInfo);
 
-	UFUNCTION(BlueprintNativeEvent)
-	void OnReceiveJoinRoomResponse(bool Success, const FGrpcLobbyConnectionInfo& ConnectionInfo);
+	void OnReceiveJoinRoomResponse(bool Success, const FGrpcLobbyRoomConnectionInfo& ConnectionInfo);
 
-	UFUNCTION(BlueprintNativeEvent)
-	void OnReceiveRoomListUpdateResponse(bool Success, const TArray<FGrpcLobbyRoomInfo>& RoomList);
+	void OnReceiveRoomListUpdateResponse(bool Success, const TArray<FGrpcLobbyRoomPreview>& RoomList);
 };

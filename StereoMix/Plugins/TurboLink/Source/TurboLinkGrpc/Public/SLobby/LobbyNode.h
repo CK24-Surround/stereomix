@@ -15,7 +15,7 @@ class TURBOLINKGRPC_API UCallLobbyServiceCreateRoom : public UBlueprintAsyncActi
 	GENERATED_BODY()
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceCreateRoomDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyConnectionInfo&, Response);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceCreateRoomDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyCreateRoomResponse&, Response);
 
 	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
 		BlueprintInternalUseOnly = "true",
@@ -52,7 +52,7 @@ private:
 	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
 
 	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyConnectionInfo& Response);
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyCreateRoomResponse& Response);
 
 	void Shutdown();
 };
@@ -63,7 +63,7 @@ class TURBOLINKGRPC_API UCallLobbyServiceJoinRoom : public UBlueprintAsyncAction
 	GENERATED_BODY()
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceJoinRoomDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyConnectionInfo&, Response);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceJoinRoomDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyJoinRoomResponse&, Response);
 
 	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
 		BlueprintInternalUseOnly = "true",
@@ -100,7 +100,7 @@ private:
 	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
 
 	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyConnectionInfo& Response);
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response);
 
 	void Shutdown();
 };
@@ -154,25 +154,25 @@ private:
 };
 
 UCLASS(ClassGroup = TurboLink)
-class TURBOLINKGRPC_API UCallLobbyServiceUpdateRoomInfo : public UBlueprintAsyncActionBase
+class TURBOLINKGRPC_API UCallLobbyServiceUpdateRoomState : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceUpdateRoomInfoDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdateRoomInfoResponse&, Response);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceUpdateRoomStateDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdateRoomStateResponse&, Response);
 
 	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
 		BlueprintInternalUseOnly = "true",
 		WorldContext = "WorldContextObject",
-		DisplayName = "Call LobbyService UpdateRoomInfo",
+		DisplayName = "Call LobbyService UpdateRoomState",
 		AdvancedDisplay = 2))
-	static UCallLobbyServiceUpdateRoomInfo* UpdateRoomInfo(UObject* WorldContextObject, const FGrpcLobbyUpdateRoomInfoRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+	static UCallLobbyServiceUpdateRoomState* UpdateRoomState(UObject* WorldContextObject, const FGrpcLobbyUpdateRoomStateRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
 
 	UPROPERTY(BlueprintAssignable)
-	FLobbyServiceUpdateRoomInfoDelegate OnUpdateRoomInfoResponse;
+	FLobbyServiceUpdateRoomStateDelegate OnUpdateRoomStateResponse;
 
 	UPROPERTY(BlueprintAssignable)
-	FLobbyServiceUpdateRoomInfoDelegate OnFail;
+	FLobbyServiceUpdateRoomStateDelegate OnFail;
 
 private:
 	virtual void Activate() override;
@@ -184,7 +184,7 @@ private:
 	ULobbyServiceClient* LobbyServiceClient;
 	
 	FGrpcContextHandle Context;
-	FGrpcLobbyUpdateRoomInfoRequest Request;
+	FGrpcLobbyUpdateRoomStateRequest Request;
 	EGrpcServiceState ServiceState;
 	FGrpcMetaData MetaData;
 	float DeadLineSeconds;
@@ -196,7 +196,349 @@ private:
 	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
 
 	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomInfoResponse& Response);
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomStateResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceUpdateRoomConfig : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceUpdateRoomConfigDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdateRoomConfigResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService UpdateRoomConfig",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceUpdateRoomConfig* UpdateRoomConfig(UObject* WorldContextObject, const FGrpcLobbyUpdateRoomConfigRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdateRoomConfigDelegate OnUpdateRoomConfigResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdateRoomConfigDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyUpdateRoomConfigRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdateRoomConfigResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceUpdatePlayerState : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceUpdatePlayerStateDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdatePlayerStateResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService UpdatePlayerState",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceUpdatePlayerState* UpdatePlayerState(UObject* WorldContextObject, const FGrpcLobbyUpdatePlayerStateRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdatePlayerStateDelegate OnUpdatePlayerStateResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdatePlayerStateDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyUpdatePlayerStateRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdatePlayerStateResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceChangeRoomPassword : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceChangeRoomPasswordDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyChangeRoomPasswordResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService ChangeRoomPassword",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceChangeRoomPassword* ChangeRoomPassword(UObject* WorldContextObject, const FGrpcLobbyChangeRoomPasswordRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceChangeRoomPasswordDelegate OnChangeRoomPasswordResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceChangeRoomPasswordDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyChangeRoomPasswordRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyChangeRoomPasswordResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceChangeRoomOwner : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceChangeRoomOwnerDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyChangeRoomOwnerResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService ChangeRoomOwner",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceChangeRoomOwner* ChangeRoomOwner(UObject* WorldContextObject, const FGrpcLobbyChangeRoomOwnerRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceChangeRoomOwnerDelegate OnChangeRoomOwnerResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceChangeRoomOwnerDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyChangeRoomOwnerRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyChangeRoomOwnerResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceDeleteRoom : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceDeleteRoomDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyDeleteRoomResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService DeleteRoom",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceDeleteRoom* DeleteRoom(UObject* WorldContextObject, const FGrpcLobbyDeleteRoomRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceDeleteRoomDelegate OnDeleteRoomResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceDeleteRoomDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyDeleteRoomRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyDeleteRoomResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceUpdateRoomConfigStream : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceUpdateRoomConfigStreamDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyListenRoomConfigUpdatesResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService UpdateRoomConfigStream",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceUpdateRoomConfigStream* UpdateRoomConfigStream(UObject* WorldContextObject, const FGrpcLobbyListenRoomConfigUpdatesRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdateRoomConfigStreamDelegate OnUpdateRoomConfigStreamResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdateRoomConfigStreamDelegate OnFinished;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdateRoomConfigStreamDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyListenRoomConfigUpdatesRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyListenRoomConfigUpdatesResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceUpdatePlayerListStream : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceUpdatePlayerListStreamDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyListenPlayerListUpdatesResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService UpdatePlayerListStream",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceUpdatePlayerListStream* UpdatePlayerListStream(UObject* WorldContextObject, const FGrpcLobbyListenPlayerListUpdatesRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdatePlayerListStreamDelegate OnUpdatePlayerListStreamResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdatePlayerListStreamDelegate OnFinished;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceUpdatePlayerListStreamDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyListenPlayerListUpdatesRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyListenPlayerListUpdatesResponse& Response);
 
 	void Shutdown();
 };
