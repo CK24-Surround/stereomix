@@ -112,8 +112,13 @@ Plugins/FMODStudio/Binaries/**/*
 !Plugins/FMODStudio/Binaries/**/fmodstudioL_vc.lib
 !Plugins/FMODStudio/Binaries/**/resonanceaudio.dll
 
-# TurboLink
+#TurboLink ThirdParty
 Plugins/TurboLink/Source/ThirdParty
+
+#TurboLink Tools
+!Plugins/TurboLink/Tools/**
+
+# TurboLink Binaries
 !Plugins/TurboLink/Binaries/Win64
 Plugins/TurboLink/Binaries/Win64/*
 !Plugins/TurboLink/Binaries/Win64/UnrealEditor.modules
