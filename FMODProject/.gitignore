@@ -1,0 +1,6 @@
+# FMOD Studio - 추후에 FMOD 폴더 내로 이전
+/*
+!/.gitignore
+!/Assets
+!/Metadata
+!/FMODProject.fspro

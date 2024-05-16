@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{c204cb99-6653-4449-b2c4-7f64d815b80c}">
+		<property name="name">
+			<value>Grab_Success</value>
+		</property>
+		<relationship name="folder">
+			<destination>{e10234b1-19f2-434a-ba6d-03bb15ebcf75}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{bd6b13ac-7307-4305-ba24-4f96e37cc962}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{bd6b13ac-7307-4305-ba24-4f96e37cc962}">
+		<property name="parameterType">
+			<value>2</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="enumerationLabels">
+			<value>Fail</value>
+			<value>Success</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
