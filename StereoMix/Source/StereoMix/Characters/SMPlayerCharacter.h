@@ -275,6 +275,12 @@ public:
 	bool bAmICatching();
 // ~Animation Section
 
+// ~Catch Section
+public:
+	UPROPERTY(EditAnywhere, Category = "Design")
+	FName CatchSocket = TEXT("CatchSlot");
+// ~Catch Section
+	
 // ~Trail Section
 public:
 	ECharacterMoveTrailState GetCharacterMoveTrailState() { return CharacterMoveTrailState; }
@@ -298,7 +304,7 @@ protected:
 	ECharacterMoveTrailState CharacterMoveTrailState;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	FName TrailSocket = TEXT("Bip001");
+	FName TrailSocket = TEXT("Trail-Point");
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> DefaultMoveTrailFX;

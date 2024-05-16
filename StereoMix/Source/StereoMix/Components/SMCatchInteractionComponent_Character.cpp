@@ -259,7 +259,7 @@ void USMCatchInteractionComponent_Character::InternalCaught(AActor* TargetActor)
 	}
 
 	// 대상에게 어태치합니다.
-	const bool bAttachSuccess = SourceCharacter->AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TEXT("CatchSlotSocket"));
+	const bool bAttachSuccess = SourceCharacter->AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TargetCharacter->CatchSocket);
 	if (!ensureAlways(bAttachSuccess))
 	{
 		return;
