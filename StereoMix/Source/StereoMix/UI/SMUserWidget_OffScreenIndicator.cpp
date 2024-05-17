@@ -34,6 +34,13 @@ void USMUserWidget_OffScreenIndicator::NativeTick(const FGeometry& MyGeometry, f
 	FVector2D LocalCoordinate;
 	USlateBlueprintLibrary::ScreenToWidgetLocal(SourcePlayerController, MyGeometry, TargetOffScreendIndicatorScreenLocation, LocalCoordinate);
 	BaseSlot->SetPosition(LocalCoordinate);
+
+	// 스크린 중앙에서 타겟을 향하는 방향으로 인디케이터를 회전시킵니다.
+	const FVector2D ViewportSize = UWidgetLayoutLibrary::GetViewportSize(SourcePlayerController);
+	const FVector2D ScreenCenter(ViewportSize.X / 2.0f, ViewportSize.Y / 2.0f);
+	FVector2D Direction = (TargetOffScreendIndicatorScreenLocation - ScreenCenter).GetSafeNormal();
+	float Angle = FMath::RadiansToDegrees(FMath::Atan2(Direction.Y, Direction.X)) + 90.0f;
+	Base->SetRenderTransformAngle(Angle);
 }
 
 FVector2D USMUserWidget_OffScreenIndicator::GetOffScreenIndicatorScreenLocation(const FGeometry& InGeometry, const FVector& TargetLocation)
@@ -64,7 +71,7 @@ FVector2D USMUserWidget_OffScreenIndicator::GetOffScreenIndicatorScreenLocation(
 	FVector2D MaxBoundary = FVector2D(ViewportSize.X - ViewportOffset, ViewportSize.Y - ViewportOffset);
 
 	// 타겟이 화면 밖을 벗어났는지 확인합니다. 타겟이 화면을 벗어난 경우에는 경계면에 올바르게 UI가 출력되도록 처리합니다.
-	bool bIsOutOfBounds = TargetScreenLocation.X < MinBoundary.X || TargetScreenLocation.X > MaxBoundary.X || TargetScreenLocation.Y < MinBoundary.Y || TargetScreenLocation.Y > MaxBoundary.Y;
+	const bool bIsOutOfBounds = TargetScreenLocation.X < MinBoundary.X || TargetScreenLocation.X > MaxBoundary.X || TargetScreenLocation.Y < MinBoundary.Y || TargetScreenLocation.Y > MaxBoundary.Y;
 	if (bIsOutOfBounds)
 	{
 		// 화면 경계와의 교점 계산하기 위한 배열입니다.
