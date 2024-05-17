@@ -584,9 +584,9 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 	// 팀이 바뀔일은 없어야하지만 테스트 시에는 충분히 있는 상황으로 이에 대한 처리입니다.
 	if (!HasAuthority())
 	{
-		GetMesh()->SetMaterial(0, AssetData->HairRingMaterial[Team]);
-		GetMesh()->SetMaterial(2, AssetData->HairFrontMaterial[Team]);
-		GetMesh()->SetMaterial(3, AssetData->HairTailMaterial[Team]);
+		GetMesh()->SetMaterial(6, AssetData->HairRingMaterial[Team]);
+		GetMesh()->SetMaterial(7, AssetData->HairFrontMaterial[Team]);
+		GetMesh()->SetMaterial(9, AssetData->HairTailMaterial[Team]);
 
 		// 기본 머티리얼을 다시 업데이트 해줍니다.
 		OriginMaterials = GetMesh()->GetMaterials();
