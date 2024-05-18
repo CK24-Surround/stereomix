@@ -35,12 +35,15 @@ class LobbyService final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    virtual ::grpc::Status CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::lobby::CreateRoomResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::CreateRoomResponse>> AsyncCreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::CreateRoomResponse>>(AsyncCreateRoomRaw(context, request, cq));
+    // For User
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::lobby::CreateRoomResponse>> CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::lobby::CreateRoomResponse>>(CreateRoomRaw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::CreateRoomResponse>> PrepareAsyncCreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::CreateRoomResponse>>(PrepareAsyncCreateRoomRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::CreateRoomResponse>> AsyncCreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::CreateRoomResponse>>(AsyncCreateRoomRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::CreateRoomResponse>> PrepareAsyncCreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::CreateRoomResponse>>(PrepareAsyncCreateRoomRaw(context, request, cq));
     }
     virtual ::grpc::Status JoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::lobby::JoinRoomResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::JoinRoomResponse>> AsyncJoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::grpc::CompletionQueue* cq) {
@@ -56,6 +59,7 @@ class LobbyService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::GetRoomListResponse>> PrepareAsyncGetRoomList(::grpc::ClientContext* context, const ::lobby::GetRoomListRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::GetRoomListResponse>>(PrepareAsyncGetRoomListRaw(context, request, cq));
     }
+    // For GameServer
     virtual ::grpc::Status UpdateRoomState(::grpc::ClientContext* context, const ::lobby::UpdateRoomStateRequest& request, ::lobby::UpdateRoomStateResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdateRoomStateResponse>> AsyncUpdateRoomState(::grpc::ClientContext* context, const ::lobby::UpdateRoomStateRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdateRoomStateResponse>>(AsyncUpdateRoomStateRaw(context, request, cq));
@@ -69,13 +73,6 @@ class LobbyService final {
     }
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdateRoomConfigResponse>> PrepareAsyncUpdateRoomConfig(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdateRoomConfigResponse>>(PrepareAsyncUpdateRoomConfigRaw(context, request, cq));
-    }
-    virtual ::grpc::Status UpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::lobby::UpdatePlayerStateResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdatePlayerStateResponse>> AsyncUpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdatePlayerStateResponse>>(AsyncUpdatePlayerStateRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdatePlayerStateResponse>> PrepareAsyncUpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdatePlayerStateResponse>>(PrepareAsyncUpdatePlayerStateRaw(context, request, cq));
     }
     virtual ::grpc::Status ChangeRoomPassword(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest& request, ::lobby::ChangeRoomPasswordResponse* response) = 0;
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::ChangeRoomPasswordResponse>> AsyncChangeRoomPassword(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest& request, ::grpc::CompletionQueue* cq) {
@@ -98,54 +95,44 @@ class LobbyService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::DeleteRoomResponse>> PrepareAsyncDeleteRoom(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::lobby::DeleteRoomResponse>>(PrepareAsyncDeleteRoomRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>> UpdateRoomConfigStream(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request) {
-      return std::unique_ptr< ::grpc::ClientReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>>(UpdateRoomConfigStreamRaw(context, request));
+    std::unique_ptr< ::grpc::ClientReaderInterface< ::lobby::Room>> ListenRoomUpdates(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReaderInterface< ::lobby::Room>>(ListenRoomUpdatesRaw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>> AsyncUpdateRoomConfigStream(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>>(AsyncUpdateRoomConfigStreamRaw(context, request, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::Room>> AsyncListenRoomUpdates(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::Room>>(AsyncListenRoomUpdatesRaw(context, request, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>> PrepareAsyncUpdateRoomConfigStream(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>>(PrepareAsyncUpdateRoomConfigStreamRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>> UpdatePlayerListStream(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request) {
-      return std::unique_ptr< ::grpc::ClientReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>>(UpdatePlayerListStreamRaw(context, request));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>> AsyncUpdatePlayerListStream(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>>(AsyncUpdatePlayerListStreamRaw(context, request, cq, tag));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>> PrepareAsyncUpdatePlayerListStream(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>>(PrepareAsyncUpdatePlayerListStreamRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::Room>> PrepareAsyncListenRoomUpdates(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReaderInterface< ::lobby::Room>>(PrepareAsyncListenRoomUpdatesRaw(context, request, cq));
     }
     class async_interface {
      public:
       virtual ~async_interface() {}
-      virtual void CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // For User
+      virtual void CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::grpc::ClientReadReactor< ::lobby::CreateRoomResponse>* reactor) = 0;
       virtual void JoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest* request, ::lobby::JoinRoomResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void JoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest* request, ::lobby::JoinRoomResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void GetRoomList(::grpc::ClientContext* context, const ::lobby::GetRoomListRequest* request, ::lobby::GetRoomListResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void GetRoomList(::grpc::ClientContext* context, const ::lobby::GetRoomListRequest* request, ::lobby::GetRoomListResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      // For GameServer
       virtual void UpdateRoomState(::grpc::ClientContext* context, const ::lobby::UpdateRoomStateRequest* request, ::lobby::UpdateRoomStateResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void UpdateRoomState(::grpc::ClientContext* context, const ::lobby::UpdateRoomStateRequest* request, ::lobby::UpdateRoomStateResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void UpdateRoomConfig(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest* request, ::lobby::UpdateRoomConfigResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void UpdateRoomConfig(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest* request, ::lobby::UpdateRoomConfigResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void UpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest* request, ::lobby::UpdatePlayerStateResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void UpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest* request, ::lobby::UpdatePlayerStateResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void ChangeRoomPassword(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest* request, ::lobby::ChangeRoomPasswordResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void ChangeRoomPassword(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest* request, ::lobby::ChangeRoomPasswordResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void ChangeRoomOwner(::grpc::ClientContext* context, const ::lobby::ChangeRoomOwnerRequest* request, ::lobby::ChangeRoomOwnerResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void ChangeRoomOwner(::grpc::ClientContext* context, const ::lobby::ChangeRoomOwnerRequest* request, ::lobby::ChangeRoomOwnerResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void DeleteRoom(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest* request, ::lobby::DeleteRoomResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void DeleteRoom(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest* request, ::lobby::DeleteRoomResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void UpdateRoomConfigStream(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest* request, ::grpc::ClientReadReactor< ::lobby::ListenRoomConfigUpdatesResponse>* reactor) = 0;
-      virtual void UpdatePlayerListStream(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest* request, ::grpc::ClientReadReactor< ::lobby::ListenPlayerListUpdatesResponse>* reactor) = 0;
+      virtual void ListenRoomUpdates(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest* request, ::grpc::ClientReadReactor< ::lobby::Room>* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
     class async_interface* experimental_async() { return async(); }
    private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::CreateRoomResponse>* AsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::CreateRoomResponse>* PrepareAsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::lobby::CreateRoomResponse>* CreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::lobby::CreateRoomResponse>* AsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::lobby::CreateRoomResponse>* PrepareAsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::JoinRoomResponse>* AsyncJoinRoomRaw(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::JoinRoomResponse>* PrepareAsyncJoinRoomRaw(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::GetRoomListResponse>* AsyncGetRoomListRaw(::grpc::ClientContext* context, const ::lobby::GetRoomListRequest& request, ::grpc::CompletionQueue* cq) = 0;
@@ -154,30 +141,27 @@ class LobbyService final {
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdateRoomStateResponse>* PrepareAsyncUpdateRoomStateRaw(::grpc::ClientContext* context, const ::lobby::UpdateRoomStateRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdateRoomConfigResponse>* AsyncUpdateRoomConfigRaw(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdateRoomConfigResponse>* PrepareAsyncUpdateRoomConfigRaw(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdatePlayerStateResponse>* AsyncUpdatePlayerStateRaw(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::UpdatePlayerStateResponse>* PrepareAsyncUpdatePlayerStateRaw(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::ChangeRoomPasswordResponse>* AsyncChangeRoomPasswordRaw(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::ChangeRoomPasswordResponse>* PrepareAsyncChangeRoomPasswordRaw(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::ChangeRoomOwnerResponse>* AsyncChangeRoomOwnerRaw(::grpc::ClientContext* context, const ::lobby::ChangeRoomOwnerRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::ChangeRoomOwnerResponse>* PrepareAsyncChangeRoomOwnerRaw(::grpc::ClientContext* context, const ::lobby::ChangeRoomOwnerRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::DeleteRoomResponse>* AsyncDeleteRoomRaw(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::lobby::DeleteRoomResponse>* PrepareAsyncDeleteRoomRaw(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>* UpdateRoomConfigStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>* AsyncUpdateRoomConfigStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::lobby::ListenRoomConfigUpdatesResponse>* PrepareAsyncUpdateRoomConfigStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>* UpdatePlayerListStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>* AsyncUpdatePlayerListStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
-    virtual ::grpc::ClientAsyncReaderInterface< ::lobby::ListenPlayerListUpdatesResponse>* PrepareAsyncUpdatePlayerListStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientReaderInterface< ::lobby::Room>* ListenRoomUpdatesRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::lobby::Room>* AsyncListenRoomUpdatesRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) = 0;
+    virtual ::grpc::ClientAsyncReaderInterface< ::lobby::Room>* PrepareAsyncListenRoomUpdatesRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
-    ::grpc::Status CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::lobby::CreateRoomResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::CreateRoomResponse>> AsyncCreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::CreateRoomResponse>>(AsyncCreateRoomRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientReader< ::lobby::CreateRoomResponse>> CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::lobby::CreateRoomResponse>>(CreateRoomRaw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::CreateRoomResponse>> PrepareAsyncCreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::CreateRoomResponse>>(PrepareAsyncCreateRoomRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::CreateRoomResponse>> AsyncCreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::CreateRoomResponse>>(AsyncCreateRoomRaw(context, request, cq, tag));
+    }
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::CreateRoomResponse>> PrepareAsyncCreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::CreateRoomResponse>>(PrepareAsyncCreateRoomRaw(context, request, cq));
     }
     ::grpc::Status JoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::lobby::JoinRoomResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::JoinRoomResponse>> AsyncJoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::grpc::CompletionQueue* cq) {
@@ -207,13 +191,6 @@ class LobbyService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::UpdateRoomConfigResponse>> PrepareAsyncUpdateRoomConfig(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::UpdateRoomConfigResponse>>(PrepareAsyncUpdateRoomConfigRaw(context, request, cq));
     }
-    ::grpc::Status UpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::lobby::UpdatePlayerStateResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::UpdatePlayerStateResponse>> AsyncUpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::UpdatePlayerStateResponse>>(AsyncUpdatePlayerStateRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::UpdatePlayerStateResponse>> PrepareAsyncUpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::UpdatePlayerStateResponse>>(PrepareAsyncUpdatePlayerStateRaw(context, request, cq));
-    }
     ::grpc::Status ChangeRoomPassword(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest& request, ::lobby::ChangeRoomPasswordResponse* response) override;
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::ChangeRoomPasswordResponse>> AsyncChangeRoomPassword(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::ChangeRoomPasswordResponse>>(AsyncChangeRoomPasswordRaw(context, request, cq));
@@ -235,29 +212,19 @@ class LobbyService final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::DeleteRoomResponse>> PrepareAsyncDeleteRoom(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::lobby::DeleteRoomResponse>>(PrepareAsyncDeleteRoomRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientReader< ::lobby::ListenRoomConfigUpdatesResponse>> UpdateRoomConfigStream(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request) {
-      return std::unique_ptr< ::grpc::ClientReader< ::lobby::ListenRoomConfigUpdatesResponse>>(UpdateRoomConfigStreamRaw(context, request));
+    std::unique_ptr< ::grpc::ClientReader< ::lobby::Room>> ListenRoomUpdates(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request) {
+      return std::unique_ptr< ::grpc::ClientReader< ::lobby::Room>>(ListenRoomUpdatesRaw(context, request));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::ListenRoomConfigUpdatesResponse>> AsyncUpdateRoomConfigStream(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::ListenRoomConfigUpdatesResponse>>(AsyncUpdateRoomConfigStreamRaw(context, request, cq, tag));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::Room>> AsyncListenRoomUpdates(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::Room>>(AsyncListenRoomUpdatesRaw(context, request, cq, tag));
     }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::ListenRoomConfigUpdatesResponse>> PrepareAsyncUpdateRoomConfigStream(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::ListenRoomConfigUpdatesResponse>>(PrepareAsyncUpdateRoomConfigStreamRaw(context, request, cq));
-    }
-    std::unique_ptr< ::grpc::ClientReader< ::lobby::ListenPlayerListUpdatesResponse>> UpdatePlayerListStream(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request) {
-      return std::unique_ptr< ::grpc::ClientReader< ::lobby::ListenPlayerListUpdatesResponse>>(UpdatePlayerListStreamRaw(context, request));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::ListenPlayerListUpdatesResponse>> AsyncUpdatePlayerListStream(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::ListenPlayerListUpdatesResponse>>(AsyncUpdatePlayerListStreamRaw(context, request, cq, tag));
-    }
-    std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::ListenPlayerListUpdatesResponse>> PrepareAsyncUpdatePlayerListStream(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::ListenPlayerListUpdatesResponse>>(PrepareAsyncUpdatePlayerListStreamRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::Room>> PrepareAsyncListenRoomUpdates(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncReader< ::lobby::Room>>(PrepareAsyncListenRoomUpdatesRaw(context, request, cq));
     }
     class async final :
       public StubInterface::async_interface {
      public:
-      void CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response, std::function<void(::grpc::Status)>) override;
-      void CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::grpc::ClientReadReactor< ::lobby::CreateRoomResponse>* reactor) override;
       void JoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest* request, ::lobby::JoinRoomResponse* response, std::function<void(::grpc::Status)>) override;
       void JoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest* request, ::lobby::JoinRoomResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void GetRoomList(::grpc::ClientContext* context, const ::lobby::GetRoomListRequest* request, ::lobby::GetRoomListResponse* response, std::function<void(::grpc::Status)>) override;
@@ -266,16 +233,13 @@ class LobbyService final {
       void UpdateRoomState(::grpc::ClientContext* context, const ::lobby::UpdateRoomStateRequest* request, ::lobby::UpdateRoomStateResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void UpdateRoomConfig(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest* request, ::lobby::UpdateRoomConfigResponse* response, std::function<void(::grpc::Status)>) override;
       void UpdateRoomConfig(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest* request, ::lobby::UpdateRoomConfigResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void UpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest* request, ::lobby::UpdatePlayerStateResponse* response, std::function<void(::grpc::Status)>) override;
-      void UpdatePlayerState(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest* request, ::lobby::UpdatePlayerStateResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void ChangeRoomPassword(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest* request, ::lobby::ChangeRoomPasswordResponse* response, std::function<void(::grpc::Status)>) override;
       void ChangeRoomPassword(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest* request, ::lobby::ChangeRoomPasswordResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void ChangeRoomOwner(::grpc::ClientContext* context, const ::lobby::ChangeRoomOwnerRequest* request, ::lobby::ChangeRoomOwnerResponse* response, std::function<void(::grpc::Status)>) override;
       void ChangeRoomOwner(::grpc::ClientContext* context, const ::lobby::ChangeRoomOwnerRequest* request, ::lobby::ChangeRoomOwnerResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void DeleteRoom(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest* request, ::lobby::DeleteRoomResponse* response, std::function<void(::grpc::Status)>) override;
       void DeleteRoom(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest* request, ::lobby::DeleteRoomResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void UpdateRoomConfigStream(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest* request, ::grpc::ClientReadReactor< ::lobby::ListenRoomConfigUpdatesResponse>* reactor) override;
-      void UpdatePlayerListStream(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest* request, ::grpc::ClientReadReactor< ::lobby::ListenPlayerListUpdatesResponse>* reactor) override;
+      void ListenRoomUpdates(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest* request, ::grpc::ClientReadReactor< ::lobby::Room>* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -287,8 +251,9 @@ class LobbyService final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::lobby::CreateRoomResponse>* AsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::lobby::CreateRoomResponse>* PrepareAsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::lobby::CreateRoomResponse>* CreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request) override;
+    ::grpc::ClientAsyncReader< ::lobby::CreateRoomResponse>* AsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::lobby::CreateRoomResponse>* PrepareAsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::JoinRoomResponse>* AsyncJoinRoomRaw(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::JoinRoomResponse>* PrepareAsyncJoinRoomRaw(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::GetRoomListResponse>* AsyncGetRoomListRaw(::grpc::ClientContext* context, const ::lobby::GetRoomListRequest& request, ::grpc::CompletionQueue* cq) override;
@@ -297,31 +262,24 @@ class LobbyService final {
     ::grpc::ClientAsyncResponseReader< ::lobby::UpdateRoomStateResponse>* PrepareAsyncUpdateRoomStateRaw(::grpc::ClientContext* context, const ::lobby::UpdateRoomStateRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::UpdateRoomConfigResponse>* AsyncUpdateRoomConfigRaw(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::UpdateRoomConfigResponse>* PrepareAsyncUpdateRoomConfigRaw(::grpc::ClientContext* context, const ::lobby::UpdateRoomConfigRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::lobby::UpdatePlayerStateResponse>* AsyncUpdatePlayerStateRaw(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::lobby::UpdatePlayerStateResponse>* PrepareAsyncUpdatePlayerStateRaw(::grpc::ClientContext* context, const ::lobby::UpdatePlayerStateRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::ChangeRoomPasswordResponse>* AsyncChangeRoomPasswordRaw(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::ChangeRoomPasswordResponse>* PrepareAsyncChangeRoomPasswordRaw(::grpc::ClientContext* context, const ::lobby::ChangeRoomPasswordRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::ChangeRoomOwnerResponse>* AsyncChangeRoomOwnerRaw(::grpc::ClientContext* context, const ::lobby::ChangeRoomOwnerRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::ChangeRoomOwnerResponse>* PrepareAsyncChangeRoomOwnerRaw(::grpc::ClientContext* context, const ::lobby::ChangeRoomOwnerRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::DeleteRoomResponse>* AsyncDeleteRoomRaw(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::lobby::DeleteRoomResponse>* PrepareAsyncDeleteRoomRaw(::grpc::ClientContext* context, const ::lobby::DeleteRoomRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientReader< ::lobby::ListenRoomConfigUpdatesResponse>* UpdateRoomConfigStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request) override;
-    ::grpc::ClientAsyncReader< ::lobby::ListenRoomConfigUpdatesResponse>* AsyncUpdateRoomConfigStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncReader< ::lobby::ListenRoomConfigUpdatesResponse>* PrepareAsyncUpdateRoomConfigStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomConfigUpdatesRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientReader< ::lobby::ListenPlayerListUpdatesResponse>* UpdatePlayerListStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request) override;
-    ::grpc::ClientAsyncReader< ::lobby::ListenPlayerListUpdatesResponse>* AsyncUpdatePlayerListStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
-    ::grpc::ClientAsyncReader< ::lobby::ListenPlayerListUpdatesResponse>* PrepareAsyncUpdatePlayerListStreamRaw(::grpc::ClientContext* context, const ::lobby::ListenPlayerListUpdatesRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientReader< ::lobby::Room>* ListenRoomUpdatesRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request) override;
+    ::grpc::ClientAsyncReader< ::lobby::Room>* AsyncListenRoomUpdatesRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request, ::grpc::CompletionQueue* cq, void* tag) override;
+    ::grpc::ClientAsyncReader< ::lobby::Room>* PrepareAsyncListenRoomUpdatesRaw(::grpc::ClientContext* context, const ::lobby::ListenRoomUpdatesRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_CreateRoom_;
     const ::grpc::internal::RpcMethod rpcmethod_JoinRoom_;
     const ::grpc::internal::RpcMethod rpcmethod_GetRoomList_;
     const ::grpc::internal::RpcMethod rpcmethod_UpdateRoomState_;
     const ::grpc::internal::RpcMethod rpcmethod_UpdateRoomConfig_;
-    const ::grpc::internal::RpcMethod rpcmethod_UpdatePlayerState_;
     const ::grpc::internal::RpcMethod rpcmethod_ChangeRoomPassword_;
     const ::grpc::internal::RpcMethod rpcmethod_ChangeRoomOwner_;
     const ::grpc::internal::RpcMethod rpcmethod_DeleteRoom_;
-    const ::grpc::internal::RpcMethod rpcmethod_UpdateRoomConfigStream_;
-    const ::grpc::internal::RpcMethod rpcmethod_UpdatePlayerListStream_;
+    const ::grpc::internal::RpcMethod rpcmethod_ListenRoomUpdates_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -329,17 +287,17 @@ class LobbyService final {
    public:
     Service();
     virtual ~Service();
-    virtual ::grpc::Status CreateRoom(::grpc::ServerContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response);
+    // For User
+    virtual ::grpc::Status CreateRoom(::grpc::ServerContext* context, const ::lobby::CreateRoomRequest* request, ::grpc::ServerWriter< ::lobby::CreateRoomResponse>* writer);
     virtual ::grpc::Status JoinRoom(::grpc::ServerContext* context, const ::lobby::JoinRoomRequest* request, ::lobby::JoinRoomResponse* response);
     virtual ::grpc::Status GetRoomList(::grpc::ServerContext* context, const ::lobby::GetRoomListRequest* request, ::lobby::GetRoomListResponse* response);
+    // For GameServer
     virtual ::grpc::Status UpdateRoomState(::grpc::ServerContext* context, const ::lobby::UpdateRoomStateRequest* request, ::lobby::UpdateRoomStateResponse* response);
     virtual ::grpc::Status UpdateRoomConfig(::grpc::ServerContext* context, const ::lobby::UpdateRoomConfigRequest* request, ::lobby::UpdateRoomConfigResponse* response);
-    virtual ::grpc::Status UpdatePlayerState(::grpc::ServerContext* context, const ::lobby::UpdatePlayerStateRequest* request, ::lobby::UpdatePlayerStateResponse* response);
     virtual ::grpc::Status ChangeRoomPassword(::grpc::ServerContext* context, const ::lobby::ChangeRoomPasswordRequest* request, ::lobby::ChangeRoomPasswordResponse* response);
     virtual ::grpc::Status ChangeRoomOwner(::grpc::ServerContext* context, const ::lobby::ChangeRoomOwnerRequest* request, ::lobby::ChangeRoomOwnerResponse* response);
     virtual ::grpc::Status DeleteRoom(::grpc::ServerContext* context, const ::lobby::DeleteRoomRequest* request, ::lobby::DeleteRoomResponse* response);
-    virtual ::grpc::Status UpdateRoomConfigStream(::grpc::ServerContext* context, const ::lobby::ListenRoomConfigUpdatesRequest* request, ::grpc::ServerWriter< ::lobby::ListenRoomConfigUpdatesResponse>* writer);
-    virtual ::grpc::Status UpdatePlayerListStream(::grpc::ServerContext* context, const ::lobby::ListenPlayerListUpdatesRequest* request, ::grpc::ServerWriter< ::lobby::ListenPlayerListUpdatesResponse>* writer);
+    virtual ::grpc::Status ListenRoomUpdates(::grpc::ServerContext* context, const ::lobby::ListenRoomUpdatesRequest* request, ::grpc::ServerWriter< ::lobby::Room>* writer);
   };
   template <class BaseClass>
   class WithAsyncMethod_CreateRoom : public BaseClass {
@@ -353,12 +311,12 @@ class LobbyService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::lobby::CreateRoomResponse* /*response*/) override {
+    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::grpc::ServerWriter< ::lobby::CreateRoomResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestCreateRoom(::grpc::ServerContext* context, ::lobby::CreateRoomRequest* request, ::grpc::ServerAsyncResponseWriter< ::lobby::CreateRoomResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    void RequestCreateRoom(::grpc::ServerContext* context, ::lobby::CreateRoomRequest* request, ::grpc::ServerAsyncWriter< ::lobby::CreateRoomResponse>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(0, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -442,32 +400,12 @@ class LobbyService final {
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_UpdatePlayerState : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_UpdatePlayerState() {
-      ::grpc::Service::MarkMethodAsync(5);
-    }
-    ~WithAsyncMethod_UpdatePlayerState() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerState(::grpc::ServerContext* /*context*/, const ::lobby::UpdatePlayerStateRequest* /*request*/, ::lobby::UpdatePlayerStateResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestUpdatePlayerState(::grpc::ServerContext* context, ::lobby::UpdatePlayerStateRequest* request, ::grpc::ServerAsyncResponseWriter< ::lobby::UpdatePlayerStateResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
   class WithAsyncMethod_ChangeRoomPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ChangeRoomPassword() {
-      ::grpc::Service::MarkMethodAsync(6);
+      ::grpc::Service::MarkMethodAsync(5);
     }
     ~WithAsyncMethod_ChangeRoomPassword() override {
       BaseClassMustBeDerivedFromService(this);
@@ -478,7 +416,7 @@ class LobbyService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestChangeRoomPassword(::grpc::ServerContext* context, ::lobby::ChangeRoomPasswordRequest* request, ::grpc::ServerAsyncResponseWriter< ::lobby::ChangeRoomPasswordResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -487,7 +425,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_ChangeRoomOwner() {
-      ::grpc::Service::MarkMethodAsync(7);
+      ::grpc::Service::MarkMethodAsync(6);
     }
     ~WithAsyncMethod_ChangeRoomOwner() override {
       BaseClassMustBeDerivedFromService(this);
@@ -498,7 +436,7 @@ class LobbyService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestChangeRoomOwner(::grpc::ServerContext* context, ::lobby::ChangeRoomOwnerRequest* request, ::grpc::ServerAsyncResponseWriter< ::lobby::ChangeRoomOwnerResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -507,7 +445,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithAsyncMethod_DeleteRoom() {
-      ::grpc::Service::MarkMethodAsync(8);
+      ::grpc::Service::MarkMethodAsync(7);
     }
     ~WithAsyncMethod_DeleteRoom() override {
       BaseClassMustBeDerivedFromService(this);
@@ -518,50 +456,30 @@ class LobbyService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteRoom(::grpc::ServerContext* context, ::lobby::DeleteRoomRequest* request, ::grpc::ServerAsyncResponseWriter< ::lobby::DeleteRoomResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_UpdateRoomConfigStream : public BaseClass {
+  class WithAsyncMethod_ListenRoomUpdates : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_UpdateRoomConfigStream() {
-      ::grpc::Service::MarkMethodAsync(9);
+    WithAsyncMethod_ListenRoomUpdates() {
+      ::grpc::Service::MarkMethodAsync(8);
     }
-    ~WithAsyncMethod_UpdateRoomConfigStream() override {
+    ~WithAsyncMethod_ListenRoomUpdates() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UpdateRoomConfigStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomConfigUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenRoomConfigUpdatesResponse>* /*writer*/) override {
+    ::grpc::Status ListenRoomUpdates(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::Room>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestUpdateRoomConfigStream(::grpc::ServerContext* context, ::lobby::ListenRoomConfigUpdatesRequest* request, ::grpc::ServerAsyncWriter< ::lobby::ListenRoomConfigUpdatesResponse>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(9, context, request, writer, new_call_cq, notification_cq, tag);
+    void RequestListenRoomUpdates(::grpc::ServerContext* context, ::lobby::ListenRoomUpdatesRequest* request, ::grpc::ServerAsyncWriter< ::lobby::Room>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(8, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
-  template <class BaseClass>
-  class WithAsyncMethod_UpdatePlayerListStream : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithAsyncMethod_UpdatePlayerListStream() {
-      ::grpc::Service::MarkMethodAsync(10);
-    }
-    ~WithAsyncMethod_UpdatePlayerListStream() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerListStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenPlayerListUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenPlayerListUpdatesResponse>* /*writer*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestUpdatePlayerListStream(::grpc::ServerContext* context, ::lobby::ListenPlayerListUpdatesRequest* request, ::grpc::ServerAsyncWriter< ::lobby::ListenPlayerListUpdatesResponse>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(10, context, request, writer, new_call_cq, notification_cq, tag);
-    }
-  };
-  typedef WithAsyncMethod_CreateRoom<WithAsyncMethod_JoinRoom<WithAsyncMethod_GetRoomList<WithAsyncMethod_UpdateRoomState<WithAsyncMethod_UpdateRoomConfig<WithAsyncMethod_UpdatePlayerState<WithAsyncMethod_ChangeRoomPassword<WithAsyncMethod_ChangeRoomOwner<WithAsyncMethod_DeleteRoom<WithAsyncMethod_UpdateRoomConfigStream<WithAsyncMethod_UpdatePlayerListStream<Service > > > > > > > > > > > AsyncService;
+  typedef WithAsyncMethod_CreateRoom<WithAsyncMethod_JoinRoom<WithAsyncMethod_GetRoomList<WithAsyncMethod_UpdateRoomState<WithAsyncMethod_UpdateRoomConfig<WithAsyncMethod_ChangeRoomPassword<WithAsyncMethod_ChangeRoomOwner<WithAsyncMethod_DeleteRoom<WithAsyncMethod_ListenRoomUpdates<Service > > > > > > > > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_CreateRoom : public BaseClass {
    private:
@@ -569,25 +487,20 @@ class LobbyService final {
    public:
     WithCallbackMethod_CreateRoom() {
       ::grpc::Service::MarkMethodCallback(0,
-          new ::grpc::internal::CallbackUnaryHandler< ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>(
+          new ::grpc::internal::CallbackServerStreamingHandler< ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response) { return this->CreateRoom(context, request, response); }));}
-    void SetMessageAllocatorFor_CreateRoom(
-        ::grpc::MessageAllocator< ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>*>(handler)
-              ->SetMessageAllocator(allocator);
+                   ::grpc::CallbackServerContext* context, const ::lobby::CreateRoomRequest* request) { return this->CreateRoom(context, request); }));
     }
     ~WithCallbackMethod_CreateRoom() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::lobby::CreateRoomResponse* /*response*/) override {
+    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::grpc::ServerWriter< ::lobby::CreateRoomResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* CreateRoom(
-      ::grpc::CallbackServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::lobby::CreateRoomResponse* /*response*/)  { return nullptr; }
+    virtual ::grpc::ServerWriteReactor< ::lobby::CreateRoomResponse>* CreateRoom(
+      ::grpc::CallbackServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithCallbackMethod_JoinRoom : public BaseClass {
@@ -698,45 +611,18 @@ class LobbyService final {
       ::grpc::CallbackServerContext* /*context*/, const ::lobby::UpdateRoomConfigRequest* /*request*/, ::lobby::UpdateRoomConfigResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithCallbackMethod_UpdatePlayerState : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithCallbackMethod_UpdatePlayerState() {
-      ::grpc::Service::MarkMethodCallback(5,
-          new ::grpc::internal::CallbackUnaryHandler< ::lobby::UpdatePlayerStateRequest, ::lobby::UpdatePlayerStateResponse>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::lobby::UpdatePlayerStateRequest* request, ::lobby::UpdatePlayerStateResponse* response) { return this->UpdatePlayerState(context, request, response); }));}
-    void SetMessageAllocatorFor_UpdatePlayerState(
-        ::grpc::MessageAllocator< ::lobby::UpdatePlayerStateRequest, ::lobby::UpdatePlayerStateResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::lobby::UpdatePlayerStateRequest, ::lobby::UpdatePlayerStateResponse>*>(handler)
-              ->SetMessageAllocator(allocator);
-    }
-    ~WithCallbackMethod_UpdatePlayerState() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerState(::grpc::ServerContext* /*context*/, const ::lobby::UpdatePlayerStateRequest* /*request*/, ::lobby::UpdatePlayerStateResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* UpdatePlayerState(
-      ::grpc::CallbackServerContext* /*context*/, const ::lobby::UpdatePlayerStateRequest* /*request*/, ::lobby::UpdatePlayerStateResponse* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
   class WithCallbackMethod_ChangeRoomPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ChangeRoomPassword() {
-      ::grpc::Service::MarkMethodCallback(6,
+      ::grpc::Service::MarkMethodCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::lobby::ChangeRoomPasswordRequest, ::lobby::ChangeRoomPasswordResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::lobby::ChangeRoomPasswordRequest* request, ::lobby::ChangeRoomPasswordResponse* response) { return this->ChangeRoomPassword(context, request, response); }));}
     void SetMessageAllocatorFor_ChangeRoomPassword(
         ::grpc::MessageAllocator< ::lobby::ChangeRoomPasswordRequest, ::lobby::ChangeRoomPasswordResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(5);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::lobby::ChangeRoomPasswordRequest, ::lobby::ChangeRoomPasswordResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -757,13 +643,13 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_ChangeRoomOwner() {
-      ::grpc::Service::MarkMethodCallback(7,
+      ::grpc::Service::MarkMethodCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::lobby::ChangeRoomOwnerRequest, ::lobby::ChangeRoomOwnerResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::lobby::ChangeRoomOwnerRequest* request, ::lobby::ChangeRoomOwnerResponse* response) { return this->ChangeRoomOwner(context, request, response); }));}
     void SetMessageAllocatorFor_ChangeRoomOwner(
         ::grpc::MessageAllocator< ::lobby::ChangeRoomOwnerRequest, ::lobby::ChangeRoomOwnerResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(6);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::lobby::ChangeRoomOwnerRequest, ::lobby::ChangeRoomOwnerResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -784,13 +670,13 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithCallbackMethod_DeleteRoom() {
-      ::grpc::Service::MarkMethodCallback(8,
+      ::grpc::Service::MarkMethodCallback(7,
           new ::grpc::internal::CallbackUnaryHandler< ::lobby::DeleteRoomRequest, ::lobby::DeleteRoomResponse>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::lobby::DeleteRoomRequest* request, ::lobby::DeleteRoomResponse* response) { return this->DeleteRoom(context, request, response); }));}
     void SetMessageAllocatorFor_DeleteRoom(
         ::grpc::MessageAllocator< ::lobby::DeleteRoomRequest, ::lobby::DeleteRoomResponse>* allocator) {
-      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(8);
+      ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(7);
       static_cast<::grpc::internal::CallbackUnaryHandler< ::lobby::DeleteRoomRequest, ::lobby::DeleteRoomResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
@@ -806,50 +692,28 @@ class LobbyService final {
       ::grpc::CallbackServerContext* /*context*/, const ::lobby::DeleteRoomRequest* /*request*/, ::lobby::DeleteRoomResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithCallbackMethod_UpdateRoomConfigStream : public BaseClass {
+  class WithCallbackMethod_ListenRoomUpdates : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_UpdateRoomConfigStream() {
-      ::grpc::Service::MarkMethodCallback(9,
-          new ::grpc::internal::CallbackServerStreamingHandler< ::lobby::ListenRoomConfigUpdatesRequest, ::lobby::ListenRoomConfigUpdatesResponse>(
+    WithCallbackMethod_ListenRoomUpdates() {
+      ::grpc::Service::MarkMethodCallback(8,
+          new ::grpc::internal::CallbackServerStreamingHandler< ::lobby::ListenRoomUpdatesRequest, ::lobby::Room>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::lobby::ListenRoomConfigUpdatesRequest* request) { return this->UpdateRoomConfigStream(context, request); }));
+                   ::grpc::CallbackServerContext* context, const ::lobby::ListenRoomUpdatesRequest* request) { return this->ListenRoomUpdates(context, request); }));
     }
-    ~WithCallbackMethod_UpdateRoomConfigStream() override {
+    ~WithCallbackMethod_ListenRoomUpdates() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UpdateRoomConfigStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomConfigUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenRoomConfigUpdatesResponse>* /*writer*/) override {
+    ::grpc::Status ListenRoomUpdates(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::Room>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerWriteReactor< ::lobby::ListenRoomConfigUpdatesResponse>* UpdateRoomConfigStream(
-      ::grpc::CallbackServerContext* /*context*/, const ::lobby::ListenRoomConfigUpdatesRequest* /*request*/)  { return nullptr; }
+    virtual ::grpc::ServerWriteReactor< ::lobby::Room>* ListenRoomUpdates(
+      ::grpc::CallbackServerContext* /*context*/, const ::lobby::ListenRoomUpdatesRequest* /*request*/)  { return nullptr; }
   };
-  template <class BaseClass>
-  class WithCallbackMethod_UpdatePlayerListStream : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithCallbackMethod_UpdatePlayerListStream() {
-      ::grpc::Service::MarkMethodCallback(10,
-          new ::grpc::internal::CallbackServerStreamingHandler< ::lobby::ListenPlayerListUpdatesRequest, ::lobby::ListenPlayerListUpdatesResponse>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::lobby::ListenPlayerListUpdatesRequest* request) { return this->UpdatePlayerListStream(context, request); }));
-    }
-    ~WithCallbackMethod_UpdatePlayerListStream() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerListStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenPlayerListUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenPlayerListUpdatesResponse>* /*writer*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerWriteReactor< ::lobby::ListenPlayerListUpdatesResponse>* UpdatePlayerListStream(
-      ::grpc::CallbackServerContext* /*context*/, const ::lobby::ListenPlayerListUpdatesRequest* /*request*/)  { return nullptr; }
-  };
-  typedef WithCallbackMethod_CreateRoom<WithCallbackMethod_JoinRoom<WithCallbackMethod_GetRoomList<WithCallbackMethod_UpdateRoomState<WithCallbackMethod_UpdateRoomConfig<WithCallbackMethod_UpdatePlayerState<WithCallbackMethod_ChangeRoomPassword<WithCallbackMethod_ChangeRoomOwner<WithCallbackMethod_DeleteRoom<WithCallbackMethod_UpdateRoomConfigStream<WithCallbackMethod_UpdatePlayerListStream<Service > > > > > > > > > > > CallbackService;
+  typedef WithCallbackMethod_CreateRoom<WithCallbackMethod_JoinRoom<WithCallbackMethod_GetRoomList<WithCallbackMethod_UpdateRoomState<WithCallbackMethod_UpdateRoomConfig<WithCallbackMethod_ChangeRoomPassword<WithCallbackMethod_ChangeRoomOwner<WithCallbackMethod_DeleteRoom<WithCallbackMethod_ListenRoomUpdates<Service > > > > > > > > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_CreateRoom : public BaseClass {
@@ -863,7 +727,7 @@ class LobbyService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::lobby::CreateRoomResponse* /*response*/) override {
+    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::grpc::ServerWriter< ::lobby::CreateRoomResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -937,29 +801,12 @@ class LobbyService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_UpdatePlayerState : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_UpdatePlayerState() {
-      ::grpc::Service::MarkMethodGeneric(5);
-    }
-    ~WithGenericMethod_UpdatePlayerState() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerState(::grpc::ServerContext* /*context*/, const ::lobby::UpdatePlayerStateRequest* /*request*/, ::lobby::UpdatePlayerStateResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
   class WithGenericMethod_ChangeRoomPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ChangeRoomPassword() {
-      ::grpc::Service::MarkMethodGeneric(6);
+      ::grpc::Service::MarkMethodGeneric(5);
     }
     ~WithGenericMethod_ChangeRoomPassword() override {
       BaseClassMustBeDerivedFromService(this);
@@ -976,7 +823,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_ChangeRoomOwner() {
-      ::grpc::Service::MarkMethodGeneric(7);
+      ::grpc::Service::MarkMethodGeneric(6);
     }
     ~WithGenericMethod_ChangeRoomOwner() override {
       BaseClassMustBeDerivedFromService(this);
@@ -993,7 +840,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithGenericMethod_DeleteRoom() {
-      ::grpc::Service::MarkMethodGeneric(8);
+      ::grpc::Service::MarkMethodGeneric(7);
     }
     ~WithGenericMethod_DeleteRoom() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1005,35 +852,18 @@ class LobbyService final {
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_UpdateRoomConfigStream : public BaseClass {
+  class WithGenericMethod_ListenRoomUpdates : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_UpdateRoomConfigStream() {
-      ::grpc::Service::MarkMethodGeneric(9);
+    WithGenericMethod_ListenRoomUpdates() {
+      ::grpc::Service::MarkMethodGeneric(8);
     }
-    ~WithGenericMethod_UpdateRoomConfigStream() override {
+    ~WithGenericMethod_ListenRoomUpdates() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UpdateRoomConfigStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomConfigUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenRoomConfigUpdatesResponse>* /*writer*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-  };
-  template <class BaseClass>
-  class WithGenericMethod_UpdatePlayerListStream : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithGenericMethod_UpdatePlayerListStream() {
-      ::grpc::Service::MarkMethodGeneric(10);
-    }
-    ~WithGenericMethod_UpdatePlayerListStream() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerListStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenPlayerListUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenPlayerListUpdatesResponse>* /*writer*/) override {
+    ::grpc::Status ListenRoomUpdates(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::Room>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -1050,12 +880,12 @@ class LobbyService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::lobby::CreateRoomResponse* /*response*/) override {
+    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::grpc::ServerWriter< ::lobby::CreateRoomResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestCreateRoom(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
+    void RequestCreateRoom(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(0, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1139,32 +969,12 @@ class LobbyService final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod_UpdatePlayerState : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_UpdatePlayerState() {
-      ::grpc::Service::MarkMethodRaw(5);
-    }
-    ~WithRawMethod_UpdatePlayerState() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerState(::grpc::ServerContext* /*context*/, const ::lobby::UpdatePlayerStateRequest* /*request*/, ::lobby::UpdatePlayerStateResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestUpdatePlayerState(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
   class WithRawMethod_ChangeRoomPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ChangeRoomPassword() {
-      ::grpc::Service::MarkMethodRaw(6);
+      ::grpc::Service::MarkMethodRaw(5);
     }
     ~WithRawMethod_ChangeRoomPassword() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1175,7 +985,7 @@ class LobbyService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestChangeRoomPassword(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(5, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1184,7 +994,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_ChangeRoomOwner() {
-      ::grpc::Service::MarkMethodRaw(7);
+      ::grpc::Service::MarkMethodRaw(6);
     }
     ~WithRawMethod_ChangeRoomOwner() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1195,7 +1005,7 @@ class LobbyService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestChangeRoomOwner(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(6, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1204,7 +1014,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawMethod_DeleteRoom() {
-      ::grpc::Service::MarkMethodRaw(8);
+      ::grpc::Service::MarkMethodRaw(7);
     }
     ~WithRawMethod_DeleteRoom() override {
       BaseClassMustBeDerivedFromService(this);
@@ -1215,47 +1025,27 @@ class LobbyService final {
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     void RequestDeleteRoom(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncUnary(8, context, request, response, new_call_cq, notification_cq, tag);
+      ::grpc::Service::RequestAsyncUnary(7, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithRawMethod_UpdateRoomConfigStream : public BaseClass {
+  class WithRawMethod_ListenRoomUpdates : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_UpdateRoomConfigStream() {
-      ::grpc::Service::MarkMethodRaw(9);
+    WithRawMethod_ListenRoomUpdates() {
+      ::grpc::Service::MarkMethodRaw(8);
     }
-    ~WithRawMethod_UpdateRoomConfigStream() override {
+    ~WithRawMethod_ListenRoomUpdates() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UpdateRoomConfigStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomConfigUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenRoomConfigUpdatesResponse>* /*writer*/) override {
+    ::grpc::Status ListenRoomUpdates(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::Room>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestUpdateRoomConfigStream(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(9, context, request, writer, new_call_cq, notification_cq, tag);
-    }
-  };
-  template <class BaseClass>
-  class WithRawMethod_UpdatePlayerListStream : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawMethod_UpdatePlayerListStream() {
-      ::grpc::Service::MarkMethodRaw(10);
-    }
-    ~WithRawMethod_UpdatePlayerListStream() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerListStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenPlayerListUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenPlayerListUpdatesResponse>* /*writer*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    void RequestUpdatePlayerListStream(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
-      ::grpc::Service::RequestAsyncServerStreaming(10, context, request, writer, new_call_cq, notification_cq, tag);
+    void RequestListenRoomUpdates(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncWriter< ::grpc::ByteBuffer>* writer, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+      ::grpc::Service::RequestAsyncServerStreaming(8, context, request, writer, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
@@ -1265,20 +1055,20 @@ class LobbyService final {
    public:
     WithRawCallbackMethod_CreateRoom() {
       ::grpc::Service::MarkMethodRawCallback(0,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
+          new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->CreateRoom(context, request, response); }));
+                   ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->CreateRoom(context, request); }));
     }
     ~WithRawCallbackMethod_CreateRoom() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::lobby::CreateRoomResponse* /*response*/) override {
+    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::grpc::ServerWriter< ::lobby::CreateRoomResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* CreateRoom(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
+    virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* CreateRoom(
+      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithRawCallbackMethod_JoinRoom : public BaseClass {
@@ -1369,34 +1159,12 @@ class LobbyService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_UpdatePlayerState : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawCallbackMethod_UpdatePlayerState() {
-      ::grpc::Service::MarkMethodRawCallback(5,
-          new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->UpdatePlayerState(context, request, response); }));
-    }
-    ~WithRawCallbackMethod_UpdatePlayerState() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerState(::grpc::ServerContext* /*context*/, const ::lobby::UpdatePlayerStateRequest* /*request*/, ::lobby::UpdatePlayerStateResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerUnaryReactor* UpdatePlayerState(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
-  };
-  template <class BaseClass>
   class WithRawCallbackMethod_ChangeRoomPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ChangeRoomPassword() {
-      ::grpc::Service::MarkMethodRawCallback(6,
+      ::grpc::Service::MarkMethodRawCallback(5,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ChangeRoomPassword(context, request, response); }));
@@ -1418,7 +1186,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_ChangeRoomOwner() {
-      ::grpc::Service::MarkMethodRawCallback(7,
+      ::grpc::Service::MarkMethodRawCallback(6,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ChangeRoomOwner(context, request, response); }));
@@ -1440,7 +1208,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithRawCallbackMethod_DeleteRoom() {
-      ::grpc::Service::MarkMethodRawCallback(8,
+      ::grpc::Service::MarkMethodRawCallback(7,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
                    ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->DeleteRoom(context, request, response); }));
@@ -1457,75 +1225,26 @@ class LobbyService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_UpdateRoomConfigStream : public BaseClass {
+  class WithRawCallbackMethod_ListenRoomUpdates : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_UpdateRoomConfigStream() {
-      ::grpc::Service::MarkMethodRawCallback(9,
+    WithRawCallbackMethod_ListenRoomUpdates() {
+      ::grpc::Service::MarkMethodRawCallback(8,
           new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->UpdateRoomConfigStream(context, request); }));
+                   ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->ListenRoomUpdates(context, request); }));
     }
-    ~WithRawCallbackMethod_UpdateRoomConfigStream() override {
+    ~WithRawCallbackMethod_ListenRoomUpdates() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status UpdateRoomConfigStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomConfigUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenRoomConfigUpdatesResponse>* /*writer*/) override {
+    ::grpc::Status ListenRoomUpdates(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::Room>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* UpdateRoomConfigStream(
+    virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* ListenRoomUpdates(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithRawCallbackMethod_UpdatePlayerListStream : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithRawCallbackMethod_UpdatePlayerListStream() {
-      ::grpc::Service::MarkMethodRawCallback(10,
-          new ::grpc::internal::CallbackServerStreamingHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
-            [this](
-                   ::grpc::CallbackServerContext* context, const::grpc::ByteBuffer* request) { return this->UpdatePlayerListStream(context, request); }));
-    }
-    ~WithRawCallbackMethod_UpdatePlayerListStream() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable synchronous version of this method
-    ::grpc::Status UpdatePlayerListStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenPlayerListUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenPlayerListUpdatesResponse>* /*writer*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    virtual ::grpc::ServerWriteReactor< ::grpc::ByteBuffer>* UpdatePlayerListStream(
-      ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/)  { return nullptr; }
-  };
-  template <class BaseClass>
-  class WithStreamedUnaryMethod_CreateRoom : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_CreateRoom() {
-      ::grpc::Service::MarkMethodStreamed(0,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>* streamer) {
-                       return this->StreamedCreateRoom(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_CreateRoom() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::lobby::CreateRoomResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedCreateRoom(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::lobby::CreateRoomRequest,::lobby::CreateRoomResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_JoinRoom : public BaseClass {
@@ -1636,39 +1355,12 @@ class LobbyService final {
     virtual ::grpc::Status StreamedUpdateRoomConfig(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::lobby::UpdateRoomConfigRequest,::lobby::UpdateRoomConfigResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_UpdatePlayerState : public BaseClass {
-   private:
-    void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
-   public:
-    WithStreamedUnaryMethod_UpdatePlayerState() {
-      ::grpc::Service::MarkMethodStreamed(5,
-        new ::grpc::internal::StreamedUnaryHandler<
-          ::lobby::UpdatePlayerStateRequest, ::lobby::UpdatePlayerStateResponse>(
-            [this](::grpc::ServerContext* context,
-                   ::grpc::ServerUnaryStreamer<
-                     ::lobby::UpdatePlayerStateRequest, ::lobby::UpdatePlayerStateResponse>* streamer) {
-                       return this->StreamedUpdatePlayerState(context,
-                         streamer);
-                  }));
-    }
-    ~WithStreamedUnaryMethod_UpdatePlayerState() override {
-      BaseClassMustBeDerivedFromService(this);
-    }
-    // disable regular version of this method
-    ::grpc::Status UpdatePlayerState(::grpc::ServerContext* /*context*/, const ::lobby::UpdatePlayerStateRequest* /*request*/, ::lobby::UpdatePlayerStateResponse* /*response*/) override {
-      abort();
-      return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
-    }
-    // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedUpdatePlayerState(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::lobby::UpdatePlayerStateRequest,::lobby::UpdatePlayerStateResponse>* server_unary_streamer) = 0;
-  };
-  template <class BaseClass>
   class WithStreamedUnaryMethod_ChangeRoomPassword : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ChangeRoomPassword() {
-      ::grpc::Service::MarkMethodStreamed(6,
+      ::grpc::Service::MarkMethodStreamed(5,
         new ::grpc::internal::StreamedUnaryHandler<
           ::lobby::ChangeRoomPasswordRequest, ::lobby::ChangeRoomPasswordResponse>(
             [this](::grpc::ServerContext* context,
@@ -1695,7 +1387,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_ChangeRoomOwner() {
-      ::grpc::Service::MarkMethodStreamed(7,
+      ::grpc::Service::MarkMethodStreamed(6,
         new ::grpc::internal::StreamedUnaryHandler<
           ::lobby::ChangeRoomOwnerRequest, ::lobby::ChangeRoomOwnerResponse>(
             [this](::grpc::ServerContext* context,
@@ -1722,7 +1414,7 @@ class LobbyService final {
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
     WithStreamedUnaryMethod_DeleteRoom() {
-      ::grpc::Service::MarkMethodStreamed(8,
+      ::grpc::Service::MarkMethodStreamed(7,
         new ::grpc::internal::StreamedUnaryHandler<
           ::lobby::DeleteRoomRequest, ::lobby::DeleteRoomResponse>(
             [this](::grpc::ServerContext* context,
@@ -1743,63 +1435,63 @@ class LobbyService final {
     // replace default version of method with streamed unary
     virtual ::grpc::Status StreamedDeleteRoom(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::lobby::DeleteRoomRequest,::lobby::DeleteRoomResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_CreateRoom<WithStreamedUnaryMethod_JoinRoom<WithStreamedUnaryMethod_GetRoomList<WithStreamedUnaryMethod_UpdateRoomState<WithStreamedUnaryMethod_UpdateRoomConfig<WithStreamedUnaryMethod_UpdatePlayerState<WithStreamedUnaryMethod_ChangeRoomPassword<WithStreamedUnaryMethod_ChangeRoomOwner<WithStreamedUnaryMethod_DeleteRoom<Service > > > > > > > > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_JoinRoom<WithStreamedUnaryMethod_GetRoomList<WithStreamedUnaryMethod_UpdateRoomState<WithStreamedUnaryMethod_UpdateRoomConfig<WithStreamedUnaryMethod_ChangeRoomPassword<WithStreamedUnaryMethod_ChangeRoomOwner<WithStreamedUnaryMethod_DeleteRoom<Service > > > > > > > StreamedUnaryService;
   template <class BaseClass>
-  class WithSplitStreamingMethod_UpdateRoomConfigStream : public BaseClass {
+  class WithSplitStreamingMethod_CreateRoom : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithSplitStreamingMethod_UpdateRoomConfigStream() {
-      ::grpc::Service::MarkMethodStreamed(9,
+    WithSplitStreamingMethod_CreateRoom() {
+      ::grpc::Service::MarkMethodStreamed(0,
         new ::grpc::internal::SplitServerStreamingHandler<
-          ::lobby::ListenRoomConfigUpdatesRequest, ::lobby::ListenRoomConfigUpdatesResponse>(
+          ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerSplitStreamer<
-                     ::lobby::ListenRoomConfigUpdatesRequest, ::lobby::ListenRoomConfigUpdatesResponse>* streamer) {
-                       return this->StreamedUpdateRoomConfigStream(context,
+                     ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>* streamer) {
+                       return this->StreamedCreateRoom(context,
                          streamer);
                   }));
     }
-    ~WithSplitStreamingMethod_UpdateRoomConfigStream() override {
+    ~WithSplitStreamingMethod_CreateRoom() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status UpdateRoomConfigStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomConfigUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenRoomConfigUpdatesResponse>* /*writer*/) override {
+    ::grpc::Status CreateRoom(::grpc::ServerContext* /*context*/, const ::lobby::CreateRoomRequest* /*request*/, ::grpc::ServerWriter< ::lobby::CreateRoomResponse>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with split streamed
-    virtual ::grpc::Status StreamedUpdateRoomConfigStream(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::lobby::ListenRoomConfigUpdatesRequest,::lobby::ListenRoomConfigUpdatesResponse>* server_split_streamer) = 0;
+    virtual ::grpc::Status StreamedCreateRoom(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::lobby::CreateRoomRequest,::lobby::CreateRoomResponse>* server_split_streamer) = 0;
   };
   template <class BaseClass>
-  class WithSplitStreamingMethod_UpdatePlayerListStream : public BaseClass {
+  class WithSplitStreamingMethod_ListenRoomUpdates : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithSplitStreamingMethod_UpdatePlayerListStream() {
-      ::grpc::Service::MarkMethodStreamed(10,
+    WithSplitStreamingMethod_ListenRoomUpdates() {
+      ::grpc::Service::MarkMethodStreamed(8,
         new ::grpc::internal::SplitServerStreamingHandler<
-          ::lobby::ListenPlayerListUpdatesRequest, ::lobby::ListenPlayerListUpdatesResponse>(
+          ::lobby::ListenRoomUpdatesRequest, ::lobby::Room>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerSplitStreamer<
-                     ::lobby::ListenPlayerListUpdatesRequest, ::lobby::ListenPlayerListUpdatesResponse>* streamer) {
-                       return this->StreamedUpdatePlayerListStream(context,
+                     ::lobby::ListenRoomUpdatesRequest, ::lobby::Room>* streamer) {
+                       return this->StreamedListenRoomUpdates(context,
                          streamer);
                   }));
     }
-    ~WithSplitStreamingMethod_UpdatePlayerListStream() override {
+    ~WithSplitStreamingMethod_ListenRoomUpdates() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status UpdatePlayerListStream(::grpc::ServerContext* /*context*/, const ::lobby::ListenPlayerListUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::ListenPlayerListUpdatesResponse>* /*writer*/) override {
+    ::grpc::Status ListenRoomUpdates(::grpc::ServerContext* /*context*/, const ::lobby::ListenRoomUpdatesRequest* /*request*/, ::grpc::ServerWriter< ::lobby::Room>* /*writer*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with split streamed
-    virtual ::grpc::Status StreamedUpdatePlayerListStream(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::lobby::ListenPlayerListUpdatesRequest,::lobby::ListenPlayerListUpdatesResponse>* server_split_streamer) = 0;
+    virtual ::grpc::Status StreamedListenRoomUpdates(::grpc::ServerContext* context, ::grpc::ServerSplitStreamer< ::lobby::ListenRoomUpdatesRequest,::lobby::Room>* server_split_streamer) = 0;
   };
-  typedef WithSplitStreamingMethod_UpdateRoomConfigStream<WithSplitStreamingMethod_UpdatePlayerListStream<Service > > SplitStreamedService;
-  typedef WithStreamedUnaryMethod_CreateRoom<WithStreamedUnaryMethod_JoinRoom<WithStreamedUnaryMethod_GetRoomList<WithStreamedUnaryMethod_UpdateRoomState<WithStreamedUnaryMethod_UpdateRoomConfig<WithStreamedUnaryMethod_UpdatePlayerState<WithStreamedUnaryMethod_ChangeRoomPassword<WithStreamedUnaryMethod_ChangeRoomOwner<WithStreamedUnaryMethod_DeleteRoom<WithSplitStreamingMethod_UpdateRoomConfigStream<WithSplitStreamingMethod_UpdatePlayerListStream<Service > > > > > > > > > > > StreamedService;
+  typedef WithSplitStreamingMethod_CreateRoom<WithSplitStreamingMethod_ListenRoomUpdates<Service > > SplitStreamedService;
+  typedef WithSplitStreamingMethod_CreateRoom<WithStreamedUnaryMethod_JoinRoom<WithStreamedUnaryMethod_GetRoomList<WithStreamedUnaryMethod_UpdateRoomState<WithStreamedUnaryMethod_UpdateRoomConfig<WithStreamedUnaryMethod_ChangeRoomPassword<WithStreamedUnaryMethod_ChangeRoomOwner<WithStreamedUnaryMethod_DeleteRoom<WithSplitStreamingMethod_ListenRoomUpdates<Service > > > > > > > > > StreamedService;
 };
 
 }  // namespace lobby

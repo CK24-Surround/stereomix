@@ -19,7 +19,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnCreateRoomResponse, bool, Succes
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnJoinRoomResponse, bool, Success, const FGrpcLobbyRoomConnectionInfo&, ConnectionInfo);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRoomListUpdateResponse, bool, Success, const TArray<FGrpcLobbyRoomPreview>&, RoomList);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnRoomListUpdateResponse, bool, Success, const TArray<FGrpcLobbyRoom>&, RoomList);
 
 /**
  * PlayerController for Lobby
@@ -70,7 +70,7 @@ class STEREOMIX_API ASMLobbyController : public APlayerController
 	FGrpcContextHandle GuestLoginContext;
 
 	UFUNCTION()
-	void HandleGuestLoginResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcAuthResponse& Response);
+	void HandleGuestLoginResponse(FGrpcContextHandle ContextHandle, const FGrpcResult& Result, const FGrpcAuthLoginResponse& Response);
 
 	FGrpcContextHandle CreateRoomContext;
 
@@ -149,5 +149,5 @@ public:
 
 	void OnReceiveJoinRoomResponse(bool Success, const FGrpcLobbyRoomConnectionInfo& ConnectionInfo);
 
-	void OnReceiveRoomListUpdateResponse(bool Success, const TArray<FGrpcLobbyRoomPreview>& RoomList);
+	void OnReceiveRoomListUpdateResponse(bool Success, const TArray<FGrpcLobbyRoom>& RoomList);
 };

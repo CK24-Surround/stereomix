@@ -37,23 +37,23 @@ void UAuthServiceClient::GuestLogin(FGrpcContextHandle Handle, const FGrpcAuthGu
 	}
 }
 
-FGrpcContextHandle UAuthServiceClient::InitRegisterGameServer()
+FGrpcContextHandle UAuthServiceClient::InitValidateUserToken()
 {
 	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
-	auto context = UGrpcClient::MakeContext<GrpcContext_AuthService_RegisterGameServer>(handle);
+	auto context = UGrpcClient::MakeContext<GrpcContext_AuthService_ValidateUserToken>(handle);
 	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
 	return context->GetHandle();
 }
 
-void UAuthServiceClient::RegisterGameServer(FGrpcContextHandle Handle, const FGrpcAuthRegisterGameServerRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+void UAuthServiceClient::ValidateUserToken(FGrpcContextHandle Handle, const FGrpcAuthValidateUserTokenRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
 {
 	auto context = UGrpcClient::GetContext(Handle);
 	if (context != nullptr)
 	{
-		auto contextRegisterGameServer = StaticCastSharedPtr<GrpcContext_AuthService_RegisterGameServer>(*context);
+		auto contextValidateUserToken = StaticCastSharedPtr<GrpcContext_AuthService_ValidateUserToken>(*context);
 		for (const auto& metaDataPair : MetaData.MetaData)
 		{
-			contextRegisterGameServer->RpcContext->AddMetadata(
+			contextValidateUserToken->RpcContext->AddMetadata(
 				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
 				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
 			);
@@ -63,9 +63,9 @@ void UAuthServiceClient::RegisterGameServer(FGrpcContextHandle Handle, const FGr
 		{
 			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
 				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
-			contextRegisterGameServer->RpcContext->set_deadline(deadLine);
+			contextValidateUserToken->RpcContext->set_deadline(deadLine);
 		}
-		contextRegisterGameServer->Call(Request);
+		contextValidateUserToken->Call(Request);
 	}
 }
 
@@ -81,7 +81,7 @@ void UAuthServiceClient::TryCancel(FGrpcContextHandle Handle)
 void UAuthServiceClient::Shutdown()
 {
 	OnGuestLoginResponse.Clear();
-	OnRegisterGameServerResponse.Clear();
+	OnValidateUserTokenResponse.Clear();
 	Super::Shutdown();
 }
 

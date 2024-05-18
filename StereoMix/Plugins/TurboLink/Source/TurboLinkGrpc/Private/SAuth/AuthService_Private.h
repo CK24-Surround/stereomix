@@ -23,14 +23,14 @@ public:
 	UAuthServiceClient* InnerClient;
 
 	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthResponse& Response);
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthLoginResponse& Response);
 public:
 	FGrpcContextHandle Handle;
 	UAuthService::FGuestLoginResponseLambda ResponseLambda;
 };
 
 UCLASS()
-class UAuthServiceRegisterGameServerLambdaWrapper : public UObject
+class UAuthServiceValidateUserTokenLambdaWrapper : public UObject
 {
 	GENERATED_BODY()
 public:
@@ -38,9 +38,9 @@ public:
 	UAuthServiceClient* InnerClient;
 
 	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthResponse& Response);
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthValidateUserTokenResponse& Response);
 public:
 	FGrpcContextHandle Handle;
-	UAuthService::FRegisterGameServerResponseLambda ResponseLambda;
+	UAuthService::FValidateUserTokenResponseLambda ResponseLambda;
 };
 

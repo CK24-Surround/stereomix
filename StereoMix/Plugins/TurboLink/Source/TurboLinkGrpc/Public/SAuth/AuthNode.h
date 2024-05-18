@@ -15,7 +15,7 @@ class TURBOLINKGRPC_API UCallAuthServiceGuestLogin : public UBlueprintAsyncActio
 	GENERATED_BODY()
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAuthServiceGuestLoginDelegate, const FGrpcResult&, GrpcResult, const FGrpcAuthResponse&, Response);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAuthServiceGuestLoginDelegate, const FGrpcResult&, GrpcResult, const FGrpcAuthLoginResponse&, Response);
 
 	UFUNCTION(BlueprintCallable, Category = "TurboLink|AuthService", meta = (
 		BlueprintInternalUseOnly = "true",
@@ -52,31 +52,31 @@ private:
 	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
 
 	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthResponse& Response);
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthLoginResponse& Response);
 
 	void Shutdown();
 };
 
 UCLASS(ClassGroup = TurboLink)
-class TURBOLINKGRPC_API UCallAuthServiceRegisterGameServer : public UBlueprintAsyncActionBase
+class TURBOLINKGRPC_API UCallAuthServiceValidateUserToken : public UBlueprintAsyncActionBase
 {
 	GENERATED_BODY()
 
 public:
-	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAuthServiceRegisterGameServerDelegate, const FGrpcResult&, GrpcResult, const FGrpcAuthResponse&, Response);
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FAuthServiceValidateUserTokenDelegate, const FGrpcResult&, GrpcResult, const FGrpcAuthValidateUserTokenResponse&, Response);
 
 	UFUNCTION(BlueprintCallable, Category = "TurboLink|AuthService", meta = (
 		BlueprintInternalUseOnly = "true",
 		WorldContext = "WorldContextObject",
-		DisplayName = "Call AuthService RegisterGameServer",
+		DisplayName = "Call AuthService ValidateUserToken",
 		AdvancedDisplay = 2))
-	static UCallAuthServiceRegisterGameServer* RegisterGameServer(UObject* WorldContextObject, const FGrpcAuthRegisterGameServerRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+	static UCallAuthServiceValidateUserToken* ValidateUserToken(UObject* WorldContextObject, const FGrpcAuthValidateUserTokenRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
 
 	UPROPERTY(BlueprintAssignable)
-	FAuthServiceRegisterGameServerDelegate OnRegisterGameServerResponse;
+	FAuthServiceValidateUserTokenDelegate OnValidateUserTokenResponse;
 
 	UPROPERTY(BlueprintAssignable)
-	FAuthServiceRegisterGameServerDelegate OnFail;
+	FAuthServiceValidateUserTokenDelegate OnFail;
 
 private:
 	virtual void Activate() override;
@@ -88,7 +88,7 @@ private:
 	UAuthServiceClient* AuthServiceClient;
 	
 	FGrpcContextHandle Context;
-	FGrpcAuthRegisterGameServerRequest Request;
+	FGrpcAuthValidateUserTokenRequest Request;
 	EGrpcServiceState ServiceState;
 	FGrpcMetaData MetaData;
 	float DeadLineSeconds;
@@ -100,7 +100,7 @@ private:
 	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
 
 	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthResponse& Response);
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthValidateUserTokenResponse& Response);
 
 	void Shutdown();
 };

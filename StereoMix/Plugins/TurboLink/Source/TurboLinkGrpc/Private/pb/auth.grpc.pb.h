@@ -35,61 +35,61 @@ class AuthService final {
   class StubInterface {
    public:
     virtual ~StubInterface() {}
-    virtual ::grpc::Status GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::auth::Response* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>> AsyncGuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>>(AsyncGuestLoginRaw(context, request, cq));
+    virtual ::grpc::Status GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::auth::LoginResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::LoginResponse>> AsyncGuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::LoginResponse>>(AsyncGuestLoginRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>> PrepareAsyncGuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>>(PrepareAsyncGuestLoginRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::LoginResponse>> PrepareAsyncGuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::LoginResponse>>(PrepareAsyncGuestLoginRaw(context, request, cq));
     }
-    virtual ::grpc::Status RegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::auth::Response* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>> AsyncRegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>>(AsyncRegisterGameServerRaw(context, request, cq));
+    virtual ::grpc::Status ValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::auth::ValidateUserTokenResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::ValidateUserTokenResponse>> AsyncValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::ValidateUserTokenResponse>>(AsyncValidateUserTokenRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>> PrepareAsyncRegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>>(PrepareAsyncRegisterGameServerRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::ValidateUserTokenResponse>> PrepareAsyncValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::auth::ValidateUserTokenResponse>>(PrepareAsyncValidateUserTokenRaw(context, request, cq));
     }
     class async_interface {
      public:
       virtual ~async_interface() {}
-      virtual void GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest* request, ::auth::Response* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest* request, ::auth::Response* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void RegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest* request, ::auth::Response* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void RegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest* request, ::auth::Response* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest* request, ::auth::LoginResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest* request, ::auth::LoginResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void ValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest* request, ::auth::ValidateUserTokenResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void ValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest* request, ::auth::ValidateUserTokenResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
     typedef class async_interface experimental_async_interface;
     virtual class async_interface* async() { return nullptr; }
     class async_interface* experimental_async() { return async(); }
    private:
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>* AsyncGuestLoginRaw(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>* PrepareAsyncGuestLoginRaw(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>* AsyncRegisterGameServerRaw(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::auth::Response>* PrepareAsyncRegisterGameServerRaw(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::auth::LoginResponse>* AsyncGuestLoginRaw(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::auth::LoginResponse>* PrepareAsyncGuestLoginRaw(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::auth::ValidateUserTokenResponse>* AsyncValidateUserTokenRaw(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::auth::ValidateUserTokenResponse>* PrepareAsyncValidateUserTokenRaw(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
   class Stub final : public StubInterface {
    public:
     Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
-    ::grpc::Status GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::auth::Response* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::Response>> AsyncGuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::Response>>(AsyncGuestLoginRaw(context, request, cq));
+    ::grpc::Status GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::auth::LoginResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::LoginResponse>> AsyncGuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::LoginResponse>>(AsyncGuestLoginRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::Response>> PrepareAsyncGuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::Response>>(PrepareAsyncGuestLoginRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::LoginResponse>> PrepareAsyncGuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::LoginResponse>>(PrepareAsyncGuestLoginRaw(context, request, cq));
     }
-    ::grpc::Status RegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::auth::Response* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::Response>> AsyncRegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::Response>>(AsyncRegisterGameServerRaw(context, request, cq));
+    ::grpc::Status ValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::auth::ValidateUserTokenResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::ValidateUserTokenResponse>> AsyncValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::ValidateUserTokenResponse>>(AsyncValidateUserTokenRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::Response>> PrepareAsyncRegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::grpc::CompletionQueue* cq) {
-      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::Response>>(PrepareAsyncRegisterGameServerRaw(context, request, cq));
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::ValidateUserTokenResponse>> PrepareAsyncValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::grpc::CompletionQueue* cq) {
+      return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::auth::ValidateUserTokenResponse>>(PrepareAsyncValidateUserTokenRaw(context, request, cq));
     }
     class async final :
       public StubInterface::async_interface {
      public:
-      void GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest* request, ::auth::Response* response, std::function<void(::grpc::Status)>) override;
-      void GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest* request, ::auth::Response* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void RegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest* request, ::auth::Response* response, std::function<void(::grpc::Status)>) override;
-      void RegisterGameServer(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest* request, ::auth::Response* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest* request, ::auth::LoginResponse* response, std::function<void(::grpc::Status)>) override;
+      void GuestLogin(::grpc::ClientContext* context, const ::auth::GuestLoginRequest* request, ::auth::LoginResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void ValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest* request, ::auth::ValidateUserTokenResponse* response, std::function<void(::grpc::Status)>) override;
+      void ValidateUserToken(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest* request, ::auth::ValidateUserTokenResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
       friend class Stub;
       explicit async(Stub* stub): stub_(stub) { }
@@ -101,12 +101,12 @@ class AuthService final {
    private:
     std::shared_ptr< ::grpc::ChannelInterface> channel_;
     class async async_stub_{this};
-    ::grpc::ClientAsyncResponseReader< ::auth::Response>* AsyncGuestLoginRaw(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::auth::Response>* PrepareAsyncGuestLoginRaw(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::auth::Response>* AsyncRegisterGameServerRaw(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::auth::Response>* PrepareAsyncRegisterGameServerRaw(::grpc::ClientContext* context, const ::auth::RegisterGameServerRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::auth::LoginResponse>* AsyncGuestLoginRaw(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::auth::LoginResponse>* PrepareAsyncGuestLoginRaw(::grpc::ClientContext* context, const ::auth::GuestLoginRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::auth::ValidateUserTokenResponse>* AsyncValidateUserTokenRaw(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::auth::ValidateUserTokenResponse>* PrepareAsyncValidateUserTokenRaw(::grpc::ClientContext* context, const ::auth::ValidateUserTokenRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_GuestLogin_;
-    const ::grpc::internal::RpcMethod rpcmethod_RegisterGameServer_;
+    const ::grpc::internal::RpcMethod rpcmethod_ValidateUserToken_;
   };
   static std::unique_ptr<Stub> NewStub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options = ::grpc::StubOptions());
 
@@ -114,8 +114,8 @@ class AuthService final {
    public:
     Service();
     virtual ~Service();
-    virtual ::grpc::Status GuestLogin(::grpc::ServerContext* context, const ::auth::GuestLoginRequest* request, ::auth::Response* response);
-    virtual ::grpc::Status RegisterGameServer(::grpc::ServerContext* context, const ::auth::RegisterGameServerRequest* request, ::auth::Response* response);
+    virtual ::grpc::Status GuestLogin(::grpc::ServerContext* context, const ::auth::GuestLoginRequest* request, ::auth::LoginResponse* response);
+    virtual ::grpc::Status ValidateUserToken(::grpc::ServerContext* context, const ::auth::ValidateUserTokenRequest* request, ::auth::ValidateUserTokenResponse* response);
   };
   template <class BaseClass>
   class WithAsyncMethod_GuestLogin : public BaseClass {
@@ -129,35 +129,35 @@ class AuthService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::LoginResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestGuestLogin(::grpc::ServerContext* context, ::auth::GuestLoginRequest* request, ::grpc::ServerAsyncResponseWriter< ::auth::Response>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestGuestLogin(::grpc::ServerContext* context, ::auth::GuestLoginRequest* request, ::grpc::ServerAsyncResponseWriter< ::auth::LoginResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(0, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
   template <class BaseClass>
-  class WithAsyncMethod_RegisterGameServer : public BaseClass {
+  class WithAsyncMethod_ValidateUserToken : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithAsyncMethod_RegisterGameServer() {
+    WithAsyncMethod_ValidateUserToken() {
       ::grpc::Service::MarkMethodAsync(1);
     }
-    ~WithAsyncMethod_RegisterGameServer() override {
+    ~WithAsyncMethod_ValidateUserToken() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status RegisterGameServer(::grpc::ServerContext* /*context*/, const ::auth::RegisterGameServerRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status ValidateUserToken(::grpc::ServerContext* /*context*/, const ::auth::ValidateUserTokenRequest* /*request*/, ::auth::ValidateUserTokenResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestRegisterGameServer(::grpc::ServerContext* context, ::auth::RegisterGameServerRequest* request, ::grpc::ServerAsyncResponseWriter< ::auth::Response>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestValidateUserToken(::grpc::ServerContext* context, ::auth::ValidateUserTokenRequest* request, ::grpc::ServerAsyncResponseWriter< ::auth::ValidateUserTokenResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
-  typedef WithAsyncMethod_GuestLogin<WithAsyncMethod_RegisterGameServer<Service > > AsyncService;
+  typedef WithAsyncMethod_GuestLogin<WithAsyncMethod_ValidateUserToken<Service > > AsyncService;
   template <class BaseClass>
   class WithCallbackMethod_GuestLogin : public BaseClass {
    private:
@@ -165,54 +165,54 @@ class AuthService final {
    public:
     WithCallbackMethod_GuestLogin() {
       ::grpc::Service::MarkMethodCallback(0,
-          new ::grpc::internal::CallbackUnaryHandler< ::auth::GuestLoginRequest, ::auth::Response>(
+          new ::grpc::internal::CallbackUnaryHandler< ::auth::GuestLoginRequest, ::auth::LoginResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::auth::GuestLoginRequest* request, ::auth::Response* response) { return this->GuestLogin(context, request, response); }));}
+                   ::grpc::CallbackServerContext* context, const ::auth::GuestLoginRequest* request, ::auth::LoginResponse* response) { return this->GuestLogin(context, request, response); }));}
     void SetMessageAllocatorFor_GuestLogin(
-        ::grpc::MessageAllocator< ::auth::GuestLoginRequest, ::auth::Response>* allocator) {
+        ::grpc::MessageAllocator< ::auth::GuestLoginRequest, ::auth::LoginResponse>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(0);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::auth::GuestLoginRequest, ::auth::Response>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::auth::GuestLoginRequest, ::auth::LoginResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~WithCallbackMethod_GuestLogin() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::LoginResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* GuestLogin(
-      ::grpc::CallbackServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::Response* /*response*/)  { return nullptr; }
+      ::grpc::CallbackServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::LoginResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithCallbackMethod_RegisterGameServer : public BaseClass {
+  class WithCallbackMethod_ValidateUserToken : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithCallbackMethod_RegisterGameServer() {
+    WithCallbackMethod_ValidateUserToken() {
       ::grpc::Service::MarkMethodCallback(1,
-          new ::grpc::internal::CallbackUnaryHandler< ::auth::RegisterGameServerRequest, ::auth::Response>(
+          new ::grpc::internal::CallbackUnaryHandler< ::auth::ValidateUserTokenRequest, ::auth::ValidateUserTokenResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::auth::RegisterGameServerRequest* request, ::auth::Response* response) { return this->RegisterGameServer(context, request, response); }));}
-    void SetMessageAllocatorFor_RegisterGameServer(
-        ::grpc::MessageAllocator< ::auth::RegisterGameServerRequest, ::auth::Response>* allocator) {
+                   ::grpc::CallbackServerContext* context, const ::auth::ValidateUserTokenRequest* request, ::auth::ValidateUserTokenResponse* response) { return this->ValidateUserToken(context, request, response); }));}
+    void SetMessageAllocatorFor_ValidateUserToken(
+        ::grpc::MessageAllocator< ::auth::ValidateUserTokenRequest, ::auth::ValidateUserTokenResponse>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::auth::RegisterGameServerRequest, ::auth::Response>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::auth::ValidateUserTokenRequest, ::auth::ValidateUserTokenResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
-    ~WithCallbackMethod_RegisterGameServer() override {
+    ~WithCallbackMethod_ValidateUserToken() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status RegisterGameServer(::grpc::ServerContext* /*context*/, const ::auth::RegisterGameServerRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status ValidateUserToken(::grpc::ServerContext* /*context*/, const ::auth::ValidateUserTokenRequest* /*request*/, ::auth::ValidateUserTokenResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* RegisterGameServer(
-      ::grpc::CallbackServerContext* /*context*/, const ::auth::RegisterGameServerRequest* /*request*/, ::auth::Response* /*response*/)  { return nullptr; }
+    virtual ::grpc::ServerUnaryReactor* ValidateUserToken(
+      ::grpc::CallbackServerContext* /*context*/, const ::auth::ValidateUserTokenRequest* /*request*/, ::auth::ValidateUserTokenResponse* /*response*/)  { return nullptr; }
   };
-  typedef WithCallbackMethod_GuestLogin<WithCallbackMethod_RegisterGameServer<Service > > CallbackService;
+  typedef WithCallbackMethod_GuestLogin<WithCallbackMethod_ValidateUserToken<Service > > CallbackService;
   typedef CallbackService ExperimentalCallbackService;
   template <class BaseClass>
   class WithGenericMethod_GuestLogin : public BaseClass {
@@ -226,24 +226,24 @@ class AuthService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::LoginResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
   };
   template <class BaseClass>
-  class WithGenericMethod_RegisterGameServer : public BaseClass {
+  class WithGenericMethod_ValidateUserToken : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithGenericMethod_RegisterGameServer() {
+    WithGenericMethod_ValidateUserToken() {
       ::grpc::Service::MarkMethodGeneric(1);
     }
-    ~WithGenericMethod_RegisterGameServer() override {
+    ~WithGenericMethod_ValidateUserToken() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status RegisterGameServer(::grpc::ServerContext* /*context*/, const ::auth::RegisterGameServerRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status ValidateUserToken(::grpc::ServerContext* /*context*/, const ::auth::ValidateUserTokenRequest* /*request*/, ::auth::ValidateUserTokenResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -260,7 +260,7 @@ class AuthService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::LoginResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -269,22 +269,22 @@ class AuthService final {
     }
   };
   template <class BaseClass>
-  class WithRawMethod_RegisterGameServer : public BaseClass {
+  class WithRawMethod_ValidateUserToken : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawMethod_RegisterGameServer() {
+    WithRawMethod_ValidateUserToken() {
       ::grpc::Service::MarkMethodRaw(1);
     }
-    ~WithRawMethod_RegisterGameServer() override {
+    ~WithRawMethod_ValidateUserToken() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status RegisterGameServer(::grpc::ServerContext* /*context*/, const ::auth::RegisterGameServerRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status ValidateUserToken(::grpc::ServerContext* /*context*/, const ::auth::ValidateUserTokenRequest* /*request*/, ::auth::ValidateUserTokenResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestRegisterGameServer(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestValidateUserToken(::grpc::ServerContext* context, ::grpc::ByteBuffer* request, ::grpc::ServerAsyncResponseWriter< ::grpc::ByteBuffer>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -303,7 +303,7 @@ class AuthService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::LoginResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -311,25 +311,25 @@ class AuthService final {
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
-  class WithRawCallbackMethod_RegisterGameServer : public BaseClass {
+  class WithRawCallbackMethod_ValidateUserToken : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithRawCallbackMethod_RegisterGameServer() {
+    WithRawCallbackMethod_ValidateUserToken() {
       ::grpc::Service::MarkMethodRawCallback(1,
           new ::grpc::internal::CallbackUnaryHandler< ::grpc::ByteBuffer, ::grpc::ByteBuffer>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->RegisterGameServer(context, request, response); }));
+                   ::grpc::CallbackServerContext* context, const ::grpc::ByteBuffer* request, ::grpc::ByteBuffer* response) { return this->ValidateUserToken(context, request, response); }));
     }
-    ~WithRawCallbackMethod_RegisterGameServer() override {
+    ~WithRawCallbackMethod_ValidateUserToken() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status RegisterGameServer(::grpc::ServerContext* /*context*/, const ::auth::RegisterGameServerRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status ValidateUserToken(::grpc::ServerContext* /*context*/, const ::auth::ValidateUserTokenRequest* /*request*/, ::auth::ValidateUserTokenResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    virtual ::grpc::ServerUnaryReactor* RegisterGameServer(
+    virtual ::grpc::ServerUnaryReactor* ValidateUserToken(
       ::grpc::CallbackServerContext* /*context*/, const ::grpc::ByteBuffer* /*request*/, ::grpc::ByteBuffer* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
@@ -340,10 +340,10 @@ class AuthService final {
     WithStreamedUnaryMethod_GuestLogin() {
       ::grpc::Service::MarkMethodStreamed(0,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::auth::GuestLoginRequest, ::auth::Response>(
+          ::auth::GuestLoginRequest, ::auth::LoginResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::auth::GuestLoginRequest, ::auth::Response>* streamer) {
+                     ::auth::GuestLoginRequest, ::auth::LoginResponse>* streamer) {
                        return this->StreamedGuestLogin(context,
                          streamer);
                   }));
@@ -352,43 +352,43 @@ class AuthService final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status GuestLogin(::grpc::ServerContext* /*context*/, const ::auth::GuestLoginRequest* /*request*/, ::auth::LoginResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedGuestLogin(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::auth::GuestLoginRequest,::auth::Response>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedGuestLogin(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::auth::GuestLoginRequest,::auth::LoginResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
-  class WithStreamedUnaryMethod_RegisterGameServer : public BaseClass {
+  class WithStreamedUnaryMethod_ValidateUserToken : public BaseClass {
    private:
     void BaseClassMustBeDerivedFromService(const Service* /*service*/) {}
    public:
-    WithStreamedUnaryMethod_RegisterGameServer() {
+    WithStreamedUnaryMethod_ValidateUserToken() {
       ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::auth::RegisterGameServerRequest, ::auth::Response>(
+          ::auth::ValidateUserTokenRequest, ::auth::ValidateUserTokenResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::auth::RegisterGameServerRequest, ::auth::Response>* streamer) {
-                       return this->StreamedRegisterGameServer(context,
+                     ::auth::ValidateUserTokenRequest, ::auth::ValidateUserTokenResponse>* streamer) {
+                       return this->StreamedValidateUserToken(context,
                          streamer);
                   }));
     }
-    ~WithStreamedUnaryMethod_RegisterGameServer() override {
+    ~WithStreamedUnaryMethod_ValidateUserToken() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status RegisterGameServer(::grpc::ServerContext* /*context*/, const ::auth::RegisterGameServerRequest* /*request*/, ::auth::Response* /*response*/) override {
+    ::grpc::Status ValidateUserToken(::grpc::ServerContext* /*context*/, const ::auth::ValidateUserTokenRequest* /*request*/, ::auth::ValidateUserTokenResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedRegisterGameServer(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::auth::RegisterGameServerRequest,::auth::Response>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedValidateUserToken(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::auth::ValidateUserTokenRequest,::auth::ValidateUserTokenResponse>* server_unary_streamer) = 0;
   };
-  typedef WithStreamedUnaryMethod_GuestLogin<WithStreamedUnaryMethod_RegisterGameServer<Service > > StreamedUnaryService;
+  typedef WithStreamedUnaryMethod_GuestLogin<WithStreamedUnaryMethod_ValidateUserToken<Service > > StreamedUnaryService;
   typedef Service SplitStreamedService;
-  typedef WithStreamedUnaryMethod_GuestLogin<WithStreamedUnaryMethod_RegisterGameServer<Service > > StreamedService;
+  typedef WithStreamedUnaryMethod_GuestLogin<WithStreamedUnaryMethod_ValidateUserToken<Service > > StreamedService;
 };
 
 }  // namespace auth

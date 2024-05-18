@@ -38,7 +38,6 @@
 #include "google/protobuf/extension_set.h"  // IWYU pragma: export
 #include "google/protobuf/generated_enum_reflection.h"
 #include "google/protobuf/unknown_field_set.h"
-#include "google/protobuf/timestamp.pb.h"
 // @@protoc_insertion_point(includes)
 
 // Must be included last.
@@ -95,18 +94,9 @@ extern JoinRoomRequestDefaultTypeInternal _JoinRoomRequest_default_instance_;
 class JoinRoomResponse;
 struct JoinRoomResponseDefaultTypeInternal;
 extern JoinRoomResponseDefaultTypeInternal _JoinRoomResponse_default_instance_;
-class ListenPlayerListUpdatesRequest;
-struct ListenPlayerListUpdatesRequestDefaultTypeInternal;
-extern ListenPlayerListUpdatesRequestDefaultTypeInternal _ListenPlayerListUpdatesRequest_default_instance_;
-class ListenPlayerListUpdatesResponse;
-struct ListenPlayerListUpdatesResponseDefaultTypeInternal;
-extern ListenPlayerListUpdatesResponseDefaultTypeInternal _ListenPlayerListUpdatesResponse_default_instance_;
-class ListenRoomConfigUpdatesRequest;
-struct ListenRoomConfigUpdatesRequestDefaultTypeInternal;
-extern ListenRoomConfigUpdatesRequestDefaultTypeInternal _ListenRoomConfigUpdatesRequest_default_instance_;
-class ListenRoomConfigUpdatesResponse;
-struct ListenRoomConfigUpdatesResponseDefaultTypeInternal;
-extern ListenRoomConfigUpdatesResponseDefaultTypeInternal _ListenRoomConfigUpdatesResponse_default_instance_;
+class ListenRoomUpdatesRequest;
+struct ListenRoomUpdatesRequestDefaultTypeInternal;
+extern ListenRoomUpdatesRequestDefaultTypeInternal _ListenRoomUpdatesRequest_default_instance_;
 class Room;
 struct RoomDefaultTypeInternal;
 extern RoomDefaultTypeInternal _Room_default_instance_;
@@ -116,18 +106,6 @@ extern RoomConfigDefaultTypeInternal _RoomConfig_default_instance_;
 class RoomConnectionInfo;
 struct RoomConnectionInfoDefaultTypeInternal;
 extern RoomConnectionInfoDefaultTypeInternal _RoomConnectionInfo_default_instance_;
-class RoomPlayer;
-struct RoomPlayerDefaultTypeInternal;
-extern RoomPlayerDefaultTypeInternal _RoomPlayer_default_instance_;
-class RoomPreview;
-struct RoomPreviewDefaultTypeInternal;
-extern RoomPreviewDefaultTypeInternal _RoomPreview_default_instance_;
-class UpdatePlayerStateRequest;
-struct UpdatePlayerStateRequestDefaultTypeInternal;
-extern UpdatePlayerStateRequestDefaultTypeInternal _UpdatePlayerStateRequest_default_instance_;
-class UpdatePlayerStateResponse;
-struct UpdatePlayerStateResponseDefaultTypeInternal;
-extern UpdatePlayerStateResponseDefaultTypeInternal _UpdatePlayerStateResponse_default_instance_;
 class UpdateRoomConfigRequest;
 struct UpdateRoomConfigRequestDefaultTypeInternal;
 extern UpdateRoomConfigRequestDefaultTypeInternal _UpdateRoomConfigRequest_default_instance_;
@@ -167,27 +145,13 @@ template <>
 template <>
 ::lobby::JoinRoomResponse* Arena::CreateMaybeMessage<::lobby::JoinRoomResponse>(Arena*);
 template <>
-::lobby::ListenPlayerListUpdatesRequest* Arena::CreateMaybeMessage<::lobby::ListenPlayerListUpdatesRequest>(Arena*);
-template <>
-::lobby::ListenPlayerListUpdatesResponse* Arena::CreateMaybeMessage<::lobby::ListenPlayerListUpdatesResponse>(Arena*);
-template <>
-::lobby::ListenRoomConfigUpdatesRequest* Arena::CreateMaybeMessage<::lobby::ListenRoomConfigUpdatesRequest>(Arena*);
-template <>
-::lobby::ListenRoomConfigUpdatesResponse* Arena::CreateMaybeMessage<::lobby::ListenRoomConfigUpdatesResponse>(Arena*);
+::lobby::ListenRoomUpdatesRequest* Arena::CreateMaybeMessage<::lobby::ListenRoomUpdatesRequest>(Arena*);
 template <>
 ::lobby::Room* Arena::CreateMaybeMessage<::lobby::Room>(Arena*);
 template <>
 ::lobby::RoomConfig* Arena::CreateMaybeMessage<::lobby::RoomConfig>(Arena*);
 template <>
 ::lobby::RoomConnectionInfo* Arena::CreateMaybeMessage<::lobby::RoomConnectionInfo>(Arena*);
-template <>
-::lobby::RoomPlayer* Arena::CreateMaybeMessage<::lobby::RoomPlayer>(Arena*);
-template <>
-::lobby::RoomPreview* Arena::CreateMaybeMessage<::lobby::RoomPreview>(Arena*);
-template <>
-::lobby::UpdatePlayerStateRequest* Arena::CreateMaybeMessage<::lobby::UpdatePlayerStateRequest>(Arena*);
-template <>
-::lobby::UpdatePlayerStateResponse* Arena::CreateMaybeMessage<::lobby::UpdatePlayerStateResponse>(Arena*);
 template <>
 ::lobby::UpdateRoomConfigRequest* Arena::CreateMaybeMessage<::lobby::UpdateRoomConfigRequest>(Arena*);
 template <>
@@ -199,12 +163,50 @@ template <>
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace lobby {
+enum RoomDeploymentStatus : int {
+  ROOM_DEPLOYMENT_STATUS_UNSPECIFIED = 0,
+  ROOM_DEPLOYMENT_STATUS_INITIALIZING = 1,
+  ROOM_DEPLOYMENT_STATUS_SEEKING = 2,
+  ROOM_DEPLOYMENT_STATUS_SEEKED = 3,
+  ROOM_DEPLOYMENT_STATUS_SCANNING = 4,
+  ROOM_DEPLOYMENT_STATUS_DEPLOYING = 5,
+  ROOM_DEPLOYMENT_STATUS_READY = 6,
+  ROOM_DEPLOYMENT_STATUS_TERMINATED = 7,
+  ROOM_DEPLOYMENT_STATUS_ERROR = 8,
+  RoomDeploymentStatus_INT_MIN_SENTINEL_DO_NOT_USE_ =
+      std::numeric_limits<::int32_t>::min(),
+  RoomDeploymentStatus_INT_MAX_SENTINEL_DO_NOT_USE_ =
+      std::numeric_limits<::int32_t>::max(),
+};
+
+bool RoomDeploymentStatus_IsValid(int value);
+constexpr RoomDeploymentStatus RoomDeploymentStatus_MIN = static_cast<RoomDeploymentStatus>(0);
+constexpr RoomDeploymentStatus RoomDeploymentStatus_MAX = static_cast<RoomDeploymentStatus>(8);
+constexpr int RoomDeploymentStatus_ARRAYSIZE = 8 + 1;
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+RoomDeploymentStatus_descriptor();
+template <typename T>
+const std::string& RoomDeploymentStatus_Name(T value) {
+  static_assert(std::is_same<T, RoomDeploymentStatus>::value ||
+                    std::is_integral<T>::value,
+                "Incorrect type passed to RoomDeploymentStatus_Name().");
+  return RoomDeploymentStatus_Name(static_cast<RoomDeploymentStatus>(value));
+}
+template <>
+inline const std::string& RoomDeploymentStatus_Name(RoomDeploymentStatus value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<RoomDeploymentStatus_descriptor,
+                                                 0, 8>(
+      static_cast<int>(value));
+}
+inline bool RoomDeploymentStatus_Parse(absl::string_view name, RoomDeploymentStatus* value) {
+  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<RoomDeploymentStatus>(
+      RoomDeploymentStatus_descriptor(), name, value);
+}
 enum RoomState : int {
   ROOM_STATE_UNSPECIFIED = 0,
-  ROOM_STATE_CREATING = 1,
-  ROOM_STATE_WAITING = 2,
-  ROOM_STATE_PLAYING = 3,
-  ROOM_STATE_CLOSED = 4,
+  ROOM_STATE_OPEN = 1,
+  ROOM_STATE_PLAYING = 2,
+  ROOM_STATE_CLOSED = 3,
   RoomState_INT_MIN_SENTINEL_DO_NOT_USE_ =
       std::numeric_limits<::int32_t>::min(),
   RoomState_INT_MAX_SENTINEL_DO_NOT_USE_ =
@@ -213,8 +215,8 @@ enum RoomState : int {
 
 bool RoomState_IsValid(int value);
 constexpr RoomState RoomState_MIN = static_cast<RoomState>(0);
-constexpr RoomState RoomState_MAX = static_cast<RoomState>(4);
-constexpr int RoomState_ARRAYSIZE = 4 + 1;
+constexpr RoomState RoomState_MAX = static_cast<RoomState>(3);
+constexpr int RoomState_ARRAYSIZE = 3 + 1;
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
 RoomState_descriptor();
 template <typename T>
@@ -227,7 +229,7 @@ const std::string& RoomState_Name(T value) {
 template <>
 inline const std::string& RoomState_Name(RoomState value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<RoomState_descriptor,
-                                                 0, 4>(
+                                                 0, 3>(
       static_cast<int>(value));
 }
 inline bool RoomState_Parse(absl::string_view name, RoomState* value) {
@@ -331,65 +333,31 @@ inline bool GameMap_Parse(absl::string_view name, GameMap* value) {
   return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<GameMap>(
       GameMap_descriptor(), name, value);
 }
-enum PlayerState : int {
-  PLAYER_STATE_UNSPECIFIED = 0,
-  PLAYER_STATE_JOINING = 1,
-  PLAYER_STATE_JOINED = 2,
-  PLAYER_STATE_LEAVE = 3,
-  PlayerState_INT_MIN_SENTINEL_DO_NOT_USE_ =
-      std::numeric_limits<::int32_t>::min(),
-  PlayerState_INT_MAX_SENTINEL_DO_NOT_USE_ =
-      std::numeric_limits<::int32_t>::max(),
-};
-
-bool PlayerState_IsValid(int value);
-constexpr PlayerState PlayerState_MIN = static_cast<PlayerState>(0);
-constexpr PlayerState PlayerState_MAX = static_cast<PlayerState>(3);
-constexpr int PlayerState_ARRAYSIZE = 3 + 1;
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
-PlayerState_descriptor();
-template <typename T>
-const std::string& PlayerState_Name(T value) {
-  static_assert(std::is_same<T, PlayerState>::value ||
-                    std::is_integral<T>::value,
-                "Incorrect type passed to PlayerState_Name().");
-  return PlayerState_Name(static_cast<PlayerState>(value));
-}
-template <>
-inline const std::string& PlayerState_Name(PlayerState value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<PlayerState_descriptor,
-                                                 0, 3>(
-      static_cast<int>(value));
-}
-inline bool PlayerState_Parse(absl::string_view name, PlayerState* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<PlayerState>(
-      PlayerState_descriptor(), name, value);
-}
 
 // ===================================================================
 
 
 // -------------------------------------------------------------------
 
-class RoomPreview final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.RoomPreview) */ {
+class RoomConnectionInfo final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.RoomConnectionInfo) */ {
  public:
-  inline RoomPreview() : RoomPreview(nullptr) {}
-  ~RoomPreview() override;
+  inline RoomConnectionInfo() : RoomConnectionInfo(nullptr) {}
+  ~RoomConnectionInfo() override;
   template<typename = void>
-  explicit PROTOBUF_CONSTEXPR RoomPreview(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  explicit PROTOBUF_CONSTEXPR RoomConnectionInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  RoomPreview(const RoomPreview& from);
-  RoomPreview(RoomPreview&& from) noexcept
-    : RoomPreview() {
+  RoomConnectionInfo(const RoomConnectionInfo& from);
+  RoomConnectionInfo(RoomConnectionInfo&& from) noexcept
+    : RoomConnectionInfo() {
     *this = ::std::move(from);
   }
 
-  inline RoomPreview& operator=(const RoomPreview& from) {
+  inline RoomConnectionInfo& operator=(const RoomConnectionInfo& from) {
     CopyFrom(from);
     return *this;
   }
-  inline RoomPreview& operator=(RoomPreview&& from) noexcept {
+  inline RoomConnectionInfo& operator=(RoomConnectionInfo&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -419,20 +387,20 @@ class RoomPreview final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const RoomPreview& default_instance() {
+  static const RoomConnectionInfo& default_instance() {
     return *internal_default_instance();
   }
-  static inline const RoomPreview* internal_default_instance() {
-    return reinterpret_cast<const RoomPreview*>(
-               &_RoomPreview_default_instance_);
+  static inline const RoomConnectionInfo* internal_default_instance() {
+    return reinterpret_cast<const RoomConnectionInfo*>(
+               &_RoomConnectionInfo_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     0;
 
-  friend void swap(RoomPreview& a, RoomPreview& b) {
+  friend void swap(RoomConnectionInfo& a, RoomConnectionInfo& b) {
     a.Swap(&b);
   }
-  inline void Swap(RoomPreview* other) {
+  inline void Swap(RoomConnectionInfo* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -445,7 +413,7 @@ class RoomPreview final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(RoomPreview* other) {
+  void UnsafeArenaSwap(RoomConnectionInfo* other) {
     if (other == this) return;
     ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -453,14 +421,14 @@ class RoomPreview final :
 
   // implements Message ----------------------------------------------
 
-  RoomPreview* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<RoomPreview>(arena);
+  RoomConnectionInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RoomConnectionInfo>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const RoomPreview& from);
+  void CopyFrom(const RoomConnectionInfo& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const RoomPreview& from) {
-    RoomPreview::MergeImpl(*this, from);
+  void MergeFrom( const RoomConnectionInfo& from) {
+    RoomConnectionInfo::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -478,15 +446,393 @@ class RoomPreview final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(RoomPreview* other);
+  void InternalSwap(RoomConnectionInfo* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::absl::string_view FullMessageName() {
-    return "lobby.RoomPreview";
+    return "lobby.RoomConnectionInfo";
   }
   protected:
-  explicit RoomPreview(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  explicit RoomConnectionInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kHostFieldNumber = 1,
+    kPortFieldNumber = 2,
+  };
+  // string host = 1;
+  void clear_host() ;
+  const std::string& host() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_host(Arg_&& arg, Args_... args);
+  std::string* mutable_host();
+  PROTOBUF_NODISCARD std::string* release_host();
+  void set_allocated_host(std::string* ptr);
+
+  private:
+  const std::string& _internal_host() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_host(
+      const std::string& value);
+  std::string* _internal_mutable_host();
+
+  public:
+  // int32 port = 2;
+  void clear_port() ;
+  ::int32_t port() const;
+  void set_port(::int32_t value);
+
+  private:
+  ::int32_t _internal_port() const;
+  void _internal_set_port(::int32_t value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:lobby.RoomConnectionInfo)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr host_;
+    ::int32_t port_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_lobby_2eproto;
+};// -------------------------------------------------------------------
+
+class RoomConfig final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.RoomConfig) */ {
+ public:
+  inline RoomConfig() : RoomConfig(nullptr) {}
+  ~RoomConfig() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR RoomConfig(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  RoomConfig(const RoomConfig& from);
+  RoomConfig(RoomConfig&& from) noexcept
+    : RoomConfig() {
+    *this = ::std::move(from);
+  }
+
+  inline RoomConfig& operator=(const RoomConfig& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline RoomConfig& operator=(RoomConfig&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const RoomConfig& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const RoomConfig* internal_default_instance() {
+    return reinterpret_cast<const RoomConfig*>(
+               &_RoomConfig_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    1;
+
+  friend void swap(RoomConfig& a, RoomConfig& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(RoomConfig* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(RoomConfig* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  RoomConfig* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<RoomConfig>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const RoomConfig& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const RoomConfig& from) {
+    RoomConfig::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(RoomConfig* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "lobby.RoomConfig";
+  }
+  protected:
+  explicit RoomConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRoomNameFieldNumber = 1,
+    kVisibilityFieldNumber = 3,
+    kModeFieldNumber = 4,
+    kMapFieldNumber = 5,
+  };
+  // string room_name = 1;
+  void clear_room_name() ;
+  const std::string& room_name() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_room_name(Arg_&& arg, Args_... args);
+  std::string* mutable_room_name();
+  PROTOBUF_NODISCARD std::string* release_room_name();
+  void set_allocated_room_name(std::string* ptr);
+
+  private:
+  const std::string& _internal_room_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_name(
+      const std::string& value);
+  std::string* _internal_mutable_room_name();
+
+  public:
+  // .lobby.RoomVisibility visibility = 3;
+  void clear_visibility() ;
+  ::lobby::RoomVisibility visibility() const;
+  void set_visibility(::lobby::RoomVisibility value);
+
+  private:
+  ::lobby::RoomVisibility _internal_visibility() const;
+  void _internal_set_visibility(::lobby::RoomVisibility value);
+
+  public:
+  // .lobby.GameMode mode = 4;
+  void clear_mode() ;
+  ::lobby::GameMode mode() const;
+  void set_mode(::lobby::GameMode value);
+
+  private:
+  ::lobby::GameMode _internal_mode() const;
+  void _internal_set_mode(::lobby::GameMode value);
+
+  public:
+  // .lobby.GameMap map = 5;
+  void clear_map() ;
+  ::lobby::GameMap map() const;
+  void set_map(::lobby::GameMap value);
+
+  private:
+  ::lobby::GameMap _internal_map() const;
+  void _internal_set_map(::lobby::GameMap value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:lobby.RoomConfig)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_name_;
+    int visibility_;
+    int mode_;
+    int map_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_lobby_2eproto;
+};// -------------------------------------------------------------------
+
+class Room final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.Room) */ {
+ public:
+  inline Room() : Room(nullptr) {}
+  ~Room() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR Room(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  Room(const Room& from);
+  Room(Room&& from) noexcept
+    : Room() {
+    *this = ::std::move(from);
+  }
+
+  inline Room& operator=(const Room& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline Room& operator=(Room&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const Room& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const Room* internal_default_instance() {
+    return reinterpret_cast<const Room*>(
+               &_Room_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(Room& a, Room& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(Room* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(Room* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  Room* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<Room>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const Room& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const Room& from) {
+    Room::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(Room* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "lobby.Room";
+  }
+  protected:
+  explicit Room(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
   static const ClassData _class_data_;
@@ -500,8 +846,13 @@ class RoomPreview final :
 
   enum : int {
     kRoomIdFieldNumber = 1,
-    kConfigFieldNumber = 2,
-    kCurrentPlayersFieldNumber = 3,
+    kShortRoomIdFieldNumber = 2,
+    kOwnerIdFieldNumber = 3,
+    kConfigFieldNumber = 4,
+    kConnectionFieldNumber = 8,
+    kStateFieldNumber = 5,
+    kMaxPlayersFieldNumber = 6,
+    kCurrentPlayersFieldNumber = 7,
   };
   // string room_id = 1;
   void clear_room_id() ;
@@ -523,7 +874,47 @@ class RoomPreview final :
   std::string* _internal_mutable_room_id();
 
   public:
-  // .lobby.RoomConfig config = 2;
+  // string short_room_id = 2;
+  void clear_short_room_id() ;
+  const std::string& short_room_id() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_short_room_id(Arg_&& arg, Args_... args);
+  std::string* mutable_short_room_id();
+  PROTOBUF_NODISCARD std::string* release_short_room_id();
+  void set_allocated_short_room_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_short_room_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_short_room_id(
+      const std::string& value);
+  std::string* _internal_mutable_short_room_id();
+
+  public:
+  // string owner_id = 3;
+  void clear_owner_id() ;
+  const std::string& owner_id() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_owner_id(Arg_&& arg, Args_... args);
+  std::string* mutable_owner_id();
+  PROTOBUF_NODISCARD std::string* release_owner_id();
+  void set_allocated_owner_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_owner_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_owner_id(
+      const std::string& value);
+  std::string* _internal_mutable_owner_id();
+
+  public:
+  // .lobby.RoomConfig config = 4;
   bool has_config() const;
   void clear_config() ;
   const ::lobby::RoomConfig& config() const;
@@ -537,7 +928,41 @@ class RoomPreview final :
   void unsafe_arena_set_allocated_config(
       ::lobby::RoomConfig* config);
   ::lobby::RoomConfig* unsafe_arena_release_config();
-  // int32 current_players = 3;
+  // .lobby.RoomConnectionInfo connection = 8;
+  bool has_connection() const;
+  void clear_connection() ;
+  const ::lobby::RoomConnectionInfo& connection() const;
+  PROTOBUF_NODISCARD ::lobby::RoomConnectionInfo* release_connection();
+  ::lobby::RoomConnectionInfo* mutable_connection();
+  void set_allocated_connection(::lobby::RoomConnectionInfo* connection);
+  private:
+  const ::lobby::RoomConnectionInfo& _internal_connection() const;
+  ::lobby::RoomConnectionInfo* _internal_mutable_connection();
+  public:
+  void unsafe_arena_set_allocated_connection(
+      ::lobby::RoomConnectionInfo* connection);
+  ::lobby::RoomConnectionInfo* unsafe_arena_release_connection();
+  // .lobby.RoomState state = 5;
+  void clear_state() ;
+  ::lobby::RoomState state() const;
+  void set_state(::lobby::RoomState value);
+
+  private:
+  ::lobby::RoomState _internal_state() const;
+  void _internal_set_state(::lobby::RoomState value);
+
+  public:
+  // int32 max_players = 6;
+  void clear_max_players() ;
+  ::int32_t max_players() const;
+  void set_max_players(::int32_t value);
+
+  private:
+  ::int32_t _internal_max_players() const;
+  void _internal_set_max_players(::int32_t value);
+
+  public:
+  // int32 current_players = 7;
   void clear_current_players() ;
   ::int32_t current_players() const;
   void set_current_players(::int32_t value);
@@ -547,7 +972,7 @@ class RoomPreview final :
   void _internal_set_current_players(::int32_t value);
 
   public:
-  // @@protoc_insertion_point(class_scope:lobby.RoomPreview)
+  // @@protoc_insertion_point(class_scope:lobby.Room)
  private:
   class _Internal;
 
@@ -558,7 +983,12 @@ class RoomPreview final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr short_room_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr owner_id_;
     ::lobby::RoomConfig* config_;
+    ::lobby::RoomConnectionInfo* connection_;
+    int state_;
+    ::int32_t max_players_;
     ::int32_t current_players_;
   };
   union { Impl_ _impl_; };
@@ -621,7 +1051,7 @@ class CreateRoomRequest final :
                &_CreateRoomRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    1;
+    3;
 
   friend void swap(CreateRoomRequest& a, CreateRoomRequest& b) {
     a.Swap(&b);
@@ -693,9 +1123,30 @@ class CreateRoomRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kRoomNameFieldNumber = 1,
     kPasswordFieldNumber = 2,
-    kConfigFieldNumber = 1,
+    kConfigFieldNumber = 3,
   };
+  // string room_name = 1;
+  void clear_room_name() ;
+  const std::string& room_name() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_room_name(Arg_&& arg, Args_... args);
+  std::string* mutable_room_name();
+  PROTOBUF_NODISCARD std::string* release_room_name();
+  void set_allocated_room_name(std::string* ptr);
+
+  private:
+  const std::string& _internal_room_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_name(
+      const std::string& value);
+  std::string* _internal_mutable_room_name();
+
+  public:
   // string password = 2;
   void clear_password() ;
   const std::string& password() const;
@@ -716,7 +1167,7 @@ class CreateRoomRequest final :
   std::string* _internal_mutable_password();
 
   public:
-  // .lobby.RoomConfig config = 1;
+  // .lobby.RoomConfig config = 3;
   bool has_config() const;
   void clear_config() ;
   const ::lobby::RoomConfig& config() const;
@@ -740,6 +1191,7 @@ class CreateRoomRequest final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
     ::lobby::RoomConfig* config_;
   };
@@ -803,7 +1255,7 @@ class CreateRoomResponse final :
                &_CreateRoomResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    2;
+    4;
 
   friend void swap(CreateRoomResponse& a, CreateRoomResponse& b) {
     a.Swap(&b);
@@ -875,9 +1327,10 @@ class CreateRoomResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kConnectionFieldNumber = 1,
+    kConnectionFieldNumber = 2,
+    kDeployStatusFieldNumber = 1,
   };
-  // .lobby.RoomConnectionInfo connection = 1;
+  // .lobby.RoomConnectionInfo connection = 2;
   bool has_connection() const;
   void clear_connection() ;
   const ::lobby::RoomConnectionInfo& connection() const;
@@ -891,6 +1344,16 @@ class CreateRoomResponse final :
   void unsafe_arena_set_allocated_connection(
       ::lobby::RoomConnectionInfo* connection);
   ::lobby::RoomConnectionInfo* unsafe_arena_release_connection();
+  // .lobby.RoomDeploymentStatus deploy_status = 1;
+  void clear_deploy_status() ;
+  ::lobby::RoomDeploymentStatus deploy_status() const;
+  void set_deploy_status(::lobby::RoomDeploymentStatus value);
+
+  private:
+  ::lobby::RoomDeploymentStatus _internal_deploy_status() const;
+  void _internal_set_deploy_status(::lobby::RoomDeploymentStatus value);
+
+  public:
   // @@protoc_insertion_point(class_scope:lobby.CreateRoomResponse)
  private:
   class _Internal;
@@ -902,6 +1365,7 @@ class CreateRoomResponse final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::lobby::RoomConnectionInfo* connection_;
+    int deploy_status_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_lobby_2eproto;
@@ -958,12 +1422,18 @@ class JoinRoomRequest final :
   static const JoinRoomRequest& default_instance() {
     return *internal_default_instance();
   }
+  enum IdCase {
+    kRoomId = 1,
+    kShortRoomId = 2,
+    ID_NOT_SET = 0,
+  };
+
   static inline const JoinRoomRequest* internal_default_instance() {
     return reinterpret_cast<const JoinRoomRequest*>(
                &_JoinRoomRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    3;
+    5;
 
   friend void swap(JoinRoomRequest& a, JoinRoomRequest& b) {
     a.Swap(&b);
@@ -1035,30 +1505,11 @@ class JoinRoomRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
+    kPasswordFieldNumber = 3,
     kRoomIdFieldNumber = 1,
-    kPasswordFieldNumber = 2,
+    kShortRoomIdFieldNumber = 2,
   };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // string password = 2;
+  // string password = 3;
   void clear_password() ;
   const std::string& password() const;
 
@@ -1078,17 +1529,73 @@ class JoinRoomRequest final :
   std::string* _internal_mutable_password();
 
   public:
+  // string room_id = 1;
+  bool has_room_id() const;
+  void clear_room_id() ;
+  const std::string& room_id() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_room_id(Arg_&& arg, Args_... args);
+  std::string* mutable_room_id();
+  PROTOBUF_NODISCARD std::string* release_room_id();
+  void set_allocated_room_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_room_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
+      const std::string& value);
+  std::string* _internal_mutable_room_id();
+
+  public:
+  // string short_room_id = 2;
+  bool has_short_room_id() const;
+  void clear_short_room_id() ;
+  const std::string& short_room_id() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_short_room_id(Arg_&& arg, Args_... args);
+  std::string* mutable_short_room_id();
+  PROTOBUF_NODISCARD std::string* release_short_room_id();
+  void set_allocated_short_room_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_short_room_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_short_room_id(
+      const std::string& value);
+  std::string* _internal_mutable_short_room_id();
+
+  public:
+  void clear_id();
+  IdCase id_case() const;
   // @@protoc_insertion_point(class_scope:lobby.JoinRoomRequest)
  private:
   class _Internal;
+  void set_has_room_id();
+  void set_has_short_room_id();
+
+  inline bool has_id() const;
+  inline void clear_has_id();
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
+    union IdUnion {
+      constexpr IdUnion() : _constinit_{} {}
+        ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
+      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr short_room_id_;
+    } id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::uint32_t _oneof_case_[1];
+
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_lobby_2eproto;
@@ -1150,7 +1657,7 @@ class JoinRoomResponse final :
                &_JoinRoomResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    4;
+    6;
 
   friend void swap(JoinRoomResponse& a, JoinRoomResponse& b) {
     a.Swap(&b);
@@ -1310,7 +1817,7 @@ class GetRoomListRequest final :
                &_GetRoomListRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    7;
 
   friend void swap(GetRoomListRequest& a, GetRoomListRequest& b) {
     a.Swap(&b);
@@ -1489,7 +1996,7 @@ class GetRoomListResponse final :
                &_GetRoomListResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
   friend void swap(GetRoomListResponse& a, GetRoomListResponse& b) {
     a.Swap(&b);
@@ -1563,25 +2070,25 @@ class GetRoomListResponse final :
   enum : int {
     kRoomsFieldNumber = 1,
   };
-  // repeated .lobby.RoomPreview rooms = 1;
+  // repeated .lobby.Room rooms = 1;
   int rooms_size() const;
   private:
   int _internal_rooms_size() const;
 
   public:
   void clear_rooms() ;
-  ::lobby::RoomPreview* mutable_rooms(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPreview >*
+  ::lobby::Room* mutable_rooms(int index);
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::Room >*
       mutable_rooms();
   private:
-  const ::lobby::RoomPreview& _internal_rooms(int index) const;
-  ::lobby::RoomPreview* _internal_add_rooms();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPreview>& _internal_rooms() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPreview>* _internal_mutable_rooms();
+  const ::lobby::Room& _internal_rooms(int index) const;
+  ::lobby::Room* _internal_add_rooms();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::Room>& _internal_rooms() const;
+  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::Room>* _internal_mutable_rooms();
   public:
-  const ::lobby::RoomPreview& rooms(int index) const;
-  ::lobby::RoomPreview* add_rooms();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPreview >&
+  const ::lobby::Room& rooms(int index) const;
+  ::lobby::Room* add_rooms();
+  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::Room >&
       rooms() const;
   // @@protoc_insertion_point(class_scope:lobby.GetRoomListResponse)
  private:
@@ -1591,913 +2098,7 @@ class GetRoomListResponse final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPreview > rooms_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
-class RoomConnectionInfo final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.RoomConnectionInfo) */ {
- public:
-  inline RoomConnectionInfo() : RoomConnectionInfo(nullptr) {}
-  ~RoomConnectionInfo() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR RoomConnectionInfo(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  RoomConnectionInfo(const RoomConnectionInfo& from);
-  RoomConnectionInfo(RoomConnectionInfo&& from) noexcept
-    : RoomConnectionInfo() {
-    *this = ::std::move(from);
-  }
-
-  inline RoomConnectionInfo& operator=(const RoomConnectionInfo& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline RoomConnectionInfo& operator=(RoomConnectionInfo&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const RoomConnectionInfo& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const RoomConnectionInfo* internal_default_instance() {
-    return reinterpret_cast<const RoomConnectionInfo*>(
-               &_RoomConnectionInfo_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    7;
-
-  friend void swap(RoomConnectionInfo& a, RoomConnectionInfo& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(RoomConnectionInfo* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(RoomConnectionInfo* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  RoomConnectionInfo* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<RoomConnectionInfo>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const RoomConnectionInfo& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const RoomConnectionInfo& from) {
-    RoomConnectionInfo::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(RoomConnectionInfo* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.RoomConnectionInfo";
-  }
-  protected:
-  explicit RoomConnectionInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kHostFieldNumber = 1,
-    kPortFieldNumber = 2,
-  };
-  // string host = 1;
-  void clear_host() ;
-  const std::string& host() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_host(Arg_&& arg, Args_... args);
-  std::string* mutable_host();
-  PROTOBUF_NODISCARD std::string* release_host();
-  void set_allocated_host(std::string* ptr);
-
-  private:
-  const std::string& _internal_host() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_host(
-      const std::string& value);
-  std::string* _internal_mutable_host();
-
-  public:
-  // int32 port = 2;
-  void clear_port() ;
-  ::int32_t port() const;
-  void set_port(::int32_t value);
-
-  private:
-  ::int32_t _internal_port() const;
-  void _internal_set_port(::int32_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:lobby.RoomConnectionInfo)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr host_;
-    ::int32_t port_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
-class RoomPlayer final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.RoomPlayer) */ {
- public:
-  inline RoomPlayer() : RoomPlayer(nullptr) {}
-  ~RoomPlayer() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR RoomPlayer(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  RoomPlayer(const RoomPlayer& from);
-  RoomPlayer(RoomPlayer&& from) noexcept
-    : RoomPlayer() {
-    *this = ::std::move(from);
-  }
-
-  inline RoomPlayer& operator=(const RoomPlayer& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline RoomPlayer& operator=(RoomPlayer&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const RoomPlayer& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const RoomPlayer* internal_default_instance() {
-    return reinterpret_cast<const RoomPlayer*>(
-               &_RoomPlayer_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    8;
-
-  friend void swap(RoomPlayer& a, RoomPlayer& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(RoomPlayer* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(RoomPlayer* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  RoomPlayer* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<RoomPlayer>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const RoomPlayer& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const RoomPlayer& from) {
-    RoomPlayer::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(RoomPlayer* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.RoomPlayer";
-  }
-  protected:
-  explicit RoomPlayer(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kUserIdFieldNumber = 1,
-    kUserNameFieldNumber = 2,
-    kJoinedAtFieldNumber = 5,
-    kStateFieldNumber = 3,
-    kIsOwnerFieldNumber = 4,
-  };
-  // string user_id = 1;
-  void clear_user_id() ;
-  const std::string& user_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_user_id(Arg_&& arg, Args_... args);
-  std::string* mutable_user_id();
-  PROTOBUF_NODISCARD std::string* release_user_id();
-  void set_allocated_user_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_user_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_id(
-      const std::string& value);
-  std::string* _internal_mutable_user_id();
-
-  public:
-  // string user_name = 2;
-  void clear_user_name() ;
-  const std::string& user_name() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_user_name(Arg_&& arg, Args_... args);
-  std::string* mutable_user_name();
-  PROTOBUF_NODISCARD std::string* release_user_name();
-  void set_allocated_user_name(std::string* ptr);
-
-  private:
-  const std::string& _internal_user_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_name(
-      const std::string& value);
-  std::string* _internal_mutable_user_name();
-
-  public:
-  // .google.protobuf.Timestamp joined_at = 5;
-  bool has_joined_at() const;
-  void clear_joined_at() ;
-  const ::PROTOBUF_NAMESPACE_ID::Timestamp& joined_at() const;
-  PROTOBUF_NODISCARD ::PROTOBUF_NAMESPACE_ID::Timestamp* release_joined_at();
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* mutable_joined_at();
-  void set_allocated_joined_at(::PROTOBUF_NAMESPACE_ID::Timestamp* joined_at);
-  private:
-  const ::PROTOBUF_NAMESPACE_ID::Timestamp& _internal_joined_at() const;
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* _internal_mutable_joined_at();
-  public:
-  void unsafe_arena_set_allocated_joined_at(
-      ::PROTOBUF_NAMESPACE_ID::Timestamp* joined_at);
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* unsafe_arena_release_joined_at();
-  // .lobby.PlayerState state = 3;
-  void clear_state() ;
-  ::lobby::PlayerState state() const;
-  void set_state(::lobby::PlayerState value);
-
-  private:
-  ::lobby::PlayerState _internal_state() const;
-  void _internal_set_state(::lobby::PlayerState value);
-
-  public:
-  // bool is_owner = 4;
-  void clear_is_owner() ;
-  bool is_owner() const;
-  void set_is_owner(bool value);
-
-  private:
-  bool _internal_is_owner() const;
-  void _internal_set_is_owner(bool value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:lobby.RoomPlayer)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_id_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_name_;
-    ::PROTOBUF_NAMESPACE_ID::Timestamp* joined_at_;
-    int state_;
-    bool is_owner_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
-class Room final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.Room) */ {
- public:
-  inline Room() : Room(nullptr) {}
-  ~Room() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR Room(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  Room(const Room& from);
-  Room(Room&& from) noexcept
-    : Room() {
-    *this = ::std::move(from);
-  }
-
-  inline Room& operator=(const Room& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline Room& operator=(Room&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const Room& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const Room* internal_default_instance() {
-    return reinterpret_cast<const Room*>(
-               &_Room_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    9;
-
-  friend void swap(Room& a, Room& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(Room* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(Room* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  Room* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<Room>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const Room& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const Room& from) {
-    Room::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(Room* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.Room";
-  }
-  protected:
-  explicit Room(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kPlayersFieldNumber = 6,
-    kRoomIdFieldNumber = 1,
-    kPasswordEncryptedFieldNumber = 2,
-    kOwnerIdFieldNumber = 4,
-    kConfigFieldNumber = 5,
-    kConnectionFieldNumber = 8,
-    kStateFieldNumber = 3,
-    kPlayerCountFieldNumber = 7,
-  };
-  // repeated .lobby.RoomPlayer players = 6;
-  int players_size() const;
-  private:
-  int _internal_players_size() const;
-
-  public:
-  void clear_players() ;
-  ::lobby::RoomPlayer* mutable_players(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer >*
-      mutable_players();
-  private:
-  const ::lobby::RoomPlayer& _internal_players(int index) const;
-  ::lobby::RoomPlayer* _internal_add_players();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPlayer>& _internal_players() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPlayer>* _internal_mutable_players();
-  public:
-  const ::lobby::RoomPlayer& players(int index) const;
-  ::lobby::RoomPlayer* add_players();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer >&
-      players() const;
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // string password_encrypted = 2;
-  void clear_password_encrypted() ;
-  const std::string& password_encrypted() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_password_encrypted(Arg_&& arg, Args_... args);
-  std::string* mutable_password_encrypted();
-  PROTOBUF_NODISCARD std::string* release_password_encrypted();
-  void set_allocated_password_encrypted(std::string* ptr);
-
-  private:
-  const std::string& _internal_password_encrypted() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_password_encrypted(
-      const std::string& value);
-  std::string* _internal_mutable_password_encrypted();
-
-  public:
-  // string owner_id = 4;
-  void clear_owner_id() ;
-  const std::string& owner_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_owner_id(Arg_&& arg, Args_... args);
-  std::string* mutable_owner_id();
-  PROTOBUF_NODISCARD std::string* release_owner_id();
-  void set_allocated_owner_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_owner_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_owner_id(
-      const std::string& value);
-  std::string* _internal_mutable_owner_id();
-
-  public:
-  // .lobby.RoomConfig config = 5;
-  bool has_config() const;
-  void clear_config() ;
-  const ::lobby::RoomConfig& config() const;
-  PROTOBUF_NODISCARD ::lobby::RoomConfig* release_config();
-  ::lobby::RoomConfig* mutable_config();
-  void set_allocated_config(::lobby::RoomConfig* config);
-  private:
-  const ::lobby::RoomConfig& _internal_config() const;
-  ::lobby::RoomConfig* _internal_mutable_config();
-  public:
-  void unsafe_arena_set_allocated_config(
-      ::lobby::RoomConfig* config);
-  ::lobby::RoomConfig* unsafe_arena_release_config();
-  // .lobby.RoomConnectionInfo connection = 8;
-  bool has_connection() const;
-  void clear_connection() ;
-  const ::lobby::RoomConnectionInfo& connection() const;
-  PROTOBUF_NODISCARD ::lobby::RoomConnectionInfo* release_connection();
-  ::lobby::RoomConnectionInfo* mutable_connection();
-  void set_allocated_connection(::lobby::RoomConnectionInfo* connection);
-  private:
-  const ::lobby::RoomConnectionInfo& _internal_connection() const;
-  ::lobby::RoomConnectionInfo* _internal_mutable_connection();
-  public:
-  void unsafe_arena_set_allocated_connection(
-      ::lobby::RoomConnectionInfo* connection);
-  ::lobby::RoomConnectionInfo* unsafe_arena_release_connection();
-  // .lobby.RoomState state = 3;
-  void clear_state() ;
-  ::lobby::RoomState state() const;
-  void set_state(::lobby::RoomState value);
-
-  private:
-  ::lobby::RoomState _internal_state() const;
-  void _internal_set_state(::lobby::RoomState value);
-
-  public:
-  // int32 player_count = 7;
-  void clear_player_count() ;
-  ::int32_t player_count() const;
-  void set_player_count(::int32_t value);
-
-  private:
-  ::int32_t _internal_player_count() const;
-  void _internal_set_player_count(::int32_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:lobby.Room)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer > players_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_encrypted_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr owner_id_;
-    ::lobby::RoomConfig* config_;
-    ::lobby::RoomConnectionInfo* connection_;
-    int state_;
-    ::int32_t player_count_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
-class RoomConfig final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.RoomConfig) */ {
- public:
-  inline RoomConfig() : RoomConfig(nullptr) {}
-  ~RoomConfig() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR RoomConfig(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  RoomConfig(const RoomConfig& from);
-  RoomConfig(RoomConfig&& from) noexcept
-    : RoomConfig() {
-    *this = ::std::move(from);
-  }
-
-  inline RoomConfig& operator=(const RoomConfig& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline RoomConfig& operator=(RoomConfig&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const RoomConfig& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const RoomConfig* internal_default_instance() {
-    return reinterpret_cast<const RoomConfig*>(
-               &_RoomConfig_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    10;
-
-  friend void swap(RoomConfig& a, RoomConfig& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(RoomConfig* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(RoomConfig* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  RoomConfig* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<RoomConfig>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const RoomConfig& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const RoomConfig& from) {
-    RoomConfig::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(RoomConfig* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.RoomConfig";
-  }
-  protected:
-  explicit RoomConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kRoomNameFieldNumber = 1,
-    kVisibilityFieldNumber = 2,
-    kModeFieldNumber = 3,
-    kMapFieldNumber = 4,
-    kMaxPlayersFieldNumber = 5,
-  };
-  // string room_name = 1;
-  void clear_room_name() ;
-  const std::string& room_name() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_name(Arg_&& arg, Args_... args);
-  std::string* mutable_room_name();
-  PROTOBUF_NODISCARD std::string* release_room_name();
-  void set_allocated_room_name(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_name(
-      const std::string& value);
-  std::string* _internal_mutable_room_name();
-
-  public:
-  // .lobby.RoomVisibility visibility = 2;
-  void clear_visibility() ;
-  ::lobby::RoomVisibility visibility() const;
-  void set_visibility(::lobby::RoomVisibility value);
-
-  private:
-  ::lobby::RoomVisibility _internal_visibility() const;
-  void _internal_set_visibility(::lobby::RoomVisibility value);
-
-  public:
-  // .lobby.GameMode mode = 3;
-  void clear_mode() ;
-  ::lobby::GameMode mode() const;
-  void set_mode(::lobby::GameMode value);
-
-  private:
-  ::lobby::GameMode _internal_mode() const;
-  void _internal_set_mode(::lobby::GameMode value);
-
-  public:
-  // .lobby.GameMap map = 4;
-  void clear_map() ;
-  ::lobby::GameMap map() const;
-  void set_map(::lobby::GameMap value);
-
-  private:
-  ::lobby::GameMap _internal_map() const;
-  void _internal_set_map(::lobby::GameMap value);
-
-  public:
-  // int32 max_players = 5;
-  void clear_max_players() ;
-  ::int32_t max_players() const;
-  void set_max_players(::int32_t value);
-
-  private:
-  ::int32_t _internal_max_players() const;
-  void _internal_set_max_players(::int32_t value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:lobby.RoomConfig)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_name_;
-    int visibility_;
-    int mode_;
-    int map_;
-    ::int32_t max_players_;
+    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::Room > rooms_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -2560,7 +2161,7 @@ class UpdateRoomStateRequest final :
                &_UpdateRoomStateRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    9;
 
   friend void swap(UpdateRoomStateRequest& a, UpdateRoomStateRequest& b) {
     a.Swap(&b);
@@ -2632,30 +2233,9 @@ class UpdateRoomStateRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRoomIdFieldNumber = 1,
-    kStateFieldNumber = 2,
+    kStateFieldNumber = 1,
   };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // .lobby.RoomState state = 2;
+  // .lobby.RoomState state = 1;
   void clear_state() ;
   ::lobby::RoomState state() const;
   void set_state(::lobby::RoomState value);
@@ -2673,7 +2253,6 @@ class UpdateRoomStateRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
     int state_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -2737,7 +2316,7 @@ class UpdateRoomStateResponse final :
                &_UpdateRoomStateResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    10;
 
   friend void swap(UpdateRoomStateResponse& a, UpdateRoomStateResponse& b) {
     a.Swap(&b);
@@ -2892,7 +2471,7 @@ class UpdateRoomConfigRequest final :
                &_UpdateRoomConfigRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    11;
 
   friend void swap(UpdateRoomConfigRequest& a, UpdateRoomConfigRequest& b) {
     a.Swap(&b);
@@ -2964,30 +2543,9 @@ class UpdateRoomConfigRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRoomIdFieldNumber = 1,
-    kConfigFieldNumber = 2,
+    kConfigFieldNumber = 1,
   };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // .lobby.RoomConfig config = 2;
+  // .lobby.RoomConfig config = 1;
   bool has_config() const;
   void clear_config() ;
   const ::lobby::RoomConfig& config() const;
@@ -3011,7 +2569,6 @@ class UpdateRoomConfigRequest final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
     ::lobby::RoomConfig* config_;
   };
   union { Impl_ _impl_; };
@@ -3074,7 +2631,7 @@ class UpdateRoomConfigResponse final :
                &_UpdateRoomConfigResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    12;
 
   friend void swap(UpdateRoomConfigResponse& a, UpdateRoomConfigResponse& b) {
     a.Swap(&b);
@@ -3178,382 +2735,6 @@ class UpdateRoomConfigResponse final :
   friend struct ::TableStruct_lobby_2eproto;
 };// -------------------------------------------------------------------
 
-class UpdatePlayerStateRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.UpdatePlayerStateRequest) */ {
- public:
-  inline UpdatePlayerStateRequest() : UpdatePlayerStateRequest(nullptr) {}
-  ~UpdatePlayerStateRequest() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR UpdatePlayerStateRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  UpdatePlayerStateRequest(const UpdatePlayerStateRequest& from);
-  UpdatePlayerStateRequest(UpdatePlayerStateRequest&& from) noexcept
-    : UpdatePlayerStateRequest() {
-    *this = ::std::move(from);
-  }
-
-  inline UpdatePlayerStateRequest& operator=(const UpdatePlayerStateRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline UpdatePlayerStateRequest& operator=(UpdatePlayerStateRequest&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const UpdatePlayerStateRequest& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const UpdatePlayerStateRequest* internal_default_instance() {
-    return reinterpret_cast<const UpdatePlayerStateRequest*>(
-               &_UpdatePlayerStateRequest_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    15;
-
-  friend void swap(UpdatePlayerStateRequest& a, UpdatePlayerStateRequest& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(UpdatePlayerStateRequest* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(UpdatePlayerStateRequest* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  UpdatePlayerStateRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<UpdatePlayerStateRequest>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const UpdatePlayerStateRequest& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const UpdatePlayerStateRequest& from) {
-    UpdatePlayerStateRequest::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(UpdatePlayerStateRequest* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.UpdatePlayerStateRequest";
-  }
-  protected:
-  explicit UpdatePlayerStateRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kRoomIdFieldNumber = 1,
-    kUserIdFieldNumber = 2,
-    kStateFieldNumber = 3,
-  };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // string user_id = 2;
-  void clear_user_id() ;
-  const std::string& user_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_user_id(Arg_&& arg, Args_... args);
-  std::string* mutable_user_id();
-  PROTOBUF_NODISCARD std::string* release_user_id();
-  void set_allocated_user_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_user_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_id(
-      const std::string& value);
-  std::string* _internal_mutable_user_id();
-
-  public:
-  // .lobby.PlayerState state = 3;
-  void clear_state() ;
-  ::lobby::PlayerState state() const;
-  void set_state(::lobby::PlayerState value);
-
-  private:
-  ::lobby::PlayerState _internal_state() const;
-  void _internal_set_state(::lobby::PlayerState value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:lobby.UpdatePlayerStateRequest)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_id_;
-    int state_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
-class UpdatePlayerStateResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.UpdatePlayerStateResponse) */ {
- public:
-  inline UpdatePlayerStateResponse() : UpdatePlayerStateResponse(nullptr) {}
-  ~UpdatePlayerStateResponse() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR UpdatePlayerStateResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  UpdatePlayerStateResponse(const UpdatePlayerStateResponse& from);
-  UpdatePlayerStateResponse(UpdatePlayerStateResponse&& from) noexcept
-    : UpdatePlayerStateResponse() {
-    *this = ::std::move(from);
-  }
-
-  inline UpdatePlayerStateResponse& operator=(const UpdatePlayerStateResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline UpdatePlayerStateResponse& operator=(UpdatePlayerStateResponse&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const UpdatePlayerStateResponse& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const UpdatePlayerStateResponse* internal_default_instance() {
-    return reinterpret_cast<const UpdatePlayerStateResponse*>(
-               &_UpdatePlayerStateResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    16;
-
-  friend void swap(UpdatePlayerStateResponse& a, UpdatePlayerStateResponse& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(UpdatePlayerStateResponse* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(UpdatePlayerStateResponse* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  UpdatePlayerStateResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<UpdatePlayerStateResponse>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const UpdatePlayerStateResponse& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const UpdatePlayerStateResponse& from) {
-    UpdatePlayerStateResponse::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(UpdatePlayerStateResponse* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.UpdatePlayerStateResponse";
-  }
-  protected:
-  explicit UpdatePlayerStateResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kUserIdFieldNumber = 1,
-    kUpdatedStateFieldNumber = 2,
-  };
-  // string user_id = 1;
-  void clear_user_id() ;
-  const std::string& user_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_user_id(Arg_&& arg, Args_... args);
-  std::string* mutable_user_id();
-  PROTOBUF_NODISCARD std::string* release_user_id();
-  void set_allocated_user_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_user_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_id(
-      const std::string& value);
-  std::string* _internal_mutable_user_id();
-
-  public:
-  // .lobby.PlayerState updated_state = 2;
-  void clear_updated_state() ;
-  ::lobby::PlayerState updated_state() const;
-  void set_updated_state(::lobby::PlayerState value);
-
-  private:
-  ::lobby::PlayerState _internal_updated_state() const;
-  void _internal_set_updated_state(::lobby::PlayerState value);
-
-  public:
-  // @@protoc_insertion_point(class_scope:lobby.UpdatePlayerStateResponse)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_id_;
-    int updated_state_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
 class ChangeRoomPasswordRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.ChangeRoomPasswordRequest) */ {
  public:
@@ -3610,7 +2791,7 @@ class ChangeRoomPasswordRequest final :
                &_ChangeRoomPasswordRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    13;
 
   friend void swap(ChangeRoomPasswordRequest& a, ChangeRoomPasswordRequest& b) {
     a.Swap(&b);
@@ -3682,30 +2863,9 @@ class ChangeRoomPasswordRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRoomIdFieldNumber = 1,
-    kPasswordFieldNumber = 2,
+    kPasswordFieldNumber = 1,
   };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // string password = 2;
+  // string password = 1;
   void clear_password() ;
   const std::string& password() const;
 
@@ -3733,7 +2893,6 @@ class ChangeRoomPasswordRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -3742,9 +2901,10 @@ class ChangeRoomPasswordRequest final :
 };// -------------------------------------------------------------------
 
 class ChangeRoomPasswordResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:lobby.ChangeRoomPasswordResponse) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.ChangeRoomPasswordResponse) */ {
  public:
   inline ChangeRoomPasswordResponse() : ChangeRoomPasswordResponse(nullptr) {}
+  ~ChangeRoomPasswordResponse() override;
   template<typename = void>
   explicit PROTOBUF_CONSTEXPR ChangeRoomPasswordResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
@@ -3796,7 +2956,7 @@ class ChangeRoomPasswordResponse final :
                &_ChangeRoomPasswordResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    14;
 
   friend void swap(ChangeRoomPasswordResponse& a, ChangeRoomPasswordResponse& b) {
     a.Swap(&b);
@@ -3825,15 +2985,29 @@ class ChangeRoomPasswordResponse final :
   ChangeRoomPasswordResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<ChangeRoomPasswordResponse>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const ChangeRoomPasswordResponse& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ChangeRoomPasswordResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const ChangeRoomPasswordResponse& from) {
+    ChangeRoomPasswordResponse::MergeImpl(*this, from);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const ChangeRoomPasswordResponse& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ChangeRoomPasswordResponse* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -3853,6 +3027,29 @@ class ChangeRoomPasswordResponse final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kRoomIdFieldNumber = 1,
+  };
+  // string room_id = 1;
+  void clear_room_id() ;
+  const std::string& room_id() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_room_id(Arg_&& arg, Args_... args);
+  std::string* mutable_room_id();
+  PROTOBUF_NODISCARD std::string* release_room_id();
+  void set_allocated_room_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_room_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
+      const std::string& value);
+  std::string* _internal_mutable_room_id();
+
+  public:
   // @@protoc_insertion_point(class_scope:lobby.ChangeRoomPasswordResponse)
  private:
   class _Internal;
@@ -3861,7 +3058,10 @@ class ChangeRoomPasswordResponse final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_lobby_2eproto;
 };// -------------------------------------------------------------------
 
@@ -3921,7 +3121,7 @@ class ChangeRoomOwnerRequest final :
                &_ChangeRoomOwnerRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    15;
 
   friend void swap(ChangeRoomOwnerRequest& a, ChangeRoomOwnerRequest& b) {
     a.Swap(&b);
@@ -3993,47 +3193,26 @@ class ChangeRoomOwnerRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRoomIdFieldNumber = 1,
-    kUserIdFieldNumber = 2,
+    kNewOwnerIdFieldNumber = 1,
   };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
+  // string new_owner_id = 1;
+  void clear_new_owner_id() ;
+  const std::string& new_owner_id() const;
 
 
 
 
   template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
+  void set_new_owner_id(Arg_&& arg, Args_... args);
+  std::string* mutable_new_owner_id();
+  PROTOBUF_NODISCARD std::string* release_new_owner_id();
+  void set_allocated_new_owner_id(std::string* ptr);
 
   private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
+  const std::string& _internal_new_owner_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_new_owner_id(
       const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // string user_id = 2;
-  void clear_user_id() ;
-  const std::string& user_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_user_id(Arg_&& arg, Args_... args);
-  std::string* mutable_user_id();
-  PROTOBUF_NODISCARD std::string* release_user_id();
-  void set_allocated_user_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_user_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_id(
-      const std::string& value);
-  std::string* _internal_mutable_user_id();
+  std::string* _internal_mutable_new_owner_id();
 
   public:
   // @@protoc_insertion_point(class_scope:lobby.ChangeRoomOwnerRequest)
@@ -4044,8 +3223,7 @@ class ChangeRoomOwnerRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr new_owner_id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -4108,7 +3286,7 @@ class ChangeRoomOwnerResponse final :
                &_ChangeRoomOwnerResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    20;
+    16;
 
   friend void swap(ChangeRoomOwnerResponse& a, ChangeRoomOwnerResponse& b) {
     a.Swap(&b);
@@ -4218,10 +3396,9 @@ class ChangeRoomOwnerResponse final :
 };// -------------------------------------------------------------------
 
 class DeleteRoomRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.DeleteRoomRequest) */ {
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:lobby.DeleteRoomRequest) */ {
  public:
   inline DeleteRoomRequest() : DeleteRoomRequest(nullptr) {}
-  ~DeleteRoomRequest() override;
   template<typename = void>
   explicit PROTOBUF_CONSTEXPR DeleteRoomRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
@@ -4273,7 +3450,7 @@ class DeleteRoomRequest final :
                &_DeleteRoomRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    21;
+    17;
 
   friend void swap(DeleteRoomRequest& a, DeleteRoomRequest& b) {
     a.Swap(&b);
@@ -4302,29 +3479,15 @@ class DeleteRoomRequest final :
   DeleteRoomRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<DeleteRoomRequest>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const DeleteRoomRequest& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const DeleteRoomRequest& from) {
-    DeleteRoomRequest::MergeImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const DeleteRoomRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
   }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const DeleteRoomRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
   public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(DeleteRoomRequest* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -4344,29 +3507,6 @@ class DeleteRoomRequest final :
 
   // accessors -------------------------------------------------------
 
-  enum : int {
-    kRoomIdFieldNumber = 1,
-  };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
   // @@protoc_insertion_point(class_scope:lobby.DeleteRoomRequest)
  private:
   class _Internal;
@@ -4375,10 +3515,7 @@ class DeleteRoomRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
-  union { Impl_ _impl_; };
   friend struct ::TableStruct_lobby_2eproto;
 };// -------------------------------------------------------------------
 
@@ -4437,7 +3574,7 @@ class DeleteRoomResponse final :
                &_DeleteRoomResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    22;
+    18;
 
   friend void swap(DeleteRoomResponse& a, DeleteRoomResponse& b) {
     a.Swap(&b);
@@ -4506,25 +3643,24 @@ class DeleteRoomResponse final :
   friend struct ::TableStruct_lobby_2eproto;
 };// -------------------------------------------------------------------
 
-class ListenRoomConfigUpdatesRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.ListenRoomConfigUpdatesRequest) */ {
+class ListenRoomUpdatesRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:lobby.ListenRoomUpdatesRequest) */ {
  public:
-  inline ListenRoomConfigUpdatesRequest() : ListenRoomConfigUpdatesRequest(nullptr) {}
-  ~ListenRoomConfigUpdatesRequest() override;
+  inline ListenRoomUpdatesRequest() : ListenRoomUpdatesRequest(nullptr) {}
   template<typename = void>
-  explicit PROTOBUF_CONSTEXPR ListenRoomConfigUpdatesRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  explicit PROTOBUF_CONSTEXPR ListenRoomUpdatesRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  ListenRoomConfigUpdatesRequest(const ListenRoomConfigUpdatesRequest& from);
-  ListenRoomConfigUpdatesRequest(ListenRoomConfigUpdatesRequest&& from) noexcept
-    : ListenRoomConfigUpdatesRequest() {
+  ListenRoomUpdatesRequest(const ListenRoomUpdatesRequest& from);
+  ListenRoomUpdatesRequest(ListenRoomUpdatesRequest&& from) noexcept
+    : ListenRoomUpdatesRequest() {
     *this = ::std::move(from);
   }
 
-  inline ListenRoomConfigUpdatesRequest& operator=(const ListenRoomConfigUpdatesRequest& from) {
+  inline ListenRoomUpdatesRequest& operator=(const ListenRoomUpdatesRequest& from) {
     CopyFrom(from);
     return *this;
   }
-  inline ListenRoomConfigUpdatesRequest& operator=(ListenRoomConfigUpdatesRequest&& from) noexcept {
+  inline ListenRoomUpdatesRequest& operator=(ListenRoomUpdatesRequest&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -4554,20 +3690,20 @@ class ListenRoomConfigUpdatesRequest final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const ListenRoomConfigUpdatesRequest& default_instance() {
+  static const ListenRoomUpdatesRequest& default_instance() {
     return *internal_default_instance();
   }
-  static inline const ListenRoomConfigUpdatesRequest* internal_default_instance() {
-    return reinterpret_cast<const ListenRoomConfigUpdatesRequest*>(
-               &_ListenRoomConfigUpdatesRequest_default_instance_);
+  static inline const ListenRoomUpdatesRequest* internal_default_instance() {
+    return reinterpret_cast<const ListenRoomUpdatesRequest*>(
+               &_ListenRoomUpdatesRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    23;
+    19;
 
-  friend void swap(ListenRoomConfigUpdatesRequest& a, ListenRoomConfigUpdatesRequest& b) {
+  friend void swap(ListenRoomUpdatesRequest& a, ListenRoomUpdatesRequest& b) {
     a.Swap(&b);
   }
-  inline void Swap(ListenRoomConfigUpdatesRequest* other) {
+  inline void Swap(ListenRoomUpdatesRequest* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -4580,7 +3716,7 @@ class ListenRoomConfigUpdatesRequest final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(ListenRoomConfigUpdatesRequest* other) {
+  void UnsafeArenaSwap(ListenRoomUpdatesRequest* other) {
     if (other == this) return;
     ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -4588,40 +3724,26 @@ class ListenRoomConfigUpdatesRequest final :
 
   // implements Message ----------------------------------------------
 
-  ListenRoomConfigUpdatesRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<ListenRoomConfigUpdatesRequest>(arena);
+  ListenRoomUpdatesRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ListenRoomUpdatesRequest>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const ListenRoomConfigUpdatesRequest& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const ListenRoomConfigUpdatesRequest& from) {
-    ListenRoomConfigUpdatesRequest::MergeImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const ListenRoomUpdatesRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
   }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const ListenRoomUpdatesRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
   public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(ListenRoomConfigUpdatesRequest* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::absl::string_view FullMessageName() {
-    return "lobby.ListenRoomConfigUpdatesRequest";
+    return "lobby.ListenRoomUpdatesRequest";
   }
   protected:
-  explicit ListenRoomConfigUpdatesRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  explicit ListenRoomUpdatesRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
   static const ClassData _class_data_;
@@ -4633,30 +3755,7 @@ class ListenRoomConfigUpdatesRequest final :
 
   // accessors -------------------------------------------------------
 
-  enum : int {
-    kRoomIdFieldNumber = 1,
-  };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // @@protoc_insertion_point(class_scope:lobby.ListenRoomConfigUpdatesRequest)
+  // @@protoc_insertion_point(class_scope:lobby.ListenRoomUpdatesRequest)
  private:
   class _Internal;
 
@@ -4664,500 +3763,7 @@ class ListenRoomConfigUpdatesRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
-class ListenRoomConfigUpdatesResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.ListenRoomConfigUpdatesResponse) */ {
- public:
-  inline ListenRoomConfigUpdatesResponse() : ListenRoomConfigUpdatesResponse(nullptr) {}
-  ~ListenRoomConfigUpdatesResponse() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR ListenRoomConfigUpdatesResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  ListenRoomConfigUpdatesResponse(const ListenRoomConfigUpdatesResponse& from);
-  ListenRoomConfigUpdatesResponse(ListenRoomConfigUpdatesResponse&& from) noexcept
-    : ListenRoomConfigUpdatesResponse() {
-    *this = ::std::move(from);
-  }
-
-  inline ListenRoomConfigUpdatesResponse& operator=(const ListenRoomConfigUpdatesResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline ListenRoomConfigUpdatesResponse& operator=(ListenRoomConfigUpdatesResponse&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const ListenRoomConfigUpdatesResponse& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const ListenRoomConfigUpdatesResponse* internal_default_instance() {
-    return reinterpret_cast<const ListenRoomConfigUpdatesResponse*>(
-               &_ListenRoomConfigUpdatesResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    24;
-
-  friend void swap(ListenRoomConfigUpdatesResponse& a, ListenRoomConfigUpdatesResponse& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(ListenRoomConfigUpdatesResponse* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(ListenRoomConfigUpdatesResponse* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  ListenRoomConfigUpdatesResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<ListenRoomConfigUpdatesResponse>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const ListenRoomConfigUpdatesResponse& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const ListenRoomConfigUpdatesResponse& from) {
-    ListenRoomConfigUpdatesResponse::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(ListenRoomConfigUpdatesResponse* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.ListenRoomConfigUpdatesResponse";
-  }
-  protected:
-  explicit ListenRoomConfigUpdatesResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kUpdatedConfigFieldNumber = 1,
-  };
-  // .lobby.RoomConfig updated_config = 1;
-  bool has_updated_config() const;
-  void clear_updated_config() ;
-  const ::lobby::RoomConfig& updated_config() const;
-  PROTOBUF_NODISCARD ::lobby::RoomConfig* release_updated_config();
-  ::lobby::RoomConfig* mutable_updated_config();
-  void set_allocated_updated_config(::lobby::RoomConfig* updated_config);
-  private:
-  const ::lobby::RoomConfig& _internal_updated_config() const;
-  ::lobby::RoomConfig* _internal_mutable_updated_config();
-  public:
-  void unsafe_arena_set_allocated_updated_config(
-      ::lobby::RoomConfig* updated_config);
-  ::lobby::RoomConfig* unsafe_arena_release_updated_config();
-  // @@protoc_insertion_point(class_scope:lobby.ListenRoomConfigUpdatesResponse)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::lobby::RoomConfig* updated_config_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
-class ListenPlayerListUpdatesRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.ListenPlayerListUpdatesRequest) */ {
- public:
-  inline ListenPlayerListUpdatesRequest() : ListenPlayerListUpdatesRequest(nullptr) {}
-  ~ListenPlayerListUpdatesRequest() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR ListenPlayerListUpdatesRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  ListenPlayerListUpdatesRequest(const ListenPlayerListUpdatesRequest& from);
-  ListenPlayerListUpdatesRequest(ListenPlayerListUpdatesRequest&& from) noexcept
-    : ListenPlayerListUpdatesRequest() {
-    *this = ::std::move(from);
-  }
-
-  inline ListenPlayerListUpdatesRequest& operator=(const ListenPlayerListUpdatesRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline ListenPlayerListUpdatesRequest& operator=(ListenPlayerListUpdatesRequest&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const ListenPlayerListUpdatesRequest& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const ListenPlayerListUpdatesRequest* internal_default_instance() {
-    return reinterpret_cast<const ListenPlayerListUpdatesRequest*>(
-               &_ListenPlayerListUpdatesRequest_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    25;
-
-  friend void swap(ListenPlayerListUpdatesRequest& a, ListenPlayerListUpdatesRequest& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(ListenPlayerListUpdatesRequest* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(ListenPlayerListUpdatesRequest* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  ListenPlayerListUpdatesRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<ListenPlayerListUpdatesRequest>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const ListenPlayerListUpdatesRequest& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const ListenPlayerListUpdatesRequest& from) {
-    ListenPlayerListUpdatesRequest::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(ListenPlayerListUpdatesRequest* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.ListenPlayerListUpdatesRequest";
-  }
-  protected:
-  explicit ListenPlayerListUpdatesRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kRoomIdFieldNumber = 1,
-  };
-  // string room_id = 1;
-  void clear_room_id() ;
-  const std::string& room_id() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_room_id();
-  PROTOBUF_NODISCARD std::string* release_room_id();
-  void set_allocated_room_id(std::string* ptr);
-
-  private:
-  const std::string& _internal_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_id(
-      const std::string& value);
-  std::string* _internal_mutable_room_id();
-
-  public:
-  // @@protoc_insertion_point(class_scope:lobby.ListenPlayerListUpdatesRequest)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_lobby_2eproto;
-};// -------------------------------------------------------------------
-
-class ListenPlayerListUpdatesResponse final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.ListenPlayerListUpdatesResponse) */ {
- public:
-  inline ListenPlayerListUpdatesResponse() : ListenPlayerListUpdatesResponse(nullptr) {}
-  ~ListenPlayerListUpdatesResponse() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR ListenPlayerListUpdatesResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  ListenPlayerListUpdatesResponse(const ListenPlayerListUpdatesResponse& from);
-  ListenPlayerListUpdatesResponse(ListenPlayerListUpdatesResponse&& from) noexcept
-    : ListenPlayerListUpdatesResponse() {
-    *this = ::std::move(from);
-  }
-
-  inline ListenPlayerListUpdatesResponse& operator=(const ListenPlayerListUpdatesResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline ListenPlayerListUpdatesResponse& operator=(ListenPlayerListUpdatesResponse&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const ListenPlayerListUpdatesResponse& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const ListenPlayerListUpdatesResponse* internal_default_instance() {
-    return reinterpret_cast<const ListenPlayerListUpdatesResponse*>(
-               &_ListenPlayerListUpdatesResponse_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    26;
-
-  friend void swap(ListenPlayerListUpdatesResponse& a, ListenPlayerListUpdatesResponse& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(ListenPlayerListUpdatesResponse* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(ListenPlayerListUpdatesResponse* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  ListenPlayerListUpdatesResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<ListenPlayerListUpdatesResponse>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const ListenPlayerListUpdatesResponse& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const ListenPlayerListUpdatesResponse& from) {
-    ListenPlayerListUpdatesResponse::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(ListenPlayerListUpdatesResponse* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "lobby.ListenPlayerListUpdatesResponse";
-  }
-  protected:
-  explicit ListenPlayerListUpdatesResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kPlayersFieldNumber = 1,
-  };
-  // repeated .lobby.RoomPlayer players = 1;
-  int players_size() const;
-  private:
-  int _internal_players_size() const;
-
-  public:
-  void clear_players() ;
-  ::lobby::RoomPlayer* mutable_players(int index);
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer >*
-      mutable_players();
-  private:
-  const ::lobby::RoomPlayer& _internal_players(int index) const;
-  ::lobby::RoomPlayer* _internal_add_players();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPlayer>& _internal_players() const;
-  ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPlayer>* _internal_mutable_players();
-  public:
-  const ::lobby::RoomPlayer& players(int index) const;
-  ::lobby::RoomPlayer* add_players();
-  const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer >&
-      players() const;
-  // @@protoc_insertion_point(class_scope:lobby.ListenPlayerListUpdatesResponse)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer > players_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
   friend struct ::TableStruct_lobby_2eproto;
 };
 
@@ -5175,75 +3781,351 @@ class ListenPlayerListUpdatesResponse final :
 #endif  // __GNUC__
 // -------------------------------------------------------------------
 
-// RoomPreview
+// RoomConnectionInfo
+
+// string host = 1;
+inline void RoomConnectionInfo::clear_host() {
+  _impl_.host_.ClearToEmpty();
+}
+inline const std::string& RoomConnectionInfo::host() const {
+  // @@protoc_insertion_point(field_get:lobby.RoomConnectionInfo.host)
+  return _internal_host();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RoomConnectionInfo::set_host(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.host_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.RoomConnectionInfo.host)
+}
+inline std::string* RoomConnectionInfo::mutable_host() {
+  std::string* _s = _internal_mutable_host();
+  // @@protoc_insertion_point(field_mutable:lobby.RoomConnectionInfo.host)
+  return _s;
+}
+inline const std::string& RoomConnectionInfo::_internal_host() const {
+  return _impl_.host_.Get();
+}
+inline void RoomConnectionInfo::_internal_set_host(const std::string& value) {
+  ;
+
+
+  _impl_.host_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RoomConnectionInfo::_internal_mutable_host() {
+  ;
+  return _impl_.host_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RoomConnectionInfo::release_host() {
+  // @@protoc_insertion_point(field_release:lobby.RoomConnectionInfo.host)
+  return _impl_.host_.Release();
+}
+inline void RoomConnectionInfo::set_allocated_host(std::string* value) {
+  _impl_.host_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.host_.IsDefault()) {
+          _impl_.host_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.RoomConnectionInfo.host)
+}
+
+// int32 port = 2;
+inline void RoomConnectionInfo::clear_port() {
+  _impl_.port_ = 0;
+}
+inline ::int32_t RoomConnectionInfo::port() const {
+  // @@protoc_insertion_point(field_get:lobby.RoomConnectionInfo.port)
+  return _internal_port();
+}
+inline void RoomConnectionInfo::set_port(::int32_t value) {
+  _internal_set_port(value);
+  // @@protoc_insertion_point(field_set:lobby.RoomConnectionInfo.port)
+}
+inline ::int32_t RoomConnectionInfo::_internal_port() const {
+  return _impl_.port_;
+}
+inline void RoomConnectionInfo::_internal_set_port(::int32_t value) {
+  ;
+  _impl_.port_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// RoomConfig
+
+// string room_name = 1;
+inline void RoomConfig::clear_room_name() {
+  _impl_.room_name_.ClearToEmpty();
+}
+inline const std::string& RoomConfig::room_name() const {
+  // @@protoc_insertion_point(field_get:lobby.RoomConfig.room_name)
+  return _internal_room_name();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void RoomConfig::set_room_name(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.room_name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.RoomConfig.room_name)
+}
+inline std::string* RoomConfig::mutable_room_name() {
+  std::string* _s = _internal_mutable_room_name();
+  // @@protoc_insertion_point(field_mutable:lobby.RoomConfig.room_name)
+  return _s;
+}
+inline const std::string& RoomConfig::_internal_room_name() const {
+  return _impl_.room_name_.Get();
+}
+inline void RoomConfig::_internal_set_room_name(const std::string& value) {
+  ;
+
+
+  _impl_.room_name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* RoomConfig::_internal_mutable_room_name() {
+  ;
+  return _impl_.room_name_.Mutable( GetArenaForAllocation());
+}
+inline std::string* RoomConfig::release_room_name() {
+  // @@protoc_insertion_point(field_release:lobby.RoomConfig.room_name)
+  return _impl_.room_name_.Release();
+}
+inline void RoomConfig::set_allocated_room_name(std::string* value) {
+  _impl_.room_name_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.room_name_.IsDefault()) {
+          _impl_.room_name_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.RoomConfig.room_name)
+}
+
+// .lobby.RoomVisibility visibility = 3;
+inline void RoomConfig::clear_visibility() {
+  _impl_.visibility_ = 0;
+}
+inline ::lobby::RoomVisibility RoomConfig::visibility() const {
+  // @@protoc_insertion_point(field_get:lobby.RoomConfig.visibility)
+  return _internal_visibility();
+}
+inline void RoomConfig::set_visibility(::lobby::RoomVisibility value) {
+   _internal_set_visibility(value);
+  // @@protoc_insertion_point(field_set:lobby.RoomConfig.visibility)
+}
+inline ::lobby::RoomVisibility RoomConfig::_internal_visibility() const {
+  return static_cast<::lobby::RoomVisibility>(_impl_.visibility_);
+}
+inline void RoomConfig::_internal_set_visibility(::lobby::RoomVisibility value) {
+  ;
+  _impl_.visibility_ = value;
+}
+
+// .lobby.GameMode mode = 4;
+inline void RoomConfig::clear_mode() {
+  _impl_.mode_ = 0;
+}
+inline ::lobby::GameMode RoomConfig::mode() const {
+  // @@protoc_insertion_point(field_get:lobby.RoomConfig.mode)
+  return _internal_mode();
+}
+inline void RoomConfig::set_mode(::lobby::GameMode value) {
+   _internal_set_mode(value);
+  // @@protoc_insertion_point(field_set:lobby.RoomConfig.mode)
+}
+inline ::lobby::GameMode RoomConfig::_internal_mode() const {
+  return static_cast<::lobby::GameMode>(_impl_.mode_);
+}
+inline void RoomConfig::_internal_set_mode(::lobby::GameMode value) {
+  ;
+  _impl_.mode_ = value;
+}
+
+// .lobby.GameMap map = 5;
+inline void RoomConfig::clear_map() {
+  _impl_.map_ = 0;
+}
+inline ::lobby::GameMap RoomConfig::map() const {
+  // @@protoc_insertion_point(field_get:lobby.RoomConfig.map)
+  return _internal_map();
+}
+inline void RoomConfig::set_map(::lobby::GameMap value) {
+   _internal_set_map(value);
+  // @@protoc_insertion_point(field_set:lobby.RoomConfig.map)
+}
+inline ::lobby::GameMap RoomConfig::_internal_map() const {
+  return static_cast<::lobby::GameMap>(_impl_.map_);
+}
+inline void RoomConfig::_internal_set_map(::lobby::GameMap value) {
+  ;
+  _impl_.map_ = value;
+}
+
+// -------------------------------------------------------------------
+
+// Room
 
 // string room_id = 1;
-inline void RoomPreview::clear_room_id() {
+inline void Room::clear_room_id() {
   _impl_.room_id_.ClearToEmpty();
 }
-inline const std::string& RoomPreview::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomPreview.room_id)
+inline const std::string& Room::room_id() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.room_id)
   return _internal_room_id();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void RoomPreview::set_room_id(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void Room::set_room_id(Arg_&& arg,
                                                      Args_... args) {
   ;
   _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.RoomPreview.room_id)
+  // @@protoc_insertion_point(field_set:lobby.Room.room_id)
 }
-inline std::string* RoomPreview::mutable_room_id() {
+inline std::string* Room::mutable_room_id() {
   std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.RoomPreview.room_id)
+  // @@protoc_insertion_point(field_mutable:lobby.Room.room_id)
   return _s;
 }
-inline const std::string& RoomPreview::_internal_room_id() const {
+inline const std::string& Room::_internal_room_id() const {
   return _impl_.room_id_.Get();
 }
-inline void RoomPreview::_internal_set_room_id(const std::string& value) {
+inline void Room::_internal_set_room_id(const std::string& value) {
   ;
 
 
   _impl_.room_id_.Set(value, GetArenaForAllocation());
 }
-inline std::string* RoomPreview::_internal_mutable_room_id() {
+inline std::string* Room::_internal_mutable_room_id() {
   ;
   return _impl_.room_id_.Mutable( GetArenaForAllocation());
 }
-inline std::string* RoomPreview::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.RoomPreview.room_id)
+inline std::string* Room::release_room_id() {
+  // @@protoc_insertion_point(field_release:lobby.Room.room_id)
   return _impl_.room_id_.Release();
 }
-inline void RoomPreview::set_allocated_room_id(std::string* value) {
+inline void Room::set_allocated_room_id(std::string* value) {
   _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         if (_impl_.room_id_.IsDefault()) {
           _impl_.room_id_.Set("", GetArenaForAllocation());
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.RoomPreview.room_id)
+  // @@protoc_insertion_point(field_set_allocated:lobby.Room.room_id)
 }
 
-// .lobby.RoomConfig config = 2;
-inline bool RoomPreview::has_config() const {
+// string short_room_id = 2;
+inline void Room::clear_short_room_id() {
+  _impl_.short_room_id_.ClearToEmpty();
+}
+inline const std::string& Room::short_room_id() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.short_room_id)
+  return _internal_short_room_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void Room::set_short_room_id(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.short_room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.Room.short_room_id)
+}
+inline std::string* Room::mutable_short_room_id() {
+  std::string* _s = _internal_mutable_short_room_id();
+  // @@protoc_insertion_point(field_mutable:lobby.Room.short_room_id)
+  return _s;
+}
+inline const std::string& Room::_internal_short_room_id() const {
+  return _impl_.short_room_id_.Get();
+}
+inline void Room::_internal_set_short_room_id(const std::string& value) {
+  ;
+
+
+  _impl_.short_room_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Room::_internal_mutable_short_room_id() {
+  ;
+  return _impl_.short_room_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* Room::release_short_room_id() {
+  // @@protoc_insertion_point(field_release:lobby.Room.short_room_id)
+  return _impl_.short_room_id_.Release();
+}
+inline void Room::set_allocated_short_room_id(std::string* value) {
+  _impl_.short_room_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.short_room_id_.IsDefault()) {
+          _impl_.short_room_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.Room.short_room_id)
+}
+
+// string owner_id = 3;
+inline void Room::clear_owner_id() {
+  _impl_.owner_id_.ClearToEmpty();
+}
+inline const std::string& Room::owner_id() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.owner_id)
+  return _internal_owner_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void Room::set_owner_id(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.owner_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.Room.owner_id)
+}
+inline std::string* Room::mutable_owner_id() {
+  std::string* _s = _internal_mutable_owner_id();
+  // @@protoc_insertion_point(field_mutable:lobby.Room.owner_id)
+  return _s;
+}
+inline const std::string& Room::_internal_owner_id() const {
+  return _impl_.owner_id_.Get();
+}
+inline void Room::_internal_set_owner_id(const std::string& value) {
+  ;
+
+
+  _impl_.owner_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Room::_internal_mutable_owner_id() {
+  ;
+  return _impl_.owner_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* Room::release_owner_id() {
+  // @@protoc_insertion_point(field_release:lobby.Room.owner_id)
+  return _impl_.owner_id_.Release();
+}
+inline void Room::set_allocated_owner_id(std::string* value) {
+  _impl_.owner_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.owner_id_.IsDefault()) {
+          _impl_.owner_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.Room.owner_id)
+}
+
+// .lobby.RoomConfig config = 4;
+inline bool Room::has_config() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.config_ != nullptr);
   return value;
 }
-inline void RoomPreview::clear_config() {
+inline void Room::clear_config() {
   if (_impl_.config_ != nullptr) _impl_.config_->Clear();
   _impl_._has_bits_[0] &= ~0x00000001u;
 }
-inline const ::lobby::RoomConfig& RoomPreview::_internal_config() const {
+inline const ::lobby::RoomConfig& Room::_internal_config() const {
   const ::lobby::RoomConfig* p = _impl_.config_;
   return p != nullptr ? *p : reinterpret_cast<const ::lobby::RoomConfig&>(
       ::lobby::_RoomConfig_default_instance_);
 }
-inline const ::lobby::RoomConfig& RoomPreview::config() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomPreview.config)
+inline const ::lobby::RoomConfig& Room::config() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.config)
   return _internal_config();
 }
-inline void RoomPreview::unsafe_arena_set_allocated_config(
+inline void Room::unsafe_arena_set_allocated_config(
     ::lobby::RoomConfig* config) {
   if (GetArenaForAllocation() == nullptr) {
     delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.config_);
@@ -5254,9 +4136,9 @@ inline void RoomPreview::unsafe_arena_set_allocated_config(
   } else {
     _impl_._has_bits_[0] &= ~0x00000001u;
   }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.RoomPreview.config)
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.Room.config)
 }
-inline ::lobby::RoomConfig* RoomPreview::release_config() {
+inline ::lobby::RoomConfig* Room::release_config() {
   _impl_._has_bits_[0] &= ~0x00000001u;
   ::lobby::RoomConfig* temp = _impl_.config_;
   _impl_.config_ = nullptr;
@@ -5271,14 +4153,14 @@ inline ::lobby::RoomConfig* RoomPreview::release_config() {
 #endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
   return temp;
 }
-inline ::lobby::RoomConfig* RoomPreview::unsafe_arena_release_config() {
-  // @@protoc_insertion_point(field_release:lobby.RoomPreview.config)
+inline ::lobby::RoomConfig* Room::unsafe_arena_release_config() {
+  // @@protoc_insertion_point(field_release:lobby.Room.config)
   _impl_._has_bits_[0] &= ~0x00000001u;
   ::lobby::RoomConfig* temp = _impl_.config_;
   _impl_.config_ = nullptr;
   return temp;
 }
-inline ::lobby::RoomConfig* RoomPreview::_internal_mutable_config() {
+inline ::lobby::RoomConfig* Room::_internal_mutable_config() {
   _impl_._has_bits_[0] |= 0x00000001u;
   if (_impl_.config_ == nullptr) {
     auto* p = CreateMaybeMessage<::lobby::RoomConfig>(GetArenaForAllocation());
@@ -5286,12 +4168,12 @@ inline ::lobby::RoomConfig* RoomPreview::_internal_mutable_config() {
   }
   return _impl_.config_;
 }
-inline ::lobby::RoomConfig* RoomPreview::mutable_config() {
+inline ::lobby::RoomConfig* Room::mutable_config() {
   ::lobby::RoomConfig* _msg = _internal_mutable_config();
-  // @@protoc_insertion_point(field_mutable:lobby.RoomPreview.config)
+  // @@protoc_insertion_point(field_mutable:lobby.Room.config)
   return _msg;
 }
-inline void RoomPreview::set_allocated_config(::lobby::RoomConfig* config) {
+inline void Room::set_allocated_config(::lobby::RoomConfig* config) {
   ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
   if (message_arena == nullptr) {
     delete _impl_.config_;
@@ -5308,34 +4190,255 @@ inline void RoomPreview::set_allocated_config(::lobby::RoomConfig* config) {
     _impl_._has_bits_[0] &= ~0x00000001u;
   }
   _impl_.config_ = config;
-  // @@protoc_insertion_point(field_set_allocated:lobby.RoomPreview.config)
+  // @@protoc_insertion_point(field_set_allocated:lobby.Room.config)
 }
 
-// int32 current_players = 3;
-inline void RoomPreview::clear_current_players() {
+// .lobby.RoomState state = 5;
+inline void Room::clear_state() {
+  _impl_.state_ = 0;
+}
+inline ::lobby::RoomState Room::state() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.state)
+  return _internal_state();
+}
+inline void Room::set_state(::lobby::RoomState value) {
+   _internal_set_state(value);
+  // @@protoc_insertion_point(field_set:lobby.Room.state)
+}
+inline ::lobby::RoomState Room::_internal_state() const {
+  return static_cast<::lobby::RoomState>(_impl_.state_);
+}
+inline void Room::_internal_set_state(::lobby::RoomState value) {
+  ;
+  _impl_.state_ = value;
+}
+
+// int32 max_players = 6;
+inline void Room::clear_max_players() {
+  _impl_.max_players_ = 0;
+}
+inline ::int32_t Room::max_players() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.max_players)
+  return _internal_max_players();
+}
+inline void Room::set_max_players(::int32_t value) {
+  _internal_set_max_players(value);
+  // @@protoc_insertion_point(field_set:lobby.Room.max_players)
+}
+inline ::int32_t Room::_internal_max_players() const {
+  return _impl_.max_players_;
+}
+inline void Room::_internal_set_max_players(::int32_t value) {
+  ;
+  _impl_.max_players_ = value;
+}
+
+// int32 current_players = 7;
+inline void Room::clear_current_players() {
   _impl_.current_players_ = 0;
 }
-inline ::int32_t RoomPreview::current_players() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomPreview.current_players)
+inline ::int32_t Room::current_players() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.current_players)
   return _internal_current_players();
 }
-inline void RoomPreview::set_current_players(::int32_t value) {
+inline void Room::set_current_players(::int32_t value) {
   _internal_set_current_players(value);
-  // @@protoc_insertion_point(field_set:lobby.RoomPreview.current_players)
+  // @@protoc_insertion_point(field_set:lobby.Room.current_players)
 }
-inline ::int32_t RoomPreview::_internal_current_players() const {
+inline ::int32_t Room::_internal_current_players() const {
   return _impl_.current_players_;
 }
-inline void RoomPreview::_internal_set_current_players(::int32_t value) {
+inline void Room::_internal_set_current_players(::int32_t value) {
   ;
   _impl_.current_players_ = value;
+}
+
+// .lobby.RoomConnectionInfo connection = 8;
+inline bool Room::has_connection() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.connection_ != nullptr);
+  return value;
+}
+inline void Room::clear_connection() {
+  if (_impl_.connection_ != nullptr) _impl_.connection_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000002u;
+}
+inline const ::lobby::RoomConnectionInfo& Room::_internal_connection() const {
+  const ::lobby::RoomConnectionInfo* p = _impl_.connection_;
+  return p != nullptr ? *p : reinterpret_cast<const ::lobby::RoomConnectionInfo&>(
+      ::lobby::_RoomConnectionInfo_default_instance_);
+}
+inline const ::lobby::RoomConnectionInfo& Room::connection() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.connection)
+  return _internal_connection();
+}
+inline void Room::unsafe_arena_set_allocated_connection(
+    ::lobby::RoomConnectionInfo* connection) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.connection_);
+  }
+  _impl_.connection_ = connection;
+  if (connection) {
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.Room.connection)
+}
+inline ::lobby::RoomConnectionInfo* Room::release_connection() {
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::lobby::RoomConnectionInfo* temp = _impl_.connection_;
+  _impl_.connection_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::lobby::RoomConnectionInfo* Room::unsafe_arena_release_connection() {
+  // @@protoc_insertion_point(field_release:lobby.Room.connection)
+  _impl_._has_bits_[0] &= ~0x00000002u;
+  ::lobby::RoomConnectionInfo* temp = _impl_.connection_;
+  _impl_.connection_ = nullptr;
+  return temp;
+}
+inline ::lobby::RoomConnectionInfo* Room::_internal_mutable_connection() {
+  _impl_._has_bits_[0] |= 0x00000002u;
+  if (_impl_.connection_ == nullptr) {
+    auto* p = CreateMaybeMessage<::lobby::RoomConnectionInfo>(GetArenaForAllocation());
+    _impl_.connection_ = p;
+  }
+  return _impl_.connection_;
+}
+inline ::lobby::RoomConnectionInfo* Room::mutable_connection() {
+  ::lobby::RoomConnectionInfo* _msg = _internal_mutable_connection();
+  // @@protoc_insertion_point(field_mutable:lobby.Room.connection)
+  return _msg;
+}
+inline void Room::set_allocated_connection(::lobby::RoomConnectionInfo* connection) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.connection_;
+  }
+  if (connection) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(connection);
+    if (message_arena != submessage_arena) {
+      connection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, connection, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000002u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000002u;
+  }
+  _impl_.connection_ = connection;
+  // @@protoc_insertion_point(field_set_allocated:lobby.Room.connection)
 }
 
 // -------------------------------------------------------------------
 
 // CreateRoomRequest
 
-// .lobby.RoomConfig config = 1;
+// string room_name = 1;
+inline void CreateRoomRequest::clear_room_name() {
+  _impl_.room_name_.ClearToEmpty();
+}
+inline const std::string& CreateRoomRequest::room_name() const {
+  // @@protoc_insertion_point(field_get:lobby.CreateRoomRequest.room_name)
+  return _internal_room_name();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void CreateRoomRequest::set_room_name(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.room_name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.CreateRoomRequest.room_name)
+}
+inline std::string* CreateRoomRequest::mutable_room_name() {
+  std::string* _s = _internal_mutable_room_name();
+  // @@protoc_insertion_point(field_mutable:lobby.CreateRoomRequest.room_name)
+  return _s;
+}
+inline const std::string& CreateRoomRequest::_internal_room_name() const {
+  return _impl_.room_name_.Get();
+}
+inline void CreateRoomRequest::_internal_set_room_name(const std::string& value) {
+  ;
+
+
+  _impl_.room_name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* CreateRoomRequest::_internal_mutable_room_name() {
+  ;
+  return _impl_.room_name_.Mutable( GetArenaForAllocation());
+}
+inline std::string* CreateRoomRequest::release_room_name() {
+  // @@protoc_insertion_point(field_release:lobby.CreateRoomRequest.room_name)
+  return _impl_.room_name_.Release();
+}
+inline void CreateRoomRequest::set_allocated_room_name(std::string* value) {
+  _impl_.room_name_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.room_name_.IsDefault()) {
+          _impl_.room_name_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.CreateRoomRequest.room_name)
+}
+
+// string password = 2;
+inline void CreateRoomRequest::clear_password() {
+  _impl_.password_.ClearToEmpty();
+}
+inline const std::string& CreateRoomRequest::password() const {
+  // @@protoc_insertion_point(field_get:lobby.CreateRoomRequest.password)
+  return _internal_password();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void CreateRoomRequest::set_password(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.password_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.CreateRoomRequest.password)
+}
+inline std::string* CreateRoomRequest::mutable_password() {
+  std::string* _s = _internal_mutable_password();
+  // @@protoc_insertion_point(field_mutable:lobby.CreateRoomRequest.password)
+  return _s;
+}
+inline const std::string& CreateRoomRequest::_internal_password() const {
+  return _impl_.password_.Get();
+}
+inline void CreateRoomRequest::_internal_set_password(const std::string& value) {
+  ;
+
+
+  _impl_.password_.Set(value, GetArenaForAllocation());
+}
+inline std::string* CreateRoomRequest::_internal_mutable_password() {
+  ;
+  return _impl_.password_.Mutable( GetArenaForAllocation());
+}
+inline std::string* CreateRoomRequest::release_password() {
+  // @@protoc_insertion_point(field_release:lobby.CreateRoomRequest.password)
+  return _impl_.password_.Release();
+}
+inline void CreateRoomRequest::set_allocated_password(std::string* value) {
+  _impl_.password_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.password_.IsDefault()) {
+          _impl_.password_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.CreateRoomRequest.password)
+}
+
+// .lobby.RoomConfig config = 3;
 inline bool CreateRoomRequest::has_config() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.config_ != nullptr);
@@ -5422,58 +4525,31 @@ inline void CreateRoomRequest::set_allocated_config(::lobby::RoomConfig* config)
   // @@protoc_insertion_point(field_set_allocated:lobby.CreateRoomRequest.config)
 }
 
-// string password = 2;
-inline void CreateRoomRequest::clear_password() {
-  _impl_.password_.ClearToEmpty();
-}
-inline const std::string& CreateRoomRequest::password() const {
-  // @@protoc_insertion_point(field_get:lobby.CreateRoomRequest.password)
-  return _internal_password();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void CreateRoomRequest::set_password(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.password_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.CreateRoomRequest.password)
-}
-inline std::string* CreateRoomRequest::mutable_password() {
-  std::string* _s = _internal_mutable_password();
-  // @@protoc_insertion_point(field_mutable:lobby.CreateRoomRequest.password)
-  return _s;
-}
-inline const std::string& CreateRoomRequest::_internal_password() const {
-  return _impl_.password_.Get();
-}
-inline void CreateRoomRequest::_internal_set_password(const std::string& value) {
-  ;
-
-
-  _impl_.password_.Set(value, GetArenaForAllocation());
-}
-inline std::string* CreateRoomRequest::_internal_mutable_password() {
-  ;
-  return _impl_.password_.Mutable( GetArenaForAllocation());
-}
-inline std::string* CreateRoomRequest::release_password() {
-  // @@protoc_insertion_point(field_release:lobby.CreateRoomRequest.password)
-  return _impl_.password_.Release();
-}
-inline void CreateRoomRequest::set_allocated_password(std::string* value) {
-  _impl_.password_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.password_.IsDefault()) {
-          _impl_.password_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.CreateRoomRequest.password)
-}
-
 // -------------------------------------------------------------------
 
 // CreateRoomResponse
 
-// .lobby.RoomConnectionInfo connection = 1;
+// .lobby.RoomDeploymentStatus deploy_status = 1;
+inline void CreateRoomResponse::clear_deploy_status() {
+  _impl_.deploy_status_ = 0;
+}
+inline ::lobby::RoomDeploymentStatus CreateRoomResponse::deploy_status() const {
+  // @@protoc_insertion_point(field_get:lobby.CreateRoomResponse.deploy_status)
+  return _internal_deploy_status();
+}
+inline void CreateRoomResponse::set_deploy_status(::lobby::RoomDeploymentStatus value) {
+   _internal_set_deploy_status(value);
+  // @@protoc_insertion_point(field_set:lobby.CreateRoomResponse.deploy_status)
+}
+inline ::lobby::RoomDeploymentStatus CreateRoomResponse::_internal_deploy_status() const {
+  return static_cast<::lobby::RoomDeploymentStatus>(_impl_.deploy_status_);
+}
+inline void CreateRoomResponse::_internal_set_deploy_status(::lobby::RoomDeploymentStatus value) {
+  ;
+  _impl_.deploy_status_ = value;
+}
+
+// .lobby.RoomConnectionInfo connection = 2;
 inline bool CreateRoomResponse::has_connection() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.connection_ != nullptr);
@@ -5565,8 +4641,17 @@ inline void CreateRoomResponse::set_allocated_connection(::lobby::RoomConnection
 // JoinRoomRequest
 
 // string room_id = 1;
+inline bool JoinRoomRequest::has_room_id() const {
+  return id_case() == kRoomId;
+}
+inline void JoinRoomRequest::set_has_room_id() {
+  _impl_._oneof_case_[0] = kRoomId;
+}
 inline void JoinRoomRequest::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
+  if (id_case() == kRoomId) {
+    _impl_.id_.room_id_.Destroy();
+    clear_has_id();
+  }
 }
 inline const std::string& JoinRoomRequest::room_id() const {
   // @@protoc_insertion_point(field_get:lobby.JoinRoomRequest.room_id)
@@ -5575,8 +4660,13 @@ inline const std::string& JoinRoomRequest::room_id() const {
 template <typename Arg_, typename... Args_>
 inline PROTOBUF_ALWAYS_INLINE void JoinRoomRequest::set_room_id(Arg_&& arg,
                                                      Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  if (id_case() != kRoomId) {
+    clear_id();
+
+    set_has_room_id();
+    _impl_.id_.room_id_.InitDefault();
+  }
+  _impl_.id_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:lobby.JoinRoomRequest.room_id)
 }
 inline std::string* JoinRoomRequest::mutable_room_id() {
@@ -5585,33 +4675,130 @@ inline std::string* JoinRoomRequest::mutable_room_id() {
   return _s;
 }
 inline const std::string& JoinRoomRequest::_internal_room_id() const {
-  return _impl_.room_id_.Get();
+  if (id_case() != kRoomId) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+  }
+  return _impl_.id_.room_id_.Get();
 }
 inline void JoinRoomRequest::_internal_set_room_id(const std::string& value) {
-  ;
+  if (id_case() != kRoomId) {
+    clear_id();
+
+    set_has_room_id();
+    _impl_.id_.room_id_.InitDefault();
+  }
 
 
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
+  _impl_.id_.room_id_.Set(value, GetArenaForAllocation());
 }
 inline std::string* JoinRoomRequest::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
+  if (id_case() != kRoomId) {
+    clear_id();
+
+    set_has_room_id();
+    _impl_.id_.room_id_.InitDefault();
+  }
+  return _impl_.id_.room_id_.Mutable( GetArenaForAllocation());
 }
 inline std::string* JoinRoomRequest::release_room_id() {
   // @@protoc_insertion_point(field_release:lobby.JoinRoomRequest.room_id)
-  return _impl_.room_id_.Release();
+  if (id_case() != kRoomId) {
+    return nullptr;
+  }
+  clear_has_id();
+  return _impl_.id_.room_id_.Release();
 }
 inline void JoinRoomRequest::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (has_id()) {
+    clear_id();
+  }
+  if (value != nullptr) {
+    set_has_room_id();
+    _impl_.id_.room_id_.InitAllocated(value, GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomRequest.room_id)
 }
 
-// string password = 2;
+// string short_room_id = 2;
+inline bool JoinRoomRequest::has_short_room_id() const {
+  return id_case() == kShortRoomId;
+}
+inline void JoinRoomRequest::set_has_short_room_id() {
+  _impl_._oneof_case_[0] = kShortRoomId;
+}
+inline void JoinRoomRequest::clear_short_room_id() {
+  if (id_case() == kShortRoomId) {
+    _impl_.id_.short_room_id_.Destroy();
+    clear_has_id();
+  }
+}
+inline const std::string& JoinRoomRequest::short_room_id() const {
+  // @@protoc_insertion_point(field_get:lobby.JoinRoomRequest.short_room_id)
+  return _internal_short_room_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void JoinRoomRequest::set_short_room_id(Arg_&& arg,
+                                                     Args_... args) {
+  if (id_case() != kShortRoomId) {
+    clear_id();
+
+    set_has_short_room_id();
+    _impl_.id_.short_room_id_.InitDefault();
+  }
+  _impl_.id_.short_room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.JoinRoomRequest.short_room_id)
+}
+inline std::string* JoinRoomRequest::mutable_short_room_id() {
+  std::string* _s = _internal_mutable_short_room_id();
+  // @@protoc_insertion_point(field_mutable:lobby.JoinRoomRequest.short_room_id)
+  return _s;
+}
+inline const std::string& JoinRoomRequest::_internal_short_room_id() const {
+  if (id_case() != kShortRoomId) {
+    return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
+  }
+  return _impl_.id_.short_room_id_.Get();
+}
+inline void JoinRoomRequest::_internal_set_short_room_id(const std::string& value) {
+  if (id_case() != kShortRoomId) {
+    clear_id();
+
+    set_has_short_room_id();
+    _impl_.id_.short_room_id_.InitDefault();
+  }
+
+
+  _impl_.id_.short_room_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* JoinRoomRequest::_internal_mutable_short_room_id() {
+  if (id_case() != kShortRoomId) {
+    clear_id();
+
+    set_has_short_room_id();
+    _impl_.id_.short_room_id_.InitDefault();
+  }
+  return _impl_.id_.short_room_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* JoinRoomRequest::release_short_room_id() {
+  // @@protoc_insertion_point(field_release:lobby.JoinRoomRequest.short_room_id)
+  if (id_case() != kShortRoomId) {
+    return nullptr;
+  }
+  clear_has_id();
+  return _impl_.id_.short_room_id_.Release();
+}
+inline void JoinRoomRequest::set_allocated_short_room_id(std::string* value) {
+  if (has_id()) {
+    clear_id();
+  }
+  if (value != nullptr) {
+    set_has_short_room_id();
+    _impl_.id_.short_room_id_.InitAllocated(value, GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomRequest.short_room_id)
+}
+
+// string password = 3;
 inline void JoinRoomRequest::clear_password() {
   _impl_.password_.ClearToEmpty();
 }
@@ -5658,6 +4845,15 @@ inline void JoinRoomRequest::set_allocated_password(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomRequest.password)
 }
 
+inline bool JoinRoomRequest::has_id() const {
+  return id_case() != ID_NOT_SET;
+}
+inline void JoinRoomRequest::clear_has_id() {
+  _impl_._oneof_case_[0] = ID_NOT_SET;
+}
+inline JoinRoomRequest::IdCase JoinRoomRequest::id_case() const {
+  return JoinRoomRequest::IdCase(_impl_._oneof_case_[0]);
+}
 // -------------------------------------------------------------------
 
 // JoinRoomResponse
@@ -5817,7 +5013,7 @@ inline void GetRoomListRequest::_internal_set_map(::lobby::GameMap value) {
 
 // GetRoomListResponse
 
-// repeated .lobby.RoomPreview rooms = 1;
+// repeated .lobby.Room rooms = 1;
 inline int GetRoomListResponse::_internal_rooms_size() const {
   return _impl_.rooms_.size();
 }
@@ -5827,927 +5023,49 @@ inline int GetRoomListResponse::rooms_size() const {
 inline void GetRoomListResponse::clear_rooms() {
   _internal_mutable_rooms()->Clear();
 }
-inline ::lobby::RoomPreview* GetRoomListResponse::mutable_rooms(int index) {
+inline ::lobby::Room* GetRoomListResponse::mutable_rooms(int index) {
   // @@protoc_insertion_point(field_mutable:lobby.GetRoomListResponse.rooms)
   return _internal_mutable_rooms()->Mutable(index);
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPreview >*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::Room >*
 GetRoomListResponse::mutable_rooms() {
   // @@protoc_insertion_point(field_mutable_list:lobby.GetRoomListResponse.rooms)
   return _internal_mutable_rooms();
 }
-inline const ::lobby::RoomPreview& GetRoomListResponse::_internal_rooms(int index) const {
+inline const ::lobby::Room& GetRoomListResponse::_internal_rooms(int index) const {
   return _internal_rooms().Get(index);
 }
-inline const ::lobby::RoomPreview& GetRoomListResponse::rooms(int index) const {
+inline const ::lobby::Room& GetRoomListResponse::rooms(int index) const {
   // @@protoc_insertion_point(field_get:lobby.GetRoomListResponse.rooms)
   return _internal_rooms(index);
 }
-inline ::lobby::RoomPreview* GetRoomListResponse::_internal_add_rooms() {
+inline ::lobby::Room* GetRoomListResponse::_internal_add_rooms() {
   return _internal_mutable_rooms()->Add();
 }
-inline ::lobby::RoomPreview* GetRoomListResponse::add_rooms() {
-  ::lobby::RoomPreview* _add = _internal_add_rooms();
+inline ::lobby::Room* GetRoomListResponse::add_rooms() {
+  ::lobby::Room* _add = _internal_add_rooms();
   // @@protoc_insertion_point(field_add:lobby.GetRoomListResponse.rooms)
   return _add;
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPreview >&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::Room >&
 GetRoomListResponse::rooms() const {
   // @@protoc_insertion_point(field_list:lobby.GetRoomListResponse.rooms)
   return _internal_rooms();
 }
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPreview>&
+inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::Room>&
 GetRoomListResponse::_internal_rooms() const {
   return _impl_.rooms_;
 }
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPreview>*
+inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::Room>*
 GetRoomListResponse::_internal_mutable_rooms() {
   return &_impl_.rooms_;
 }
 
 // -------------------------------------------------------------------
 
-// RoomConnectionInfo
-
-// string host = 1;
-inline void RoomConnectionInfo::clear_host() {
-  _impl_.host_.ClearToEmpty();
-}
-inline const std::string& RoomConnectionInfo::host() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomConnectionInfo.host)
-  return _internal_host();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void RoomConnectionInfo::set_host(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.host_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.RoomConnectionInfo.host)
-}
-inline std::string* RoomConnectionInfo::mutable_host() {
-  std::string* _s = _internal_mutable_host();
-  // @@protoc_insertion_point(field_mutable:lobby.RoomConnectionInfo.host)
-  return _s;
-}
-inline const std::string& RoomConnectionInfo::_internal_host() const {
-  return _impl_.host_.Get();
-}
-inline void RoomConnectionInfo::_internal_set_host(const std::string& value) {
-  ;
-
-
-  _impl_.host_.Set(value, GetArenaForAllocation());
-}
-inline std::string* RoomConnectionInfo::_internal_mutable_host() {
-  ;
-  return _impl_.host_.Mutable( GetArenaForAllocation());
-}
-inline std::string* RoomConnectionInfo::release_host() {
-  // @@protoc_insertion_point(field_release:lobby.RoomConnectionInfo.host)
-  return _impl_.host_.Release();
-}
-inline void RoomConnectionInfo::set_allocated_host(std::string* value) {
-  _impl_.host_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.host_.IsDefault()) {
-          _impl_.host_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.RoomConnectionInfo.host)
-}
-
-// int32 port = 2;
-inline void RoomConnectionInfo::clear_port() {
-  _impl_.port_ = 0;
-}
-inline ::int32_t RoomConnectionInfo::port() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomConnectionInfo.port)
-  return _internal_port();
-}
-inline void RoomConnectionInfo::set_port(::int32_t value) {
-  _internal_set_port(value);
-  // @@protoc_insertion_point(field_set:lobby.RoomConnectionInfo.port)
-}
-inline ::int32_t RoomConnectionInfo::_internal_port() const {
-  return _impl_.port_;
-}
-inline void RoomConnectionInfo::_internal_set_port(::int32_t value) {
-  ;
-  _impl_.port_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// RoomPlayer
-
-// string user_id = 1;
-inline void RoomPlayer::clear_user_id() {
-  _impl_.user_id_.ClearToEmpty();
-}
-inline const std::string& RoomPlayer::user_id() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomPlayer.user_id)
-  return _internal_user_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void RoomPlayer::set_user_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.user_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.RoomPlayer.user_id)
-}
-inline std::string* RoomPlayer::mutable_user_id() {
-  std::string* _s = _internal_mutable_user_id();
-  // @@protoc_insertion_point(field_mutable:lobby.RoomPlayer.user_id)
-  return _s;
-}
-inline const std::string& RoomPlayer::_internal_user_id() const {
-  return _impl_.user_id_.Get();
-}
-inline void RoomPlayer::_internal_set_user_id(const std::string& value) {
-  ;
-
-
-  _impl_.user_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* RoomPlayer::_internal_mutable_user_id() {
-  ;
-  return _impl_.user_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* RoomPlayer::release_user_id() {
-  // @@protoc_insertion_point(field_release:lobby.RoomPlayer.user_id)
-  return _impl_.user_id_.Release();
-}
-inline void RoomPlayer::set_allocated_user_id(std::string* value) {
-  _impl_.user_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.user_id_.IsDefault()) {
-          _impl_.user_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.RoomPlayer.user_id)
-}
-
-// string user_name = 2;
-inline void RoomPlayer::clear_user_name() {
-  _impl_.user_name_.ClearToEmpty();
-}
-inline const std::string& RoomPlayer::user_name() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomPlayer.user_name)
-  return _internal_user_name();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void RoomPlayer::set_user_name(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.user_name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.RoomPlayer.user_name)
-}
-inline std::string* RoomPlayer::mutable_user_name() {
-  std::string* _s = _internal_mutable_user_name();
-  // @@protoc_insertion_point(field_mutable:lobby.RoomPlayer.user_name)
-  return _s;
-}
-inline const std::string& RoomPlayer::_internal_user_name() const {
-  return _impl_.user_name_.Get();
-}
-inline void RoomPlayer::_internal_set_user_name(const std::string& value) {
-  ;
-
-
-  _impl_.user_name_.Set(value, GetArenaForAllocation());
-}
-inline std::string* RoomPlayer::_internal_mutable_user_name() {
-  ;
-  return _impl_.user_name_.Mutable( GetArenaForAllocation());
-}
-inline std::string* RoomPlayer::release_user_name() {
-  // @@protoc_insertion_point(field_release:lobby.RoomPlayer.user_name)
-  return _impl_.user_name_.Release();
-}
-inline void RoomPlayer::set_allocated_user_name(std::string* value) {
-  _impl_.user_name_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.user_name_.IsDefault()) {
-          _impl_.user_name_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.RoomPlayer.user_name)
-}
-
-// .lobby.PlayerState state = 3;
-inline void RoomPlayer::clear_state() {
-  _impl_.state_ = 0;
-}
-inline ::lobby::PlayerState RoomPlayer::state() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomPlayer.state)
-  return _internal_state();
-}
-inline void RoomPlayer::set_state(::lobby::PlayerState value) {
-   _internal_set_state(value);
-  // @@protoc_insertion_point(field_set:lobby.RoomPlayer.state)
-}
-inline ::lobby::PlayerState RoomPlayer::_internal_state() const {
-  return static_cast<::lobby::PlayerState>(_impl_.state_);
-}
-inline void RoomPlayer::_internal_set_state(::lobby::PlayerState value) {
-  ;
-  _impl_.state_ = value;
-}
-
-// bool is_owner = 4;
-inline void RoomPlayer::clear_is_owner() {
-  _impl_.is_owner_ = false;
-}
-inline bool RoomPlayer::is_owner() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomPlayer.is_owner)
-  return _internal_is_owner();
-}
-inline void RoomPlayer::set_is_owner(bool value) {
-  _internal_set_is_owner(value);
-  // @@protoc_insertion_point(field_set:lobby.RoomPlayer.is_owner)
-}
-inline bool RoomPlayer::_internal_is_owner() const {
-  return _impl_.is_owner_;
-}
-inline void RoomPlayer::_internal_set_is_owner(bool value) {
-  ;
-  _impl_.is_owner_ = value;
-}
-
-// .google.protobuf.Timestamp joined_at = 5;
-inline bool RoomPlayer::has_joined_at() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.joined_at_ != nullptr);
-  return value;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& RoomPlayer::_internal_joined_at() const {
-  const ::PROTOBUF_NAMESPACE_ID::Timestamp* p = _impl_.joined_at_;
-  return p != nullptr ? *p : reinterpret_cast<const ::PROTOBUF_NAMESPACE_ID::Timestamp&>(
-      ::PROTOBUF_NAMESPACE_ID::_Timestamp_default_instance_);
-}
-inline const ::PROTOBUF_NAMESPACE_ID::Timestamp& RoomPlayer::joined_at() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomPlayer.joined_at)
-  return _internal_joined_at();
-}
-inline void RoomPlayer::unsafe_arena_set_allocated_joined_at(
-    ::PROTOBUF_NAMESPACE_ID::Timestamp* joined_at) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.joined_at_);
-  }
-  _impl_.joined_at_ = joined_at;
-  if (joined_at) {
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.RoomPlayer.joined_at)
-}
-inline ::PROTOBUF_NAMESPACE_ID::Timestamp* RoomPlayer::release_joined_at() {
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = _impl_.joined_at_;
-  _impl_.joined_at_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::PROTOBUF_NAMESPACE_ID::Timestamp* RoomPlayer::unsafe_arena_release_joined_at() {
-  // @@protoc_insertion_point(field_release:lobby.RoomPlayer.joined_at)
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* temp = _impl_.joined_at_;
-  _impl_.joined_at_ = nullptr;
-  return temp;
-}
-inline ::PROTOBUF_NAMESPACE_ID::Timestamp* RoomPlayer::_internal_mutable_joined_at() {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  if (_impl_.joined_at_ == nullptr) {
-    auto* p = CreateMaybeMessage<::PROTOBUF_NAMESPACE_ID::Timestamp>(GetArenaForAllocation());
-    _impl_.joined_at_ = p;
-  }
-  return _impl_.joined_at_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::Timestamp* RoomPlayer::mutable_joined_at() {
-  ::PROTOBUF_NAMESPACE_ID::Timestamp* _msg = _internal_mutable_joined_at();
-  // @@protoc_insertion_point(field_mutable:lobby.RoomPlayer.joined_at)
-  return _msg;
-}
-inline void RoomPlayer::set_allocated_joined_at(::PROTOBUF_NAMESPACE_ID::Timestamp* joined_at) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete reinterpret_cast< ::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.joined_at_);
-  }
-  if (joined_at) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(
-                reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(joined_at));
-    if (message_arena != submessage_arena) {
-      joined_at = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, joined_at, submessage_arena);
-    }
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  _impl_.joined_at_ = joined_at;
-  // @@protoc_insertion_point(field_set_allocated:lobby.RoomPlayer.joined_at)
-}
-
-// -------------------------------------------------------------------
-
-// Room
-
-// string room_id = 1;
-inline void Room::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
-}
-inline const std::string& Room::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.Room.room_id)
-  return _internal_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Room::set_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.Room.room_id)
-}
-inline std::string* Room::mutable_room_id() {
-  std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.Room.room_id)
-  return _s;
-}
-inline const std::string& Room::_internal_room_id() const {
-  return _impl_.room_id_.Get();
-}
-inline void Room::_internal_set_room_id(const std::string& value) {
-  ;
-
-
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* Room::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* Room::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.Room.room_id)
-  return _impl_.room_id_.Release();
-}
-inline void Room::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.Room.room_id)
-}
-
-// string password_encrypted = 2;
-inline void Room::clear_password_encrypted() {
-  _impl_.password_encrypted_.ClearToEmpty();
-}
-inline const std::string& Room::password_encrypted() const {
-  // @@protoc_insertion_point(field_get:lobby.Room.password_encrypted)
-  return _internal_password_encrypted();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Room::set_password_encrypted(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.password_encrypted_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.Room.password_encrypted)
-}
-inline std::string* Room::mutable_password_encrypted() {
-  std::string* _s = _internal_mutable_password_encrypted();
-  // @@protoc_insertion_point(field_mutable:lobby.Room.password_encrypted)
-  return _s;
-}
-inline const std::string& Room::_internal_password_encrypted() const {
-  return _impl_.password_encrypted_.Get();
-}
-inline void Room::_internal_set_password_encrypted(const std::string& value) {
-  ;
-
-
-  _impl_.password_encrypted_.Set(value, GetArenaForAllocation());
-}
-inline std::string* Room::_internal_mutable_password_encrypted() {
-  ;
-  return _impl_.password_encrypted_.Mutable( GetArenaForAllocation());
-}
-inline std::string* Room::release_password_encrypted() {
-  // @@protoc_insertion_point(field_release:lobby.Room.password_encrypted)
-  return _impl_.password_encrypted_.Release();
-}
-inline void Room::set_allocated_password_encrypted(std::string* value) {
-  _impl_.password_encrypted_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.password_encrypted_.IsDefault()) {
-          _impl_.password_encrypted_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.Room.password_encrypted)
-}
-
-// .lobby.RoomState state = 3;
-inline void Room::clear_state() {
-  _impl_.state_ = 0;
-}
-inline ::lobby::RoomState Room::state() const {
-  // @@protoc_insertion_point(field_get:lobby.Room.state)
-  return _internal_state();
-}
-inline void Room::set_state(::lobby::RoomState value) {
-   _internal_set_state(value);
-  // @@protoc_insertion_point(field_set:lobby.Room.state)
-}
-inline ::lobby::RoomState Room::_internal_state() const {
-  return static_cast<::lobby::RoomState>(_impl_.state_);
-}
-inline void Room::_internal_set_state(::lobby::RoomState value) {
-  ;
-  _impl_.state_ = value;
-}
-
-// string owner_id = 4;
-inline void Room::clear_owner_id() {
-  _impl_.owner_id_.ClearToEmpty();
-}
-inline const std::string& Room::owner_id() const {
-  // @@protoc_insertion_point(field_get:lobby.Room.owner_id)
-  return _internal_owner_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Room::set_owner_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.owner_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.Room.owner_id)
-}
-inline std::string* Room::mutable_owner_id() {
-  std::string* _s = _internal_mutable_owner_id();
-  // @@protoc_insertion_point(field_mutable:lobby.Room.owner_id)
-  return _s;
-}
-inline const std::string& Room::_internal_owner_id() const {
-  return _impl_.owner_id_.Get();
-}
-inline void Room::_internal_set_owner_id(const std::string& value) {
-  ;
-
-
-  _impl_.owner_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* Room::_internal_mutable_owner_id() {
-  ;
-  return _impl_.owner_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* Room::release_owner_id() {
-  // @@protoc_insertion_point(field_release:lobby.Room.owner_id)
-  return _impl_.owner_id_.Release();
-}
-inline void Room::set_allocated_owner_id(std::string* value) {
-  _impl_.owner_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.owner_id_.IsDefault()) {
-          _impl_.owner_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.Room.owner_id)
-}
-
-// .lobby.RoomConfig config = 5;
-inline bool Room::has_config() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.config_ != nullptr);
-  return value;
-}
-inline void Room::clear_config() {
-  if (_impl_.config_ != nullptr) _impl_.config_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000001u;
-}
-inline const ::lobby::RoomConfig& Room::_internal_config() const {
-  const ::lobby::RoomConfig* p = _impl_.config_;
-  return p != nullptr ? *p : reinterpret_cast<const ::lobby::RoomConfig&>(
-      ::lobby::_RoomConfig_default_instance_);
-}
-inline const ::lobby::RoomConfig& Room::config() const {
-  // @@protoc_insertion_point(field_get:lobby.Room.config)
-  return _internal_config();
-}
-inline void Room::unsafe_arena_set_allocated_config(
-    ::lobby::RoomConfig* config) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.config_);
-  }
-  _impl_.config_ = config;
-  if (config) {
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.Room.config)
-}
-inline ::lobby::RoomConfig* Room::release_config() {
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::lobby::RoomConfig* temp = _impl_.config_;
-  _impl_.config_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::lobby::RoomConfig* Room::unsafe_arena_release_config() {
-  // @@protoc_insertion_point(field_release:lobby.Room.config)
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::lobby::RoomConfig* temp = _impl_.config_;
-  _impl_.config_ = nullptr;
-  return temp;
-}
-inline ::lobby::RoomConfig* Room::_internal_mutable_config() {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  if (_impl_.config_ == nullptr) {
-    auto* p = CreateMaybeMessage<::lobby::RoomConfig>(GetArenaForAllocation());
-    _impl_.config_ = p;
-  }
-  return _impl_.config_;
-}
-inline ::lobby::RoomConfig* Room::mutable_config() {
-  ::lobby::RoomConfig* _msg = _internal_mutable_config();
-  // @@protoc_insertion_point(field_mutable:lobby.Room.config)
-  return _msg;
-}
-inline void Room::set_allocated_config(::lobby::RoomConfig* config) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete _impl_.config_;
-  }
-  if (config) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(config);
-    if (message_arena != submessage_arena) {
-      config = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, config, submessage_arena);
-    }
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  _impl_.config_ = config;
-  // @@protoc_insertion_point(field_set_allocated:lobby.Room.config)
-}
-
-// repeated .lobby.RoomPlayer players = 6;
-inline int Room::_internal_players_size() const {
-  return _impl_.players_.size();
-}
-inline int Room::players_size() const {
-  return _internal_players_size();
-}
-inline void Room::clear_players() {
-  _internal_mutable_players()->Clear();
-}
-inline ::lobby::RoomPlayer* Room::mutable_players(int index) {
-  // @@protoc_insertion_point(field_mutable:lobby.Room.players)
-  return _internal_mutable_players()->Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer >*
-Room::mutable_players() {
-  // @@protoc_insertion_point(field_mutable_list:lobby.Room.players)
-  return _internal_mutable_players();
-}
-inline const ::lobby::RoomPlayer& Room::_internal_players(int index) const {
-  return _internal_players().Get(index);
-}
-inline const ::lobby::RoomPlayer& Room::players(int index) const {
-  // @@protoc_insertion_point(field_get:lobby.Room.players)
-  return _internal_players(index);
-}
-inline ::lobby::RoomPlayer* Room::_internal_add_players() {
-  return _internal_mutable_players()->Add();
-}
-inline ::lobby::RoomPlayer* Room::add_players() {
-  ::lobby::RoomPlayer* _add = _internal_add_players();
-  // @@protoc_insertion_point(field_add:lobby.Room.players)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer >&
-Room::players() const {
-  // @@protoc_insertion_point(field_list:lobby.Room.players)
-  return _internal_players();
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPlayer>&
-Room::_internal_players() const {
-  return _impl_.players_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPlayer>*
-Room::_internal_mutable_players() {
-  return &_impl_.players_;
-}
-
-// int32 player_count = 7;
-inline void Room::clear_player_count() {
-  _impl_.player_count_ = 0;
-}
-inline ::int32_t Room::player_count() const {
-  // @@protoc_insertion_point(field_get:lobby.Room.player_count)
-  return _internal_player_count();
-}
-inline void Room::set_player_count(::int32_t value) {
-  _internal_set_player_count(value);
-  // @@protoc_insertion_point(field_set:lobby.Room.player_count)
-}
-inline ::int32_t Room::_internal_player_count() const {
-  return _impl_.player_count_;
-}
-inline void Room::_internal_set_player_count(::int32_t value) {
-  ;
-  _impl_.player_count_ = value;
-}
-
-// .lobby.RoomConnectionInfo connection = 8;
-inline bool Room::has_connection() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.connection_ != nullptr);
-  return value;
-}
-inline void Room::clear_connection() {
-  if (_impl_.connection_ != nullptr) _impl_.connection_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000002u;
-}
-inline const ::lobby::RoomConnectionInfo& Room::_internal_connection() const {
-  const ::lobby::RoomConnectionInfo* p = _impl_.connection_;
-  return p != nullptr ? *p : reinterpret_cast<const ::lobby::RoomConnectionInfo&>(
-      ::lobby::_RoomConnectionInfo_default_instance_);
-}
-inline const ::lobby::RoomConnectionInfo& Room::connection() const {
-  // @@protoc_insertion_point(field_get:lobby.Room.connection)
-  return _internal_connection();
-}
-inline void Room::unsafe_arena_set_allocated_connection(
-    ::lobby::RoomConnectionInfo* connection) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.connection_);
-  }
-  _impl_.connection_ = connection;
-  if (connection) {
-    _impl_._has_bits_[0] |= 0x00000002u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000002u;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.Room.connection)
-}
-inline ::lobby::RoomConnectionInfo* Room::release_connection() {
-  _impl_._has_bits_[0] &= ~0x00000002u;
-  ::lobby::RoomConnectionInfo* temp = _impl_.connection_;
-  _impl_.connection_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::lobby::RoomConnectionInfo* Room::unsafe_arena_release_connection() {
-  // @@protoc_insertion_point(field_release:lobby.Room.connection)
-  _impl_._has_bits_[0] &= ~0x00000002u;
-  ::lobby::RoomConnectionInfo* temp = _impl_.connection_;
-  _impl_.connection_ = nullptr;
-  return temp;
-}
-inline ::lobby::RoomConnectionInfo* Room::_internal_mutable_connection() {
-  _impl_._has_bits_[0] |= 0x00000002u;
-  if (_impl_.connection_ == nullptr) {
-    auto* p = CreateMaybeMessage<::lobby::RoomConnectionInfo>(GetArenaForAllocation());
-    _impl_.connection_ = p;
-  }
-  return _impl_.connection_;
-}
-inline ::lobby::RoomConnectionInfo* Room::mutable_connection() {
-  ::lobby::RoomConnectionInfo* _msg = _internal_mutable_connection();
-  // @@protoc_insertion_point(field_mutable:lobby.Room.connection)
-  return _msg;
-}
-inline void Room::set_allocated_connection(::lobby::RoomConnectionInfo* connection) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete _impl_.connection_;
-  }
-  if (connection) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(connection);
-    if (message_arena != submessage_arena) {
-      connection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, connection, submessage_arena);
-    }
-    _impl_._has_bits_[0] |= 0x00000002u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000002u;
-  }
-  _impl_.connection_ = connection;
-  // @@protoc_insertion_point(field_set_allocated:lobby.Room.connection)
-}
-
-// -------------------------------------------------------------------
-
-// RoomConfig
-
-// string room_name = 1;
-inline void RoomConfig::clear_room_name() {
-  _impl_.room_name_.ClearToEmpty();
-}
-inline const std::string& RoomConfig::room_name() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomConfig.room_name)
-  return _internal_room_name();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void RoomConfig::set_room_name(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.RoomConfig.room_name)
-}
-inline std::string* RoomConfig::mutable_room_name() {
-  std::string* _s = _internal_mutable_room_name();
-  // @@protoc_insertion_point(field_mutable:lobby.RoomConfig.room_name)
-  return _s;
-}
-inline const std::string& RoomConfig::_internal_room_name() const {
-  return _impl_.room_name_.Get();
-}
-inline void RoomConfig::_internal_set_room_name(const std::string& value) {
-  ;
-
-
-  _impl_.room_name_.Set(value, GetArenaForAllocation());
-}
-inline std::string* RoomConfig::_internal_mutable_room_name() {
-  ;
-  return _impl_.room_name_.Mutable( GetArenaForAllocation());
-}
-inline std::string* RoomConfig::release_room_name() {
-  // @@protoc_insertion_point(field_release:lobby.RoomConfig.room_name)
-  return _impl_.room_name_.Release();
-}
-inline void RoomConfig::set_allocated_room_name(std::string* value) {
-  _impl_.room_name_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_name_.IsDefault()) {
-          _impl_.room_name_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.RoomConfig.room_name)
-}
-
-// .lobby.RoomVisibility visibility = 2;
-inline void RoomConfig::clear_visibility() {
-  _impl_.visibility_ = 0;
-}
-inline ::lobby::RoomVisibility RoomConfig::visibility() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomConfig.visibility)
-  return _internal_visibility();
-}
-inline void RoomConfig::set_visibility(::lobby::RoomVisibility value) {
-   _internal_set_visibility(value);
-  // @@protoc_insertion_point(field_set:lobby.RoomConfig.visibility)
-}
-inline ::lobby::RoomVisibility RoomConfig::_internal_visibility() const {
-  return static_cast<::lobby::RoomVisibility>(_impl_.visibility_);
-}
-inline void RoomConfig::_internal_set_visibility(::lobby::RoomVisibility value) {
-  ;
-  _impl_.visibility_ = value;
-}
-
-// .lobby.GameMode mode = 3;
-inline void RoomConfig::clear_mode() {
-  _impl_.mode_ = 0;
-}
-inline ::lobby::GameMode RoomConfig::mode() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomConfig.mode)
-  return _internal_mode();
-}
-inline void RoomConfig::set_mode(::lobby::GameMode value) {
-   _internal_set_mode(value);
-  // @@protoc_insertion_point(field_set:lobby.RoomConfig.mode)
-}
-inline ::lobby::GameMode RoomConfig::_internal_mode() const {
-  return static_cast<::lobby::GameMode>(_impl_.mode_);
-}
-inline void RoomConfig::_internal_set_mode(::lobby::GameMode value) {
-  ;
-  _impl_.mode_ = value;
-}
-
-// .lobby.GameMap map = 4;
-inline void RoomConfig::clear_map() {
-  _impl_.map_ = 0;
-}
-inline ::lobby::GameMap RoomConfig::map() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomConfig.map)
-  return _internal_map();
-}
-inline void RoomConfig::set_map(::lobby::GameMap value) {
-   _internal_set_map(value);
-  // @@protoc_insertion_point(field_set:lobby.RoomConfig.map)
-}
-inline ::lobby::GameMap RoomConfig::_internal_map() const {
-  return static_cast<::lobby::GameMap>(_impl_.map_);
-}
-inline void RoomConfig::_internal_set_map(::lobby::GameMap value) {
-  ;
-  _impl_.map_ = value;
-}
-
-// int32 max_players = 5;
-inline void RoomConfig::clear_max_players() {
-  _impl_.max_players_ = 0;
-}
-inline ::int32_t RoomConfig::max_players() const {
-  // @@protoc_insertion_point(field_get:lobby.RoomConfig.max_players)
-  return _internal_max_players();
-}
-inline void RoomConfig::set_max_players(::int32_t value) {
-  _internal_set_max_players(value);
-  // @@protoc_insertion_point(field_set:lobby.RoomConfig.max_players)
-}
-inline ::int32_t RoomConfig::_internal_max_players() const {
-  return _impl_.max_players_;
-}
-inline void RoomConfig::_internal_set_max_players(::int32_t value) {
-  ;
-  _impl_.max_players_ = value;
-}
-
-// -------------------------------------------------------------------
-
 // UpdateRoomStateRequest
 
-// string room_id = 1;
-inline void UpdateRoomStateRequest::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
-}
-inline const std::string& UpdateRoomStateRequest::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.UpdateRoomStateRequest.room_id)
-  return _internal_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void UpdateRoomStateRequest::set_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.UpdateRoomStateRequest.room_id)
-}
-inline std::string* UpdateRoomStateRequest::mutable_room_id() {
-  std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.UpdateRoomStateRequest.room_id)
-  return _s;
-}
-inline const std::string& UpdateRoomStateRequest::_internal_room_id() const {
-  return _impl_.room_id_.Get();
-}
-inline void UpdateRoomStateRequest::_internal_set_room_id(const std::string& value) {
-  ;
-
-
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* UpdateRoomStateRequest::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* UpdateRoomStateRequest::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.UpdateRoomStateRequest.room_id)
-  return _impl_.room_id_.Release();
-}
-inline void UpdateRoomStateRequest::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.UpdateRoomStateRequest.room_id)
-}
-
-// .lobby.RoomState state = 2;
+// .lobby.RoomState state = 1;
 inline void UpdateRoomStateRequest::clear_state() {
   _impl_.state_ = 0;
 }
@@ -6795,54 +5113,7 @@ inline void UpdateRoomStateResponse::_internal_set_updated_state(::lobby::RoomSt
 
 // UpdateRoomConfigRequest
 
-// string room_id = 1;
-inline void UpdateRoomConfigRequest::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
-}
-inline const std::string& UpdateRoomConfigRequest::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.UpdateRoomConfigRequest.room_id)
-  return _internal_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void UpdateRoomConfigRequest::set_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.UpdateRoomConfigRequest.room_id)
-}
-inline std::string* UpdateRoomConfigRequest::mutable_room_id() {
-  std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.UpdateRoomConfigRequest.room_id)
-  return _s;
-}
-inline const std::string& UpdateRoomConfigRequest::_internal_room_id() const {
-  return _impl_.room_id_.Get();
-}
-inline void UpdateRoomConfigRequest::_internal_set_room_id(const std::string& value) {
-  ;
-
-
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* UpdateRoomConfigRequest::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* UpdateRoomConfigRequest::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.UpdateRoomConfigRequest.room_id)
-  return _impl_.room_id_.Release();
-}
-inline void UpdateRoomConfigRequest::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.UpdateRoomConfigRequest.room_id)
-}
-
-// .lobby.RoomConfig config = 2;
+// .lobby.RoomConfig config = 1;
 inline bool UpdateRoomConfigRequest::has_config() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.config_ != nullptr);
@@ -7022,245 +5293,9 @@ inline void UpdateRoomConfigResponse::set_allocated_updated_config(::lobby::Room
 
 // -------------------------------------------------------------------
 
-// UpdatePlayerStateRequest
-
-// string room_id = 1;
-inline void UpdatePlayerStateRequest::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
-}
-inline const std::string& UpdatePlayerStateRequest::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.UpdatePlayerStateRequest.room_id)
-  return _internal_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void UpdatePlayerStateRequest::set_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.UpdatePlayerStateRequest.room_id)
-}
-inline std::string* UpdatePlayerStateRequest::mutable_room_id() {
-  std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.UpdatePlayerStateRequest.room_id)
-  return _s;
-}
-inline const std::string& UpdatePlayerStateRequest::_internal_room_id() const {
-  return _impl_.room_id_.Get();
-}
-inline void UpdatePlayerStateRequest::_internal_set_room_id(const std::string& value) {
-  ;
-
-
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* UpdatePlayerStateRequest::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* UpdatePlayerStateRequest::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.UpdatePlayerStateRequest.room_id)
-  return _impl_.room_id_.Release();
-}
-inline void UpdatePlayerStateRequest::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.UpdatePlayerStateRequest.room_id)
-}
-
-// string user_id = 2;
-inline void UpdatePlayerStateRequest::clear_user_id() {
-  _impl_.user_id_.ClearToEmpty();
-}
-inline const std::string& UpdatePlayerStateRequest::user_id() const {
-  // @@protoc_insertion_point(field_get:lobby.UpdatePlayerStateRequest.user_id)
-  return _internal_user_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void UpdatePlayerStateRequest::set_user_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.user_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.UpdatePlayerStateRequest.user_id)
-}
-inline std::string* UpdatePlayerStateRequest::mutable_user_id() {
-  std::string* _s = _internal_mutable_user_id();
-  // @@protoc_insertion_point(field_mutable:lobby.UpdatePlayerStateRequest.user_id)
-  return _s;
-}
-inline const std::string& UpdatePlayerStateRequest::_internal_user_id() const {
-  return _impl_.user_id_.Get();
-}
-inline void UpdatePlayerStateRequest::_internal_set_user_id(const std::string& value) {
-  ;
-
-
-  _impl_.user_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* UpdatePlayerStateRequest::_internal_mutable_user_id() {
-  ;
-  return _impl_.user_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* UpdatePlayerStateRequest::release_user_id() {
-  // @@protoc_insertion_point(field_release:lobby.UpdatePlayerStateRequest.user_id)
-  return _impl_.user_id_.Release();
-}
-inline void UpdatePlayerStateRequest::set_allocated_user_id(std::string* value) {
-  _impl_.user_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.user_id_.IsDefault()) {
-          _impl_.user_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.UpdatePlayerStateRequest.user_id)
-}
-
-// .lobby.PlayerState state = 3;
-inline void UpdatePlayerStateRequest::clear_state() {
-  _impl_.state_ = 0;
-}
-inline ::lobby::PlayerState UpdatePlayerStateRequest::state() const {
-  // @@protoc_insertion_point(field_get:lobby.UpdatePlayerStateRequest.state)
-  return _internal_state();
-}
-inline void UpdatePlayerStateRequest::set_state(::lobby::PlayerState value) {
-   _internal_set_state(value);
-  // @@protoc_insertion_point(field_set:lobby.UpdatePlayerStateRequest.state)
-}
-inline ::lobby::PlayerState UpdatePlayerStateRequest::_internal_state() const {
-  return static_cast<::lobby::PlayerState>(_impl_.state_);
-}
-inline void UpdatePlayerStateRequest::_internal_set_state(::lobby::PlayerState value) {
-  ;
-  _impl_.state_ = value;
-}
-
-// -------------------------------------------------------------------
-
-// UpdatePlayerStateResponse
-
-// string user_id = 1;
-inline void UpdatePlayerStateResponse::clear_user_id() {
-  _impl_.user_id_.ClearToEmpty();
-}
-inline const std::string& UpdatePlayerStateResponse::user_id() const {
-  // @@protoc_insertion_point(field_get:lobby.UpdatePlayerStateResponse.user_id)
-  return _internal_user_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void UpdatePlayerStateResponse::set_user_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.user_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.UpdatePlayerStateResponse.user_id)
-}
-inline std::string* UpdatePlayerStateResponse::mutable_user_id() {
-  std::string* _s = _internal_mutable_user_id();
-  // @@protoc_insertion_point(field_mutable:lobby.UpdatePlayerStateResponse.user_id)
-  return _s;
-}
-inline const std::string& UpdatePlayerStateResponse::_internal_user_id() const {
-  return _impl_.user_id_.Get();
-}
-inline void UpdatePlayerStateResponse::_internal_set_user_id(const std::string& value) {
-  ;
-
-
-  _impl_.user_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* UpdatePlayerStateResponse::_internal_mutable_user_id() {
-  ;
-  return _impl_.user_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* UpdatePlayerStateResponse::release_user_id() {
-  // @@protoc_insertion_point(field_release:lobby.UpdatePlayerStateResponse.user_id)
-  return _impl_.user_id_.Release();
-}
-inline void UpdatePlayerStateResponse::set_allocated_user_id(std::string* value) {
-  _impl_.user_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.user_id_.IsDefault()) {
-          _impl_.user_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.UpdatePlayerStateResponse.user_id)
-}
-
-// .lobby.PlayerState updated_state = 2;
-inline void UpdatePlayerStateResponse::clear_updated_state() {
-  _impl_.updated_state_ = 0;
-}
-inline ::lobby::PlayerState UpdatePlayerStateResponse::updated_state() const {
-  // @@protoc_insertion_point(field_get:lobby.UpdatePlayerStateResponse.updated_state)
-  return _internal_updated_state();
-}
-inline void UpdatePlayerStateResponse::set_updated_state(::lobby::PlayerState value) {
-   _internal_set_updated_state(value);
-  // @@protoc_insertion_point(field_set:lobby.UpdatePlayerStateResponse.updated_state)
-}
-inline ::lobby::PlayerState UpdatePlayerStateResponse::_internal_updated_state() const {
-  return static_cast<::lobby::PlayerState>(_impl_.updated_state_);
-}
-inline void UpdatePlayerStateResponse::_internal_set_updated_state(::lobby::PlayerState value) {
-  ;
-  _impl_.updated_state_ = value;
-}
-
-// -------------------------------------------------------------------
-
 // ChangeRoomPasswordRequest
 
-// string room_id = 1;
-inline void ChangeRoomPasswordRequest::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
-}
-inline const std::string& ChangeRoomPasswordRequest::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.ChangeRoomPasswordRequest.room_id)
-  return _internal_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void ChangeRoomPasswordRequest::set_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.ChangeRoomPasswordRequest.room_id)
-}
-inline std::string* ChangeRoomPasswordRequest::mutable_room_id() {
-  std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.ChangeRoomPasswordRequest.room_id)
-  return _s;
-}
-inline const std::string& ChangeRoomPasswordRequest::_internal_room_id() const {
-  return _impl_.room_id_.Get();
-}
-inline void ChangeRoomPasswordRequest::_internal_set_room_id(const std::string& value) {
-  ;
-
-
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* ChangeRoomPasswordRequest::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* ChangeRoomPasswordRequest::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.ChangeRoomPasswordRequest.room_id)
-  return _impl_.room_id_.Release();
-}
-inline void ChangeRoomPasswordRequest::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.ChangeRoomPasswordRequest.room_id)
-}
-
-// string password = 2;
+// string password = 1;
 inline void ChangeRoomPasswordRequest::clear_password() {
   _impl_.password_.ClearToEmpty();
 }
@@ -7311,102 +5346,102 @@ inline void ChangeRoomPasswordRequest::set_allocated_password(std::string* value
 
 // ChangeRoomPasswordResponse
 
-// -------------------------------------------------------------------
-
-// ChangeRoomOwnerRequest
-
 // string room_id = 1;
-inline void ChangeRoomOwnerRequest::clear_room_id() {
+inline void ChangeRoomPasswordResponse::clear_room_id() {
   _impl_.room_id_.ClearToEmpty();
 }
-inline const std::string& ChangeRoomOwnerRequest::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.ChangeRoomOwnerRequest.room_id)
+inline const std::string& ChangeRoomPasswordResponse::room_id() const {
+  // @@protoc_insertion_point(field_get:lobby.ChangeRoomPasswordResponse.room_id)
   return _internal_room_id();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void ChangeRoomOwnerRequest::set_room_id(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void ChangeRoomPasswordResponse::set_room_id(Arg_&& arg,
                                                      Args_... args) {
   ;
   _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.ChangeRoomOwnerRequest.room_id)
+  // @@protoc_insertion_point(field_set:lobby.ChangeRoomPasswordResponse.room_id)
 }
-inline std::string* ChangeRoomOwnerRequest::mutable_room_id() {
+inline std::string* ChangeRoomPasswordResponse::mutable_room_id() {
   std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.ChangeRoomOwnerRequest.room_id)
+  // @@protoc_insertion_point(field_mutable:lobby.ChangeRoomPasswordResponse.room_id)
   return _s;
 }
-inline const std::string& ChangeRoomOwnerRequest::_internal_room_id() const {
+inline const std::string& ChangeRoomPasswordResponse::_internal_room_id() const {
   return _impl_.room_id_.Get();
 }
-inline void ChangeRoomOwnerRequest::_internal_set_room_id(const std::string& value) {
+inline void ChangeRoomPasswordResponse::_internal_set_room_id(const std::string& value) {
   ;
 
 
   _impl_.room_id_.Set(value, GetArenaForAllocation());
 }
-inline std::string* ChangeRoomOwnerRequest::_internal_mutable_room_id() {
+inline std::string* ChangeRoomPasswordResponse::_internal_mutable_room_id() {
   ;
   return _impl_.room_id_.Mutable( GetArenaForAllocation());
 }
-inline std::string* ChangeRoomOwnerRequest::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.ChangeRoomOwnerRequest.room_id)
+inline std::string* ChangeRoomPasswordResponse::release_room_id() {
+  // @@protoc_insertion_point(field_release:lobby.ChangeRoomPasswordResponse.room_id)
   return _impl_.room_id_.Release();
 }
-inline void ChangeRoomOwnerRequest::set_allocated_room_id(std::string* value) {
+inline void ChangeRoomPasswordResponse::set_allocated_room_id(std::string* value) {
   _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         if (_impl_.room_id_.IsDefault()) {
           _impl_.room_id_.Set("", GetArenaForAllocation());
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.ChangeRoomOwnerRequest.room_id)
+  // @@protoc_insertion_point(field_set_allocated:lobby.ChangeRoomPasswordResponse.room_id)
 }
 
-// string user_id = 2;
-inline void ChangeRoomOwnerRequest::clear_user_id() {
-  _impl_.user_id_.ClearToEmpty();
+// -------------------------------------------------------------------
+
+// ChangeRoomOwnerRequest
+
+// string new_owner_id = 1;
+inline void ChangeRoomOwnerRequest::clear_new_owner_id() {
+  _impl_.new_owner_id_.ClearToEmpty();
 }
-inline const std::string& ChangeRoomOwnerRequest::user_id() const {
-  // @@protoc_insertion_point(field_get:lobby.ChangeRoomOwnerRequest.user_id)
-  return _internal_user_id();
+inline const std::string& ChangeRoomOwnerRequest::new_owner_id() const {
+  // @@protoc_insertion_point(field_get:lobby.ChangeRoomOwnerRequest.new_owner_id)
+  return _internal_new_owner_id();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void ChangeRoomOwnerRequest::set_user_id(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void ChangeRoomOwnerRequest::set_new_owner_id(Arg_&& arg,
                                                      Args_... args) {
   ;
-  _impl_.user_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.ChangeRoomOwnerRequest.user_id)
+  _impl_.new_owner_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.ChangeRoomOwnerRequest.new_owner_id)
 }
-inline std::string* ChangeRoomOwnerRequest::mutable_user_id() {
-  std::string* _s = _internal_mutable_user_id();
-  // @@protoc_insertion_point(field_mutable:lobby.ChangeRoomOwnerRequest.user_id)
+inline std::string* ChangeRoomOwnerRequest::mutable_new_owner_id() {
+  std::string* _s = _internal_mutable_new_owner_id();
+  // @@protoc_insertion_point(field_mutable:lobby.ChangeRoomOwnerRequest.new_owner_id)
   return _s;
 }
-inline const std::string& ChangeRoomOwnerRequest::_internal_user_id() const {
-  return _impl_.user_id_.Get();
+inline const std::string& ChangeRoomOwnerRequest::_internal_new_owner_id() const {
+  return _impl_.new_owner_id_.Get();
 }
-inline void ChangeRoomOwnerRequest::_internal_set_user_id(const std::string& value) {
+inline void ChangeRoomOwnerRequest::_internal_set_new_owner_id(const std::string& value) {
   ;
 
 
-  _impl_.user_id_.Set(value, GetArenaForAllocation());
+  _impl_.new_owner_id_.Set(value, GetArenaForAllocation());
 }
-inline std::string* ChangeRoomOwnerRequest::_internal_mutable_user_id() {
+inline std::string* ChangeRoomOwnerRequest::_internal_mutable_new_owner_id() {
   ;
-  return _impl_.user_id_.Mutable( GetArenaForAllocation());
+  return _impl_.new_owner_id_.Mutable( GetArenaForAllocation());
 }
-inline std::string* ChangeRoomOwnerRequest::release_user_id() {
-  // @@protoc_insertion_point(field_release:lobby.ChangeRoomOwnerRequest.user_id)
-  return _impl_.user_id_.Release();
+inline std::string* ChangeRoomOwnerRequest::release_new_owner_id() {
+  // @@protoc_insertion_point(field_release:lobby.ChangeRoomOwnerRequest.new_owner_id)
+  return _impl_.new_owner_id_.Release();
 }
-inline void ChangeRoomOwnerRequest::set_allocated_user_id(std::string* value) {
-  _impl_.user_id_.SetAllocated(value, GetArenaForAllocation());
+inline void ChangeRoomOwnerRequest::set_allocated_new_owner_id(std::string* value) {
+  _impl_.new_owner_id_.SetAllocated(value, GetArenaForAllocation());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.user_id_.IsDefault()) {
-          _impl_.user_id_.Set("", GetArenaForAllocation());
+        if (_impl_.new_owner_id_.IsDefault()) {
+          _impl_.new_owner_id_.Set("", GetArenaForAllocation());
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.ChangeRoomOwnerRequest.user_id)
+  // @@protoc_insertion_point(field_set_allocated:lobby.ChangeRoomOwnerRequest.new_owner_id)
 }
 
 // -------------------------------------------------------------------
@@ -7464,301 +5499,13 @@ inline void ChangeRoomOwnerResponse::set_allocated_owner_id(std::string* value) 
 
 // DeleteRoomRequest
 
-// string room_id = 1;
-inline void DeleteRoomRequest::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
-}
-inline const std::string& DeleteRoomRequest::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.DeleteRoomRequest.room_id)
-  return _internal_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void DeleteRoomRequest::set_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.DeleteRoomRequest.room_id)
-}
-inline std::string* DeleteRoomRequest::mutable_room_id() {
-  std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.DeleteRoomRequest.room_id)
-  return _s;
-}
-inline const std::string& DeleteRoomRequest::_internal_room_id() const {
-  return _impl_.room_id_.Get();
-}
-inline void DeleteRoomRequest::_internal_set_room_id(const std::string& value) {
-  ;
-
-
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* DeleteRoomRequest::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* DeleteRoomRequest::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.DeleteRoomRequest.room_id)
-  return _impl_.room_id_.Release();
-}
-inline void DeleteRoomRequest::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.DeleteRoomRequest.room_id)
-}
-
 // -------------------------------------------------------------------
 
 // DeleteRoomResponse
 
 // -------------------------------------------------------------------
 
-// ListenRoomConfigUpdatesRequest
-
-// string room_id = 1;
-inline void ListenRoomConfigUpdatesRequest::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
-}
-inline const std::string& ListenRoomConfigUpdatesRequest::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.ListenRoomConfigUpdatesRequest.room_id)
-  return _internal_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void ListenRoomConfigUpdatesRequest::set_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.ListenRoomConfigUpdatesRequest.room_id)
-}
-inline std::string* ListenRoomConfigUpdatesRequest::mutable_room_id() {
-  std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.ListenRoomConfigUpdatesRequest.room_id)
-  return _s;
-}
-inline const std::string& ListenRoomConfigUpdatesRequest::_internal_room_id() const {
-  return _impl_.room_id_.Get();
-}
-inline void ListenRoomConfigUpdatesRequest::_internal_set_room_id(const std::string& value) {
-  ;
-
-
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* ListenRoomConfigUpdatesRequest::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* ListenRoomConfigUpdatesRequest::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.ListenRoomConfigUpdatesRequest.room_id)
-  return _impl_.room_id_.Release();
-}
-inline void ListenRoomConfigUpdatesRequest::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.ListenRoomConfigUpdatesRequest.room_id)
-}
-
-// -------------------------------------------------------------------
-
-// ListenRoomConfigUpdatesResponse
-
-// .lobby.RoomConfig updated_config = 1;
-inline bool ListenRoomConfigUpdatesResponse::has_updated_config() const {
-  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
-  PROTOBUF_ASSUME(!value || _impl_.updated_config_ != nullptr);
-  return value;
-}
-inline void ListenRoomConfigUpdatesResponse::clear_updated_config() {
-  if (_impl_.updated_config_ != nullptr) _impl_.updated_config_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000001u;
-}
-inline const ::lobby::RoomConfig& ListenRoomConfigUpdatesResponse::_internal_updated_config() const {
-  const ::lobby::RoomConfig* p = _impl_.updated_config_;
-  return p != nullptr ? *p : reinterpret_cast<const ::lobby::RoomConfig&>(
-      ::lobby::_RoomConfig_default_instance_);
-}
-inline const ::lobby::RoomConfig& ListenRoomConfigUpdatesResponse::updated_config() const {
-  // @@protoc_insertion_point(field_get:lobby.ListenRoomConfigUpdatesResponse.updated_config)
-  return _internal_updated_config();
-}
-inline void ListenRoomConfigUpdatesResponse::unsafe_arena_set_allocated_updated_config(
-    ::lobby::RoomConfig* updated_config) {
-  if (GetArenaForAllocation() == nullptr) {
-    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.updated_config_);
-  }
-  _impl_.updated_config_ = updated_config;
-  if (updated_config) {
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.ListenRoomConfigUpdatesResponse.updated_config)
-}
-inline ::lobby::RoomConfig* ListenRoomConfigUpdatesResponse::release_updated_config() {
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::lobby::RoomConfig* temp = _impl_.updated_config_;
-  _impl_.updated_config_ = nullptr;
-#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
-  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
-  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  if (GetArenaForAllocation() == nullptr) { delete old; }
-#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
-  if (GetArenaForAllocation() != nullptr) {
-    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
-  }
-#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
-  return temp;
-}
-inline ::lobby::RoomConfig* ListenRoomConfigUpdatesResponse::unsafe_arena_release_updated_config() {
-  // @@protoc_insertion_point(field_release:lobby.ListenRoomConfigUpdatesResponse.updated_config)
-  _impl_._has_bits_[0] &= ~0x00000001u;
-  ::lobby::RoomConfig* temp = _impl_.updated_config_;
-  _impl_.updated_config_ = nullptr;
-  return temp;
-}
-inline ::lobby::RoomConfig* ListenRoomConfigUpdatesResponse::_internal_mutable_updated_config() {
-  _impl_._has_bits_[0] |= 0x00000001u;
-  if (_impl_.updated_config_ == nullptr) {
-    auto* p = CreateMaybeMessage<::lobby::RoomConfig>(GetArenaForAllocation());
-    _impl_.updated_config_ = p;
-  }
-  return _impl_.updated_config_;
-}
-inline ::lobby::RoomConfig* ListenRoomConfigUpdatesResponse::mutable_updated_config() {
-  ::lobby::RoomConfig* _msg = _internal_mutable_updated_config();
-  // @@protoc_insertion_point(field_mutable:lobby.ListenRoomConfigUpdatesResponse.updated_config)
-  return _msg;
-}
-inline void ListenRoomConfigUpdatesResponse::set_allocated_updated_config(::lobby::RoomConfig* updated_config) {
-  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
-  if (message_arena == nullptr) {
-    delete _impl_.updated_config_;
-  }
-  if (updated_config) {
-    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
-        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(updated_config);
-    if (message_arena != submessage_arena) {
-      updated_config = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
-          message_arena, updated_config, submessage_arena);
-    }
-    _impl_._has_bits_[0] |= 0x00000001u;
-  } else {
-    _impl_._has_bits_[0] &= ~0x00000001u;
-  }
-  _impl_.updated_config_ = updated_config;
-  // @@protoc_insertion_point(field_set_allocated:lobby.ListenRoomConfigUpdatesResponse.updated_config)
-}
-
-// -------------------------------------------------------------------
-
-// ListenPlayerListUpdatesRequest
-
-// string room_id = 1;
-inline void ListenPlayerListUpdatesRequest::clear_room_id() {
-  _impl_.room_id_.ClearToEmpty();
-}
-inline const std::string& ListenPlayerListUpdatesRequest::room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.ListenPlayerListUpdatesRequest.room_id)
-  return _internal_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void ListenPlayerListUpdatesRequest::set_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.ListenPlayerListUpdatesRequest.room_id)
-}
-inline std::string* ListenPlayerListUpdatesRequest::mutable_room_id() {
-  std::string* _s = _internal_mutable_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.ListenPlayerListUpdatesRequest.room_id)
-  return _s;
-}
-inline const std::string& ListenPlayerListUpdatesRequest::_internal_room_id() const {
-  return _impl_.room_id_.Get();
-}
-inline void ListenPlayerListUpdatesRequest::_internal_set_room_id(const std::string& value) {
-  ;
-
-
-  _impl_.room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* ListenPlayerListUpdatesRequest::_internal_mutable_room_id() {
-  ;
-  return _impl_.room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* ListenPlayerListUpdatesRequest::release_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.ListenPlayerListUpdatesRequest.room_id)
-  return _impl_.room_id_.Release();
-}
-inline void ListenPlayerListUpdatesRequest::set_allocated_room_id(std::string* value) {
-  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.room_id_.IsDefault()) {
-          _impl_.room_id_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.ListenPlayerListUpdatesRequest.room_id)
-}
-
-// -------------------------------------------------------------------
-
-// ListenPlayerListUpdatesResponse
-
-// repeated .lobby.RoomPlayer players = 1;
-inline int ListenPlayerListUpdatesResponse::_internal_players_size() const {
-  return _impl_.players_.size();
-}
-inline int ListenPlayerListUpdatesResponse::players_size() const {
-  return _internal_players_size();
-}
-inline void ListenPlayerListUpdatesResponse::clear_players() {
-  _internal_mutable_players()->Clear();
-}
-inline ::lobby::RoomPlayer* ListenPlayerListUpdatesResponse::mutable_players(int index) {
-  // @@protoc_insertion_point(field_mutable:lobby.ListenPlayerListUpdatesResponse.players)
-  return _internal_mutable_players()->Mutable(index);
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer >*
-ListenPlayerListUpdatesResponse::mutable_players() {
-  // @@protoc_insertion_point(field_mutable_list:lobby.ListenPlayerListUpdatesResponse.players)
-  return _internal_mutable_players();
-}
-inline const ::lobby::RoomPlayer& ListenPlayerListUpdatesResponse::_internal_players(int index) const {
-  return _internal_players().Get(index);
-}
-inline const ::lobby::RoomPlayer& ListenPlayerListUpdatesResponse::players(int index) const {
-  // @@protoc_insertion_point(field_get:lobby.ListenPlayerListUpdatesResponse.players)
-  return _internal_players(index);
-}
-inline ::lobby::RoomPlayer* ListenPlayerListUpdatesResponse::_internal_add_players() {
-  return _internal_mutable_players()->Add();
-}
-inline ::lobby::RoomPlayer* ListenPlayerListUpdatesResponse::add_players() {
-  ::lobby::RoomPlayer* _add = _internal_add_players();
-  // @@protoc_insertion_point(field_add:lobby.ListenPlayerListUpdatesResponse.players)
-  return _add;
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::lobby::RoomPlayer >&
-ListenPlayerListUpdatesResponse::players() const {
-  // @@protoc_insertion_point(field_list:lobby.ListenPlayerListUpdatesResponse.players)
-  return _internal_players();
-}
-inline const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPlayer>&
-ListenPlayerListUpdatesResponse::_internal_players() const {
-  return _impl_.players_;
-}
-inline ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField<::lobby::RoomPlayer>*
-ListenPlayerListUpdatesResponse::_internal_mutable_players() {
-  return &_impl_.players_;
-}
+// ListenRoomUpdatesRequest
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
@@ -7770,6 +5517,12 @@ ListenPlayerListUpdatesResponse::_internal_mutable_players() {
 
 PROTOBUF_NAMESPACE_OPEN
 
+template <>
+struct is_proto_enum<::lobby::RoomDeploymentStatus> : std::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor<::lobby::RoomDeploymentStatus>() {
+  return ::lobby::RoomDeploymentStatus_descriptor();
+}
 template <>
 struct is_proto_enum<::lobby::RoomState> : std::true_type {};
 template <>
@@ -7793,12 +5546,6 @@ struct is_proto_enum<::lobby::GameMap> : std::true_type {};
 template <>
 inline const EnumDescriptor* GetEnumDescriptor<::lobby::GameMap>() {
   return ::lobby::GameMap_descriptor();
-}
-template <>
-struct is_proto_enum<::lobby::PlayerState> : std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor<::lobby::PlayerState>() {
-  return ::lobby::PlayerState_descriptor();
 }
 
 PROTOBUF_NAMESPACE_CLOSE

@@ -41,7 +41,7 @@ void UCallAuthServiceGuestLogin::OnServiceStateChanged(EGrpcServiceState NewStat
 		FGrpcResult result;
 		result.Code = EGrpcResultCode::ConnectionFailed;
 
-		FGrpcAuthResponse response;
+		FGrpcAuthLoginResponse response;
 		OnFail.Broadcast(result, response);
 
 		Shutdown();
@@ -67,7 +67,7 @@ void UCallAuthServiceGuestLogin::OnContextStateChange(FGrpcContextHandle Handle,
 	}
 }
 
-void UCallAuthServiceGuestLogin::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthResponse& Response)
+void UCallAuthServiceGuestLogin::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthLoginResponse& Response)
 {
 	if (GrpcResult.Code == EGrpcResultCode::Ok)
 	{
@@ -103,9 +103,9 @@ void UCallAuthServiceGuestLogin::Shutdown()
 #endif
 }
 
-UCallAuthServiceRegisterGameServer* UCallAuthServiceRegisterGameServer::RegisterGameServer(UObject* WorldContextObject, const FGrpcAuthRegisterGameServerRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
+UCallAuthServiceValidateUserToken* UCallAuthServiceValidateUserToken::ValidateUserToken(UObject* WorldContextObject, const FGrpcAuthValidateUserTokenRequest& request, FGrpcMetaData metaData, float deadLineSeconds)
 {
-	UCallAuthServiceRegisterGameServer* node = NewObject<UCallAuthServiceRegisterGameServer>(WorldContextObject);
+	UCallAuthServiceValidateUserToken* node = NewObject<UCallAuthServiceValidateUserToken>(WorldContextObject);
 	UTurboLinkGrpcManager* turboLinkManager = UTurboLinkGrpcUtilities::GetTurboLinkGrpcManager(WorldContextObject);
 
 	node->AuthService = Cast<UAuthService>(turboLinkManager->MakeService("AuthService"));
@@ -118,16 +118,16 @@ UCallAuthServiceRegisterGameServer* UCallAuthServiceRegisterGameServer::Register
 	node->MetaData = metaData;
 	node->DeadLineSeconds = deadLineSeconds;
 
-	node->AuthService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallAuthServiceRegisterGameServer::OnServiceStateChanged);
+	node->AuthService->OnServiceStateChanged.AddUniqueDynamic(node, &UCallAuthServiceValidateUserToken::OnServiceStateChanged);
 	return node;
 }
 
-void UCallAuthServiceRegisterGameServer::Activate()
+void UCallAuthServiceValidateUserToken::Activate()
 {
 	AuthService->Connect();
 }
 
-void UCallAuthServiceRegisterGameServer::OnServiceStateChanged(EGrpcServiceState NewState)
+void UCallAuthServiceValidateUserToken::OnServiceStateChanged(EGrpcServiceState NewState)
 {
 	if (ServiceState == NewState) return;
 	ServiceState = NewState;
@@ -137,7 +137,7 @@ void UCallAuthServiceRegisterGameServer::OnServiceStateChanged(EGrpcServiceState
 		FGrpcResult result;
 		result.Code = EGrpcResultCode::ConnectionFailed;
 
-		FGrpcAuthResponse response;
+		FGrpcAuthValidateUserTokenResponse response;
 		OnFail.Broadcast(result, response);
 
 		Shutdown();
@@ -147,15 +147,15 @@ void UCallAuthServiceRegisterGameServer::OnServiceStateChanged(EGrpcServiceState
 	if (NewState == EGrpcServiceState::Ready)
 	{
 		AuthServiceClient = AuthService->MakeClient();
-		AuthServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallAuthServiceRegisterGameServer::OnContextStateChange);
-		AuthServiceClient->OnRegisterGameServerResponse.AddUniqueDynamic(this, &UCallAuthServiceRegisterGameServer::OnResponse);
+		AuthServiceClient->OnContextStateChange.AddUniqueDynamic(this, &UCallAuthServiceValidateUserToken::OnContextStateChange);
+		AuthServiceClient->OnValidateUserTokenResponse.AddUniqueDynamic(this, &UCallAuthServiceValidateUserToken::OnResponse);
 
-		Context = AuthServiceClient->InitRegisterGameServer();
-		AuthServiceClient->RegisterGameServer(Context, Request, MetaData, DeadLineSeconds);
+		Context = AuthServiceClient->InitValidateUserToken();
+		AuthServiceClient->ValidateUserToken(Context, Request, MetaData, DeadLineSeconds);
 	}
 }
 
-void UCallAuthServiceRegisterGameServer::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
+void UCallAuthServiceValidateUserToken::OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State)
 {
 	if (State == EGrpcContextState::Done)
 	{
@@ -163,11 +163,11 @@ void UCallAuthServiceRegisterGameServer::OnContextStateChange(FGrpcContextHandle
 	}
 }
 
-void UCallAuthServiceRegisterGameServer::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthResponse& Response)
+void UCallAuthServiceValidateUserToken::OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcAuthValidateUserTokenResponse& Response)
 {
 	if (GrpcResult.Code == EGrpcResultCode::Ok)
 	{
-		OnRegisterGameServerResponse.Broadcast(GrpcResult, Response);
+		OnValidateUserTokenResponse.Broadcast(GrpcResult, Response);
 	}
 	else
 	{
@@ -175,9 +175,9 @@ void UCallAuthServiceRegisterGameServer::OnResponse(FGrpcContextHandle Handle, c
 	}
 }
 
-void UCallAuthServiceRegisterGameServer::Shutdown()
+void UCallAuthServiceValidateUserToken::Shutdown()
 {
-	AuthService->OnServiceStateChanged.RemoveDynamic(this, &UCallAuthServiceRegisterGameServer::OnServiceStateChanged);
+	AuthService->OnServiceStateChanged.RemoveDynamic(this, &UCallAuthServiceValidateUserToken::OnServiceStateChanged);
 	if (AuthServiceClient != nullptr)
 	{
 		AuthService->RemoveClient(AuthServiceClient);
