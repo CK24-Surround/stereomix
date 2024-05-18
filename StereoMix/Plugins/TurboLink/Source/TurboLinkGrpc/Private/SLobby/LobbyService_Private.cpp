@@ -6,7 +6,18 @@ void ULobbyServiceCreateRoomLambdaWrapper::OnResponse(FGrpcContextHandle _Handle
 	if (_Handle != this->Handle) return;
 
 	ResponseLambda(GrpcResult, Response);
-	InnerClient->OnCreateRoomResponse.RemoveDynamic(this, &ULobbyServiceCreateRoomLambdaWrapper::OnResponse);
+}
+
+void ULobbyServiceCreateRoomLambdaWrapper::OnContextStateChanged(FGrpcContextHandle _Handle, EGrpcContextState NewState)
+{
+	if (_Handle != this->Handle) return;
+	if (NewState == EGrpcContextState::Done)
+	{
+		FinishLambda();
+
+		InnerClient->OnCreateRoomResponse.RemoveDynamic(this, &ULobbyServiceCreateRoomLambdaWrapper::OnResponse);
+		InnerClient->OnContextStateChange.RemoveDynamic(this, &ULobbyServiceCreateRoomLambdaWrapper::OnContextStateChanged);
+	}
 }
 
 void ULobbyServiceJoinRoomLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response)
@@ -41,14 +52,6 @@ void ULobbyServiceUpdateRoomConfigLambdaWrapper::OnResponse(FGrpcContextHandle _
 	InnerClient->OnUpdateRoomConfigResponse.RemoveDynamic(this, &ULobbyServiceUpdateRoomConfigLambdaWrapper::OnResponse);
 }
 
-void ULobbyServiceUpdatePlayerStateLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdatePlayerStateResponse& Response)
-{
-	if (_Handle != this->Handle) return;
-
-	ResponseLambda(GrpcResult, Response);
-	InnerClient->OnUpdatePlayerStateResponse.RemoveDynamic(this, &ULobbyServiceUpdatePlayerStateLambdaWrapper::OnResponse);
-}
-
 void ULobbyServiceChangeRoomPasswordLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyChangeRoomPasswordResponse& Response)
 {
 	if (_Handle != this->Handle) return;
@@ -73,41 +76,22 @@ void ULobbyServiceDeleteRoomLambdaWrapper::OnResponse(FGrpcContextHandle _Handle
 	InnerClient->OnDeleteRoomResponse.RemoveDynamic(this, &ULobbyServiceDeleteRoomLambdaWrapper::OnResponse);
 }
 
-void ULobbyServiceUpdateRoomConfigStreamLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyListenRoomConfigUpdatesResponse& Response)
+void ULobbyServiceListenRoomUpdatesLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyRoom& Response)
 {
 	if (_Handle != this->Handle) return;
 
 	ResponseLambda(GrpcResult, Response);
 }
 
-void ULobbyServiceUpdateRoomConfigStreamLambdaWrapper::OnContextStateChanged(FGrpcContextHandle _Handle, EGrpcContextState NewState)
+void ULobbyServiceListenRoomUpdatesLambdaWrapper::OnContextStateChanged(FGrpcContextHandle _Handle, EGrpcContextState NewState)
 {
 	if (_Handle != this->Handle) return;
 	if (NewState == EGrpcContextState::Done)
 	{
 		FinishLambda();
 
-		InnerClient->OnUpdateRoomConfigStreamResponse.RemoveDynamic(this, &ULobbyServiceUpdateRoomConfigStreamLambdaWrapper::OnResponse);
-		InnerClient->OnContextStateChange.RemoveDynamic(this, &ULobbyServiceUpdateRoomConfigStreamLambdaWrapper::OnContextStateChanged);
-	}
-}
-
-void ULobbyServiceUpdatePlayerListStreamLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyListenPlayerListUpdatesResponse& Response)
-{
-	if (_Handle != this->Handle) return;
-
-	ResponseLambda(GrpcResult, Response);
-}
-
-void ULobbyServiceUpdatePlayerListStreamLambdaWrapper::OnContextStateChanged(FGrpcContextHandle _Handle, EGrpcContextState NewState)
-{
-	if (_Handle != this->Handle) return;
-	if (NewState == EGrpcContextState::Done)
-	{
-		FinishLambda();
-
-		InnerClient->OnUpdatePlayerListStreamResponse.RemoveDynamic(this, &ULobbyServiceUpdatePlayerListStreamLambdaWrapper::OnResponse);
-		InnerClient->OnContextStateChange.RemoveDynamic(this, &ULobbyServiceUpdatePlayerListStreamLambdaWrapper::OnContextStateChanged);
+		InnerClient->OnListenRoomUpdatesResponse.RemoveDynamic(this, &ULobbyServiceListenRoomUpdatesLambdaWrapper::OnResponse);
+		InnerClient->OnContextStateChange.RemoveDynamic(this, &ULobbyServiceListenRoomUpdatesLambdaWrapper::OnContextStateChanged);
 	}
 }
 

@@ -13,22 +13,38 @@ struct FGrpcAuthGuestLoginRequest : public FGrpcMessage
     FString UserName = "";
 };
 
-USTRUCT(BlueprintType, meta = (DisplayName="Auth.RegisterGameServerRequest"))
-struct FGrpcAuthRegisterGameServerRequest : public FGrpcMessage
-{
-    GENERATED_BODY()
-    DECLARE_JSON_FUNCTIONS()
-
-    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
-    FString ServerName = "";
-};
-
-USTRUCT(BlueprintType, meta = (DisplayName="Auth.Response"))
-struct FGrpcAuthResponse : public FGrpcMessage
+USTRUCT(BlueprintType, meta = (DisplayName="Auth.LoginResponse"))
+struct FGrpcAuthLoginResponse : public FGrpcMessage
 {
     GENERATED_BODY()
     DECLARE_JSON_FUNCTIONS()
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
     FString Token = "";
+};
+
+USTRUCT(BlueprintType, meta = (DisplayName="Auth.ValidateUserTokenRequest"))
+struct FGrpcAuthValidateUserTokenRequest : public FGrpcMessage
+{
+    GENERATED_BODY()
+    DECLARE_JSON_FUNCTIONS()
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString Token = "";
+};
+
+USTRUCT(BlueprintType, meta = (DisplayName="Auth.ValidateUserTokenResponse"))
+struct FGrpcAuthValidateUserTokenResponse : public FGrpcMessage
+{
+    GENERATED_BODY()
+    DECLARE_JSON_FUNCTIONS()
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    bool IsValid = false;
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString UserId = "";
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString UserName = "";
 };

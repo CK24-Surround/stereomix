@@ -59,20 +59,25 @@ namespace auth {
 class GuestLoginRequest;
 struct GuestLoginRequestDefaultTypeInternal;
 extern GuestLoginRequestDefaultTypeInternal _GuestLoginRequest_default_instance_;
-class RegisterGameServerRequest;
-struct RegisterGameServerRequestDefaultTypeInternal;
-extern RegisterGameServerRequestDefaultTypeInternal _RegisterGameServerRequest_default_instance_;
-class Response;
-struct ResponseDefaultTypeInternal;
-extern ResponseDefaultTypeInternal _Response_default_instance_;
+class LoginResponse;
+struct LoginResponseDefaultTypeInternal;
+extern LoginResponseDefaultTypeInternal _LoginResponse_default_instance_;
+class ValidateUserTokenRequest;
+struct ValidateUserTokenRequestDefaultTypeInternal;
+extern ValidateUserTokenRequestDefaultTypeInternal _ValidateUserTokenRequest_default_instance_;
+class ValidateUserTokenResponse;
+struct ValidateUserTokenResponseDefaultTypeInternal;
+extern ValidateUserTokenResponseDefaultTypeInternal _ValidateUserTokenResponse_default_instance_;
 }  // namespace auth
 PROTOBUF_NAMESPACE_OPEN
 template <>
 ::auth::GuestLoginRequest* Arena::CreateMaybeMessage<::auth::GuestLoginRequest>(Arena*);
 template <>
-::auth::RegisterGameServerRequest* Arena::CreateMaybeMessage<::auth::RegisterGameServerRequest>(Arena*);
+::auth::LoginResponse* Arena::CreateMaybeMessage<::auth::LoginResponse>(Arena*);
 template <>
-::auth::Response* Arena::CreateMaybeMessage<::auth::Response>(Arena*);
+::auth::ValidateUserTokenRequest* Arena::CreateMaybeMessage<::auth::ValidateUserTokenRequest>(Arena*);
+template <>
+::auth::ValidateUserTokenResponse* Arena::CreateMaybeMessage<::auth::ValidateUserTokenResponse>(Arena*);
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace auth {
@@ -247,25 +252,25 @@ class GuestLoginRequest final :
   friend struct ::TableStruct_auth_2eproto;
 };// -------------------------------------------------------------------
 
-class RegisterGameServerRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:auth.RegisterGameServerRequest) */ {
+class LoginResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:auth.LoginResponse) */ {
  public:
-  inline RegisterGameServerRequest() : RegisterGameServerRequest(nullptr) {}
-  ~RegisterGameServerRequest() override;
+  inline LoginResponse() : LoginResponse(nullptr) {}
+  ~LoginResponse() override;
   template<typename = void>
-  explicit PROTOBUF_CONSTEXPR RegisterGameServerRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+  explicit PROTOBUF_CONSTEXPR LoginResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
-  RegisterGameServerRequest(const RegisterGameServerRequest& from);
-  RegisterGameServerRequest(RegisterGameServerRequest&& from) noexcept
-    : RegisterGameServerRequest() {
+  LoginResponse(const LoginResponse& from);
+  LoginResponse(LoginResponse&& from) noexcept
+    : LoginResponse() {
     *this = ::std::move(from);
   }
 
-  inline RegisterGameServerRequest& operator=(const RegisterGameServerRequest& from) {
+  inline LoginResponse& operator=(const LoginResponse& from) {
     CopyFrom(from);
     return *this;
   }
-  inline RegisterGameServerRequest& operator=(RegisterGameServerRequest&& from) noexcept {
+  inline LoginResponse& operator=(LoginResponse&& from) noexcept {
     if (this == &from) return *this;
     if (GetOwningArena() == from.GetOwningArena()
   #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
@@ -295,20 +300,20 @@ class RegisterGameServerRequest final :
   static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
     return default_instance().GetMetadata().reflection;
   }
-  static const RegisterGameServerRequest& default_instance() {
+  static const LoginResponse& default_instance() {
     return *internal_default_instance();
   }
-  static inline const RegisterGameServerRequest* internal_default_instance() {
-    return reinterpret_cast<const RegisterGameServerRequest*>(
-               &_RegisterGameServerRequest_default_instance_);
+  static inline const LoginResponse* internal_default_instance() {
+    return reinterpret_cast<const LoginResponse*>(
+               &_LoginResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
     1;
 
-  friend void swap(RegisterGameServerRequest& a, RegisterGameServerRequest& b) {
+  friend void swap(LoginResponse& a, LoginResponse& b) {
     a.Swap(&b);
   }
-  inline void Swap(RegisterGameServerRequest* other) {
+  inline void Swap(LoginResponse* other) {
     if (other == this) return;
   #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
     if (GetOwningArena() != nullptr &&
@@ -321,7 +326,7 @@ class RegisterGameServerRequest final :
       ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
     }
   }
-  void UnsafeArenaSwap(RegisterGameServerRequest* other) {
+  void UnsafeArenaSwap(LoginResponse* other) {
     if (other == this) return;
     ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
     InternalSwap(other);
@@ -329,14 +334,14 @@ class RegisterGameServerRequest final :
 
   // implements Message ----------------------------------------------
 
-  RegisterGameServerRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<RegisterGameServerRequest>(arena);
+  LoginResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<LoginResponse>(arena);
   }
   using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const RegisterGameServerRequest& from);
+  void CopyFrom(const LoginResponse& from);
   using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const RegisterGameServerRequest& from) {
-    RegisterGameServerRequest::MergeImpl(*this, from);
+  void MergeFrom( const LoginResponse& from) {
+    LoginResponse::MergeImpl(*this, from);
   }
   private:
   static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
@@ -354,180 +359,15 @@ class RegisterGameServerRequest final :
   void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   void SharedDtor();
   void SetCachedSize(int size) const final;
-  void InternalSwap(RegisterGameServerRequest* other);
+  void InternalSwap(LoginResponse* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
   static ::absl::string_view FullMessageName() {
-    return "auth.RegisterGameServerRequest";
+    return "auth.LoginResponse";
   }
   protected:
-  explicit RegisterGameServerRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  public:
-
-  static const ClassData _class_data_;
-  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
-
-  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  enum : int {
-    kServerNameFieldNumber = 1,
-  };
-  // string server_name = 1;
-  void clear_server_name() ;
-  const std::string& server_name() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_server_name(Arg_&& arg, Args_... args);
-  std::string* mutable_server_name();
-  PROTOBUF_NODISCARD std::string* release_server_name();
-  void set_allocated_server_name(std::string* ptr);
-
-  private:
-  const std::string& _internal_server_name() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_server_name(
-      const std::string& value);
-  std::string* _internal_mutable_server_name();
-
-  public:
-  // @@protoc_insertion_point(class_scope:auth.RegisterGameServerRequest)
- private:
-  class _Internal;
-
-  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
-  typedef void InternalArenaConstructable_;
-  typedef void DestructorSkippable_;
-  struct Impl_ {
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr server_name_;
-    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-  };
-  union { Impl_ _impl_; };
-  friend struct ::TableStruct_auth_2eproto;
-};// -------------------------------------------------------------------
-
-class Response final :
-    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:auth.Response) */ {
- public:
-  inline Response() : Response(nullptr) {}
-  ~Response() override;
-  template<typename = void>
-  explicit PROTOBUF_CONSTEXPR Response(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
-
-  Response(const Response& from);
-  Response(Response&& from) noexcept
-    : Response() {
-    *this = ::std::move(from);
-  }
-
-  inline Response& operator=(const Response& from) {
-    CopyFrom(from);
-    return *this;
-  }
-  inline Response& operator=(Response&& from) noexcept {
-    if (this == &from) return *this;
-    if (GetOwningArena() == from.GetOwningArena()
-  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
-        && GetOwningArena() != nullptr
-  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
-    ) {
-      InternalSwap(&from);
-    } else {
-      CopyFrom(from);
-    }
-    return *this;
-  }
-
-  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
-    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
-  }
-  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
-    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-  }
-
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
-    return GetDescriptor();
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
-    return default_instance().GetMetadata().descriptor;
-  }
-  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
-    return default_instance().GetMetadata().reflection;
-  }
-  static const Response& default_instance() {
-    return *internal_default_instance();
-  }
-  static inline const Response* internal_default_instance() {
-    return reinterpret_cast<const Response*>(
-               &_Response_default_instance_);
-  }
-  static constexpr int kIndexInFileMessages =
-    2;
-
-  friend void swap(Response& a, Response& b) {
-    a.Swap(&b);
-  }
-  inline void Swap(Response* other) {
-    if (other == this) return;
-  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() != nullptr &&
-        GetOwningArena() == other->GetOwningArena()) {
-   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
-    if (GetOwningArena() == other->GetOwningArena()) {
-  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
-      InternalSwap(other);
-    } else {
-      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
-    }
-  }
-  void UnsafeArenaSwap(Response* other) {
-    if (other == this) return;
-    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
-    InternalSwap(other);
-  }
-
-  // implements Message ----------------------------------------------
-
-  Response* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
-    return CreateMaybeMessage<Response>(arena);
-  }
-  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
-  void CopyFrom(const Response& from);
-  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
-  void MergeFrom( const Response& from) {
-    Response::MergeImpl(*this, from);
-  }
-  private:
-  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
-  public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
-
-  private:
-  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
-  void SharedDtor();
-  void SetCachedSize(int size) const final;
-  void InternalSwap(Response* other);
-
-  private:
-  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
-  static ::absl::string_view FullMessageName() {
-    return "auth.Response";
-  }
-  protected:
-  explicit Response(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  explicit LoginResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
   public:
 
   static const ClassData _class_data_;
@@ -562,7 +402,7 @@ class Response final :
   std::string* _internal_mutable_token();
 
   public:
-  // @@protoc_insertion_point(class_scope:auth.Response)
+  // @@protoc_insertion_point(class_scope:auth.LoginResponse)
  private:
   class _Internal;
 
@@ -571,6 +411,370 @@ class Response final :
   typedef void DestructorSkippable_;
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr token_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_auth_2eproto;
+};// -------------------------------------------------------------------
+
+class ValidateUserTokenRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:auth.ValidateUserTokenRequest) */ {
+ public:
+  inline ValidateUserTokenRequest() : ValidateUserTokenRequest(nullptr) {}
+  ~ValidateUserTokenRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ValidateUserTokenRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ValidateUserTokenRequest(const ValidateUserTokenRequest& from);
+  ValidateUserTokenRequest(ValidateUserTokenRequest&& from) noexcept
+    : ValidateUserTokenRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline ValidateUserTokenRequest& operator=(const ValidateUserTokenRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ValidateUserTokenRequest& operator=(ValidateUserTokenRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ValidateUserTokenRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ValidateUserTokenRequest* internal_default_instance() {
+    return reinterpret_cast<const ValidateUserTokenRequest*>(
+               &_ValidateUserTokenRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    2;
+
+  friend void swap(ValidateUserTokenRequest& a, ValidateUserTokenRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ValidateUserTokenRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ValidateUserTokenRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ValidateUserTokenRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ValidateUserTokenRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ValidateUserTokenRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const ValidateUserTokenRequest& from) {
+    ValidateUserTokenRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ValidateUserTokenRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "auth.ValidateUserTokenRequest";
+  }
+  protected:
+  explicit ValidateUserTokenRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kTokenFieldNumber = 1,
+  };
+  // string token = 1;
+  void clear_token() ;
+  const std::string& token() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_token(Arg_&& arg, Args_... args);
+  std::string* mutable_token();
+  PROTOBUF_NODISCARD std::string* release_token();
+  void set_allocated_token(std::string* ptr);
+
+  private:
+  const std::string& _internal_token() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_token(
+      const std::string& value);
+  std::string* _internal_mutable_token();
+
+  public:
+  // @@protoc_insertion_point(class_scope:auth.ValidateUserTokenRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr token_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_auth_2eproto;
+};// -------------------------------------------------------------------
+
+class ValidateUserTokenResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:auth.ValidateUserTokenResponse) */ {
+ public:
+  inline ValidateUserTokenResponse() : ValidateUserTokenResponse(nullptr) {}
+  ~ValidateUserTokenResponse() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR ValidateUserTokenResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  ValidateUserTokenResponse(const ValidateUserTokenResponse& from);
+  ValidateUserTokenResponse(ValidateUserTokenResponse&& from) noexcept
+    : ValidateUserTokenResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline ValidateUserTokenResponse& operator=(const ValidateUserTokenResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline ValidateUserTokenResponse& operator=(ValidateUserTokenResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const ValidateUserTokenResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const ValidateUserTokenResponse* internal_default_instance() {
+    return reinterpret_cast<const ValidateUserTokenResponse*>(
+               &_ValidateUserTokenResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    3;
+
+  friend void swap(ValidateUserTokenResponse& a, ValidateUserTokenResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(ValidateUserTokenResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(ValidateUserTokenResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  ValidateUserTokenResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<ValidateUserTokenResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const ValidateUserTokenResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const ValidateUserTokenResponse& from) {
+    ValidateUserTokenResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(ValidateUserTokenResponse* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "auth.ValidateUserTokenResponse";
+  }
+  protected:
+  explicit ValidateUserTokenResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kUserIdFieldNumber = 2,
+    kUserNameFieldNumber = 3,
+    kIsValidFieldNumber = 1,
+  };
+  // string user_id = 2;
+  void clear_user_id() ;
+  const std::string& user_id() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_user_id(Arg_&& arg, Args_... args);
+  std::string* mutable_user_id();
+  PROTOBUF_NODISCARD std::string* release_user_id();
+  void set_allocated_user_id(std::string* ptr);
+
+  private:
+  const std::string& _internal_user_id() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_id(
+      const std::string& value);
+  std::string* _internal_mutable_user_id();
+
+  public:
+  // string user_name = 3;
+  void clear_user_name() ;
+  const std::string& user_name() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_user_name(Arg_&& arg, Args_... args);
+  std::string* mutable_user_name();
+  PROTOBUF_NODISCARD std::string* release_user_name();
+  void set_allocated_user_name(std::string* ptr);
+
+  private:
+  const std::string& _internal_user_name() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_user_name(
+      const std::string& value);
+  std::string* _internal_mutable_user_name();
+
+  public:
+  // bool is_valid = 1;
+  void clear_is_valid() ;
+  bool is_valid() const;
+  void set_is_valid(bool value);
+
+  private:
+  bool _internal_is_valid() const;
+  void _internal_set_is_valid(bool value);
+
+  public:
+  // @@protoc_insertion_point(class_scope:auth.ValidateUserTokenResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr user_name_;
+    bool is_valid_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
   union { Impl_ _impl_; };
@@ -642,104 +846,222 @@ inline void GuestLoginRequest::set_allocated_user_name(std::string* value) {
 
 // -------------------------------------------------------------------
 
-// RegisterGameServerRequest
-
-// string server_name = 1;
-inline void RegisterGameServerRequest::clear_server_name() {
-  _impl_.server_name_.ClearToEmpty();
-}
-inline const std::string& RegisterGameServerRequest::server_name() const {
-  // @@protoc_insertion_point(field_get:auth.RegisterGameServerRequest.server_name)
-  return _internal_server_name();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void RegisterGameServerRequest::set_server_name(Arg_&& arg,
-                                                     Args_... args) {
-  ;
-  _impl_.server_name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:auth.RegisterGameServerRequest.server_name)
-}
-inline std::string* RegisterGameServerRequest::mutable_server_name() {
-  std::string* _s = _internal_mutable_server_name();
-  // @@protoc_insertion_point(field_mutable:auth.RegisterGameServerRequest.server_name)
-  return _s;
-}
-inline const std::string& RegisterGameServerRequest::_internal_server_name() const {
-  return _impl_.server_name_.Get();
-}
-inline void RegisterGameServerRequest::_internal_set_server_name(const std::string& value) {
-  ;
-
-
-  _impl_.server_name_.Set(value, GetArenaForAllocation());
-}
-inline std::string* RegisterGameServerRequest::_internal_mutable_server_name() {
-  ;
-  return _impl_.server_name_.Mutable( GetArenaForAllocation());
-}
-inline std::string* RegisterGameServerRequest::release_server_name() {
-  // @@protoc_insertion_point(field_release:auth.RegisterGameServerRequest.server_name)
-  return _impl_.server_name_.Release();
-}
-inline void RegisterGameServerRequest::set_allocated_server_name(std::string* value) {
-  _impl_.server_name_.SetAllocated(value, GetArenaForAllocation());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.server_name_.IsDefault()) {
-          _impl_.server_name_.Set("", GetArenaForAllocation());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:auth.RegisterGameServerRequest.server_name)
-}
-
-// -------------------------------------------------------------------
-
-// Response
+// LoginResponse
 
 // string token = 2;
-inline void Response::clear_token() {
+inline void LoginResponse::clear_token() {
   _impl_.token_.ClearToEmpty();
 }
-inline const std::string& Response::token() const {
-  // @@protoc_insertion_point(field_get:auth.Response.token)
+inline const std::string& LoginResponse::token() const {
+  // @@protoc_insertion_point(field_get:auth.LoginResponse.token)
   return _internal_token();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Response::set_token(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void LoginResponse::set_token(Arg_&& arg,
                                                      Args_... args) {
   ;
   _impl_.token_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:auth.Response.token)
+  // @@protoc_insertion_point(field_set:auth.LoginResponse.token)
 }
-inline std::string* Response::mutable_token() {
+inline std::string* LoginResponse::mutable_token() {
   std::string* _s = _internal_mutable_token();
-  // @@protoc_insertion_point(field_mutable:auth.Response.token)
+  // @@protoc_insertion_point(field_mutable:auth.LoginResponse.token)
   return _s;
 }
-inline const std::string& Response::_internal_token() const {
+inline const std::string& LoginResponse::_internal_token() const {
   return _impl_.token_.Get();
 }
-inline void Response::_internal_set_token(const std::string& value) {
+inline void LoginResponse::_internal_set_token(const std::string& value) {
   ;
 
 
   _impl_.token_.Set(value, GetArenaForAllocation());
 }
-inline std::string* Response::_internal_mutable_token() {
+inline std::string* LoginResponse::_internal_mutable_token() {
   ;
   return _impl_.token_.Mutable( GetArenaForAllocation());
 }
-inline std::string* Response::release_token() {
-  // @@protoc_insertion_point(field_release:auth.Response.token)
+inline std::string* LoginResponse::release_token() {
+  // @@protoc_insertion_point(field_release:auth.LoginResponse.token)
   return _impl_.token_.Release();
 }
-inline void Response::set_allocated_token(std::string* value) {
+inline void LoginResponse::set_allocated_token(std::string* value) {
   _impl_.token_.SetAllocated(value, GetArenaForAllocation());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         if (_impl_.token_.IsDefault()) {
           _impl_.token_.Set("", GetArenaForAllocation());
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:auth.Response.token)
+  // @@protoc_insertion_point(field_set_allocated:auth.LoginResponse.token)
+}
+
+// -------------------------------------------------------------------
+
+// ValidateUserTokenRequest
+
+// string token = 1;
+inline void ValidateUserTokenRequest::clear_token() {
+  _impl_.token_.ClearToEmpty();
+}
+inline const std::string& ValidateUserTokenRequest::token() const {
+  // @@protoc_insertion_point(field_get:auth.ValidateUserTokenRequest.token)
+  return _internal_token();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ValidateUserTokenRequest::set_token(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.token_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:auth.ValidateUserTokenRequest.token)
+}
+inline std::string* ValidateUserTokenRequest::mutable_token() {
+  std::string* _s = _internal_mutable_token();
+  // @@protoc_insertion_point(field_mutable:auth.ValidateUserTokenRequest.token)
+  return _s;
+}
+inline const std::string& ValidateUserTokenRequest::_internal_token() const {
+  return _impl_.token_.Get();
+}
+inline void ValidateUserTokenRequest::_internal_set_token(const std::string& value) {
+  ;
+
+
+  _impl_.token_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ValidateUserTokenRequest::_internal_mutable_token() {
+  ;
+  return _impl_.token_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ValidateUserTokenRequest::release_token() {
+  // @@protoc_insertion_point(field_release:auth.ValidateUserTokenRequest.token)
+  return _impl_.token_.Release();
+}
+inline void ValidateUserTokenRequest::set_allocated_token(std::string* value) {
+  _impl_.token_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.token_.IsDefault()) {
+          _impl_.token_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:auth.ValidateUserTokenRequest.token)
+}
+
+// -------------------------------------------------------------------
+
+// ValidateUserTokenResponse
+
+// bool is_valid = 1;
+inline void ValidateUserTokenResponse::clear_is_valid() {
+  _impl_.is_valid_ = false;
+}
+inline bool ValidateUserTokenResponse::is_valid() const {
+  // @@protoc_insertion_point(field_get:auth.ValidateUserTokenResponse.is_valid)
+  return _internal_is_valid();
+}
+inline void ValidateUserTokenResponse::set_is_valid(bool value) {
+  _internal_set_is_valid(value);
+  // @@protoc_insertion_point(field_set:auth.ValidateUserTokenResponse.is_valid)
+}
+inline bool ValidateUserTokenResponse::_internal_is_valid() const {
+  return _impl_.is_valid_;
+}
+inline void ValidateUserTokenResponse::_internal_set_is_valid(bool value) {
+  ;
+  _impl_.is_valid_ = value;
+}
+
+// string user_id = 2;
+inline void ValidateUserTokenResponse::clear_user_id() {
+  _impl_.user_id_.ClearToEmpty();
+}
+inline const std::string& ValidateUserTokenResponse::user_id() const {
+  // @@protoc_insertion_point(field_get:auth.ValidateUserTokenResponse.user_id)
+  return _internal_user_id();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ValidateUserTokenResponse::set_user_id(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.user_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:auth.ValidateUserTokenResponse.user_id)
+}
+inline std::string* ValidateUserTokenResponse::mutable_user_id() {
+  std::string* _s = _internal_mutable_user_id();
+  // @@protoc_insertion_point(field_mutable:auth.ValidateUserTokenResponse.user_id)
+  return _s;
+}
+inline const std::string& ValidateUserTokenResponse::_internal_user_id() const {
+  return _impl_.user_id_.Get();
+}
+inline void ValidateUserTokenResponse::_internal_set_user_id(const std::string& value) {
+  ;
+
+
+  _impl_.user_id_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ValidateUserTokenResponse::_internal_mutable_user_id() {
+  ;
+  return _impl_.user_id_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ValidateUserTokenResponse::release_user_id() {
+  // @@protoc_insertion_point(field_release:auth.ValidateUserTokenResponse.user_id)
+  return _impl_.user_id_.Release();
+}
+inline void ValidateUserTokenResponse::set_allocated_user_id(std::string* value) {
+  _impl_.user_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.user_id_.IsDefault()) {
+          _impl_.user_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:auth.ValidateUserTokenResponse.user_id)
+}
+
+// string user_name = 3;
+inline void ValidateUserTokenResponse::clear_user_name() {
+  _impl_.user_name_.ClearToEmpty();
+}
+inline const std::string& ValidateUserTokenResponse::user_name() const {
+  // @@protoc_insertion_point(field_get:auth.ValidateUserTokenResponse.user_name)
+  return _internal_user_name();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void ValidateUserTokenResponse::set_user_name(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.user_name_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:auth.ValidateUserTokenResponse.user_name)
+}
+inline std::string* ValidateUserTokenResponse::mutable_user_name() {
+  std::string* _s = _internal_mutable_user_name();
+  // @@protoc_insertion_point(field_mutable:auth.ValidateUserTokenResponse.user_name)
+  return _s;
+}
+inline const std::string& ValidateUserTokenResponse::_internal_user_name() const {
+  return _impl_.user_name_.Get();
+}
+inline void ValidateUserTokenResponse::_internal_set_user_name(const std::string& value) {
+  ;
+
+
+  _impl_.user_name_.Set(value, GetArenaForAllocation());
+}
+inline std::string* ValidateUserTokenResponse::_internal_mutable_user_name() {
+  ;
+  return _impl_.user_name_.Mutable( GetArenaForAllocation());
+}
+inline std::string* ValidateUserTokenResponse::release_user_name() {
+  // @@protoc_insertion_point(field_release:auth.ValidateUserTokenResponse.user_name)
+  return _impl_.user_name_.Release();
+}
+inline void ValidateUserTokenResponse::set_allocated_user_name(std::string* value) {
+  _impl_.user_name_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.user_name_.IsDefault()) {
+          _impl_.user_name_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:auth.ValidateUserTokenResponse.user_name)
 }
 
 #ifdef __GNUC__

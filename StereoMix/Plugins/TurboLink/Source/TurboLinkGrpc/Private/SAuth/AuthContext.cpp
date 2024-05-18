@@ -26,12 +26,12 @@ void GrpcContext_AuthService_GuestLogin::Call(const FGrpcAuthGuestLoginRequest& 
 void GrpcContext_AuthService_GuestLogin::OnRpcEvent(bool Ok, const void* EventTag)
 {
 	Super::OnRpcEventInternal(Ok, EventTag, 
-		[this](const FGrpcResult& _Result, ::auth::Response* _RpcResponse) 
+		[this](const FGrpcResult& _Result, ::auth::LoginResponse* _RpcResponse) 
 		{
 			UAuthServiceClient* client = (UAuthServiceClient*)(this->Client);
 			if (!(client->OnGuestLoginResponse.IsBound())) return;
 
-			FGrpcAuthResponse response;
+			FGrpcAuthLoginResponse response;
 			if (_RpcResponse) {
 				GRPC_TO_TURBOLINK(_RpcResponse, &response);
 			}
@@ -40,37 +40,37 @@ void GrpcContext_AuthService_GuestLogin::OnRpcEvent(bool Ok, const void* EventTa
 	);
 }
 
-GrpcContext_AuthService_RegisterGameServer::GrpcContext_AuthService_RegisterGameServer(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
+GrpcContext_AuthService_ValidateUserToken::GrpcContext_AuthService_ValidateUserToken(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
 	: Super(_Handle, _Service, _Client)
 {
 }
 
-void GrpcContext_AuthService_RegisterGameServer::Call(const FGrpcAuthRegisterGameServerRequest& Request)
+void GrpcContext_AuthService_ValidateUserToken::Call(const FGrpcAuthValidateUserTokenRequest& Request)
 {
 	check(GetState() == EGrpcContextState::Ready);
 	UpdateState(EGrpcContextState::Initialing);
 
-	::auth::RegisterGameServerRequest rpcRequest;
+	::auth::ValidateUserTokenRequest rpcRequest;
 	TURBOLINK_TO_GRPC(&Request, &rpcRequest);
 
 	UAuthService* service = (UAuthService*)Service;
-	RpcReaderWriter = service->d->Stub->AsyncRegisterGameServer(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get());
+	RpcReaderWriter = service->d->Stub->AsyncValidateUserToken(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get());
 	RpcReaderWriter->ReadInitialMetadata(InitialTag);
 }
 
-void GrpcContext_AuthService_RegisterGameServer::OnRpcEvent(bool Ok, const void* EventTag)
+void GrpcContext_AuthService_ValidateUserToken::OnRpcEvent(bool Ok, const void* EventTag)
 {
 	Super::OnRpcEventInternal(Ok, EventTag, 
-		[this](const FGrpcResult& _Result, ::auth::Response* _RpcResponse) 
+		[this](const FGrpcResult& _Result, ::auth::ValidateUserTokenResponse* _RpcResponse) 
 		{
 			UAuthServiceClient* client = (UAuthServiceClient*)(this->Client);
-			if (!(client->OnRegisterGameServerResponse.IsBound())) return;
+			if (!(client->OnValidateUserTokenResponse.IsBound())) return;
 
-			FGrpcAuthResponse response;
+			FGrpcAuthValidateUserTokenResponse response;
 			if (_RpcResponse) {
 				GRPC_TO_TURBOLINK(_RpcResponse, &response);
 			}
-			client->OnRegisterGameServerResponse.Broadcast(Handle, _Result, response);
+			client->OnValidateUserTokenResponse.Broadcast(Handle, _Result, response);
 		}
 	);
 }

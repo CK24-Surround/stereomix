@@ -7,11 +7,14 @@
 void GRPC_TO_TURBOLINK(const ::auth::GuestLoginRequest* in, FGrpcAuthGuestLoginRequest* out);
 void TURBOLINK_TO_GRPC(const FGrpcAuthGuestLoginRequest* in, ::auth::GuestLoginRequest* out);
 
-void GRPC_TO_TURBOLINK(const ::auth::RegisterGameServerRequest* in, FGrpcAuthRegisterGameServerRequest* out);
-void TURBOLINK_TO_GRPC(const FGrpcAuthRegisterGameServerRequest* in, ::auth::RegisterGameServerRequest* out);
+void GRPC_TO_TURBOLINK(const ::auth::LoginResponse* in, FGrpcAuthLoginResponse* out);
+void TURBOLINK_TO_GRPC(const FGrpcAuthLoginResponse* in, ::auth::LoginResponse* out);
 
-void GRPC_TO_TURBOLINK(const ::auth::Response* in, FGrpcAuthResponse* out);
-void TURBOLINK_TO_GRPC(const FGrpcAuthResponse* in, ::auth::Response* out);
+void GRPC_TO_TURBOLINK(const ::auth::ValidateUserTokenRequest* in, FGrpcAuthValidateUserTokenRequest* out);
+void TURBOLINK_TO_GRPC(const FGrpcAuthValidateUserTokenRequest* in, ::auth::ValidateUserTokenRequest* out);
 
-typedef grpc::ClientAsyncResponseReader<::auth::Response> AuthService_GuestLogin_ReaderWriter;
-typedef grpc::ClientAsyncResponseReader<::auth::Response> AuthService_RegisterGameServer_ReaderWriter;
+void GRPC_TO_TURBOLINK(const ::auth::ValidateUserTokenResponse* in, FGrpcAuthValidateUserTokenResponse* out);
+void TURBOLINK_TO_GRPC(const FGrpcAuthValidateUserTokenResponse* in, ::auth::ValidateUserTokenResponse* out);
+
+typedef grpc::ClientAsyncResponseReader<::auth::LoginResponse> AuthService_GuestLogin_ReaderWriter;
+typedef grpc::ClientAsyncResponseReader<::auth::ValidateUserTokenResponse> AuthService_ValidateUserToken_ReaderWriter;

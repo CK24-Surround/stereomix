@@ -26,11 +26,11 @@ private:
 	UPROPERTY()
 	UAuthServiceClient* InnerClient; 
 public:
-	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcAuthResponse& Response)> FGuestLoginResponseLambda;
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcAuthLoginResponse& Response)> FGuestLoginResponseLambda;
 	void CallGuestLogin(const FGrpcAuthGuestLoginRequest& Request, FGuestLoginResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
-	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcAuthResponse& Response)> FRegisterGameServerResponseLambda;
-	void CallRegisterGameServer(const FGrpcAuthRegisterGameServerRequest& Request, FRegisterGameServerResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcAuthValidateUserTokenResponse& Response)> FValidateUserTokenResponseLambda;
+	void CallValidateUserToken(const FGrpcAuthValidateUserTokenRequest& Request, FValidateUserTokenResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 public:
 	class Private;

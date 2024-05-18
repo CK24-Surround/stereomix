@@ -3,7 +3,6 @@
 #include "SLobby/LobbyClient.h"
 #include "LobbyService_Private.h"
 #include "LobbyMarshaling.h"
-#include "SGoogleProtobuf/TimestampMarshaling.h"
 #include "TurboLinkGrpcManager.h"
 
 GrpcContext_LobbyService_CreateRoom::GrpcContext_LobbyService_CreateRoom(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
@@ -20,8 +19,7 @@ void GrpcContext_LobbyService_CreateRoom::Call(const FGrpcLobbyCreateRoomRequest
 	TURBOLINK_TO_GRPC(&Request, &rpcRequest);
 
 	ULobbyService* service = (ULobbyService*)Service;
-	RpcReaderWriter = service->d->Stub->AsyncCreateRoom(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get());
-	RpcReaderWriter->ReadInitialMetadata(InitialTag);
+	RpcReaderWriter = service->d->Stub->AsyncCreateRoom(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get(), InitialTag);
 }
 
 void GrpcContext_LobbyService_CreateRoom::OnRpcEvent(bool Ok, const void* EventTag)
@@ -181,41 +179,6 @@ void GrpcContext_LobbyService_UpdateRoomConfig::OnRpcEvent(bool Ok, const void* 
 	);
 }
 
-GrpcContext_LobbyService_UpdatePlayerState::GrpcContext_LobbyService_UpdatePlayerState(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
-	: Super(_Handle, _Service, _Client)
-{
-}
-
-void GrpcContext_LobbyService_UpdatePlayerState::Call(const FGrpcLobbyUpdatePlayerStateRequest& Request)
-{
-	check(GetState() == EGrpcContextState::Ready);
-	UpdateState(EGrpcContextState::Initialing);
-
-	::lobby::UpdatePlayerStateRequest rpcRequest;
-	TURBOLINK_TO_GRPC(&Request, &rpcRequest);
-
-	ULobbyService* service = (ULobbyService*)Service;
-	RpcReaderWriter = service->d->Stub->AsyncUpdatePlayerState(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get());
-	RpcReaderWriter->ReadInitialMetadata(InitialTag);
-}
-
-void GrpcContext_LobbyService_UpdatePlayerState::OnRpcEvent(bool Ok, const void* EventTag)
-{
-	Super::OnRpcEventInternal(Ok, EventTag, 
-		[this](const FGrpcResult& _Result, ::lobby::UpdatePlayerStateResponse* _RpcResponse) 
-		{
-			ULobbyServiceClient* client = (ULobbyServiceClient*)(this->Client);
-			if (!(client->OnUpdatePlayerStateResponse.IsBound())) return;
-
-			FGrpcLobbyUpdatePlayerStateResponse response;
-			if (_RpcResponse) {
-				GRPC_TO_TURBOLINK(_RpcResponse, &response);
-			}
-			client->OnUpdatePlayerStateResponse.Broadcast(Handle, _Result, response);
-		}
-	);
-}
-
 GrpcContext_LobbyService_ChangeRoomPassword::GrpcContext_LobbyService_ChangeRoomPassword(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
 	: Super(_Handle, _Service, _Client)
 {
@@ -321,70 +284,36 @@ void GrpcContext_LobbyService_DeleteRoom::OnRpcEvent(bool Ok, const void* EventT
 	);
 }
 
-GrpcContext_LobbyService_UpdateRoomConfigStream::GrpcContext_LobbyService_UpdateRoomConfigStream(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
+GrpcContext_LobbyService_ListenRoomUpdates::GrpcContext_LobbyService_ListenRoomUpdates(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
 	: Super(_Handle, _Service, _Client)
 {
 }
 
-void GrpcContext_LobbyService_UpdateRoomConfigStream::Call(const FGrpcLobbyListenRoomConfigUpdatesRequest& Request)
+void GrpcContext_LobbyService_ListenRoomUpdates::Call(const FGrpcLobbyListenRoomUpdatesRequest& Request)
 {
 	check(GetState() == EGrpcContextState::Ready);
 	UpdateState(EGrpcContextState::Initialing);
 
-	::lobby::ListenRoomConfigUpdatesRequest rpcRequest;
+	::lobby::ListenRoomUpdatesRequest rpcRequest;
 	TURBOLINK_TO_GRPC(&Request, &rpcRequest);
 
 	ULobbyService* service = (ULobbyService*)Service;
-	RpcReaderWriter = service->d->Stub->AsyncUpdateRoomConfigStream(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get(), InitialTag);
+	RpcReaderWriter = service->d->Stub->AsyncListenRoomUpdates(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get(), InitialTag);
 }
 
-void GrpcContext_LobbyService_UpdateRoomConfigStream::OnRpcEvent(bool Ok, const void* EventTag)
+void GrpcContext_LobbyService_ListenRoomUpdates::OnRpcEvent(bool Ok, const void* EventTag)
 {
 	Super::OnRpcEventInternal(Ok, EventTag, 
-		[this](const FGrpcResult& _Result, ::lobby::ListenRoomConfigUpdatesResponse* _RpcResponse) 
+		[this](const FGrpcResult& _Result, ::lobby::Room* _RpcResponse) 
 		{
 			ULobbyServiceClient* client = (ULobbyServiceClient*)(this->Client);
-			if (!(client->OnUpdateRoomConfigStreamResponse.IsBound())) return;
+			if (!(client->OnListenRoomUpdatesResponse.IsBound())) return;
 
-			FGrpcLobbyListenRoomConfigUpdatesResponse response;
+			FGrpcLobbyRoom response;
 			if (_RpcResponse) {
 				GRPC_TO_TURBOLINK(_RpcResponse, &response);
 			}
-			client->OnUpdateRoomConfigStreamResponse.Broadcast(Handle, _Result, response);
-		}
-	);
-}
-
-GrpcContext_LobbyService_UpdatePlayerListStream::GrpcContext_LobbyService_UpdatePlayerListStream(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
-	: Super(_Handle, _Service, _Client)
-{
-}
-
-void GrpcContext_LobbyService_UpdatePlayerListStream::Call(const FGrpcLobbyListenPlayerListUpdatesRequest& Request)
-{
-	check(GetState() == EGrpcContextState::Ready);
-	UpdateState(EGrpcContextState::Initialing);
-
-	::lobby::ListenPlayerListUpdatesRequest rpcRequest;
-	TURBOLINK_TO_GRPC(&Request, &rpcRequest);
-
-	ULobbyService* service = (ULobbyService*)Service;
-	RpcReaderWriter = service->d->Stub->AsyncUpdatePlayerListStream(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get(), InitialTag);
-}
-
-void GrpcContext_LobbyService_UpdatePlayerListStream::OnRpcEvent(bool Ok, const void* EventTag)
-{
-	Super::OnRpcEventInternal(Ok, EventTag, 
-		[this](const FGrpcResult& _Result, ::lobby::ListenPlayerListUpdatesResponse* _RpcResponse) 
-		{
-			ULobbyServiceClient* client = (ULobbyServiceClient*)(this->Client);
-			if (!(client->OnUpdatePlayerListStreamResponse.IsBound())) return;
-
-			FGrpcLobbyListenPlayerListUpdatesResponse response;
-			if (_RpcResponse) {
-				GRPC_TO_TURBOLINK(_RpcResponse, &response);
-			}
-			client->OnUpdatePlayerListStreamResponse.Broadcast(Handle, _Result, response);
+			client->OnListenRoomUpdatesResponse.Broadcast(Handle, _Result, response);
 		}
 	);
 }

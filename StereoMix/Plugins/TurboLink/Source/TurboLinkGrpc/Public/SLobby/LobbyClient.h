@@ -9,12 +9,10 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceJoinRoomResponse, 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceGetRoomListResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyGetRoomListResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceUpdateRoomStateResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdateRoomStateResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceUpdateRoomConfigResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdateRoomConfigResponse&, Response);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceUpdatePlayerStateResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdatePlayerStateResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceChangeRoomPasswordResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyChangeRoomPasswordResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceChangeRoomOwnerResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyChangeRoomOwnerResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceDeleteRoomResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyDeleteRoomResponse&, Response);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceUpdateRoomConfigStreamResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyListenRoomConfigUpdatesResponse&, Response);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceUpdatePlayerListStreamResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyListenPlayerListUpdatesResponse&, Response);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceListenRoomUpdatesResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyRoom&, Response);
 
 UCLASS(ClassGroup = TurboLink, BlueprintType)
 class TURBOLINKGRPC_API ULobbyServiceClient : public UGrpcClient
@@ -38,9 +36,6 @@ public:
 	FOnLobbyServiceUpdateRoomConfigResponse OnUpdateRoomConfigResponse;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnLobbyServiceUpdatePlayerStateResponse OnUpdatePlayerStateResponse;
-
-	UPROPERTY(BlueprintAssignable)
 	FOnLobbyServiceChangeRoomPasswordResponse OnChangeRoomPasswordResponse;
 
 	UPROPERTY(BlueprintAssignable)
@@ -50,10 +45,7 @@ public:
 	FOnLobbyServiceDeleteRoomResponse OnDeleteRoomResponse;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnLobbyServiceUpdateRoomConfigStreamResponse OnUpdateRoomConfigStreamResponse;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnLobbyServiceUpdatePlayerListStreamResponse OnUpdatePlayerListStreamResponse;
+	FOnLobbyServiceListenRoomUpdatesResponse OnListenRoomUpdatesResponse;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = TurboLink)
@@ -87,12 +79,6 @@ public:
 	void UpdateRoomConfig(FGrpcContextHandle Handle, const FGrpcLobbyUpdateRoomConfigRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink)
-	FGrpcContextHandle InitUpdatePlayerState();
-
-	UFUNCTION(BlueprintCallable, Category = TurboLink, meta = (AdvancedDisplay = 2))
-	void UpdatePlayerState(FGrpcContextHandle Handle, const FGrpcLobbyUpdatePlayerStateRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
-
-	UFUNCTION(BlueprintCallable, Category = TurboLink)
 	FGrpcContextHandle InitChangeRoomPassword();
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink, meta = (AdvancedDisplay = 2))
@@ -111,16 +97,10 @@ public:
 	void DeleteRoom(FGrpcContextHandle Handle, const FGrpcLobbyDeleteRoomRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink)
-	FGrpcContextHandle InitUpdateRoomConfigStream();
+	FGrpcContextHandle InitListenRoomUpdates();
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink, meta = (AdvancedDisplay = 2))
-	void UpdateRoomConfigStream(FGrpcContextHandle Handle, const FGrpcLobbyListenRoomConfigUpdatesRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
-
-	UFUNCTION(BlueprintCallable, Category = TurboLink)
-	FGrpcContextHandle InitUpdatePlayerListStream();
-
-	UFUNCTION(BlueprintCallable, Category = TurboLink, meta = (AdvancedDisplay = 2))
-	void UpdatePlayerListStream(FGrpcContextHandle Handle, const FGrpcLobbyListenPlayerListUpdatesRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+	void ListenRoomUpdates(FGrpcContextHandle Handle, const FGrpcLobbyListenRoomUpdatesRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 public:
 	virtual void Shutdown() override;

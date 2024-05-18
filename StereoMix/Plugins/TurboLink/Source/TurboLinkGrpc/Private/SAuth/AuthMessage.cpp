@@ -4,6 +4,7 @@
 #include "google/protobuf/util/json_util.h"
 
 DEFINE_JSON_FUNCTIONS(FGrpcAuthGuestLoginRequest, ::auth::GuestLoginRequest)
-DEFINE_JSON_FUNCTIONS(FGrpcAuthRegisterGameServerRequest, ::auth::RegisterGameServerRequest)
-DEFINE_JSON_FUNCTIONS(FGrpcAuthResponse, ::auth::Response)
+DEFINE_JSON_FUNCTIONS(FGrpcAuthLoginResponse, ::auth::LoginResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcAuthValidateUserTokenRequest, ::auth::ValidateUserTokenRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcAuthValidateUserTokenResponse, ::auth::ValidateUserTokenResponse)
 

@@ -4,8 +4,8 @@
 #include "SAuth/AuthMessage.h"
 #include "AuthClient.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAuthServiceGuestLoginResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcAuthResponse&, Response);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAuthServiceRegisterGameServerResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcAuthResponse&, Response);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAuthServiceGuestLoginResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcAuthLoginResponse&, Response);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnAuthServiceValidateUserTokenResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcAuthValidateUserTokenResponse&, Response);
 
 UCLASS(ClassGroup = TurboLink, BlueprintType)
 class TURBOLINKGRPC_API UAuthServiceClient : public UGrpcClient
@@ -17,7 +17,7 @@ public:
 	FOnAuthServiceGuestLoginResponse OnGuestLoginResponse;
 
 	UPROPERTY(BlueprintAssignable)
-	FOnAuthServiceRegisterGameServerResponse OnRegisterGameServerResponse;
+	FOnAuthServiceValidateUserTokenResponse OnValidateUserTokenResponse;
 
 public:
 	UFUNCTION(BlueprintCallable, Category = TurboLink)
@@ -27,10 +27,10 @@ public:
 	void GuestLogin(FGrpcContextHandle Handle, const FGrpcAuthGuestLoginRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink)
-	FGrpcContextHandle InitRegisterGameServer();
+	FGrpcContextHandle InitValidateUserToken();
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink, meta = (AdvancedDisplay = 2))
-	void RegisterGameServer(FGrpcContextHandle Handle, const FGrpcAuthRegisterGameServerRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+	void ValidateUserToken(FGrpcContextHandle Handle, const FGrpcAuthValidateUserTokenRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 public:
 	virtual void Shutdown() override;
