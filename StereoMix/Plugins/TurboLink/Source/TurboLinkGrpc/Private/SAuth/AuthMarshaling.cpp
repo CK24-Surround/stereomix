@@ -11,23 +11,37 @@ void TURBOLINK_TO_GRPC(const FGrpcAuthGuestLoginRequest* in, ::auth::GuestLoginR
     out->set_user_name((const char*)StringCast<UTF8CHAR>(*(in->UserName)).Get());
 }
 
-void GRPC_TO_TURBOLINK(const ::auth::RegisterGameServerRequest* in, FGrpcAuthRegisterGameServerRequest* out)
-{
-    out->ServerName=StringCast<TCHAR>((const UTF8CHAR*)(in->server_name().c_str())).Get();
-}
-
-void TURBOLINK_TO_GRPC(const FGrpcAuthRegisterGameServerRequest* in, ::auth::RegisterGameServerRequest* out)
-{
-    out->set_server_name((const char*)StringCast<UTF8CHAR>(*(in->ServerName)).Get());
-}
-
-void GRPC_TO_TURBOLINK(const ::auth::Response* in, FGrpcAuthResponse* out)
+void GRPC_TO_TURBOLINK(const ::auth::LoginResponse* in, FGrpcAuthLoginResponse* out)
 {
     out->Token=StringCast<TCHAR>((const UTF8CHAR*)(in->token().c_str())).Get();
 }
 
-void TURBOLINK_TO_GRPC(const FGrpcAuthResponse* in, ::auth::Response* out)
+void TURBOLINK_TO_GRPC(const FGrpcAuthLoginResponse* in, ::auth::LoginResponse* out)
 {
     out->set_token((const char*)StringCast<UTF8CHAR>(*(in->Token)).Get());
+}
+
+void GRPC_TO_TURBOLINK(const ::auth::ValidateUserTokenRequest* in, FGrpcAuthValidateUserTokenRequest* out)
+{
+    out->Token=StringCast<TCHAR>((const UTF8CHAR*)(in->token().c_str())).Get();
+}
+
+void TURBOLINK_TO_GRPC(const FGrpcAuthValidateUserTokenRequest* in, ::auth::ValidateUserTokenRequest* out)
+{
+    out->set_token((const char*)StringCast<UTF8CHAR>(*(in->Token)).Get());
+}
+
+void GRPC_TO_TURBOLINK(const ::auth::ValidateUserTokenResponse* in, FGrpcAuthValidateUserTokenResponse* out)
+{
+    out->IsValid=in->is_valid();
+    out->UserId=StringCast<TCHAR>((const UTF8CHAR*)(in->user_id().c_str())).Get();
+    out->UserName=StringCast<TCHAR>((const UTF8CHAR*)(in->user_name().c_str())).Get();
+}
+
+void TURBOLINK_TO_GRPC(const FGrpcAuthValidateUserTokenResponse* in, ::auth::ValidateUserTokenResponse* out)
+{
+    out->set_is_valid(in->IsValid);
+    out->set_user_id((const char*)StringCast<UTF8CHAR>(*(in->UserId)).Get());
+    out->set_user_name((const char*)StringCast<UTF8CHAR>(*(in->UserName)).Get());
 }
 

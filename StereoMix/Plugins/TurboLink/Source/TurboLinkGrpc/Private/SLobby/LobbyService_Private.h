@@ -24,9 +24,12 @@ public:
 
 	UFUNCTION()
 	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyCreateRoomResponse& Response);
+	UFUNCTION()
+	void OnContextStateChanged(FGrpcContextHandle Handle, EGrpcContextState NewState);
 public:
 	FGrpcContextHandle Handle;
 	ULobbyService::FCreateRoomResponseLambda ResponseLambda;
+	ULobbyService::FCreateRoomFinishLambda FinishLambda;
 };
 
 UCLASS()
@@ -90,21 +93,6 @@ public:
 };
 
 UCLASS()
-class ULobbyServiceUpdatePlayerStateLambdaWrapper : public UObject
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY()
-	ULobbyServiceClient* InnerClient;
-
-	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyUpdatePlayerStateResponse& Response);
-public:
-	FGrpcContextHandle Handle;
-	ULobbyService::FUpdatePlayerStateResponseLambda ResponseLambda;
-};
-
-UCLASS()
 class ULobbyServiceChangeRoomPasswordLambdaWrapper : public UObject
 {
 	GENERATED_BODY()
@@ -150,7 +138,7 @@ public:
 };
 
 UCLASS()
-class ULobbyServiceUpdateRoomConfigStreamLambdaWrapper : public UObject
+class ULobbyServiceListenRoomUpdatesLambdaWrapper : public UObject
 {
 	GENERATED_BODY()
 public:
@@ -158,30 +146,12 @@ public:
 	ULobbyServiceClient* InnerClient;
 
 	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyListenRoomConfigUpdatesResponse& Response);
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyRoom& Response);
 	UFUNCTION()
 	void OnContextStateChanged(FGrpcContextHandle Handle, EGrpcContextState NewState);
 public:
 	FGrpcContextHandle Handle;
-	ULobbyService::FUpdateRoomConfigStreamResponseLambda ResponseLambda;
-	ULobbyService::FUpdateRoomConfigStreamFinishLambda FinishLambda;
-};
-
-UCLASS()
-class ULobbyServiceUpdatePlayerListStreamLambdaWrapper : public UObject
-{
-	GENERATED_BODY()
-public:
-	UPROPERTY()
-	ULobbyServiceClient* InnerClient;
-
-	UFUNCTION()
-	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyListenPlayerListUpdatesResponse& Response);
-	UFUNCTION()
-	void OnContextStateChanged(FGrpcContextHandle Handle, EGrpcContextState NewState);
-public:
-	FGrpcContextHandle Handle;
-	ULobbyService::FUpdatePlayerListStreamResponseLambda ResponseLambda;
-	ULobbyService::FUpdatePlayerListStreamFinishLambda FinishLambda;
+	ULobbyService::FListenRoomUpdatesResponseLambda ResponseLambda;
+	ULobbyService::FListenRoomUpdatesFinishLambda FinishLambda;
 };
 

@@ -3,10 +3,10 @@
 #include "TurboLinkGrpcContext.h"
 #include "SAuth/AuthMessage.h"
 #include "SAuth/AuthMarshaling.h"
-class GrpcContext_AuthService_GuestLogin : public GrpcContext_Ping_Pong<AuthService_GuestLogin_ReaderWriter, ::auth::Response>
+class GrpcContext_AuthService_GuestLogin : public GrpcContext_Ping_Pong<AuthService_GuestLogin_ReaderWriter, ::auth::LoginResponse>
 {
 	friend class UAuthServiceClient;
-	typedef GrpcContext_Ping_Pong<AuthService_GuestLogin_ReaderWriter, ::auth::Response> Super;
+	typedef GrpcContext_Ping_Pong<AuthService_GuestLogin_ReaderWriter, ::auth::LoginResponse> Super;
 
 private:
 	void Call(const FGrpcAuthGuestLoginRequest& Request);
@@ -16,16 +16,16 @@ public:
 	GrpcContext_AuthService_GuestLogin(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
 };
 
-class GrpcContext_AuthService_RegisterGameServer : public GrpcContext_Ping_Pong<AuthService_RegisterGameServer_ReaderWriter, ::auth::Response>
+class GrpcContext_AuthService_ValidateUserToken : public GrpcContext_Ping_Pong<AuthService_ValidateUserToken_ReaderWriter, ::auth::ValidateUserTokenResponse>
 {
 	friend class UAuthServiceClient;
-	typedef GrpcContext_Ping_Pong<AuthService_RegisterGameServer_ReaderWriter, ::auth::Response> Super;
+	typedef GrpcContext_Ping_Pong<AuthService_ValidateUserToken_ReaderWriter, ::auth::ValidateUserTokenResponse> Super;
 
 private:
-	void Call(const FGrpcAuthRegisterGameServerRequest& Request);
+	void Call(const FGrpcAuthValidateUserTokenRequest& Request);
 	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
 
 public:
-	GrpcContext_AuthService_RegisterGameServer(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+	GrpcContext_AuthService_ValidateUserToken(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
 };
 

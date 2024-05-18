@@ -73,16 +73,16 @@ void UAuthService::CallGuestLogin(const FGrpcAuthGuestLoginRequest& Request, FGu
 	InnerClient->GuestLogin(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
 }
 
-void UAuthService::CallRegisterGameServer(const FGrpcAuthRegisterGameServerRequest& Request, FRegisterGameServerResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+void UAuthService::CallValidateUserToken(const FGrpcAuthValidateUserTokenRequest& Request, FValidateUserTokenResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
 {
 	if (InnerClient == nullptr)
 	{
 		InnerClient = MakeClient();
 	}
-	UAuthServiceRegisterGameServerLambdaWrapper* lambdaWrapper = NewObject<UAuthServiceRegisterGameServerLambdaWrapper>();
+	UAuthServiceValidateUserTokenLambdaWrapper* lambdaWrapper = NewObject<UAuthServiceValidateUserTokenLambdaWrapper>();
 	lambdaWrapper->InnerClient = InnerClient;
 	lambdaWrapper->ResponseLambda = ResponseLambda;
-	lambdaWrapper->Handle = InnerClient->InitRegisterGameServer();
-	InnerClient->OnRegisterGameServerResponse.AddUniqueDynamic(lambdaWrapper, &UAuthServiceRegisterGameServerLambdaWrapper::OnResponse);
-	InnerClient->RegisterGameServer(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+	lambdaWrapper->Handle = InnerClient->InitValidateUserToken();
+	InnerClient->OnValidateUserTokenResponse.AddUniqueDynamic(lambdaWrapper, &UAuthServiceValidateUserTokenLambdaWrapper::OnResponse);
+	InnerClient->ValidateUserToken(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
 }

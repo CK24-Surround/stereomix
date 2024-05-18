@@ -36,7 +36,51 @@ namespace _pb = ::PROTOBUF_NAMESPACE_ID;
 namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace lobby {
 template <typename>
-PROTOBUF_CONSTEXPR RoomPreview::RoomPreview(
+PROTOBUF_CONSTEXPR RoomConnectionInfo::RoomConnectionInfo(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.host_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.port_)*/ 0
+
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct RoomConnectionInfoDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR RoomConnectionInfoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~RoomConnectionInfoDefaultTypeInternal() {}
+  union {
+    RoomConnectionInfo _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoomConnectionInfoDefaultTypeInternal _RoomConnectionInfo_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR RoomConfig::RoomConfig(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.room_name_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.visibility_)*/ 0
+
+  , /*decltype(_impl_.mode_)*/ 0
+
+  , /*decltype(_impl_.map_)*/ 0
+
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct RoomConfigDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR RoomConfigDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~RoomConfigDefaultTypeInternal() {}
+  union {
+    RoomConfig _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoomConfigDefaultTypeInternal _RoomConfig_default_instance_;
+template <typename>
+PROTOBUF_CONSTEXPR Room::Room(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
@@ -44,24 +88,41 @@ PROTOBUF_CONSTEXPR RoomPreview::RoomPreview(
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
+  , /*decltype(_impl_.short_room_id_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.owner_id_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
   , /*decltype(_impl_.config_)*/nullptr
+  , /*decltype(_impl_.connection_)*/nullptr
+  , /*decltype(_impl_.state_)*/ 0
+
+  , /*decltype(_impl_.max_players_)*/ 0
+
   , /*decltype(_impl_.current_players_)*/ 0
 } {}
-struct RoomPreviewDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR RoomPreviewDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~RoomPreviewDefaultTypeInternal() {}
+struct RoomDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR RoomDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~RoomDefaultTypeInternal() {}
   union {
-    RoomPreview _instance;
+    Room _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoomPreviewDefaultTypeInternal _RoomPreview_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoomDefaultTypeInternal _Room_default_instance_;
 template <typename>
 PROTOBUF_CONSTEXPR CreateRoomRequest::CreateRoomRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.room_name_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
   , /*decltype(_impl_.password_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
@@ -82,7 +143,9 @@ PROTOBUF_CONSTEXPR CreateRoomResponse::CreateRoomResponse(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.connection_)*/nullptr} {}
+  , /*decltype(_impl_.connection_)*/nullptr
+  , /*decltype(_impl_.deploy_status_)*/ 0
+} {}
 struct CreateRoomResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR CreateRoomResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~CreateRoomResponseDefaultTypeInternal() {}
@@ -96,15 +159,13 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 template <typename>
 PROTOBUF_CONSTEXPR JoinRoomRequest::JoinRoomRequest(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
+    /*decltype(_impl_.password_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
-  , /*decltype(_impl_.password_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+  , /*decltype(_impl_.id_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_._oneof_case_)*/{}} {}
 struct JoinRoomRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR JoinRoomRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~JoinRoomRequestDefaultTypeInternal() {}
@@ -167,121 +228,9 @@ struct GetRoomListResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 GetRoomListResponseDefaultTypeInternal _GetRoomListResponse_default_instance_;
 template <typename>
-PROTOBUF_CONSTEXPR RoomConnectionInfo::RoomConnectionInfo(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.host_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.port_)*/ 0
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct RoomConnectionInfoDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR RoomConnectionInfoDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~RoomConnectionInfoDefaultTypeInternal() {}
-  union {
-    RoomConnectionInfo _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoomConnectionInfoDefaultTypeInternal _RoomConnectionInfo_default_instance_;
-template <typename>
-PROTOBUF_CONSTEXPR RoomPlayer::RoomPlayer(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_._has_bits_)*/{}
-  , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.user_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.user_name_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.joined_at_)*/nullptr
-  , /*decltype(_impl_.state_)*/ 0
-
-  , /*decltype(_impl_.is_owner_)*/ false
-} {}
-struct RoomPlayerDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR RoomPlayerDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~RoomPlayerDefaultTypeInternal() {}
-  union {
-    RoomPlayer _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoomPlayerDefaultTypeInternal _RoomPlayer_default_instance_;
-template <typename>
-PROTOBUF_CONSTEXPR Room::Room(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_._has_bits_)*/{}
-  , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.players_)*/{}
-  , /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.password_encrypted_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.owner_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.config_)*/nullptr
-  , /*decltype(_impl_.connection_)*/nullptr
-  , /*decltype(_impl_.state_)*/ 0
-
-  , /*decltype(_impl_.player_count_)*/ 0
-} {}
-struct RoomDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR RoomDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~RoomDefaultTypeInternal() {}
-  union {
-    Room _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoomDefaultTypeInternal _Room_default_instance_;
-template <typename>
-PROTOBUF_CONSTEXPR RoomConfig::RoomConfig(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_name_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.visibility_)*/ 0
-
-  , /*decltype(_impl_.mode_)*/ 0
-
-  , /*decltype(_impl_.map_)*/ 0
-
-  , /*decltype(_impl_.max_players_)*/ 0
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct RoomConfigDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR RoomConfigDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~RoomConfigDefaultTypeInternal() {}
-  union {
-    RoomConfig _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 RoomConfigDefaultTypeInternal _RoomConfig_default_instance_;
-template <typename>
 PROTOBUF_CONSTEXPR UpdateRoomStateRequest::UpdateRoomStateRequest(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.state_)*/ 0
+    /*decltype(_impl_.state_)*/ 0
 
   , /*decltype(_impl_._cached_size_)*/{}} {}
 struct UpdateRoomStateRequestDefaultTypeInternal {
@@ -315,10 +264,6 @@ PROTOBUF_CONSTEXPR UpdateRoomConfigRequest::UpdateRoomConfigRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
   , /*decltype(_impl_.config_)*/nullptr} {}
 struct UpdateRoomConfigRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR UpdateRoomConfigRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
@@ -347,57 +292,9 @@ struct UpdateRoomConfigResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdateRoomConfigResponseDefaultTypeInternal _UpdateRoomConfigResponse_default_instance_;
 template <typename>
-PROTOBUF_CONSTEXPR UpdatePlayerStateRequest::UpdatePlayerStateRequest(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.user_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.state_)*/ 0
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct UpdatePlayerStateRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR UpdatePlayerStateRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~UpdatePlayerStateRequestDefaultTypeInternal() {}
-  union {
-    UpdatePlayerStateRequest _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdatePlayerStateRequestDefaultTypeInternal _UpdatePlayerStateRequest_default_instance_;
-template <typename>
-PROTOBUF_CONSTEXPR UpdatePlayerStateResponse::UpdatePlayerStateResponse(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.user_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.updated_state_)*/ 0
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct UpdatePlayerStateResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR UpdatePlayerStateResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~UpdatePlayerStateResponseDefaultTypeInternal() {}
-  union {
-    UpdatePlayerStateResponse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UpdatePlayerStateResponseDefaultTypeInternal _UpdatePlayerStateResponse_default_instance_;
-template <typename>
 PROTOBUF_CONSTEXPR ChangeRoomPasswordRequest::ChangeRoomPasswordRequest(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.password_)*/ {
+    /*decltype(_impl_.password_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
@@ -414,7 +311,12 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ChangeRoomPasswordRequestDefaultTypeInternal _ChangeRoomPasswordRequest_default_instance_;
 template <typename>
 PROTOBUF_CONSTEXPR ChangeRoomPasswordResponse::ChangeRoomPasswordResponse(
-    ::_pbi::ConstantInitialized) {}
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.room_id_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct ChangeRoomPasswordResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ChangeRoomPasswordResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ChangeRoomPasswordResponseDefaultTypeInternal() {}
@@ -428,11 +330,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 template <typename>
 PROTOBUF_CONSTEXPR ChangeRoomOwnerRequest::ChangeRoomOwnerRequest(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.user_id_)*/ {
+    /*decltype(_impl_.new_owner_id_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
@@ -467,12 +365,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ChangeRoomOwnerResponseDefaultTypeInternal _ChangeRoomOwnerResponse_default_instance_;
 template <typename>
 PROTOBUF_CONSTEXPR DeleteRoomRequest::DeleteRoomRequest(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+    ::_pbi::ConstantInitialized) {}
 struct DeleteRoomRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR DeleteRoomRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DeleteRoomRequestDefaultTypeInternal() {}
@@ -497,93 +390,71 @@ struct DeleteRoomResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 DeleteRoomResponseDefaultTypeInternal _DeleteRoomResponse_default_instance_;
 template <typename>
-PROTOBUF_CONSTEXPR ListenRoomConfigUpdatesRequest::ListenRoomConfigUpdatesRequest(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct ListenRoomConfigUpdatesRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ListenRoomConfigUpdatesRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ListenRoomConfigUpdatesRequestDefaultTypeInternal() {}
+PROTOBUF_CONSTEXPR ListenRoomUpdatesRequest::ListenRoomUpdatesRequest(
+    ::_pbi::ConstantInitialized) {}
+struct ListenRoomUpdatesRequestDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR ListenRoomUpdatesRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~ListenRoomUpdatesRequestDefaultTypeInternal() {}
   union {
-    ListenRoomConfigUpdatesRequest _instance;
+    ListenRoomUpdatesRequest _instance;
   };
 };
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListenRoomConfigUpdatesRequestDefaultTypeInternal _ListenRoomConfigUpdatesRequest_default_instance_;
-template <typename>
-PROTOBUF_CONSTEXPR ListenRoomConfigUpdatesResponse::ListenRoomConfigUpdatesResponse(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_._has_bits_)*/{}
-  , /*decltype(_impl_._cached_size_)*/{}
-  , /*decltype(_impl_.updated_config_)*/nullptr} {}
-struct ListenRoomConfigUpdatesResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ListenRoomConfigUpdatesResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ListenRoomConfigUpdatesResponseDefaultTypeInternal() {}
-  union {
-    ListenRoomConfigUpdatesResponse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListenRoomConfigUpdatesResponseDefaultTypeInternal _ListenRoomConfigUpdatesResponse_default_instance_;
-template <typename>
-PROTOBUF_CONSTEXPR ListenPlayerListUpdatesRequest::ListenPlayerListUpdatesRequest(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct ListenPlayerListUpdatesRequestDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ListenPlayerListUpdatesRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ListenPlayerListUpdatesRequestDefaultTypeInternal() {}
-  union {
-    ListenPlayerListUpdatesRequest _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListenPlayerListUpdatesRequestDefaultTypeInternal _ListenPlayerListUpdatesRequest_default_instance_;
-template <typename>
-PROTOBUF_CONSTEXPR ListenPlayerListUpdatesResponse::ListenPlayerListUpdatesResponse(
-    ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.players_)*/{}
-  , /*decltype(_impl_._cached_size_)*/{}} {}
-struct ListenPlayerListUpdatesResponseDefaultTypeInternal {
-  PROTOBUF_CONSTEXPR ListenPlayerListUpdatesResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
-  ~ListenPlayerListUpdatesResponseDefaultTypeInternal() {}
-  union {
-    ListenPlayerListUpdatesResponse _instance;
-  };
-};
-
-PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
-    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListenPlayerListUpdatesResponseDefaultTypeInternal _ListenPlayerListUpdatesResponse_default_instance_;
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ListenRoomUpdatesRequestDefaultTypeInternal _ListenRoomUpdatesRequest_default_instance_;
 }  // namespace lobby
-static ::_pb::Metadata file_level_metadata_lobby_2eproto[27];
+static ::_pb::Metadata file_level_metadata_lobby_2eproto[20];
 static const ::_pb::EnumDescriptor* file_level_enum_descriptors_lobby_2eproto[5];
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_lobby_2eproto = nullptr;
 const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     protodesc_cold) = {
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPreview, _impl_._has_bits_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPreview, _internal_metadata_),
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::lobby::RoomConnectionInfo, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
     ~0u,  // no _weak_field_map_
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPreview, _impl_.room_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPreview, _impl_.config_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPreview, _impl_.current_players_),
+    PROTOBUF_FIELD_OFFSET(::lobby::RoomConnectionInfo, _impl_.host_),
+    PROTOBUF_FIELD_OFFSET(::lobby::RoomConnectionInfo, _impl_.port_),
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.room_name_),
+    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.visibility_),
+    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.mode_),
+    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.map_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_._has_bits_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.room_id_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.short_room_id_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.owner_id_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.config_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.state_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.max_players_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.current_players_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.connection_),
+    ~0u,
+    ~0u,
     ~0u,
     0,
     ~0u,
+    ~0u,
+    ~0u,
+    1,
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -592,10 +463,12 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_.config_),
+    PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_.room_name_),
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_.password_),
-    0,
+    PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_.config_),
     ~0u,
+    ~0u,
+    0,
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomResponse, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomResponse, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -604,18 +477,22 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomResponse, _impl_.deploy_status_),
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomResponse, _impl_.connection_),
+    ~0u,
     0,
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _internal_metadata_),
     ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
+    PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _impl_._oneof_case_[0]),
     ~0u,  // no _weak_field_map_
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _impl_.room_id_),
+    ::_pbi::kInvalidFieldOffsetTag,
+    ::_pbi::kInvalidFieldOffsetTag,
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _impl_.password_),
+    PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _impl_.id_),
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomResponse, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomResponse, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -647,71 +524,6 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no sizeof(Split)
     PROTOBUF_FIELD_OFFSET(::lobby::GetRoomListResponse, _impl_.rooms_),
     ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConnectionInfo, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConnectionInfo, _impl_.host_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConnectionInfo, _impl_.port_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPlayer, _impl_._has_bits_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPlayer, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPlayer, _impl_.user_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPlayer, _impl_.user_name_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPlayer, _impl_.state_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPlayer, _impl_.is_owner_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomPlayer, _impl_.joined_at_),
-    ~0u,
-    ~0u,
-    ~0u,
-    ~0u,
-    0,
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_._has_bits_),
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.room_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.password_encrypted_),
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.state_),
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.owner_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.config_),
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.players_),
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.player_count_),
-    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.connection_),
-    ~0u,
-    ~0u,
-    ~0u,
-    ~0u,
-    0,
-    ~0u,
-    ~0u,
-    1,
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.room_name_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.visibility_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.mode_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.map_),
-    PROTOBUF_FIELD_OFFSET(::lobby::RoomConfig, _impl_.max_players_),
-    ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomStateRequest, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
@@ -719,7 +531,6 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomStateRequest, _impl_.room_id_),
     PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomStateRequest, _impl_.state_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomStateResponse, _internal_metadata_),
@@ -738,9 +549,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomConfigRequest, _impl_.room_id_),
     PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomConfigRequest, _impl_.config_),
-    ~0u,
     0,
     PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomConfigResponse, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomConfigResponse, _internal_metadata_),
@@ -753,27 +562,6 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     PROTOBUF_FIELD_OFFSET(::lobby::UpdateRoomConfigResponse, _impl_.updated_config_),
     0,
     ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdatePlayerStateRequest, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdatePlayerStateRequest, _impl_.room_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdatePlayerStateRequest, _impl_.user_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdatePlayerStateRequest, _impl_.state_),
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdatePlayerStateResponse, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdatePlayerStateResponse, _impl_.user_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::UpdatePlayerStateResponse, _impl_.updated_state_),
-    ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomPasswordRequest, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
@@ -781,7 +569,6 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomPasswordRequest, _impl_.room_id_),
     PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomPasswordRequest, _impl_.password_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomPasswordResponse, _internal_metadata_),
@@ -791,6 +578,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomPasswordResponse, _impl_.room_id_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomOwnerRequest, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -799,8 +587,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomOwnerRequest, _impl_.room_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomOwnerRequest, _impl_.user_id_),
+    PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomOwnerRequest, _impl_.new_owner_id_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::lobby::ChangeRoomOwnerResponse, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -818,7 +605,6 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::DeleteRoomRequest, _impl_.room_id_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::lobby::DeleteRoomResponse, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -828,212 +614,147 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
     ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenRoomConfigUpdatesRequest, _internal_metadata_),
+    PROTOBUF_FIELD_OFFSET(::lobby::ListenRoomUpdatesRequest, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
     ~0u,  // no _weak_field_map_
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenRoomConfigUpdatesRequest, _impl_.room_id_),
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenRoomConfigUpdatesResponse, _impl_._has_bits_),
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenRoomConfigUpdatesResponse, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenRoomConfigUpdatesResponse, _impl_.updated_config_),
-    0,
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenPlayerListUpdatesRequest, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenPlayerListUpdatesRequest, _impl_.room_id_),
-    ~0u,  // no _has_bits_
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenPlayerListUpdatesResponse, _internal_metadata_),
-    ~0u,  // no _extensions_
-    ~0u,  // no _oneof_case_
-    ~0u,  // no _weak_field_map_
-    ~0u,  // no _inlined_string_donated_
-    ~0u,  // no _split_
-    ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::lobby::ListenPlayerListUpdatesResponse, _impl_.players_),
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        { 0, 11, -1, sizeof(::lobby::RoomPreview)},
-        { 14, 24, -1, sizeof(::lobby::CreateRoomRequest)},
-        { 26, 35, -1, sizeof(::lobby::CreateRoomResponse)},
-        { 36, -1, -1, sizeof(::lobby::JoinRoomRequest)},
-        { 46, 55, -1, sizeof(::lobby::JoinRoomResponse)},
-        { 56, -1, -1, sizeof(::lobby::GetRoomListRequest)},
-        { 67, -1, -1, sizeof(::lobby::GetRoomListResponse)},
-        { 76, -1, -1, sizeof(::lobby::RoomConnectionInfo)},
-        { 86, 99, -1, sizeof(::lobby::RoomPlayer)},
-        { 104, 120, -1, sizeof(::lobby::Room)},
-        { 128, -1, -1, sizeof(::lobby::RoomConfig)},
-        { 141, -1, -1, sizeof(::lobby::UpdateRoomStateRequest)},
-        { 151, -1, -1, sizeof(::lobby::UpdateRoomStateResponse)},
-        { 160, 170, -1, sizeof(::lobby::UpdateRoomConfigRequest)},
-        { 172, 181, -1, sizeof(::lobby::UpdateRoomConfigResponse)},
-        { 182, -1, -1, sizeof(::lobby::UpdatePlayerStateRequest)},
-        { 193, -1, -1, sizeof(::lobby::UpdatePlayerStateResponse)},
-        { 203, -1, -1, sizeof(::lobby::ChangeRoomPasswordRequest)},
-        { 213, -1, -1, sizeof(::lobby::ChangeRoomPasswordResponse)},
-        { 221, -1, -1, sizeof(::lobby::ChangeRoomOwnerRequest)},
-        { 231, -1, -1, sizeof(::lobby::ChangeRoomOwnerResponse)},
-        { 240, -1, -1, sizeof(::lobby::DeleteRoomRequest)},
-        { 249, -1, -1, sizeof(::lobby::DeleteRoomResponse)},
-        { 257, -1, -1, sizeof(::lobby::ListenRoomConfigUpdatesRequest)},
-        { 266, 275, -1, sizeof(::lobby::ListenRoomConfigUpdatesResponse)},
-        { 276, -1, -1, sizeof(::lobby::ListenPlayerListUpdatesRequest)},
-        { 285, -1, -1, sizeof(::lobby::ListenPlayerListUpdatesResponse)},
+        { 0, -1, -1, sizeof(::lobby::RoomConnectionInfo)},
+        { 10, -1, -1, sizeof(::lobby::RoomConfig)},
+        { 22, 38, -1, sizeof(::lobby::Room)},
+        { 46, 57, -1, sizeof(::lobby::CreateRoomRequest)},
+        { 60, 70, -1, sizeof(::lobby::CreateRoomResponse)},
+        { 72, -1, -1, sizeof(::lobby::JoinRoomRequest)},
+        { 84, 93, -1, sizeof(::lobby::JoinRoomResponse)},
+        { 94, -1, -1, sizeof(::lobby::GetRoomListRequest)},
+        { 105, -1, -1, sizeof(::lobby::GetRoomListResponse)},
+        { 114, -1, -1, sizeof(::lobby::UpdateRoomStateRequest)},
+        { 123, -1, -1, sizeof(::lobby::UpdateRoomStateResponse)},
+        { 132, 141, -1, sizeof(::lobby::UpdateRoomConfigRequest)},
+        { 142, 151, -1, sizeof(::lobby::UpdateRoomConfigResponse)},
+        { 152, -1, -1, sizeof(::lobby::ChangeRoomPasswordRequest)},
+        { 161, -1, -1, sizeof(::lobby::ChangeRoomPasswordResponse)},
+        { 170, -1, -1, sizeof(::lobby::ChangeRoomOwnerRequest)},
+        { 179, -1, -1, sizeof(::lobby::ChangeRoomOwnerResponse)},
+        { 188, -1, -1, sizeof(::lobby::DeleteRoomRequest)},
+        { 196, -1, -1, sizeof(::lobby::DeleteRoomResponse)},
+        { 204, -1, -1, sizeof(::lobby::ListenRoomUpdatesRequest)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
-    &::lobby::_RoomPreview_default_instance_._instance,
+    &::lobby::_RoomConnectionInfo_default_instance_._instance,
+    &::lobby::_RoomConfig_default_instance_._instance,
+    &::lobby::_Room_default_instance_._instance,
     &::lobby::_CreateRoomRequest_default_instance_._instance,
     &::lobby::_CreateRoomResponse_default_instance_._instance,
     &::lobby::_JoinRoomRequest_default_instance_._instance,
     &::lobby::_JoinRoomResponse_default_instance_._instance,
     &::lobby::_GetRoomListRequest_default_instance_._instance,
     &::lobby::_GetRoomListResponse_default_instance_._instance,
-    &::lobby::_RoomConnectionInfo_default_instance_._instance,
-    &::lobby::_RoomPlayer_default_instance_._instance,
-    &::lobby::_Room_default_instance_._instance,
-    &::lobby::_RoomConfig_default_instance_._instance,
     &::lobby::_UpdateRoomStateRequest_default_instance_._instance,
     &::lobby::_UpdateRoomStateResponse_default_instance_._instance,
     &::lobby::_UpdateRoomConfigRequest_default_instance_._instance,
     &::lobby::_UpdateRoomConfigResponse_default_instance_._instance,
-    &::lobby::_UpdatePlayerStateRequest_default_instance_._instance,
-    &::lobby::_UpdatePlayerStateResponse_default_instance_._instance,
     &::lobby::_ChangeRoomPasswordRequest_default_instance_._instance,
     &::lobby::_ChangeRoomPasswordResponse_default_instance_._instance,
     &::lobby::_ChangeRoomOwnerRequest_default_instance_._instance,
     &::lobby::_ChangeRoomOwnerResponse_default_instance_._instance,
     &::lobby::_DeleteRoomRequest_default_instance_._instance,
     &::lobby::_DeleteRoomResponse_default_instance_._instance,
-    &::lobby::_ListenRoomConfigUpdatesRequest_default_instance_._instance,
-    &::lobby::_ListenRoomConfigUpdatesResponse_default_instance_._instance,
-    &::lobby::_ListenPlayerListUpdatesRequest_default_instance_._instance,
-    &::lobby::_ListenPlayerListUpdatesResponse_default_instance_._instance,
+    &::lobby::_ListenRoomUpdatesRequest_default_instance_._instance,
 };
 const char descriptor_table_protodef_lobby_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-    "\n\013lobby.proto\022\005lobby\032\037google/protobuf/ti"
-    "mestamp.proto\"Z\n\013RoomPreview\022\017\n\007room_id\030"
-    "\001 \001(\t\022!\n\006config\030\002 \001(\0132\021.lobby.RoomConfig"
-    "\022\027\n\017current_players\030\003 \001(\005\"H\n\021CreateRoomR"
-    "equest\022!\n\006config\030\001 \001(\0132\021.lobby.RoomConfi"
-    "g\022\020\n\010password\030\002 \001(\t\"C\n\022CreateRoomRespons"
-    "e\022-\n\nconnection\030\001 \001(\0132\031.lobby.RoomConnec"
-    "tionInfo\"4\n\017JoinRoomRequest\022\017\n\007room_id\030\001"
-    " \001(\t\022\020\n\010password\030\002 \001(\t\"A\n\020JoinRoomRespon"
-    "se\022-\n\nconnection\030\001 \001(\0132\031.lobby.RoomConne"
-    "ctionInfo\"{\n\022GetRoomListRequest\022)\n\nvisib"
-    "ility\030\001 \001(\0162\025.lobby.RoomVisibility\022\035\n\004mo"
-    "de\030\003 \001(\0162\017.lobby.GameMode\022\033\n\003map\030\004 \001(\0162\016"
-    ".lobby.GameMap\"8\n\023GetRoomListResponse\022!\n"
-    "\005rooms\030\001 \003(\0132\022.lobby.RoomPreview\"0\n\022Room"
-    "ConnectionInfo\022\014\n\004host\030\001 \001(\t\022\014\n\004port\030\002 \001"
-    "(\005\"\224\001\n\nRoomPlayer\022\017\n\007user_id\030\001 \001(\t\022\021\n\tus"
-    "er_name\030\002 \001(\t\022!\n\005state\030\003 \001(\0162\022.lobby.Pla"
-    "yerState\022\020\n\010is_owner\030\004 \001(\010\022-\n\tjoined_at\030"
-    "\005 \001(\0132\032.google.protobuf.Timestamp\"\362\001\n\004Ro"
-    "om\022\017\n\007room_id\030\001 \001(\t\022\032\n\022password_encrypte"
-    "d\030\002 \001(\t\022\037\n\005state\030\003 \001(\0162\020.lobby.RoomState"
-    "\022\020\n\010owner_id\030\004 \001(\t\022!\n\006config\030\005 \001(\0132\021.lob"
-    "by.RoomConfig\022\"\n\007players\030\006 \003(\0132\021.lobby.R"
-    "oomPlayer\022\024\n\014player_count\030\007 \001(\005\022-\n\nconne"
-    "ction\030\010 \001(\0132\031.lobby.RoomConnectionInfo\"\233"
-    "\001\n\nRoomConfig\022\021\n\troom_name\030\001 \001(\t\022)\n\nvisi"
-    "bility\030\002 \001(\0162\025.lobby.RoomVisibility\022\035\n\004m"
-    "ode\030\003 \001(\0162\017.lobby.GameMode\022\033\n\003map\030\004 \001(\0162"
-    "\016.lobby.GameMap\022\023\n\013max_players\030\005 \001(\005\"J\n\026"
-    "UpdateRoomStateRequest\022\017\n\007room_id\030\001 \001(\t\022"
-    "\037\n\005state\030\002 \001(\0162\020.lobby.RoomState\"B\n\027Upda"
-    "teRoomStateResponse\022\'\n\rupdated_state\030\001 \001"
-    "(\0162\020.lobby.RoomState\"M\n\027UpdateRoomConfig"
-    "Request\022\017\n\007room_id\030\001 \001(\t\022!\n\006config\030\002 \001(\013"
-    "2\021.lobby.RoomConfig\"E\n\030UpdateRoomConfigR"
-    "esponse\022)\n\016updated_config\030\001 \001(\0132\021.lobby."
-    "RoomConfig\"_\n\030UpdatePlayerStateRequest\022\017"
-    "\n\007room_id\030\001 \001(\t\022\017\n\007user_id\030\002 \001(\t\022!\n\005stat"
-    "e\030\003 \001(\0162\022.lobby.PlayerState\"W\n\031UpdatePla"
-    "yerStateResponse\022\017\n\007user_id\030\001 \001(\t\022)\n\rupd"
-    "ated_state\030\002 \001(\0162\022.lobby.PlayerState\">\n\031"
-    "ChangeRoomPasswordRequest\022\017\n\007room_id\030\001 \001"
-    "(\t\022\020\n\010password\030\002 \001(\t\"\034\n\032ChangeRoomPasswo"
-    "rdResponse\":\n\026ChangeRoomOwnerRequest\022\017\n\007"
-    "room_id\030\001 \001(\t\022\017\n\007user_id\030\002 \001(\t\"+\n\027Change"
-    "RoomOwnerResponse\022\020\n\010owner_id\030\001 \001(\t\"$\n\021D"
-    "eleteRoomRequest\022\017\n\007room_id\030\001 \001(\t\"\024\n\022Del"
-    "eteRoomResponse\"1\n\036ListenRoomConfigUpdat"
-    "esRequest\022\017\n\007room_id\030\001 \001(\t\"L\n\037ListenRoom"
-    "ConfigUpdatesResponse\022)\n\016updated_config\030"
-    "\001 \001(\0132\021.lobby.RoomConfig\"1\n\036ListenPlayer"
-    "ListUpdatesRequest\022\017\n\007room_id\030\001 \001(\t\"E\n\037L"
-    "istenPlayerListUpdatesResponse\022\"\n\007player"
-    "s\030\001 \003(\0132\021.lobby.RoomPlayer*\207\001\n\tRoomState"
-    "\022\032\n\026ROOM_STATE_UNSPECIFIED\020\000\022\027\n\023ROOM_STA"
-    "TE_CREATING\020\001\022\026\n\022ROOM_STATE_WAITING\020\002\022\026\n"
-    "\022ROOM_STATE_PLAYING\020\003\022\025\n\021ROOM_STATE_CLOS"
-    "ED\020\004*j\n\016RoomVisibility\022\037\n\033ROOM_VISIBILIT"
-    "Y_UNSPECIFIED\020\000\022\032\n\026ROOM_VISIBILITY_PUBLI"
-    "C\020\001\022\033\n\027ROOM_VISIBILITY_PRIVATE\020\002*<\n\010Game"
-    "Mode\022\031\n\025GAME_MODE_UNSPECIFIED\020\000\022\025\n\021GAME_"
-    "MODE_DEFAULT\020\001*9\n\007GameMap\022\030\n\024GAME_MAP_UN"
-    "SPECIFIED\020\000\022\024\n\020GAME_MAP_DEFAULT\020\001*v\n\013Pla"
-    "yerState\022\034\n\030PLAYER_STATE_UNSPECIFIED\020\000\022\030"
-    "\n\024PLAYER_STATE_JOINING\020\001\022\027\n\023PLAYER_STATE"
-    "_JOINED\020\002\022\026\n\022PLAYER_STATE_LEAVE\020\0032\231\007\n\014Lo"
-    "bbyService\022A\n\nCreateRoom\022\030.lobby.CreateR"
-    "oomRequest\032\031.lobby.CreateRoomResponse\022;\n"
-    "\010JoinRoom\022\026.lobby.JoinRoomRequest\032\027.lobb"
-    "y.JoinRoomResponse\022D\n\013GetRoomList\022\031.lobb"
-    "y.GetRoomListRequest\032\032.lobby.GetRoomList"
-    "Response\022P\n\017UpdateRoomState\022\035.lobby.Upda"
-    "teRoomStateRequest\032\036.lobby.UpdateRoomSta"
-    "teResponse\022S\n\020UpdateRoomConfig\022\036.lobby.U"
-    "pdateRoomConfigRequest\032\037.lobby.UpdateRoo"
-    "mConfigResponse\022V\n\021UpdatePlayerState\022\037.l"
-    "obby.UpdatePlayerStateRequest\032 .lobby.Up"
-    "datePlayerStateResponse\022Y\n\022ChangeRoomPas"
-    "sword\022 .lobby.ChangeRoomPasswordRequest\032"
-    "!.lobby.ChangeRoomPasswordResponse\022P\n\017Ch"
-    "angeRoomOwner\022\035.lobby.ChangeRoomOwnerReq"
-    "uest\032\036.lobby.ChangeRoomOwnerResponse\022A\n\n"
-    "DeleteRoom\022\030.lobby.DeleteRoomRequest\032\031.l"
-    "obby.DeleteRoomResponse\022i\n\026UpdateRoomCon"
-    "figStream\022%.lobby.ListenRoomConfigUpdate"
-    "sRequest\032&.lobby.ListenRoomConfigUpdates"
-    "Response0\001\022i\n\026UpdatePlayerListStream\022%.l"
-    "obby.ListenPlayerListUpdatesRequest\032&.lo"
-    "bby.ListenPlayerListUpdatesResponse0\001B\025\370"
-    "\001\001\252\002\017StereoMix.Lobbyb\006proto3"
-};
-static const ::_pbi::DescriptorTable* const descriptor_table_lobby_2eproto_deps[1] =
-    {
-        &::descriptor_table_google_2fprotobuf_2ftimestamp_2eproto,
+    "\n\013lobby.proto\022\005lobby\"0\n\022RoomConnectionIn"
+    "fo\022\014\n\004host\030\001 \001(\t\022\014\n\004port\030\002 \001(\005\"\206\001\n\nRoomC"
+    "onfig\022\021\n\troom_name\030\001 \001(\t\022)\n\nvisibility\030\003"
+    " \001(\0162\025.lobby.RoomVisibility\022\035\n\004mode\030\004 \001("
+    "\0162\017.lobby.GameMode\022\033\n\003map\030\005 \001(\0162\016.lobby."
+    "GameMap\"\341\001\n\004Room\022\017\n\007room_id\030\001 \001(\t\022\025\n\rsho"
+    "rt_room_id\030\002 \001(\t\022\020\n\010owner_id\030\003 \001(\t\022!\n\006co"
+    "nfig\030\004 \001(\0132\021.lobby.RoomConfig\022\037\n\005state\030\005"
+    " \001(\0162\020.lobby.RoomState\022\023\n\013max_players\030\006 "
+    "\001(\005\022\027\n\017current_players\030\007 \001(\005\022-\n\nconnecti"
+    "on\030\010 \001(\0132\031.lobby.RoomConnectionInfo\"[\n\021C"
+    "reateRoomRequest\022\021\n\troom_name\030\001 \001(\t\022\020\n\010p"
+    "assword\030\002 \001(\t\022!\n\006config\030\003 \001(\0132\021.lobby.Ro"
+    "omConfig\"w\n\022CreateRoomResponse\0222\n\rdeploy"
+    "_status\030\001 \001(\0162\033.lobby.RoomDeploymentStat"
+    "us\022-\n\nconnection\030\002 \001(\0132\031.lobby.RoomConne"
+    "ctionInfo\"U\n\017JoinRoomRequest\022\021\n\007room_id\030"
+    "\001 \001(\tH\000\022\027\n\rshort_room_id\030\002 \001(\tH\000\022\020\n\010pass"
+    "word\030\003 \001(\tB\004\n\002id\"A\n\020JoinRoomResponse\022-\n\n"
+    "connection\030\001 \001(\0132\031.lobby.RoomConnectionI"
+    "nfo\"{\n\022GetRoomListRequest\022)\n\nvisibility\030"
+    "\001 \001(\0162\025.lobby.RoomVisibility\022\035\n\004mode\030\003 \001"
+    "(\0162\017.lobby.GameMode\022\033\n\003map\030\004 \001(\0162\016.lobby"
+    ".GameMap\"1\n\023GetRoomListResponse\022\032\n\005rooms"
+    "\030\001 \003(\0132\013.lobby.Room\"9\n\026UpdateRoomStateRe"
+    "quest\022\037\n\005state\030\001 \001(\0162\020.lobby.RoomState\"B"
+    "\n\027UpdateRoomStateResponse\022\'\n\rupdated_sta"
+    "te\030\001 \001(\0162\020.lobby.RoomState\"<\n\027UpdateRoom"
+    "ConfigRequest\022!\n\006config\030\001 \001(\0132\021.lobby.Ro"
+    "omConfig\"E\n\030UpdateRoomConfigResponse\022)\n\016"
+    "updated_config\030\001 \001(\0132\021.lobby.RoomConfig\""
+    "-\n\031ChangeRoomPasswordRequest\022\020\n\010password"
+    "\030\001 \001(\t\"-\n\032ChangeRoomPasswordResponse\022\017\n\007"
+    "room_id\030\001 \001(\t\".\n\026ChangeRoomOwnerRequest\022"
+    "\024\n\014new_owner_id\030\001 \001(\t\"+\n\027ChangeRoomOwner"
+    "Response\022\020\n\010owner_id\030\001 \001(\t\"\023\n\021DeleteRoom"
+    "Request\"\024\n\022DeleteRoomResponse\"\032\n\030ListenR"
+    "oomUpdatesRequest*\344\002\n\024RoomDeploymentStat"
+    "us\022&\n\"ROOM_DEPLOYMENT_STATUS_UNSPECIFIED"
+    "\020\000\022\'\n#ROOM_DEPLOYMENT_STATUS_INITIALIZIN"
+    "G\020\001\022\"\n\036ROOM_DEPLOYMENT_STATUS_SEEKING\020\002\022"
+    "!\n\035ROOM_DEPLOYMENT_STATUS_SEEKED\020\003\022#\n\037RO"
+    "OM_DEPLOYMENT_STATUS_SCANNING\020\004\022$\n ROOM_"
+    "DEPLOYMENT_STATUS_DEPLOYING\020\005\022 \n\034ROOM_DE"
+    "PLOYMENT_STATUS_READY\020\006\022%\n!ROOM_DEPLOYME"
+    "NT_STATUS_TERMINATED\020\007\022 \n\034ROOM_DEPLOYMEN"
+    "T_STATUS_ERROR\020\010*k\n\tRoomState\022\032\n\026ROOM_ST"
+    "ATE_UNSPECIFIED\020\000\022\023\n\017ROOM_STATE_OPEN\020\001\022\026"
+    "\n\022ROOM_STATE_PLAYING\020\002\022\025\n\021ROOM_STATE_CLO"
+    "SED\020\003*j\n\016RoomVisibility\022\037\n\033ROOM_VISIBILI"
+    "TY_UNSPECIFIED\020\000\022\032\n\026ROOM_VISIBILITY_PUBL"
+    "IC\020\001\022\033\n\027ROOM_VISIBILITY_PRIVATE\020\002*<\n\010Gam"
+    "eMode\022\031\n\025GAME_MODE_UNSPECIFIED\020\000\022\025\n\021GAME"
+    "_MODE_DEFAULT\020\001*9\n\007GameMap\022\030\n\024GAME_MAP_U"
+    "NSPECIFIED\020\000\022\024\n\020GAME_MAP_DEFAULT\020\0012\262\005\n\014L"
+    "obbyService\022C\n\nCreateRoom\022\030.lobby.Create"
+    "RoomRequest\032\031.lobby.CreateRoomResponse0\001"
+    "\022;\n\010JoinRoom\022\026.lobby.JoinRoomRequest\032\027.l"
+    "obby.JoinRoomResponse\022D\n\013GetRoomList\022\031.l"
+    "obby.GetRoomListRequest\032\032.lobby.GetRoomL"
+    "istResponse\022P\n\017UpdateRoomState\022\035.lobby.U"
+    "pdateRoomStateRequest\032\036.lobby.UpdateRoom"
+    "StateResponse\022S\n\020UpdateRoomConfig\022\036.lobb"
+    "y.UpdateRoomConfigRequest\032\037.lobby.Update"
+    "RoomConfigResponse\022Y\n\022ChangeRoomPassword"
+    "\022 .lobby.ChangeRoomPasswordRequest\032!.lob"
+    "by.ChangeRoomPasswordResponse\022P\n\017ChangeR"
+    "oomOwner\022\035.lobby.ChangeRoomOwnerRequest\032"
+    "\036.lobby.ChangeRoomOwnerResponse\022A\n\nDelet"
+    "eRoom\022\030.lobby.DeleteRoomRequest\032\031.lobby."
+    "DeleteRoomResponse\022C\n\021ListenRoomUpdates\022"
+    "\037.lobby.ListenRoomUpdatesRequest\032\013.lobby"
+    ".Room0\001B\025\370\001\001\252\002\017StereoMix.Lobbyb\006proto3"
 };
 static ::absl::once_flag descriptor_table_lobby_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_lobby_2eproto = {
     false,
     false,
-    3628,
+    2918,
     descriptor_table_protodef_lobby_2eproto,
     "lobby.proto",
     &descriptor_table_lobby_2eproto_once,
-    descriptor_table_lobby_2eproto_deps,
-    1,
-    27,
+    nullptr,
+    0,
+    20,
     schemas,
     file_default_instances,
     TableStruct_lobby_2eproto::offsets,
@@ -1060,9 +781,29 @@ PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_lobby_2e
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_lobby_2eproto(&descriptor_table_lobby_2eproto);
 namespace lobby {
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* RoomState_descriptor() {
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* RoomDeploymentStatus_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_lobby_2eproto);
   return file_level_enum_descriptors_lobby_2eproto[0];
+}
+bool RoomDeploymentStatus_IsValid(int value) {
+  switch (value) {
+    case 0:
+    case 1:
+    case 2:
+    case 3:
+    case 4:
+    case 5:
+    case 6:
+    case 7:
+    case 8:
+      return true;
+    default:
+      return false;
+  }
+}
+const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* RoomState_descriptor() {
+  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_lobby_2eproto);
+  return file_level_enum_descriptors_lobby_2eproto[1];
 }
 bool RoomState_IsValid(int value) {
   switch (value) {
@@ -1070,7 +811,6 @@ bool RoomState_IsValid(int value) {
     case 1:
     case 2:
     case 3:
-    case 4:
       return true;
     default:
       return false;
@@ -1078,7 +818,7 @@ bool RoomState_IsValid(int value) {
 }
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* RoomVisibility_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_lobby_2eproto);
-  return file_level_enum_descriptors_lobby_2eproto[1];
+  return file_level_enum_descriptors_lobby_2eproto[2];
 }
 bool RoomVisibility_IsValid(int value) {
   switch (value) {
@@ -1092,7 +832,7 @@ bool RoomVisibility_IsValid(int value) {
 }
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* GameMode_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_lobby_2eproto);
-  return file_level_enum_descriptors_lobby_2eproto[2];
+  return file_level_enum_descriptors_lobby_2eproto[3];
 }
 bool GameMode_IsValid(int value) {
   switch (value) {
@@ -1105,7 +845,7 @@ bool GameMode_IsValid(int value) {
 }
 const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* GameMap_descriptor() {
   ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_lobby_2eproto);
-  return file_level_enum_descriptors_lobby_2eproto[3];
+  return file_level_enum_descriptors_lobby_2eproto[4];
 }
 bool GameMap_IsValid(int value) {
   switch (value) {
@@ -1116,52 +856,581 @@ bool GameMap_IsValid(int value) {
       return false;
   }
 }
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor* PlayerState_descriptor() {
-  ::PROTOBUF_NAMESPACE_ID::internal::AssignDescriptors(&descriptor_table_lobby_2eproto);
-  return file_level_enum_descriptors_lobby_2eproto[4];
+// ===================================================================
+
+class RoomConnectionInfo::_Internal {
+ public:
+};
+
+RoomConnectionInfo::RoomConnectionInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:lobby.RoomConnectionInfo)
 }
-bool PlayerState_IsValid(int value) {
-  switch (value) {
-    case 0:
-    case 1:
-    case 2:
-    case 3:
-      return true;
-    default:
-      return false;
+RoomConnectionInfo::RoomConnectionInfo(const RoomConnectionInfo& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  RoomConnectionInfo* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.host_) {}
+
+    , decltype(_impl_.port_) {}
+
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.host_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.host_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_host().empty()) {
+    _this->_impl_.host_.Set(from._internal_host(), _this->GetArenaForAllocation());
   }
+  _this->_impl_.port_ = from._impl_.port_;
+  // @@protoc_insertion_point(copy_constructor:lobby.RoomConnectionInfo)
+}
+
+inline void RoomConnectionInfo::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.host_) {}
+
+    , decltype(_impl_.port_) { 0 }
+
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.host_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.host_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+RoomConnectionInfo::~RoomConnectionInfo() {
+  // @@protoc_insertion_point(destructor:lobby.RoomConnectionInfo)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void RoomConnectionInfo::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.host_.Destroy();
+}
+
+void RoomConnectionInfo::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void RoomConnectionInfo::Clear() {
+// @@protoc_insertion_point(message_clear_start:lobby.RoomConnectionInfo)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.host_.ClearToEmpty();
+  _impl_.port_ = 0;
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* RoomConnectionInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string host = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_host();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.RoomConnectionInfo.host"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // int32 port = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
+          _impl_.port_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* RoomConnectionInfo::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:lobby.RoomConnectionInfo)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string host = 1;
+  if (!this->_internal_host().empty()) {
+    const std::string& _s = this->_internal_host();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.RoomConnectionInfo.host");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // int32 port = 2;
+  if (this->_internal_port() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        2, this->_internal_port(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:lobby.RoomConnectionInfo)
+  return target;
+}
+
+::size_t RoomConnectionInfo::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:lobby.RoomConnectionInfo)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string host = 1;
+  if (!this->_internal_host().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_host());
+  }
+
+  // int32 port = 2;
+  if (this->_internal_port() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+        this->_internal_port());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RoomConnectionInfo::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    RoomConnectionInfo::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RoomConnectionInfo::GetClassData() const { return &_class_data_; }
+
+
+void RoomConnectionInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<RoomConnectionInfo*>(&to_msg);
+  auto& from = static_cast<const RoomConnectionInfo&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.RoomConnectionInfo)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_host().empty()) {
+    _this->_internal_set_host(from._internal_host());
+  }
+  if (from._internal_port() != 0) {
+    _this->_internal_set_port(from._internal_port());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void RoomConnectionInfo::CopyFrom(const RoomConnectionInfo& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:lobby.RoomConnectionInfo)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RoomConnectionInfo::IsInitialized() const {
+  return true;
+}
+
+void RoomConnectionInfo::InternalSwap(RoomConnectionInfo* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.host_, lhs_arena,
+                                       &other->_impl_.host_, rhs_arena);
+
+  swap(_impl_.port_, other->_impl_.port_);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata RoomConnectionInfo::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
+      file_level_metadata_lobby_2eproto[0]);
 }
 // ===================================================================
 
-class RoomPreview::_Internal {
+class RoomConfig::_Internal {
  public:
-  using HasBits = decltype(std::declval<RoomPreview>()._impl_._has_bits_);
+};
+
+RoomConfig::RoomConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:lobby.RoomConfig)
+}
+RoomConfig::RoomConfig(const RoomConfig& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  RoomConfig* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.room_name_) {}
+
+    , decltype(_impl_.visibility_) {}
+
+    , decltype(_impl_.mode_) {}
+
+    , decltype(_impl_.map_) {}
+
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.room_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.room_name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_room_name().empty()) {
+    _this->_impl_.room_name_.Set(from._internal_room_name(), _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.visibility_, &from._impl_.visibility_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.map_) -
+    reinterpret_cast<char*>(&_impl_.visibility_)) + sizeof(_impl_.map_));
+  // @@protoc_insertion_point(copy_constructor:lobby.RoomConfig)
+}
+
+inline void RoomConfig::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.room_name_) {}
+
+    , decltype(_impl_.visibility_) { 0 }
+
+    , decltype(_impl_.mode_) { 0 }
+
+    , decltype(_impl_.map_) { 0 }
+
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.room_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.room_name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+RoomConfig::~RoomConfig() {
+  // @@protoc_insertion_point(destructor:lobby.RoomConfig)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void RoomConfig::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.room_name_.Destroy();
+}
+
+void RoomConfig::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void RoomConfig::Clear() {
+// @@protoc_insertion_point(message_clear_start:lobby.RoomConfig)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.room_name_.ClearToEmpty();
+  ::memset(&_impl_.visibility_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.map_) -
+      reinterpret_cast<char*>(&_impl_.visibility_)) + sizeof(_impl_.map_));
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* RoomConfig::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string room_name = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_room_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.RoomConfig.room_name"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .lobby.RoomVisibility visibility = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+          _internal_set_visibility(static_cast<::lobby::RoomVisibility>(val));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .lobby.GameMode mode = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+          _internal_set_mode(static_cast<::lobby::GameMode>(val));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .lobby.GameMap map = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+          _internal_set_map(static_cast<::lobby::GameMap>(val));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* RoomConfig::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:lobby.RoomConfig)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string room_name = 1;
+  if (!this->_internal_room_name().empty()) {
+    const std::string& _s = this->_internal_room_name();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.RoomConfig.room_name");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // .lobby.RoomVisibility visibility = 3;
+  if (this->_internal_visibility() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        3, this->_internal_visibility(), target);
+  }
+
+  // .lobby.GameMode mode = 4;
+  if (this->_internal_mode() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        4, this->_internal_mode(), target);
+  }
+
+  // .lobby.GameMap map = 5;
+  if (this->_internal_map() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        5, this->_internal_map(), target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:lobby.RoomConfig)
+  return target;
+}
+
+::size_t RoomConfig::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:lobby.RoomConfig)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string room_name = 1;
+  if (!this->_internal_room_name().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_room_name());
+  }
+
+  // .lobby.RoomVisibility visibility = 3;
+  if (this->_internal_visibility() != 0) {
+    total_size += 1 +
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_visibility());
+  }
+
+  // .lobby.GameMode mode = 4;
+  if (this->_internal_mode() != 0) {
+    total_size += 1 +
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_mode());
+  }
+
+  // .lobby.GameMap map = 5;
+  if (this->_internal_map() != 0) {
+    total_size += 1 +
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_map());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RoomConfig::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    RoomConfig::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RoomConfig::GetClassData() const { return &_class_data_; }
+
+
+void RoomConfig::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<RoomConfig*>(&to_msg);
+  auto& from = static_cast<const RoomConfig&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.RoomConfig)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_room_name().empty()) {
+    _this->_internal_set_room_name(from._internal_room_name());
+  }
+  if (from._internal_visibility() != 0) {
+    _this->_internal_set_visibility(from._internal_visibility());
+  }
+  if (from._internal_mode() != 0) {
+    _this->_internal_set_mode(from._internal_mode());
+  }
+  if (from._internal_map() != 0) {
+    _this->_internal_set_map(from._internal_map());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void RoomConfig::CopyFrom(const RoomConfig& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:lobby.RoomConfig)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool RoomConfig::IsInitialized() const {
+  return true;
+}
+
+void RoomConfig::InternalSwap(RoomConfig* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_name_, lhs_arena,
+                                       &other->_impl_.room_name_, rhs_arena);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(RoomConfig, _impl_.map_)
+      + sizeof(RoomConfig::_impl_.map_)
+      - PROTOBUF_FIELD_OFFSET(RoomConfig, _impl_.visibility_)>(
+          reinterpret_cast<char*>(&_impl_.visibility_),
+          reinterpret_cast<char*>(&other->_impl_.visibility_));
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata RoomConfig::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
+      file_level_metadata_lobby_2eproto[1]);
+}
+// ===================================================================
+
+class Room::_Internal {
+ public:
+  using HasBits = decltype(std::declval<Room>()._impl_._has_bits_);
   static constexpr ::int32_t kHasBitsOffset =
-    8 * PROTOBUF_FIELD_OFFSET(RoomPreview, _impl_._has_bits_);
-  static const ::lobby::RoomConfig& config(const RoomPreview* msg);
+    8 * PROTOBUF_FIELD_OFFSET(Room, _impl_._has_bits_);
+  static const ::lobby::RoomConfig& config(const Room* msg);
   static void set_has_config(HasBits* has_bits) {
     (*has_bits)[0] |= 1u;
+  }
+  static const ::lobby::RoomConnectionInfo& connection(const Room* msg);
+  static void set_has_connection(HasBits* has_bits) {
+    (*has_bits)[0] |= 2u;
   }
 };
 
 const ::lobby::RoomConfig&
-RoomPreview::_Internal::config(const RoomPreview* msg) {
+Room::_Internal::config(const Room* msg) {
   return *msg->_impl_.config_;
 }
-RoomPreview::RoomPreview(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+const ::lobby::RoomConnectionInfo&
+Room::_Internal::connection(const Room* msg) {
+  return *msg->_impl_.connection_;
+}
+Room::Room(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.RoomPreview)
+  // @@protoc_insertion_point(arena_constructor:lobby.Room)
 }
-RoomPreview::RoomPreview(const RoomPreview& from)
+Room::Room(const Room& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
-  RoomPreview* const _this = this; (void)_this;
+  Room* const _this = this; (void)_this;
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.room_id_) {}
 
+    , decltype(_impl_.short_room_id_) {}
+
+    , decltype(_impl_.owner_id_) {}
+
     , decltype(_impl_.config_){nullptr}
+    , decltype(_impl_.connection_){nullptr}
+    , decltype(_impl_.state_) {}
+
+    , decltype(_impl_.max_players_) {}
+
     , decltype(_impl_.current_players_) {}
   };
 
@@ -1173,21 +1442,49 @@ RoomPreview::RoomPreview(const RoomPreview& from)
   if (!from._internal_room_id().empty()) {
     _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
   }
+  _impl_.short_room_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.short_room_id_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_short_room_id().empty()) {
+    _this->_impl_.short_room_id_.Set(from._internal_short_room_id(), _this->GetArenaForAllocation());
+  }
+  _impl_.owner_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.owner_id_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_owner_id().empty()) {
+    _this->_impl_.owner_id_.Set(from._internal_owner_id(), _this->GetArenaForAllocation());
+  }
   if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
     _this->_impl_.config_ = new ::lobby::RoomConfig(*from._impl_.config_);
   }
-  _this->_impl_.current_players_ = from._impl_.current_players_;
-  // @@protoc_insertion_point(copy_constructor:lobby.RoomPreview)
+  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
+    _this->_impl_.connection_ = new ::lobby::RoomConnectionInfo(*from._impl_.connection_);
+  }
+  ::memcpy(&_impl_.state_, &from._impl_.state_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.current_players_) -
+    reinterpret_cast<char*>(&_impl_.state_)) + sizeof(_impl_.current_players_));
+  // @@protoc_insertion_point(copy_constructor:lobby.Room)
 }
 
-inline void RoomPreview::SharedCtor(::_pb::Arena* arena) {
+inline void Room::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.room_id_) {}
 
+    , decltype(_impl_.short_room_id_) {}
+
+    , decltype(_impl_.owner_id_) {}
+
     , decltype(_impl_.config_){nullptr}
+    , decltype(_impl_.connection_){nullptr}
+    , decltype(_impl_.state_) { 0 }
+
+    , decltype(_impl_.max_players_) { 0 }
+
     , decltype(_impl_.current_players_) { 0 }
 
   };
@@ -1195,10 +1492,18 @@ inline void RoomPreview::SharedCtor(::_pb::Arena* arena) {
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.room_id_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.short_room_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.short_room_id_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.owner_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.owner_id_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
-RoomPreview::~RoomPreview() {
-  // @@protoc_insertion_point(destructor:lobby.RoomPreview)
+Room::~Room() {
+  // @@protoc_insertion_point(destructor:lobby.Room)
   if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
   (void)arena;
     return;
@@ -1206,34 +1511,47 @@ RoomPreview::~RoomPreview() {
   SharedDtor();
 }
 
-inline void RoomPreview::SharedDtor() {
+inline void Room::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
   _impl_.room_id_.Destroy();
+  _impl_.short_room_id_.Destroy();
+  _impl_.owner_id_.Destroy();
   if (this != internal_default_instance()) delete _impl_.config_;
+  if (this != internal_default_instance()) delete _impl_.connection_;
 }
 
-void RoomPreview::SetCachedSize(int size) const {
+void Room::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
 
-void RoomPreview::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.RoomPreview)
+void Room::Clear() {
+// @@protoc_insertion_point(message_clear_start:lobby.Room)
   ::uint32_t cached_has_bits = 0;
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
   _impl_.room_id_.ClearToEmpty();
+  _impl_.short_room_id_.ClearToEmpty();
+  _impl_.owner_id_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    ABSL_DCHECK(_impl_.config_ != nullptr);
-    _impl_.config_->Clear();
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      ABSL_DCHECK(_impl_.config_ != nullptr);
+      _impl_.config_->Clear();
+    }
+    if (cached_has_bits & 0x00000002u) {
+      ABSL_DCHECK(_impl_.connection_ != nullptr);
+      _impl_.connection_->Clear();
+    }
   }
-  _impl_.current_players_ = 0;
+  ::memset(&_impl_.state_, 0, static_cast<::size_t>(
+      reinterpret_cast<char*>(&_impl_.current_players_) -
+      reinterpret_cast<char*>(&_impl_.state_)) + sizeof(_impl_.current_players_));
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
-const char* RoomPreview::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+const char* Room::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
   _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
@@ -1246,24 +1564,74 @@ const char* RoomPreview::_InternalParse(const char* ptr, ::_pbi::ParseContext* c
           auto str = _internal_mutable_room_id();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.RoomPreview.room_id"));
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.Room.room_id"));
         } else {
           goto handle_unusual;
         }
         continue;
-      // .lobby.RoomConfig config = 2;
+      // string short_room_id = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_short_room_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.Room.short_room_id"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // string owner_id = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
+          auto str = _internal_mutable_owner_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.Room.owner_id"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .lobby.RoomConfig config = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_config(), ptr);
           CHK_(ptr);
         } else {
           goto handle_unusual;
         }
         continue;
-      // int32 current_players = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
+      // .lobby.RoomState state = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+          _internal_set_state(static_cast<::lobby::RoomState>(val));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // int32 max_players = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 48)) {
+          _impl_.max_players_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // int32 current_players = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
           _impl_.current_players_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .lobby.RoomConnectionInfo connection = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 66)) {
+          ptr = ctx->ParseMessage(_internal_mutable_connection(), ptr);
           CHK_(ptr);
         } else {
           goto handle_unusual;
@@ -1293,9 +1661,9 @@ failure:
 #undef CHK_
 }
 
-::uint8_t* RoomPreview::_InternalSerialize(
+::uint8_t* Room::_InternalSerialize(
     ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.RoomPreview)
+  // @@protoc_insertion_point(serialize_to_array_start:lobby.Room)
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
@@ -1303,35 +1671,72 @@ failure:
   if (!this->_internal_room_id().empty()) {
     const std::string& _s = this->_internal_room_id();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.RoomPreview.room_id");
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.Room.room_id");
     target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
+  // string short_room_id = 2;
+  if (!this->_internal_short_room_id().empty()) {
+    const std::string& _s = this->_internal_short_room_id();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.Room.short_room_id");
+    target = stream->WriteStringMaybeAliased(2, _s, target);
+  }
+
+  // string owner_id = 3;
+  if (!this->_internal_owner_id().empty()) {
+    const std::string& _s = this->_internal_owner_id();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.Room.owner_id");
+    target = stream->WriteStringMaybeAliased(3, _s, target);
+  }
+
   cached_has_bits = _impl_._has_bits_[0];
-  // .lobby.RoomConfig config = 2;
+  // .lobby.RoomConfig config = 4;
   if (cached_has_bits & 0x00000001u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::config(this),
+      InternalWriteMessage(4, _Internal::config(this),
         _Internal::config(this).GetCachedSize(), target, stream);
   }
 
-  // int32 current_players = 3;
+  // .lobby.RoomState state = 5;
+  if (this->_internal_state() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        5, this->_internal_state(), target);
+  }
+
+  // int32 max_players = 6;
+  if (this->_internal_max_players() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
+        6, this->_internal_max_players(), target);
+  }
+
+  // int32 current_players = 7;
   if (this->_internal_current_players() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-        3, this->_internal_current_players(), target);
+        7, this->_internal_current_players(), target);
+  }
+
+  // .lobby.RoomConnectionInfo connection = 8;
+  if (cached_has_bits & 0x00000002u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(8, _Internal::connection(this),
+        _Internal::connection(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
     target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
         _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.RoomPreview)
+  // @@protoc_insertion_point(serialize_to_array_end:lobby.Room)
   return target;
 }
 
-::size_t RoomPreview::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.RoomPreview)
+::size_t Room::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:lobby.Room)
   ::size_t total_size = 0;
 
   ::uint32_t cached_has_bits = 0;
@@ -1344,15 +1749,48 @@ failure:
                                     this->_internal_room_id());
   }
 
-  // .lobby.RoomConfig config = 2;
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.config_);
+  // string short_room_id = 2;
+  if (!this->_internal_short_room_id().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_short_room_id());
   }
 
-  // int32 current_players = 3;
+  // string owner_id = 3;
+  if (!this->_internal_owner_id().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_owner_id());
+  }
+
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    // .lobby.RoomConfig config = 4;
+    if (cached_has_bits & 0x00000001u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.config_);
+    }
+
+    // .lobby.RoomConnectionInfo connection = 8;
+    if (cached_has_bits & 0x00000002u) {
+      total_size += 1 +
+        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+          *_impl_.connection_);
+    }
+
+  }
+  // .lobby.RoomState state = 5;
+  if (this->_internal_state() != 0) {
+    total_size += 1 +
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_state());
+  }
+
+  // int32 max_players = 6;
+  if (this->_internal_max_players() != 0) {
+    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
+        this->_internal_max_players());
+  }
+
+  // int32 current_players = 7;
   if (this->_internal_current_players() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
         this->_internal_current_players());
@@ -1361,17 +1799,17 @@ failure:
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RoomPreview::_class_data_ = {
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Room::_class_data_ = {
     ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    RoomPreview::MergeImpl
+    Room::MergeImpl
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RoomPreview::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Room::GetClassData() const { return &_class_data_; }
 
 
-void RoomPreview::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<RoomPreview*>(&to_msg);
-  auto& from = static_cast<const RoomPreview&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.RoomPreview)
+void Room::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<Room*>(&to_msg);
+  auto& from = static_cast<const Room&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.Room)
   ABSL_DCHECK_NE(&from, _this);
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
@@ -1379,9 +1817,28 @@ void RoomPreview::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   if (!from._internal_room_id().empty()) {
     _this->_internal_set_room_id(from._internal_room_id());
   }
-  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
-    _this->_internal_mutable_config()->::lobby::RoomConfig::MergeFrom(
-        from._internal_config());
+  if (!from._internal_short_room_id().empty()) {
+    _this->_internal_set_short_room_id(from._internal_short_room_id());
+  }
+  if (!from._internal_owner_id().empty()) {
+    _this->_internal_set_owner_id(from._internal_owner_id());
+  }
+  cached_has_bits = from._impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000003u) {
+    if (cached_has_bits & 0x00000001u) {
+      _this->_internal_mutable_config()->::lobby::RoomConfig::MergeFrom(
+          from._internal_config());
+    }
+    if (cached_has_bits & 0x00000002u) {
+      _this->_internal_mutable_connection()->::lobby::RoomConnectionInfo::MergeFrom(
+          from._internal_connection());
+    }
+  }
+  if (from._internal_state() != 0) {
+    _this->_internal_set_state(from._internal_state());
+  }
+  if (from._internal_max_players() != 0) {
+    _this->_internal_set_max_players(from._internal_max_players());
   }
   if (from._internal_current_players() != 0) {
     _this->_internal_set_current_players(from._internal_current_players());
@@ -1389,18 +1846,18 @@ void RoomPreview::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PR
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
-void RoomPreview::CopyFrom(const RoomPreview& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.RoomPreview)
+void Room::CopyFrom(const Room& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:lobby.Room)
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool RoomPreview::IsInitialized() const {
+bool Room::IsInitialized() const {
   return true;
 }
 
-void RoomPreview::InternalSwap(RoomPreview* other) {
+void Room::InternalSwap(Room* other) {
   using std::swap;
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
@@ -1408,18 +1865,22 @@ void RoomPreview::InternalSwap(RoomPreview* other) {
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
                                        &other->_impl_.room_id_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.short_room_id_, lhs_arena,
+                                       &other->_impl_.short_room_id_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.owner_id_, lhs_arena,
+                                       &other->_impl_.owner_id_, rhs_arena);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(RoomPreview, _impl_.current_players_)
-      + sizeof(RoomPreview::_impl_.current_players_)
-      - PROTOBUF_FIELD_OFFSET(RoomPreview, _impl_.config_)>(
+      PROTOBUF_FIELD_OFFSET(Room, _impl_.current_players_)
+      + sizeof(Room::_impl_.current_players_)
+      - PROTOBUF_FIELD_OFFSET(Room, _impl_.config_)>(
           reinterpret_cast<char*>(&_impl_.config_),
           reinterpret_cast<char*>(&other->_impl_.config_));
 }
 
-::PROTOBUF_NAMESPACE_ID::Metadata RoomPreview::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata Room::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[0]);
+      file_level_metadata_lobby_2eproto[2]);
 }
 // ===================================================================
 
@@ -1449,11 +1910,20 @@ CreateRoomRequest::CreateRoomRequest(const CreateRoomRequest& from)
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.room_name_) {}
+
     , decltype(_impl_.password_) {}
 
     , decltype(_impl_.config_){nullptr}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.room_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.room_name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_room_name().empty()) {
+    _this->_impl_.room_name_.Set(from._internal_room_name(), _this->GetArenaForAllocation());
+  }
   _impl_.password_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.password_.Set("", GetArenaForAllocation());
@@ -1472,10 +1942,16 @@ inline void CreateRoomRequest::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.room_name_) {}
+
     , decltype(_impl_.password_) {}
 
     , decltype(_impl_.config_){nullptr}
   };
+  _impl_.room_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.room_name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.password_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.password_.Set("", GetArenaForAllocation());
@@ -1493,6 +1969,7 @@ CreateRoomRequest::~CreateRoomRequest() {
 
 inline void CreateRoomRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.room_name_.Destroy();
   _impl_.password_.Destroy();
   if (this != internal_default_instance()) delete _impl_.config_;
 }
@@ -1507,6 +1984,7 @@ void CreateRoomRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.room_name_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
@@ -1524,11 +2002,13 @@ const char* CreateRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseCont
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .lobby.RoomConfig config = 1;
+      // string room_name = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          ptr = ctx->ParseMessage(_internal_mutable_config(), ptr);
+          auto str = _internal_mutable_room_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.CreateRoomRequest.room_name"));
         } else {
           goto handle_unusual;
         }
@@ -1540,6 +2020,15 @@ const char* CreateRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseCont
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
           CHK_(::_pbi::VerifyUTF8(str, "lobby.CreateRoomRequest.password"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .lobby.RoomConfig config = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_config(), ptr);
+          CHK_(ptr);
         } else {
           goto handle_unusual;
         }
@@ -1574,12 +2063,12 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  cached_has_bits = _impl_._has_bits_[0];
-  // .lobby.RoomConfig config = 1;
-  if (cached_has_bits & 0x00000001u) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, _Internal::config(this),
-        _Internal::config(this).GetCachedSize(), target, stream);
+  // string room_name = 1;
+  if (!this->_internal_room_name().empty()) {
+    const std::string& _s = this->_internal_room_name();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.CreateRoomRequest.room_name");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   // string password = 2;
@@ -1588,6 +2077,14 @@ failure:
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.CreateRoomRequest.password");
     target = stream->WriteStringMaybeAliased(2, _s, target);
+  }
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // .lobby.RoomConfig config = 3;
+  if (cached_has_bits & 0x00000001u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::config(this),
+        _Internal::config(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1606,13 +2103,19 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  // string room_name = 1;
+  if (!this->_internal_room_name().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_room_name());
+  }
+
   // string password = 2;
   if (!this->_internal_password().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                     this->_internal_password());
   }
 
-  // .lobby.RoomConfig config = 1;
+  // .lobby.RoomConfig config = 3;
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
@@ -1638,6 +2141,9 @@ void CreateRoomRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_room_name().empty()) {
+    _this->_internal_set_room_name(from._internal_room_name());
+  }
   if (!from._internal_password().empty()) {
     _this->_internal_set_password(from._internal_password());
   }
@@ -1665,6 +2171,8 @@ void CreateRoomRequest::InternalSwap(CreateRoomRequest* other) {
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_name_, lhs_arena,
+                                       &other->_impl_.room_name_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, lhs_arena,
                                        &other->_impl_.password_, rhs_arena);
   swap(_impl_.config_, other->_impl_.config_);
@@ -1673,7 +2181,7 @@ void CreateRoomRequest::InternalSwap(CreateRoomRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata CreateRoomRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[1]);
+      file_level_metadata_lobby_2eproto[3]);
 }
 // ===================================================================
 
@@ -1703,12 +2211,15 @@ CreateRoomResponse::CreateRoomResponse(const CreateRoomResponse& from)
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.connection_){nullptr}};
+    , decltype(_impl_.connection_){nullptr}
+    , decltype(_impl_.deploy_status_) {}
+  };
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
   if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
     _this->_impl_.connection_ = new ::lobby::RoomConnectionInfo(*from._impl_.connection_);
   }
+  _this->_impl_.deploy_status_ = from._impl_.deploy_status_;
   // @@protoc_insertion_point(copy_constructor:lobby.CreateRoomResponse)
 }
 
@@ -1718,6 +2229,8 @@ inline void CreateRoomResponse::SharedCtor(::_pb::Arena* arena) {
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
     , decltype(_impl_.connection_){nullptr}
+    , decltype(_impl_.deploy_status_) { 0 }
+
   };
 }
 
@@ -1750,6 +2263,7 @@ void CreateRoomResponse::Clear() {
     ABSL_DCHECK(_impl_.connection_ != nullptr);
     _impl_.connection_->Clear();
   }
+  _impl_.deploy_status_ = 0;
   _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -1761,9 +2275,19 @@ const char* CreateRoomResponse::_InternalParse(const char* ptr, ::_pbi::ParseCon
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .lobby.RoomConnectionInfo connection = 1;
+      // .lobby.RoomDeploymentStatus deploy_status = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
+          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
+          CHK_(ptr);
+          _internal_set_deploy_status(static_cast<::lobby::RoomDeploymentStatus>(val));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .lobby.RoomConnectionInfo connection = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_connection(), ptr);
           CHK_(ptr);
         } else {
@@ -1800,11 +2324,18 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  // .lobby.RoomDeploymentStatus deploy_status = 1;
+  if (this->_internal_deploy_status() != 0) {
+    target = stream->EnsureSpace(target);
+    target = ::_pbi::WireFormatLite::WriteEnumToArray(
+        1, this->_internal_deploy_status(), target);
+  }
+
   cached_has_bits = _impl_._has_bits_[0];
-  // .lobby.RoomConnectionInfo connection = 1;
+  // .lobby.RoomConnectionInfo connection = 2;
   if (cached_has_bits & 0x00000001u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, _Internal::connection(this),
+      InternalWriteMessage(2, _Internal::connection(this),
         _Internal::connection(this).GetCachedSize(), target, stream);
   }
 
@@ -1824,12 +2355,18 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .lobby.RoomConnectionInfo connection = 1;
+  // .lobby.RoomConnectionInfo connection = 2;
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
       ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
         *_impl_.connection_);
+  }
+
+  // .lobby.RoomDeploymentStatus deploy_status = 1;
+  if (this->_internal_deploy_status() != 0) {
+    total_size += 1 +
+                  ::_pbi::WireFormatLite::EnumSize(this->_internal_deploy_status());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -1854,6 +2391,9 @@ void CreateRoomResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
     _this->_internal_mutable_connection()->::lobby::RoomConnectionInfo::MergeFrom(
         from._internal_connection());
   }
+  if (from._internal_deploy_status() != 0) {
+    _this->_internal_set_deploy_status(from._internal_deploy_status());
+  }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
 
@@ -1872,18 +2412,25 @@ void CreateRoomResponse::InternalSwap(CreateRoomResponse* other) {
   using std::swap;
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  swap(_impl_.connection_, other->_impl_.connection_);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(CreateRoomResponse, _impl_.deploy_status_)
+      + sizeof(CreateRoomResponse::_impl_.deploy_status_)
+      - PROTOBUF_FIELD_OFFSET(CreateRoomResponse, _impl_.connection_)>(
+          reinterpret_cast<char*>(&_impl_.connection_),
+          reinterpret_cast<char*>(&other->_impl_.connection_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata CreateRoomResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[2]);
+      file_level_metadata_lobby_2eproto[4]);
 }
 // ===================================================================
 
 class JoinRoomRequest::_Internal {
  public:
+  static constexpr ::int32_t kOneofCaseOffset =
+    PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _impl_._oneof_case_);
 };
 
 JoinRoomRequest::JoinRoomRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
@@ -1895,20 +2442,13 @@ JoinRoomRequest::JoinRoomRequest(const JoinRoomRequest& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   JoinRoomRequest* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
+      decltype(_impl_.password_) {}
 
-    , decltype(_impl_.password_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
+    , decltype(_impl_.id_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_._oneof_case_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
   _impl_.password_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.password_.Set("", GetArenaForAllocation());
@@ -1916,26 +2456,37 @@ JoinRoomRequest::JoinRoomRequest(const JoinRoomRequest& from)
   if (!from._internal_password().empty()) {
     _this->_impl_.password_.Set(from._internal_password(), _this->GetArenaForAllocation());
   }
+  clear_has_id();
+  switch (from.id_case()) {
+    case kRoomId: {
+      _this->_internal_set_room_id(from._internal_room_id());
+      break;
+    }
+    case kShortRoomId: {
+      _this->_internal_set_short_room_id(from._internal_short_room_id());
+      break;
+    }
+    case ID_NOT_SET: {
+      break;
+    }
+  }
   // @@protoc_insertion_point(copy_constructor:lobby.JoinRoomRequest)
 }
 
 inline void JoinRoomRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
+      decltype(_impl_.password_) {}
 
-    , decltype(_impl_.password_) {}
-
+    , decltype(_impl_.id_){}
     , /*decltype(_impl_._cached_size_)*/{}
+    , /*decltype(_impl_._oneof_case_)*/{}
   };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.password_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.password_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  clear_has_id();
 }
 
 JoinRoomRequest::~JoinRoomRequest() {
@@ -1949,13 +2500,34 @@ JoinRoomRequest::~JoinRoomRequest() {
 
 inline void JoinRoomRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
   _impl_.password_.Destroy();
+  if (has_id()) {
+    clear_id();
+  }
 }
 
 void JoinRoomRequest::SetCachedSize(int size) const {
   _impl_._cached_size_.Set(size);
 }
+
+void JoinRoomRequest::clear_id() {
+// @@protoc_insertion_point(one_of_clear_start:lobby.JoinRoomRequest)
+  switch (id_case()) {
+    case kRoomId: {
+      _impl_.id_.room_id_.Destroy();
+      break;
+    }
+    case kShortRoomId: {
+      _impl_.id_.short_room_id_.Destroy();
+      break;
+    }
+    case ID_NOT_SET: {
+      break;
+    }
+  }
+  _impl_._oneof_case_[0] = ID_NOT_SET;
+}
+
 
 void JoinRoomRequest::Clear() {
 // @@protoc_insertion_point(message_clear_start:lobby.JoinRoomRequest)
@@ -1963,8 +2535,8 @@ void JoinRoomRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.room_id_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
+  clear_id();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -1985,9 +2557,20 @@ const char* JoinRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseContex
           goto handle_unusual;
         }
         continue;
-      // string password = 2;
+      // string short_room_id = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_short_room_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.JoinRoomRequest.short_room_id"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // string password = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_password();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -2025,20 +2608,29 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
+  switch (id_case()) {
+    case kRoomId: {
+      const std::string& _s = this->_internal_room_id();
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomRequest.room_id");
+      target = stream->WriteStringMaybeAliased(1, _s, target);
+      break;
+    }
+    case kShortRoomId: {
+      const std::string& _s = this->_internal_short_room_id();
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+          _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomRequest.short_room_id");
+      target = stream->WriteStringMaybeAliased(2, _s, target);
+      break;
+    }
+    default: ;
   }
-
-  // string password = 2;
+  // string password = 3;
   if (!this->_internal_password().empty()) {
     const std::string& _s = this->_internal_password();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomRequest.password");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
+    target = stream->WriteStringMaybeAliased(3, _s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2057,18 +2649,29 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  // string password = 2;
+  // string password = 3;
   if (!this->_internal_password().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                     this->_internal_password());
   }
 
+  switch (id_case()) {
+    // string room_id = 1;
+    case kRoomId: {
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_room_id());
+      break;
+    }
+    // string short_room_id = 2;
+    case kShortRoomId: {
+      total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                      this->_internal_short_room_id());
+      break;
+    }
+    case ID_NOT_SET: {
+      break;
+    }
+  }
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -2087,11 +2690,21 @@ void JoinRoomRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
   if (!from._internal_password().empty()) {
     _this->_internal_set_password(from._internal_password());
+  }
+  switch (from.id_case()) {
+    case kRoomId: {
+      _this->_internal_set_room_id(from._internal_room_id());
+      break;
+    }
+    case kShortRoomId: {
+      _this->_internal_set_short_room_id(from._internal_short_room_id());
+      break;
+    }
+    case ID_NOT_SET: {
+      break;
+    }
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -2112,16 +2725,16 @@ void JoinRoomRequest::InternalSwap(JoinRoomRequest* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, lhs_arena,
                                        &other->_impl_.password_, rhs_arena);
+  swap(_impl_.id_, other->_impl_.id_);
+  swap(_impl_._oneof_case_[0], other->_impl_._oneof_case_[0]);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata JoinRoomRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[3]);
+      file_level_metadata_lobby_2eproto[5]);
 }
 // ===================================================================
 
@@ -2326,7 +2939,7 @@ void JoinRoomResponse::InternalSwap(JoinRoomResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata JoinRoomResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[4]);
+      file_level_metadata_lobby_2eproto[6]);
 }
 // ===================================================================
 
@@ -2563,7 +3176,7 @@ void GetRoomListRequest::InternalSwap(GetRoomListRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata GetRoomListRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[5]);
+      file_level_metadata_lobby_2eproto[7]);
 }
 // ===================================================================
 
@@ -2629,7 +3242,7 @@ const char* GetRoomListResponse::_InternalParse(const char* ptr, ::_pbi::ParseCo
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // repeated .lobby.RoomPreview rooms = 1;
+      // repeated .lobby.Room rooms = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
           ptr -= 1;
@@ -2672,7 +3285,7 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // repeated .lobby.RoomPreview rooms = 1;
+  // repeated .lobby.Room rooms = 1;
   for (unsigned i = 0,
       n = static_cast<unsigned>(this->_internal_rooms_size()); i < n; i++) {
     const auto& repfield = this->_internal_rooms(i);
@@ -2696,7 +3309,7 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // repeated .lobby.RoomPreview rooms = 1;
+  // repeated .lobby.Room rooms = 1;
   total_size += 1UL * this->_internal_rooms_size();
   for (const auto& msg : this->_internal_rooms()) {
     total_size +=
@@ -2745,1442 +3358,7 @@ void GetRoomListResponse::InternalSwap(GetRoomListResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata GetRoomListResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[6]);
-}
-// ===================================================================
-
-class RoomConnectionInfo::_Internal {
- public:
-};
-
-RoomConnectionInfo::RoomConnectionInfo(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.RoomConnectionInfo)
-}
-RoomConnectionInfo::RoomConnectionInfo(const RoomConnectionInfo& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  RoomConnectionInfo* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.host_) {}
-
-    , decltype(_impl_.port_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.host_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.host_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_host().empty()) {
-    _this->_impl_.host_.Set(from._internal_host(), _this->GetArenaForAllocation());
-  }
-  _this->_impl_.port_ = from._impl_.port_;
-  // @@protoc_insertion_point(copy_constructor:lobby.RoomConnectionInfo)
-}
-
-inline void RoomConnectionInfo::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_.host_) {}
-
-    , decltype(_impl_.port_) { 0 }
-
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-  _impl_.host_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.host_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
-
-RoomConnectionInfo::~RoomConnectionInfo() {
-  // @@protoc_insertion_point(destructor:lobby.RoomConnectionInfo)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void RoomConnectionInfo::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.host_.Destroy();
-}
-
-void RoomConnectionInfo::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void RoomConnectionInfo::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.RoomConnectionInfo)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.host_.ClearToEmpty();
-  _impl_.port_ = 0;
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* RoomConnectionInfo::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string host = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_host();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.RoomConnectionInfo.host"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // int32 port = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
-          _impl_.port_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* RoomConnectionInfo::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.RoomConnectionInfo)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string host = 1;
-  if (!this->_internal_host().empty()) {
-    const std::string& _s = this->_internal_host();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.RoomConnectionInfo.host");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // int32 port = 2;
-  if (this->_internal_port() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-        2, this->_internal_port(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.RoomConnectionInfo)
-  return target;
-}
-
-::size_t RoomConnectionInfo::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.RoomConnectionInfo)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string host = 1;
-  if (!this->_internal_host().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_host());
-  }
-
-  // int32 port = 2;
-  if (this->_internal_port() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
-        this->_internal_port());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RoomConnectionInfo::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    RoomConnectionInfo::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RoomConnectionInfo::GetClassData() const { return &_class_data_; }
-
-
-void RoomConnectionInfo::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<RoomConnectionInfo*>(&to_msg);
-  auto& from = static_cast<const RoomConnectionInfo&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.RoomConnectionInfo)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_host().empty()) {
-    _this->_internal_set_host(from._internal_host());
-  }
-  if (from._internal_port() != 0) {
-    _this->_internal_set_port(from._internal_port());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void RoomConnectionInfo::CopyFrom(const RoomConnectionInfo& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.RoomConnectionInfo)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool RoomConnectionInfo::IsInitialized() const {
-  return true;
-}
-
-void RoomConnectionInfo::InternalSwap(RoomConnectionInfo* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.host_, lhs_arena,
-                                       &other->_impl_.host_, rhs_arena);
-
-  swap(_impl_.port_, other->_impl_.port_);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata RoomConnectionInfo::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[7]);
-}
-// ===================================================================
-
-class RoomPlayer::_Internal {
- public:
-  using HasBits = decltype(std::declval<RoomPlayer>()._impl_._has_bits_);
-  static constexpr ::int32_t kHasBitsOffset =
-    8 * PROTOBUF_FIELD_OFFSET(RoomPlayer, _impl_._has_bits_);
-  static const ::PROTOBUF_NAMESPACE_ID::Timestamp& joined_at(const RoomPlayer* msg);
-  static void set_has_joined_at(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
-};
-
-const ::PROTOBUF_NAMESPACE_ID::Timestamp&
-RoomPlayer::_Internal::joined_at(const RoomPlayer* msg) {
-  return *msg->_impl_.joined_at_;
-}
-void RoomPlayer::clear_joined_at() {
-  if (_impl_.joined_at_ != nullptr) _impl_.joined_at_->Clear();
-  _impl_._has_bits_[0] &= ~0x00000001u;
-}
-RoomPlayer::RoomPlayer(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.RoomPlayer)
-}
-RoomPlayer::RoomPlayer(const RoomPlayer& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  RoomPlayer* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){from._impl_._has_bits_}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.user_id_) {}
-
-    , decltype(_impl_.user_name_) {}
-
-    , decltype(_impl_.joined_at_){nullptr}
-    , decltype(_impl_.state_) {}
-
-    , decltype(_impl_.is_owner_) {}
-  };
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_user_id().empty()) {
-    _this->_impl_.user_id_.Set(from._internal_user_id(), _this->GetArenaForAllocation());
-  }
-  _impl_.user_name_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_name_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_user_name().empty()) {
-    _this->_impl_.user_name_.Set(from._internal_user_name(), _this->GetArenaForAllocation());
-  }
-  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
-    _this->_impl_.joined_at_ = new ::PROTOBUF_NAMESPACE_ID::Timestamp(*from._impl_.joined_at_);
-  }
-  ::memcpy(&_impl_.state_, &from._impl_.state_,
-    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.is_owner_) -
-    reinterpret_cast<char*>(&_impl_.state_)) + sizeof(_impl_.is_owner_));
-  // @@protoc_insertion_point(copy_constructor:lobby.RoomPlayer)
-}
-
-inline void RoomPlayer::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.user_id_) {}
-
-    , decltype(_impl_.user_name_) {}
-
-    , decltype(_impl_.joined_at_){nullptr}
-    , decltype(_impl_.state_) { 0 }
-
-    , decltype(_impl_.is_owner_) { false }
-
-  };
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.user_name_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_name_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
-
-RoomPlayer::~RoomPlayer() {
-  // @@protoc_insertion_point(destructor:lobby.RoomPlayer)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void RoomPlayer::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.user_id_.Destroy();
-  _impl_.user_name_.Destroy();
-  if (this != internal_default_instance()) delete _impl_.joined_at_;
-}
-
-void RoomPlayer::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void RoomPlayer::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.RoomPlayer)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.user_id_.ClearToEmpty();
-  _impl_.user_name_.ClearToEmpty();
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    ABSL_DCHECK(_impl_.joined_at_ != nullptr);
-    _impl_.joined_at_->Clear();
-  }
-  ::memset(&_impl_.state_, 0, static_cast<::size_t>(
-      reinterpret_cast<char*>(&_impl_.is_owner_) -
-      reinterpret_cast<char*>(&_impl_.state_)) + sizeof(_impl_.is_owner_));
-  _impl_._has_bits_.Clear();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* RoomPlayer::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  _Internal::HasBits has_bits{};
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string user_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_user_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.RoomPlayer.user_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // string user_name = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_user_name();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.RoomPlayer.user_name"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.PlayerState state = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
-          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-          _internal_set_state(static_cast<::lobby::PlayerState>(val));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // bool is_owner = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
-          _impl_.is_owner_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint64(&ptr);
-          CHK_(ptr);
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .google.protobuf.Timestamp joined_at = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 42)) {
-          ptr = ctx->ParseMessage(_internal_mutable_joined_at(), ptr);
-          CHK_(ptr);
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  _impl_._has_bits_.Or(has_bits);
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* RoomPlayer::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.RoomPlayer)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string user_id = 1;
-  if (!this->_internal_user_id().empty()) {
-    const std::string& _s = this->_internal_user_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.RoomPlayer.user_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // string user_name = 2;
-  if (!this->_internal_user_name().empty()) {
-    const std::string& _s = this->_internal_user_name();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.RoomPlayer.user_name");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
-
-  // .lobby.PlayerState state = 3;
-  if (this->_internal_state() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        3, this->_internal_state(), target);
-  }
-
-  // bool is_owner = 4;
-  if (this->_internal_is_owner() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(
-        4, this->_internal_is_owner(), target);
-  }
-
-  cached_has_bits = _impl_._has_bits_[0];
-  // .google.protobuf.Timestamp joined_at = 5;
-  if (cached_has_bits & 0x00000001u) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(5, _Internal::joined_at(this),
-        _Internal::joined_at(this).GetCachedSize(), target, stream);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.RoomPlayer)
-  return target;
-}
-
-::size_t RoomPlayer::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.RoomPlayer)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string user_id = 1;
-  if (!this->_internal_user_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_user_id());
-  }
-
-  // string user_name = 2;
-  if (!this->_internal_user_name().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_user_name());
-  }
-
-  // .google.protobuf.Timestamp joined_at = 5;
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.joined_at_);
-  }
-
-  // .lobby.PlayerState state = 3;
-  if (this->_internal_state() != 0) {
-    total_size += 1 +
-                  ::_pbi::WireFormatLite::EnumSize(this->_internal_state());
-  }
-
-  // bool is_owner = 4;
-  if (this->_internal_is_owner() != 0) {
-    total_size += 2;
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RoomPlayer::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    RoomPlayer::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RoomPlayer::GetClassData() const { return &_class_data_; }
-
-
-void RoomPlayer::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<RoomPlayer*>(&to_msg);
-  auto& from = static_cast<const RoomPlayer&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.RoomPlayer)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_user_id().empty()) {
-    _this->_internal_set_user_id(from._internal_user_id());
-  }
-  if (!from._internal_user_name().empty()) {
-    _this->_internal_set_user_name(from._internal_user_name());
-  }
-  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
-    _this->_internal_mutable_joined_at()->::PROTOBUF_NAMESPACE_ID::Timestamp::MergeFrom(
-        from._internal_joined_at());
-  }
-  if (from._internal_state() != 0) {
-    _this->_internal_set_state(from._internal_state());
-  }
-  if (from._internal_is_owner() != 0) {
-    _this->_internal_set_is_owner(from._internal_is_owner());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void RoomPlayer::CopyFrom(const RoomPlayer& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.RoomPlayer)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool RoomPlayer::IsInitialized() const {
-  return true;
-}
-
-void RoomPlayer::InternalSwap(RoomPlayer* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_id_, lhs_arena,
-                                       &other->_impl_.user_id_, rhs_arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_name_, lhs_arena,
-                                       &other->_impl_.user_name_, rhs_arena);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(RoomPlayer, _impl_.is_owner_)
-      + sizeof(RoomPlayer::_impl_.is_owner_)
-      - PROTOBUF_FIELD_OFFSET(RoomPlayer, _impl_.joined_at_)>(
-          reinterpret_cast<char*>(&_impl_.joined_at_),
-          reinterpret_cast<char*>(&other->_impl_.joined_at_));
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata RoomPlayer::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
       file_level_metadata_lobby_2eproto[8]);
-}
-// ===================================================================
-
-class Room::_Internal {
- public:
-  using HasBits = decltype(std::declval<Room>()._impl_._has_bits_);
-  static constexpr ::int32_t kHasBitsOffset =
-    8 * PROTOBUF_FIELD_OFFSET(Room, _impl_._has_bits_);
-  static const ::lobby::RoomConfig& config(const Room* msg);
-  static void set_has_config(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
-  static const ::lobby::RoomConnectionInfo& connection(const Room* msg);
-  static void set_has_connection(HasBits* has_bits) {
-    (*has_bits)[0] |= 2u;
-  }
-};
-
-const ::lobby::RoomConfig&
-Room::_Internal::config(const Room* msg) {
-  return *msg->_impl_.config_;
-}
-const ::lobby::RoomConnectionInfo&
-Room::_Internal::connection(const Room* msg) {
-  return *msg->_impl_.connection_;
-}
-Room::Room(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.Room)
-}
-Room::Room(const Room& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  Room* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){from._impl_._has_bits_}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.players_){from._impl_.players_}
-    , decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.password_encrypted_) {}
-
-    , decltype(_impl_.owner_id_) {}
-
-    , decltype(_impl_.config_){nullptr}
-    , decltype(_impl_.connection_){nullptr}
-    , decltype(_impl_.state_) {}
-
-    , decltype(_impl_.player_count_) {}
-  };
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
-  _impl_.password_encrypted_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.password_encrypted_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_password_encrypted().empty()) {
-    _this->_impl_.password_encrypted_.Set(from._internal_password_encrypted(), _this->GetArenaForAllocation());
-  }
-  _impl_.owner_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.owner_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_owner_id().empty()) {
-    _this->_impl_.owner_id_.Set(from._internal_owner_id(), _this->GetArenaForAllocation());
-  }
-  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
-    _this->_impl_.config_ = new ::lobby::RoomConfig(*from._impl_.config_);
-  }
-  if ((from._impl_._has_bits_[0] & 0x00000002u) != 0) {
-    _this->_impl_.connection_ = new ::lobby::RoomConnectionInfo(*from._impl_.connection_);
-  }
-  ::memcpy(&_impl_.state_, &from._impl_.state_,
-    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.player_count_) -
-    reinterpret_cast<char*>(&_impl_.state_)) + sizeof(_impl_.player_count_));
-  // @@protoc_insertion_point(copy_constructor:lobby.Room)
-}
-
-inline void Room::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.players_){arena}
-    , decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.password_encrypted_) {}
-
-    , decltype(_impl_.owner_id_) {}
-
-    , decltype(_impl_.config_){nullptr}
-    , decltype(_impl_.connection_){nullptr}
-    , decltype(_impl_.state_) { 0 }
-
-    , decltype(_impl_.player_count_) { 0 }
-
-  };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.password_encrypted_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.password_encrypted_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.owner_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.owner_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
-
-Room::~Room() {
-  // @@protoc_insertion_point(destructor:lobby.Room)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void Room::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _internal_mutable_players()->~RepeatedPtrField();
-  _impl_.room_id_.Destroy();
-  _impl_.password_encrypted_.Destroy();
-  _impl_.owner_id_.Destroy();
-  if (this != internal_default_instance()) delete _impl_.config_;
-  if (this != internal_default_instance()) delete _impl_.connection_;
-}
-
-void Room::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void Room::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.Room)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _internal_mutable_players()->Clear();
-  _impl_.room_id_.ClearToEmpty();
-  _impl_.password_encrypted_.ClearToEmpty();
-  _impl_.owner_id_.ClearToEmpty();
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    if (cached_has_bits & 0x00000001u) {
-      ABSL_DCHECK(_impl_.config_ != nullptr);
-      _impl_.config_->Clear();
-    }
-    if (cached_has_bits & 0x00000002u) {
-      ABSL_DCHECK(_impl_.connection_ != nullptr);
-      _impl_.connection_->Clear();
-    }
-  }
-  ::memset(&_impl_.state_, 0, static_cast<::size_t>(
-      reinterpret_cast<char*>(&_impl_.player_count_) -
-      reinterpret_cast<char*>(&_impl_.state_)) + sizeof(_impl_.player_count_));
-  _impl_._has_bits_.Clear();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* Room::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  _Internal::HasBits has_bits{};
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string room_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.Room.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // string password_encrypted = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_password_encrypted();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.Room.password_encrypted"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.RoomState state = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
-          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-          _internal_set_state(static_cast<::lobby::RoomState>(val));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // string owner_id = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
-          auto str = _internal_mutable_owner_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.Room.owner_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.RoomConfig config = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 42)) {
-          ptr = ctx->ParseMessage(_internal_mutable_config(), ptr);
-          CHK_(ptr);
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // repeated .lobby.RoomPlayer players = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 50)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_players(), ptr);
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<50>(ptr));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // int32 player_count = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
-          _impl_.player_count_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.RoomConnectionInfo connection = 8;
-      case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 66)) {
-          ptr = ctx->ParseMessage(_internal_mutable_connection(), ptr);
-          CHK_(ptr);
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  _impl_._has_bits_.Or(has_bits);
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* Room::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.Room)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.Room.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // string password_encrypted = 2;
-  if (!this->_internal_password_encrypted().empty()) {
-    const std::string& _s = this->_internal_password_encrypted();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.Room.password_encrypted");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
-
-  // .lobby.RoomState state = 3;
-  if (this->_internal_state() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        3, this->_internal_state(), target);
-  }
-
-  // string owner_id = 4;
-  if (!this->_internal_owner_id().empty()) {
-    const std::string& _s = this->_internal_owner_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.Room.owner_id");
-    target = stream->WriteStringMaybeAliased(4, _s, target);
-  }
-
-  cached_has_bits = _impl_._has_bits_[0];
-  // .lobby.RoomConfig config = 5;
-  if (cached_has_bits & 0x00000001u) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(5, _Internal::config(this),
-        _Internal::config(this).GetCachedSize(), target, stream);
-  }
-
-  // repeated .lobby.RoomPlayer players = 6;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_players_size()); i < n; i++) {
-    const auto& repfield = this->_internal_players(i);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(6, repfield, repfield.GetCachedSize(), target, stream);
-  }
-
-  // int32 player_count = 7;
-  if (this->_internal_player_count() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-        7, this->_internal_player_count(), target);
-  }
-
-  // .lobby.RoomConnectionInfo connection = 8;
-  if (cached_has_bits & 0x00000002u) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(8, _Internal::connection(this),
-        _Internal::connection(this).GetCachedSize(), target, stream);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.Room)
-  return target;
-}
-
-::size_t Room::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.Room)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // repeated .lobby.RoomPlayer players = 6;
-  total_size += 1UL * this->_internal_players_size();
-  for (const auto& msg : this->_internal_players()) {
-    total_size +=
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
-  }
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  // string password_encrypted = 2;
-  if (!this->_internal_password_encrypted().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_password_encrypted());
-  }
-
-  // string owner_id = 4;
-  if (!this->_internal_owner_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_owner_id());
-  }
-
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    // .lobby.RoomConfig config = 5;
-    if (cached_has_bits & 0x00000001u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *_impl_.config_);
-    }
-
-    // .lobby.RoomConnectionInfo connection = 8;
-    if (cached_has_bits & 0x00000002u) {
-      total_size += 1 +
-        ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-          *_impl_.connection_);
-    }
-
-  }
-  // .lobby.RoomState state = 3;
-  if (this->_internal_state() != 0) {
-    total_size += 1 +
-                  ::_pbi::WireFormatLite::EnumSize(this->_internal_state());
-  }
-
-  // int32 player_count = 7;
-  if (this->_internal_player_count() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
-        this->_internal_player_count());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData Room::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    Room::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*Room::GetClassData() const { return &_class_data_; }
-
-
-void Room::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<Room*>(&to_msg);
-  auto& from = static_cast<const Room&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.Room)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  _this->_internal_mutable_players()->MergeFrom(from._internal_players());
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
-  if (!from._internal_password_encrypted().empty()) {
-    _this->_internal_set_password_encrypted(from._internal_password_encrypted());
-  }
-  if (!from._internal_owner_id().empty()) {
-    _this->_internal_set_owner_id(from._internal_owner_id());
-  }
-  cached_has_bits = from._impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000003u) {
-    if (cached_has_bits & 0x00000001u) {
-      _this->_internal_mutable_config()->::lobby::RoomConfig::MergeFrom(
-          from._internal_config());
-    }
-    if (cached_has_bits & 0x00000002u) {
-      _this->_internal_mutable_connection()->::lobby::RoomConnectionInfo::MergeFrom(
-          from._internal_connection());
-    }
-  }
-  if (from._internal_state() != 0) {
-    _this->_internal_set_state(from._internal_state());
-  }
-  if (from._internal_player_count() != 0) {
-    _this->_internal_set_player_count(from._internal_player_count());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void Room::CopyFrom(const Room& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.Room)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool Room::IsInitialized() const {
-  return true;
-}
-
-void Room::InternalSwap(Room* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  _internal_mutable_players()->InternalSwap(other->_internal_mutable_players());
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_encrypted_, lhs_arena,
-                                       &other->_impl_.password_encrypted_, rhs_arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.owner_id_, lhs_arena,
-                                       &other->_impl_.owner_id_, rhs_arena);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(Room, _impl_.player_count_)
-      + sizeof(Room::_impl_.player_count_)
-      - PROTOBUF_FIELD_OFFSET(Room, _impl_.config_)>(
-          reinterpret_cast<char*>(&_impl_.config_),
-          reinterpret_cast<char*>(&other->_impl_.config_));
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata Room::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[9]);
-}
-// ===================================================================
-
-class RoomConfig::_Internal {
- public:
-};
-
-RoomConfig::RoomConfig(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.RoomConfig)
-}
-RoomConfig::RoomConfig(const RoomConfig& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  RoomConfig* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_name_) {}
-
-    , decltype(_impl_.visibility_) {}
-
-    , decltype(_impl_.mode_) {}
-
-    , decltype(_impl_.map_) {}
-
-    , decltype(_impl_.max_players_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_name_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_name_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_name().empty()) {
-    _this->_impl_.room_name_.Set(from._internal_room_name(), _this->GetArenaForAllocation());
-  }
-  ::memcpy(&_impl_.visibility_, &from._impl_.visibility_,
-    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.max_players_) -
-    reinterpret_cast<char*>(&_impl_.visibility_)) + sizeof(_impl_.max_players_));
-  // @@protoc_insertion_point(copy_constructor:lobby.RoomConfig)
-}
-
-inline void RoomConfig::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_name_) {}
-
-    , decltype(_impl_.visibility_) { 0 }
-
-    , decltype(_impl_.mode_) { 0 }
-
-    , decltype(_impl_.map_) { 0 }
-
-    , decltype(_impl_.max_players_) { 0 }
-
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-  _impl_.room_name_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_name_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
-
-RoomConfig::~RoomConfig() {
-  // @@protoc_insertion_point(destructor:lobby.RoomConfig)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void RoomConfig::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_name_.Destroy();
-}
-
-void RoomConfig::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void RoomConfig::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.RoomConfig)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.room_name_.ClearToEmpty();
-  ::memset(&_impl_.visibility_, 0, static_cast<::size_t>(
-      reinterpret_cast<char*>(&_impl_.max_players_) -
-      reinterpret_cast<char*>(&_impl_.visibility_)) + sizeof(_impl_.max_players_));
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* RoomConfig::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string room_name = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_name();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.RoomConfig.room_name"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.RoomVisibility visibility = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
-          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-          _internal_set_visibility(static_cast<::lobby::RoomVisibility>(val));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.GameMode mode = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
-          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-          _internal_set_mode(static_cast<::lobby::GameMode>(val));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.GameMap map = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 32)) {
-          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-          _internal_set_map(static_cast<::lobby::GameMap>(val));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // int32 max_players = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
-          _impl_.max_players_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* RoomConfig::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.RoomConfig)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string room_name = 1;
-  if (!this->_internal_room_name().empty()) {
-    const std::string& _s = this->_internal_room_name();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.RoomConfig.room_name");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // .lobby.RoomVisibility visibility = 2;
-  if (this->_internal_visibility() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        2, this->_internal_visibility(), target);
-  }
-
-  // .lobby.GameMode mode = 3;
-  if (this->_internal_mode() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        3, this->_internal_mode(), target);
-  }
-
-  // .lobby.GameMap map = 4;
-  if (this->_internal_map() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        4, this->_internal_map(), target);
-  }
-
-  // int32 max_players = 5;
-  if (this->_internal_max_players() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-        5, this->_internal_max_players(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.RoomConfig)
-  return target;
-}
-
-::size_t RoomConfig::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.RoomConfig)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string room_name = 1;
-  if (!this->_internal_room_name().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_name());
-  }
-
-  // .lobby.RoomVisibility visibility = 2;
-  if (this->_internal_visibility() != 0) {
-    total_size += 1 +
-                  ::_pbi::WireFormatLite::EnumSize(this->_internal_visibility());
-  }
-
-  // .lobby.GameMode mode = 3;
-  if (this->_internal_mode() != 0) {
-    total_size += 1 +
-                  ::_pbi::WireFormatLite::EnumSize(this->_internal_mode());
-  }
-
-  // .lobby.GameMap map = 4;
-  if (this->_internal_map() != 0) {
-    total_size += 1 +
-                  ::_pbi::WireFormatLite::EnumSize(this->_internal_map());
-  }
-
-  // int32 max_players = 5;
-  if (this->_internal_max_players() != 0) {
-    total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
-        this->_internal_max_players());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData RoomConfig::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    RoomConfig::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*RoomConfig::GetClassData() const { return &_class_data_; }
-
-
-void RoomConfig::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<RoomConfig*>(&to_msg);
-  auto& from = static_cast<const RoomConfig&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.RoomConfig)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_room_name().empty()) {
-    _this->_internal_set_room_name(from._internal_room_name());
-  }
-  if (from._internal_visibility() != 0) {
-    _this->_internal_set_visibility(from._internal_visibility());
-  }
-  if (from._internal_mode() != 0) {
-    _this->_internal_set_mode(from._internal_mode());
-  }
-  if (from._internal_map() != 0) {
-    _this->_internal_set_map(from._internal_map());
-  }
-  if (from._internal_max_players() != 0) {
-    _this->_internal_set_max_players(from._internal_max_players());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void RoomConfig::CopyFrom(const RoomConfig& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.RoomConfig)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool RoomConfig::IsInitialized() const {
-  return true;
-}
-
-void RoomConfig::InternalSwap(RoomConfig* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_name_, lhs_arena,
-                                       &other->_impl_.room_name_, rhs_arena);
-  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
-      PROTOBUF_FIELD_OFFSET(RoomConfig, _impl_.max_players_)
-      + sizeof(RoomConfig::_impl_.max_players_)
-      - PROTOBUF_FIELD_OFFSET(RoomConfig, _impl_.visibility_)>(
-          reinterpret_cast<char*>(&_impl_.visibility_),
-          reinterpret_cast<char*>(&other->_impl_.visibility_));
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata RoomConfig::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[10]);
 }
 // ===================================================================
 
@@ -4194,40 +3372,19 @@ UpdateRoomStateRequest::UpdateRoomStateRequest(::PROTOBUF_NAMESPACE_ID::Arena* a
   // @@protoc_insertion_point(arena_constructor:lobby.UpdateRoomStateRequest)
 }
 UpdateRoomStateRequest::UpdateRoomStateRequest(const UpdateRoomStateRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  UpdateRoomStateRequest* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.state_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
-  _this->_impl_.state_ = from._impl_.state_;
+  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
+      from._internal_metadata_);
   // @@protoc_insertion_point(copy_constructor:lobby.UpdateRoomStateRequest)
 }
 
 inline void UpdateRoomStateRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.state_) { 0 }
+      decltype(_impl_.state_) { 0 }
 
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 UpdateRoomStateRequest::~UpdateRoomStateRequest() {
@@ -4241,7 +3398,6 @@ UpdateRoomStateRequest::~UpdateRoomStateRequest() {
 
 inline void UpdateRoomStateRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
 }
 
 void UpdateRoomStateRequest::SetCachedSize(int size) const {
@@ -4254,7 +3410,6 @@ void UpdateRoomStateRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.room_id_.ClearToEmpty();
   _impl_.state_ = 0;
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -4265,20 +3420,9 @@ const char* UpdateRoomStateRequest::_InternalParse(const char* ptr, ::_pbi::Pars
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string room_id = 1;
+      // .lobby.RoomState state = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.UpdateRoomStateRequest.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.RoomState state = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
           ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
           _internal_set_state(static_cast<::lobby::RoomState>(val));
@@ -4315,19 +3459,11 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.UpdateRoomStateRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // .lobby.RoomState state = 2;
+  // .lobby.RoomState state = 1;
   if (this->_internal_state() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        2, this->_internal_state(), target);
+        1, this->_internal_state(), target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -4346,13 +3482,7 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  // .lobby.RoomState state = 2;
+  // .lobby.RoomState state = 1;
   if (this->_internal_state() != 0) {
     total_size += 1 +
                   ::_pbi::WireFormatLite::EnumSize(this->_internal_state());
@@ -4376,9 +3506,6 @@ void UpdateRoomStateRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg,
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
   if (from._internal_state() != 0) {
     _this->_internal_set_state(from._internal_state());
   }
@@ -4398,18 +3525,14 @@ bool UpdateRoomStateRequest::IsInitialized() const {
 
 void UpdateRoomStateRequest::InternalSwap(UpdateRoomStateRequest* other) {
   using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
   swap(_impl_.state_, other->_impl_.state_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata UpdateRoomStateRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[11]);
+      file_level_metadata_lobby_2eproto[9]);
 }
 // ===================================================================
 
@@ -4583,7 +3706,7 @@ void UpdateRoomStateResponse::InternalSwap(UpdateRoomStateResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata UpdateRoomStateResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[12]);
+      file_level_metadata_lobby_2eproto[10]);
 }
 // ===================================================================
 
@@ -4613,18 +3736,9 @@ UpdateRoomConfigRequest::UpdateRoomConfigRequest(const UpdateRoomConfigRequest& 
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.room_id_) {}
-
     , decltype(_impl_.config_){nullptr}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
   if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
     _this->_impl_.config_ = new ::lobby::RoomConfig(*from._impl_.config_);
   }
@@ -4636,14 +3750,8 @@ inline void UpdateRoomConfigRequest::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.room_id_) {}
-
     , decltype(_impl_.config_){nullptr}
   };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 UpdateRoomConfigRequest::~UpdateRoomConfigRequest() {
@@ -4657,7 +3765,6 @@ UpdateRoomConfigRequest::~UpdateRoomConfigRequest() {
 
 inline void UpdateRoomConfigRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
   if (this != internal_default_instance()) delete _impl_.config_;
 }
 
@@ -4671,7 +3778,6 @@ void UpdateRoomConfigRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.room_id_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     ABSL_DCHECK(_impl_.config_ != nullptr);
@@ -4688,20 +3794,9 @@ const char* UpdateRoomConfigRequest::_InternalParse(const char* ptr, ::_pbi::Par
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string room_id = 1;
+      // .lobby.RoomConfig config = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.UpdateRoomConfigRequest.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.RoomConfig config = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           ptr = ctx->ParseMessage(_internal_mutable_config(), ptr);
           CHK_(ptr);
         } else {
@@ -4738,19 +3833,11 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.UpdateRoomConfigRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
   cached_has_bits = _impl_._has_bits_[0];
-  // .lobby.RoomConfig config = 2;
+  // .lobby.RoomConfig config = 1;
   if (cached_has_bits & 0x00000001u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(2, _Internal::config(this),
+      InternalWriteMessage(1, _Internal::config(this),
         _Internal::config(this).GetCachedSize(), target, stream);
   }
 
@@ -4770,13 +3857,7 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  // .lobby.RoomConfig config = 2;
+  // .lobby.RoomConfig config = 1;
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
@@ -4802,9 +3883,6 @@ void UpdateRoomConfigRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
   if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
     _this->_internal_mutable_config()->::lobby::RoomConfig::MergeFrom(
         from._internal_config());
@@ -4825,19 +3903,15 @@ bool UpdateRoomConfigRequest::IsInitialized() const {
 
 void UpdateRoomConfigRequest::InternalSwap(UpdateRoomConfigRequest* other) {
   using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
   swap(_impl_.config_, other->_impl_.config_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata UpdateRoomConfigRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[13]);
+      file_level_metadata_lobby_2eproto[11]);
 }
 // ===================================================================
 
@@ -5042,512 +4116,7 @@ void UpdateRoomConfigResponse::InternalSwap(UpdateRoomConfigResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata UpdateRoomConfigResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[14]);
-}
-// ===================================================================
-
-class UpdatePlayerStateRequest::_Internal {
- public:
-};
-
-UpdatePlayerStateRequest::UpdatePlayerStateRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.UpdatePlayerStateRequest)
-}
-UpdatePlayerStateRequest::UpdatePlayerStateRequest(const UpdatePlayerStateRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  UpdatePlayerStateRequest* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.user_id_) {}
-
-    , decltype(_impl_.state_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_user_id().empty()) {
-    _this->_impl_.user_id_.Set(from._internal_user_id(), _this->GetArenaForAllocation());
-  }
-  _this->_impl_.state_ = from._impl_.state_;
-  // @@protoc_insertion_point(copy_constructor:lobby.UpdatePlayerStateRequest)
-}
-
-inline void UpdatePlayerStateRequest::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.user_id_) {}
-
-    , decltype(_impl_.state_) { 0 }
-
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
-
-UpdatePlayerStateRequest::~UpdatePlayerStateRequest() {
-  // @@protoc_insertion_point(destructor:lobby.UpdatePlayerStateRequest)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void UpdatePlayerStateRequest::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
-  _impl_.user_id_.Destroy();
-}
-
-void UpdatePlayerStateRequest::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void UpdatePlayerStateRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.UpdatePlayerStateRequest)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.room_id_.ClearToEmpty();
-  _impl_.user_id_.ClearToEmpty();
-  _impl_.state_ = 0;
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* UpdatePlayerStateRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string room_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.UpdatePlayerStateRequest.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // string user_id = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_user_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.UpdatePlayerStateRequest.user_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.PlayerState state = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 24)) {
-          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-          _internal_set_state(static_cast<::lobby::PlayerState>(val));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* UpdatePlayerStateRequest::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.UpdatePlayerStateRequest)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.UpdatePlayerStateRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // string user_id = 2;
-  if (!this->_internal_user_id().empty()) {
-    const std::string& _s = this->_internal_user_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.UpdatePlayerStateRequest.user_id");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
-
-  // .lobby.PlayerState state = 3;
-  if (this->_internal_state() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        3, this->_internal_state(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.UpdatePlayerStateRequest)
-  return target;
-}
-
-::size_t UpdatePlayerStateRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.UpdatePlayerStateRequest)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  // string user_id = 2;
-  if (!this->_internal_user_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_user_id());
-  }
-
-  // .lobby.PlayerState state = 3;
-  if (this->_internal_state() != 0) {
-    total_size += 1 +
-                  ::_pbi::WireFormatLite::EnumSize(this->_internal_state());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UpdatePlayerStateRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    UpdatePlayerStateRequest::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UpdatePlayerStateRequest::GetClassData() const { return &_class_data_; }
-
-
-void UpdatePlayerStateRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<UpdatePlayerStateRequest*>(&to_msg);
-  auto& from = static_cast<const UpdatePlayerStateRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.UpdatePlayerStateRequest)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
-  if (!from._internal_user_id().empty()) {
-    _this->_internal_set_user_id(from._internal_user_id());
-  }
-  if (from._internal_state() != 0) {
-    _this->_internal_set_state(from._internal_state());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void UpdatePlayerStateRequest::CopyFrom(const UpdatePlayerStateRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.UpdatePlayerStateRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool UpdatePlayerStateRequest::IsInitialized() const {
-  return true;
-}
-
-void UpdatePlayerStateRequest::InternalSwap(UpdatePlayerStateRequest* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_id_, lhs_arena,
-                                       &other->_impl_.user_id_, rhs_arena);
-  swap(_impl_.state_, other->_impl_.state_);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata UpdatePlayerStateRequest::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[15]);
-}
-// ===================================================================
-
-class UpdatePlayerStateResponse::_Internal {
- public:
-};
-
-UpdatePlayerStateResponse::UpdatePlayerStateResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.UpdatePlayerStateResponse)
-}
-UpdatePlayerStateResponse::UpdatePlayerStateResponse(const UpdatePlayerStateResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  UpdatePlayerStateResponse* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.user_id_) {}
-
-    , decltype(_impl_.updated_state_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_user_id().empty()) {
-    _this->_impl_.user_id_.Set(from._internal_user_id(), _this->GetArenaForAllocation());
-  }
-  _this->_impl_.updated_state_ = from._impl_.updated_state_;
-  // @@protoc_insertion_point(copy_constructor:lobby.UpdatePlayerStateResponse)
-}
-
-inline void UpdatePlayerStateResponse::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_.user_id_) {}
-
-    , decltype(_impl_.updated_state_) { 0 }
-
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
-
-UpdatePlayerStateResponse::~UpdatePlayerStateResponse() {
-  // @@protoc_insertion_point(destructor:lobby.UpdatePlayerStateResponse)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void UpdatePlayerStateResponse::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.user_id_.Destroy();
-}
-
-void UpdatePlayerStateResponse::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void UpdatePlayerStateResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.UpdatePlayerStateResponse)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.user_id_.ClearToEmpty();
-  _impl_.updated_state_ = 0;
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* UpdatePlayerStateResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string user_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_user_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.UpdatePlayerStateResponse.user_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // .lobby.PlayerState updated_state = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
-          ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
-          CHK_(ptr);
-          _internal_set_updated_state(static_cast<::lobby::PlayerState>(val));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* UpdatePlayerStateResponse::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.UpdatePlayerStateResponse)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string user_id = 1;
-  if (!this->_internal_user_id().empty()) {
-    const std::string& _s = this->_internal_user_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.UpdatePlayerStateResponse.user_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // .lobby.PlayerState updated_state = 2;
-  if (this->_internal_updated_state() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        2, this->_internal_updated_state(), target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.UpdatePlayerStateResponse)
-  return target;
-}
-
-::size_t UpdatePlayerStateResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.UpdatePlayerStateResponse)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string user_id = 1;
-  if (!this->_internal_user_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_user_id());
-  }
-
-  // .lobby.PlayerState updated_state = 2;
-  if (this->_internal_updated_state() != 0) {
-    total_size += 1 +
-                  ::_pbi::WireFormatLite::EnumSize(this->_internal_updated_state());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UpdatePlayerStateResponse::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    UpdatePlayerStateResponse::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UpdatePlayerStateResponse::GetClassData() const { return &_class_data_; }
-
-
-void UpdatePlayerStateResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<UpdatePlayerStateResponse*>(&to_msg);
-  auto& from = static_cast<const UpdatePlayerStateResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.UpdatePlayerStateResponse)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_user_id().empty()) {
-    _this->_internal_set_user_id(from._internal_user_id());
-  }
-  if (from._internal_updated_state() != 0) {
-    _this->_internal_set_updated_state(from._internal_updated_state());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void UpdatePlayerStateResponse::CopyFrom(const UpdatePlayerStateResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.UpdatePlayerStateResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool UpdatePlayerStateResponse::IsInitialized() const {
-  return true;
-}
-
-void UpdatePlayerStateResponse::InternalSwap(UpdatePlayerStateResponse* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_id_, lhs_arena,
-                                       &other->_impl_.user_id_, rhs_arena);
-  swap(_impl_.updated_state_, other->_impl_.updated_state_);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata UpdatePlayerStateResponse::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[16]);
+      file_level_metadata_lobby_2eproto[12]);
 }
 // ===================================================================
 
@@ -5564,20 +4133,11 @@ ChangeRoomPasswordRequest::ChangeRoomPasswordRequest(const ChangeRoomPasswordReq
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ChangeRoomPasswordRequest* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.password_) {}
+      decltype(_impl_.password_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
   _impl_.password_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.password_.Set("", GetArenaForAllocation());
@@ -5591,16 +4151,10 @@ ChangeRoomPasswordRequest::ChangeRoomPasswordRequest(const ChangeRoomPasswordReq
 inline void ChangeRoomPasswordRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.password_) {}
+      decltype(_impl_.password_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.password_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.password_.Set("", GetArenaForAllocation());
@@ -5618,7 +4172,6 @@ ChangeRoomPasswordRequest::~ChangeRoomPasswordRequest() {
 
 inline void ChangeRoomPasswordRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
   _impl_.password_.Destroy();
 }
 
@@ -5632,7 +4185,6 @@ void ChangeRoomPasswordRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.room_id_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -5643,20 +4195,9 @@ const char* ChangeRoomPasswordRequest::_InternalParse(const char* ptr, ::_pbi::P
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string room_id = 1;
+      // string password = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.ChangeRoomPasswordRequest.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // string password = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_password();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -5694,20 +4235,12 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.ChangeRoomPasswordRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // string password = 2;
+  // string password = 1;
   if (!this->_internal_password().empty()) {
     const std::string& _s = this->_internal_password();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.ChangeRoomPasswordRequest.password");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
+    target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -5726,13 +4259,7 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  // string password = 2;
+  // string password = 1;
   if (!this->_internal_password().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                     this->_internal_password());
@@ -5756,9 +4283,6 @@ void ChangeRoomPasswordRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_m
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
   if (!from._internal_password().empty()) {
     _this->_internal_set_password(from._internal_password());
   }
@@ -5781,8 +4305,6 @@ void ChangeRoomPasswordRequest::InternalSwap(ChangeRoomPasswordRequest* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, lhs_arena,
                                        &other->_impl_.password_, rhs_arena);
 }
@@ -5790,7 +4312,7 @@ void ChangeRoomPasswordRequest::InternalSwap(ChangeRoomPasswordRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ChangeRoomPasswordRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[17]);
+      file_level_metadata_lobby_2eproto[13]);
 }
 // ===================================================================
 
@@ -5799,36 +4321,194 @@ class ChangeRoomPasswordResponse::_Internal {
 };
 
 ChangeRoomPasswordResponse::ChangeRoomPasswordResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:lobby.ChangeRoomPasswordResponse)
 }
 ChangeRoomPasswordResponse::ChangeRoomPasswordResponse(const ChangeRoomPasswordResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   ChangeRoomPasswordResponse* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.room_id_) {}
+
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.room_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.room_id_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_room_id().empty()) {
+    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(copy_constructor:lobby.ChangeRoomPasswordResponse)
 }
 
+inline void ChangeRoomPasswordResponse::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.room_id_) {}
 
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.room_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.room_id_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
 
+ChangeRoomPasswordResponse::~ChangeRoomPasswordResponse() {
+  // @@protoc_insertion_point(destructor:lobby.ChangeRoomPasswordResponse)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
 
+inline void ChangeRoomPasswordResponse::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.room_id_.Destroy();
+}
+
+void ChangeRoomPasswordResponse::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void ChangeRoomPasswordResponse::Clear() {
+// @@protoc_insertion_point(message_clear_start:lobby.ChangeRoomPasswordResponse)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.room_id_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* ChangeRoomPasswordResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string room_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_room_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.ChangeRoomPasswordResponse.room_id"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* ChangeRoomPasswordResponse::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:lobby.ChangeRoomPasswordResponse)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string room_id = 1;
+  if (!this->_internal_room_id().empty()) {
+    const std::string& _s = this->_internal_room_id();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.ChangeRoomPasswordResponse.room_id");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:lobby.ChangeRoomPasswordResponse)
+  return target;
+}
+
+::size_t ChangeRoomPasswordResponse::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:lobby.ChangeRoomPasswordResponse)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string room_id = 1;
+  if (!this->_internal_room_id().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_room_id());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ChangeRoomPasswordResponse::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    ChangeRoomPasswordResponse::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ChangeRoomPasswordResponse::GetClassData() const { return &_class_data_; }
 
 
+void ChangeRoomPasswordResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<ChangeRoomPasswordResponse*>(&to_msg);
+  auto& from = static_cast<const ChangeRoomPasswordResponse&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.ChangeRoomPasswordResponse)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
 
+  if (!from._internal_room_id().empty()) {
+    _this->_internal_set_room_id(from._internal_room_id());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
 
+void ChangeRoomPasswordResponse::CopyFrom(const ChangeRoomPasswordResponse& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:lobby.ChangeRoomPasswordResponse)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
 
+bool ChangeRoomPasswordResponse::IsInitialized() const {
+  return true;
+}
 
+void ChangeRoomPasswordResponse::InternalSwap(ChangeRoomPasswordResponse* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
+                                       &other->_impl_.room_id_, rhs_arena);
+}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ChangeRoomPasswordResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[18]);
+      file_level_metadata_lobby_2eproto[14]);
 }
 // ===================================================================
 
@@ -5845,26 +4525,17 @@ ChangeRoomOwnerRequest::ChangeRoomOwnerRequest(const ChangeRoomOwnerRequest& fro
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ChangeRoomOwnerRequest* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.user_id_) {}
+      decltype(_impl_.new_owner_id_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
+  _impl_.new_owner_id_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
+        _impl_.new_owner_id_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_user_id().empty()) {
-    _this->_impl_.user_id_.Set(from._internal_user_id(), _this->GetArenaForAllocation());
+  if (!from._internal_new_owner_id().empty()) {
+    _this->_impl_.new_owner_id_.Set(from._internal_new_owner_id(), _this->GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:lobby.ChangeRoomOwnerRequest)
 }
@@ -5872,19 +4543,13 @@ ChangeRoomOwnerRequest::ChangeRoomOwnerRequest(const ChangeRoomOwnerRequest& fro
 inline void ChangeRoomOwnerRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , decltype(_impl_.user_id_) {}
+      decltype(_impl_.new_owner_id_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.room_id_.InitDefault();
+  _impl_.new_owner_id_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
+        _impl_.new_owner_id_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -5899,8 +4564,7 @@ ChangeRoomOwnerRequest::~ChangeRoomOwnerRequest() {
 
 inline void ChangeRoomOwnerRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
-  _impl_.user_id_.Destroy();
+  _impl_.new_owner_id_.Destroy();
 }
 
 void ChangeRoomOwnerRequest::SetCachedSize(int size) const {
@@ -5913,8 +4577,7 @@ void ChangeRoomOwnerRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.room_id_.ClearToEmpty();
-  _impl_.user_id_.ClearToEmpty();
+  _impl_.new_owner_id_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -5924,24 +4587,13 @@ const char* ChangeRoomOwnerRequest::_InternalParse(const char* ptr, ::_pbi::Pars
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string room_id = 1;
+      // string new_owner_id = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
+          auto str = _internal_mutable_new_owner_id();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.ChangeRoomOwnerRequest.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // string user_id = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_user_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.ChangeRoomOwnerRequest.user_id"));
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.ChangeRoomOwnerRequest.new_owner_id"));
         } else {
           goto handle_unusual;
         }
@@ -5975,20 +4627,12 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
+  // string new_owner_id = 1;
+  if (!this->_internal_new_owner_id().empty()) {
+    const std::string& _s = this->_internal_new_owner_id();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.ChangeRoomOwnerRequest.room_id");
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.ChangeRoomOwnerRequest.new_owner_id");
     target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  // string user_id = 2;
-  if (!this->_internal_user_id().empty()) {
-    const std::string& _s = this->_internal_user_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.ChangeRoomOwnerRequest.user_id");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -6007,16 +4651,10 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
+  // string new_owner_id = 1;
+  if (!this->_internal_new_owner_id().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  // string user_id = 2;
-  if (!this->_internal_user_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_user_id());
+                                    this->_internal_new_owner_id());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -6037,11 +4675,8 @@ void ChangeRoomOwnerRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg,
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
-  if (!from._internal_user_id().empty()) {
-    _this->_internal_set_user_id(from._internal_user_id());
+  if (!from._internal_new_owner_id().empty()) {
+    _this->_internal_set_new_owner_id(from._internal_new_owner_id());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -6062,16 +4697,14 @@ void ChangeRoomOwnerRequest::InternalSwap(ChangeRoomOwnerRequest* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_id_, lhs_arena,
-                                       &other->_impl_.user_id_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.new_owner_id_, lhs_arena,
+                                       &other->_impl_.new_owner_id_, rhs_arena);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ChangeRoomOwnerRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[19]);
+      file_level_metadata_lobby_2eproto[15]);
 }
 // ===================================================================
 
@@ -6267,7 +4900,7 @@ void ChangeRoomOwnerResponse::InternalSwap(ChangeRoomOwnerResponse* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata ChangeRoomOwnerResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[20]);
+      file_level_metadata_lobby_2eproto[16]);
 }
 // ===================================================================
 
@@ -6276,194 +4909,36 @@ class DeleteRoomRequest::_Internal {
 };
 
 DeleteRoomRequest::DeleteRoomRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:lobby.DeleteRoomRequest)
 }
 DeleteRoomRequest::DeleteRoomRequest(const DeleteRoomRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
   DeleteRoomRequest* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
-
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
   // @@protoc_insertion_point(copy_constructor:lobby.DeleteRoomRequest)
 }
 
-inline void DeleteRoomRequest::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
 
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
 
-DeleteRoomRequest::~DeleteRoomRequest() {
-  // @@protoc_insertion_point(destructor:lobby.DeleteRoomRequest)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
 
-inline void DeleteRoomRequest::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
-}
-
-void DeleteRoomRequest::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void DeleteRoomRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.DeleteRoomRequest)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.room_id_.ClearToEmpty();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* DeleteRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string room_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.DeleteRoomRequest.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* DeleteRoomRequest::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.DeleteRoomRequest)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.DeleteRoomRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.DeleteRoomRequest)
-  return target;
-}
-
-::size_t DeleteRoomRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.DeleteRoomRequest)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData DeleteRoomRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    DeleteRoomRequest::MergeImpl
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeleteRoomRequest::GetClassData() const { return &_class_data_; }
 
 
-void DeleteRoomRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<DeleteRoomRequest*>(&to_msg);
-  auto& from = static_cast<const DeleteRoomRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.DeleteRoomRequest)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
 
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
 
-void DeleteRoomRequest::CopyFrom(const DeleteRoomRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.DeleteRoomRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
 
-bool DeleteRoomRequest::IsInitialized() const {
-  return true;
-}
 
-void DeleteRoomRequest::InternalSwap(DeleteRoomRequest* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
-}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata DeleteRoomRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[21]);
+      file_level_metadata_lobby_2eproto[17]);
 }
 // ===================================================================
 
@@ -6501,793 +4976,60 @@ const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*DeleteRoomResponse::GetClassDa
 ::PROTOBUF_NAMESPACE_ID::Metadata DeleteRoomResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[22]);
+      file_level_metadata_lobby_2eproto[18]);
 }
 // ===================================================================
 
-class ListenRoomConfigUpdatesRequest::_Internal {
+class ListenRoomUpdatesRequest::_Internal {
  public:
 };
 
-ListenRoomConfigUpdatesRequest::ListenRoomConfigUpdatesRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.ListenRoomConfigUpdatesRequest)
+ListenRoomUpdatesRequest::ListenRoomUpdatesRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  // @@protoc_insertion_point(arena_constructor:lobby.ListenRoomUpdatesRequest)
 }
-ListenRoomConfigUpdatesRequest::ListenRoomConfigUpdatesRequest(const ListenRoomConfigUpdatesRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  ListenRoomConfigUpdatesRequest* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
-
+ListenRoomUpdatesRequest::ListenRoomUpdatesRequest(const ListenRoomUpdatesRequest& from)
+  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  ListenRoomUpdatesRequest* const _this = this; (void)_this;
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
-  // @@protoc_insertion_point(copy_constructor:lobby.ListenRoomConfigUpdatesRequest)
+  // @@protoc_insertion_point(copy_constructor:lobby.ListenRoomUpdatesRequest)
 }
 
-inline void ListenRoomConfigUpdatesRequest::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
 
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
 
-ListenRoomConfigUpdatesRequest::~ListenRoomConfigUpdatesRequest() {
-  // @@protoc_insertion_point(destructor:lobby.ListenRoomConfigUpdatesRequest)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
 
-inline void ListenRoomConfigUpdatesRequest::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
-}
 
-void ListenRoomConfigUpdatesRequest::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void ListenRoomConfigUpdatesRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.ListenRoomConfigUpdatesRequest)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.room_id_.ClearToEmpty();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* ListenRoomConfigUpdatesRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string room_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.ListenRoomConfigUpdatesRequest.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* ListenRoomConfigUpdatesRequest::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.ListenRoomConfigUpdatesRequest)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.ListenRoomConfigUpdatesRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.ListenRoomConfigUpdatesRequest)
-  return target;
-}
-
-::size_t ListenRoomConfigUpdatesRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.ListenRoomConfigUpdatesRequest)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ListenRoomConfigUpdatesRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    ListenRoomConfigUpdatesRequest::MergeImpl
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ListenRoomUpdatesRequest::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
 };
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ListenRoomConfigUpdatesRequest::GetClassData() const { return &_class_data_; }
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ListenRoomUpdatesRequest::GetClassData() const { return &_class_data_; }
 
 
-void ListenRoomConfigUpdatesRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<ListenRoomConfigUpdatesRequest*>(&to_msg);
-  auto& from = static_cast<const ListenRoomConfigUpdatesRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.ListenRoomConfigUpdatesRequest)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
 
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
 
-void ListenRoomConfigUpdatesRequest::CopyFrom(const ListenRoomConfigUpdatesRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.ListenRoomConfigUpdatesRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
 
-bool ListenRoomConfigUpdatesRequest::IsInitialized() const {
-  return true;
-}
 
-void ListenRoomConfigUpdatesRequest::InternalSwap(ListenRoomConfigUpdatesRequest* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
-}
 
-::PROTOBUF_NAMESPACE_ID::Metadata ListenRoomConfigUpdatesRequest::GetMetadata() const {
+::PROTOBUF_NAMESPACE_ID::Metadata ListenRoomUpdatesRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[23]);
-}
-// ===================================================================
-
-class ListenRoomConfigUpdatesResponse::_Internal {
- public:
-  using HasBits = decltype(std::declval<ListenRoomConfigUpdatesResponse>()._impl_._has_bits_);
-  static constexpr ::int32_t kHasBitsOffset =
-    8 * PROTOBUF_FIELD_OFFSET(ListenRoomConfigUpdatesResponse, _impl_._has_bits_);
-  static const ::lobby::RoomConfig& updated_config(const ListenRoomConfigUpdatesResponse* msg);
-  static void set_has_updated_config(HasBits* has_bits) {
-    (*has_bits)[0] |= 1u;
-  }
-};
-
-const ::lobby::RoomConfig&
-ListenRoomConfigUpdatesResponse::_Internal::updated_config(const ListenRoomConfigUpdatesResponse* msg) {
-  return *msg->_impl_.updated_config_;
-}
-ListenRoomConfigUpdatesResponse::ListenRoomConfigUpdatesResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.ListenRoomConfigUpdatesResponse)
-}
-ListenRoomConfigUpdatesResponse::ListenRoomConfigUpdatesResponse(const ListenRoomConfigUpdatesResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  ListenRoomConfigUpdatesResponse* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){from._impl_._has_bits_}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.updated_config_){nullptr}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
-    _this->_impl_.updated_config_ = new ::lobby::RoomConfig(*from._impl_.updated_config_);
-  }
-  // @@protoc_insertion_point(copy_constructor:lobby.ListenRoomConfigUpdatesResponse)
-}
-
-inline void ListenRoomConfigUpdatesResponse::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_._has_bits_){}
-    , /*decltype(_impl_._cached_size_)*/{}
-    , decltype(_impl_.updated_config_){nullptr}
-  };
-}
-
-ListenRoomConfigUpdatesResponse::~ListenRoomConfigUpdatesResponse() {
-  // @@protoc_insertion_point(destructor:lobby.ListenRoomConfigUpdatesResponse)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void ListenRoomConfigUpdatesResponse::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  if (this != internal_default_instance()) delete _impl_.updated_config_;
-}
-
-void ListenRoomConfigUpdatesResponse::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void ListenRoomConfigUpdatesResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.ListenRoomConfigUpdatesResponse)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    ABSL_DCHECK(_impl_.updated_config_ != nullptr);
-    _impl_.updated_config_->Clear();
-  }
-  _impl_._has_bits_.Clear();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* ListenRoomConfigUpdatesResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  _Internal::HasBits has_bits{};
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // .lobby.RoomConfig updated_config = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          ptr = ctx->ParseMessage(_internal_mutable_updated_config(), ptr);
-          CHK_(ptr);
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  _impl_._has_bits_.Or(has_bits);
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* ListenRoomConfigUpdatesResponse::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.ListenRoomConfigUpdatesResponse)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  cached_has_bits = _impl_._has_bits_[0];
-  // .lobby.RoomConfig updated_config = 1;
-  if (cached_has_bits & 0x00000001u) {
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(1, _Internal::updated_config(this),
-        _Internal::updated_config(this).GetCachedSize(), target, stream);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.ListenRoomConfigUpdatesResponse)
-  return target;
-}
-
-::size_t ListenRoomConfigUpdatesResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.ListenRoomConfigUpdatesResponse)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // .lobby.RoomConfig updated_config = 1;
-  cached_has_bits = _impl_._has_bits_[0];
-  if (cached_has_bits & 0x00000001u) {
-    total_size += 1 +
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
-        *_impl_.updated_config_);
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ListenRoomConfigUpdatesResponse::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    ListenRoomConfigUpdatesResponse::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ListenRoomConfigUpdatesResponse::GetClassData() const { return &_class_data_; }
-
-
-void ListenRoomConfigUpdatesResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<ListenRoomConfigUpdatesResponse*>(&to_msg);
-  auto& from = static_cast<const ListenRoomConfigUpdatesResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.ListenRoomConfigUpdatesResponse)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
-    _this->_internal_mutable_updated_config()->::lobby::RoomConfig::MergeFrom(
-        from._internal_updated_config());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void ListenRoomConfigUpdatesResponse::CopyFrom(const ListenRoomConfigUpdatesResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.ListenRoomConfigUpdatesResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool ListenRoomConfigUpdatesResponse::IsInitialized() const {
-  return true;
-}
-
-void ListenRoomConfigUpdatesResponse::InternalSwap(ListenRoomConfigUpdatesResponse* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
-  swap(_impl_.updated_config_, other->_impl_.updated_config_);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata ListenRoomConfigUpdatesResponse::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[24]);
-}
-// ===================================================================
-
-class ListenPlayerListUpdatesRequest::_Internal {
- public:
-};
-
-ListenPlayerListUpdatesRequest::ListenPlayerListUpdatesRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.ListenPlayerListUpdatesRequest)
-}
-ListenPlayerListUpdatesRequest::ListenPlayerListUpdatesRequest(const ListenPlayerListUpdatesRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  ListenPlayerListUpdatesRequest* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_room_id().empty()) {
-    _this->_impl_.room_id_.Set(from._internal_room_id(), _this->GetArenaForAllocation());
-  }
-  // @@protoc_insertion_point(copy_constructor:lobby.ListenPlayerListUpdatesRequest)
-}
-
-inline void ListenPlayerListUpdatesRequest::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-  _impl_.room_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.room_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-}
-
-ListenPlayerListUpdatesRequest::~ListenPlayerListUpdatesRequest() {
-  // @@protoc_insertion_point(destructor:lobby.ListenPlayerListUpdatesRequest)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void ListenPlayerListUpdatesRequest::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.room_id_.Destroy();
-}
-
-void ListenPlayerListUpdatesRequest::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void ListenPlayerListUpdatesRequest::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.ListenPlayerListUpdatesRequest)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.room_id_.ClearToEmpty();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* ListenPlayerListUpdatesRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // string room_id = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_room_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "lobby.ListenPlayerListUpdatesRequest.room_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* ListenPlayerListUpdatesRequest::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.ListenPlayerListUpdatesRequest)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    const std::string& _s = this->_internal_room_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.ListenPlayerListUpdatesRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.ListenPlayerListUpdatesRequest)
-  return target;
-}
-
-::size_t ListenPlayerListUpdatesRequest::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.ListenPlayerListUpdatesRequest)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string room_id = 1;
-  if (!this->_internal_room_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_room_id());
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ListenPlayerListUpdatesRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    ListenPlayerListUpdatesRequest::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ListenPlayerListUpdatesRequest::GetClassData() const { return &_class_data_; }
-
-
-void ListenPlayerListUpdatesRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<ListenPlayerListUpdatesRequest*>(&to_msg);
-  auto& from = static_cast<const ListenPlayerListUpdatesRequest&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.ListenPlayerListUpdatesRequest)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_room_id().empty()) {
-    _this->_internal_set_room_id(from._internal_room_id());
-  }
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void ListenPlayerListUpdatesRequest::CopyFrom(const ListenPlayerListUpdatesRequest& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.ListenPlayerListUpdatesRequest)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool ListenPlayerListUpdatesRequest::IsInitialized() const {
-  return true;
-}
-
-void ListenPlayerListUpdatesRequest::InternalSwap(ListenPlayerListUpdatesRequest* other) {
-  using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
-                                       &other->_impl_.room_id_, rhs_arena);
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata ListenPlayerListUpdatesRequest::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[25]);
-}
-// ===================================================================
-
-class ListenPlayerListUpdatesResponse::_Internal {
- public:
-};
-
-ListenPlayerListUpdatesResponse::ListenPlayerListUpdatesResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
-  SharedCtor(arena);
-  // @@protoc_insertion_point(arena_constructor:lobby.ListenPlayerListUpdatesResponse)
-}
-ListenPlayerListUpdatesResponse::ListenPlayerListUpdatesResponse(const ListenPlayerListUpdatesResponse& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message() {
-  ListenPlayerListUpdatesResponse* const _this = this; (void)_this;
-  new (&_impl_) Impl_{
-      decltype(_impl_.players_){from._impl_.players_}
-    , /*decltype(_impl_._cached_size_)*/{}};
-
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  // @@protoc_insertion_point(copy_constructor:lobby.ListenPlayerListUpdatesResponse)
-}
-
-inline void ListenPlayerListUpdatesResponse::SharedCtor(::_pb::Arena* arena) {
-  (void)arena;
-  new (&_impl_) Impl_{
-      decltype(_impl_.players_){arena}
-    , /*decltype(_impl_._cached_size_)*/{}
-  };
-}
-
-ListenPlayerListUpdatesResponse::~ListenPlayerListUpdatesResponse() {
-  // @@protoc_insertion_point(destructor:lobby.ListenPlayerListUpdatesResponse)
-  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
-  (void)arena;
-    return;
-  }
-  SharedDtor();
-}
-
-inline void ListenPlayerListUpdatesResponse::SharedDtor() {
-  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _internal_mutable_players()->~RepeatedPtrField();
-}
-
-void ListenPlayerListUpdatesResponse::SetCachedSize(int size) const {
-  _impl_._cached_size_.Set(size);
-}
-
-void ListenPlayerListUpdatesResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:lobby.ListenPlayerListUpdatesResponse)
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _internal_mutable_players()->Clear();
-  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
-}
-
-const char* ListenPlayerListUpdatesResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
-#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
-  while (!ctx->Done(&ptr)) {
-    ::uint32_t tag;
-    ptr = ::_pbi::ReadTag(ptr, &tag);
-    switch (tag >> 3) {
-      // repeated .lobby.RoomPlayer players = 1;
-      case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          ptr -= 1;
-          do {
-            ptr += 1;
-            ptr = ctx->ParseMessage(_internal_add_players(), ptr);
-            CHK_(ptr);
-            if (!ctx->DataAvailable(ptr)) break;
-          } while (::PROTOBUF_NAMESPACE_ID::internal::ExpectTag<10>(ptr));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      default:
-        goto handle_unusual;
-    }  // switch
-  handle_unusual:
-    if ((tag == 0) || ((tag & 7) == 4)) {
-      CHK_(ptr);
-      ctx->SetLastTag(tag);
-      goto message_done;
-    }
-    ptr = UnknownFieldParse(
-        tag,
-        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
-        ptr, ctx);
-    CHK_(ptr != nullptr);
-  }  // while
-message_done:
-  return ptr;
-failure:
-  ptr = nullptr;
-  goto message_done;
-#undef CHK_
-}
-
-::uint8_t* ListenPlayerListUpdatesResponse::_InternalSerialize(
-    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:lobby.ListenPlayerListUpdatesResponse)
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  // repeated .lobby.RoomPlayer players = 1;
-  for (unsigned i = 0,
-      n = static_cast<unsigned>(this->_internal_players_size()); i < n; i++) {
-    const auto& repfield = this->_internal_players(i);
-    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-        InternalWriteMessage(1, repfield, repfield.GetCachedSize(), target, stream);
-  }
-
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:lobby.ListenPlayerListUpdatesResponse)
-  return target;
-}
-
-::size_t ListenPlayerListUpdatesResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:lobby.ListenPlayerListUpdatesResponse)
-  ::size_t total_size = 0;
-
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // repeated .lobby.RoomPlayer players = 1;
-  total_size += 1UL * this->_internal_players_size();
-  for (const auto& msg : this->_internal_players()) {
-    total_size +=
-      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(msg);
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData ListenPlayerListUpdatesResponse::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
-    ListenPlayerListUpdatesResponse::MergeImpl
-};
-const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*ListenPlayerListUpdatesResponse::GetClassData() const { return &_class_data_; }
-
-
-void ListenPlayerListUpdatesResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
-  auto* const _this = static_cast<ListenPlayerListUpdatesResponse*>(&to_msg);
-  auto& from = static_cast<const ListenPlayerListUpdatesResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.ListenPlayerListUpdatesResponse)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  _this->_internal_mutable_players()->MergeFrom(from._internal_players());
-  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void ListenPlayerListUpdatesResponse::CopyFrom(const ListenPlayerListUpdatesResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:lobby.ListenPlayerListUpdatesResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool ListenPlayerListUpdatesResponse::IsInitialized() const {
-  return true;
-}
-
-void ListenPlayerListUpdatesResponse::InternalSwap(ListenPlayerListUpdatesResponse* other) {
-  using std::swap;
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  _internal_mutable_players()->InternalSwap(other->_internal_mutable_players());
-}
-
-::PROTOBUF_NAMESPACE_ID::Metadata ListenPlayerListUpdatesResponse::GetMetadata() const {
-  return ::_pbi::AssignDescriptors(
-      &descriptor_table_lobby_2eproto_getter, &descriptor_table_lobby_2eproto_once,
-      file_level_metadata_lobby_2eproto[26]);
+      file_level_metadata_lobby_2eproto[19]);
 }
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace lobby
 PROTOBUF_NAMESPACE_OPEN
-template<> PROTOBUF_NOINLINE ::lobby::RoomPreview*
-Arena::CreateMaybeMessage< ::lobby::RoomPreview >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::RoomPreview >(arena);
+template<> PROTOBUF_NOINLINE ::lobby::RoomConnectionInfo*
+Arena::CreateMaybeMessage< ::lobby::RoomConnectionInfo >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::lobby::RoomConnectionInfo >(arena);
+}
+template<> PROTOBUF_NOINLINE ::lobby::RoomConfig*
+Arena::CreateMaybeMessage< ::lobby::RoomConfig >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::lobby::RoomConfig >(arena);
+}
+template<> PROTOBUF_NOINLINE ::lobby::Room*
+Arena::CreateMaybeMessage< ::lobby::Room >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::lobby::Room >(arena);
 }
 template<> PROTOBUF_NOINLINE ::lobby::CreateRoomRequest*
 Arena::CreateMaybeMessage< ::lobby::CreateRoomRequest >(Arena* arena) {
@@ -7313,22 +5055,6 @@ template<> PROTOBUF_NOINLINE ::lobby::GetRoomListResponse*
 Arena::CreateMaybeMessage< ::lobby::GetRoomListResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::lobby::GetRoomListResponse >(arena);
 }
-template<> PROTOBUF_NOINLINE ::lobby::RoomConnectionInfo*
-Arena::CreateMaybeMessage< ::lobby::RoomConnectionInfo >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::RoomConnectionInfo >(arena);
-}
-template<> PROTOBUF_NOINLINE ::lobby::RoomPlayer*
-Arena::CreateMaybeMessage< ::lobby::RoomPlayer >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::RoomPlayer >(arena);
-}
-template<> PROTOBUF_NOINLINE ::lobby::Room*
-Arena::CreateMaybeMessage< ::lobby::Room >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::Room >(arena);
-}
-template<> PROTOBUF_NOINLINE ::lobby::RoomConfig*
-Arena::CreateMaybeMessage< ::lobby::RoomConfig >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::RoomConfig >(arena);
-}
 template<> PROTOBUF_NOINLINE ::lobby::UpdateRoomStateRequest*
 Arena::CreateMaybeMessage< ::lobby::UpdateRoomStateRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::lobby::UpdateRoomStateRequest >(arena);
@@ -7344,14 +5070,6 @@ Arena::CreateMaybeMessage< ::lobby::UpdateRoomConfigRequest >(Arena* arena) {
 template<> PROTOBUF_NOINLINE ::lobby::UpdateRoomConfigResponse*
 Arena::CreateMaybeMessage< ::lobby::UpdateRoomConfigResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::lobby::UpdateRoomConfigResponse >(arena);
-}
-template<> PROTOBUF_NOINLINE ::lobby::UpdatePlayerStateRequest*
-Arena::CreateMaybeMessage< ::lobby::UpdatePlayerStateRequest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::UpdatePlayerStateRequest >(arena);
-}
-template<> PROTOBUF_NOINLINE ::lobby::UpdatePlayerStateResponse*
-Arena::CreateMaybeMessage< ::lobby::UpdatePlayerStateResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::UpdatePlayerStateResponse >(arena);
 }
 template<> PROTOBUF_NOINLINE ::lobby::ChangeRoomPasswordRequest*
 Arena::CreateMaybeMessage< ::lobby::ChangeRoomPasswordRequest >(Arena* arena) {
@@ -7377,21 +5095,9 @@ template<> PROTOBUF_NOINLINE ::lobby::DeleteRoomResponse*
 Arena::CreateMaybeMessage< ::lobby::DeleteRoomResponse >(Arena* arena) {
   return Arena::CreateMessageInternal< ::lobby::DeleteRoomResponse >(arena);
 }
-template<> PROTOBUF_NOINLINE ::lobby::ListenRoomConfigUpdatesRequest*
-Arena::CreateMaybeMessage< ::lobby::ListenRoomConfigUpdatesRequest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::ListenRoomConfigUpdatesRequest >(arena);
-}
-template<> PROTOBUF_NOINLINE ::lobby::ListenRoomConfigUpdatesResponse*
-Arena::CreateMaybeMessage< ::lobby::ListenRoomConfigUpdatesResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::ListenRoomConfigUpdatesResponse >(arena);
-}
-template<> PROTOBUF_NOINLINE ::lobby::ListenPlayerListUpdatesRequest*
-Arena::CreateMaybeMessage< ::lobby::ListenPlayerListUpdatesRequest >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::ListenPlayerListUpdatesRequest >(arena);
-}
-template<> PROTOBUF_NOINLINE ::lobby::ListenPlayerListUpdatesResponse*
-Arena::CreateMaybeMessage< ::lobby::ListenPlayerListUpdatesResponse >(Arena* arena) {
-  return Arena::CreateMessageInternal< ::lobby::ListenPlayerListUpdatesResponse >(arena);
+template<> PROTOBUF_NOINLINE ::lobby::ListenRoomUpdatesRequest*
+Arena::CreateMaybeMessage< ::lobby::ListenRoomUpdatesRequest >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::lobby::ListenRoomUpdatesRequest >(arena);
 }
 PROTOBUF_NAMESPACE_CLOSE
 // @@protoc_insertion_point(global_scope)
