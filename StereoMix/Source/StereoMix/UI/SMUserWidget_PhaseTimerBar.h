@@ -25,6 +25,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> PhaseTimerBar;
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	TWeakObjectPtr<UMaterialInstanceDynamic> PhaseTimerBarMaterialInstanceDynamic;
 };

@@ -7,8 +7,10 @@
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
+#include "Components/Image.h"
 #include "Components/ScaleBox.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMLog.h"
 
 USMUserWidget_ScreenIndicator::USMUserWidget_ScreenIndicator() {}
@@ -208,5 +210,40 @@ FVector2D USMUserWidget_ScreenIndicator::GetScreenLocationForTargetBehindCamera(
 		ScreenLocation.Y = ScreenCenter.Y - (UpDot / ForwardDot) * ScreenCenter.Y;
 
 		return ScreenLocation;
+	}
+}
+
+void USMUserWidget_ScreenIndicator::SetTarget(AActor* InTargetActor)
+{
+	TargetActor = InTargetActor;
+	ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(TargetActor);
+	if (TargetTeamInterface)
+	{
+		ESMTeam TargetTeam = TargetTeamInterface->GetTeam();
+
+		switch (TargetTeam)
+		{
+			case ESMTeam::None:
+			{
+				break;
+			}
+			case ESMTeam::EDM:
+			{
+				UMaterialInstanceDynamic* ArrowMaterial = IMG_Arrow->GetDynamicMaterial();
+				UMaterialInstanceDynamic* BodyMID = IMG_Body->GetDynamicMaterial();
+				ArrowMaterial->SetScalarParameterValue(TEXT("Team"), 0.0f);
+				BodyMID->SetScalarParameterValue(TEXT("Team"), 0.0f);
+				break;
+			}
+			case ESMTeam::FutureBass:
+			{
+				UMaterialInstanceDynamic* ArrowMaterial = IMG_Arrow->GetDynamicMaterial();
+				UMaterialInstanceDynamic* BodyMID = IMG_Body->GetDynamicMaterial();
+				ArrowMaterial->SetScalarParameterValue(TEXT("Team"), 1.0f);
+				BodyMID->SetScalarParameterValue(TEXT("Team"), 1.0f);
+				
+				break;
+			}
+		}
 	}
 }

@@ -6,6 +6,7 @@
 #include "SMUserWidget.h"
 #include "SMUserWidget_ScreenIndicator.generated.h"
 
+class UImage;
 class UCanvasPanel;
 class UScaleBox;
 
@@ -47,9 +48,15 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScaleBox> Arrow;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> IMG_Arrow;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> IMG_Body;
+
 public:
-	// 인디케이터가 가리킬 대상을 설정합니다.
-	void SetTarget(AActor* InTargetActor) { TargetActor = InTargetActor; }
+	// 인디케이터가 가리킬 대상을 설정하고 인디케이터를 활성화합니다.
+	void SetTarget(AActor* InTargetActor);
 
 protected:
 	/**
