@@ -126,14 +126,18 @@ void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle
 		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
 	}
 
-	// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 제거하도록 합니다.
-	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
-
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void USMGameplayAbility_Stun::OnStunTimeEnd()
 {
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
@@ -143,6 +147,9 @@ void USMGameplayAbility_Stun::OnStunTimeEnd()
 
 	// 잡을 수 없는 태그를 부착합니다. 추가 잡기를 방지합니다.
 	SourceASC->AddTag(SMTags::Character::State::Uncatchable);
+
+	// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 제거하도록 합니다.
+	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
 
 	// 스매시 당하는 상태인 경우의 처리입니다.
 	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Smashed))
