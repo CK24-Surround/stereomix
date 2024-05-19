@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
-#include "SMUserWidget_OffScreenIndicator.generated.h"
+#include "SMUserWidget_ScreenIndicator.generated.h"
 
 class UCanvasPanel;
 class UScaleBox;
@@ -13,12 +13,12 @@ class UScaleBox;
  * 
  */
 UCLASS()
-class STEREOMIX_API USMUserWidget_OffScreenIndicator : public USMUserWidget
+class STEREOMIX_API USMUserWidget_ScreenIndicator : public USMUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	USMUserWidget_OffScreenIndicator();
+	USMUserWidget_ScreenIndicator();
 
 	virtual bool Initialize() override;
 

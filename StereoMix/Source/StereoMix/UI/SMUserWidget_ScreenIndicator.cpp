@@ -1,7 +1,7 @@
 // Copyright Surround, Inc. All Rights Reserved.
 
 
-#include "SMUserWidget_OffScreenIndicator.h"
+#include "SMUserWidget_ScreenIndicator.h"
 
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
@@ -11,9 +11,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "Utilities/SMLog.h"
 
-USMUserWidget_OffScreenIndicator::USMUserWidget_OffScreenIndicator() {}
+USMUserWidget_ScreenIndicator::USMUserWidget_ScreenIndicator() {}
 
-bool USMUserWidget_OffScreenIndicator::Initialize()
+bool USMUserWidget_ScreenIndicator::Initialize()
 {
 	if (!Super::Initialize())
 	{
@@ -37,7 +37,7 @@ bool USMUserWidget_OffScreenIndicator::Initialize()
 	return true;
 }
 
-void USMUserWidget_OffScreenIndicator::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
+void USMUserWidget_ScreenIndicator::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
@@ -47,7 +47,7 @@ void USMUserWidget_OffScreenIndicator::NativeTick(const FGeometry& MyGeometry, f
 	}
 }
 
-void USMUserWidget_OffScreenIndicator::UpdateIndicator(const FGeometry& MyGeometry)
+void USMUserWidget_ScreenIndicator::UpdateIndicator(const FGeometry& MyGeometry)
 {
 	UCanvasPanelSlot* BaseSlot = Cast<UCanvasPanelSlot>(Base->Slot);
 	if (!ensureAlways(BaseSlot))
@@ -112,7 +112,7 @@ void USMUserWidget_OffScreenIndicator::UpdateIndicator(const FGeometry& MyGeomet
 	BaseSlot->SetPosition(LocalCoordinate);
 }
 
-bool USMUserWidget_OffScreenIndicator::IsInBounds(const FVector2D& TargetScreenLocation, const FVector2D& MinBoundary, const FVector2D& MaxBoundary)
+bool USMUserWidget_ScreenIndicator::IsInBounds(const FVector2D& TargetScreenLocation, const FVector2D& MinBoundary, const FVector2D& MaxBoundary)
 {
 	auto IsAxisInBounds = [](double Min, double Max, double Value)
 	{
@@ -125,7 +125,7 @@ bool USMUserWidget_OffScreenIndicator::IsInBounds(const FVector2D& TargetScreenL
 	return Result;
 }
 
-FVector2D USMUserWidget_OffScreenIndicator::GetOffScreenIndicatorScreenLocation(const FGeometry& InGeometry, const FVector2D& TargetScreenLocation, const FVector2D& ViewportSize, const FVector2D& ScreenCenter, float ViewportOffset, const FVector2D& MinBoundary, const FVector2D& MaxBoundary)
+FVector2D USMUserWidget_ScreenIndicator::GetOffScreenIndicatorScreenLocation(const FGeometry& InGeometry, const FVector2D& TargetScreenLocation, const FVector2D& ViewportSize, const FVector2D& ScreenCenter, float ViewportOffset, const FVector2D& MinBoundary, const FVector2D& MaxBoundary)
 {
 	// 스크린 좌표의 중심에서 타겟을 향한 방향과 타겟의 위치를 저장합니다.
 	const FVector2D Direction = (TargetScreenLocation - ScreenCenter).GetSafeNormal();
@@ -173,7 +173,7 @@ FVector2D USMUserWidget_OffScreenIndicator::GetOffScreenIndicatorScreenLocation(
 	return OffScreenLocation;
 }
 
-FVector2D USMUserWidget_OffScreenIndicator::GetScreenLocationForTargetBehindCamera(const FVector& TargetLocation, const FVector2D& ViewportSize, const FVector2D& ScreenCenter)
+FVector2D USMUserWidget_ScreenIndicator::GetScreenLocationForTargetBehindCamera(const FVector& TargetLocation, const FVector2D& ViewportSize, const FVector2D& ScreenCenter)
 {
 	APlayerController* SourcePlayerController = GetOwningPlayer();
 	if (!ensureAlways(SourcePlayerController))
