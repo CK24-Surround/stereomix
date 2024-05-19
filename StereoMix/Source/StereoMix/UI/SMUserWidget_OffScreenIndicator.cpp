@@ -127,78 +127,50 @@ bool USMUserWidget_OffScreenIndicator::IsInBounds(const FVector2D& TargetScreenL
 
 FVector2D USMUserWidget_OffScreenIndicator::GetOffScreenIndicatorScreenLocation(const FGeometry& InGeometry, const FVector2D& TargetScreenLocation, const FVector2D& ViewportSize, const FVector2D& ScreenCenter, float ViewportOffset, const FVector2D& MinBoundary, const FVector2D& MaxBoundary)
 {
-	// 스크린좌표의 중심에서 타겟을 향한 방향과 타겟의 위치를 저장합니다.
+	// 스크린 좌표의 중심에서 타겟을 향한 방향과 타겟의 위치를 저장합니다.
 	const FVector2D Direction = (TargetScreenLocation - ScreenCenter).GetSafeNormal();
-	FVector2D ClampedTargetScreenLocation = TargetScreenLocation;
+	if (Direction == FVector2D::ZeroVector)
+	{
+		return FVector2D::ZeroVector;
+	}
 
-	// 화면 경계와의 교점 계산하기 위한 배열입니다.
-	TArray<FVector2D> Intersections;
+	FVector2D OffScreenLocation = TargetScreenLocation;
 
-	// 방향이 좌측을 향한 경우입니다.
+	// CheckX를 통해 사용되는 축이 X축인지 Y축인지 구별하는 람다식입니다.
+	auto CalculateIntersection = [&ScreenCenter, &Direction, &OffScreenLocation](bool CheckX, float ScreenCenterCoord, float DirectionCoord, float BoundaryCoord, float OtherMinBoundaryCoord, float OtherMaxBoundaryCoord)
+	{
+		// 한 축의 중심을 기준으로 한 축의 경계까지의 길이를 구하고 이를 한 축의 방향으로 나눕니다. 이를 통해 어떤 길이를 가질떄 왼쪽 경계에 도달할 수 있는지 구할 수 있습니다.
+		const float DistanceToBoundary = (BoundaryCoord - ScreenCenterCoord) / DirectionCoord;
+		FVector2D Intersection = ScreenCenter + (Direction * DistanceToBoundary);
+
+		// 반대되는 축의 최소 경계와 최대 경계 사이에 존재하는지 확인합니다. 이 사이에 존재한다면 유효한 교점입니다.
+		const float IntersectionCoord = CheckX ? Intersection.Y : Intersection.X;
+		if (OtherMinBoundaryCoord <= IntersectionCoord && IntersectionCoord <= OtherMaxBoundaryCoord)
+		{
+			OffScreenLocation = Intersection;
+		}
+	};
+
+	// 가로, 세로 순서로 교점을 계산하고 유효하면 ClampedTargetScreenLocation에 저장합니다. 가로, 세로에서 모두 유효한 교점이 나온다면 세로측 교점을 우선시하게됩니다. (사실상 같은 값)
 	if (Direction.X < 0)
 	{
-		// 중심을 기준으로 왼쪽 경계까지의 길이를 구한 뒤 방향의 x로 나눕니다. 이를 통해 어떤 길이를 가질때 왼쪽 경계에 도달할 수 있는지 구할 수 있습니다.
-		float T = (MinBoundary.X - ScreenCenter.X) / Direction.X;
-		// 중심으로부터 타겟을 방향으로 위에서 구한 길이만큼 곱하면 왼쪽 경계에 도달하는 선을 구할 수 있습니다.
-		FVector2D Intersection = ScreenCenter + Direction * T;
-		// 이 선의 Y값이 상단과 하단 경계 사이에 속한다면 유효한 경계내에 있는 것을 의미하므로 값을 저장해둡니다.
-		if (Intersection.Y >= MinBoundary.Y && Intersection.Y <= MaxBoundary.Y)
-		{
-			Intersections.Add(Intersection);
-		}
+		CalculateIntersection(true, ScreenCenter.X, Direction.X, MinBoundary.X, MinBoundary.Y, MaxBoundary.Y);
 	}
-
-	// 방향이 우측을 향한 경우입니다.
-	if (Direction.X > 0)
+	else if (Direction.X > 0)
 	{
-		float T = (MaxBoundary.X - ScreenCenter.X) / Direction.X;
-		FVector2D Intersection = ScreenCenter + Direction * T;
-		if (Intersection.Y >= MinBoundary.Y && Intersection.Y <= MaxBoundary.Y)
-		{
-			Intersections.Add(Intersection);
-		}
+		CalculateIntersection(true, ScreenCenter.X, Direction.X, MaxBoundary.X, MinBoundary.Y, MaxBoundary.Y);
 	}
 
-	// 방향이 상단을 향한 경우입니다. (스크린 좌표이기 때문에 음수인 경우 상단입니다.)
 	if (Direction.Y < 0)
 	{
-		float T = (MinBoundary.Y - ScreenCenter.Y) / Direction.Y;
-		FVector2D Intersection = ScreenCenter + Direction * T;
-		if (Intersection.X >= MinBoundary.X && Intersection.X <= MaxBoundary.X)
-		{
-			Intersections.Add(Intersection);
-		}
+		CalculateIntersection(false, ScreenCenter.Y, Direction.Y, MinBoundary.Y, MinBoundary.X, MaxBoundary.X);
 	}
-
-	// 방향이 하단을 향한 경우입니다.
-	if (Direction.Y > 0)
+	else if (Direction.Y > 0)
 	{
-		float T = (MaxBoundary.Y - ScreenCenter.Y) / Direction.Y;
-		FVector2D Intersection = ScreenCenter + Direction * T;
-		if (Intersection.X >= MinBoundary.X && Intersection.X <= MaxBoundary.X)
-		{
-			Intersections.Add(Intersection);
-		}
+		CalculateIntersection(false, ScreenCenter.Y, Direction.Y, MaxBoundary.Y, MinBoundary.X, MaxBoundary.X);
 	}
 
-	// 가장 가까운 교점 선택합니다.
-	// 이해를 돕기 위한 예시입니다.
-	// 위의 식에서 좌측 경계면에서 절반보다 위쪽에 인디케이터가 찍혀야하는 경우 if문에 Direction.X < 0와 Direction.Y < 0가 ture가 됩니다.
-	// 이 때 교점의 거리가 Direction.Y < 0인 경우는 굉장히 멀게 찍혀 좌측 경계면을 넘어 버리게 될 것입니다. 이처럼 대부분의 경우 Intersections는 1개의 값만 갖게됩니다.
-	// 그렇다면 조건자체를 경계면을 넘는 쪽만 계산하는게 더 좋다고 생각할 수 있습니다. 하지만 문제가 생기게됩니다. 확률은 매우 낮지만 두가지 경계면에 걸쳐 있는 경우가 존재할 수 있습니다.
-	// 이 경우 올바른 처리가 되지 않습니다. 이런 상황을 방지하고자 아래 수식을 추가했습니다.
-	float MinDistanceSqaured = FLT_MAX;
-	for (const FVector2D& Intersection : Intersections)
-	{
-		float DistanceSqaured = FVector2D::DistSquared(ScreenCenter, Intersection);
-		if (DistanceSqaured < MinDistanceSqaured)
-		{
-			MinDistanceSqaured = DistanceSqaured;
-			ClampedTargetScreenLocation = Intersection;
-		}
-	}
-
-	return ClampedTargetScreenLocation;
+	return OffScreenLocation;
 }
 
 FVector2D USMUserWidget_OffScreenIndicator::GetScreenLocationForTargetBehindCamera(const FVector& TargetLocation, const FVector2D& ViewportSize, const FVector2D& ScreenCenter)
