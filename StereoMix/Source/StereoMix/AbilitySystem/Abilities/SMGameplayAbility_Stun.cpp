@@ -92,27 +92,42 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	// 스턴 즉시 이펙트를 재생합니다.
 	FGameplayCueParameters GCParams;
 	GCParams.Instigator = SourceCharacter->GetLastAttackInstigator();
-
 	GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
 
 	SourceASC->AddGameplayCue(SMTags::GameplayCue::Stun, GCParams);
+
+	// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 활성화하도록 합니다.
+	SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
 }
 
 void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (ensureAlways(SourceASC))
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
 	{
-		// 스턴 이펙트를 종료합니다.
-		SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Stun);
-
-		if (!bWasCancelled)
-		{
-			// 면역상태로 진입합니다. 딜레이로 인해 데미지를 받을 수도 있으니 GA실행 전에 먼저 면역태그를 추가합니다.
-			SourceASC->AddTag(SMTags::Character::State::Immune);
-			SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
-		}
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, true);
+		return;
 	}
+
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
+	{
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, true);
+		return;
+	}
+
+	// 스턴 이펙트를 종료합니다.
+	SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Stun);
+
+	if (!bWasCancelled)
+	{
+		// 면역상태로 진입합니다. 딜레이로 인해 데미지를 받을 수도 있으니 GA실행 전에 먼저 면역태그를 추가합니다.
+		SourceASC->AddTag(SMTags::Character::State::Immune);
+		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
+	}
+
+	// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 제거하도록 합니다.
+	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }

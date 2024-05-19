@@ -122,8 +122,8 @@ void ASMPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	CachedStereoMixPlayerController = GetController<ASMPlayerController>();
-	check(CachedStereoMixPlayerController);
+	CachedSMPlayerController = GetController<ASMPlayerController>();
+	check(CachedSMPlayerController);
 
 	InitASC();
 }
@@ -144,8 +144,8 @@ void ASMPlayerCharacter::OnRep_Controller()
 {
 	Super::OnRep_Controller();
 
-	CachedStereoMixPlayerController = GetController<ASMPlayerController>();
-	check(CachedStereoMixPlayerController);
+	CachedSMPlayerController = GetController<ASMPlayerController>();
+	check(CachedSMPlayerController);
 }
 
 void ASMPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -424,10 +424,10 @@ FVector ASMPlayerCharacter::GetCursorTargetingPoint(bool bIsZeroBasis)
 
 	FVector Result(0.0, 0.0, BasisLocation.Z);
 
-	if (CachedStereoMixPlayerController)
+	if (CachedSMPlayerController)
 	{
 		FVector WorldLocation, WorldDirection;
-		CachedStereoMixPlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+		CachedSMPlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
 		const FPlane Plane(BasisLocation, FVector::UpVector);
 		const FVector IntersectionPoint = FMath::RayPlaneIntersection(WorldLocation, WorldDirection, Plane);
 		if (!IntersectionPoint.ContainsNaN())
@@ -508,6 +508,50 @@ void ASMPlayerCharacter::Landed(const FHitResult& Hit)
 void ASMPlayerCharacter::SetCharacterStateVisibility_Implementation(bool bEnable)
 {
 	CharacterStateWidgetComponent->SetVisibility(bEnable);
+}
+
+void ASMPlayerCharacter::MulticastRPCAddScreenIndicatorToSelf_Implementation(AActor* TargetActor)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	// 자기 자신은 제외합니다.
+	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
+	if (TargetCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 추가해줍니다.
+	ASMPlayerController* LocalPlayerController = Cast<ASMPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (ensureAlways(LocalPlayerController))
+	{
+		LocalPlayerController->AddScreendIndicator(this);
+	}
+}
+
+void ASMPlayerCharacter::MulticastRPCRemoveScreenIndicatorToSelf_Implementation(AActor* TargetActor)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	// 자기 자신은 제외합니다.
+	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
+	if (TargetCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 제거합니다.
+	ASMPlayerController* LocalPlayerController = Cast<ASMPlayerController>(GetWorld()->GetFirstPlayerController());
+	if (ensureAlways(LocalPlayerController))
+	{
+		LocalPlayerController->RemoveScreenIndicator(TargetActor);
+	}
 }
 
 void ASMPlayerCharacter::SetEnableCollision(bool bInEnableCollision)

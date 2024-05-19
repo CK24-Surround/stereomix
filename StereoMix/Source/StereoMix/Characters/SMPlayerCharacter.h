@@ -132,7 +132,7 @@ protected:
 // ~Caching Section
 protected:
 	UPROPERTY()
-	TObjectPtr<ASMPlayerController> CachedStereoMixPlayerController;
+	TObjectPtr<ASMPlayerController> CachedSMPlayerController;
 // ~Caching Section
 
 // ~GAS Section
@@ -218,6 +218,14 @@ public:
 	/** 캐릭터 상태 위젯의 가시성을 조절합니다. */
 	UFUNCTION(NetMulticast, Unreliable)
 	void SetCharacterStateVisibility(bool bEnable);
+
+	/** 다른 클라이언트들에게 자신을 타겟으로 하는 인디케이터를 추가합니다. */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCAddScreenIndicatorToSelf(AActor* TargetActor);
+
+	/** 다른 클라이언트들에게 자신을 타겟으로 하는 인디케이터를 제거합니다. */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCRemoveScreenIndicatorToSelf(AActor* TargetActor);
 // ~Widget Section
 
 // ~State Section
@@ -280,7 +288,7 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	FName CatchSocket = TEXT("CatchSlot");
 // ~Catch Section
-	
+
 // ~Trail Section
 public:
 	ECharacterMoveTrailState GetCharacterMoveTrailState() { return CharacterMoveTrailState; }

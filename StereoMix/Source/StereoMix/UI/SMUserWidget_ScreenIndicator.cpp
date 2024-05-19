@@ -8,7 +8,7 @@
 #include "Components/CanvasPanel.h"
 #include "Components/CanvasPanelSlot.h"
 #include "Components/ScaleBox.h"
-#include "Kismet/GameplayStatics.h"
+#include "GameFramework/Character.h"
 #include "Utilities/SMLog.h"
 
 USMUserWidget_ScreenIndicator::USMUserWidget_ScreenIndicator() {}
@@ -18,20 +18,6 @@ bool USMUserWidget_ScreenIndicator::Initialize()
 	if (!Super::Initialize())
 	{
 		return false;
-	}
-
-	// TODO: 테스트를 위한 코드입니다.
-	{
-		if (GetOwningPlayer())
-		{
-			TArray<AActor*> Actors;
-			UGameplayStatics::GetAllActorsWithTag(GetOwningPlayer(), TEXT("IndicatorTester"), Actors);
-			if (Actors.IsValidIndex(0))
-			{
-				TargetActor = Actors[0];
-				NET_LOG(GetOwningPlayer(), Warning, TEXT("%s"), *TargetActor->GetName());
-			}
-		}
 	}
 
 	return true;
@@ -70,7 +56,18 @@ void USMUserWidget_ScreenIndicator::UpdateIndicator(const FGeometry& MyGeometry)
 	const FVector2D ScreenCenter(ViewportSize.X / 2.0, ViewportSize.Y / 2.0);
 
 	// 타겟의 월드 좌표를 스크린좌표로 변환합니다.
-	const FVector TargetLocation = TargetActor->GetActorLocation();
+	ACharacter* TargetCharacter = Cast<ACharacter>(TargetActor);
+	FVector TargetLocation = TargetActor->GetActorLocation();
+	if (TargetCharacter)
+	{
+		USkeletalMeshComponent* TargetMesh = TargetCharacter->GetMesh();
+		if (ensureAlways(TargetMesh))
+		{
+			const FName SocketName = TEXT("Trail-Point");
+			TargetLocation = TargetMesh->GetSocketLocation(SocketName);
+		}
+	}
+
 	FVector2D TargetScreenLocation;
 	if (!SourcePlayerController->ProjectWorldLocationToScreen(TargetLocation, TargetScreenLocation, true))
 	{

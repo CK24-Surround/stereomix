@@ -6,10 +6,13 @@
 #include "EnhancedInputSubsystems.h"
 #include "SMPlayerState.h"
 #include "Blueprint/UserWidget.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "Data/SMControlData.h"
 #include "UI/SMUserWidget_HUD.h"
+#include "UI/SMUserWidget_ScreenIndicator.h"
 #include "UI/SMUserWidget_VictoryDefeat.h"
 #include "Utilities/SMAssetPath.h"
+#include "Utilities/SMLog.h"
 
 ASMPlayerController::ASMPlayerController()
 {
@@ -37,10 +40,10 @@ void ASMPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, Cast<UClass>(HUDWidgetClass));
+	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, HUDWidgetClass);
 	HUDWidget->AddToViewport(0);
 
-	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, Cast<UClass>(VictoryDefeatWidgetClass));
+	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass);
 	VictoryDefeatWidget->AddToViewport(1);
 
 	ASMPlayerState* SMPlayerState = GetPlayerState<ASMPlayerState>();
@@ -69,4 +72,49 @@ void ASMPlayerController::InitControl()
 	FInputModeGameOnly InputModeGameOnly;
 	InputModeGameOnly.SetConsumeCaptureMouseDown(false);
 	// SetInputMode(InputModeGameOnly);
+}
+
+void ASMPlayerController::AddScreendIndicator(AActor* TargetActor)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 추가합니다. 
+	if (!Cast<ASMPlayerCharacter>(GetPawn()))
+	{
+		return;
+	}
+
+	// 인디케이터를 생성하고 타겟을 지정합니다.
+	USMUserWidget_ScreenIndicator* OffScreendIndicator = CreateWidget<USMUserWidget_ScreenIndicator>(this, OffScreenIndicatorClass);
+	OffScreendIndicator->AddToViewport(-1);
+	OffScreendIndicator->SetTarget(TargetActor);
+	OffScreenIndicators.Add(TargetActor, OffScreendIndicator);
+}
+
+void ASMPlayerController::RemoveScreenIndicator(AActor* TargetActor)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 제거합니다. 
+	if (!Cast<ASMPlayerCharacter>(GetPawn()))
+	{
+		return;
+	}
+
+	// 인디케이터를 제거합니다. 중복 제거되도 문제는 없습니다.
+	TObjectPtr<USMUserWidget_ScreenIndicator>* OffScreendIndicator = OffScreenIndicators.Find(TargetActor);
+	if (!OffScreendIndicator)
+	{
+		return;
+	}
+
+	(*OffScreendIndicator)->RemoveFromParent();
+	(*OffScreendIndicator)->ConditionalBeginDestroy();
+	OffScreenIndicators.Remove(TargetActor);
 }

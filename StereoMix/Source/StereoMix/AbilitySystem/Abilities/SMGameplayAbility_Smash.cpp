@@ -10,12 +10,12 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraSystem.h"
-#include "Tiles/SMTile.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
 #include "Data/SMSpecialAction.h"
 #include "FunctionLibraries/SMCatchInteractionBlueprintLibrary.h"
+#include "Player/SMPlayerController.h"
 #include "Utilities/SMLog.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
@@ -209,6 +209,15 @@ void USMGameplayAbility_Smash::OnSmash()
 		}
 
 		SourceCIC->SetActorIAmCatching(nullptr);
+	}
+	else
+	{
+		// 인디케이터를 제거합니다.
+		ASMPlayerController* SourceController = Cast<ASMPlayerController>(SourceCharacter->Controller);
+		if (ensureAlways(SourceController))
+		{
+			SourceController->RemoveScreenIndicator(TargetActor);
+		}
 	}
 }
 
