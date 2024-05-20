@@ -145,7 +145,7 @@
 	</object>
 	<object class="EventMixerGroup" id="{2b2c7e4a-54ea-411a-b92f-c924529578b0}">
 		<property name="volume">
-			<value>-3.5</value>
+			<value>-11</value>
 		</property>
 		<property name="name">
 			<value>Grab</value>
@@ -336,6 +336,9 @@
 	<object class="ThreeEQEffect" id="{bc047c3e-d45f-4c5e-831b-9bbeb62542b7}">
 		<property name="lowGain">
 			<value>4</value>
+		</property>
+		<property name="highGain">
+			<value>-7.5</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{e4a2a072-fdbe-4ec6-80b7-d91fef238621}">

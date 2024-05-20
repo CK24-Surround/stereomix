@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{e62f6258-1f0d-44c0-9fd5-8961a0e64295}">
+		<property name="name">
+			<value>Team</value>
+		</property>
+		<relationship name="folder">
+			<destination>{e10234b1-19f2-434a-ba6d-03bb15ebcf75}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{3f50adc7-eca2-42d4-906e-468a47fc26db}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{3f50adc7-eca2-42d4-906e-468a47fc26db}">
+		<property name="parameterType">
+			<value>2</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="enumerationLabels">
+			<value>Friendly</value>
+			<value>Enemy</value>
+		</property>
+		<property name="isGlobal">
+			<value>true</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+		<property name="isExposedRecursively">
+			<value>false</value>
+		</property>
+	</object>
+</objects>
