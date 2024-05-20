@@ -210,7 +210,7 @@
 			<value>-6.5</value>
 		</property>
 		<property name="highGain">
-			<value>-2</value>
+			<value>-3</value>
 		</property>
 		<property name="highCrossover">
 			<value>2600</value>

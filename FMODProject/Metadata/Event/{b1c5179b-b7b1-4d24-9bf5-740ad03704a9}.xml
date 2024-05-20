@@ -93,7 +93,7 @@
 			<value>1.9382312925170069</value>
 		</property>
 		<property name="pitch">
-			<value>6</value>
+			<value>1.20000005</value>
 		</property>
 		<property name="looping">
 			<value>true</value>
@@ -171,6 +171,7 @@
 	</object>
 	<object class="MixerBusEffectChain" id="{342e9258-ff9e-41a6-92e6-4efed95d7841}">
 		<relationship name="effects">
+			<destination>{eb7f730c-e4b3-4923-b092-32479114b9d9}</destination>
 			<destination>{032b9ccb-9f29-4864-84d7-f994335da56c}</destination>
 			<destination>{7618bc0b-0006-421c-a24c-3c0da56a3b30}</destination>
 		</relationship>
@@ -178,6 +179,14 @@
 	<object class="MixerBusPanner" id="{067e970b-a77c-4b4a-a086-ebff0faf5780}" />
 	<object class="MixerBusFader" id="{7f6edf59-d944-476b-b55c-3d78d93010f9}" />
 	<object class="SpatialiserEffect" id="{db1c7567-13de-44c6-a8f3-1d621d28c3a8}" />
+	<object class="ThreeEQEffect" id="{eb7f730c-e4b3-4923-b092-32479114b9d9}">
+		<property name="midGain">
+			<value>-8</value>
+		</property>
+		<property name="highGain">
+			<value>-4</value>
+		</property>
+	</object>
 	<object class="MixerBusFader" id="{032b9ccb-9f29-4864-84d7-f994335da56c}" />
 	<object class="DistortionEffect" id="{7618bc0b-0006-421c-a24c-3c0da56a3b30}">
 		<property name="level">
