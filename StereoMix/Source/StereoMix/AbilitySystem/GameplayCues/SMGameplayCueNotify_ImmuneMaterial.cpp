@@ -21,7 +21,7 @@ bool USMGameplayCueNotify_ImmuneMaterial::OnExecute_Implementation(AActor* MyTar
 	{
 		ResetMaterial(SourceCharacter);
 	}
-	
+
 	return true;
 }
 
@@ -38,6 +38,7 @@ void USMGameplayCueNotify_ImmuneMaterial::ApplyMaterial(ASMPlayerCharacter* Sour
 		return;
 	}
 
+	SourceMesh->SetOverlayMaterial(nullptr);
 	ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	if (ImmuneMaterial.Find(SourceTeam))
 	{
@@ -62,6 +63,7 @@ void USMGameplayCueNotify_ImmuneMaterial::ResetMaterial(ASMPlayerCharacter* Sour
 		return;
 	}
 
+	SourceMesh->SetOverlayMaterial(SourceCharacter->GetOriginOverlayMaterial());
 	const TArray<TObjectPtr<UMaterialInterface>>& OriginMaterials = SourceCharacter->GetOriginMaterials();
 	for (int32 i = 0; i < OriginMaterials.Num(); ++i)
 	{

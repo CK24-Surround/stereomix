@@ -120,14 +120,19 @@ protected:
 // ~Data Section
 public:
 	const TArray<TObjectPtr<UMaterialInterface>>& GetOriginMaterials() { return OriginMaterials; }
+	UMaterialInterface* GetOriginOverlayMaterial() { return OriginOverlayMaterial; }
 
 protected:
 	UPROPERTY()
 	TObjectPtr<const USMDesignData> DesignData;
 
-	/** 캐릭터의 기본 머티리얼을 담고 있습니다. */
+	/** 캐릭터의 원본 머티리얼입니다. */
 	UPROPERTY()
 	TArray<TObjectPtr<UMaterialInterface>> OriginMaterials;
+
+	/** 캐릭터의 원본 오버레이 머티리얼입니다. */
+	UPROPERTY()
+	TObjectPtr<UMaterialInterface> OriginOverlayMaterial;
 // ~Data Section
 
 // ~Caching Section

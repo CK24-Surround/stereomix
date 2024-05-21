@@ -113,6 +113,7 @@ void ASMPlayerCharacter::PostInitializeComponents()
 	if (!HasAuthority())
 	{
 		OriginMaterials = GetMesh()->GetMaterials();
+		OriginOverlayMaterial = GetMesh()->GetOverlayMaterial();
 	}
 
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMPlayerCharacter::OnTeamChangeCallback);
