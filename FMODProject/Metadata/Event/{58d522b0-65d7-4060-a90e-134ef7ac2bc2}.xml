@@ -50,7 +50,7 @@
 			<destination>{d99d4f41-e51f-4c24-b62c-9860294134fa}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{1e9eb0c4-8213-47d1-8e4f-afba33cdf6f9}</destination>
+			<destination>{9a63b508-b0a9-4d11-ba3c-4b3bddcd5c21}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{580865f1-374a-4f62-9250-8d81337b6ffb}" />
@@ -95,7 +95,10 @@
 	</object>
 	<object class="SingleSound" id="{d684def2-bfd8-415a-a42a-66e770b1acac}">
 		<property name="length">
-			<value>0.99479019980112704</value>
+			<value>0.69479019980112677</value>
+		</property>
+		<property name="timelockedOffset">
+			<value>0.51932193660368586</value>
 		</property>
 		<property name="pitch">
 			<value>9.5</value>
@@ -184,7 +187,6 @@
 		<relationship name="automationPoints">
 			<destination>{34cbb69b-d4cf-4a6b-b5e5-5d86c0a43d0d}</destination>
 			<destination>{cfb897c2-b8e2-4f77-8a86-41e31cdb56a8}</destination>
-			<destination>{b1029430-c3b5-45ad-b5c5-f8d846d599a9}</destination>
 		</relationship>
 	</object>
 	<object class="AutomationPoint" id="{34cbb69b-d4cf-4a6b-b5e5-5d86c0a43d0d}">
@@ -192,29 +194,21 @@
 			<value>0.0046962591534125452</value>
 		</property>
 		<property name="value">
-			<value>0.899999976</value>
+			<value>0.819999993</value>
 		</property>
 		<property name="curveShape">
-			<value>-1</value>
+			<value>0.267968327</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{cfb897c2-b8e2-4f77-8a86-41e31cdb56a8}">
 		<property name="position">
-			<value>0.29999999999999999</value>
+			<value>0.14999999999999999</value>
 		</property>
 		<property name="value">
-			<value>1.10000002</value>
+			<value>1.53999996</value>
 		</property>
 		<property name="curveShape">
 			<value>-0.31151703</value>
-		</property>
-	</object>
-	<object class="AutomationPoint" id="{b1029430-c3b5-45ad-b5c5-f8d846d599a9}">
-		<property name="position">
-			<value>0.9984246960155071</value>
-		</property>
-		<property name="value">
-			<value>1.75999999</value>
 		</property>
 	</object>
 </objects>

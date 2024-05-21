@@ -54,7 +54,7 @@
 			<destination>{4f9a853b-e934-4e00-9b0e-91b1c2749e0f}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{1e9eb0c4-8213-47d1-8e4f-afba33cdf6f9}</destination>
+			<destination>{269d6171-8870-468d-afb5-ae64c9ca14ca}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{7bef6be9-5163-413d-8a81-9ea8d1653062}" />
@@ -187,6 +187,9 @@
 	<object class="SingleSound" id="{2be35d4c-56fb-4f3c-a23f-2f9dd1953bfe}">
 		<property name="length">
 			<value>1.1200000000000001</value>
+		</property>
+		<property name="pitch">
+			<value>-2</value>
 		</property>
 		<relationship name="fadeInCurve">
 			<destination>{9700b0c7-47ba-45c2-b53e-2b0244322c0c}</destination>
@@ -523,7 +526,7 @@
 			<value>-6.5</value>
 		</property>
 		<property name="highGain">
-			<value>-6</value>
+			<value>-14</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{3806477a-a1c2-4f50-8ed3-a59d649870bf}" />

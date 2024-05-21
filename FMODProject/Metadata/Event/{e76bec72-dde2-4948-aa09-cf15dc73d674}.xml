@@ -50,7 +50,7 @@
 			<destination>{b0dfb262-1a70-41c6-9369-f6594f398baf}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{1e9eb0c4-8213-47d1-8e4f-afba33cdf6f9}</destination>
+			<destination>{269d6171-8870-468d-afb5-ae64c9ca14ca}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{2421727d-054e-4e50-a764-5b23b65a9fd7}">
@@ -182,15 +182,15 @@
 			<value>260</value>
 		</property>
 		<property name="feedback">
-			<value>24.5</value>
+			<value>14.5</value>
 		</property>
 		<property name="level">
-			<value>-9</value>
+			<value>-36</value>
 		</property>
 	</object>
 	<object class="SFXReverbEffect" id="{8f0a57ca-9522-44c8-a8e7-e488db8904e9}">
 		<property name="decayTime">
-			<value>2100</value>
+			<value>1200</value>
 		</property>
 		<property name="wetLevel">
 			<value>-7.5</value>

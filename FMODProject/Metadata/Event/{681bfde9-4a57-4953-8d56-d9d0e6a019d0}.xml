@@ -51,7 +51,7 @@
 			<destination>{7329dc29-720a-4335-8936-e2b39dcec04d}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{1e9eb0c4-8213-47d1-8e4f-afba33cdf6f9}</destination>
+			<destination>{9a63b508-b0a9-4d11-ba3c-4b3bddcd5c21}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{d5a867df-f709-4cff-b12b-a9e5e79023a1}" />
@@ -168,8 +168,14 @@
 	<object class="MixerBusPanner" id="{ca0cc12e-b953-4fca-a652-73368837be73}" />
 	<object class="MixerBusFader" id="{24eb0f0e-e329-440a-a863-ee08867d35d2}" />
 	<object class="ThreeEQEffect" id="{0f57a8b5-1d08-4565-894c-120fb9d79650}">
-		<property name="midGain">
-			<value>-6.5</value>
+		<property name="highGain">
+			<value>-19</value>
+		</property>
+		<property name="highCrossover">
+			<value>7500</value>
+		</property>
+		<property name="crossoverSlope">
+			<value>2</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{93ea892b-7502-4060-8fa7-b2eb0d345d37}" />

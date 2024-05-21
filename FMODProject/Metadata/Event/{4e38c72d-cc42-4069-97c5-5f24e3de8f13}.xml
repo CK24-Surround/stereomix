@@ -59,7 +59,7 @@
 			<destination>{b12dd4f0-ca31-42af-9c20-a0f835041f79}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{1e9eb0c4-8213-47d1-8e4f-afba33cdf6f9}</destination>
+			<destination>{269d6171-8870-468d-afb5-ae64c9ca14ca}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{7bc72a85-992a-408f-9a51-fc8ec6d7284f}">
@@ -156,6 +156,9 @@
 		</property>
 		<property name="volume">
 			<value>-3</value>
+		</property>
+		<property name="pitch">
+			<value>11.5</value>
 		</property>
 		<relationship name="modulators">
 			<destination>{61c4249d-b128-4f4c-acf2-a1efceb3d349}</destination>
