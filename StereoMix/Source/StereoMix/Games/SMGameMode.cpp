@@ -4,15 +4,34 @@
 #include "SMGameMode.h"
 
 #include "SMGameState.h"
+#include "StereoMix.h"
+#include "Connection/SMGameServerConnectionSubsystem.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Projectiles/SMProjectile.h"
 #include "Projectiles/SMProjectilePool.h"
+#include "Session/SMGameSession.h"
 #include "Utilities/SMLog.h"
 
 ASMGameMode::ASMGameMode()
 {
 	bUseSeamlessTravel = true;
+	GameSessionClass = ASMGameSession::StaticClass();
+}
+
+void ASMGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetWorld()->GetNetMode() == NM_DedicatedServer)
+	{
+		FString RoomShortCode = FPlatformMisc::GetEnvironmentVariable(TEXT("STEREOMIX_SHORT_ROOM_ID"));
+		UE_LOG(LogStereoMix, Log, TEXT("STEREOMIX_SHORT_ROOM_ID: %s"), *RoomShortCode)
+		if (!RoomShortCode.IsEmpty())
+		{
+			GetGameState<ASMGameState>()->ShortRoomId = RoomShortCode;
+		}
+	}
 }
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)

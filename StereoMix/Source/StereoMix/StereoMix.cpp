@@ -3,4 +3,4 @@
 #include "StereoMix.h"
 #include "Modules/ModuleManager.h"
 
-IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, StereoMix, "StereoMix" );
+IMPLEMENT_PRIMARY_GAME_MODULE(FDefaultGameModuleImpl, StereoMix, "StereoMix");

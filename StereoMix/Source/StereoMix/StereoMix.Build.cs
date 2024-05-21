@@ -10,8 +10,14 @@ public class StereoMix : ModuleRules
 
 		PublicIncludePaths.Add("StereoMix");
 
-		PublicDependencyModuleNames.AddRange(new[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "AnimGraphRuntime", "Niagara" });
-		PrivateDependencyModuleNames.AddRange(new[] { "GameplayAbilities", "GameplayTasks", "GameplayTags", "TurboLinkGrpc" });
+		PublicDependencyModuleNames.AddRange(new[]
+		{
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "ModelViewViewModel", "AnimGraphRuntime", "Niagara"
+		});
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
+			"GameplayAbilities", "GameplayTasks", "GameplayTags", "TurboLinkGrpc"
+		});
 
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });

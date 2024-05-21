@@ -7,6 +7,7 @@
 #include "Data/SMTeam.h"
 #include "SMGameState.generated.h"
 
+class USMWidget_RoomId;
 DECLARE_DELEGATE_OneParam(FOnChangeTimeSignature, int32 /*RemainTime*/);
 DECLARE_DELEGATE_TwoParams(FOnChangeTimeWithRatioSignature, int32 /*RemainTime*/, int32 /*Time*/);
 DECLARE_DELEGATE_OneParam(FOnChangePhaseSignature, int32 /*PhaseNumber*/);
@@ -25,30 +26,26 @@ class STEREOMIX_API ASMGameState : public AGameState
 public:
 	ASMGameState();
 
-public:
 	virtual void PostInitializeComponents() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-// ~Round Time Section
-public:
+	// ~Round Time Section
 	FORCEINLINE int32 GetReplicatedRemainRoundTime() const { return ReplicatedRemainRoundTime; }
 
 	/** 게임모드에서 게임 스테이트의 남은 라운드 타임을 변경할때 사용합니다. 이외 용도로 사용되면 안 됩니다. */
 	FORCEINLINE void SetReplicatedRemainRoundTime(int32 InReplicatedRemainRoundTime) { ReplicatedRemainRoundTime = InReplicatedRemainRoundTime; }
 
-public:
 	FOnChangeTimeSignature OnChangeRoundTime;
 
 protected:
 	UFUNCTION()
 	void OnRep_ReplicatedRemainRoundTime();
 
-protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedRemainRoundTime")
 	int32 ReplicatedRemainRoundTime = 0;
-// ~Round Time Section
+	// ~Round Time Section
 
-// ~Score Section
+	// ~Score Section
 public:
 	void SetTeamScores(ESMTeam InTeam, int32 InScore);
 
@@ -60,7 +57,6 @@ public:
 	FORCEINLINE int32 GetReplicatedEDMTeamPhaseScore() const { return ReplicatedEDMTeamPhaseScore; }
 	FORCEINLINE int32 GetReplicatedFutureBaseTeamPhaseScore() const { return ReplicatedFutureBassTeamPhaseScore; }
 
-public:
 	FOnChangeTeamScoreSignature OnChangeEDMTeamScore;
 	FOnChangeTeamScoreSignature OnChangeFutureBassTeamScore;
 
@@ -86,7 +82,6 @@ protected:
 	UFUNCTION()
 	void OnRep_ReplicatedFutureBassTeamPhaseScore();
 
-protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Score")
 	TMap<ESMTeam, int32> TeamScores;
 
@@ -110,9 +105,9 @@ protected:
 	/** TMap은 리플리케이트 되지 않기 때문에 int32를 대신 사용합니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedFutureBassTeamPhaseScore")
 	int32 ReplicatedFutureBassTeamPhaseScore = 0;
-// ~Score Section
+	// ~Score Section
 
-// ~Phase Section
+	// ~Phase Section
 public:
 	FORCEINLINE int32 GetReplicatedRemainPhaseTime() { return ReplicatedRemainPhaseTime; }
 
@@ -128,7 +123,6 @@ public:
 
 	void EndPhase();
 
-public:
 	FOnChangeTimeWithRatioSignature OnChangePhaseTime;
 
 	FOnChangePhaseSignature OnChangePhase;
@@ -140,7 +134,6 @@ protected:
 	UFUNCTION()
 	void OnRep_ReplicatedCurrentPhaseNumber();
 
-protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedRemainPhaseTime")
 	int32 ReplicatedRemainPhaseTime = 0;
 
@@ -149,9 +142,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedCurrentPhaseNumber")
 	int32 ReplicatedCurrentPhaseNumber = 0;
-// ~Phase Section
+	// ~Phase Section
 
-// ~VictoryDefeat Section
+	// ~VictoryDefeat Section
 public:
 	/** 현재 스코어로 승패 결과를 계산하여 이긴 팀을 반환합니다. */
 	ESMTeam CalculateVictoryTeam();
@@ -166,5 +159,20 @@ protected:
 
 public:
 	FOnEndRoundSignature OnEndRound;
-// ~VictoryDefeat Section
+	// ~VictoryDefeat Section
+
+public:
+	UPROPERTY(EditAnywhere, Category="Room")
+	TSubclassOf<UUserWidget> RoomIdWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<USMWidget_RoomId> RoomIdWidget;
+	
+	UPROPERTY(EditAnywhere, ReplicatedUsing=OnRep_ReplicatedShortRoomId, Category="Room")
+	FString ShortRoomId;
+
+	UFUNCTION()
+	void OnRep_ReplicatedShortRoomId();
+
+	virtual void BeginPlay() override;
 };

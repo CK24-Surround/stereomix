@@ -4,8 +4,12 @@
 #include "SMGameState.h"
 
 #include "EngineUtils.h"
+#include "StereoMix.h"
+#include "Blueprint/UserWidget.h"
+#include "Components/TextBlock.h"
 #include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"
+#include "UI/Widget/SMWidget_RoomId.h"
 #include "Utilities/SMLog.h"
 
 ASMGameState::ASMGameState()
@@ -51,6 +55,7 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(ASMGameState, ReplicatedCurrentPhaseNumber);
 	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamPhaseScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamPhaseScore);
+	DOREPLIFETIME(ASMGameState, ShortRoomId)
 }
 
 void ASMGameState::OnRep_ReplicatedRemainRoundTime()
@@ -174,6 +179,28 @@ ESMTeam ASMGameState::CalculateVictoryTeam()
 void ASMGameState::EndRoundVictoryDefeatResult()
 {
 	MulticastRPCSendEndRoundResult(CalculateVictoryTeam());
+}
+
+void ASMGameState::OnRep_ReplicatedShortRoomId()
+{
+	if (RoomIdWidget)
+	{
+		RoomIdWidget->RoomIdText->SetText(FText::FromString(ShortRoomId));
+	}
+}
+
+void ASMGameState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (GetWorld()->GetNetMode() == NM_Client)
+	{
+		RoomIdWidget = CreateWidget<USMWidget_RoomId>(GetWorld(), RoomIdWidgetClass);
+		RoomIdWidget->AddToViewport(5);
+
+		RoomIdWidget->RoomIdText->SetText(FText::FromString(ShortRoomId));
+		UE_LOG(LogStereoMix, Log, TEXT(" 룸 UI 추가"))
+	}
 }
 
 void ASMGameState::MulticastRPCSendEndRoundResult_Implementation(ESMTeam VictoryTeam)
