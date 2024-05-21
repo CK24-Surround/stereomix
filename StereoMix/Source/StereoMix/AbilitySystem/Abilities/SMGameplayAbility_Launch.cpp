@@ -102,9 +102,15 @@ void USMGameplayAbility_Launch::ExecuteLaunchFX()
 		return;
 	}
 
+	// TODO: 이전 이펙트 재생 방식으로 임시로 남겨두었습니다.
+	// FGameplayCueParameters GCParams;
+	// GCParams.Location = SourceCharacter->GetActorLocation() + SourceCharacter->GetActorForwardVector() * 100.0f;
+	// GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
+	// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
+
 	// 발사 FX를 재생합니다.
 	FGameplayCueParameters GCParams;
-	GCParams.Location = SourceCharacter->GetActorLocation() + SourceCharacter->GetActorForwardVector() * 100.0f;
-	GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
+	GCParams.Location = FVector::ForwardVector * 100.0f;
+	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
 }
