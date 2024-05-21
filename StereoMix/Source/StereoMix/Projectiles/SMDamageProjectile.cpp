@@ -49,6 +49,8 @@ void ASMDamageProjectile::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, 
 
 	if (HasAuthority())
 	{
+		ExecuteWallHitFX();
+
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
 		EndLifeTime();
 	}
@@ -150,4 +152,18 @@ void ASMDamageProjectile::ApplyFX(AActor* InTarget)
 	FGameplayCueParameters GCParams;
 	GCParams.Location = TargetActor->GetActorLocation();
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileHit, GCParams);
+}
+
+void ASMDamageProjectile::ExecuteWallHitFX()
+{
+	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
+	if (!ensureAlways(SourceASC))
+	{
+		return;
+	}
+
+	// 적중한 타겟에게 FX를 재생시킵니다.
+	FGameplayCueParameters GCParams;
+	GCParams.Location = GetActorLocation();
+	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileWallHit, GCParams);
 }

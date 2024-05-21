@@ -35,4 +35,7 @@ protected:
 
 	/** GC를 통해 FX를 적용합니다. */
 	void ApplyFX(AActor* InTarget);
+
+	/** 벽 충돌시 FX를 실행합니다. */
+	void ExecuteWallHitFX();
 };
