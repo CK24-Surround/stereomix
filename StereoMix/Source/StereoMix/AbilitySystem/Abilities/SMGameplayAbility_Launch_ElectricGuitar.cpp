@@ -96,6 +96,8 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchTimerCallback()
 	// 투사체를 발사합니다.
 	NewProjectile->Launch(SourceCharacter, NewStartLocation + LaunchData.OffsetLocations[LaunchData.Count++], LaunchData.Nomal, ProjectileSpeed, MaxDistance, Damage);
 
+	ExecuteLaunchFX();
+
 	if (LaunchData.Count < ProjectileCount)
 	{
 		FTimerHandle TimerHandle;

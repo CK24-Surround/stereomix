@@ -83,6 +83,11 @@ void USMGameplayAbility_Launch::ApplyCooldown(const FGameplayAbilitySpecHandle H
 
 void USMGameplayAbility_Launch::ServerRPCSendAimingData_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantizeNormal& Normal)
 {
+	LaunchProjectile(SourceLocation, Normal);
+}
+
+void USMGameplayAbility_Launch::ExecuteLaunchFX()
+{
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensureAlways(SourceCharacter))
 	{
@@ -102,6 +107,4 @@ void USMGameplayAbility_Launch::ServerRPCSendAimingData_Implementation(const FVe
 	GCParams.Location = SourceCharacter->GetActorLocation() + SourceCharacter->GetActorForwardVector() * 100.0f;
 	GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
-
-	LaunchProjectile(SourceLocation, Normal);
 }

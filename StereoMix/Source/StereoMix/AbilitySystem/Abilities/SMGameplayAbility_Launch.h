@@ -31,6 +31,8 @@ protected:
 	UFUNCTION(Server, Reliable)
 	virtual void ServerRPCSendAimingData(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantizeNormal& Normal);
 
+	virtual void ExecuteLaunchFX();
+
 	/** 투사체를 발사시킵니다. 서버에서 호출됩니다. 이 함수를 오버라이드하여 발사 로직을 구성해야합니다. */
 	virtual void LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal) PURE_VIRTUAL(USMGameplayAbility_Launch::LaunchProjectile);
 
