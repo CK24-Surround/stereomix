@@ -49,6 +49,10 @@ protected:
 	UFUNCTION()
 	void OnSmash();
 
+	/** 스매시 종료 애니메이션에 진입 시 호출됩니다. 사실상 스매시 GA가 종료됩니다. */
+	UFUNCTION()
+	void OnSmashEnd(FGameplayEventData Payload);
+
 protected:
 	/** 사거리 내를 타게팅 했다면 InTargetLocation이 그대로, 사거리 밖을 타게팅 했다면 사거리에 맞게 조정된 InTargetLocation이 반환됩니다. */
 	FVector CalculateMaxDistanceLocation(const FVector& InStartLocation, const FVector& InTargetLocation);

@@ -53,6 +53,7 @@ namespace SMTags
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Catch);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smash);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SmashEnd);
 		}
 
 		namespace Character

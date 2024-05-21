@@ -10,6 +10,7 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "NiagaraSystem.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
@@ -189,17 +190,23 @@ void USMGameplayAbility_Smash::OnSmash()
 	}
 
 	// 스매시 종료 애니메이션을 재생합니다. 이 애니메이션이 종료되면 스매시가 종료됩니다. 종료는 서버에서 수행하게 됩니다.
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashEndMontage"), SmashMontage, 1.0f, TEXT("End"));
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashEndMontage"), SmashMontage, 1.0f, TEXT("End"), false);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		EndAbilityByCancel();
 		return;
 	}
-	if (CurrentActorInfo->IsNetAuthority())
-	{
-		PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
-	}
 	PlayMontageAndWaitTask->ReadyForActivation();
+
+	// 스매시 종료 애니메이션 진입까지 기다립니다. 이후 스매시 GA를 종료합니다.
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::SmashEnd);
+	if (!ensureAlways(WaitGameplayEventTask))
+	{
+		EndAbilityByCancel();
+		return;
+	}
+	WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnSmashEnd);
+	WaitGameplayEventTask->ReadyForActivation();
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{
@@ -210,6 +217,11 @@ void USMGameplayAbility_Smash::OnSmash()
 
 		SourceCIC->SetActorIAmCatching(nullptr);
 	}
+}
+
+void USMGameplayAbility_Smash::OnSmashEnd(FGameplayEventData Payload)
+{
+	K2_EndAbilityLocally();
 }
 
 FVector USMGameplayAbility_Smash::CalculateMaxDistanceLocation(const FVector& InStartLocation, const FVector& InTargetLocation)
