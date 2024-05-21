@@ -71,7 +71,7 @@ void ASMPlayerController::InitControl()
 
 	FInputModeGameOnly InputModeGameOnly;
 	InputModeGameOnly.SetConsumeCaptureMouseDown(false);
-	// SetInputMode(InputModeGameOnly);
+	SetInputMode(InputModeGameOnly);
 }
 
 void ASMPlayerController::AddScreendIndicator(AActor* TargetActor)
