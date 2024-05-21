@@ -177,6 +177,9 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 			{
 				SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::CatchBuff));
 			}
+
+			// 해당 클라이언트의 인디케이터를 제거합니다.
+			SourceCharacter->ClientRPCRemoveScreendIndicatorToSelf(TargetActor);
 		}
 	}
 

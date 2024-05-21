@@ -62,6 +62,7 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void OnRep_Controller() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	virtual void BeginDestroy() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -219,13 +220,17 @@ public:
 	UFUNCTION(NetMulticast, Unreliable)
 	void SetCharacterStateVisibility(bool bEnable);
 
-	/** 다른 클라이언트들에게 자신을 타겟으로 하는 인디케이터를 추가합니다. */
+	/** 다른 클라이언트들에게 인디케이터를 추가합니다. */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCAddScreenIndicatorToSelf(AActor* TargetActor);
 
-	/** 다른 클라이언트들에게 자신을 타겟으로 하는 인디케이터를 제거합니다. */
+	/** 다른 클라이언트들에게서 인디케이터를 제거합니다. */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCRemoveScreenIndicatorToSelf(AActor* TargetActor);
+
+	/** 해당 클라이언트에서만 인디케이터를 제거합니다. */
+	UFUNCTION(Client, Reliable)
+	void ClientRPCRemoveScreendIndicatorToSelf(AActor* TargetActor);
 // ~Widget Section
 
 // ~State Section

@@ -210,15 +210,6 @@ void USMGameplayAbility_Smash::OnSmash()
 
 		SourceCIC->SetActorIAmCatching(nullptr);
 	}
-	else
-	{
-		// 인디케이터를 제거합니다.
-		ASMPlayerController* SourceController = Cast<ASMPlayerController>(SourceCharacter->Controller);
-		if (ensureAlways(SourceController))
-		{
-			SourceController->RemoveScreenIndicator(TargetActor);
-		}
-	}
 }
 
 FVector USMGameplayAbility_Smash::CalculateMaxDistanceLocation(const FVector& InStartLocation, const FVector& InTargetLocation)

@@ -160,6 +160,13 @@ void ASMPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	ASC->OnChangedTag.RemoveAll(this);
 }
 
+void ASMPlayerCharacter::BeginDestroy()
+{
+	// 자신을 타겟하는 인디케이터가 존재할 수 있으니 제거해줍니다.
+	MulticastRPCRemoveScreenIndicatorToSelf(this);
+	Super::BeginDestroy();
+}
+
 void ASMPlayerCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -551,6 +558,15 @@ void ASMPlayerCharacter::MulticastRPCRemoveScreenIndicatorToSelf_Implementation(
 	if (ensureAlways(LocalPlayerController))
 	{
 		LocalPlayerController->RemoveScreenIndicator(TargetActor);
+	}
+}
+
+void ASMPlayerCharacter::ClientRPCRemoveScreendIndicatorToSelf_Implementation(AActor* TargetActor)
+{
+	// ClientRPC로 무조건 오너십을 갖고 있어 CachedSMPlayerController가 유효하겠지만 만약을 위한 예외처리입니다.
+	if (ensureAlways(CachedSMPlayerController))
+	{
+		CachedSMPlayerController->RemoveScreenIndicator(TargetActor);
 	}
 }
 
