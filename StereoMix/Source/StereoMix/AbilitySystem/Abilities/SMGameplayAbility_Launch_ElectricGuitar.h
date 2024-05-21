@@ -26,13 +26,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Projectile|ElectricGuitar", DisplayName = "투사체가 발사될 넓이")
 	float ProjectileWidth = 50.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Projectile|ElectricGuitar", DisplayName = "투사체가 발사될 각도")
+	float ProjectileTotalAngle = 10.0f;
+
 	UPROPERTY(EditAnywhere, Category = "Projectile|ElectricGuitar", DisplayName = "전탄 발사 소요 시간")
-	float TotalLaunchTime = 0.1f;
+	float TotalLaunchTime = 0.175f;
 
 public:
 	struct FLaunchData
 	{
 		TArray<FVector> OffsetLocations;
+		TArray<FVector> Angles;
 		FVector CenterOffsetLocation;
 		FVector Nomal;
 		int32 Count = 0;
