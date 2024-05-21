@@ -23,14 +23,14 @@ class STEREOMIX_API ASMGameMode : public AGameMode
 public:
 	ASMGameMode();
 
+	virtual void BeginPlay() override;
+	
 protected:
 	/** 플레이어 입장시 전송된 닉네임으로 플레이어 스테이트를 초기화해줍니다. */
 	virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
 
-protected:
 	virtual void PostInitializeComponents() override;
 
-protected:
 	virtual void StartMatch() override;
 
 	virtual void EndMatch() override;
@@ -44,19 +44,16 @@ protected:
 	/** 승패 확인 타이머가 만료된 후 처리를 합니다. */
 	void EndVictoryDefeatTimer();
 
-protected:
 	UPROPERTY()
 	TWeakObjectPtr<ASMGameState> CachedSMGameState;
 
-// ~Round Time Section
-protected:
+	// ~Round Time Section
 	/** 남은 라운스 타임을 설정합니다. GameState에 복제됩니다. */
 	void SetRemainRoundTime(int32 InRemainRoundTime);
 
 	/** 1초 주기로 라운드 타임과 관련된 처리를 합니다. */
 	void PerformRoundTime();
 
-protected:
 	FTimerHandle RoundTimerHandle;
 
 	int32 RemainRoundTime = 0;
@@ -68,10 +65,9 @@ protected:
 	int32 VictoryDefeatTime = 15;
 
 	uint32 bIsRoundEnd = false;
-// ~Round Time Section
+	// ~Round Time Section
 
-// ~Phase Section
-protected:
+	// ~Phase Section
 	FORCEINLINE int32 GetPhaseTime() { return PhaseTime; }
 
 	/** 페이즈의 남은 시간을 설정합니다. */
@@ -83,7 +79,6 @@ protected:
 	/** 현재 페이즈 수를 설정합니다. */
 	void SetCurrentPhaseNumber(int32 InCurrentPhaseNumber);
 
-protected:
 	FTimerHandle PhaseTimerHandle;
 
 	int32 RemainPhaseTime = 0;
@@ -92,20 +87,19 @@ protected:
 	int32 PhaseTime = 60;
 
 	int32 CurrentPhaseNumber = 0;
-// ~Phase Section
+	// ~Phase Section
 
-// ~Object Pooling Section
+	// ~Object Pooling Section
 public:
 	USMProjectilePool* GetEletricGuitarProjectilePool(ESMTeam SourceTeam);
 
 protected:
 	void InitProjectilePool();
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Pool|Class")
 	TMap<ESMTeam, TSubclassOf<USMProjectilePool>> EletricGuitarProjectilePoolClass;
 
 	UPROPERTY()
 	TMap<ESMTeam, TObjectPtr<USMProjectilePool>> EletricGuitarProjectilePool;
-// ~Object Pooling Section
+	// ~Object Pooling Section
 };
