@@ -4,7 +4,7 @@
 #include "SMPlayerController.h"
 
 #include "EnhancedInputSubsystems.h"
-#include "SMPlayerState.h"
+#include "SMGamePlayerState.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Data/SMControlData.h"
@@ -46,7 +46,7 @@ void ASMPlayerController::OnRep_PlayerState()
 	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass);
 	VictoryDefeatWidget->AddToViewport(1);
 
-	ASMPlayerState* SMPlayerState = GetPlayerState<ASMPlayerState>();
+	ASMGamePlayerState* SMPlayerState = GetPlayerState<ASMGamePlayerState>();
 	if (ensure(SMPlayerState))
 	{
 		UAbilitySystemComponent* SourceASC = SMPlayerState->GetAbilitySystemComponent();

@@ -3,30 +3,35 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystemInterface.h"
+#include "Data/SMCharacterType.h"
+#include "Data/SMTeam.h"
 #include "GameFramework/PlayerState.h"
 #include "SMPlayerState.generated.h"
 
-class USMAbilitySystemComponent;
-class USMCharacterAttributeSet;
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API ASMPlayerState : public APlayerState, public IAbilitySystemInterface
+class STEREOMIX_API ASMPlayerState : public APlayerState
 {
 	GENERATED_BODY()
 
 public:
-	ASMPlayerState();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 public:
-	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
+	FORCEINLINE ESMTeam GetTeam() { return Team; }
+
+	FORCEINLINE void SetTeam(ESMTeam NewTeam) { Team = NewTeam; }
+
+	FORCEINLINE ESMCharacterType GetCharacterTeam() { return CharacterType; }
+
+	FORCEINLINE void SetCharacterType(ESMCharacterType NewCharacterType) { CharacterType = NewCharacterType; }
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "GAS|ASC")
-	TObjectPtr<USMAbilitySystemComponent> ASC;
+	UPROPERTY(Replicated)
+	ESMTeam Team;
 
-	UPROPERTY(VisibleAnywhere, Category = "GAS|AttributeSet")
-	TObjectPtr<USMCharacterAttributeSet> CharacterAttributeSet; 
+	UPROPERTY(Replicated)
+	ESMCharacterType CharacterType;
 };

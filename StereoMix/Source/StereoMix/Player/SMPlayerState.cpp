@@ -3,20 +3,12 @@
 
 #include "SMPlayerState.h"
 
-#include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
+#include "Net/UnrealNetwork.h"
 
-ASMPlayerState::ASMPlayerState()
+void ASMPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	NetUpdateFrequency = 30.0f;
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	ASC = CreateDefaultSubobject<USMAbilitySystemComponent>(TEXT("ASC"));
-	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-	
-	CharacterAttributeSet = CreateDefaultSubobject<USMCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
-}
-
-UAbilitySystemComponent* ASMPlayerState::GetAbilitySystemComponent() const
-{
-	return ASC;
+	DOREPLIFETIME(ThisClass, Team);
+	DOREPLIFETIME(ThisClass, CharacterType);
 }

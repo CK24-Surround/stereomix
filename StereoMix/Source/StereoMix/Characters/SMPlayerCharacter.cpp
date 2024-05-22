@@ -18,7 +18,7 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Player/SMPlayerController.h"
-#include "Player/SMPlayerState.h"
+#include "Player/SMGamePlayerState.h"
 #include "UI/SMUserWidget_CharacterState.h"
 #include "UI/SMWidgetComponent.h"
 #include "Utilities/SMAssetPath.h"
@@ -257,7 +257,7 @@ void ASMPlayerCharacter::SetupGASInputComponent()
 
 void ASMPlayerCharacter::InitASC()
 {
-	ASMPlayerState* StereoMixPlayerState = GetPlayerState<ASMPlayerState>();
+	ASMGamePlayerState* StereoMixPlayerState = GetPlayerState<ASMGamePlayerState>();
 	if (!ensureAlways(StereoMixPlayerState))
 	{
 		return;
