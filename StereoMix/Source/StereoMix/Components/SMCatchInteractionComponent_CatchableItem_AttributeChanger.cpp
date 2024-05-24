@@ -66,7 +66,7 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 
 ASMTile* USMCatchInteractionComponent_CatchableItem_AttributeChanger::TileTrigger(AActor* Instigator)
 {
-	if (ensureAlways(Instigator))
+	if (!ensureAlways(Instigator))
 	{
 		return nullptr;
 	}
