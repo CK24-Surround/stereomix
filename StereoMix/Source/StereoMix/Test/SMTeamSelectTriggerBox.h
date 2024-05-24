@@ -23,6 +23,8 @@ protected:
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
+	void RespawnCharacter(AActor* TargetActor);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> BaseMesh;

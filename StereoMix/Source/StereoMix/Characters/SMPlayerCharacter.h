@@ -14,8 +14,6 @@
 
 class UNiagaraComponent;
 class UNiagaraSystem;
-DECLARE_MULTICAST_DELEGATE(FOnLandedSignature);
-
 class USMCatchInteractionComponent_Character;
 class UWidgetComponent;
 class USMTeamComponent;
@@ -48,6 +46,8 @@ enum class ECharacterMoveTrailState : uint8
 	Immune
 };
 
+DECLARE_MULTICAST_DELEGATE(FOnLandedSignature);
+
 UCLASS()
 class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMCatchInteractionInterface, public ISMDamageInterface
 {
@@ -62,7 +62,6 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void OnRep_Controller() override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	virtual void BeginDestroy() override;
 
 protected:
 	virtual void BeginPlay() override;
@@ -161,19 +160,19 @@ protected:
 	UPROPERTY()
 	TWeakObjectPtr<USMAbilitySystemComponent> ASC;
 
-	UPROPERTY(EditAnywhere, Category = "GAS|GA")
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
 	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
 
-	UPROPERTY(EditAnywhere, Category = "GAS|GA")
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
 	TSubclassOf<UGameplayEffect> ForInitGE;
 
-	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tag")
 	FGameplayTagContainer LockAimTags;
 
-	UPROPERTY(EditAnywhere, Category = "GAS|Tag")
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tag")
 	FGameplayTagContainer LockMovementTags;
 // ~GAS Section
 
@@ -295,7 +294,7 @@ public:
 
 // ~Catch Section
 public:
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Design|Socket")
 	FName CatchSocket = TEXT("CatchSlot");
 // ~Catch Section
 
@@ -321,16 +320,16 @@ protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_CharacterMoveTrailState")
 	ECharacterMoveTrailState CharacterMoveTrailState;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Design|Socket")
 	FName TrailSocket = TEXT("Trail-Point");
 
-	UPROPERTY(EditAnywhere, Category = "FX")
+	UPROPERTY(EditAnywhere, Category = "Design|FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> DefaultMoveTrailFX;
 
-	UPROPERTY(EditAnywhere, Category = "FX")
+	UPROPERTY(EditAnywhere, Category = "Design|FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> CatchMoveTrailFX;
 
-	UPROPERTY(EditAnywhere, Category = "FX")
+	UPROPERTY(EditAnywhere, Category = "Design|FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
 // ~Trail Section
 };

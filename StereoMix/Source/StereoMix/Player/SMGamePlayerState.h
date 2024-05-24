@@ -20,6 +20,8 @@ class STEREOMIX_API ASMGamePlayerState : public ASMPlayerState, public IAbilityS
 public:
 	ASMGamePlayerState();
 
+	virtual void PostInitializeComponents() override;
+
 public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 

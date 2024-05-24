@@ -12,8 +12,16 @@ ASMGamePlayerState::ASMGamePlayerState()
 
 	ASC = CreateDefaultSubobject<USMAbilitySystemComponent>(TEXT("ASC"));
 	ASC->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);
-	
+
 	CharacterAttributeSet = CreateDefaultSubobject<USMCharacterAttributeSet>(TEXT("CharacterAttributeSet"));
+}
+
+void ASMGamePlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	// TODO: 임시 팀입니다.
+	SetTeam(ESMTeam::EDM);
 }
 
 UAbilitySystemComponent* ASMGamePlayerState::GetAbilitySystemComponent() const

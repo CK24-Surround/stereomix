@@ -40,12 +40,20 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 		UE_LOG(LogTemp, Error, TEXT("DesignData 로드에 실패했습니다."));
 	}
 
-	GetMesh()->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
+	CachedMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	CachedMeshComponent->SetRelativeRotation(FRotator(0.0, -90.0, 0.0));
+
+	UCharacterMovementComponent* CachedMovementComponent = GetCharacterMovement();
+	CachedMovementComponent->MaxAcceleration = 9999.0f;
+	CachedMovementComponent->MaxStepHeight = 10.0f;
+	CachedMovementComponent->SetWalkableFloorAngle(5.0f);
+	CachedMovementComponent->bCanWalkOffLedges = false;
 
 	HitBox = CreateDefaultSubobject<USphereComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
-	HitBox->InitSphereRadius(100.0f);
+	HitBox->InitSphereRadius(125.0f);
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
 	CameraBoom->SetupAttachment(RootComponent);
@@ -151,7 +159,9 @@ void ASMPlayerCharacter::OnRep_Controller()
 
 void ASMPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::EndPlay(EndPlayReason);
+	// TODO: 현재 정상작동되지 않습니다.
+	// 자신을 타겟하는 인디케이터가 존재할 수 있으니 제거해줍니다.
+	MulticastRPCRemoveScreenIndicatorToSelf(this);
 
 	if (!ASC.Get())
 	{
@@ -159,13 +169,8 @@ void ASMPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 
 	ASC->OnChangedTag.RemoveAll(this);
-}
 
-void ASMPlayerCharacter::BeginDestroy()
-{
-	// 자신을 타겟하는 인디케이터가 존재할 수 있으니 제거해줍니다.
-	MulticastRPCRemoveScreenIndicatorToSelf(this);
-	Super::BeginDestroy();
+	Super::EndPlay(EndPlayReason);
 }
 
 void ASMPlayerCharacter::BeginPlay()
@@ -283,6 +288,8 @@ void ASMPlayerCharacter::InitASC()
 	{
 		return;
 	}
+
+	TeamComponent->SetTeam(StereoMixPlayerState->GetTeam());
 
 	FOnAttributeChangeData NewData;
 	NewData.NewValue = AttributeSet->GetMoveSpeed();

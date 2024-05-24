@@ -24,7 +24,7 @@ public:
 
 	FORCEINLINE void SetTeam(ESMTeam NewTeam) { Team = NewTeam; }
 
-	FORCEINLINE ESMCharacterType GetCharacterTeam() { return CharacterType; }
+	FORCEINLINE ESMCharacterType GetCharacterType() { return CharacterType; }
 
 	FORCEINLINE void SetCharacterType(ESMCharacterType NewCharacterType) { CharacterType = NewCharacterType; }
 
