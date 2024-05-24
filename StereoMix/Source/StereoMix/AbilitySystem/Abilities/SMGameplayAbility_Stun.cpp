@@ -38,8 +38,6 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
-	NET_LOG(SourceCharacter, Warning, TEXT("스턴 시작: %p"), this);
-
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
@@ -133,7 +131,6 @@ void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle
 		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
 	}
 
-	NET_LOG(SourceCharacter, Warning, TEXT("스턴 종료"));
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

@@ -39,17 +39,8 @@ void ASMPlayerController::BeginPlay()
 
 	if (HasAuthority())
 	{
-		// TODO: 추후 팀 및 캐릭터 선택 UI가 생기면 아래 로직을 제거해야합니다. 
-		AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-		if (ensureAlways(GameMode))
-		{
-			AActor* PlayerStarter = GameMode->FindPlayerStart(this, TEXT("SpawnPoint"));
-			if (ensureAlways(PlayerStarter))
-			{
-				const FVector NewLocation = PlayerStarter->GetActorLocation();
-				SpawnCharacter(&NewLocation);
-			}
-		}
+		// 오류를 방지하기위해 지연 스폰합니다.
+		GetWorldTimerManager().SetTimerForNextTick(this, &ThisClass::SpawnTimerCallback);
 	}
 }
 
@@ -89,6 +80,25 @@ void ASMPlayerController::InitControl()
 	FInputModeGameOnly InputModeGameOnly;
 	InputModeGameOnly.SetConsumeCaptureMouseDown(false);
 	// SetInputMode(InputModeGameOnly);
+}
+
+void ASMPlayerController::SpawnTimerCallback()
+{
+	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	if (!ensureAlways(GameMode))
+	{
+		return;
+	}
+
+	// 스폰 포인트를 구합니다. 여기서는 SpawnPoint라는 태그를 가진 플레이어 스타트를 활용하고 있습니다.
+	AActor* PlayerStarter = GameMode->FindPlayerStart(this, TEXT("SpawnPoint"));
+	if (!ensureAlways(PlayerStarter))
+	{
+		return;
+	}
+
+	const FVector NewLocation = PlayerStarter->GetActorLocation();
+	SpawnCharacter(&NewLocation);
 }
 
 void ASMPlayerController::SpawnCharacter(const FVector* InLocation, const FRotator* InRotation)
@@ -177,16 +187,10 @@ void ASMPlayerController::SpawnCharacter(const FVector* InLocation, const FRotat
 		return;
 	}
 
-	// 기존 캐릭터를 제거하고 부여된 어빌리티를 초기화합니다.  
+	// 기존 캐릭터를 제거합니다.  
 	ASMPlayerCharacter* PreviousCharacter = GetPawn<ASMPlayerCharacter>();
 	if (PreviousCharacter)
 	{
-		UAbilitySystemComponent* SourceASC = SMPlayerState->GetAbilitySystemComponent();
-		if (SourceASC)
-		{
-			SourceASC->ClearAllAbilities();
-		}
-
 		PreviousCharacter->Destroy();
 	}
 

@@ -161,7 +161,7 @@ void ASMPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	// TODO: 현재 정상작동되지 않습니다.
 	// 자신을 타겟하는 인디케이터가 존재할 수 있으니 제거해줍니다.
-	MulticastRPCRemoveScreenIndicatorToSelf(this);
+	// MulticastRPCRemoveScreenIndicatorToSelf(this);
 
 	if (!ASC.Get())
 	{
@@ -217,8 +217,15 @@ void ASMPlayerCharacter::OnRep_PlayerState()
 
 	InitASC();
 
-	USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
+	ESMTeam SourceTeam = TeamComponent->GetTeam();
+	USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), AssetData->CharacterStateWidget[SourceTeam]);
 	CharacterStateWidgetComponent->SetWidget(NewWidget);
+
+	DefaultMoveTrailFXComponent->SetAsset(DefaultMoveTrailFX[SourceTeam]);
+	DefaultMoveTrailFXComponent->Activate(true);
+
+	CatchMoveTrailFXComponent->SetAsset(CatchMoveTrailFX[SourceTeam]);
+	ImmuneMoveTrailFXComponent->SetAsset(ImmuneMoveTrailFX[SourceTeam]);
 }
 
 void ASMPlayerCharacter::InitCamera()
@@ -278,6 +285,7 @@ void ASMPlayerCharacter::InitASC()
 
 	if (HasAuthority())
 	{
+		ASC->ClearAllAbilities();
 		ASC->InitAbilityActorInfo(StereoMixPlayerState, this);
 		GiveDefaultAbilities();
 	}
@@ -649,6 +657,7 @@ void ASMPlayerCharacter::OnTeamChangeCallback()
 {
 	const ESMTeam Team = TeamComponent->GetTeam();
 
+	return;
 	// 팀이 바뀔일은 없어야하지만 테스트 시에는 충분히 있는 상황으로 이에 대한 처리입니다.
 	if (!HasAuthority())
 	{

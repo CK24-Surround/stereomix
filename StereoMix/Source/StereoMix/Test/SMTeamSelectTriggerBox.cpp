@@ -48,7 +48,6 @@ void ASMTeamSelectTriggerBox::PostInitializeComponents()
 
 void ASMTeamSelectTriggerBox::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	NET_LOG(this, Warning, TEXT(""));
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	RespawnCharacter(OtherActor);

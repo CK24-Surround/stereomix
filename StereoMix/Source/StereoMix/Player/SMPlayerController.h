@@ -46,6 +46,11 @@ protected:
 protected:
 	void InitControl();
 
+	/**
+	 * BeginPlay에서 생성할때 오류를 방지하고자 지연 스폰합니다.
+	 */
+	void SpawnTimerCallback();
+
 public:
 	/**
 	 * 캐릭터를 스폰하고 빙의합니다. 이미 캐릭터가 존재하는 경우라면 해당 캐릭터를 제거하고 새로운 캐릭터를 스폰하고 빙의합니다. 이때 기존 캐릭터로부터 부여된 어빌리티들을 초기화합니다.
