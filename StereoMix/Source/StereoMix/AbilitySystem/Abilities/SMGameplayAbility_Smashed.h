@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
+#include "Data/SMTeam.h"
 #include "SMGameplayAbility_Smashed.generated.h"
 
 /**
@@ -23,8 +24,11 @@ public:
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	
+
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> SmashedMontage;
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SmashedMontage;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> CachedSmashedMontage;
 };

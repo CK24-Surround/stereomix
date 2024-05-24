@@ -38,8 +38,11 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> CatchMontage;
+	UPROPERTY(EditAnywhere, Category = "Design|Montage")
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> CatchMontage;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> CachedCatchMontage;
 
 protected:
 	UFUNCTION()
@@ -68,16 +71,16 @@ protected:
 	/** 커서 위치입니다. */
 	FVector TargetLocation;
 
-	UPROPERTY(EditAnywhere, Category = "Catch")
+	UPROPERTY(EditAnywhere, Category = "Design|Catch")
 	float MaxDistance = 300.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Catch")
+	UPROPERTY(EditAnywhere, Category = "Design|Catch")
 	float LimitDegree = 90.0f;
 
 	/** 방향에 구애받지 않고 무조건 잡을 수 있는 거리를 나타냅니다. */
-	UPROPERTY(EditAnywhere, Category = "Catch", DisplayName = "무조건 잡을 수 있는 거리")
+	UPROPERTY(EditAnywhere, Category = "Design|Catch", DisplayName = "무조건 잡을 수 있는 거리")
 	float UnconditionallyCatchDistance = 150.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Debug")
+	UPROPERTY(EditAnywhere, Category = "Design|Debug")
 	uint32 bShowDebug:1 = false;
 };

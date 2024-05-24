@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "Characters/SMPlayerCharacter.h"
 
 USMGameplayAbility_Caught::USMGameplayAbility_Caught()
 {
@@ -17,6 +18,13 @@ void USMGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!ensureAlways(SourceCharacter))
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensure(SourceASC))
 	{
@@ -24,8 +32,10 @@ void USMGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle
 		return;
 	}
 
+	CachedCaughtMontage = CaughtMontage.FindOrAdd(SourceCharacter->GetTeam(), nullptr);
+
 	// 재생을 시도하고 재생에 실패했다면 bWasCancelled = true로 종료합니다.
-	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, CaughtMontage, 1.0f);
+	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, CachedCaughtMontage, 1.0f);
 	if (!ensure(Duration > 0.0f))
 	{
 		EndAbilityByCancel();

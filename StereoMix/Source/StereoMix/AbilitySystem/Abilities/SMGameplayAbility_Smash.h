@@ -65,7 +65,10 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> SmashMontage;
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SmashMontage;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> CachedSmashMontage;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> DamageGE;

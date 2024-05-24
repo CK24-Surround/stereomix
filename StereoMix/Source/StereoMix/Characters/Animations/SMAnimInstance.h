@@ -43,17 +43,17 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
 	TObjectPtr<UAnimSequence> CatchIdle;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
-	TObjectPtr<UAnimSequence> ForwardWalk;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|MoveCycle")
+	TObjectPtr<UAnimSequence> ForwardMove;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
-	TObjectPtr<UAnimSequence> BackWalk;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|MoveCycle")
+	TObjectPtr<UAnimSequence> BackwardMove;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
-	TObjectPtr<UAnimSequence> RightWalk;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|MoveCycle")
+	TObjectPtr<UAnimSequence> RightMove;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|WalkCycle")
-	TObjectPtr<UAnimSequence> LeftWalk;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|MoveCycle")
+	TObjectPtr<UAnimSequence> LeftMove;
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Reference")

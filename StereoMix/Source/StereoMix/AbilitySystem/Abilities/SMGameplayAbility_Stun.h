@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
+#include "Data/SMTeam.h"
 #include "SMGameplayAbility_Stun.generated.h"
 
 /**
@@ -73,13 +74,22 @@ protected:
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> StunMontage;
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> StunMontage;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> CachedStunMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> SmashedMontage;
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SmashedMontage;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> CachedSmashedMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> CatchExitMontage;
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> CatchExitMontage;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> CachedCatchExitMontage;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TArray<TSubclassOf<UGameplayEffect>> StunEndedGEs;

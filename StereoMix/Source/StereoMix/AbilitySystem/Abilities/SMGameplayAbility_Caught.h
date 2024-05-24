@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
+#include "Data/SMTeam.h"
 #include "SMGameplayAbility_Caught.generated.h"
 
 /**
@@ -22,6 +23,9 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Montage")
-	TObjectPtr<UAnimMontage> CaughtMontage;
+	UPROPERTY(EditAnywhere, Category = "Design|Montage")
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> CaughtMontage;
+
+	UPROPERTY()
+	TObjectPtr<UAnimMontage> CachedCaughtMontage;
 };

@@ -345,7 +345,7 @@ void USMCatchInteractionComponent_Character::InternalTileTriggerdBySmash(AActor*
 
 	// 타일을 트리거합니다.
 	FHitResult HitResult;
-	const FVector Start = SourceCharacter->GetActorLocation();
+	const FVector Start = InstigatorCharacter->GetActorLocation();
 	const FVector End = Start + (-FVector::UpVector * 1000.0f);
 	const FCollisionQueryParams Param(SCENE_QUERY_STAT(TileTrace), false);
 	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(25.0f);

@@ -38,6 +38,8 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
+	NET_LOG(SourceCharacter, Warning, TEXT("스턴 시작: %p"), this);
+
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
@@ -52,9 +54,14 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 		return;
 	}
 
+	ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	CachedStunMontage = StunMontage.FindOrAdd(SourceTeam, nullptr);
+	CachedSmashedMontage = SmashedMontage.FindOrAdd(SourceTeam, nullptr);
+	CachedCatchExitMontage = CatchExitMontage.FindOrAdd(SourceTeam, nullptr);
+
 	// 스턴 몽타주가 정상적으로 실행되면 0.0f 이상의 값을 반환합니다.
-	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, StunMontage, 1.0f);
-	ClientRPCPlayMontage(StunMontage);
+	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, CachedStunMontage, 1.0f);
+	ClientRPCPlayMontage(CachedStunMontage);
 	if (!ensureAlways(Duration > 0.0f))
 	{
 		EndAbilityByCancel();
@@ -126,6 +133,7 @@ void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle
 		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
 	}
 
+	NET_LOG(SourceCharacter, Warning, TEXT("스턴 종료"));
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -216,8 +224,8 @@ void USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded(FGameplayEventData Payloa
 {
 	// 버저비터 종료 애니메이션을 재생하고 이 애니메이션이 종료되면 스턴을 종료합니다. 이미 잡기는 풀린 상태입니다.
 	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 종료"));
-	ClientRPCPlayMontage(SmashedMontage, 1.0f, TEXT("End"));
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), SmashedMontage, 1.0f, TEXT("End"));
+	ClientRPCPlayMontage(CachedSmashedMontage, 1.0f, TEXT("End"));
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), CachedSmashedMontage, 1.0f, TEXT("End"));
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		EndAbilityByCancel();
@@ -280,7 +288,7 @@ void USMGameplayAbility_Stun::ResetStunState()
 
 	// 한번이라도 특수 액션을 당하면 캐릭터가 넘어진 상태가 됩니다. 이 상태에서는 스턴 종료 애니메이션 달라져야하는데, 이를 구분하기위한 코드입니다.
 	// 특수 액션을 당하면 특수 액션 피격 애니메이션으로 무한루프 되고 있는 상태이므로 아래의 로직으로 구분할 수 있습니다.
-	UAnimMontage* EndMontage = StunMontage;
+	UAnimMontage* EndMontage = CachedStunMontage;
 	UAnimInstance* SourceAnimInstace = CurrentActorInfo->GetAnimInstance();
 	if (ensureAlways(SourceAnimInstace))
 	{
@@ -289,9 +297,9 @@ void USMGameplayAbility_Stun::ResetStunState()
 		if (MontageInstance)
 		{
 			// 몽타주 인스턴스의 몽타주가 특수 액션의 몽타주와 동일한지 체크합니다.
-			if (MontageInstance->Montage == SmashedMontage)
+			if (MontageInstance->Montage == CachedSmashedMontage)
 			{
-				EndMontage = SmashedMontage;
+				EndMontage = CachedSmashedMontage;
 			}
 		}
 	}

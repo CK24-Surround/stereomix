@@ -45,18 +45,10 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 	}
 
 	// 잡던 도중에 타겟이 사라지질 수도 있으므로(예시: 게임을 종료) 이에 대한 예외처리를 해줍니다.
-	USMAbilitySystemComponent* TargetASC = nullptr;
 	USMCatchInteractionComponent_Character* TargetCIC = nullptr;
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(SourceCIC->GetActorCatchingMe());
 	if (TargetCharacter)
 	{
-		TargetASC = Cast<USMAbilitySystemComponent>(TargetCharacter->GetAbilitySystemComponent());
-		if (!ensureAlways(TargetASC))
-		{
-			EndAbilityByCancel();
-			return;
-		}
-
 		TargetCIC = Cast<USMCatchInteractionComponent_Character>(TargetCharacter->GetCatchInteractionComponent());
 		if (!ensureAlways(TargetCIC))
 		{
@@ -74,8 +66,10 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 		TargetCIC->SetActorIAmCatching(nullptr);
 	}
 
-	ClientRPCPlayMontage(CaughtExitMontage);
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("CaughtExit"), CaughtExitMontage, 1.0f);
+	CachedCaughtExitMontage = CaughtExitMontage.FindOrAdd(SourceCharacter->GetTeam(), nullptr);
+
+	ClientRPCPlayMontage(CachedCaughtExitMontage);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("CaughtExit"), CachedCaughtExitMontage, 1.0f);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		EndAbilityByCancel();

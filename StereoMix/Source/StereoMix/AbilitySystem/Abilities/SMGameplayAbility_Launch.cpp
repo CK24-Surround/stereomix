@@ -43,6 +43,9 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 		return;
 	}
 
+	ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	CachedMontage = Montage.FindOrAdd(SourceTeam, nullptr);
+
 	// 투사체의 발사위치와 방향을 서버로 보냅니다.
 	if (ActorInfo->IsLocallyControlled())
 	{
@@ -55,7 +58,7 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
 	// 발사 애니메이션을 재생합니다.
-	SourceASC->PlayMontage(this, ActivationInfo, Montage, 1.0f);
+	SourceASC->PlayMontage(this, ActivationInfo, CachedMontage, 1.0f);
 }
 
 void USMGameplayAbility_Launch::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const

@@ -27,14 +27,17 @@ void USMGameplayAbility_Smashed::ActivateAbility(const FGameplayAbilitySpecHandl
 		return;
 	}
 
-	auto SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!ensure(SourceCharacter))
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);
 		return;
 	}
 
-	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, SmashedMontage, 1.0f);
+	ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	CachedSmashedMontage = SmashedMontage.FindOrAdd(SourceTeam, nullptr);
+
+	const float Duration = SourceASC->PlayMontage(this, ActivationInfo, CachedSmashedMontage, 1.0f);
 	if (!ensure(Duration > 0.0f))
 	{
 		EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, true);

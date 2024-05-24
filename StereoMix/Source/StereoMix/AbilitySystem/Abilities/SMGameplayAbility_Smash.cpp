@@ -62,11 +62,14 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 		}
 	}
 
+	ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	CachedSmashMontage = SmashMontage.FindOrAdd(SourceTeam, nullptr);
+
 	// 스매시는 착지 시 판정이 발생하고 이에 대한 처리가 수행되어야합니다. 착지 델리게이트를 기다립니다.
 	SourceCharacter->OnLanded.AddUObject(this, &ThisClass::OnSmash);
 
 	// 스매시 애니메이션을 재생합니다.
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashMontage"), SmashMontage);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashMontage"), CachedSmashMontage);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		EndAbilityByCancel();
@@ -190,7 +193,7 @@ void USMGameplayAbility_Smash::OnSmash()
 	}
 
 	// 스매시 종료 애니메이션을 재생합니다. 이 애니메이션이 종료되면 스매시가 종료됩니다. 종료는 서버에서 수행하게 됩니다.
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashEndMontage"), SmashMontage, 1.0f, TEXT("End"), false);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("SmashEndMontage"), CachedSmashMontage, 1.0f, TEXT("End"), false);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		EndAbilityByCancel();

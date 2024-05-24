@@ -45,7 +45,7 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 	InternalOnCaughtReleased(Instigator);
 
 	// 아이템의 바로아래 타일을 트리거하고 이 타일을 기준으로 스매시의 크기만큼의 타일을 골라내 소스액터에 저장합니다.
-	ASMTile* TriggeredTile = TileTrigger();
+	ASMTile* TriggeredTile = TileTrigger(Instigator);
 	if (TriggeredTile)
 	{
 		SaveTriggeredTilesBySmash(TriggeredTile, InMagnitude);
@@ -64,10 +64,15 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 	SourceItem->ActivateItem(Instigator);
 }
 
-ASMTile* USMCatchInteractionComponent_CatchableItem_AttributeChanger::TileTrigger()
+ASMTile* USMCatchInteractionComponent_CatchableItem_AttributeChanger::TileTrigger(AActor* Instigator)
 {
+	if (ensureAlways(Instigator))
+	{
+		return nullptr;
+	}
+
 	FHitResult HitResult;
-	const FVector Start = SourceActor->GetActorLocation();
+	const FVector Start = Instigator->GetActorLocation();
 	const FVector End = Start + (-FVector::UpVector * 1000.0f);
 	const FCollisionQueryParams Param(SCENE_QUERY_STAT(TileTrace), false);
 	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(25.0f);

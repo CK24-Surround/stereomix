@@ -49,8 +49,11 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 		return;
 	}
 
+	ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	CachedCatchMontage = CatchMontage.FindOrAdd(SourceTeam, nullptr);
+
 	// 언제든 다른 상태로 인해 끊길 수 있는 애니메이션이기에 bAllowInterruptAfterBlendOut을 활성화 해 언제 끊기던 OnInterrupted가 브로드 캐스트 되도록합니다.
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CatchMontage);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CachedCatchMontage);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		EndAbilityByCancel();
@@ -72,7 +75,7 @@ void USMGameplayAbility_Catch::ActivateAbility(const FGameplayAbilitySpecHandle 
 	CommitAbility(Handle, ActorInfo, ActivationInfo);
 
 	// 만약 무소속이라면 뒤의 로직을 실행하지 않습니다. 즉 애니메이션과 이펙트만 실행됩니다.
-	if (SourceCharacter->GetTeam() == ESMTeam::None)
+	if (SourceTeam == ESMTeam::None)
 	{
 		EndAbilityByCancel();
 		return;
