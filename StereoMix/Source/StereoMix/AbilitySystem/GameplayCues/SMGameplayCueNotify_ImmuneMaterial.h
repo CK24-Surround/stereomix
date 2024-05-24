@@ -8,6 +8,17 @@
 #include "Data/SMTeam.h"
 #include "SMGameplayCueNotify_ImmuneMaterial.generated.h"
 
+USTRUCT(BlueprintType)
+struct FImmuneApplyIndexData
+{
+	GENERATED_BODY()
+
+	FImmuneApplyIndexData() {}
+
+	UPROPERTY(EditAnywhere)
+	TArray<int32> ApplyIndexNumbers;
+};
+
 /**
  * 
  */
@@ -32,7 +43,7 @@ protected:
 
 	/** 먼역 머티리얼이 적용되야할 캐릭터 메시 머티리얼 인덱스입니다.*/
 	UPROPERTY(EditAnywhere, Category = "Asset", meta = (EditCondition = "bIsApply", EditConditionHides))
-	TArray<int32> ApplyIndexNumbers = {0, 1, 2, 3};
+	TMap<ESMTeam, FImmuneApplyIndexData> ApplyIndexData;
 
 	UPROPERTY(EditAnywhere, Category = "Asset", meta = (EditCondition = "bIsApply", EditConditionHides))
 	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneMaterial;

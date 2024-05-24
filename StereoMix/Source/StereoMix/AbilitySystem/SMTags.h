@@ -82,7 +82,7 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SmashSplashHit);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SmashWithHealItem);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneEnd);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneMaterialApply);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneMaterialApply_ElectricGuitar);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneMaterialReset);
 	}
 }

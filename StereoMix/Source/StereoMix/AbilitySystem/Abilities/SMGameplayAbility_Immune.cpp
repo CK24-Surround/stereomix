@@ -78,7 +78,7 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 		SourceCharacter->SetCharacterMoveTrailState(ECharacterMoveTrailState::Immune);
 	}
 
-	K2_ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialApply, MakeEffectContext(Handle, ActorInfo));
+	K2_ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialApply_ElectricGuitar, MakeEffectContext(Handle, ActorInfo));
 }
 
 void USMGameplayAbility_Immune::OnFinishDelay()

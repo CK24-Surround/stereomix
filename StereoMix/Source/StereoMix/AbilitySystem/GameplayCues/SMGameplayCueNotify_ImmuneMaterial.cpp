@@ -42,10 +42,13 @@ void USMGameplayCueNotify_ImmuneMaterial::ApplyMaterial(ASMPlayerCharacter* Sour
 	ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	if (ImmuneMaterial.Find(SourceTeam))
 	{
-		// 면역 머티리얼 적용이 필요한 머티리얼 슬롯에 면역 머티리얼을 적용합니다.
-		for (const auto& ApplyIndexNumber : ApplyIndexNumbers)
+		if (ApplyIndexData.Find(SourceTeam))
 		{
-			SourceMesh->SetMaterial(ApplyIndexNumber, ImmuneMaterial[SourceTeam]);
+			// 면역 머티리얼 적용이 필요한 머티리얼 슬롯에 면역 머티리얼을 적용합니다.
+			for (const auto& ApplyIndexNumber : ApplyIndexData[SourceTeam].ApplyIndexNumbers)
+			{
+				SourceMesh->SetMaterial(ApplyIndexNumber, ImmuneMaterial[SourceTeam]);
+			}
 		}
 	}
 }
