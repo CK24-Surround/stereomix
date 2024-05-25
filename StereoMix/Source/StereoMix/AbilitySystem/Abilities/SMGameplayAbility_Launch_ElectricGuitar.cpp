@@ -70,7 +70,7 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectile(const FVector& I
 void USMGameplayAbility_Launch_ElectricGuitar::LaunchTimerCallback()
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
 		return;

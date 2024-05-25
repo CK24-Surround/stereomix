@@ -4,6 +4,7 @@
 #include "SMGameplayCueNotifyLoopWithTeam_Stun.h"
 
 #include "NiagaraFunctionLibrary.h"
+#include "Utilities/SMLog.h"
 
 void ASMGameplayCueNotifyLoopWithTeam_Stun::OnStartFX(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
@@ -46,8 +47,9 @@ void ASMGameplayCueNotifyLoopWithTeam_Stun::OnLoopingStartFX(AActor* SourceActor
 
 void ASMGameplayCueNotifyLoopWithTeam_Stun::OnEndFX(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
-	if (!ensureAlways(SourceActor))
+	if (!SourceActor)
 	{
+		NET_LOG(nullptr, Error, TEXT("소스 캐릭터가 유효하지 않습니다."));
 		return;
 	}
 

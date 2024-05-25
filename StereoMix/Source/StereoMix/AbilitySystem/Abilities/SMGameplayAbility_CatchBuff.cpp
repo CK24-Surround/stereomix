@@ -78,7 +78,7 @@ void USMGameplayAbility_CatchBuff::ActivateAbility(const FGameplayAbilitySpecHan
 void USMGameplayAbility_CatchBuff::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	if (!SourceCharacter)
 	{
 		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;

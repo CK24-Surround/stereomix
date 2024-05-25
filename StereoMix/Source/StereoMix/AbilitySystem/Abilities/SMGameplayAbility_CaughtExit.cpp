@@ -23,15 +23,15 @@ void USMGameplayAbility_CaughtExit::ActivateAbility(const FGameplayAbilitySpecHa
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensureAlways(SourceASC))
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
 	{
 		EndAbilityByCancel();
 		return;

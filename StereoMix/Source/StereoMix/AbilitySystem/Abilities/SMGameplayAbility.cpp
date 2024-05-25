@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "Utilities/SMLog.h"
 
 USMGameplayAbility::USMGameplayAbility()
 {
@@ -16,22 +17,36 @@ USMGameplayAbility::USMGameplayAbility()
 
 USMAbilitySystemComponent* USMGameplayAbility::GetSMAbilitySystemComponentFromActorInfo() const
 {
-	if (ensure(CurrentActorInfo))
+	if (!ensureAlways(CurrentActorInfo))
 	{
-		return Cast<USMAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get());
+		return nullptr;
 	}
 
-	return nullptr;
+	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get());
+	if (!SourceASC)
+	{
+		NET_LOG(nullptr, Error, TEXT("소스 ASC가 유효하지 않습니다."));
+		return nullptr;
+	}
+
+	return SourceASC;
 }
 
 ASMPlayerCharacter* USMGameplayAbility::GetSMPlayerCharacterFromActorInfo() const
 {
-	if (ensure(CurrentActorInfo))
+	if (!ensureAlways(CurrentActorInfo))
 	{
-		return Cast<ASMPlayerCharacter>(CurrentActorInfo->AvatarActor.Get());
+		return nullptr;
 	}
 
-	return nullptr;
+	ASMPlayerCharacter* SourceCharacter = Cast<ASMPlayerCharacter>(CurrentActorInfo->AvatarActor.Get());
+	if (!SourceCharacter)
+	{
+		NET_LOG(nullptr, Error, TEXT("소스 캐릭터가 유효하지 않습니다."));
+		return nullptr;
+	}
+
+	return SourceCharacter;
 }
 
 void USMGameplayAbility::EndAbilityByCancel()

@@ -159,10 +159,6 @@ void ASMPlayerCharacter::OnRep_Controller()
 
 void ASMPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	// TODO: 현재 정상작동되지 않습니다.
-	// 자신을 타겟하는 인디케이터가 존재할 수 있으니 제거해줍니다.
-	// MulticastRPCRemoveScreenIndicatorToSelf(this);
-
 	if (!ASC.Get())
 	{
 		return;

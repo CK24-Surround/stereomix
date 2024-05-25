@@ -22,7 +22,7 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
 		return;
@@ -83,15 +83,15 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 
 void USMGameplayAbility_Immune::OnFinishDelay()
 {
-	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
-	if (!ensureAlways(SourceASC))
+	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
+	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
 	{
 		EndAbilityByCancel();
 		return;

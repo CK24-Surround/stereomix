@@ -19,7 +19,7 @@ void USMGameplayAbility_Caught::ActivateAbility(const FGameplayAbilitySpecHandle
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
 		return;

@@ -32,7 +32,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
 		return;
@@ -108,16 +108,16 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	if (!SourceCharacter)
 	{
-		Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, true);
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
 	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
 	if (!ensureAlways(SourceASC))
 	{
-		Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, true);
+		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
 
@@ -137,7 +137,7 @@ void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle
 void USMGameplayAbility_Stun::OnStunTimeEnd()
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
 		return;
@@ -176,7 +176,7 @@ void USMGameplayAbility_Stun::OnStunTimeEnd()
 void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-	if (!ensureAlways(SourceCharacter))
+	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
 		return;

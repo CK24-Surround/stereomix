@@ -17,7 +17,7 @@ void USMGameplayAbility_CaughtExitOnStunEnd::EndAbility(const FGameplayAbilitySp
 	if (!bWasCancelled)
 	{
 		ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
-		if (ensure(SourceCharacter))
+		if (SourceCharacter)
 		{
 			// 스턴 어빌리티에게 잡기 탈출이 끝났음을 알립니다.
 			UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceCharacter, SMTags::Event::Character::CaughtExitEnd, FGameplayEventData());
