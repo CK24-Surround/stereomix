@@ -215,6 +215,9 @@ void ASMPlayerController::AddScreendIndicator(AActor* TargetActor)
 	OffScreendIndicator->AddToViewport(-1);
 	OffScreendIndicator->SetTarget(TargetActor);
 	OffScreenIndicators.Add(TargetActor, OffScreendIndicator);
+
+	// 대상이 게임에서 나갔을 경우의 예외처리입니다.
+	TargetActor->OnDestroyed.AddDynamic(this, &ThisClass::OnTargetDestroyedWithIndicator);
 }
 
 void ASMPlayerController::RemoveScreenIndicator(AActor* TargetActor)
@@ -240,4 +243,14 @@ void ASMPlayerController::RemoveScreenIndicator(AActor* TargetActor)
 	(*OffScreendIndicator)->RemoveFromParent();
 	(*OffScreendIndicator)->ConditionalBeginDestroy();
 	OffScreenIndicators.Remove(TargetActor);
+
+	// 대상이 게임에서 나갔을 경우의 예외처리로 사용된 이벤트를 제거합니다.
+	TargetActor->OnDestroyed.RemoveAll(this);
+}
+
+void ASMPlayerController::OnTargetDestroyedWithIndicator(AActor* DestroyedActor)
+{
+	// 대상이 게임에서 나가거나 어떤 이유로 유효하지 않게된 경우 인디케이터를 제거해줍니다.
+	NET_LOG(this, Warning, TEXT("유효하지 않은 타겟의 인디케이터 제거"));
+	RemoveScreenIndicator(DestroyedActor);
 }

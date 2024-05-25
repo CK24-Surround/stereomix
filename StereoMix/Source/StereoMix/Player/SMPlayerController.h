@@ -64,6 +64,10 @@ public:
 	/** 타겟을 향하는 인디케이터를 제거합니다. */
 	void RemoveScreenIndicator(AActor* TargetActor);
 
+	/** 인디케이터를 갖고 있는 타겟이 파괴되면 호출됩니다.*/
+	UFUNCTION()
+	void OnTargetDestroyedWithIndicator(AActor* DestroyedActor);
+
 public:
 	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
 

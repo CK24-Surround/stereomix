@@ -551,7 +551,7 @@ void ASMPlayerCharacter::MulticastRPCAddScreenIndicatorToSelf_Implementation(AAc
 	ASMPlayerController* LocalPlayerController = Cast<ASMPlayerController>(GetWorld()->GetFirstPlayerController());
 	if (ensureAlways(LocalPlayerController))
 	{
-		LocalPlayerController->AddScreendIndicator(this);
+		LocalPlayerController->AddScreendIndicator(TargetActor);
 	}
 }
 
