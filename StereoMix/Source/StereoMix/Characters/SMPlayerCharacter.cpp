@@ -214,7 +214,8 @@ void ASMPlayerCharacter::OnRep_PlayerState()
 	InitASC();
 
 	ESMTeam SourceTeam = TeamComponent->GetTeam();
-	USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), AssetData->CharacterStateWidget[SourceTeam]);
+	const TSubclassOf<UUserWidget>* CharacterStateWidgetPtr = AssetData->CharacterStateWidget.Find(SourceTeam);
+	USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), *CharacterStateWidgetPtr);
 	CharacterStateWidgetComponent->SetWidget(NewWidget);
 
 	DefaultMoveTrailFXComponent->SetAsset(DefaultMoveTrailFX[SourceTeam]);
