@@ -655,31 +655,7 @@ void ASMPlayerCharacter::OnCatchRelease()
 
 void ASMPlayerCharacter::OnTeamChangeCallback()
 {
-	const ESMTeam Team = TeamComponent->GetTeam();
-
 	return;
-	// 팀이 바뀔일은 없어야하지만 테스트 시에는 충분히 있는 상황으로 이에 대한 처리입니다.
-	if (!HasAuthority())
-	{
-		GetMesh()->SetMaterial(6, AssetData->HairRingMaterial[Team]);
-		GetMesh()->SetMaterial(7, AssetData->HairFrontMaterial[Team]);
-		GetMesh()->SetMaterial(9, AssetData->HairTailMaterial[Team]);
-
-		// 기본 머티리얼을 다시 업데이트 해줍니다.
-		OriginMaterials = GetMesh()->GetMaterials();
-
-		if (ASC.Get())
-		{
-			USMUserWidget_CharacterState* NewWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), AssetData->CharacterStateWidget[TeamComponent->GetTeam()]);
-			CharacterStateWidgetComponent->SetWidget(NewWidget);
-		}
-
-		DefaultMoveTrailFXComponent->SetAsset(DefaultMoveTrailFX[Team]);
-		DefaultMoveTrailFXComponent->Activate(true);
-
-		CatchMoveTrailFXComponent->SetAsset(CatchMoveTrailFX[Team]);
-		ImmuneMoveTrailFXComponent->SetAsset(ImmuneMoveTrailFX[Team]);
-	}
 }
 
 bool ASMPlayerCharacter::bAmICatching()
