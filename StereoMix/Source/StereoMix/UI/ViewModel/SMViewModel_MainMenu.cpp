@@ -26,7 +26,7 @@ void USMViewModel_MainMenu::ShowSettings()
 	// SettingsWidget->AddToViewport(5);
 }
 
-void USMViewModel_MainMenu::QuitGame() const
+void USMViewModel_MainMenu::QuitGame()
 {
 	UKismetSystemLibrary::QuitGame(GetWorld(), nullptr, EQuitPreference::Quit, true);
 }

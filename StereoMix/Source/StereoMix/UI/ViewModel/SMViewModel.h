@@ -9,7 +9,7 @@
 /**
  * StereoMix ViewModel base class
  */
-UCLASS(Abstract)
+UCLASS(Abstract, BlueprintType)
 class STEREOMIX_API USMViewModel : public UMVVMViewModelBase
 {
 	GENERATED_BODY()

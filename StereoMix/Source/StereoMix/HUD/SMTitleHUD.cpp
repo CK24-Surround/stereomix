@@ -45,39 +45,6 @@ void ASMTitleHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
-void ASMTitleHUD::OnAuthServiceStateChanged(const EGrpcServiceState ChangedState)
-{
-	if (!TitleViewModel)
-	{
-		return;
-	}
-
-	ETitleConnectionStatus ConnectionStatus = ETitleConnectionStatus::None;
-	switch (ChangedState)
-	{
-	case EGrpcServiceState::NotCreate:
-	case EGrpcServiceState::Shutdown:
-		ConnectionStatus = ETitleConnectionStatus::None;
-		break;
-	case EGrpcServiceState::Idle:
-	case EGrpcServiceState::Connecting:
-		ConnectionStatus = ETitleConnectionStatus::Connecting;
-		break;
-	case EGrpcServiceState::Ready:
-		ConnectionStatus = ETitleConnectionStatus::Connected;
-		break;
-	case EGrpcServiceState::TransientFailure:
-		ConnectionStatus = ETitleConnectionStatus::ConnectionFailed;
-		break;
-	}
-	
-	TitleViewModel->SetConnectionStatus(ConnectionStatus);
-	if (ChangedState == EGrpcServiceState::Ready)
-	{
-		CreateGuestLoginWidget();
-	}
-}
-
 void ASMTitleHUD::CreateGuestLoginWidget()
 {
 	checkfSlow(GuestLoginWidgetClass, TEXT("GuestLoginWidgetClass is not set."))
@@ -101,8 +68,42 @@ void ASMTitleHUD::OnGuestLoginSubmit()
 
 	if (const auto ConnectionSubsystem = GetGameInstance()->GetSubsystem<USMClientConnectionSubsystem>())
 	{
-		GuestLoginWidget->RemoveFromParent();
 		ConnectionSubsystem->GuestLogin(GuestLoginViewModel->GetUserName());
+		GuestLoginWidget->RemoveFromParent();
+	}
+}
+
+void ASMTitleHUD::OnAuthServiceStateChanged(const EGrpcServiceState ChangedState)
+{
+	if (!TitleViewModel)
+	{
+		return;
+	}
+
+	// TODO: ViewModel로 옮기기
+	ETitleConnectionStatus ConnectionStatus = ETitleConnectionStatus::None;
+	switch (ChangedState)
+	{
+	case EGrpcServiceState::NotCreate:
+	case EGrpcServiceState::Shutdown:
+		ConnectionStatus = ETitleConnectionStatus::None;
+		break;
+	case EGrpcServiceState::Idle:
+	case EGrpcServiceState::Connecting:
+		ConnectionStatus = ETitleConnectionStatus::Connecting;
+		break;
+	case EGrpcServiceState::Ready:
+		ConnectionStatus = ETitleConnectionStatus::Connected;
+		break;
+	case EGrpcServiceState::TransientFailure:
+		ConnectionStatus = ETitleConnectionStatus::ConnectionFailed;
+		break;
+	}
+	
+	TitleViewModel->SetConnectionStatus(ConnectionStatus);
+	if (ChangedState == EGrpcServiceState::Ready)
+	{
+		CreateGuestLoginWidget();
 	}
 }
 

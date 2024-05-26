@@ -13,7 +13,7 @@
 /**
  * Default Login ViewModel
  */
-UCLASS(Blueprintable)
+UCLASS(BlueprintType)
 class STEREOMIX_API USMViewModel_Login : public USMViewModel
 {
 	GENERATED_BODY()
