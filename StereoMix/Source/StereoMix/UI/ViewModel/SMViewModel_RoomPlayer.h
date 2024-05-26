@@ -10,7 +10,7 @@
 /**
  * Room Player ViewModel
  */
-UCLASS()
+UCLASS(BlueprintType)
 class STEREOMIX_API USMViewModel_RoomPlayer : public USMViewModel
 {
 	GENERATED_BODY()

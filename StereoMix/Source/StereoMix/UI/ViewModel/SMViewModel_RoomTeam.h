@@ -12,7 +12,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class STEREOMIX_API USMViewModel_RoomTeam : public USMViewModel
 {
 	GENERATED_BODY()

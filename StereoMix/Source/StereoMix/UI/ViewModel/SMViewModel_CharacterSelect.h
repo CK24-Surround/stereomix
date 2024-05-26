@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class STEREOMIX_API USMViewModel_CharacterSelect : public USMViewModel
 {
 	GENERATED_BODY()

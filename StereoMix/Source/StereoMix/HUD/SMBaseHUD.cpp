@@ -23,9 +23,9 @@ void ASMBaseHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
-UUserWidget* ASMBaseHUD::AddWidgetToViewport(const TSubclassOf<UUserWidget>& WidgetClass)
+UUserWidget* ASMBaseHUD::AddWidgetToViewport(const TSubclassOf<UUserWidget>& WidgetClass, int32 ZOrder)
 {
 	UUserWidget* Widget = CreateWidget<UUserWidget>(GetOwningPlayerController(), WidgetClass);
-	Widget->AddToViewport();
+	Widget->AddToViewport(ZOrder);
 	return Widget;
 }

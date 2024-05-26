@@ -4,35 +4,41 @@
 
 #include "CoreMinimal.h"
 #include "SMViewModel.h"
+#include "StereoMix.h"
 #include "SMViewModel_RoomShortCodePopup.generated.h"
 
 /**
  * Room Short Code Popup ViewModel
  */
-UCLASS()
+UCLASS(BlueprintType)
 class STEREOMIX_API USMViewModel_RoomShortCodePopup : public USMViewModel
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter=SetRoomShortCodeText, meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter=SetRoomShortCodeText, Getter=GetRoomShortCodeText, meta=(AllowPrivateAccess))
 	FText RoomShortCodeText;
 
 	UPROPERTY(BlueprintReadWrite, FieldNotify, meta=(AllowPrivateAccess))
-	bool bSubmitButtonEnabled;
+	bool bSubmitButtonEnabled = false;
 
 	UPROPERTY(BlueprintReadWrite, FieldNotify, meta=(AllowPrivateAccess))
-	bool bCancelButtonEnabled;
+	bool bCancelButtonEnabled = true;
 
 public:
 	FSimpleDelegate OnSubmit;
 	FSimpleDelegate OnCancel;
 
-	FText GetRoomShortCodeText() const { return RoomShortCodeText; }
+	FText GetRoomShortCodeText() const
+	{
+		return RoomShortCodeText;
+	}
 
 	void SetRoomShortCodeText(const FText& NewRoomShortCode)
 	{
-		UE_MVVM_SET_PROPERTY_VALUE(RoomShortCodeText, NewRoomShortCode.ToUpper());
-		SetSubmitButtonEnabled(IsValidRoomShortCode(NewRoomShortCode));
+		if (UE_MVVM_SET_PROPERTY_VALUE(RoomShortCodeText, NewRoomShortCode))
+		{
+			SetSubmitButtonEnabled(IsValidRoomShortCode(NewRoomShortCode));
+		}
 	}
 
 	bool IsSubmitButtonEnabled() const { return bSubmitButtonEnabled; }

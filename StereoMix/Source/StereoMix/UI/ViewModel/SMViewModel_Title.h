@@ -23,7 +23,7 @@ enum class ETitleConnectionStatus
 /**
  * Title ViewModel
  */
-UCLASS()
+UCLASS(BlueprintType)
 class STEREOMIX_API USMViewModel_Title : public USMViewModel
 {
 	GENERATED_BODY()

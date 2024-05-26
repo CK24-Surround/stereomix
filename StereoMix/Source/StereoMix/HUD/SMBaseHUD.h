@@ -35,9 +35,10 @@ protected:
 	/**
 	 * 위젯을 생성하고 뷰포트에 추가합니다.
 	 * @param WidgetClass 위젯 클래스
+	 * @param ZOrder
 	 * @return 생성된 위젯
 	 */
-	virtual UUserWidget* AddWidgetToViewport(const TSubclassOf<UUserWidget>& WidgetClass);
+	virtual UUserWidget* AddWidgetToViewport(const TSubclassOf<UUserWidget>& WidgetClass, int32 ZOrder = 0);
 
 	// template<class ViewModelT>
 	// ViewModelT* CreateViewModel()

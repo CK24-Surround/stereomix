@@ -9,7 +9,7 @@
 /**
  * MainMenu ViewModel
  */
-UCLASS()
+UCLASS(BlueprintType)
 class STEREOMIX_API USMViewModel_MainMenu : public USMViewModel
 {
 	GENERATED_BODY()
@@ -31,5 +31,5 @@ public:
 	void ShowSettings();
 
 	UFUNCTION(BlueprintCallable, Category="UI")
-	void QuitGame() const;
+	void QuitGame();
 };

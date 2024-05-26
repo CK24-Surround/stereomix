@@ -25,7 +25,7 @@ void USMViewModel_RoomShortCodePopup::Cancel()
 
 bool USMViewModel_RoomShortCodePopup::IsValidRoomShortCode(const FText& RoomShortCodeToCheck)
 {
-	static const FRegexPattern ValidUserNamePattern(TEXT("^[a-zA-Z0-9]{1,6}$"));
+	static const FRegexPattern ValidUserNamePattern(TEXT("^[A-Z0-9]{6}$"));
 
 	FRegexMatcher UserNameMatcher(ValidUserNamePattern, RoomShortCodeToCheck.ToString());
 	return UserNameMatcher.FindNext();
