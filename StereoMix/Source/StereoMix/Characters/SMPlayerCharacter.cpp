@@ -272,8 +272,12 @@ void ASMPlayerCharacter::UpdateCameraLocation()
 	const FVector MouseLocation = GetCursorTargetingPoint();
 	FVector TargetLocation = (SourceLocation + MouseLocation) * 0.5;
 
-	TargetLocation.X = FMath::Clamp(TargetLocation.X, SourceLocation.X - CameraDistanceThreshold, SourceLocation.X + CameraDistanceThreshold);
-	TargetLocation.Y = FMath::Clamp(TargetLocation.Y, SourceLocation.Y - CameraDistanceThreshold, SourceLocation.Y + CameraDistanceThreshold);
+	const FVector SourceToTargetVector = TargetLocation - SourceLocation;
+	if (FMath::Square(CameraDistanceThreshold) < SourceToTargetVector.SizeSquared())
+	{
+		const FVector AdjustVector = SourceToTargetVector.GetSafeNormal() * CameraDistanceThreshold;
+		TargetLocation = SourceLocation + AdjustVector;
+	}
 
 	CameraBoom->SetWorldLocation(TargetLocation);
 }
