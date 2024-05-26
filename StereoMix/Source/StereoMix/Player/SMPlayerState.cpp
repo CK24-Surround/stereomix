@@ -3,6 +3,7 @@
 
 #include "SMPlayerState.h"
 
+#include "StereoMix.h"
 #include "Games/SMGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
@@ -19,6 +20,8 @@ void ASMPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
 {
 	Super::SeamlessTravelTo(NewPlayerState);
 
+	UE_LOG(LogStereoMix, Verbose, TEXT("[SMPlayerState] Player %s seamless traveled to %s"), *GetName(), *NewPlayerState->GetName())
+	
 	if (ASMPlayerState* SMPlayerState = Cast<ASMPlayerState>(NewPlayerState))
 	{
 		SMPlayerState->Team = Team;

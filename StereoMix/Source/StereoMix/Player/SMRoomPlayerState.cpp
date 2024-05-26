@@ -34,14 +34,27 @@ void ASMRoomPlayerState::BeginPlay()
 void ASMRoomPlayerState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
-	const ASMRoomState* RoomState = GetWorld()->GetGameStateChecked<ASMRoomState>();
-	RoomState->BroadcastPlayerRemoved(this);
+
+	if (!GetWorld())
+	{
+		return;
+	}
+	
+	const ASMRoomState* RoomState = GetWorld()->GetGameState<ASMRoomState>();
+	if (RoomState)
+	{
+		RoomState->BroadcastPlayerRemoved(this);
+	}
 }
 
 bool ASMRoomPlayerState::CanChangeTeam(const ESMTeam NewTeam) const
 {
-	const ASMRoomState* RoomState = CastChecked<ASMRoomState>(GetWorld()->GetGameState());
-	return RoomState->GetPlayerCountInTeam(NewTeam) < RoomState->MaxPlayersInTeam;
+	const ASMRoomState* RoomState = Cast<ASMRoomState>(GetWorld()->GetGameState());
+	if (RoomState)
+	{
+		return RoomState->GetPlayerCountInTeam(NewTeam) < RoomState->MaxPlayersInTeam;
+	}
+	return Super::CanChangeTeam(NewTeam);
 }
 
 void ASMRoomPlayerState::OnTeamChanged(const ESMTeam PreviousTeam, const ESMTeam NewTeam)
@@ -49,7 +62,10 @@ void ASMRoomPlayerState::OnTeamChanged(const ESMTeam PreviousTeam, const ESMTeam
 	Super::OnTeamChanged(PreviousTeam, NewTeam);
 	if (PreviousTeam != ESMTeam::None && NewTeam != PreviousTeam)
 	{
-		const ASMRoomState* RoomState = GetWorld()->GetGameStateChecked<ASMRoomState>();
-		RoomState->BroadcastTeamChanged(this, NewTeam);
+		const ASMRoomState* RoomState = GetWorld()->GetGameState<ASMRoomState>();
+		if (RoomState)
+		{
+			RoomState->BroadcastTeamChanged(this, NewTeam);
+		}
 	}
 }

@@ -64,7 +64,7 @@ void USMViewModel_RoomTeam::ChangeTeam()
 void USMViewModel_RoomTeam::OnPlayerAdd(APlayerState* NewPlayer)
 {
 	ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(NewPlayer);
-	NET_LOG(RoomPlayer, Verbose, TEXT("[Room_Team_VM] [%s] Player %s added with team %s"), *UEnum::GetValueAsString(Team), *NewPlayer->GetPlayerName(), *UEnum::GetValueAsString(RoomPlayer->GetTeam()))
+	// NET_LOG(RoomPlayer, Verbose, TEXT("[Room_Team_VM] [%s] Player %s added with team %s"), *UEnum::GetValueAsString(Team), *NewPlayer->GetPlayerName(), *UEnum::GetValueAsString(RoomPlayer->GetTeam()))
 	if (RoomPlayer->GetTeam() != Team)
 	{
 		return;
@@ -78,8 +78,13 @@ void USMViewModel_RoomTeam::OnPlayerAdd(APlayerState* NewPlayer)
 
 void USMViewModel_RoomTeam::OnPlayerRemove(APlayerState* RemovedPlayer)
 {
+	if (!OwningRoomState.IsValid())
+	{
+		return;
+	}
+	
 	const ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(RemovedPlayer);
-	NET_LOG(RoomPlayer, Verbose, TEXT("[Room_Team_VM] [%s] Player %s removed"), *UEnum::GetValueAsString(Team), *RemovedPlayer->GetPlayerName())
+	// NET_LOG(RoomPlayer, Verbose, TEXT("[Room_Team_VM] [%s] Player %s removed"), *UEnum::GetValueAsString(Team), *RemovedPlayer->GetPlayerName())
 	if (RoomPlayer->GetTeam() != Team)
 	{
 		return;
@@ -100,7 +105,7 @@ void USMViewModel_RoomTeam::OnPlayerTeamChanged(APlayerState* TargetPlayer, cons
 		return;
 	}
 
-	UE_LOG(LogStereoMix, Verbose, TEXT("[Room_Team_VM] [%s] Player %s changed team to %s"), *UEnum::GetValueAsString(Team), *TargetPlayer->GetPlayerName(), *UEnum::GetValueAsString(NewTeam))
+	// UE_LOG(LogStereoMix, Verbose, TEXT("[Room_Team_VM] [%s] Player %s changed team to %s"), *UEnum::GetValueAsString(Team), *TargetPlayer->GetPlayerName(), *UEnum::GetValueAsString(NewTeam))
 	if (Team == NewTeam)
 	{
 		const bool bChanged = AddPlayer(RoomPlayer);

@@ -4,12 +4,16 @@
 #include "SMCharacterSelectMode.h"
 
 #include "SMCharacterSelectState.h"
+#include "Player/SMCharacterSelectPlayerState.h"
 #include "Player/SMFrontendPlayerController.h"
+#include "Session/SMGameSession.h"
 #include "Session/SMRoomSession.h"
 
 ASMCharacterSelectMode::ASMCharacterSelectMode()
 {
-	GameSessionClass = ASMRoomSession::StaticClass();
+	bUseSeamlessTravel = true;
+	GameSessionClass = ASMGameSession::StaticClass();
 	GameStateClass = ASMCharacterSelectState::StaticClass();
+	PlayerStateClass =ASMCharacterSelectPlayerState::StaticClass();
 	PlayerControllerClass = ASMFrontendPlayerController::StaticClass();
 }

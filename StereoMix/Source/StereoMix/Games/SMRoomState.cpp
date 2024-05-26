@@ -34,13 +34,13 @@ int32 ASMRoomState::GetPlayerCountInTeam(const ESMTeam Team) const
 
 void ASMRoomState::BroadcastPlayerAdded(APlayerState* PlayerState) const
 {
-	NET_LOG(this, Verbose, TEXT("Player %s added to room with team %s"), *PlayerState->GetPlayerName(), *UEnum::GetValueAsString(Cast<ASMRoomPlayerState>(PlayerState)->GetTeam()))
+	// NET_LOG(this, Verbose, TEXT("Player %s added to room with team %s"), *PlayerState->GetPlayerName(), *UEnum::GetValueAsString(Cast<ASMRoomPlayerState>(PlayerState)->GetTeam()))
 	PlayerAddEvent.Broadcast(PlayerState);
 }
 
 void ASMRoomState::BroadcastPlayerRemoved(APlayerState* PlayerState) const
 {
-NET_LOG(this, Verbose, TEXT("Player %s removed from room"), *PlayerState->GetPlayerName())
+	// NET_LOG(this, Verbose, TEXT("Player %s removed from room"), *PlayerState->GetPlayerName())
  	PlayerRemoveEvent.Broadcast(PlayerState);
 }
 

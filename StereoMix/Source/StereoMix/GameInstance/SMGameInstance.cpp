@@ -15,6 +15,7 @@ void USMGameInstance::Init()
 void USMGameInstance::StartGameInstance()
 {
 	Super::StartGameInstance();
+
 }
 
 void USMGameInstance::ShowLoadingScreen()

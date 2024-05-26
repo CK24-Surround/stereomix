@@ -4,15 +4,16 @@
 #include "SMRoomMode.h"
 
 #include "SMRoomState.h"
-#include "HUD/SMRoomHUD.h"
 #include "Player/SMRoomPlayerState.h"
+#include "Session/SMGameSession.h"
 #include "Session/SMRoomSession.h"
+#include "Utilities/SMLog.h"
 
 ASMRoomMode::ASMRoomMode()
 {
 	bUseSeamlessTravel = true;
 
-	GameSessionClass = ASMRoomSession::StaticClass();
+	GameSessionClass = ASMGameSession::StaticClass();
 	GameStateClass = ASMRoomState::StaticClass();
 	PlayerStateClass = ASMRoomPlayerState::StaticClass();
 
@@ -31,7 +32,11 @@ void ASMRoomMode::InitGameState()
 
 bool ASMRoomMode::IsReadyToStart()
 {
-	return GetNumPlayers() == GameSession->MaxPlayers;
+	const int32 NumPlayers = GetNumPlayers();
+	// const int32 MaxPlayers = GameSession->MaxPlayers; // 게임세션의 MaxPlayers가 제대로 적용되지 않음
+	const int32 MaxPlayers = 6;
+	NET_LOG(this, Verbose, TEXT("NumPlayers: %d, MaxPlayers: %d"), NumPlayers, MaxPlayers);
+	return NumPlayers == MaxPlayers;
 }
 
 void ASMRoomMode::OnPostLogin(AController* NewPlayer)
@@ -48,16 +53,20 @@ void ASMRoomMode::Logout(AController* Exiting)
 
 void ASMRoomMode::UpdateRoomState()
 {
+	NET_LOG(this, Log, TEXT("[SMRoomMode] UpdateRoomState"));
 	ASMRoomState* RoomState = Cast<ASMRoomState>(GameState);
 	check(RoomState)
 
 	if (const bool IsReady = IsReadyToStart(); IsReady && !CountdownTimerHandle.IsValid())
 	{
+		NET_LOG(this, Log, TEXT("[SMRoomMode] IsReadyToStart"))
+		RoomState->Countdown = CountdownTime;
 		RoomState->StartCountdown();
 		GetWorldTimerManager().SetTimer(CountdownTimerHandle, this, &ASMRoomMode::CountdownTick, 1.0f, true);
 	}
 	else if (!IsReady && CountdownTimerHandle.IsValid())
 	{
+		NET_LOG(this, Log, TEXT("[SMRoomMode] Cancel Countdown"))
 		GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
 		RoomState->CancelCountdown();
 	}
@@ -80,8 +89,12 @@ void ASMRoomMode::CountdownTick()
 		else
 		{
 			GetWorldTimerManager().ClearTimer(CountdownTimerHandle);
-			
+			StartGame();
 		}
+	}
+	else
+	{
+		NET_LOG(this, Log, TEXT("Countdown: %d"), RoomState->Countdown);
 	}
 }
 

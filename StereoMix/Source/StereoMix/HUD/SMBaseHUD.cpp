@@ -15,7 +15,10 @@ void ASMBaseHUD::BeginPlay()
 	Super::BeginPlay();
 
 	checkfSlow(MainWidgetClass, TEXT("MainWidgetClass is not set."))
-	MainWidget = AddWidgetToViewport(MainWidgetClass);
+	if (MainWidgetClass)
+	{
+		MainWidget = AddWidgetToViewport(MainWidgetClass);
+	}
 }
 
 void ASMBaseHUD::EndPlay(const EEndPlayReason::Type EndPlayReason)

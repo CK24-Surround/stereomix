@@ -26,7 +26,7 @@ void USMViewModel_RoomPlayer::Init(ASMRoomPlayerState* TargetPlayer)
 	{
 		bIsLocal = OwningPlayerState->GetOwningController()->IsLocalPlayerController();
 	}
-	NET_LOG(OwningPlayerState.Get(), Verbose, TEXT("USMViewModel_RoomPlayer::Init - %s, %d"), *PlayerName, bIsLocal)
+	// NET_LOG(OwningPlayerState.Get(), Verbose, TEXT("USMViewModel_RoomPlayer::Init - %s, %d"), *PlayerName, bIsLocal)
 	SetItem(FText::FromString(PlayerName), bIsLocal);
 }
 
@@ -34,12 +34,12 @@ void USMViewModel_RoomPlayer::Remove()
 {
 	ResetItem();
 	OwningPlayerState.Reset();
-	NET_LOG(OwningPlayerState.Get(), Verbose, TEXT("USMViewModel_RoomPlayer::Remove"))
+	// NET_LOG(OwningPlayerState.Get(), Verbose, TEXT("USMViewModel_RoomPlayer::Remove"))
 }
 
 void USMViewModel_RoomPlayer::SetItem(const FText& PlayerName, const bool bIsLocalPlayer)
 {
-	NET_LOG(OwningPlayerState.Get(), Verbose, TEXT("USMViewModel_RoomPlayer::SetItem - false, %s, %d"), *PlayerName.ToString(), bIsLocalPlayer);
+	// NET_LOG(OwningPlayerState.Get(), Verbose, TEXT("USMViewModel_RoomPlayer::SetItem - false, %s, %d"), *PlayerName.ToString(), bIsLocalPlayer);
 	// UE_MVVM_SET_PROPERTY_VALUE(bEmpty, false);
 	SetIsEmpty(false);
 	UE_MVVM_SET_PROPERTY_VALUE(PlayerNameText, PlayerName);
@@ -48,7 +48,7 @@ void USMViewModel_RoomPlayer::SetItem(const FText& PlayerName, const bool bIsLoc
 
 void USMViewModel_RoomPlayer::ResetItem()
 {
-	NET_LOG(OwningPlayerState.Get(), Verbose, TEXT("USMViewModel_RoomPlayer::ResetItem - true, %s, false"), *PlayerNameText.ToString());
+	// NET_LOG(OwningPlayerState.Get(), Verbose, TEXT("USMViewModel_RoomPlayer::ResetItem - true, %s, false"), *PlayerNameText.ToString());
 	// UE_MVVM_SET_PROPERTY_VALUE(bEmpty, true);
 	SetIsEmpty(true);
 	UE_MVVM_SET_PROPERTY_VALUE(PlayerNameText, FText());

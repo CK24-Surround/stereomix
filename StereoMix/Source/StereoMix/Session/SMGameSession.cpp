@@ -21,6 +21,19 @@ ASMGameSession::ASMGameSession(const FObjectInitializer& ObjectInitializer)
 void ASMGameSession::BeginPlay()
 {
 	Super::BeginPlay();
+// #if WITH_EDITOR
+// 	if (GEngine && HasAuthority())
+// 	{
+// 		if (GEngine->Exec(GetWorld(), TEXT("net.AllowPIESeamlessTravel 1")))
+// 		{
+// 			UE_LOG(LogStereoMix, Log, TEXT("Allowed seamless travel in PIE"));
+// 		}
+// 		else
+// 		{
+// 			UE_LOG(LogStereoMix, Warning, TEXT("Failed to allow seamless travel in PIE"));
+// 		}
+// 	}
+// #endif
 }
 
 // Called every frame

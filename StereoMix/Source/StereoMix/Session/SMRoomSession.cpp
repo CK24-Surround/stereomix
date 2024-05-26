@@ -3,6 +3,7 @@
 
 #include "SMRoomSession.h"
 
+#include "StereoMix.h"
 #include "Connection/SMGameServerConnectionSubsystem.h"
 
 
@@ -11,6 +12,7 @@ ASMRoomSession::ASMRoomSession()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+	MaxPlayers = 6;
 }
 
 void ASMRoomSession::RegisterServer()
@@ -22,6 +24,7 @@ void ASMRoomSession::RegisterServer()
 void ASMRoomSession::BeginPlay()
 {
 	Super::BeginPlay();
+	UE_LOG(LogStereoMix, Verbose, TEXT("MaxPlayers set to %d"), MaxPlayers);
 }
 
 // Called every frame
