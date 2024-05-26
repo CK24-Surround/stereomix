@@ -2,3 +2,7 @@
 
 
 #include "SMViewModel.h"
+
+USMViewModel::USMViewModel()
+{
+}

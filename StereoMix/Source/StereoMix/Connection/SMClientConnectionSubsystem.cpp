@@ -45,25 +45,25 @@ void USMClientConnectionSubsystem::ConnectLobbyService() const
 	LobbyService->Connect();
 }
 
-void USMClientConnectionSubsystem::GuestLogin(const FString& UserName)
+void USMClientConnectionSubsystem::GuestLogin(const FText& UserName)
 {
 	if (!USMGrpcServiceUtil::IsServiceReadyToCall(AuthService))
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC AuthService is not ready to call."));
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC AuthService is not ready to call."))
 		LoginEvent.Broadcast(EGrpcResultCode::ConnectionFailed);
 		return;
 	}
 
 	if (USMGrpcServiceUtil::IsBusy(AuthServiceClient, GuestLoginHandle))
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC AuthService::GuestLogin is already in progress."));
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC AuthService::GuestLogin is already in progress."))
 		LoginEvent.Broadcast(EGrpcResultCode::Aborted);
 		return;
 	}
 
 	GuestLoginHandle = AuthServiceClient->InitGuestLogin();
 	FGrpcAuthGuestLoginRequest Request;
-	Request.UserName = UserName;
+	Request.UserName = UserName.ToString();
 	AuthServiceClient->GuestLogin(GuestLoginHandle, Request);
 
 	Account.UserName = UserName;
@@ -79,7 +79,7 @@ void USMClientConnectionSubsystem::OnGuestLoginResponse(FGrpcContextHandle Handl
 {
 	if (Result.Code != EGrpcResultCode::Ok)
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC AuthService::GuestLogin failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString());
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC AuthService::GuestLogin failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
 		LoginEvent.Broadcast(Result.Code);
 		return;
 	}
@@ -95,21 +95,21 @@ void USMClientConnectionSubsystem::CreateRoom(const FString& RoomName, const EGr
 {
 	if (!USMGrpcServiceUtil::IsServiceReadyToCall(LobbyService))
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService is not ready to call."));
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService is not ready to call."))
 		CreateRoomEvent.Broadcast(EGrpcResultCode::ConnectionFailed, EGrpcLobbyRoomDeploymentStatus::ROOM_DEPLOYMENT_STATUS_UNSPECIFIED, FString());
 		return;
 	}
 
 	if (USMGrpcServiceUtil::IsBusy(LobbyServiceClient, CreateRoomHandle))
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService::CreateRoom is already in progress."));
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService::CreateRoom is already in progress."))
 		CreateRoomEvent.Broadcast(EGrpcResultCode::Aborted, EGrpcLobbyRoomDeploymentStatus::ROOM_DEPLOYMENT_STATUS_UNSPECIFIED, FString());
 		return;
 	}
 
 	if (Visibility == EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PRIVATE && Password.IsEmpty())
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("Private room must have a password."));
+		UE_LOG(LogStereoMix, Error, TEXT("Private room must have a password."))
 		CreateRoomEvent.Broadcast(EGrpcResultCode::InvalidArgument, EGrpcLobbyRoomDeploymentStatus::ROOM_DEPLOYMENT_STATUS_UNSPECIFIED, FString());
 		return;
 	}
@@ -130,7 +130,7 @@ void USMClientConnectionSubsystem::OnCreateRoomResponse(FGrpcContextHandle Handl
 	FString ConnectionUrl;
 	if (Result.Code != EGrpcResultCode::Ok || Response.DeployStatus == EGrpcLobbyRoomDeploymentStatus::ROOM_DEPLOYMENT_STATUS_ERROR)
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService::CreateRoom failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString());
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService::CreateRoom failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
 		CreateRoomEvent.Broadcast(Result.Code, Response.DeployStatus, FString());
 
 		if (Result.Code == EGrpcResultCode::Unauthenticated)
@@ -146,11 +146,11 @@ void USMClientConnectionSubsystem::OnCreateRoomResponse(FGrpcContextHandle Handl
 	{
 		const FGrpcLobbyRoomConnectionInfo& Connection = Response.Connection;
 		ConnectionUrl = FString::Printf(TEXT("%s:%d"), *Connection.Host, Connection.Port);
-		UE_LOG(LogStereoMix, Log, TEXT("gRPC LobbyService::CreateRoom succeeded. ConnectionUrl: %s"), *ConnectionUrl);
+		UE_LOG(LogStereoMix, Log, TEXT("gRPC LobbyService::CreateRoom succeeded. ConnectionUrl: %s"), *ConnectionUrl)
 	}
 	else
 	{
-		UE_LOG(LogStereoMix, Log, TEXT("gRPC LobbyService::CreateRoom is in progress. DeploymentStatus: %s"), *UEnum::GetValueAsString(Response.DeployStatus));
+		UE_LOG(LogStereoMix, Log, TEXT("gRPC LobbyService::CreateRoom is in progress. DeploymentStatus: %s"), *UEnum::GetValueAsString(Response.DeployStatus))
 	}
 	
 	CreateRoomEvent.Broadcast(Result.Code, Response.DeployStatus, ConnectionUrl);
@@ -177,21 +177,21 @@ void USMClientConnectionSubsystem::JoinRoomInternal(const FGrpcLobbyJoinRoomRequ
 {
 	if (!USMGrpcServiceUtil::IsServiceReadyToCall(LobbyService))
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService is not ready to call."));
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService is not ready to call."))
 		JoinRoomEvent.Broadcast(EGrpcResultCode::ConnectionFailed, FString());
 		return;
 	}
 
 	if (USMGrpcServiceUtil::IsBusy(LobbyServiceClient, JoinRoomHandle))
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService::JoinRoom is already in progress."));
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService::JoinRoom is already in progress."))
 		JoinRoomEvent.Broadcast(EGrpcResultCode::Aborted, FString());
 		return;
 	}
 
 	if (Request.Id.RoomId.IsEmpty() && Request.Id.ShortRoomId.IsEmpty())
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("RoomId or ShortCode must be specified."));
+		UE_LOG(LogStereoMix, Error, TEXT("RoomId or ShortCode must be specified."))
 		JoinRoomEvent.Broadcast(EGrpcResultCode::InvalidArgument, FString());
 		return;
 	}
@@ -210,7 +210,7 @@ void USMClientConnectionSubsystem::OnJoinRoomResponse(FGrpcContextHandle Handle,
 			bIsAuthenticated = false;
 		}
 
-		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService::JoinRoom failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString());
+		UE_LOG(LogStereoMix, Error, TEXT("gRPC LobbyService::JoinRoom failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
 		JoinRoomEvent.Broadcast(Result.Code, FString());
 
 		return;
@@ -219,5 +219,5 @@ void USMClientConnectionSubsystem::OnJoinRoomResponse(FGrpcContextHandle Handle,
 	const FGrpcLobbyRoomConnectionInfo& Connection = Response.Connection;
 	const FString ConnectionUrl = FString::Printf(TEXT("%s:%d"), *Connection.Host, Connection.Port);
 	JoinRoomEvent.Broadcast(Result.Code, ConnectionUrl);
-	UE_LOG(LogStereoMix, Log, TEXT("gRPC LobbyService::JoinRoom succeeded. ConnectionUrl: %s"), *ConnectionUrl);
+	UE_LOG(LogStereoMix, Log, TEXT("gRPC LobbyService::JoinRoom succeeded. ConnectionUrl: %s"), *ConnectionUrl)
 }

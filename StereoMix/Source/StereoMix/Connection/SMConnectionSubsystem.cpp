@@ -62,7 +62,7 @@ FGrpcMetaData USMConnectionSubsystem::GetAuthorizationMetaData() const
 {
 	FGrpcMetaData Metadata;
 	Metadata.MetaData.Add(TEXT("authorization"), TEXT("Bearer ") + AuthToken);
-	UE_LOG(LogStereoMix, Verbose, TEXT("Authorization: %s"), *Metadata.MetaData.FindRef(TEXT("authorization")));
+	UE_LOG(LogStereoMix, Verbose, TEXT("Authorization: %s"), *Metadata.MetaData.FindRef(TEXT("authorization")))
 	return Metadata;
 }
 
@@ -74,7 +74,7 @@ void USMConnectionSubsystem::ConnectAuthService() const
 
 void USMConnectionSubsystem::OnAuthServiceStateChanged(const EGrpcServiceState ChangedState)
 {
-	UE_LOG(LogStereoMix, Log, TEXT("gRPC AuthService state changed: %s"), *UEnum::GetValueAsString(ChangedState));
+	UE_LOG(LogStereoMix, Log, TEXT("gRPC AuthService state changed: %s"), *UEnum::GetValueAsString(ChangedState))
 	AuthServiceStateChangedEvent.Broadcast(ChangedState);
 }
 
@@ -87,7 +87,7 @@ void USMConnectionSubsystem::SetTargetEndPoint(EConnectionEndPointTargets Target
 {
 	UTurboLinkGrpcConfig* TurboLinkConfig = GetMutableDefault<UTurboLinkGrpcConfig>();
 
-	UE_LOG(LogStereoMix, Verbose, TEXT("SetTargetEndPoint: %s"), *UEnum::GetValueAsString(Target));
+	UE_LOG(LogStereoMix, Verbose, TEXT("SetTargetEndPoint: %s"), *UEnum::GetValueAsString(Target))
 
 	// 로컬을 제외하고는 모두 SecureChannel을 사용해야 합니다.
 	switch (Target)

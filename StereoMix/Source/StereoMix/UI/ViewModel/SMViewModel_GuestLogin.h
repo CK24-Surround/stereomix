@@ -3,30 +3,42 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMViewModel.h"
+#include "SMViewModel_Login.h"
+#include "StereoMix.h"
 #include "SMViewModel_GuestLogin.generated.h"
 
 /**
  * GuestLogin ViewModel
  */
 UCLASS(BlueprintType)
-class STEREOMIX_API USMViewModel_GuestLogin : public USMViewModel
+class STEREOMIX_API USMViewModel_GuestLogin : public USMViewModel_Login
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite, FieldNotify, Getter, meta=(AllowPrivateAccess))
-	FText UserName;
-
-	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter, meta=(AllowPrivateAccess))
-	bool SubmitButtonEnabled{true};
+	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter=SetUserNameText, meta=(AllowPrivateAccess))
+	FText UserNameText;
 
 public:
-	FText GetUserName() const { return UserName; }
-	void SetUserName(const FText& NewUserName) { UE_MVVM_SET_PROPERTY_VALUE(UserName, NewUserName); }
+	FText GetUserName() const
+	{
+		return UserNameText;
+	}
 
-	bool GetSubmitButtonEnabled() const { return SubmitButtonEnabled; }
-	void SetSubmitButtonEnabled(const bool NewSubmitButtonEnabled) { UE_MVVM_SET_PROPERTY_VALUE(SubmitButtonEnabled, NewSubmitButtonEnabled); }
+	virtual void Submit() override;
 
-	UFUNCTION(BlueprintCallable, Category="UI")
-	void Submit();
+protected:
+	void SetUserNameText(const FText& UserName)
+	{
+		UE_MVVM_SET_PROPERTY_VALUE(UserNameText, UserName);
+		if (IsValidUserName(UserName))
+		{
+			SetSubmitButtonEnabled(true);
+		}
+		else
+		{
+			SetSubmitButtonEnabled(false);
+		}
+	}
+
+	static bool IsValidUserName(const FText& UserNameToCheck);
 };
