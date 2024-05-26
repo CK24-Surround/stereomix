@@ -21,7 +21,7 @@ class STEREOMIX_API USMViewModel_Popup : public USMViewModel
 
 public:
 	FOnPopupClosed OnPopupClosed;
-	
+
 	const FText& GetContent() const { return Content; }
 	void SetContent(const FText& NewContent) { UE_MVVM_SET_PROPERTY_VALUE(Content, NewContent); }
 

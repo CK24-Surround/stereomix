@@ -39,7 +39,7 @@ void ASMGameState::PostInitializeComponents()
 			Tile->OnChangeTile.AddUObject(this, &ASMGameState::OnChangeTile);
 		}
 
-		NET_LOG(this, Warning, TEXT("현재 타일 개수: %d"), TotalTileCount);
+		NET_LOG(this, Warning, TEXT("현재 타일 개수: %d"), TotalTileCount)
 	}
 }
 
@@ -193,14 +193,14 @@ void ASMGameState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GetWorld()->GetNetMode() == NM_Client)
-	{
-		RoomIdWidget = CreateWidget<USMWidget_RoomId>(GetWorld(), RoomIdWidgetClass);
-		RoomIdWidget->AddToViewport(5);
-
-		RoomIdWidget->RoomIdText->SetText(FText::FromString(ShortRoomId));
-		UE_LOG(LogStereoMix, Log, TEXT(" 룸 UI 추가"))
-	}
+	// 임시 UI
+	// if (GetWorld()->GetNetMode() == NM_Client)
+	// {
+	// 	RoomIdWidget = CreateWidget<USMWidget_RoomId>(GetWorld(), RoomIdWidgetClass);
+	// 	RoomIdWidget->AddToViewport(5);
+	//
+	// 	RoomIdWidget->RoomIdText->SetText(FText::FromString(ShortRoomId));
+	// }
 }
 
 void ASMGameState::MulticastRPCSendEndRoundResult_Implementation(ESMTeam VictoryTeam)

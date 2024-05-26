@@ -14,38 +14,39 @@ class STEREOMIX_API USMViewModel_RoomShortCodePopup : public USMViewModel
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter, meta=(AllowPrivateAccess))
-	FText RoomShortCode;
+	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter=SetRoomShortCodeText, meta=(AllowPrivateAccess))
+	FText RoomShortCodeText;
 
-	UPROPERTY(BlueprintReadWrite, FieldNotify, Getter, meta=(AllowPrivateAccess))
-	bool IsEnterRoomButtonEnabled;
+	UPROPERTY(BlueprintReadWrite, FieldNotify, meta=(AllowPrivateAccess))
+	bool bSubmitButtonEnabled;
 
-	UPROPERTY(BlueprintReadWrite, FieldNotify, Getter, meta=(AllowPrivateAccess))
-	bool IsCancelButtonEnabled;
+	UPROPERTY(BlueprintReadWrite, FieldNotify, meta=(AllowPrivateAccess))
+	bool bCancelButtonEnabled;
 
 public:
-	FText GetRoomShortCode() const { return RoomShortCode; }
-	void SetRoomShortCode(const FText& NewRoomShortCode)
+	FSimpleDelegate OnSubmit;
+	FSimpleDelegate OnCancel;
+
+	FText GetRoomShortCodeText() const { return RoomShortCodeText; }
+
+	void SetRoomShortCodeText(const FText& NewRoomShortCode)
 	{
-		if (!NewRoomShortCode.IsEmptyOrWhitespace() && UE_MVVM_SET_PROPERTY_VALUE(RoomShortCode, NewRoomShortCode))
-		{
-			SetIsEnterRoomButtonEnabled(true);
-		}
-		else
-		{
-			SetIsEnterRoomButtonEnabled(false);
-		}
+		UE_MVVM_SET_PROPERTY_VALUE(RoomShortCodeText, NewRoomShortCode.ToUpper());
+		SetSubmitButtonEnabled(IsValidRoomShortCode(NewRoomShortCode));
 	}
 
-	bool GetIsEnterRoomButtonEnabled() const { return IsEnterRoomButtonEnabled; }
-	void SetIsEnterRoomButtonEnabled(const bool NewIsEnterRoomButtonEnabled) { UE_MVVM_SET_PROPERTY_VALUE(IsEnterRoomButtonEnabled, NewIsEnterRoomButtonEnabled); }
+	bool IsSubmitButtonEnabled() const { return bSubmitButtonEnabled; }
+	void SetSubmitButtonEnabled(const bool bEnabled) { UE_MVVM_SET_PROPERTY_VALUE(bSubmitButtonEnabled, bEnabled); }
 
-	bool GetIsCancelButtonEnabled() const { return IsCancelButtonEnabled; }
-	void SetIsCancelButtonEnabled(const bool NewIsCancelButtonEnabled) { UE_MVVM_SET_PROPERTY_VALUE(IsCancelButtonEnabled, NewIsCancelButtonEnabled); }
+	bool IsCancelButtonEnabled() const { return bCancelButtonEnabled; }
+	void SetCancelButtonEnabled(const bool bEnabled) { UE_MVVM_SET_PROPERTY_VALUE(bCancelButtonEnabled, bEnabled); }
 
-	UFUNCTION(BlueprintCallable)
-	void EnterRoom();
+	UFUNCTION(BlueprintCallable, Category="UI")
+	void Submit();
 
-	UFUNCTION(BlueprintCallable)
+	UFUNCTION(BlueprintCallable, Category="UI")
 	void Cancel();
+
+protected:
+	static bool IsValidRoomShortCode(const FText& RoomShortCodeToCheck);
 };

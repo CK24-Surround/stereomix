@@ -175,4 +175,5 @@ public:
 	void OnRep_ReplicatedShortRoomId();
 
 	virtual void BeginPlay() override;
+	
 };

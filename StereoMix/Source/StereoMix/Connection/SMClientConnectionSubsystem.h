@@ -26,7 +26,7 @@ struct STEREOMIX_API FUserAccount
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadOnly)
-	FString UserName;
+	FText UserName;
 };
 
 /**
@@ -95,7 +95,7 @@ public:
 	 * 게스트 계정으로 로그인합니다.
 	 * @param UserName 게스트 이름
 	 */
-	void GuestLogin(const FString& UserName);
+	void GuestLogin(const FText& UserName);
 
 private:
 	FGrpcContextHandle GuestLoginHandle;

@@ -7,14 +7,26 @@
 #include "MVVMSubsystem.h"
 #include "Connection/SMClientConnectionSubsystem.h"
 
-void USMViewModel_RoomShortCodePopup::EnterRoom()
+void USMViewModel_RoomShortCodePopup::Submit()
 {
-	if (USMClientConnectionSubsystem* ClientConnection = GetWorld()->GetGameInstance()->GetSubsystem<USMClientConnectionSubsystem>())
+	if (IsValidRoomShortCode(RoomShortCodeText) && OnSubmit.IsBound())
 	{
-		ClientConnection->JoinRoomUsingShortCode(GetRoomShortCode().ToString());
+		OnSubmit.Execute();
 	}
 }
 
 void USMViewModel_RoomShortCodePopup::Cancel()
 {
+	if (OnCancel.IsBound())
+	{
+		OnCancel.Execute();
+	}
+}
+
+bool USMViewModel_RoomShortCodePopup::IsValidRoomShortCode(const FText& RoomShortCodeToCheck)
+{
+	static const FRegexPattern ValidUserNamePattern(TEXT("^[a-zA-Z0-9]{1,6}$"));
+
+	FRegexMatcher UserNameMatcher(ValidUserNamePattern, RoomShortCodeToCheck.ToString());
+	return UserNameMatcher.FindNext();
 }

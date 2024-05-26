@@ -13,14 +13,14 @@ UCLASS()
 class STEREOMIX_API USMViewModel_MainMenu : public USMViewModel
 {
 	GENERATED_BODY()
-	
-	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter, meta=(AllowPrivateAccess))
-	FText UserName;
+
+	UPROPERTY(BlueprintReadWrite, FieldNotify, Getter=GetUserNameText, meta=(AllowPrivateAccess))
+	FText UserNameText;
 
 public:
-	const FText& GetUserName() const { return UserName; }
-	void SetUserName(const FText& NewUserName) { UE_MVVM_SET_PROPERTY_VALUE(UserName, NewUserName); }
-	
+	const FText& GetUserNameText() const { return UserNameText; }
+	void SetUserNameText(const FText& NewUserNameText) { UE_MVVM_SET_PROPERTY_VALUE(UserNameText, NewUserNameText); }
+
 	UFUNCTION(BlueprintCallable, Category="UI")
 	void StartGame();
 
