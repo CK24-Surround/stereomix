@@ -183,6 +183,7 @@ void ASMPlayerCharacter::Tick(float DeltaTime)
 
 	if (IsLocallyControlled())
 	{
+		UpdateCameraLocation();
 		FocusToCursor();
 	}
 }
@@ -242,6 +243,39 @@ void ASMPlayerCharacter::InitCamera()
 	CameraBoom->bEnableCameraLag = true;
 
 	Camera->SetFieldOfView(CameraFOV);
+}
+
+void ASMPlayerCharacter::UpdateCameraLocation()
+{
+	FVector2D MouseScreenLocation;
+	if (!CachedSMPlayerController->GetMousePosition(MouseScreenLocation.X, MouseScreenLocation.Y))
+	{
+		return;
+	}
+
+	if (!GEngine)
+	{
+		return;
+	}
+
+	UGameViewportClient* GameViewport = GEngine->GameViewport;
+	if (!GameViewport)
+	{
+		return;
+	}
+
+	FVector2D ScreenSize;
+	GameViewport->GetViewportSize(ScreenSize);
+	const FVector2D ScreenCenter = ScreenSize / 2.0;
+
+	const FVector SourceLocation = GetActorLocation();
+	const FVector MouseLocation = GetCursorTargetingPoint();
+	FVector TargetLocation = (SourceLocation + MouseLocation) * 0.5;
+
+	TargetLocation.X = FMath::Clamp(TargetLocation.X, SourceLocation.X - CameraDistanceThreshold, SourceLocation.X + CameraDistanceThreshold);
+	TargetLocation.Y = FMath::Clamp(TargetLocation.Y, SourceLocation.Y - CameraDistanceThreshold, SourceLocation.Y + CameraDistanceThreshold);
+
+	CameraBoom->SetWorldLocation(TargetLocation);
 }
 
 ESMTeam ASMPlayerCharacter::GetTeam() const

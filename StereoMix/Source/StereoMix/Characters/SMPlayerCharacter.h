@@ -75,9 +75,18 @@ public:
 
 	virtual void OnRep_PlayerState() override;
 
+// Camera Section
 protected:
 	// 카메라 관련 데이터를 초기화합니다.
 	void InitCamera();
+
+	void UpdateCameraLocation();
+
+protected:
+	/** 카메라가 최대로 움직일 수 있는 거리입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design|Camera")
+	float CameraDistanceThreshold = 100.0f;
+// Camera Section
 
 // ~Component Section
 public:
