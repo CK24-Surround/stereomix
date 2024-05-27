@@ -32,6 +32,9 @@
 		<relationship name="timeline">
 			<destination>{3ee7a726-6120-454c-b843-0536daadac0f}</destination>
 		</relationship>
+		<relationship name="banks">
+			<destination>{5a5eb164-a087-4519-b95c-f4eaf242a5a8}</destination>
+		</relationship>
 	</object>
 	<object class="EventMixer" id="{dabba741-c93a-4fa8-9154-43d43563c1fb}">
 		<relationship name="masterBus">
@@ -51,7 +54,7 @@
 			<destination>{316150e2-b9fa-4e07-880a-bd05b9ec7ae4}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{9a63b508-b0a9-4d11-ba3c-4b3bddcd5c21}</destination>
+			<destination>{316d87e5-51cc-4c53-88d9-b9f1bcf6b91c}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{9f54dfaa-de67-4850-9be9-45c90c76739c}" />
@@ -142,6 +145,10 @@
 		<property name="length">
 			<value>1.8800000000000001</value>
 		</property>
+		<property name="name" />
+		<property name="intensity">
+			<value>87.5</value>
+		</property>
 		<relationship name="modulators">
 			<destination>{11bc08a3-e0e7-479e-ae5e-66ba63618464}</destination>
 		</relationship>
@@ -225,8 +232,14 @@
 		<property name="peakValue">
 			<value>100</value>
 		</property>
+		<property name="decayTime">
+			<value>60000</value>
+		</property>
 		<property name="sustainValue">
 			<value>100</value>
+		</property>
+		<property name="releaseTime">
+			<value>3600</value>
 		</property>
 		<property name="releaseShape">
 			<value>-0.157229021</value>

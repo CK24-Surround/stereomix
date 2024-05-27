@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{0611ccc0-d7e7-4e7d-aa66-97d5b720eadd}">
 		<property name="name">
-			<value>Stage1-temp</value>
+			<value>Stage1</value>
 		</property>
 		<property name="outputFormat">
 			<value>1</value>
@@ -38,6 +38,9 @@
 		</relationship>
 		<relationship name="parameters">
 			<destination>{ff0bd1d0-2685-4d0c-8a92-72acc2e64287}</destination>
+		</relationship>
+		<relationship name="banks">
+			<destination>{791cf093-fc85-432e-ad6f-d5d4e3b31ee0}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixer" id="{fcbe820f-cb89-4fd0-9d44-b270b52347db}">
