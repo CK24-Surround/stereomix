@@ -98,8 +98,10 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	FGameplayCueParameters GCParams;
 	GCParams.Instigator = SourceCharacter->GetLastAttackInstigator();
 	GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
-
 	SourceASC->AddGameplayCue(SMTags::GameplayCue::Stun, GCParams);
+
+	// 캐릭터 상태 위젯을 숨깁니다.
+	SourceCharacter->SetCharacterStateVisibility(false);
 
 	// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 활성화하도록 합니다.
 	SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
@@ -348,6 +350,9 @@ void USMGameplayAbility_Stun::OnStunEnd()
 			BP_ApplyGameplayEffectToOwner(StunEndedGE);
 		}
 	}
+
+	// 캐릭터 상태 위젯을 다시 보이게합니다.
+	SourceCharacter->SetCharacterStateVisibility(true);
 
 	K2_EndAbility();
 }

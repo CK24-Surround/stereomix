@@ -199,9 +199,6 @@ void USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
 	SetActorCatchingMe(nullptr);
 	SourceASC->RemoveTag(SMTags::Character::State::Caught);
 
-	// 캐릭터 상태 위젯을 다시 보이게합니다.
-	SourceCharacter->SetCharacterStateVisibility(true);
-
 	// 충돌판정, 움직임을 복구합니다.
 	SourceCharacter->SetEnableCollision(true);
 	SourceCharacter->SetEnableMovement(true);
@@ -271,9 +268,6 @@ void USMCatchInteractionComponent_Character::InternalCaught(AActor* TargetActor)
 
 	// 자신을 잡았던 캐릭터 목록을 업데이트 해줍니다.
 	CapturedMeCharcters.Add(TargetCharacter);
-
-	// 캐릭터 상태 위젯을 숨깁니다.
-	SourceCharacter->SetCharacterStateVisibility(false);
 
 	// 충돌판정, 움직임을 잠급니다.
 	SourceCharacter->SetEnableCollision(false);
