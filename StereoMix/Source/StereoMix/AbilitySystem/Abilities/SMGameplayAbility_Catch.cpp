@@ -186,6 +186,18 @@ void USMGameplayAbility_Catch::ServerRPCRequestCatch_Implementation(const FVecto
 		}
 	}
 
+	// 잡기 성공 여부에 따라 애니메이션을 재생합니다.
+	if (bSuccess)
+	{
+		ClientRPCPlayMontage(CachedCatchMontage, 1.0F, TEXT("Success"));
+		MontageJumpToSection(TEXT("Success"));
+	}
+	else
+	{
+		ClientRPCPlayMontage(CachedCatchMontage, 1.0F, TEXT("Fail"));
+		MontageJumpToSection(TEXT("Fail"));
+	}
+
 #if UE_ENABLE_DEBUG_DRAWING
 	if (bShowDebug)
 	{
