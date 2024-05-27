@@ -47,7 +47,7 @@ protected:
 
 	/** 매치기의 핵심 로직입니다. 착지 시 호출됩니다. */
 	UFUNCTION()
-	void OnSmash();
+	void OnSmash(ASMPlayerCharacter* LandedCharacter);
 
 	/** 스매시 종료 애니메이션에 진입 시 호출됩니다. 사실상 스매시 GA가 종료됩니다. */
 	UFUNCTION()

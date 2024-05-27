@@ -31,6 +31,7 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Character.State.Smashed", "상대 캐릭터에게 매치기 당하는 상태를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncatchable, "Character.State.Uncatchable", "잡힐 수 없는 상태임을 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "Character.State.Immune", "모든 피격 판정이 발생하지 않는 면역 상태임을 나타냅니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Character.State.Jump", "점프 상태임을 나타냅니다.");
 	}
 
 	namespace Data

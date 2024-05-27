@@ -568,7 +568,7 @@ void ASMPlayerCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
 
-	OnLanded.Broadcast();
+	OnLanded.Broadcast(this);
 }
 
 void ASMPlayerCharacter::SetCharacterStateVisibility_Implementation(bool bEnable)

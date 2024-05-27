@@ -4,14 +4,14 @@
 #include "SMJumpPad.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Kismet/GameplayStatics.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 
 ASMJumpPad::ASMJumpPad()
@@ -46,26 +46,34 @@ void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	ACharacter* TargetCharacter = Cast<ACharacter>(OtherActor);
-	if (ensureAlways(TargetCharacter))
+	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OtherActor);
+	if (!ensureAlways(TargetCharacter))
 	{
-		if (TargetCharacter->GetLocalRole() == ROLE_SimulatedProxy)
-		{
-			return;
-		}
+		return;
+	}
 
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter);
-		if (!ensureAlways(TargetASC))
-		{
-			return;
-		}
+	if (TargetCharacter->GetLocalRole() == ROLE_SimulatedProxy)
+	{
+		return;
+	}
 
-		if (TargetASC->HasAnyMatchingGameplayTags(DenineTags))
-		{
-			return;
-		}
+	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+	if (!ensureAlways(TargetASC))
+	{
+		return;
+	}
 
-		Jump(TargetCharacter, JumpTarget->GetComponentLocation());
+	if (TargetASC->HasAnyMatchingGameplayTags(DenineTags))
+	{
+		return;
+	}
+
+	Jump(TargetCharacter, JumpTarget->GetComponentLocation());
+	TargetCharacter->OnLanded.AddUObject(this, &ThisClass::TargetLanded);
+
+	if (HasAuthority())
+	{
+		TargetASC->AddTag(SMTags::Character::State::Jump);
 	}
 }
 
@@ -78,12 +86,41 @@ void ASMJumpPad::Jump(ACharacter* InCharacter, const FVector& TargetLocation)
 		return;
 	}
 
-	// TODO: 임시로 에어컨트롤 비활성화
+	OriginAirControl.Add(InCharacter, TargetMovement->AirControl);
 	TargetMovement->AirControl = 0.0f;
 
+	OriginGravityScale.Add(InCharacter, TargetMovement->GravityScale);
 	TargetMovement->GravityScale = GravityScale;
 	const float Gravity = TargetMovement->GetGravityZ();
+
 	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight2(this, StartLocation, TargetLocation, ApexHeight, Gravity);
 
 	InCharacter->LaunchCharacter(LaunchVelocity, true, true);
+}
+
+void ASMJumpPad::TargetLanded(ASMPlayerCharacter* LandedCharacter)
+{
+	UCharacterMovementComponent* TargetMovement = LandedCharacter->GetCharacterMovement();
+	if (!ensureAlways(TargetMovement))
+	{
+		return;
+	}
+
+	if (HasAuthority())
+	{
+		USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(LandedCharacter->GetAbilitySystemComponent());
+		TargetASC->RemoveTag(SMTags::Character::State::Jump);
+	}
+
+	if (OriginGravityScale.Find(LandedCharacter))
+	{
+		TargetMovement->GravityScale = OriginGravityScale[LandedCharacter];
+	}
+
+	if (OriginAirControl.Find(LandedCharacter))
+	{
+		TargetMovement->AirControl = OriginAirControl[LandedCharacter];
+	}
+
+	LandedCharacter->OnLanded.RemoveAll(this);
 }

@@ -143,7 +143,7 @@ void USMGameplayAbility_Smash::OnReceiveTargetData(const FGameplayAbilityTargetD
 	LaunchCharacterToTargetWithApex(SourceLocation, TargetLocation, SourceMovement->GetGravityZ());
 }
 
-void USMGameplayAbility_Smash::OnSmash()
+void USMGameplayAbility_Smash::OnSmash(ASMPlayerCharacter* LandedCharacter)
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!SourceCharacter)

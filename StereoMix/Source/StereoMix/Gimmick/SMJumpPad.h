@@ -7,6 +7,7 @@
 
 #include "SMJumpPad.generated.h"
 
+class ASMPlayerCharacter;
 class UBoxComponent;
 
 UCLASS()
@@ -26,6 +27,8 @@ protected:
 protected:
 	void Jump(ACharacter* InCharacter, const FVector& TargetLocation);
 
+	void TargetLanded(ASMPlayerCharacter* LandedCharacter);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
@@ -42,6 +45,10 @@ protected:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Jump")
 	float GravityScale = 4.0f;
+
+	TMap<TWeakObjectPtr<AActor>, float> OriginGravityScale;
+
+	TMap<TWeakObjectPtr<AActor>, float> OriginAirControl;
 
 	UPROPERTY(EditAnywhere, Category = "Jump")
 	float ApexHeight = 500.0f;

@@ -20,6 +20,7 @@ class USMTeamComponent;
 class USMAbilitySystemComponent;
 class UGameplayEffect;
 class UGameplayAbility;
+class ASMPlayerCharacter;
 class ASMPlayerController;
 struct FInputActionValue;
 class USphereComponent;
@@ -46,7 +47,7 @@ enum class ECharacterMoveTrailState : uint8
 	Immune
 };
 
-DECLARE_MULTICAST_DELEGATE(FOnLandedSignature);
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnLandedSignature, ASMPlayerCharacter* /*LandedCharacter*/);
 
 UCLASS()
 class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMCatchInteractionInterface, public ISMDamageInterface
