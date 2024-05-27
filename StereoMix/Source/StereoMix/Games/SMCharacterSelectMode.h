@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "SMCharacterSelectMode.generated.h"
 
+class ASMCharacterSelectState;
+
 /**
  * 
  */
@@ -14,6 +16,24 @@ class STEREOMIX_API ASMCharacterSelectMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
+	TWeakObjectPtr<ASMCharacterSelectState> CharacterSelectState;
+
+	
 public:
 	ASMCharacterSelectMode();
+
+	virtual void InitGameState() override;
+
+	virtual void StartPlay() override;
+
+protected:
+	UFUNCTION()
+	void OnCountdownTick();
+
+	UFUNCTION()
+	void OnCountdownFinished();
+
+	UFUNCTION()
+	void StartGame();
 };

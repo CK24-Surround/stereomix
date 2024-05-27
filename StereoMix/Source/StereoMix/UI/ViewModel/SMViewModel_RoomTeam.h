@@ -66,8 +66,7 @@ protected:
 	void SetTeamFull(const bool bFull) { UE_MVVM_SET_PROPERTY_VALUE(bIsFull, bFull); }
 
 	void SetIncludeLocalPlayer(const bool bInclude) { UE_MVVM_SET_PROPERTY_VALUE(bIncludeLocalPlayer, bInclude); }
-
-	void OnPlayerAdd(APlayerState* NewPlayer);
-	void OnPlayerRemove(APlayerState* RemovedPlayer);
-	void OnPlayerTeamChanged(APlayerState* TargetPlayer, ESMTeam NewTeam);
+	
+	UFUNCTION()
+	void OnTeamPlayersUpdated(ESMTeam UpdatedTeam);
 };

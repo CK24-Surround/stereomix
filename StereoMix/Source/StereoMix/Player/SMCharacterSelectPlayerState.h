@@ -6,6 +6,7 @@
 #include "SMPlayerState.h"
 #include "SMCharacterSelectPlayerState.generated.h"
 
+class ASMCharacterSelectState;
 /**
  * 
  */
@@ -14,7 +15,14 @@ class STEREOMIX_API ASMCharacterSelectPlayerState : public ASMPlayerState
 {
 	GENERATED_BODY()
 
+	TWeakObjectPtr<ASMCharacterSelectState> CharacterSelectState;
+	
 public:
 	ASMCharacterSelectPlayerState();
+	
 	virtual void BeginPlay() override;
+
+	virtual bool CanChangeTeam(ESMTeam NewTeam) const override;
+
+	virtual bool CanChangeCharacterType(ESMCharacterType NewCharacterType) const override;
 };

@@ -3,7 +3,7 @@
 
 #include "SMCharacterSelectPlayerState.h"
 
-#include "Utilities/SMLog.h"
+#include "Games/SMCharacterSelectState.h"
 
 ASMCharacterSelectPlayerState::ASMCharacterSelectPlayerState()
 {
@@ -12,5 +12,15 @@ ASMCharacterSelectPlayerState::ASMCharacterSelectPlayerState()
 void ASMCharacterSelectPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
-	NET_LOG(this, Verbose, TEXT("ASMCharacterSelectPlayerState::BeginPlay"))
+	CharacterSelectState = GetWorld()->GetGameState<ASMCharacterSelectState>();
+}
+
+bool ASMCharacterSelectPlayerState::CanChangeTeam(ESMTeam NewTeam) const
+{
+	return false;
+}
+
+bool ASMCharacterSelectPlayerState::CanChangeCharacterType(ESMCharacterType NewCharacterType) const
+{
+	return Super::CanChangeCharacterType(NewCharacterType);
 }

@@ -13,9 +13,13 @@ class STEREOMIX_API ASMGameSession : public AGameSession
 {
 	GENERATED_BODY()
 
+
 public:
+	UPROPERTY()
+	bool bCanEnterRoom;
+	
 	// Sets default values for this actor's properties
-	ASMGameSession(const FObjectInitializer& ObjectInitializer);
+	ASMGameSession();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;

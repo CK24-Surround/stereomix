@@ -22,16 +22,6 @@ ASMGameMode::ASMGameMode()
 void ASMGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (GetWorld()->GetNetMode() == NM_DedicatedServer)
-	{
-		FString RoomShortCode = FPlatformMisc::GetEnvironmentVariable(TEXT("STEREOMIX_SHORT_ROOM_ID"));
-		UE_LOG(LogStereoMix, Log, TEXT("STEREOMIX_SHORT_ROOM_ID: %s"), *RoomShortCode)
-		if (!RoomShortCode.IsEmpty())
-		{
-			GetGameState<ASMGameState>()->ShortRoomId = RoomShortCode;
-		}
-	}
 }
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)

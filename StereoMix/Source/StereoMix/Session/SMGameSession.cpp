@@ -5,35 +5,28 @@
 
 #include "StereoMix.h"
 #include "Connection/SMGameServerConnectionSubsystem.h"
+#include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogSMGameSession)
 
 // Sets default values
-ASMGameSession::ASMGameSession(const FObjectInitializer& ObjectInitializer)
-	: Super(ObjectInitializer)
+ASMGameSession::ASMGameSession()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	SessionName = TEXT("StereoMix GameSession");
 	MaxPlayers = 6;
+
+#if WITH_EDITOR
+	bCanEnterRoom = true;
+#else
+	bCanEnterRoom = false;
+#endif
 }
 
 // Called when the game starts or when spawned
 void ASMGameSession::BeginPlay()
 {
 	Super::BeginPlay();
-// #if WITH_EDITOR
-// 	if (GEngine && HasAuthority())
-// 	{
-// 		if (GEngine->Exec(GetWorld(), TEXT("net.AllowPIESeamlessTravel 1")))
-// 		{
-// 			UE_LOG(LogStereoMix, Log, TEXT("Allowed seamless travel in PIE"));
-// 		}
-// 		else
-// 		{
-// 			UE_LOG(LogStereoMix, Warning, TEXT("Failed to allow seamless travel in PIE"));
-// 		}
-// 	}
-// #endif
 }
 
 // Called every frame
@@ -44,6 +37,8 @@ void ASMGameSession::Tick(float DeltaTime)
 
 void ASMGameSession::InitOptions(const FString& Options)
 {
+	// BUG: MaxPlayers가 생성자가 아니라 실제 여기서 적용됨 
+	MaxPlayers = 6;
 	Super::InitOptions(Options);
 	UE_LOG(LogSMGameSession, Verbose, TEXT("InitOptions: %s"), *Options)
 }
@@ -56,13 +51,18 @@ void ASMGameSession::RegisterServer()
 FString ASMGameSession::ApproveLogin(const FString& Options)
 {
 	UE_LOG(LogSMGameSession, Verbose, TEXT("ApproveLogin: %s"), *Options)
+
+	if (!bCanEnterRoom)
+	{
+		return TEXT("Room is closed.");
+	}
+	
 	return Super::ApproveLogin(Options);
 }
 
 void ASMGameSession::PostLogin(APlayerController* NewPlayer)
 {
 	Super::PostLogin(NewPlayer);
-	UE_LOG(LogSMGameSession, Verbose, TEXT("PostLogin"))
 }
 
 void ASMGameSession::RegisterPlayer(APlayerController* NewPlayer, const FUniqueNetIdRepl& UniqueId, bool bWasFromInvite)

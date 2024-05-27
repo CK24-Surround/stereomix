@@ -22,9 +22,12 @@ void USMViewModel_RoomTeam::BindGameState(ASMRoomState* InRoomState)
 	SetPlayer3(NewObject<USMViewModel_RoomPlayer>(GetWorld()));
 	Players.Add(Player3);
 
-	OwningRoomState->PlayerAddEvent.AddUObject(this, &USMViewModel_RoomTeam::OnPlayerAdd);
-	OwningRoomState->PlayerRemoveEvent.AddUObject(this, &USMViewModel_RoomTeam::OnPlayerRemove);
-	OwningRoomState->PlayerTeamChangeEvent.AddUObject(this, &USMViewModel_RoomTeam::OnPlayerTeamChanged);
+	for (auto PlayerViewModel : Players)
+	{
+		PlayerViewModel->Remove();
+	}
+
+	OwningRoomState->OnTeamPlayersUpdated.AddDynamic(this, &USMViewModel_RoomTeam::OnTeamPlayersUpdated);
 }
 
 void USMViewModel_RoomTeam::ChangeTeam()
@@ -35,89 +38,88 @@ void USMViewModel_RoomTeam::ChangeTeam()
 		return;
 	}
 
+	NET_LOG(LocalPlayerState, Verbose, TEXT("[Room_Team_VM] [%s] Player %s changing team"), *UEnum::GetValueAsString(Team), *LocalPlayerState->GetPlayerName())
 	LocalPlayerState->SetTeam(Team);
 }
-//
-// void USMViewModel_RoomTeam::OnTeamPlayersUpdate(const ESMTeam TargetTeam)
+
+void USMViewModel_RoomTeam::OnTeamPlayersUpdated(const ESMTeam UpdatedTeam)
+{
+	if (UpdatedTeam != Team)
+	{
+		return;
+	}
+
+	const TArray<ASMRoomPlayerState*>& TeamPlayers = OwningRoomState->GetTeamPlayers(Team);
+	for (int i = 0; i < Players.Num(); ++i)
+	{
+		if (i < TeamPlayers.Num())
+		{
+			Players[i]->Init(TeamPlayers[i]);
+		}
+		else
+		{
+			Players[i]->Remove();
+		}
+	}
+}
+
+// void USMViewModel_RoomTeam::OnPlayerAdd(APlayerState* NewPlayer)
 // {
-// 	if (TargetTeam != Team)
+// 	ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(NewPlayer);
+// 	// NET_LOG(RoomPlayer, Verbose, TEXT("[Room_Team_VM] [%s] Player %s added with team %s"), *UEnum::GetValueAsString(Team), *NewPlayer->GetPlayerName(), *UEnum::GetValueAsString(RoomPlayer->GetTeam()))
+// 	if (RoomPlayer->GetTeam() != Team)
 // 	{
 // 		return;
 // 	}
 //
-// 	const TArray<TObjectPtr<ASMRoomPlayerState>>& PlayerStates = OwningRoomState->GetTeamPlayers(Team);
+// 	const bool bAdded = AddPlayer(RoomPlayer);
+// 	ensure(bAdded);
 //
-// 	UE_LOG(LogStereoMix, Verbose, TEXT("[Room_Team_VM] [%s] Team players updated"), *UEnum::GetValueAsString(Team))
-// 	for (int i = 0; i < Players.Num(); ++i)
-// 	{
-// 		if (i < PlayerStates.Num())
-// 		{
-// 			Players[i]->Init(PlayerStates[i]);
-// 		}
-// 		else
-// 		{
-// 			Players[i]->Remove();
-// 		}
-// 	}
+// 	SetTeamFull(OwningRoomState->GetPlayerCountInTeam(Team) >= OwningRoomState->MaxPlayersInTeam);
 // }
-
-void USMViewModel_RoomTeam::OnPlayerAdd(APlayerState* NewPlayer)
-{
-	ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(NewPlayer);
-	// NET_LOG(RoomPlayer, Verbose, TEXT("[Room_Team_VM] [%s] Player %s added with team %s"), *UEnum::GetValueAsString(Team), *NewPlayer->GetPlayerName(), *UEnum::GetValueAsString(RoomPlayer->GetTeam()))
-	if (RoomPlayer->GetTeam() != Team)
-	{
-		return;
-	}
-
-	const bool bAdded = AddPlayer(RoomPlayer);
-	ensure(bAdded);
-
-	SetTeamFull(OwningRoomState->GetPlayerCountInTeam(Team) >= OwningRoomState->MaxPlayersInTeam);
-}
-
-void USMViewModel_RoomTeam::OnPlayerRemove(APlayerState* RemovedPlayer)
-{
-	if (!OwningRoomState.IsValid())
-	{
-		return;
-	}
-	
-	const ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(RemovedPlayer);
-	// NET_LOG(RoomPlayer, Verbose, TEXT("[Room_Team_VM] [%s] Player %s removed"), *UEnum::GetValueAsString(Team), *RemovedPlayer->GetPlayerName())
-	if (RoomPlayer->GetTeam() != Team)
-	{
-		return;
-	}
-
-	const bool bRemoved = RemovePlayer(RoomPlayer);
-	ensure(bRemoved);
-
-	SetTeamFull(OwningRoomState->GetPlayerCountInTeam(Team) >= OwningRoomState->MaxPlayersInTeam);
-}
-
-void USMViewModel_RoomTeam::OnPlayerTeamChanged(APlayerState* TargetPlayer, const ESMTeam NewTeam)
-{
-	ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(TargetPlayer);
-
-	if (NewTeam == ESMTeam::None)
-	{
-		return;
-	}
-
-	// UE_LOG(LogStereoMix, Verbose, TEXT("[Room_Team_VM] [%s] Player %s changed team to %s"), *UEnum::GetValueAsString(Team), *TargetPlayer->GetPlayerName(), *UEnum::GetValueAsString(NewTeam))
-	if (Team == NewTeam)
-	{
-		const bool bChanged = AddPlayer(RoomPlayer);
-		ensure(bChanged);
-	}
-	else
-	{
-		RemovePlayer(RoomPlayer);
-	}
-
-	SetTeamFull(OwningRoomState->GetPlayerCountInTeam(Team) >= OwningRoomState->MaxPlayersInTeam);
-}
+//
+// void USMViewModel_RoomTeam::OnPlayerRemove(APlayerState* RemovedPlayer)
+// {
+// 	if (!OwningRoomState.IsValid())
+// 	{
+// 		return;
+// 	}
+// 	
+// 	const ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(RemovedPlayer);
+// 	// NET_LOG(RoomPlayer, Verbose, TEXT("[Room_Team_VM] [%s] Player %s removed"), *UEnum::GetValueAsString(Team), *RemovedPlayer->GetPlayerName())
+// 	if (RoomPlayer->GetTeam() != Team)
+// 	{
+// 		return;
+// 	}
+//
+// 	const bool bRemoved = RemovePlayer(RoomPlayer);
+// 	ensure(bRemoved);
+//
+// 	SetTeamFull(OwningRoomState->GetPlayerCountInTeam(Team) >= OwningRoomState->MaxPlayersInTeam);
+// }
+//
+// void USMViewModel_RoomTeam::OnPlayerTeamChanged(APlayerState* TargetPlayer, const ESMTeam NewTeam)
+// {
+// 	ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(TargetPlayer);
+//
+// 	if (NewTeam == ESMTeam::None)
+// 	{
+// 		return;
+// 	}
+//
+// 	// UE_LOG(LogStereoMix, Verbose, TEXT("[Room_Team_VM] [%s] Player %s changed team to %s"), *UEnum::GetValueAsString(Team), *TargetPlayer->GetPlayerName(), *UEnum::GetValueAsString(NewTeam))
+// 	if (Team == NewTeam)
+// 	{
+// 		const bool bChanged = AddPlayer(RoomPlayer);
+// 		ensure(bChanged);
+// 	}
+// 	else
+// 	{
+// 		RemovePlayer(RoomPlayer);
+// 	}
+//
+// 	SetTeamFull(OwningRoomState->GetPlayerCountInTeam(Team) >= OwningRoomState->MaxPlayersInTeam);
+// }
 
 bool USMViewModel_RoomTeam::AddPlayer(ASMRoomPlayerState* Player)
 {

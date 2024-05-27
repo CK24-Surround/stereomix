@@ -26,6 +26,8 @@ void ASMLobbyHUD::BeginPlay()
 		}
 	}
 
+	
+	
 	if (const auto ConnectionSubsystem = GetGameInstance()->GetSubsystem<USMClientConnectionSubsystem>())
 	{
 		ConnectionSubsystem->LobbyServiceStateChangedEvent.AddUniqueDynamic(this, &ASMLobbyHUD::OnLobbyServiceStateChanged);
@@ -39,7 +41,7 @@ void ASMLobbyHUD::BeginPlay()
 		}
 		else
 		{
-			UGameplayStatics::OpenLevel(GetWorld(), TEXT("L_Title"));
+			// UGameplayStatics::OpenLevel(GetWorld(), TEXT("L_Title"));
 		}
 	}
 }

@@ -4,8 +4,6 @@
 #include "SMGameState.h"
 
 #include "EngineUtils.h"
-#include "StereoMix.h"
-#include "Blueprint/UserWidget.h"
 #include "Components/TextBlock.h"
 #include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"

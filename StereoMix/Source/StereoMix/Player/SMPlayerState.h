@@ -8,8 +8,8 @@
 #include "GameFramework/PlayerState.h"
 #include "SMPlayerState.generated.h"
 
-DECLARE_EVENT_OneParam(ASMRoomPlayerState, FTeamChangedEvent, ESMTeam /*ChangedTeam*/);
-DECLARE_EVENT_OneParam(ASMRoomPlayerState, FCharacterTypeChangedEvent, ESMCharacterType /*ChangedCharacterType*/);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamChangedEvent, ESMTeam, NewTeam);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterTypeChangedEvent, ESMCharacterType, NewCharacterType);
 
 /**
  * 
@@ -24,38 +24,43 @@ public:
 
 	virtual void SeamlessTravelTo(APlayerState* NewPlayerState) override;
 
-public:
-	FTeamChangedEvent TeamChangedEvent;
-	FCharacterTypeChangedEvent CharacterTypeChangedEvent;
+	virtual void BeginPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 	
-	FORCEINLINE ESMTeam GetTeam() const { return Team; }
+	// ============================================================================
+	// Team, Character Type
 
-	UFUNCTION(Reliable, Server) 
-	void SetTeam(ESMTeam NewTeam);
-
-	FORCEINLINE ESMCharacterType GetCharacterType() { return CharacterType; }
-
-	UFUNCTION(Reliable, Server)
-	void SetCharacterType(ESMCharacterType NewCharacterType);
-
-	virtual void OnTeamChanged(ESMTeam PreviousTeam, ESMTeam NewTeam);
-
-	virtual void OnCharacterTypeChanged(ESMCharacterType PreviousCharacterType, ESMCharacterType NewCharacterType);
-
-protected:
+private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing= OnRep_Team)
 	ESMTeam Team;
 
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing= OnRep_CharacterType)
 	ESMCharacterType CharacterType;
+	
+	UFUNCTION()
+	void OnRep_Team(ESMTeam PreviousTeam);
 
 	UFUNCTION()
-	virtual void OnRep_Team(ESMTeam PreviousTeam);
+	void OnRep_CharacterType(ESMCharacterType PreviousCharacterType);
+	
+public:
+	FTeamChangedEvent TeamChangedEvent;
+	FCharacterTypeChangedEvent CharacterTypeChangedEvent;
+	
+	FORCEINLINE ESMTeam GetTeam() const { return Team; }
+	FORCEINLINE ESMCharacterType GetCharacterType() const { return CharacterType; }
 
-	UFUNCTION()
-	virtual void OnRep_CharacterType(ESMCharacterType PreviousCharacterType);
+	UFUNCTION(Reliable, Server)
+	void SetTeam(ESMTeam NewTeam);
 
+	UFUNCTION(Reliable, Server)
+	void SetCharacterType(ESMCharacterType NewCharacterType);
+
+protected:
 	virtual bool CanChangeTeam(ESMTeam NewTeam) const;
-
 	virtual bool CanChangeCharacterType(ESMCharacterType NewCharacterType) const;
+
+	virtual void OnTeamChanged(ESMTeam PreviousTeam, ESMTeam NewTeam);
+	virtual void OnCharacterTypeChanged(ESMCharacterType PreviousCharacterType, ESMCharacterType NewCharacterType);
 };

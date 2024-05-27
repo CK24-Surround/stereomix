@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SMGameStateNotify.h"
 #include "GameFramework/GameModeBase.h"
 #include "SMRoomMode.generated.h"
+
+class ASMRoomState;
 
 /**
  * StereoMix Room Mode
@@ -14,6 +17,11 @@ class STEREOMIX_API ASMRoomMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
+	TWeakObjectPtr<ASMRoomState> RoomState;
+
+	
+	
 public:
 	ASMRoomMode();
 
@@ -21,22 +29,22 @@ public:
 
 	virtual void InitGameState() override;
 
-	bool IsReadyToStart();
+	virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
+
+	virtual void StartPlay() override;
+
+	bool IsReadyToStart() const;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Room Config")
-	int32 CountdownTime;
 	
-	virtual void OnPostLogin(AController* NewPlayer) override;
-
-	virtual void Logout(AController* Exiting) override;
-
-	void UpdateRoomState();
-
-	virtual void CountdownTick();
-
+	UFUNCTION()
+	void OnTeamPlayersUpdated(ESMTeam UpdatedTeam);
+	
+	UFUNCTION()
+	void OnCountdownTick();
+	
+	UFUNCTION()
+	void OnCountdownFinished();
+	
 	virtual void StartGame();
-
-private:
-	FTimerHandle CountdownTimerHandle;
 };

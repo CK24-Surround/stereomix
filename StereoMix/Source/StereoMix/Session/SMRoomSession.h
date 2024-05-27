@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/GameSession.h"
+#include "SMGameSession.h"
 #include "SMRoomSession.generated.h"
 
 UCLASS()
-class STEREOMIX_API ASMRoomSession : public AGameSession
+class STEREOMIX_API ASMRoomSession : public ASMGameSession
 {
 	GENERATED_BODY()
 
@@ -16,6 +16,8 @@ public:
 
 	virtual void RegisterServer() override;
 
+	virtual void InitOptions(const FString& Options) override;
+	
 protected:
 	virtual void BeginPlay() override;
 

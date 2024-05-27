@@ -3,64 +3,81 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SMTeam.h"
+#include "SMGameStateNotify.h"
 #include "GameFramework/GameStateBase.h"
-#include "Player/SMRoomPlayerState.h"
 #include "SMRoomState.generated.h"
 
-DECLARE_EVENT_OneParam(ASMRoomState, FPlayerAddEvent, APlayerState* /*AddedPlayerState*/)
-DECLARE_EVENT_OneParam(ASMRoomState, FPlayerRemoveEvent, APlayerState* /*RemovedPlayerState*/)
-DECLARE_EVENT_TwoParams(ASMRoomState, FPlayerTeamChangeEvent, APlayerState* /*PlayerState*/, ESMTeam /*NewTeam*/)
+enum class ESMTeam : uint8;
+class ASMRoomPlayerState;
+class UCountdownTimerComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamPlayersUpdated, ESMTeam, UpdatedTeam);
 
 /**
  * StereoMix Room State
  */
 UCLASS()
-class STEREOMIX_API ASMRoomState : public AGameStateBase
+class STEREOMIX_API ASMRoomState : public AGameStateBase, public ISMGameStateNotify
 {
 	GENERATED_BODY()
+	
+	UPROPERTY()
+	TObjectPtr<UCountdownTimerComponent> CountdownTimer;
+	
+	UPROPERTY(ReplicatedUsing=OnRep_UnreadyPlayers)
+	TArray<ASMRoomPlayerState*> UnreadyPlayers;
+	
+	UPROPERTY(ReplicatedUsing=OnRep_TeamEdmPlayers)
+	TArray<ASMRoomPlayerState*> TeamEdmPlayers;
 
+	UPROPERTY(ReplicatedUsing=OnRep_TeamFutureBassPlayers)
+	TArray<ASMRoomPlayerState*> TeamFutureBassPlayers;
+
+	UFUNCTION()
+	void OnRep_UnreadyPlayers() const;
+	
+	UFUNCTION()
+	void OnRep_TeamEdmPlayers() const;
+
+	UFUNCTION()
+	void OnRep_TeamFutureBassPlayers() const;
+	
 public:
+	FPlayerJoined OnPlayerJoined;
+	FPlayerLeft OnPlayerLeft;
+	FTeamPlayersUpdated OnTeamPlayersUpdated;
+	
+	UPROPERTY(EditDefaultsOnly, Replicated)
+	int32 ReplicatedMaxPlayersInGame;
+	
+	UPROPERTY(EditDefaultsOnly, Replicated)
+	int32 ReplicatedMaxPlayersInTeam;
+	
 	UPROPERTY(EditDefaultsOnly)
-	int32 MaxPlayersInTeam;
+	int32 CountdownTime;
+	
+	UPROPERTY(Replicated)
+	FString ShortRoomCode;
 
 	ASMRoomState();
 
+	virtual void AddPlayerState(APlayerState* PlayerState) override;
+
+	virtual void RemovePlayerState(APlayerState* PlayerState) override;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UCountdownTimerComponent* GetCountdownTimer() const { return CountdownTimer.Get(); }
 
-	// ============================================================================
-	// Countdown
-public:
-	FPlayerAddEvent PlayerAddEvent;
-	FPlayerRemoveEvent PlayerRemoveEvent;
-	FPlayerTeamChangeEvent PlayerTeamChangeEvent;
+	const TArray<ASMRoomPlayerState*>& GetTeamEdmPlayers() const { return TeamEdmPlayers; }
 
-	UPROPERTY(ReplicatedUsing = OnRep_Countdown)
-	int8 Countdown = 0;
+	const TArray<ASMRoomPlayerState*>& GetTeamFutureBassPlayers() const { return TeamFutureBassPlayers; }
 
-	UFUNCTION()
-	void OnRep_Countdown() const;
-
-	UFUNCTION(Reliable, Client)
-	void StartCountdown();
-
-	UFUNCTION(Reliable, Client)
-	void CancelCountdown();
-
-
-	// ============================================================================
-	// Team
-	
-public:
-	int32 GetPlayerCountInTeam(ESMTeam Team) const;
-
-
-	// ============================================================================
-	// Player State
+	const TArray<ASMRoomPlayerState*>& GetTeamPlayers(ESMTeam Team) const;
 
 public:
-	void BroadcastPlayerAdded(APlayerState* PlayerState) const;
-	void BroadcastPlayerRemoved(APlayerState* PlayerState) const;
-	void BroadcastTeamChanged(ASMRoomPlayerState* TargetPlayerState, ESMTeam NewTeam) const;
+	virtual void NotifyPlayerJoined(ASMPlayerState* JoinedPlayer) override;
+	virtual void NotifyPlayerLeft(ASMPlayerState* LeftPlayer) override;
+	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override;
+	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override;
 };

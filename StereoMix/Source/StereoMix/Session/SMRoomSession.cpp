@@ -12,7 +12,7 @@ ASMRoomSession::ASMRoomSession()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	MaxPlayers = 6;
+	bCanEnterRoom = true;
 }
 
 void ASMRoomSession::RegisterServer()
@@ -20,11 +20,16 @@ void ASMRoomSession::RegisterServer()
 	Super::RegisterServer();
 }
 
+void ASMRoomSession::InitOptions(const FString& Options)
+{
+	MaxPlayers = 6;
+	Super::InitOptions(Options);
+}
+
 // Called when the game starts or when spawned
 void ASMRoomSession::BeginPlay()
 {
 	Super::BeginPlay();
-	UE_LOG(LogStereoMix, Verbose, TEXT("MaxPlayers set to %d"), MaxPlayers);
 }
 
 // Called every frame
