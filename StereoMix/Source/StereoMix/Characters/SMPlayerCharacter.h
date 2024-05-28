@@ -111,6 +111,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component|Camera")
 	TObjectPtr<UCameraComponent> Camera;
 
+	UPROPERTY(VisibleAnywhere, Category = "Component|Listener")
+	TObjectPtr<USceneComponent> ListenerComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Component|Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
 

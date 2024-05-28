@@ -62,6 +62,10 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	Camera->SetupAttachment(CameraBoom);
 	InitCamera();
 
+	ListenerComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ListenerComponent"));
+	ListenerComponent->SetAbsolute(false, true, true);
+	ListenerComponent->SetupAttachment(CameraBoom);
+
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
 	CatchInteractionComponent = CreateDefaultSubobject<USMCatchInteractionComponent_Character>(TEXT("CatchInteractionComponent"));
@@ -155,6 +159,8 @@ void ASMPlayerCharacter::OnRep_Controller()
 
 	CachedSMPlayerController = GetController<ASMPlayerController>();
 	check(CachedSMPlayerController);
+
+	CachedSMPlayerController->SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
 }
 
 void ASMPlayerCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -263,10 +269,6 @@ void ASMPlayerCharacter::UpdateCameraLocation()
 	{
 		return;
 	}
-
-	FVector2D ScreenSize;
-	GameViewport->GetViewportSize(ScreenSize);
-	const FVector2D ScreenCenter = ScreenSize / 2.0;
 
 	const FVector SourceLocation = GetActorLocation();
 	const FVector MouseLocation = GetCursorTargetingPoint();
