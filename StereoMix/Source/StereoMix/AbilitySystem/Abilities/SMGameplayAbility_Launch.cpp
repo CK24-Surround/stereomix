@@ -59,6 +59,10 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 
 	// 발사 애니메이션을 재생합니다.
 	SourceASC->PlayMontage(this, ActivationInfo, CachedMontage, 1.0f);
+
+	FGameplayCueParameters GCParams;
+	GCParams.Location = SourceCharacter->GetActorLocation();
+	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch_Sound, GCParams);
 }
 
 void USMGameplayAbility_Launch::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const

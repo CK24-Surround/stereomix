@@ -8,10 +8,12 @@ bool USMGameplayCueNotify::OnExecute_Implementation(AActor* MyTarget, const FGam
 	if (bIsAttach)
 	{
 		PlayNiagaraSystemWithAttach(MyTarget, Parameters);
+		PlaySoundWithAttach(MyTarget, Parameters);
 	}
 	else
 	{
 		PlayNiagaraSystem(MyTarget, Parameters);
+		PlaySound(MyTarget, Parameters);
 	}
 
 	return true;

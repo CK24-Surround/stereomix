@@ -3,23 +3,13 @@
 
 #include "SMGameplayCueNotify_WithTeam.h"
 
+#include "FMODBlueprintStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMLog.h"
 
-USMGameplayCueNotify_WithTeam::USMGameplayCueNotify_WithTeam()
-{
-	FX.Add(ESMTeam::None, nullptr);
-	FX.Add(ESMTeam::EDM, nullptr);
-	FX.Add(ESMTeam::FutureBass, nullptr);
-}
-
 void USMGameplayCueNotify_WithTeam::PlayNiagaraSystem(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
-	FVector Location;
-	FRotator Rotation;
-	GetLocationAndRotation(Parameters, Location, Rotation);
-
 	ESMTeam Team;
 	if (!bUseInstigatorTeam)
 	{
@@ -30,15 +20,20 @@ void USMGameplayCueNotify_WithTeam::PlayNiagaraSystem(AActor* SourceActor, const
 		Team = GetTeamForSource(Parameters.Instigator.Get());
 	}
 
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceActor, FX[Team], Location, Rotation, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
+	if (!Effect.Find(Team))
+	{
+		return;
+	}
+
+	FVector Location;
+	FRotator Rotation;
+	GetLocationAndRotation(Parameters, Location, Rotation);
+
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceActor, Effect[Team], Location, Rotation, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
 }
 
 void USMGameplayCueNotify_WithTeam::PlayNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
-	FVector Location;
-	FRotator Rotation;
-	GetLocationAndRotation(Parameters, Location, Rotation);
-
 	ESMTeam Team;
 	if (!bUseInstigatorTeam)
 	{
@@ -48,6 +43,15 @@ void USMGameplayCueNotify_WithTeam::PlayNiagaraSystemWithAttach(AActor* SourceAc
 	{
 		Team = GetTeamForSource(Parameters.Instigator.Get());
 	}
+
+	if (!Effect.Find(Team))
+	{
+		return;
+	}
+
+	FVector Location;
+	FRotator Rotation;
+	GetLocationAndRotation(Parameters, Location, Rotation);
 
 	USceneComponent* AttachToComponent = Parameters.TargetAttachComponent.Get();
 	if (!ensureAlways(AttachToComponent))
@@ -55,7 +59,61 @@ void USMGameplayCueNotify_WithTeam::PlayNiagaraSystemWithAttach(AActor* SourceAc
 		return;
 	}
 
-	UNiagaraFunctionLibrary::SpawnSystemAttached(FX[Team], AttachToComponent, NAME_None, Location, Rotation, EAttachLocation::SnapToTarget, false, true, ENCPoolMethod::AutoRelease);
+	UNiagaraFunctionLibrary::SpawnSystemAttached(Effect[Team], AttachToComponent, NAME_None, Location, Rotation, EAttachLocation::SnapToTarget, false, true, ENCPoolMethod::AutoRelease);
+}
+
+void USMGameplayCueNotify_WithTeam::PlaySound(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
+{
+	ESMTeam Team;
+	if (!bUseInstigatorTeam)
+	{
+		Team = GetTeamForSource(SourceActor);
+	}
+	else
+	{
+		Team = GetTeamForSource(Parameters.Instigator.Get());
+	}
+
+	if (!Sound.Find(Team))
+	{
+		return;
+	}
+
+	FVector Location;
+	FRotator Rotation;
+	GetLocationAndRotation(Parameters, Location, Rotation);
+	FTransform NewTransform{Rotation, Location};
+	UFMODBlueprintStatics::PlayEventAtLocation(SourceActor, Sound[Team], NewTransform, true);
+}
+
+void USMGameplayCueNotify_WithTeam::PlaySoundWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
+{
+	ESMTeam Team;
+	if (!bUseInstigatorTeam)
+	{
+		Team = GetTeamForSource(SourceActor);
+	}
+	else
+	{
+		Team = GetTeamForSource(Parameters.Instigator.Get());
+	}
+
+	if (!Sound.Find(Team))
+	{
+		return;
+	}
+
+	FVector Location;
+	FRotator Rotation;
+	GetLocationAndRotation(Parameters, Location, Rotation);
+
+	USceneComponent* AttachToComponent = Parameters.TargetAttachComponent.Get();
+	if (!ensureAlways(AttachToComponent))
+	{
+		return;
+	}
+
+	UFMODBlueprintStatics::PlayEventAttached(Sound[Team], AttachToComponent, NAME_None, Location, EAttachLocation::SnapToTarget, true, true, true);
 }
 
 ESMTeam USMGameplayCueNotify_WithTeam::GetTeamForSource(const AActor* SourceActor) const
