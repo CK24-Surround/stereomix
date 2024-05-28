@@ -32,11 +32,9 @@ ASMPlayerController::ASMPlayerController()
 	bShowMouseCursor = true;
 }
 
-void ASMPlayerController::BeginPlay()
+void ASMPlayerController::InitPlayerState()
 {
-	Super::BeginPlay();
-
-	InitControl();
+	Super::InitPlayerState();
 
 	if (HasAuthority())
 	{
@@ -45,9 +43,22 @@ void ASMPlayerController::BeginPlay()
 	}
 }
 
+void ASMPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+
+	InitControl();
+}
+
 void ASMPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
+
+	ASMGamePlayerState* SMPlayerState = GetPlayerState<ASMGamePlayerState>();
+	if (!SMPlayerState)
+	{
+		return;
+	}
 
 	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, HUDWidgetClass);
 	HUDWidget->AddToViewport(0);
@@ -55,13 +66,9 @@ void ASMPlayerController::OnRep_PlayerState()
 	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass);
 	VictoryDefeatWidget->AddToViewport(1);
 
-	ASMGamePlayerState* SMPlayerState = GetPlayerState<ASMGamePlayerState>();
-	if (ensure(SMPlayerState))
-	{
-		UAbilitySystemComponent* SourceASC = SMPlayerState->GetAbilitySystemComponent();
-		HUDWidget->SetASC(SourceASC);
-		VictoryDefeatWidget->SetASC(SourceASC);
-	}
+	UAbilitySystemComponent* SourceASC = SMPlayerState->GetAbilitySystemComponent();
+	HUDWidget->SetASC(SourceASC);
+	VictoryDefeatWidget->SetASC(SourceASC);
 }
 
 void ASMPlayerController::InitControl()
@@ -174,7 +181,7 @@ void ASMPlayerController::SpawnCharacter(const FVector* InLocation, const FRotat
 		UE_LOG(LogStereoMix, Warning, TEXT("캐릭터 타입이 None으로 설정되어있습니다. 기본값으로 설정합니다."))
 		CharacterType = ESMCharacterType::ElectricGuitar;
 	}
-	
+
 	FCharacterSpawnData* CharacterSpawnData = CharacterClass.Find(CharacterType);
 	if (!ensureAlways(CharacterSpawnData))
 	{

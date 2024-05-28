@@ -38,6 +38,8 @@ class STEREOMIX_API ASMPlayerController : public APlayerController
 public:
 	ASMPlayerController();
 
+	virtual void InitPlayerState() override;
+
 protected:
 	virtual void BeginPlay() override;
 
