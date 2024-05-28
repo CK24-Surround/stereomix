@@ -70,7 +70,7 @@ void ASMLobbyHUD::CreateRoomShortCodePopupWidget()
 			RoomShortCodePopupViewModel->OnSubmit.BindUObject(this, &ASMLobbyHUD::OnJoinRoomWithCodeSubmit);
 			RoomShortCodePopupViewModel->OnCancel.BindUObject(this, &ASMLobbyHUD::OnJoinRoomWithCodeCancel);
 		}
-		LobbyViewModel->SetAllButtonEnabled(false);
+		// LobbyViewModel->SetAllButtonEnabled(false);
 	}
 }
 

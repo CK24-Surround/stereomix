@@ -31,6 +31,7 @@ void USMViewModel_Lobby::CreateRoom()
 {
 	if (USMClientConnectionSubsystem* ClientConnection = GetWorld()->GetGameInstance()->GetSubsystem<USMClientConnectionSubsystem>())
 	{
+		SetAllButtonEnabled(false);
 		ClientConnection->CreateRoom(TEXT("TestRoom"), EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC, EGrpcLobbyGameMode::GAME_MODE_DEFAULT, EGrpcLobbyGameMap::GAME_MAP_DEFAULT);
 	}
 }
