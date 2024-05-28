@@ -45,10 +45,16 @@ private:
 	void OnRep_CharacterType(ESMCharacterType PreviousCharacterType);
 	
 public:
+	UPROPERTY(BlueprintAssignable)
 	FTeamChangedEvent TeamChangedEvent;
+
+	UPROPERTY(BlueprintAssignable)
 	FCharacterTypeChangedEvent CharacterTypeChangedEvent;
-	
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ESMTeam GetTeam() const { return Team; }
+
+	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ESMCharacterType GetCharacterType() const { return CharacterType; }
 
 	UFUNCTION(Reliable, Server)

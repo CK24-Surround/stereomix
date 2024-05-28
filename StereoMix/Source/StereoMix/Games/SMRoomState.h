@@ -43,8 +43,13 @@ class STEREOMIX_API ASMRoomState : public AGameStateBase, public ISMGameStateNot
 	void OnRep_TeamFutureBassPlayers() const;
 	
 public:
+	UPROPERTY(BlueprintAssignable)
 	FPlayerJoined OnPlayerJoined;
+
+	UPROPERTY(BlueprintAssignable)
 	FPlayerLeft OnPlayerLeft;
+
+	UPROPERTY(BlueprintAssignable)
 	FTeamPlayersUpdated OnTeamPlayersUpdated;
 	
 	UPROPERTY(EditDefaultsOnly, Replicated)

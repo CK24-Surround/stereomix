@@ -17,7 +17,7 @@ enum class ECharacterSelectionState : uint8
 	End
 };
 
-DECLARE_EVENT_OneParam(ASMCharacterSelectState, FCharacterSelectionStateChangedEvent, ECharacterSelectionState /* NewCharacterSelectionState */)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterSelectionStateChangedEvent, ECharacterSelectionState, NewCharacterSelectionState);
 
 /**
  * 
@@ -41,8 +41,11 @@ private:
 public:
 	UPROPERTY(EditDefaultsOnly)
 	int32 CountdownTime;
-	
+
+	UPROPERTY(BlueprintAssignable)
 	FPlayerCharacterChanged OnPlayerCharacterChanged;
+	
+	UPROPERTY(BlueprintAssignable)
 	FCharacterSelectionStateChangedEvent CharacterSelectionStateChangedEvent;
 	
 	ASMCharacterSelectState();

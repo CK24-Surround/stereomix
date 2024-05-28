@@ -21,6 +21,11 @@ void ASMCharacterSelectPlayerController::InitPlayerState()
 	}
 }
 
+void ASMCharacterSelectPlayerController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void ASMCharacterSelectPlayerController::OnCharacterTypeChanged(const ESMCharacterType NewCharacterType)
 {
 	NET_LOG(this, Verbose, TEXT("[SMCharacterSelectPlayerController] OnCharacterTypeChanged: %s"), *UEnum::GetValueAsString(NewCharacterType))

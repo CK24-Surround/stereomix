@@ -23,6 +23,8 @@ public:
 
 	virtual void InitPlayerState() override;
 
+	virtual void BeginPlay() override;
+
 protected:
 	UFUNCTION()
 	void OnCharacterTypeChanged(ESMCharacterType NewCharacterType);
