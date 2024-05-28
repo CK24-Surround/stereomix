@@ -59,6 +59,9 @@ Binaries/Win64/*
 !Binaries/Win64/UnrealEditor.modules
 !Binaries/Win64/UnrealEditor-StereoMix.dll
 
+# Releases
+Releases
+
 # Builds
 Build/*
 
