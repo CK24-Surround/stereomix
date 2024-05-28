@@ -61,7 +61,7 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 	SourceASC->PlayMontage(this, ActivationInfo, CachedMontage, 1.0f);
 
 	FGameplayCueParameters GCParams;
-	GCParams.Location = SourceCharacter->GetActorLocation();
+	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch_Sound, GCParams);
 }
 
