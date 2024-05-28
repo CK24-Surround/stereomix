@@ -93,9 +93,10 @@ void ASMGameMode::BindToGameState()
 
 void ASMGameMode::EndVictoryDefeatTimer()
 {
-	// TODO: 임시로 현재 레벨을 재시작하도록 구성했습니다. 
-	FString CurrentLevelPath = TEXT("/Game/StereoMix/Levels/Main/L_Main");
-	GetWorld()->ServerTravel(CurrentLevelPath);
+	ReturnToMainMenuHost();
+
+	// FString CurrentLevelPath = TEXT("/Game/StereoMix/Levels/Round1/L_Round1");
+	// GetWorld()->ServerTravel(CurrentLevelPath);
 }
 
 void ASMGameMode::SetRemainRoundTime(int32 InRemainRoundTime)

@@ -72,6 +72,6 @@ void ASMCharacterSelectMode::StartGame()
 {
 	if (GetWorld())
 	{
-		ProcessServerTravel("/Game/StereoMix/Levels/Main/L_Main");
+		ProcessServerTravel("/Game/StereoMix/Levels/Round1/L_Round1");
 	}
 }
