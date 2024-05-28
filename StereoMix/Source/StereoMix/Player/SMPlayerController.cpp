@@ -99,14 +99,14 @@ void ASMPlayerController::SpawnTimerCallback()
 	}
 
 	// 스폰 포인트를 구합니다. 여기서는 SpawnPoint라는 태그를 가진 플레이어 스타트를 활용하고 있습니다.
-	AActor* PlayerStarter = GameMode->FindPlayerStart(this, TEXT("SpawnPoint"));
-	if (!ensureAlways(PlayerStarter))
-	{
-		return;
-	}
-
-	const FVector NewLocation = PlayerStarter->GetActorLocation();
-	SpawnCharacter(&NewLocation);
+	// AActor* PlayerStarter = GameMode->FindPlayerStart(this, TEXT("SpawnPoint"));
+	// if (!ensureAlways(PlayerStarter))
+	// {
+	// 	return;
+	// }
+	//
+	// const FVector NewLocation = PlayerStarter->GetActorLocation();
+	SpawnCharacter();
 }
 
 void ASMPlayerController::SpawnCharacter(const FVector* InLocation, const FRotator* InRotation)
