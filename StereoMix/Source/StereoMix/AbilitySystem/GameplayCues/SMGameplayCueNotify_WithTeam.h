@@ -30,13 +30,13 @@ protected:
 	ESMTeam GetTeamForSource(const AActor* SourceActor) const;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "FX|Effect")
+	UPROPERTY(EditAnywhere, Category = "Design|FX|Effect")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> Effect;
 
-	UPROPERTY(EditAnywhere, Category = "FX|Sound")
+	UPROPERTY(EditAnywhere, Category = "Design|FX|Sound")
 	TMap<ESMTeam, TObjectPtr<UFMODEvent>> Sound;
 
 	/** 가해자 팀의 이펙트 사용 여부입니다. false인 경우 자신의 팀 이펙트를 사용합니다. */
-	UPROPERTY(EditAnywhere, Category = "FX")
+	UPROPERTY(EditAnywhere, Category = "Design|FX")
 	uint32 bUseInstigatorTeam:1 = false;
 };
