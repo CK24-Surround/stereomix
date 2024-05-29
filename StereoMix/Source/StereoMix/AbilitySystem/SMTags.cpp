@@ -79,6 +79,8 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "GameplayCue.Catch", "잡기 시전 시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CatchHit, "GameplayCue.CatchHit", "잡기 적중 시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "GameplayCue.Stun", "스턴 시 재생되는 게임플레이 큐의 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(StunStart_Sound, "GameplayCue.StunStart_Sound", "스턴 시작 시 재생되는 게임플레이 큐의 태그입니다. 사운드 전용입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(StunEnd_Sound, "GameplayCue.StunEnd_Sound", "스턴 종료 시 재생되는 게임플레이 큐의 태그입니다. 사운드 전용입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "GameplayCue.Smash", "매치기 시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashSplashHit, "GameplayCue.SmashSplashHit", "매치기 스플래시에 적중 시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashWithHealItem, "GameplayCue.SmashWithHealItem", "힐 아이템 매치기 시 재생되는 게임플레이 큐의 태그입니다.");
