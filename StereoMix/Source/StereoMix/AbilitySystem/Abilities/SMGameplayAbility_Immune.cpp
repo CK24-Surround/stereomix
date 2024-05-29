@@ -3,6 +3,7 @@
 
 #include "SMGameplayAbility_Immune.h"
 
+#include "FMODBlueprintStatics.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
@@ -78,7 +79,12 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 		SourceCharacter->SetCharacterMoveTrailState(ECharacterMoveTrailState::Immune);
 	}
 
-	K2_ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialApply_ElectricGuitar, MakeEffectContext(Handle, ActorInfo));
+	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialApply_ElectricGuitar);
+
+	if (ActorInfo->IsLocallyControlled())
+	{
+		UFMODBlueprintStatics::PlayEvent2D(SourceCharacter, ImmuneSound, true);
+	}
 }
 
 void USMGameplayAbility_Immune::OnFinishDelay()
@@ -136,8 +142,7 @@ void USMGameplayAbility_Immune::OnFinishDelay()
 	FGameplayCueParameters GCParams;
 	GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneEnd, GCParams);
-
-	K2_ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialReset, MakeEffectContext(CurrentSpecHandle, CurrentActorInfo));
+	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialReset);
 
 	if (CurrentActorInfo->IsNetAuthority())
 	{

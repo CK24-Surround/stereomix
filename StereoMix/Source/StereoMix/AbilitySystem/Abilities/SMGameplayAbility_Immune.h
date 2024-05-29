@@ -6,6 +6,7 @@
 #include "SMGameplayAbility.h"
 #include "SMGameplayAbility_Immune.generated.h"
 
+class UFMODEvent;
 /**
  * 
  */
@@ -25,9 +26,12 @@ protected:
 	void OnFinishDelay();
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Immune")
+	UPROPERTY(EditAnywhere, Category = "Design|FX|Immune")
+	TObjectPtr<UFMODEvent> ImmuneSound;
+	
+	UPROPERTY(EditAnywhere, Category = "Design|Immune")
 	float MoveSpeedMultiply = 1.5f;
 
-	UPROPERTY(EditAnywhere, Category = "Immune")
+	UPROPERTY(EditAnywhere, Category = "Design|Immune")
 	float ImmuneTime = 3.0f;
 };
