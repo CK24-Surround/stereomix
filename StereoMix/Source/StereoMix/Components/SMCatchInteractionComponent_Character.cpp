@@ -366,7 +366,7 @@ void USMCatchInteractionComponent_Character::InternalTileTriggerdBySmash(AActor*
 			// 이펙트를 재생합니다.
 			FGameplayCueParameters GCParams;
 			GCParams.Location = Tile->GetTileLocation();
-			InstigatorASC->ExecuteGameplayCue(SMTags::GameplayCue::Smash, GCParams);
+			InstigatorASC->ExecuteGameplayCue(SMTags::GameplayCue::SpecialAction::SmashSuccessWithCharacter, GCParams);
 
 			// 스플래시 데미지를 적용합니다.
 			UBoxComponent* TileBoxComponent = Tile->GetBoxComponent();
@@ -445,7 +445,7 @@ void USMCatchInteractionComponent_Character::InternalApplySmashSplashDamage(cons
 			FGameplayCueParameters GCParams;
 			GCParams.Location = TargetCharacter->GetActorLocation();
 			GCParams.Instigator = InstigatorCharacter;
-			InstigatorASC->ExecuteGameplayCue(SMTags::GameplayCue::SmashSplashHit, GCParams);
+			InstigatorASC->ExecuteGameplayCue(SMTags::GameplayCue::SpecialAction::SmashSplashHit, GCParams);
 		}
 	}
 

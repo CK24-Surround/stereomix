@@ -81,13 +81,18 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "GameplayCue.Stun", "스턴시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(StunStart_Sound, "GameplayCue.StunStart_Sound", "스턴 시작시 재생되는 게임플레이 큐의 태그입니다. 사운드 전용입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(StunEnd_Sound, "GameplayCue.StunEnd_Sound", "스턴 종료시 재생되는 게임플레이 큐의 태그입니다. 사운드 전용입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "GameplayCue.Smash", "매치기시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashSplashHit, "GameplayCue.SmashSplashHit", "매치기 스플래시에 적중시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashWithHealItem, "GameplayCue.SmashWithHealItem", "힐 아이템 매치기시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ApplyHeal, "GameplayCue.ApplyHeal", "힐 적용시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneEnd, "GameplayCue.ImmuneEnd", "면역 종료시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialApply_ElectricGuitar, "GameplayCue.ImmuneMaterialApply_ElectricGuitar", "일렉기타의 면역 머티리얼 적용시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialReset, "GameplayCue.ImmuneMaterialReset", "면역 머티리얼 리셋시 재생되는 게임플레이 큐의 태그입니다.");
+
+		namespace SpecialAction
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "GameplayCue.SpecialAction.Smash", "매치기에 사용됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashSuccessWithCharacter, "GameplayCue.SpecialAction.SmashSuccessWithCharacter", "캐릭터 매치기 성공시 호출됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashSplashHit, "GameplayCue.SpecialAction.SmashSplashHit", "매치기 스플래시 적중시 호출됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashSuccessWithHealItem, "GameplayCue.SpecialAction.SmashSuccessWithHealItem", "힐 아이템 매치기 성공시 호출됩니다.");
+		}
 
 		namespace JumpPad
 		{

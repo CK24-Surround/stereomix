@@ -135,20 +135,20 @@ protected:
 
 // ~Data Section
 public:
-	const TArray<TObjectPtr<UMaterialInterface>>& GetOriginMaterials() { return OriginMaterials; }
-	UMaterialInterface* GetOriginOverlayMaterial() { return OriginOverlayMaterial; }
+	const TArray<TObjectPtr<UMaterialInterface>>& GetOriginalMaterials() { return OriginalMaterials; }
+	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
 
 protected:
 	UPROPERTY()
 	TObjectPtr<const USMDesignData> DesignData;
 
 	/** 캐릭터의 원본 머티리얼입니다. */
-	UPROPERTY()
-	TArray<TObjectPtr<UMaterialInterface>> OriginMaterials;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Design|Material")
+	TArray<TObjectPtr<UMaterialInterface>> OriginalMaterials;
 
 	/** 캐릭터의 원본 오버레이 머티리얼입니다. */
-	UPROPERTY()
-	TObjectPtr<UMaterialInterface> OriginOverlayMaterial;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Design|Material")
+	TObjectPtr<UMaterialInterface> OriginalOverlayMaterial;
 // ~Data Section
 
 // ~Caching Section

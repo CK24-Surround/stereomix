@@ -9,14 +9,12 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "NiagaraSystem.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
 #include "Data/SMSpecialAction.h"
 #include "FunctionLibraries/SMCatchInteractionBlueprintLibrary.h"
-#include "Player/SMPlayerController.h"
 #include "Utilities/SMLog.h"
 
 USMGameplayAbility_Smash::USMGameplayAbility_Smash()
@@ -112,6 +110,8 @@ void USMGameplayAbility_Smash::ActivateAbility(const FGameplayAbilitySpecHandle 
 		FAbilityTargetDataSetDelegate& TargetDataSetDelegate = SourceASC->AbilityTargetDataSetDelegate(Handle, ActivationInfo.GetActivationPredictionKey());
 		TargetDataSetDelegate.AddUObject(this, &ThisClass::OnReceiveTargetData);
 	}
+
+	SourceASC->AddGameplayCue(SMTags::GameplayCue::SpecialAction::Smash);
 }
 
 void USMGameplayAbility_Smash::OnReceiveTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag)
@@ -220,6 +220,8 @@ void USMGameplayAbility_Smash::OnSmash(ASMPlayerCharacter* LandedCharacter)
 
 		SourceCIC->SetActorIAmCatching(nullptr);
 	}
+
+	SourceASC->RemoveGameplayCue(SMTags::GameplayCue::SpecialAction::Smash);
 }
 
 void USMGameplayAbility_Smash::OnSmashEnd(FGameplayEventData Payload)

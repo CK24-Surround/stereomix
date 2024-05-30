@@ -66,8 +66,8 @@ void USMGameplayCueNotify_ImmuneMaterial::ResetMaterial(ASMPlayerCharacter* Sour
 		return;
 	}
 
-	SourceMesh->SetOverlayMaterial(SourceCharacter->GetOriginOverlayMaterial());
-	const TArray<TObjectPtr<UMaterialInterface>>& OriginMaterials = SourceCharacter->GetOriginMaterials();
+	SourceMesh->SetOverlayMaterial(SourceCharacter->GetOriginalOverlayMaterial());
+	const TArray<TObjectPtr<UMaterialInterface>>& OriginMaterials = SourceCharacter->GetOriginalMaterials();
 	for (int32 i = 0; i < OriginMaterials.Num(); ++i)
 	{
 		SourceMesh->SetMaterial(i, OriginMaterials[i]);
