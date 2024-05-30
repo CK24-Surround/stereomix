@@ -311,7 +311,7 @@ public:
 
 // ~Catch Section
 public:
-	UPROPERTY(EditAnywhere, Category = "Design|Socket")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design|Socket")
 	FName CatchSocket = TEXT("CatchSlot");
 // ~Catch Section
 
@@ -337,7 +337,7 @@ protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_CharacterMoveTrailState")
 	ECharacterMoveTrailState CharacterMoveTrailState;
 
-	UPROPERTY(EditAnywhere, Category = "Design|Socket")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design|Socket")
 	FName TrailSocket = TEXT("Trail-Point");
 
 	UPROPERTY(EditAnywhere, Category = "Design|FX")

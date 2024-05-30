@@ -12,12 +12,12 @@
 USMGameplayCueNotify_WithLocalTeam::USMGameplayCueNotify_WithLocalTeam()
 {
 	Effect.FindOrAdd(ESMLocalTeam::Equal, nullptr);
-	Effect.FindOrAdd(ESMLocalTeam::different, nullptr);
+	Effect.FindOrAdd(ESMLocalTeam::Different, nullptr);
 }
 
 void USMGameplayCueNotify_WithLocalTeam::PlayNiagaraSystem(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
-	ESMLocalTeam Team = ESMLocalTeam::different;
+	ESMLocalTeam Team = ESMLocalTeam::Different;
 	if (IsSameTeamWithLocalTeam(SourceActor))
 	{
 		Team = ESMLocalTeam::Equal;
@@ -37,7 +37,7 @@ void USMGameplayCueNotify_WithLocalTeam::PlayNiagaraSystem(AActor* SourceActor, 
 
 void USMGameplayCueNotify_WithLocalTeam::PlayNiagaraSystemWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
-	ESMLocalTeam Team = ESMLocalTeam::different;
+	ESMLocalTeam Team = ESMLocalTeam::Different;
 	if (IsSameTeamWithLocalTeam(SourceActor))
 	{
 		Team = ESMLocalTeam::Equal;
@@ -63,7 +63,7 @@ void USMGameplayCueNotify_WithLocalTeam::PlayNiagaraSystemWithAttach(AActor* Sou
 
 void USMGameplayCueNotify_WithLocalTeam::PlaySound(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
-	ESMLocalTeam Team = ESMLocalTeam::different;
+	ESMLocalTeam Team = ESMLocalTeam::Different;
 	if (IsSameTeamWithLocalTeam(SourceActor))
 	{
 		Team = ESMLocalTeam::Equal;
@@ -83,7 +83,7 @@ void USMGameplayCueNotify_WithLocalTeam::PlaySound(AActor* SourceActor, const FG
 
 void USMGameplayCueNotify_WithLocalTeam::PlaySoundWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
 {
-	ESMLocalTeam Team = ESMLocalTeam::different;
+	ESMLocalTeam Team = ESMLocalTeam::Different;
 	if (IsSameTeamWithLocalTeam(SourceActor))
 	{
 		Team = ESMLocalTeam::Equal;

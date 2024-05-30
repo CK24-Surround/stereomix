@@ -172,6 +172,8 @@ void ASMCatchableItem_AttributeChanger::ApplyItemByWhile(TArray<AActor*> ActorsT
 			}
 		}
 
+		ActorToApplyASC->ExecuteGameplayCue(SMTags::GameplayCue::ApplyHeal);
+
 		NET_LOG(this, Log, TEXT("아이템 적용 액터: %s"), *ActorToApply->GetName());
 	}
 }
@@ -281,7 +283,7 @@ void ASMCatchableItem_AttributeChanger::MulticastRPCPlayActivateHealItemFX_Imple
 		return;
 	}
 
-	ESMLocalTeam LocalTeam = ESMLocalTeam::different;
+	ESMLocalTeam LocalTeam = ESMLocalTeam::Different;
 	if (IsSameTeamWithLocalTeam(InActivator))
 	{
 		LocalTeam = ESMLocalTeam::Equal;
