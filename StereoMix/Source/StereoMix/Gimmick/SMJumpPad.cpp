@@ -4,6 +4,7 @@
 #include "SMJumpPad.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayCueManager.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
@@ -16,6 +17,8 @@
 
 ASMJumpPad::ASMJumpPad()
 {
+	bReplicates = true;
+
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 
@@ -71,8 +74,14 @@ void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
 	Jump(TargetCharacter, JumpTarget->GetComponentLocation());
 	TargetCharacter->OnLanded.AddUObject(this, &ThisClass::TargetLanded);
 
+	// 점프대 사용 FX를 재생합니다. 로컬에서는 예측적으로 FX를 재생합니다.
+	FGameplayCueParameters GCParams;
+	GCParams.Location = GetActorLocation();
+	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::UseJumpPad, GCParams);
+
 	if (HasAuthority())
 	{
+		MulticastRPCPlayUseJumpPadFX(TargetCharacter);
 		TargetASC->AddTag(SMTags::Character::State::Jump);
 	}
 }
@@ -96,10 +105,23 @@ void ASMJumpPad::Jump(ACharacter* InCharacter, const FVector& TargetLocation)
 	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight2(this, StartLocation, TargetLocation, ApexHeight, Gravity);
 
 	InCharacter->LaunchCharacter(LaunchVelocity, true, true);
+	InCharacter->OnDestroyed.AddDynamic(this, &ThisClass::OnDestroyedUsingJumpPadCharacter);
 }
 
 void ASMJumpPad::TargetLanded(ASMPlayerCharacter* LandedCharacter)
 {
+	if (!LandedCharacter)
+	{
+		NET_LOG(this, Warning, TEXT("착지하는 캐릭터가 유효하지 않습니다."));
+		return;
+	}
+
+	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(LandedCharacter->GetAbilitySystemComponent());
+	if (!ensureAlways(TargetASC))
+	{
+		return;
+	}
+
 	UCharacterMovementComponent* TargetMovement = LandedCharacter->GetCharacterMovement();
 	if (!ensureAlways(TargetMovement))
 	{
@@ -108,7 +130,6 @@ void ASMJumpPad::TargetLanded(ASMPlayerCharacter* LandedCharacter)
 
 	if (HasAuthority())
 	{
-		USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(LandedCharacter->GetAbilitySystemComponent());
 		TargetASC->RemoveTag(SMTags::Character::State::Jump);
 	}
 
@@ -122,5 +143,41 @@ void ASMJumpPad::TargetLanded(ASMPlayerCharacter* LandedCharacter)
 		TargetMovement->AirControl = OriginAirControl[LandedCharacter];
 	}
 
+	LandedCharacter->OnDestroyed.RemoveAll(this);
 	LandedCharacter->OnLanded.RemoveAll(this);
+
+	// 착지 FX를 재생합니다. 로컬에서는 예측적으로 먼저 재생합니다.
+	FGameplayCueParameters GCParams;
+	GCParams.Location = LandedCharacter->GetActorLocation();
+	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
+
+	if (HasAuthority())
+	{
+		MulticastRPCPlayLandedFX(LandedCharacter);
+	}
+}
+
+void ASMJumpPad::OnDestroyedUsingJumpPadCharacter(AActor* DestroyedActor)
+{
+	DestroyedActor->OnDestroyed.RemoveAll(this);
+}
+
+void ASMJumpPad::MulticastRPCPlayUseJumpPadFX_Implementation(ASMPlayerCharacter* SourceCharacter)
+{
+	if (!HasAuthority() && !SourceCharacter->IsLocallyControlled())
+	{
+		FGameplayCueParameters GCParams;
+		GCParams.Location = GetActorLocation();
+		UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
+	}
+}
+
+void ASMJumpPad::MulticastRPCPlayLandedFX_Implementation(ASMPlayerCharacter* SourceCharacter)
+{
+	if (!HasAuthority() && !SourceCharacter->IsLocallyControlled())
+	{
+		FGameplayCueParameters GCParams;
+		GCParams.Location = SourceCharacter->GetActorLocation();
+		UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
+	}
 }

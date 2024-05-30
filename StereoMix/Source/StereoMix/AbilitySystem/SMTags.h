@@ -89,5 +89,11 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneEnd);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneMaterialApply_ElectricGuitar);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneMaterialReset);
+
+		namespace JumpPad
+		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(UseJumpPad);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Land);
+		}
 	}
 }

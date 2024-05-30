@@ -7,6 +7,7 @@
 
 #include "SMJumpPad.generated.h"
 
+class UFMODEvent;
 class ASMPlayerCharacter;
 class UBoxComponent;
 
@@ -29,6 +30,16 @@ protected:
 
 	void TargetLanded(ASMPlayerCharacter* LandedCharacter);
 
+	/** 만약 점프대 사용 중 캐릭터가 파괴된 경우 예외처리를 위한 함수입니다. */
+	UFUNCTION()
+	void OnDestroyedUsingJumpPadCharacter(AActor* DestroyedActor);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastRPCPlayUseJumpPadFX(ASMPlayerCharacter* SourceCharacter);
+
+	UFUNCTION(NetMulticast, Unreliable)
+	void MulticastRPCPlayLandedFX(ASMPlayerCharacter* SourceCharacter);
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
@@ -43,16 +54,16 @@ protected:
 	TObjectPtr<USceneComponent> JumpTarget;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Jump")
+	UPROPERTY(EditAnywhere, Category = "Design|Jump")
 	float GravityScale = 4.0f;
 
 	TMap<TWeakObjectPtr<AActor>, float> OriginGravityScale;
 
 	TMap<TWeakObjectPtr<AActor>, float> OriginAirControl;
 
-	UPROPERTY(EditAnywhere, Category = "Jump")
+	UPROPERTY(EditAnywhere, Category = "Design|Jump")
 	float ApexHeight = 500.0f;
 
-	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tags")
 	FGameplayTagContainer DenineTags;
 };

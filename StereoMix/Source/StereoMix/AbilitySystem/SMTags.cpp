@@ -88,5 +88,11 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneEnd, "GameplayCue.ImmuneEnd", "면역 종료시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialApply_ElectricGuitar, "GameplayCue.ImmuneMaterialApply_ElectricGuitar", "일렉기타의 면역 머티리얼 적용시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialReset, "GameplayCue.ImmuneMaterialReset", "면역 머티리얼 리셋시 재생되는 게임플레이 큐의 태그입니다.");
+
+		namespace JumpPad
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(UseJumpPad, "GameplayCue.JumpPad.UseJumpPad", "점프대 사용시 호출됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Land, "GameplayCue.JumpPad.Land", " 점프대 사용후 착지할때 호출됩니다.");
+		}
 	}
 }
