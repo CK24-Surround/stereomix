@@ -43,6 +43,12 @@ public:
 	int32 CountdownTime;
 
 	UPROPERTY(BlueprintAssignable)
+	FPlayerJoined OnPlayerJoined;
+
+	UPROPERTY(BlueprintAssignable)
+	FPlayerLeft OnPlayerLeft;
+	
+	UPROPERTY(BlueprintAssignable)
 	FPlayerCharacterChanged OnPlayerCharacterChanged;
 	
 	UPROPERTY(BlueprintAssignable)

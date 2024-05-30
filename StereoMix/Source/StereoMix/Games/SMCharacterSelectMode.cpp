@@ -40,12 +40,29 @@ void ASMCharacterSelectMode::StartPlay()
 // ReSharper disable once CppMemberFunctionMayBeStatic
 void ASMCharacterSelectMode::OnCountdownTick()
 {
+	if (CharacterSelectState->GetCountdownTimer()->GetRemainingTime() == 15)
+	{
+		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
+		{
+			if (ASMCharacterSelectPlayerState* CharacterSelectPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
+			{
+				if (CharacterSelectPlayerState->GetCharacterType() == ESMCharacterType::None)
+				{
+					// 임시로 기본 기타로 설정
+					CharacterSelectPlayerState->SetCharacterType(ESMCharacterType::ElectricGuitar);
+				}
+				UE_LOG(LogStereoMix, Log, TEXT("Player %s selected %s."), *CharacterSelectPlayerState->GetPlayerName(), *UEnum::GetValueAsString(CharacterSelectPlayerState->GetCharacterType()))
+			}
+		}
+	}
 }
 
 void ASMCharacterSelectMode::OnCountdownFinished()
 {
 	if (CharacterSelectState.IsValid())
 	{
+		CharacterSelectState->SetCharacterSelectionState(ECharacterSelectionState::End);
+		
 		// 임시 코드
 		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
 		{

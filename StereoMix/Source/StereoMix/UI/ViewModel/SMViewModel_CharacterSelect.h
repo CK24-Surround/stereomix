@@ -5,11 +5,30 @@
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
 #include "SMViewModel.h"
+#include "SMViewModel_CharacterSelect_Player.h"
+#include "Data/SMCharacterType.h"
+#include "Data/SMTeam.h"
 #include "SMViewModel_CharacterSelect.generated.h"
 
-class ASMCharacterSelectPlayerState;
-enum class ESMTeam : uint8;
 class ASMCharacterSelectState;
+class ASMCharacterSelectPlayerState;
+
+UCLASS(BlueprintType)
+class STEREOMIX_API USMCharacterSelectPlayerData : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(BlueprintReadOnly)
+	bool bLocalPlayer;
+
+	UPROPERTY(BlueprintReadOnly)
+	FText PlayerName;
+
+	UPROPERTY(BlueprintReadOnly)
+	ESMCharacterType CharacterType;
+};
+
 /**
  * 
  */
@@ -27,11 +46,14 @@ class STEREOMIX_API USMViewModel_CharacterSelect : public USMViewModel
 	UPROPERTY(BlueprintReadWrite, FieldNotify, meta=(AllowPrivateAccess))
 	int32 RemainingTime;
 
+	UPROPERTY(BlueprintReadOnly, FieldNotify, meta=(AllowPrivateAccess))
+	TArray<TObjectPtr<USMViewModel_CharacterSelect_Player>> PlayerEntries;
+
 	TWeakObjectPtr<ASMCharacterSelectState> OwningGameState;
 	TWeakObjectPtr<ASMCharacterSelectPlayerState> LocalPlayerState;
 
 public:
-	void BindGameState(ASMCharacterSelectState* GameState);
+	virtual void InitializeViewModel(UWorld* InWorld) override;
 
 protected:
 	int32 GetRemainingTime() const { return RemainingTime; }

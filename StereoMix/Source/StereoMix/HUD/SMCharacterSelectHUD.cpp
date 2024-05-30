@@ -32,7 +32,7 @@ void ASMCharacterSelectHUD::BeginPlay()
 	CharacterSelectState = GetWorld()->GetGameState<ASMCharacterSelectState>();
 	if (CharacterSelectState)
 	{
-		CharacterSelectViewModel->BindGameState(CharacterSelectState);
+		CharacterSelectViewModel->InitializeViewModel(GetWorld());
 	}
 	else
 	{

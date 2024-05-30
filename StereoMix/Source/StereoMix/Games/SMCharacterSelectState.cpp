@@ -13,7 +13,7 @@ void ASMCharacterSelectState::OnRep_CharacterSelectionState() const
 
 ASMCharacterSelectState::ASMCharacterSelectState()
 {
-	CountdownTime = 10;
+	CountdownTime = 30;
 	
 	CharacterSelectionState = ECharacterSelectionState::Select;
 	CountdownTimer = CreateDefaultSubobject<UCountdownTimerComponent>(TEXT("RoomCountdownTimer"));
@@ -45,10 +45,18 @@ void ASMCharacterSelectState::SetCharacterSelectionState(ECharacterSelectionStat
 
 void ASMCharacterSelectState::NotifyPlayerJoined(ASMPlayerState* JoinedPlayer)
 {
+	if (OnPlayerJoined.IsBound())
+	{
+		OnPlayerJoined.Broadcast(JoinedPlayer);
+	}
 }
 
 void ASMCharacterSelectState::NotifyPlayerLeft(ASMPlayerState* LeftPlayer)
 {
+	if (OnPlayerLeft.IsBound())
+	{
+		OnPlayerLeft.Broadcast(LeftPlayer);
+	}
 }
 
 void ASMCharacterSelectState::NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam)

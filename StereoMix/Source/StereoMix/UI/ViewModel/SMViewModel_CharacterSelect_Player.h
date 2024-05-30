@@ -28,6 +28,8 @@ class STEREOMIX_API USMViewModel_CharacterSelect_Player : public USMViewModel
 	TWeakObjectPtr<ASMPlayerState> OwningPlayerState;
 
 public:
+	virtual void InitializeViewModel(UWorld* InWorld) override;
+	
 	void BindPlayerState(ASMPlayerState* PlayerState);
 
 	void Reset();

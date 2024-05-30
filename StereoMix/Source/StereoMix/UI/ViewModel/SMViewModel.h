@@ -16,4 +16,8 @@ class STEREOMIX_API USMViewModel : public UMVVMViewModelBase
 
 public:
 	USMViewModel();
+
+	virtual void InitializeViewModel(UWorld* InWorld);
+
+	virtual void BeginDestroy() override;
 };
