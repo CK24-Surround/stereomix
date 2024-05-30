@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "FMODBlueprintStatics.h"
 #include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/SMTags.h"
 #include "Components/BoxComponent.h"
@@ -22,9 +23,6 @@ ASMCatchableItem_AttributeChanger::ASMCatchableItem_AttributeChanger()
 	CIC = CreateDefaultSubobject<USMCatchInteractionComponent_CatchableItem_AttributeChanger>(TEXT("CIC"));
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
-
-	ActivateFX.FindOrAdd(ESMLocalTeam::Equal, nullptr);
-	ActivateFX.FindOrAdd(ESMLocalTeam::different, nullptr);
 }
 
 USMCatchInteractionComponent* ASMCatchableItem_AttributeChanger::GetCatchInteractionComponent()
@@ -103,6 +101,7 @@ void ASMCatchableItem_AttributeChanger::TriggerCountTimerStart()
 	TriggerData.CurrentTriggerCount = 0;
 
 	ApplyItemByStart(GetConfirmedActorsToApplyItem());
+	MulticastRPCPlayActivateHealItemFX(Activator.Get(), TriggeredTiles);
 
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::TriggerCountTimerCallback, Interval, false);
@@ -113,6 +112,7 @@ void ASMCatchableItem_AttributeChanger::TriggerCountTimerCallback()
 	if (TriggerData.CurrentTriggerCount++ < TriggerCount)
 	{
 		ApplyItemByWhile(GetConfirmedActorsToApplyItem());
+		MulticastRPCPlayActivateHealItemFX(Activator.Get(), TriggeredTiles);
 
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::TriggerCountTimerCallback, Interval, false);
@@ -247,7 +247,6 @@ TArray<AActor*> ASMCatchableItem_AttributeChanger::GetActorsOnTriggeredTiles(ECo
 		}
 	}
 
-	MulticastRPCPlayActivateHealItemFX(Activator.Get(), TriggeredTiles);
 	return Result;
 }
 
@@ -288,19 +287,33 @@ void ASMCatchableItem_AttributeChanger::MulticastRPCPlayActivateHealItemFX_Imple
 		LocalTeam = ESMLocalTeam::Equal;
 	}
 
-	for (const auto& TriggeredTile : InTrigeredTiles)
+	if (ActivateEffect.Find(LocalTeam))
 	{
-		if (!ensureAlways(TriggeredTile.Get()))
+		for (const auto& TriggeredTile : InTrigeredTiles)
 		{
-			continue;
-		}
+			if (!ensureAlways(TriggeredTile.Get()))
+			{
+				continue;
+			}
 
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ActivateFX[LocalTeam], TriggeredTile->GetTileLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ActivateEffect[LocalTeam], TriggeredTile->GetTileLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
+		}
+	}
+
+	if (ActivateSound.Find(LocalTeam))
+	{
+		UFMODBlueprintStatics::PlayEventAtLocation(this, ActivateSound[LocalTeam], GetActorTransform(), true);
 	}
 }
 
 bool ASMCatchableItem_AttributeChanger::IsSameTeamWithLocalTeam(AActor* TargetActor) const
 {
+	if (!TargetActor)
+	{
+		NET_LOG(this, Warning, TEXT("시전자가 유효하지 않습니다."));
+		return false;
+	}
+
 	ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(TargetActor);
 	if (!ensureAlways(TargetTeamInterface))
 	{

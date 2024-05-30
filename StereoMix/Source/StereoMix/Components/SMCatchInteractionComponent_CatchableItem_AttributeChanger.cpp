@@ -48,6 +48,11 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 	ASMTile* TriggeredTile = TileTrigger(Instigator);
 	if (TriggeredTile)
 	{
+		const FVector TileLocation = TriggeredTile->GetTileLocation();
+		
+		// FX 재생을 위해 약간 어긋난 아이템의 위치를 보정합니다.
+		SourceItem->SetActorLocation(TileLocation);
+		
 		SaveTriggeredTilesBySmash(TriggeredTile, InMagnitude);
 
 		// 스매시 이펙트를 재생합니다.
@@ -55,7 +60,7 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 		if (ensureAlways(InstigatorASC))
 		{
 			FGameplayCueParameters GCParams;
-			GCParams.Location = TriggeredTile->GetTileLocation();
+			GCParams.Location = TileLocation;
 			InstigatorASC->ExecuteGameplayCue(SourceItem->SmashGCTag, GCParams);
 		}
 	}

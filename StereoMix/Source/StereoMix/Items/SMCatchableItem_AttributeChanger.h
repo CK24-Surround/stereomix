@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
 #include "SMCatchableItem.h"
 #include "Data/SMLocalTeam.h"
 #include "SMCatchableItem_AttributeChanger.generated.h"
 
+class UFMODEvent;
 class UNiagaraSystem;
 class UGameplayEffect;
 class USMTeamComponent;
@@ -53,7 +53,7 @@ protected:
 	/** 아이템을 적용하기에 유효한 타겟인지 검증합니다. */
 	bool IsValidActorToApplyItem(AActor* TargetActor);
 
-	/** 이펙트를 재생합니다. */
+	/** FX를 재생합니다. */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCPlayActivateHealItemFX(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTrigeredTiles);
 
@@ -78,6 +78,7 @@ public:
 	/** 아이템 활성자입니다. */
 	TWeakObjectPtr<AActor> Activator;
 
+	/** 트리거된 타일을 저장하고 있습니다. CIC에서 저장됩니다. */
 	TArray<TWeakObjectPtr<ASMTile>> TriggeredTiles;
 
 	/** 현재 트리거 횟수입니다. */
@@ -89,8 +90,11 @@ public:
 	FTriggerData TriggerData;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Design")
-	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateFX;
+	UPROPERTY(EditAnywhere, Category = "Design|FX")
+	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateEffect;
+
+	UPROPERTY(EditAnywhere, Category = "Design|FX")
+	TMap<ESMLocalTeam, TObjectPtr<UFMODEvent>> ActivateSound;
 
 	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "지속시간")
 	float Duration = 5.0f;
