@@ -125,6 +125,7 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	TrajectoryMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	TrajectoryMeshComponent->SetupAttachment(TrajectoryFXComponent);
 	TrajectoryMeshComponent->SetHiddenInGame(true);
+	TrajectoryMeshComponent->SetWorldScale3D(FVector(1.0, 0.8, 1.0));
 }
 
 void ASMPlayerCharacter::PostInitializeComponents()
@@ -853,7 +854,8 @@ void ASMPlayerCharacter::DrawSmashEndPoint()
 
 			const float Distance = FVector::Dist2D(SourceLocation, TrajectoryTargetLocation);
 			const float Ratio = Distance / 100.0f;
-			TrajectoryMeshComponent->SetWorldScale3D(FVector(Ratio, 1.0, 1.0));
+			const FVector CachedScale = TrajectoryMeshComponent->GetComponentScale();
+			TrajectoryMeshComponent->SetWorldScale3D(FVector(Ratio, CachedScale.Y, CachedScale.Z));
 		}
 	}
 	else
