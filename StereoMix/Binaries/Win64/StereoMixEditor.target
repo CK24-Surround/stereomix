@@ -6630,6 +6630,26 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(ProjectDir)/Plugins/KawaiiPhysics/Binaries/Win64/UnrealEditor-KawaiiPhysics.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/KawaiiPhysics/Binaries/Win64/UnrealEditor-KawaiiPhysics.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/KawaiiPhysics/Binaries/Win64/UnrealEditor-KawaiiPhysicsEd.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/KawaiiPhysics/Binaries/Win64/UnrealEditor-KawaiiPhysicsEd.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/KawaiiPhysics/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(ProjectDir)/Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkEditor.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -29704,6 +29724,10 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(ProjectDir)/Plugins/KawaiiPhysics/KawaiiPhysics.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(ProjectDir)/Plugins/TurboLink/TurboLink.uplugin",
 			"Type": "UFS"
 		},
@@ -29803,6 +29827,7 @@
 		"InterchangeEditor",
 		"InterchangeTests",
 		"KDevelopSourceCodeAccess",
+		"KawaiiPhysics",
 		"LauncherChunkInstaller",
 		"LevelSequenceEditor",
 		"LightMixer",
