@@ -144,7 +144,8 @@ FMOD_RESULT F_CALLBACK SoundCallback(FMOD_STUDIO_EVENT_CALLBACK_TYPE type, FMOD_
         // Pass the sound to FMOD
         FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES* props = (FMOD_STUDIO_PROGRAMMER_SOUND_PROPERTIES*)parameters;
         props->sound = (FMOD_SOUND*)sound;
-        UE_LOG(LogFMODAudioLink, Verbose, TEXT("Sound Created: %s , Consumer = %" PRIu64 "."), *sourceName, ConsumerPtr);
+    	// 빌드 오류로 주석처리했습니다.
+        // UE_LOG(LogFMODAudioLink, Verbose, TEXT("Sound Created: %s , Consumer = %" PRIu64 "."), *sourceName, ConsumerPtr);
     }
     else if (type == FMOD_STUDIO_EVENT_CALLBACK_DESTROY_PROGRAMMER_SOUND)
     {
@@ -153,7 +154,8 @@ FMOD_RESULT F_CALLBACK SoundCallback(FMOD_STUDIO_EVENT_CALLBACK_TYPE type, FMOD_
         FMOD::Sound* sound = (FMOD::Sound*)props->sound;
 
         // Release the sound
-        UE_LOG(LogFMODAudioLink, Verbose, TEXT("Sound Release: %" PRIu64 "."), sound);
+    	// 빌드 오류로 주석처리했습니다.
+        // UE_LOG(LogFMODAudioLink, Verbose, TEXT("Sound Release: %" PRIu64 "."), sound);
         result = sound->release();
     }
     else if (type == FMOD_STUDIO_EVENT_CALLBACK_DESTROYED)
@@ -161,7 +163,8 @@ FMOD_RESULT F_CALLBACK SoundCallback(FMOD_STUDIO_EVENT_CALLBACK_TYPE type, FMOD_
         InputClientRef* ClientRef = nullptr;
         result = eventInstance->getUserData((void**)&ClientRef);
 
-        UE_LOG(LogFMODAudioLink, Verbose, TEXT("Event Destroyed: ClientRef = %" PRIu64 "."), ClientRef);
+    	// 빌드 오류로 주석처리했습니다.
+        // UE_LOG(LogFMODAudioLink, Verbose, TEXT("Event Destroyed: ClientRef = %" PRIu64 "."), ClientRef);
         if (ClientRef)
         {
             delete ClientRef;
@@ -182,8 +185,9 @@ void FFMODAudioLinkInputClient::Start(USceneComponent* InComponent)
     auto SelfSP = AsShared();
     auto PlayLambda = [SelfSP, LinkEvent, InComponent]()
         {
-            UE_LOG(LogFMODAudioLink, Verbose, TEXT("FFMODAudioLinkInputClient::Start: SelSP = %" PRIu64 ", LinkEvent = %s, InComponent = %" PRIu64 ".")
-                    , &SelfSP, *LinkEvent.Get()->GetName(), &InComponent);
+    		// 빌드 오류로 주석처리했습니다.
+            // UE_LOG(LogFMODAudioLink, Verbose, TEXT("FFMODAudioLinkInputClient::Start: SelSP = %" PRIu64 ", LinkEvent = %s, InComponent = %" PRIu64 ".")
+            //         , &SelfSP, *LinkEvent.Get()->GetName(), &InComponent);
 
             FMOD::Studio::EventDescription* EventDesc = IFMODStudioModule::Get().GetEventDescription(LinkEvent.Get());
             if (EventDesc != nullptr)
