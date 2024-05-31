@@ -74,6 +74,9 @@
 		<property name="priority">
 			<value>1</value>
 		</property>
+		<property name="minimumDistance">
+			<value>25</value>
+		</property>
 		<property name="maximumDistance">
 			<value>80</value>
 		</property>
@@ -137,6 +140,12 @@
 	</object>
 	<object class="MixerBusPanner" id="{fe25c5f7-eec0-4df0-9d67-6dada4a80498}" />
 	<object class="SingleSound" id="{981197c4-686b-4899-b952-ca0d7cdea9c0}">
+		<property name="length">
+			<value>0.94999999999999996</value>
+		</property>
+		<property name="timelockedOffset">
+			<value>0.050000000000000003</value>
+		</property>
 		<relationship name="modulators">
 			<destination>{aaa68fc1-8f50-44c3-aad8-6218cc25686e}</destination>
 		</relationship>
@@ -169,7 +178,10 @@
 	</object>
 	<object class="SingleSound" id="{d2e65fa4-e1eb-4660-881e-cadb75b7de70}">
 		<property name="length">
-			<value>0.69461393130766103</value>
+			<value>0.664613931307661</value>
+		</property>
+		<property name="timelockedOffset">
+			<value>0.036934332705534333</value>
 		</property>
 		<property name="pitch">
 			<value>3.60000014</value>
@@ -329,7 +341,7 @@
 	</object>
 	<object class="AutomationPoint" id="{5d61a2bb-7739-4366-978b-f06ddfb6ddae}">
 		<property name="position">
-			<value>1</value>
+			<value>0.94999999999999996</value>
 		</property>
 		<property name="value">
 			<value>0</value>
@@ -343,7 +355,7 @@
 	<object class="MixerBusFader" id="{1fa55df7-dcd5-452c-83dd-2e24b20763dd}" />
 	<object class="AutomationPoint" id="{955e4d2e-12e5-4d72-8266-d845ab2fee1c}">
 		<property name="position">
-			<value>0.59461393130766105</value>
+			<value>0.56461393130766113</value>
 		</property>
 		<property name="value">
 			<value>1</value>
@@ -354,7 +366,7 @@
 	</object>
 	<object class="AutomationPoint" id="{cfd0ed72-9516-4bff-b203-2eda89ae976e}">
 		<property name="position">
-			<value>0.69461393130766103</value>
+			<value>0.66461393130766111</value>
 		</property>
 		<property name="value">
 			<value>0</value>

@@ -145,7 +145,6 @@
 		<property name="length">
 			<value>1.8800000000000001</value>
 		</property>
-		<property name="name" />
 		<property name="intensity">
 			<value>87.5</value>
 		</property>
@@ -255,10 +254,10 @@
 	<object class="SpatialiserEffect" id="{db1c7567-13de-44c6-a8f3-1d621d28c3a8}" />
 	<object class="ThreeEQEffect" id="{eb7f730c-e4b3-4923-b092-32479114b9d9}">
 		<property name="midGain">
-			<value>-8</value>
+			<value>-5.5</value>
 		</property>
 		<property name="highGain">
-			<value>-4</value>
+			<value>-3.5</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{032b9ccb-9f29-4864-84d7-f994335da56c}" />
