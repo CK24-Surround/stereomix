@@ -27,6 +27,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
+#include "Tiles/SMTile.h"
 
 ASMPlayerCharacter::ASMPlayerCharacter()
 {
@@ -191,6 +192,7 @@ void ASMPlayerCharacter::Tick(float DeltaTime)
 	{
 		UpdateCameraLocation();
 		FocusToCursor();
+		DrawSmashEndPoint();
 	}
 }
 
@@ -772,4 +774,54 @@ void ASMPlayerCharacter::ActivateCatchMoveTrail()
 void ASMPlayerCharacter::ActivateImmuneMoveTrail()
 {
 	ImmuneMoveTrailFXComponent->Activate(true);
+}
+
+void ASMPlayerCharacter::DrawSmashEndPoint()
+{
+	if (!ASC.Get())
+	{
+		return;
+	}
+
+	if (!ASC->HasMatchingGameplayTag(SMTags::Character::State::Catch))
+	{
+		return;
+	}
+
+	if (ASC->HasMatchingGameplayTag(SMTags::Character::State::Smashing))
+	{
+		return;
+	}
+
+	auto CalculateMaxDistanceLocation = [](const FVector& InStartLocation, const FVector& InTargetLocation)
+	{
+		FVector AlignedSourceZ = InStartLocation;
+		AlignedSourceZ.Z = InTargetLocation.Z;
+
+		const float TileSize = 150.0f;
+		const float Range = TileSize * 6;
+		if (FVector::DistSquared(AlignedSourceZ, InTargetLocation) > FMath::Square(Range))
+		{
+			const FVector SourceToTargetDirection = (InTargetLocation - AlignedSourceZ).GetSafeNormal();
+
+			const FVector Result = AlignedSourceZ + (SourceToTargetDirection * Range);
+			return Result;
+		}
+
+		return InTargetLocation;
+	};
+
+	const FVector Start = CalculateMaxDistanceLocation(GetActorLocation(), GetCursorTargetingPoint(true));;
+	const FVector End = Start + (FVector::DownVector * 100.0f);
+
+	FHitResult HitResult;
+	const bool bSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, SMCollisionTraceChannel::TileAction);
+	if (bSuccess)
+	{
+		ASMTile* TargetTile = Cast<ASMTile>(HitResult.GetActor());
+		if (TargetTile)
+		{
+			DrawDebugBox(GetWorld(), TargetTile->GetTileLocation(), FVector(375.0, 375.0, 100.0), FColor::Orange);
+		}
+	}
 }
