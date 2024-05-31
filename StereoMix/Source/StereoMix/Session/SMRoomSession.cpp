@@ -3,10 +3,6 @@
 
 #include "SMRoomSession.h"
 
-#include "StereoMix.h"
-#include "Connection/SMGameServerConnectionSubsystem.h"
-
-
 // Sets default values
 ASMRoomSession::ASMRoomSession()
 {

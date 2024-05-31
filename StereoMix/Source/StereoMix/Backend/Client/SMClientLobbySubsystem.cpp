@@ -17,6 +17,7 @@ void USMClientLobbySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	LobbyClient->OnCreateRoomResponse.AddDynamic(this, &USMClientLobbySubsystem::OnGrpcCreateRoomResponse);
 	LobbyClient->OnQuickMatchResponse.AddDynamic(this, &USMClientLobbySubsystem::OnGrpcQuickMatchResponse);
 	LobbyClient->OnJoinRoomResponse.AddDynamic(this, &USMClientLobbySubsystem::OnGrpcJoinRoomResponse);
+	LobbyClient->OnJoinRoomWithCodeResponse.AddDynamic(this, &USMClientLobbySubsystem::OnGrpcJoinRoomWithCodeResponse);
 }
 
 bool USMClientLobbySubsystem::CreateRoom(const FString& RoomName, FGrpcLobbyRoomConfig RoomConfig, const FString& Password)
@@ -118,41 +119,44 @@ void USMClientLobbySubsystem::OnGrpcCreateRoomResponse(FGrpcContextHandle Handle
 		return;
 	}
 
+	ECreateRoomResult Result;
+	FString ServerUrl;
 	switch (GrpcResult.Code)
 	{
 	case EGrpcResultCode::Ok:
-		OnCreateRoomResponse.Broadcast(ECreateRoomResult::Success, GetServerUrl(Response.Connection));
-		break;
-		
-	case EGrpcResultCode::Cancelled:
-		OnCreateRoomResponse.Broadcast(ECreateRoomResult::Cancelled, TEXT(""));
-		break;
-		
-	case EGrpcResultCode::InvalidArgument:
-		OnCreateRoomResponse.Broadcast(ECreateRoomResult::InvalidArgument, TEXT(""));
-		break;
-		
-	case EGrpcResultCode::DeadlineExceeded:
-		OnCreateRoomResponse.Broadcast(ECreateRoomResult::DeadlineExceeded, TEXT(""));
-		break;
-		
-	case EGrpcResultCode::Internal:
-		OnCreateRoomResponse.Broadcast(ECreateRoomResult::InternalError, TEXT(""));
-		break;
-		
-	case EGrpcResultCode::Unauthenticated:
-		OnCreateRoomResponse.Broadcast(ECreateRoomResult::Unauthenticated, TEXT(""));
-		break;
-		
-	case EGrpcResultCode::ConnectionFailed:
-		OnCreateRoomResponse.Broadcast(ECreateRoomResult::ConnectionError, TEXT(""));
+		Result = ECreateRoomResult::Success;
+		ServerUrl = GetServerUrl(Response.Connection);
 		break;
 
-	case EGrpcResultCode::Unknown:
+	case EGrpcResultCode::Cancelled:
+		Result = ECreateRoomResult::Cancelled;
+		break;
+
+	case EGrpcResultCode::Internal:
+		Result = ECreateRoomResult::InternalError;
+		break;
+
+	case EGrpcResultCode::DeadlineExceeded:
+		Result = ECreateRoomResult::DeadlineExceeded;
+		break;
+
+	case EGrpcResultCode::Unauthenticated:
+		Result = ECreateRoomResult::Unauthenticated;
+		break;
+
+	case EGrpcResultCode::InvalidArgument:
+		Result = ECreateRoomResult::InvalidArgument;
+		break;
+
+	case EGrpcResultCode::ConnectionFailed:
+		Result = ECreateRoomResult::ConnectionError;
+		break;
+
 	default:
-		OnCreateRoomResponse.Broadcast(ECreateRoomResult::UnknownError, TEXT(""));
+		Result = ECreateRoomResult::UnknownError;
 		break;
 	}
+	OnCreateRoomResponse.Broadcast(Result, ServerUrl);
 }
 
 void USMClientLobbySubsystem::OnGrpcQuickMatchResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyQuickMatchResponse& Response)
@@ -171,20 +175,187 @@ void USMClientLobbySubsystem::OnGrpcQuickMatchResponse(FGrpcContextHandle Handle
 		UE_LOG(LogStereoMix, Error, TEXT("[SMClientLobbySubsystem] quick match failed: %s, %s"), *GrpcResult.GetCodeString(), *GrpcResult.GetMessageString())
 	}
 
-	if (!OnCreateRoomResponse.IsBound())
+	if (!OnQuickMatchResponse.IsBound())
 	{
 		return;
 	}
 
-	switch (GrpcResult)
+	EQuickMatchResult Result;
+	FString ServerUrl;
+	switch (GrpcResult.Code)
 	{
+	case EGrpcResultCode::Ok:
+		Result = EQuickMatchResult::Success;
+		ServerUrl = GetServerUrl(Response.Connection);
+		break;
+
+	case EGrpcResultCode::Cancelled:
+		Result = EQuickMatchResult::Cancelled;
+		break;
+
+	case EGrpcResultCode::Internal:
+		Result = EQuickMatchResult::InternalError;
+		break;
+
+	case EGrpcResultCode::DeadlineExceeded:
+		Result = EQuickMatchResult::DeadlineExceeded;
+		break;
+
+	case EGrpcResultCode::Unauthenticated:
+		Result = EQuickMatchResult::Unauthenticated;
+		break;
+
+	case EGrpcResultCode::InvalidArgument:
+		Result = EQuickMatchResult::InvalidArgument;
+		break;
+
+	case EGrpcResultCode::ConnectionFailed:
+		Result = EQuickMatchResult::ConnectionError;
+		break;
+
 	default:
-		break;;
+		Result = EQuickMatchResult::UnknownError;
+		break;
 	}
+	OnQuickMatchResponse.Broadcast(Result, ServerUrl);
 }
 
 void USMClientLobbySubsystem::OnGrpcJoinRoomResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response)
 {
+	if (Handle != GrpcContextHandle)
+	{
+		return;
+	}
+
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		UE_LOG(LogStereoMix, Log, TEXT("[SMClientLobbySubsystem] join room success."))
+	}
+	else
+	{
+		UE_LOG(LogStereoMix, Error, TEXT("[SMClientLobbySubsystem] join room failed: %s, %s"), *GrpcResult.GetCodeString(), *GrpcResult.GetMessageString())
+	}
+
+	if (!OnJoinRoomResponse.IsBound())
+	{
+		return;
+	}
+
+	EJoinRoomResult Result;
+	FString ServerUrl;
+	switch (GrpcResult.Code)
+	{
+	case EGrpcResultCode::Ok:
+		Result = EJoinRoomResult::Success;
+		ServerUrl = GetServerUrl(Response.Connection);
+		break;
+
+	case EGrpcResultCode::Unauthenticated:
+		Result = EJoinRoomResult::Unauthenticated;
+		break;
+
+	case EGrpcResultCode::InvalidArgument:
+		Result = EJoinRoomResult::InvalidArgument;
+		break;
+
+	case EGrpcResultCode::NotFound:
+		Result = EJoinRoomResult::RoomNotFound;
+		break;
+
+	case EGrpcResultCode::PermissionDenied:
+		Result = EJoinRoomResult::InvalidPassword;
+		break;
+
+	case EGrpcResultCode::Aborted:
+		Result = EJoinRoomResult::RoomFull;
+		break;
+
+	case EGrpcResultCode::Internal:
+		Result = EJoinRoomResult::InternalError;
+		break;
+
+	case EGrpcResultCode::DeadlineExceeded:
+		Result = EJoinRoomResult::DeadlineExceeded;
+		break;
+
+	case EGrpcResultCode::ConnectionFailed:
+		Result = EJoinRoomResult::ConnectionError;
+		break;
+
+	default:
+		Result = EJoinRoomResult::UnknownError;
+		break;
+	}
+	OnJoinRoomResponse.Broadcast(Result, ServerUrl);
+}
+
+void USMClientLobbySubsystem::OnGrpcJoinRoomWithCodeResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomWithCodeResponse& Response)
+{
+	if (Handle != GrpcContextHandle)
+	{
+		return;
+	}
+
+	if (GrpcResult.Code == EGrpcResultCode::Ok)
+	{
+		UE_LOG(LogStereoMix, Log, TEXT("[SMClientLobbySubsystem] join room with code success."))
+	}
+	else
+	{
+		UE_LOG(LogStereoMix, Error, TEXT("[SMClientLobbySubsystem] join room with code failed: %s, %s"), *GrpcResult.GetCodeString(), *GrpcResult.GetMessageString())
+	}
+
+	if (!OnJoinRoomWithCodeResponse.IsBound())
+	{
+		return;
+	}
+
+	EJoinRoomResult Result;
+	FString ServerUrl;
+	switch (GrpcResult.Code)
+	{
+	case EGrpcResultCode::Ok:
+		Result = EJoinRoomResult::Success;
+		ServerUrl = GetServerUrl(Response.Connection);
+		break;
+
+	case EGrpcResultCode::Unauthenticated:
+		Result = EJoinRoomResult::Unauthenticated;
+		break;
+
+	case EGrpcResultCode::InvalidArgument:
+		Result = EJoinRoomResult::InvalidArgument;
+		break;
+
+	case EGrpcResultCode::NotFound:
+		Result = EJoinRoomResult::RoomNotFound;
+		break;
+
+	case EGrpcResultCode::PermissionDenied:
+		Result = EJoinRoomResult::InvalidPassword;
+		break;
+
+	case EGrpcResultCode::Aborted:
+		Result = EJoinRoomResult::RoomFull;
+		break;
+
+	case EGrpcResultCode::Internal:
+		Result = EJoinRoomResult::InternalError;
+		break;
+
+	case EGrpcResultCode::DeadlineExceeded:
+		Result = EJoinRoomResult::DeadlineExceeded;
+		break;
+
+	case EGrpcResultCode::ConnectionFailed:
+		Result = EJoinRoomResult::ConnectionError;
+		break;
+
+	default:
+		Result = EJoinRoomResult::UnknownError;
+		break;
+	}
+	OnJoinRoomResponse.Broadcast(Result, ServerUrl);
 }
 
 FString USMClientLobbySubsystem::GetServerUrl(const FGrpcLobbyRoomConnectionInfo& ConnectionInfo)

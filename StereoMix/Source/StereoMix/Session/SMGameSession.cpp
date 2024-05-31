@@ -4,7 +4,6 @@
 #include "SMGameSession.h"
 
 #include "StereoMix.h"
-#include "Connection/SMGameServerConnectionSubsystem.h"
 #include "Kismet/GameplayStatics.h"
 
 DEFINE_LOG_CATEGORY(LogSMGameSession)

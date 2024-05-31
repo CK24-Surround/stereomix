@@ -5,7 +5,6 @@
 
 #include "SMGameState.h"
 #include "StereoMix.h"
-#include "Connection/SMGameServerConnectionSubsystem.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Projectiles/SMProjectile.h"

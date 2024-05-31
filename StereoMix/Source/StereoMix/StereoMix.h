@@ -4,4 +4,4 @@
 
 #include "CoreMinimal.h"
 
-DECLARE_LOG_CATEGORY_EXTERN(LogStereoMix, VeryVerbose, All)
+DECLARE_LOG_CATEGORY_CLASS(LogStereoMix, VeryVerbose, All)

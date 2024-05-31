@@ -7,6 +7,8 @@
 #include "Backend/SMLobbySubsystem.h"
 #include "SMClientLobbySubsystem.generated.h"
 
+//TODO: gRPC 프로토버퍼에서 구현해서 백엔드에서 바로 넘겨주기
+
 UENUM(BlueprintType)
 enum class ECreateRoomResult : uint8
 {
@@ -114,6 +116,9 @@ protected:
 
 	UFUNCTION()
 	void OnGrpcJoinRoomResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response);
+
+	UFUNCTION()
+	void OnGrpcJoinRoomWithCodeResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomWithCodeResponse& Response);
 
 private:
 	static FString GetServerUrl(const FGrpcLobbyRoomConnectionInfo& ConnectionInfo);
