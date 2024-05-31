@@ -64,31 +64,31 @@ protected:
 	void LaunchCharacterToTargetWithApex(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ);
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Montage")
+	UPROPERTY(EditAnywhere, Category = "Design|Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SmashMontage;
 
 	UPROPERTY()
 	TObjectPtr<UAnimMontage> CachedSmashMontage;
 
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
 	TSubclassOf<UGameplayEffect> DamageGE;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Smash", DisplayName = "매치기 대미지")
+	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "매치기 대미지")
 	float SmashDamage = 40.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 도약 거리(타일 기준)")
+	UPROPERTY(EditAnywhere, Category = "Design|Jump", DisplayName = "매치기 도약 거리(타일 기준)")
 	int32 SmashRangeByTile = 6;
 
-	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 정점 높이")
-	float ApexHeight = 500.0f;
+	UPROPERTY(EditAnywhere, Category = "Design|Jump", DisplayName = "매치기 정점 높이")
+	float SmashApexHeight = 500.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Smash|Jump", DisplayName = "매치기 시 적용되는 중력 스케일")
+	UPROPERTY(EditAnywhere, Category = "Design|Jump", DisplayName = "매치기 시 적용되는 중력 스케일")
 	float SmashGravityScale = 3.0f;
 
 	float OriginalGravityScale = 0.0f;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Smash|TileTirgger", DisplayName = "매치기 1회에 타일이 트리거 되는 횟수")
+	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "매치기 1회에 타일이 트리거 되는 횟수")
 	int32 MaxTriggerCount = 3;
 };

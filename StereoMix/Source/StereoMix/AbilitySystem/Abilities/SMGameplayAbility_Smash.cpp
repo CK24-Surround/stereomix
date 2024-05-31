@@ -280,6 +280,6 @@ void USMGameplayAbility_Smash::LaunchCharacterToTargetWithApex(const FVector& In
 		return;
 	}
 
-	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, InStartLocation, InTargetLocation, ApexHeight, InGravityZ);
+	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, InStartLocation, InTargetLocation, SmashApexHeight, InGravityZ);
 	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }
