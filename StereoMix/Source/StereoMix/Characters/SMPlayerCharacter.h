@@ -351,5 +351,13 @@ protected:
 // ~Trail Section
 
 // TODO: 임시 함수입니다. 스매시 엔드 포인트를 그려줍니다. 이 캐릭터 클래스는 모든 캐릭터의 부모 클래스이기에 스매시 엔드포인트를 그려주는 함수가 여기 존재해서는 안됩니다. 단지 느낌을 보기 위한 프로토타이핑입니다.
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Design|Trajectory")
+	TObjectPtr<UNiagaraComponent> TrajectoryFXComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Design|Tragectory")
+	TObjectPtr<UStaticMeshComponent> TrajectoryMeshComponent;
+
+protected:
 	void DrawSmashEndPoint();
 };

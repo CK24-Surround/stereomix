@@ -112,6 +112,19 @@ ASMPlayerCharacter::ASMPlayerCharacter()
 	ImmuneMoveTrailFX.FindOrAdd(ESMTeam::None, nullptr);
 	ImmuneMoveTrailFX.FindOrAdd(ESMTeam::EDM, nullptr);
 	ImmuneMoveTrailFX.FindOrAdd(ESMTeam::FutureBass, nullptr);
+
+	// TODO: 임시코드
+	TrajectoryFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("TrajectoryFXComponent"));
+	TrajectoryFXComponent->SetAbsolute(true, true, true);
+	TrajectoryFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	TrajectoryFXComponent->SetAutoActivate(false);
+	TrajectoryFXComponent->SetHiddenInGame(true);
+
+	TrajectoryMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TrajectoryMeshComponent"));
+	TrajectoryMeshComponent->SetAbsolute(false, true, true);
+	TrajectoryMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	TrajectoryMeshComponent->SetupAttachment(TrajectoryFXComponent);
+	TrajectoryMeshComponent->SetHiddenInGame(true);
 }
 
 void ASMPlayerCharacter::PostInitializeComponents()
@@ -182,6 +195,11 @@ void ASMPlayerCharacter::BeginPlay()
 
 	CatchInteractionComponent->OnCatch.AddUObject(this, &ThisClass::OnCatch);
 	CatchInteractionComponent->OnCatchRelease.AddUObject(this, &ThisClass::OnCatchRelease);
+
+	if (IsLocallyControlled())
+	{
+		TrajectoryFXComponent->Activate(true);
+	}
 }
 
 void ASMPlayerCharacter::Tick(float DeltaTime)
@@ -778,6 +796,8 @@ void ASMPlayerCharacter::ActivateImmuneMoveTrail()
 
 void ASMPlayerCharacter::DrawSmashEndPoint()
 {
+	TrajectoryFXComponent->SetHiddenInGame(true, true);
+
 	if (!ASC.Get())
 	{
 		return;
@@ -811,7 +831,9 @@ void ASMPlayerCharacter::DrawSmashEndPoint()
 		return InTargetLocation;
 	};
 
-	const FVector Start = CalculateMaxDistanceLocation(GetActorLocation(), GetCursorTargetingPoint(true));;
+	const FVector SourceLocation = GetActorLocation();
+	const FVector TargetLocation = GetCursorTargetingPoint(true);
+	const FVector Start = CalculateMaxDistanceLocation(SourceLocation, TargetLocation);
 	const FVector End = Start + (FVector::DownVector * 100.0f);
 
 	FHitResult HitResult;
@@ -821,7 +843,21 @@ void ASMPlayerCharacter::DrawSmashEndPoint()
 		ASMTile* TargetTile = Cast<ASMTile>(HitResult.GetActor());
 		if (TargetTile)
 		{
-			DrawDebugBox(GetWorld(), TargetTile->GetTileLocation(), FVector(375.0, 375.0, 100.0), FColor::Orange);
+			TrajectoryFXComponent->SetHiddenInGame(false, true);
+
+			const FVector TrajectoryTargetLocation = TargetTile->GetTileLocation() + FVector(0.0, 0.0, 10.0);
+			TrajectoryFXComponent->SetWorldLocation(TrajectoryTargetLocation);
+
+			const FRotator TrajectoryTargetRotation = (TrajectoryTargetLocation - SourceLocation).GetSafeNormal2D().Rotation();
+			TrajectoryMeshComponent->SetWorldRotation(TrajectoryTargetRotation);
+
+			const float Distance = FVector::Dist2D(SourceLocation, TrajectoryTargetLocation);
+			const float Ratio = Distance / 100.0f;
+			TrajectoryMeshComponent->SetWorldScale3D(FVector(Ratio, 1.0, 1.0));
 		}
+	}
+	else
+	{
+		TrajectoryFXComponent->SetHiddenInGame(true, true);
 	}
 }
