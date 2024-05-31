@@ -76,6 +76,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{59e02586-b41f-4fc4-9cc9-9e4ebbefcce7}">
+		<property name="volume">
+			<value>-6</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{20e58151-a6fc-44ab-8fde-6e4791bcd73b}</destination>
 		</relationship>
@@ -97,7 +100,7 @@
 			<value>0.62130678529345684</value>
 		</property>
 		<property name="pitch">
-			<value>22</value>
+			<value>20</value>
 		</property>
 		<relationship name="fadeOutCurve">
 			<destination>{fb84a854-8759-4341-84bf-92eb2676d76b}</destination>
@@ -142,8 +145,8 @@
 			<destination>{3b2ab0bf-277c-48bc-9059-8bda47d904aa}</destination>
 			<destination>{8f0a57ca-9522-44c8-a8e7-e488db8904e9}</destination>
 			<destination>{31788c2c-4b6f-4eef-a402-20347003ab48}</destination>
-			<destination>{2fc0b7cc-2b61-4f4e-8142-6a5491acfa69}</destination>
 			<destination>{52afc0d2-e1be-4610-8640-d998ccef9bec}</destination>
+			<destination>{2fc0b7cc-2b61-4f4e-8142-6a5491acfa69}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{9204a123-b8e3-48b5-9745-7c9c7690baea}" />
@@ -200,20 +203,12 @@
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{31788c2c-4b6f-4eef-a402-20347003ab48}" />
-	<object class="PitchShifterEffect" id="{2fc0b7cc-2b61-4f4e-8142-6a5491acfa69}">
-		<property name="pitch">
-			<value>1</value>
-		</property>
-		<relationship name="modulators">
-			<destination>{6525ab15-e6f0-4d80-97c3-ca82edeed597}</destination>
-		</relationship>
-	</object>
 	<object class="ThreeEQEffect" id="{52afc0d2-e1be-4610-8640-d998ccef9bec}">
 		<property name="midGain">
 			<value>-6.5</value>
 		</property>
 		<property name="highGain">
-			<value>-3</value>
+			<value>-4</value>
 		</property>
 		<property name="highCrossover">
 			<value>2600</value>
@@ -221,6 +216,14 @@
 		<property name="crossoverSlope">
 			<value>0</value>
 		</property>
+	</object>
+	<object class="PitchShifterEffect" id="{2fc0b7cc-2b61-4f4e-8142-6a5491acfa69}">
+		<property name="pitch">
+			<value>1</value>
+		</property>
+		<relationship name="modulators">
+			<destination>{6525ab15-e6f0-4d80-97c3-ca82edeed597}</destination>
+		</relationship>
 	</object>
 	<object class="RandomizerModulator" id="{6525ab15-e6f0-4d80-97c3-ca82edeed597}">
 		<property name="nameOfPropertyBeingModulated">

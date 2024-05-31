@@ -209,7 +209,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{1afde482-7c68-46e6-9c54-f45839e04d22}">
 		<property name="volume">
-			<value>-6.5</value>
+			<value>-9.5</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{f68a32fa-81e2-4026-a9ce-aa8fc8258146}</destination>
@@ -645,6 +645,9 @@
 		</relationship>
 	</object>
 	<object class="SingleSound" id="{93c67d66-7d6f-4cf2-b76f-06c65b1f6399}">
+		<property name="pitch">
+			<value>-0.699999988</value>
+		</property>
 		<relationship name="modulators">
 			<destination>{21353f66-7256-4afe-a572-366cde6955a7}</destination>
 			<destination>{ce76a910-c840-4830-8f0c-78893177b2ba}</destination>
@@ -655,7 +658,7 @@
 	</object>
 	<object class="EventMixerGroup" id="{8b2e42d8-5538-4604-879d-741cb34ccf1f}">
 		<property name="volume">
-			<value>-17</value>
+			<value>-10</value>
 		</property>
 		<property name="name">
 			<value>Cans</value>
@@ -702,6 +705,7 @@
 	</object>
 	<object class="MixerBusEffectChain" id="{f68a32fa-81e2-4026-a9ce-aa8fc8258146}">
 		<relationship name="effects">
+			<destination>{be04150e-d560-4260-b9b6-21367f888cd6}</destination>
 			<destination>{091bfa61-f787-4d8b-8648-01c25ab46a52}</destination>
 			<destination>{9716d979-0f3b-43b5-95f7-72ba930647d9}</destination>
 		</relationship>
@@ -1222,6 +1226,14 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{8c694479-443c-4453-a9e9-81c4d513fa46}" />
+	<object class="ThreeEQEffect" id="{be04150e-d560-4260-b9b6-21367f888cd6}">
+		<property name="midGain">
+			<value>-1</value>
+		</property>
+		<property name="highGain">
+			<value>-7</value>
+		</property>
+	</object>
 	<object class="MixerBusFader" id="{091bfa61-f787-4d8b-8648-01c25ab46a52}" />
 	<object class="SpatialiserEffect" id="{9716d979-0f3b-43b5-95f7-72ba930647d9}" />
 	<object class="AutomationPoint" id="{f7abaabe-7487-4c94-ab32-a8b468aa4acf}">

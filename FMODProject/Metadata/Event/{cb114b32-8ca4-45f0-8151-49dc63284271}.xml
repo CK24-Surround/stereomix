@@ -61,6 +61,9 @@
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{f7d91e79-6da2-45b9-ba4c-da5e24ed5934}">
+		<property name="priority">
+			<value>3</value>
+		</property>
 		<property name="maximumDistance">
 			<value>80</value>
 		</property>
@@ -117,7 +120,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{93336e7d-fa10-4251-94db-6c17130967f5}">
 		<property name="volume">
-			<value>-11.5</value>
+			<value>-10</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{a4133df9-723b-4e1a-839d-84b8bd5d11fd}</destination>
@@ -319,6 +322,7 @@
 	<object class="MixerBusEffectChain" id="{a4133df9-723b-4e1a-839d-84b8bd5d11fd}">
 		<relationship name="effects">
 			<destination>{ff52f2e2-0028-45f9-ac44-4febab411575}</destination>
+			<destination>{a9ce8622-2d49-4dfc-bb2f-769436f59b9a}</destination>
 			<destination>{64e9bd1c-18cb-4bac-b017-97437ca3adc1}</destination>
 		</relationship>
 	</object>
@@ -510,6 +514,11 @@
 	</object>
 	<object class="MixerBusPanner" id="{e7d9e19e-d44d-4430-afec-4953fce3cdc3}" />
 	<object class="MixerBusFader" id="{ff52f2e2-0028-45f9-ac44-4febab411575}" />
+	<object class="ThreeEQEffect" id="{a9ce8622-2d49-4dfc-bb2f-769436f59b9a}">
+		<property name="highGain">
+			<value>4.5</value>
+		</property>
+	</object>
 	<object class="SpatialiserEffect" id="{64e9bd1c-18cb-4bac-b017-97437ca3adc1}" />
 	<object class="AutomationPoint" id="{e7cb7446-9e09-468a-827c-575391ea734c}">
 		<property name="position">
