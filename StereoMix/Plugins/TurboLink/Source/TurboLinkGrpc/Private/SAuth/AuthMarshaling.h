@@ -4,6 +4,9 @@
 #include "TurboLinkGrpcContext.h"
 #include "auth.grpc.pb.h"
 
+void GRPC_TO_TURBOLINK(const ::auth::UserAccount* in, FGrpcAuthUserAccount* out);
+void TURBOLINK_TO_GRPC(const FGrpcAuthUserAccount* in, ::auth::UserAccount* out);
+
 void GRPC_TO_TURBOLINK(const ::auth::GuestLoginRequest* in, FGrpcAuthGuestLoginRequest* out);
 void TURBOLINK_TO_GRPC(const FGrpcAuthGuestLoginRequest* in, ::auth::GuestLoginRequest* out);
 

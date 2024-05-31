@@ -177,20 +177,5 @@ protected:
 
 public:
 	FOnEndRoundSignature OnEndRound;
-// ~VictoryDefeat Section
-
-public:
-	UPROPERTY(EditAnywhere, Category="Room")
-	TSubclassOf<UUserWidget> RoomIdWidgetClass;
-
-	UPROPERTY()
-	TObjectPtr<USMWidget_RoomId> RoomIdWidget;
-
-	UPROPERTY(EditAnywhere, ReplicatedUsing=OnRep_ReplicatedShortRoomId, Category="Room")
-	FString ShortRoomId;
-
-	UFUNCTION()
-	void OnRep_ReplicatedShortRoomId();
-
-	virtual void BeginPlay() override;
+	// ~VictoryDefeat Section
 };

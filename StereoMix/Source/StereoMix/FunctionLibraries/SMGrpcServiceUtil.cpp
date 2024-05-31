@@ -18,6 +18,9 @@ bool USMGrpcServiceUtil::IsServiceReadyToCall(const UGrpcService* Service)
 
 bool USMGrpcServiceUtil::IsBusy(const UGrpcClient* Client, const FGrpcContextHandle& Handle)
 {
-	ensure(Client);
+	if (!ensureMsgf(Client, TEXT("GrpcClient is nullptr.")))
+	{
+		return true;
+	}
 	return Client->GetContextState(Handle) == EGrpcContextState::Busy;
 }

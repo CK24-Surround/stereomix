@@ -6,8 +6,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Connection/SMClientConnectionSubsystem.h"
 #include "Kismet/GameplayStatics.h"
-#include "UI/ViewModel/SMViewModel_Lobby.h"
-#include "UI/ViewModel/SMViewModel_RoomShortCodePopup.h"
+#include "UI/ViewModel/SMLobbyViewModel.h"
+#include "UI/ViewModel/SMRoomCodeViewModel.h"
 
 ASMLobbyHUD::ASMLobbyHUD()
 {
@@ -19,7 +19,7 @@ void ASMLobbyHUD::BeginPlay()
 
 	if (MainWidget)
 	{
-		if (auto ViewModel = GetViewModelFromWidget<USMViewModel_Lobby>(MainWidget, TEXT("SMViewModel_Lobby")))
+		if (auto ViewModel = GetViewModelFromWidget<USMLobbyViewModel>(MainWidget, TEXT("SMViewModel_Lobby")))
 		{
 			LobbyViewModel = ViewModel;
 			LobbyViewModel->OnRequestJoinRoom.BindUObject(this, &ASMLobbyHUD::OnRequestJoinRoom);
@@ -64,7 +64,7 @@ void ASMLobbyHUD::CreateRoomShortCodePopupWidget()
 	JoinRoomWithCodeWidget = AddWidgetToViewport(JoinRoomWithCodeWidgetClass, 5);
 	if (JoinRoomWithCodeWidget)
 	{
-		if (auto ViewModel = GetViewModelFromWidget<USMViewModel_RoomShortCodePopup>(JoinRoomWithCodeWidget, TEXT("SMViewModel_RoomShortCodePopup")))
+		if (auto ViewModel = GetViewModelFromWidget<USMRoomCodeViewModel>(JoinRoomWithCodeWidget, TEXT("SMViewModel_RoomShortCodePopup")))
 		{
 			RoomShortCodePopupViewModel = ViewModel;
 			RoomShortCodePopupViewModel->OnSubmit.BindUObject(this, &ASMLobbyHUD::OnJoinRoomWithCodeSubmit);

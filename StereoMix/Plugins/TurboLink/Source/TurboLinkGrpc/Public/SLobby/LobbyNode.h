@@ -28,9 +28,6 @@ public:
 	FLobbyServiceCreateRoomDelegate OnCreateRoomResponse;
 
 	UPROPERTY(BlueprintAssignable)
-	FLobbyServiceCreateRoomDelegate OnFinished;
-
-	UPROPERTY(BlueprintAssignable)
 	FLobbyServiceCreateRoomDelegate OnFail;
 
 private:
@@ -56,6 +53,54 @@ private:
 
 	UFUNCTION()
 	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyCreateRoomResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceQuickMatch : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceQuickMatchDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyQuickMatchResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService QuickMatch",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceQuickMatch* QuickMatch(UObject* WorldContextObject, const FGrpcLobbyQuickMatchRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceQuickMatchDelegate OnQuickMatchResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceQuickMatchDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyQuickMatchRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyQuickMatchResponse& Response);
 
 	void Shutdown();
 };
@@ -104,6 +149,54 @@ private:
 
 	UFUNCTION()
 	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response);
+
+	void Shutdown();
+};
+
+UCLASS(ClassGroup = TurboLink)
+class TURBOLINKGRPC_API UCallLobbyServiceJoinRoomWithCode : public UBlueprintAsyncActionBase
+{
+	GENERATED_BODY()
+
+public:
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FLobbyServiceJoinRoomWithCodeDelegate, const FGrpcResult&, GrpcResult, const FGrpcLobbyJoinRoomWithCodeResponse&, Response);
+
+	UFUNCTION(BlueprintCallable, Category = "TurboLink|LobbyService", meta = (
+		BlueprintInternalUseOnly = "true",
+		WorldContext = "WorldContextObject",
+		DisplayName = "Call LobbyService JoinRoomWithCode",
+		AdvancedDisplay = 2))
+	static UCallLobbyServiceJoinRoomWithCode* JoinRoomWithCode(UObject* WorldContextObject, const FGrpcLobbyJoinRoomWithCodeRequest& request, FGrpcMetaData metaData = FGrpcMetaData(), float deadLineSeconds = 0.f);
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceJoinRoomWithCodeDelegate OnJoinRoomWithCodeResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FLobbyServiceJoinRoomWithCodeDelegate OnFail;
+
+private:
+	virtual void Activate() override;
+
+	UPROPERTY()
+	ULobbyService* LobbyService;
+	
+	UPROPERTY()
+	ULobbyServiceClient* LobbyServiceClient;
+	
+	FGrpcContextHandle Context;
+	FGrpcLobbyJoinRoomWithCodeRequest Request;
+	EGrpcServiceState ServiceState;
+	FGrpcMetaData MetaData;
+	float DeadLineSeconds;
+
+	UFUNCTION()
+	void OnServiceStateChanged(EGrpcServiceState NewState);
+	
+	UFUNCTION()
+	void OnContextStateChange(FGrpcContextHandle Handle, EGrpcContextState State);
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomWithCodeResponse& Response);
 
 	void Shutdown();
 };

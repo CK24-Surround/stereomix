@@ -3,6 +3,19 @@
 #include "TurboLinkGrpcMessage.h"
 #include "AuthMessage.generated.h"
 
+USTRUCT(BlueprintType, meta = (DisplayName="Auth.UserAccount"))
+struct FGrpcAuthUserAccount : public FGrpcMessage
+{
+    GENERATED_BODY()
+    DECLARE_JSON_FUNCTIONS()
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString UserId = "";
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString UserName = "";
+};
+
 USTRUCT(BlueprintType, meta = (DisplayName="Auth.GuestLoginRequest"))
 struct FGrpcAuthGuestLoginRequest : public FGrpcMessage
 {
@@ -20,7 +33,13 @@ struct FGrpcAuthLoginResponse : public FGrpcMessage
     DECLARE_JSON_FUNCTIONS()
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
-    FString Token = "";
+    FString AccessToken = "";
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString RefreshToken = "";
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FGrpcAuthUserAccount UserAccount;
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Auth.ValidateUserTokenRequest"))
@@ -30,7 +49,7 @@ struct FGrpcAuthValidateUserTokenRequest : public FGrpcMessage
     DECLARE_JSON_FUNCTIONS()
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
-    FString Token = "";
+    FString AccessToken = "";
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Auth.ValidateUserTokenResponse"))
@@ -43,8 +62,5 @@ struct FGrpcAuthValidateUserTokenResponse : public FGrpcMessage
     bool IsValid = false;
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
-    FString UserId = "";
-
-    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
-    FString UserName = "";
+    FGrpcAuthUserAccount UserAccount;
 };

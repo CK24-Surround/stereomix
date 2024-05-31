@@ -6,7 +6,7 @@
 #include "SMBaseHUD.h"
 #include "SMCharacterSelectHUD.generated.h"
 
-class USMViewModel_CharacterSelect;
+class USMCharacterSelectionViewModel;
 class ASMCharacterSelectState;
 /**
  * 
@@ -20,7 +20,7 @@ class STEREOMIX_API ASMCharacterSelectHUD : public ASMBaseHUD
 	TObjectPtr<ASMCharacterSelectState> CharacterSelectState;
 
 	UPROPERTY()
-	TObjectPtr<USMViewModel_CharacterSelect> CharacterSelectViewModel;
+	TObjectPtr<USMCharacterSelectionViewModel> CharacterSelectViewModel;
 
 public:
 	ASMCharacterSelectHUD();

@@ -27,11 +27,16 @@ private:
 	ULobbyServiceClient* InnerClient; 
 public:
 	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyCreateRoomResponse& Response)> FCreateRoomResponseLambda;
-	typedef TFunction<void()> FCreateRoomFinishLambda;
-	void CallCreateRoom(const FGrpcLobbyCreateRoomRequest& Request, FCreateRoomResponseLambda ResponseLambda, FCreateRoomFinishLambda FinishLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+	void CallCreateRoom(const FGrpcLobbyCreateRoomRequest& Request, FCreateRoomResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyQuickMatchResponse& Response)> FQuickMatchResponseLambda;
+	void CallQuickMatch(const FGrpcLobbyQuickMatchRequest& Request, FQuickMatchResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response)> FJoinRoomResponseLambda;
 	void CallJoinRoom(const FGrpcLobbyJoinRoomRequest& Request, FJoinRoomResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomWithCodeResponse& Response)> FJoinRoomWithCodeResponseLambda;
+	void CallJoinRoomWithCode(const FGrpcLobbyJoinRoomWithCodeRequest& Request, FJoinRoomWithCodeResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 	typedef TFunction<void(const FGrpcResult& GrpcResult, const FGrpcLobbyGetRoomListResponse& Response)> FGetRoomListResponseLambda;
 	void CallGetRoomList(const FGrpcLobbyGetRoomListRequest& Request, FGetRoomListResponseLambda ResponseLambda, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);

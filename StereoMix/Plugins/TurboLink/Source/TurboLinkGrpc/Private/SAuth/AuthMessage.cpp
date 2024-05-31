@@ -3,6 +3,7 @@
 #include "SAuth/AuthMarshaling.h"
 #include "google/protobuf/util/json_util.h"
 
+DEFINE_JSON_FUNCTIONS(FGrpcAuthUserAccount, ::auth::UserAccount)
 DEFINE_JSON_FUNCTIONS(FGrpcAuthGuestLoginRequest, ::auth::GuestLoginRequest)
 DEFINE_JSON_FUNCTIONS(FGrpcAuthLoginResponse, ::auth::LoginResponse)
 DEFINE_JSON_FUNCTIONS(FGrpcAuthValidateUserTokenRequest, ::auth::ValidateUserTokenRequest)

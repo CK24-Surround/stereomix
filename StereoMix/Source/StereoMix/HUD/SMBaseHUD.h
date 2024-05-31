@@ -40,19 +40,6 @@ protected:
 	 */
 	virtual UUserWidget* AddWidgetToViewport(const TSubclassOf<UUserWidget>& WidgetClass, int32 ZOrder = 0);
 
-	// template<class ViewModelT>
-	// ViewModelT* CreateViewModel()
-	// {
-	// 	ViewModelT* NewViewModel = NewObject<ViewModelT>(this);
-	// 	USMViewModel* SMViewModel = Cast<USMViewModel>(NewViewModel);
-	// 	checkf(SMViewModel, TEXT("ViewModel must be derived from USMViewModel"));
-	// 	SMViewModel->InitViewModel(GetOwningPlayerController());
-	//
-	// 	// CreateViewModel로 생성된 뷰모델은 HUD에 종속되어 HUD가 삭제될 때 DestroyViewModel이 호출됨
-	// 	ViewModels.Add(NewViewModel);
-	// 	return NewViewModel;
-	// }
-
 	/**
 	 * 위젯에서 뷰모델을 가져옵니다.
 	 * @tparam ViewModelT 뷰모델 타입

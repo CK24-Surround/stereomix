@@ -8,8 +8,12 @@ DEFINE_JSON_FUNCTIONS(FGrpcLobbyRoomConfig, ::lobby::RoomConfig)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyRoom, ::lobby::Room)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyCreateRoomRequest, ::lobby::CreateRoomRequest)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyCreateRoomResponse, ::lobby::CreateRoomResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyQuickMatchRequest, ::lobby::QuickMatchRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyQuickMatchResponse, ::lobby::QuickMatchResponse)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyJoinRoomRequest, ::lobby::JoinRoomRequest)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyJoinRoomResponse, ::lobby::JoinRoomResponse)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyJoinRoomWithCodeRequest, ::lobby::JoinRoomWithCodeRequest)
+DEFINE_JSON_FUNCTIONS(FGrpcLobbyJoinRoomWithCodeResponse, ::lobby::JoinRoomWithCodeResponse)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyGetRoomListRequest, ::lobby::GetRoomListRequest)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyGetRoomListResponse, ::lobby::GetRoomListResponse)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyUpdateRoomStateRequest, ::lobby::UpdateRoomStateRequest)
@@ -23,25 +27,4 @@ DEFINE_JSON_FUNCTIONS(FGrpcLobbyChangeRoomOwnerResponse, ::lobby::ChangeRoomOwne
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyDeleteRoomRequest, ::lobby::DeleteRoomRequest)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyDeleteRoomResponse, ::lobby::DeleteRoomResponse)
 DEFINE_JSON_FUNCTIONS(FGrpcLobbyListenRoomUpdatesRequest, ::lobby::ListenRoomUpdatesRequest)
-
-FGrpcLobbyJoinRoomRequestId UGrpcLobbyJoinRoomRequestIdHelperLibrary::MakeId(EGrpcLobbyJoinRoomRequestId IdCase, 
-    FString RoomId, FString ShortRoomId 
-)
-{
-    FGrpcLobbyJoinRoomRequestId Id;
-    Id.IdCase = IdCase;
-    Id.RoomId = RoomId;
-    Id.ShortRoomId = ShortRoomId;
-
-    return Id;
-}
-
-void UGrpcLobbyJoinRoomRequestIdHelperLibrary::BreakId(const FGrpcLobbyJoinRoomRequestId& Id, EGrpcLobbyJoinRoomRequestId& IdCase, 
-    FString& RoomId, FString& ShortRoomId 
-)
-{
-    IdCase = Id.IdCase;
-    RoomId = Id.RoomId;
-    ShortRoomId = Id.ShortRoomId;
-}
 

@@ -3,10 +3,10 @@
 #include "TurboLinkGrpcContext.h"
 #include "SLobby/LobbyMessage.h"
 #include "SLobby/LobbyMarshaling.h"
-class GrpcContext_LobbyService_CreateRoom : public GrpcContext_Ping_Stream<LobbyService_CreateRoom_ReaderWriter, ::lobby::CreateRoomResponse>
+class GrpcContext_LobbyService_CreateRoom : public GrpcContext_Ping_Pong<LobbyService_CreateRoom_ReaderWriter, ::lobby::CreateRoomResponse>
 {
 	friend class ULobbyServiceClient;
-	typedef GrpcContext_Ping_Stream<LobbyService_CreateRoom_ReaderWriter, ::lobby::CreateRoomResponse> Super;
+	typedef GrpcContext_Ping_Pong<LobbyService_CreateRoom_ReaderWriter, ::lobby::CreateRoomResponse> Super;
 
 private:
 	void Call(const FGrpcLobbyCreateRoomRequest& Request);
@@ -14,6 +14,19 @@ private:
 
 public:
 	GrpcContext_LobbyService_CreateRoom(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_QuickMatch : public GrpcContext_Ping_Pong<LobbyService_QuickMatch_ReaderWriter, ::lobby::QuickMatchResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Pong<LobbyService_QuickMatch_ReaderWriter, ::lobby::QuickMatchResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyQuickMatchRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_QuickMatch(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
 };
 
 class GrpcContext_LobbyService_JoinRoom : public GrpcContext_Ping_Pong<LobbyService_JoinRoom_ReaderWriter, ::lobby::JoinRoomResponse>
@@ -27,6 +40,19 @@ private:
 
 public:
 	GrpcContext_LobbyService_JoinRoom(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
+};
+
+class GrpcContext_LobbyService_JoinRoomWithCode : public GrpcContext_Ping_Pong<LobbyService_JoinRoomWithCode_ReaderWriter, ::lobby::JoinRoomWithCodeResponse>
+{
+	friend class ULobbyServiceClient;
+	typedef GrpcContext_Ping_Pong<LobbyService_JoinRoomWithCode_ReaderWriter, ::lobby::JoinRoomWithCodeResponse> Super;
+
+private:
+	void Call(const FGrpcLobbyJoinRoomWithCodeRequest& Request);
+	virtual void OnRpcEvent(bool Ok, const void* EventTag) override;
+
+public:
+	GrpcContext_LobbyService_JoinRoomWithCode(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client);
 };
 
 class GrpcContext_LobbyService_GetRoomList : public GrpcContext_Ping_Pong<LobbyService_GetRoomList_ReaderWriter, ::lobby::GetRoomListResponse>

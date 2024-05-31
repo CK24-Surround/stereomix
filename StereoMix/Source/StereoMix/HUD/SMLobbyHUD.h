@@ -6,11 +6,11 @@
 #include "SMBaseHUD.h"
 #include "TurboLinkGrpcClient.h"
 #include "SLobby/LobbyMessage.h"
-#include "UI/ViewModel/SMViewModel_Title.h"
+#include "UI/ViewModel/SMTitleViewModel.h"
 #include "SMLobbyHUD.generated.h"
 
-class USMViewModel_Lobby;
-class USMViewModel_RoomShortCodePopup;
+class USMLobbyViewModel;
+class USMRoomCodeViewModel;
 /**
  * 
  */
@@ -34,10 +34,10 @@ protected:
 	TObjectPtr<UUserWidget> JoinRoomWithCodeWidget;
 	
 	UPROPERTY(Transient)
-	TObjectPtr<USMViewModel_Lobby> LobbyViewModel;
+	TObjectPtr<USMLobbyViewModel> LobbyViewModel;
 	
 	UPROPERTY(Transient)
-	TObjectPtr<USMViewModel_RoomShortCodePopup> RoomShortCodePopupViewModel;
+	TObjectPtr<USMRoomCodeViewModel> RoomShortCodePopupViewModel;
 
 	void CreateRoomShortCodePopupWidget();
 

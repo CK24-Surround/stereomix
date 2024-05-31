@@ -4,10 +4,8 @@
 #include "SMGameState.h"
 
 #include "EngineUtils.h"
-#include "Components/TextBlock.h"
 #include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"
-#include "UI/Widget/SMWidget_RoomId.h"
 #include "Utilities/SMLog.h"
 
 ASMGameState::ASMGameState()
@@ -183,28 +181,6 @@ ESMTeam ASMGameState::CalculateVictoryTeam()
 void ASMGameState::EndRoundVictoryDefeatResult()
 {
 	MulticastRPCSendEndRoundResult(CalculateVictoryTeam());
-}
-
-void ASMGameState::OnRep_ReplicatedShortRoomId()
-{
-	if (RoomIdWidget)
-	{
-		RoomIdWidget->RoomIdText->SetText(FText::FromString(ShortRoomId));
-	}
-}
-
-void ASMGameState::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// 임시 UI
-	// if (GetWorld()->GetNetMode() == NM_Client)
-	// {
-	// 	RoomIdWidget = CreateWidget<USMWidget_RoomId>(GetWorld(), RoomIdWidgetClass);
-	// 	RoomIdWidget->AddToViewport(5);
-	//
-	// 	RoomIdWidget->RoomIdText->SetText(FText::FromString(ShortRoomId));
-	// }
 }
 
 void ASMGameState::MulticastRPCSendEndRoundResult_Implementation(ESMTeam VictoryTeam)

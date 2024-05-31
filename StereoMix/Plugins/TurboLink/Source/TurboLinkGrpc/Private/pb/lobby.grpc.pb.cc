@@ -23,7 +23,9 @@ namespace lobby {
 
 static const char* LobbyService_method_names[] = {
   "/lobby.LobbyService/CreateRoom",
+  "/lobby.LobbyService/QuickMatch",
   "/lobby.LobbyService/JoinRoom",
+  "/lobby.LobbyService/JoinRoomWithCode",
   "/lobby.LobbyService/GetRoomList",
   "/lobby.LobbyService/UpdateRoomState",
   "/lobby.LobbyService/UpdateRoomConfig",
@@ -40,31 +42,63 @@ std::unique_ptr< LobbyService::Stub> LobbyService::NewStub(const std::shared_ptr
 }
 
 LobbyService::Stub::Stub(const std::shared_ptr< ::grpc::ChannelInterface>& channel, const ::grpc::StubOptions& options)
-  : channel_(channel), rpcmethod_CreateRoom_(LobbyService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
-  , rpcmethod_JoinRoom_(LobbyService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_GetRoomList_(LobbyService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_UpdateRoomState_(LobbyService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_UpdateRoomConfig_(LobbyService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ChangeRoomPassword_(LobbyService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ChangeRoomOwner_(LobbyService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_DeleteRoom_(LobbyService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
-  , rpcmethod_ListenRoomUpdates_(LobbyService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
+  : channel_(channel), rpcmethod_CreateRoom_(LobbyService_method_names[0], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_QuickMatch_(LobbyService_method_names[1], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_JoinRoom_(LobbyService_method_names[2], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_JoinRoomWithCode_(LobbyService_method_names[3], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_GetRoomList_(LobbyService_method_names[4], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpdateRoomState_(LobbyService_method_names[5], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_UpdateRoomConfig_(LobbyService_method_names[6], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ChangeRoomPassword_(LobbyService_method_names[7], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ChangeRoomOwner_(LobbyService_method_names[8], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_DeleteRoom_(LobbyService_method_names[9], options.suffix_for_stats(),::grpc::internal::RpcMethod::NORMAL_RPC, channel)
+  , rpcmethod_ListenRoomUpdates_(LobbyService_method_names[10], options.suffix_for_stats(),::grpc::internal::RpcMethod::SERVER_STREAMING, channel)
   {}
 
-::grpc::ClientReader< ::lobby::CreateRoomResponse>* LobbyService::Stub::CreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request) {
-  return ::grpc::internal::ClientReaderFactory< ::lobby::CreateRoomResponse>::Create(channel_.get(), rpcmethod_CreateRoom_, context, request);
+::grpc::Status LobbyService::Stub::CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::lobby::CreateRoomResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_CreateRoom_, context, request, response);
 }
 
-void LobbyService::Stub::async::CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::grpc::ClientReadReactor< ::lobby::CreateRoomResponse>* reactor) {
-  ::grpc::internal::ClientCallbackReaderFactory< ::lobby::CreateRoomResponse>::Create(stub_->channel_.get(), stub_->rpcmethod_CreateRoom_, context, request, reactor);
+void LobbyService::Stub::async::CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_CreateRoom_, context, request, response, std::move(f));
 }
 
-::grpc::ClientAsyncReader< ::lobby::CreateRoomResponse>* LobbyService::Stub::AsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq, void* tag) {
-  return ::grpc::internal::ClientAsyncReaderFactory< ::lobby::CreateRoomResponse>::Create(channel_.get(), cq, rpcmethod_CreateRoom_, context, request, true, tag);
+void LobbyService::Stub::async::CreateRoom(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_CreateRoom_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncReader< ::lobby::CreateRoomResponse>* LobbyService::Stub::PrepareAsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncReaderFactory< ::lobby::CreateRoomResponse>::Create(channel_.get(), cq, rpcmethod_CreateRoom_, context, request, false, nullptr);
+::grpc::ClientAsyncResponseReader< ::lobby::CreateRoomResponse>* LobbyService::Stub::PrepareAsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::lobby::CreateRoomResponse, ::lobby::CreateRoomRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_CreateRoom_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::lobby::CreateRoomResponse>* LobbyService::Stub::AsyncCreateRoomRaw(::grpc::ClientContext* context, const ::lobby::CreateRoomRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncCreateRoomRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status LobbyService::Stub::QuickMatch(::grpc::ClientContext* context, const ::lobby::QuickMatchRequest& request, ::lobby::QuickMatchResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::lobby::QuickMatchRequest, ::lobby::QuickMatchResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_QuickMatch_, context, request, response);
+}
+
+void LobbyService::Stub::async::QuickMatch(::grpc::ClientContext* context, const ::lobby::QuickMatchRequest* request, ::lobby::QuickMatchResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::lobby::QuickMatchRequest, ::lobby::QuickMatchResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_QuickMatch_, context, request, response, std::move(f));
+}
+
+void LobbyService::Stub::async::QuickMatch(::grpc::ClientContext* context, const ::lobby::QuickMatchRequest* request, ::lobby::QuickMatchResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_QuickMatch_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::lobby::QuickMatchResponse>* LobbyService::Stub::PrepareAsyncQuickMatchRaw(::grpc::ClientContext* context, const ::lobby::QuickMatchRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::lobby::QuickMatchResponse, ::lobby::QuickMatchRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_QuickMatch_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::lobby::QuickMatchResponse>* LobbyService::Stub::AsyncQuickMatchRaw(::grpc::ClientContext* context, const ::lobby::QuickMatchRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncQuickMatchRaw(context, request, cq);
+  result->StartCall();
+  return result;
 }
 
 ::grpc::Status LobbyService::Stub::JoinRoom(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::lobby::JoinRoomResponse* response) {
@@ -86,6 +120,29 @@ void LobbyService::Stub::async::JoinRoom(::grpc::ClientContext* context, const :
 ::grpc::ClientAsyncResponseReader< ::lobby::JoinRoomResponse>* LobbyService::Stub::AsyncJoinRoomRaw(::grpc::ClientContext* context, const ::lobby::JoinRoomRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncJoinRoomRaw(context, request, cq);
+  result->StartCall();
+  return result;
+}
+
+::grpc::Status LobbyService::Stub::JoinRoomWithCode(::grpc::ClientContext* context, const ::lobby::JoinRoomWithCodeRequest& request, ::lobby::JoinRoomWithCodeResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::lobby::JoinRoomWithCodeRequest, ::lobby::JoinRoomWithCodeResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_JoinRoomWithCode_, context, request, response);
+}
+
+void LobbyService::Stub::async::JoinRoomWithCode(::grpc::ClientContext* context, const ::lobby::JoinRoomWithCodeRequest* request, ::lobby::JoinRoomWithCodeResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::lobby::JoinRoomWithCodeRequest, ::lobby::JoinRoomWithCodeResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_JoinRoomWithCode_, context, request, response, std::move(f));
+}
+
+void LobbyService::Stub::async::JoinRoomWithCode(::grpc::ClientContext* context, const ::lobby::JoinRoomWithCodeRequest* request, ::lobby::JoinRoomWithCodeResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+  ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_JoinRoomWithCode_, context, request, response, reactor);
+}
+
+::grpc::ClientAsyncResponseReader< ::lobby::JoinRoomWithCodeResponse>* LobbyService::Stub::PrepareAsyncJoinRoomWithCodeRaw(::grpc::ClientContext* context, const ::lobby::JoinRoomWithCodeRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::lobby::JoinRoomWithCodeResponse, ::lobby::JoinRoomWithCodeRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_JoinRoomWithCode_, context, request);
+}
+
+::grpc::ClientAsyncResponseReader< ::lobby::JoinRoomWithCodeResponse>* LobbyService::Stub::AsyncJoinRoomWithCodeRaw(::grpc::ClientContext* context, const ::lobby::JoinRoomWithCodeRequest& request, ::grpc::CompletionQueue* cq) {
+  auto* result =
+    this->PrepareAsyncJoinRoomWithCodeRaw(context, request, cq);
   result->StartCall();
   return result;
 }
@@ -247,16 +304,26 @@ void LobbyService::Stub::async::ListenRoomUpdates(::grpc::ClientContext* context
 LobbyService::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       LobbyService_method_names[0],
-      ::grpc::internal::RpcMethod::SERVER_STREAMING,
-      new ::grpc::internal::ServerStreamingHandler< LobbyService::Service, ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse>(
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::CreateRoomRequest, ::lobby::CreateRoomResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LobbyService::Service* service,
              ::grpc::ServerContext* ctx,
              const ::lobby::CreateRoomRequest* req,
-             ::grpc::ServerWriter<::lobby::CreateRoomResponse>* writer) {
-               return service->CreateRoom(ctx, req, writer);
+             ::lobby::CreateRoomResponse* resp) {
+               return service->CreateRoom(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       LobbyService_method_names[1],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::QuickMatchRequest, ::lobby::QuickMatchResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](LobbyService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::lobby::QuickMatchRequest* req,
+             ::lobby::QuickMatchResponse* resp) {
+               return service->QuickMatch(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      LobbyService_method_names[2],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::JoinRoomRequest, ::lobby::JoinRoomResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LobbyService::Service* service,
@@ -266,7 +333,17 @@ LobbyService::Service::Service() {
                return service->JoinRoom(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LobbyService_method_names[2],
+      LobbyService_method_names[3],
+      ::grpc::internal::RpcMethod::NORMAL_RPC,
+      new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::JoinRoomWithCodeRequest, ::lobby::JoinRoomWithCodeResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+          [](LobbyService::Service* service,
+             ::grpc::ServerContext* ctx,
+             const ::lobby::JoinRoomWithCodeRequest* req,
+             ::lobby::JoinRoomWithCodeResponse* resp) {
+               return service->JoinRoomWithCode(ctx, req, resp);
+             }, this)));
+  AddMethod(new ::grpc::internal::RpcServiceMethod(
+      LobbyService_method_names[4],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::GetRoomListRequest, ::lobby::GetRoomListResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LobbyService::Service* service,
@@ -276,7 +353,7 @@ LobbyService::Service::Service() {
                return service->GetRoomList(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LobbyService_method_names[3],
+      LobbyService_method_names[5],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::UpdateRoomStateRequest, ::lobby::UpdateRoomStateResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LobbyService::Service* service,
@@ -286,7 +363,7 @@ LobbyService::Service::Service() {
                return service->UpdateRoomState(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LobbyService_method_names[4],
+      LobbyService_method_names[6],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::UpdateRoomConfigRequest, ::lobby::UpdateRoomConfigResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LobbyService::Service* service,
@@ -296,7 +373,7 @@ LobbyService::Service::Service() {
                return service->UpdateRoomConfig(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LobbyService_method_names[5],
+      LobbyService_method_names[7],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::ChangeRoomPasswordRequest, ::lobby::ChangeRoomPasswordResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LobbyService::Service* service,
@@ -306,7 +383,7 @@ LobbyService::Service::Service() {
                return service->ChangeRoomPassword(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LobbyService_method_names[6],
+      LobbyService_method_names[8],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::ChangeRoomOwnerRequest, ::lobby::ChangeRoomOwnerResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LobbyService::Service* service,
@@ -316,7 +393,7 @@ LobbyService::Service::Service() {
                return service->ChangeRoomOwner(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LobbyService_method_names[7],
+      LobbyService_method_names[9],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
       new ::grpc::internal::RpcMethodHandler< LobbyService::Service, ::lobby::DeleteRoomRequest, ::lobby::DeleteRoomResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](LobbyService::Service* service,
@@ -326,7 +403,7 @@ LobbyService::Service::Service() {
                return service->DeleteRoom(ctx, req, resp);
              }, this)));
   AddMethod(new ::grpc::internal::RpcServiceMethod(
-      LobbyService_method_names[8],
+      LobbyService_method_names[10],
       ::grpc::internal::RpcMethod::SERVER_STREAMING,
       new ::grpc::internal::ServerStreamingHandler< LobbyService::Service, ::lobby::ListenRoomUpdatesRequest, ::lobby::Room>(
           [](LobbyService::Service* service,
@@ -340,14 +417,28 @@ LobbyService::Service::Service() {
 LobbyService::Service::~Service() {
 }
 
-::grpc::Status LobbyService::Service::CreateRoom(::grpc::ServerContext* context, const ::lobby::CreateRoomRequest* request, ::grpc::ServerWriter< ::lobby::CreateRoomResponse>* writer) {
+::grpc::Status LobbyService::Service::CreateRoom(::grpc::ServerContext* context, const ::lobby::CreateRoomRequest* request, ::lobby::CreateRoomResponse* response) {
   (void) context;
   (void) request;
-  (void) writer;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status LobbyService::Service::QuickMatch(::grpc::ServerContext* context, const ::lobby::QuickMatchRequest* request, ::lobby::QuickMatchResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
 ::grpc::Status LobbyService::Service::JoinRoom(::grpc::ServerContext* context, const ::lobby::JoinRoomRequest* request, ::lobby::JoinRoomResponse* response) {
+  (void) context;
+  (void) request;
+  (void) response;
+  return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
+}
+
+::grpc::Status LobbyService::Service::JoinRoomWithCode(::grpc::ServerContext* context, const ::lobby::JoinRoomWithCodeRequest* request, ::lobby::JoinRoomWithCodeResponse* response) {
   (void) context;
   (void) request;
   (void) response;

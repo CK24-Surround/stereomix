@@ -6,7 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "SMFrontendPlayerController.generated.h"
 
-class USMViewModel_GuestLogin;
+class USMGuestLoginViewModel;
 /**
  * 
  */

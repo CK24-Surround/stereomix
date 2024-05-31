@@ -8,8 +8,8 @@
 #include "TurboLinkGrpcService.h"
 #include "SMTitleHUD.generated.h"
 
-class USMViewModel_GuestLogin;
-class USMViewModel_Title;
+class USMGuestLoginViewModel;
+class USMTitleViewModel;
 
 /**
  * 
@@ -31,7 +31,7 @@ protected:
 	TSubclassOf<UUserWidget> GuestLoginWidgetClass;
 
 	UPROPERTY(Transient)
-	TObjectPtr<USMViewModel_Title> TitleViewModel;
+	TObjectPtr<USMTitleViewModel> TitleViewModel;
 
 	UPROPERTY(Transient)
 	TObjectPtr<UUserWidget> GuestLoginWidget;
@@ -39,7 +39,7 @@ protected:
 	// TODO: 추후에 새로운 로그인 방식을 추가할 경우 LoginViewModel로 통일 후 LoginViewModel로 전부 처리하기
 
 	UPROPERTY(Transient)
-	TObjectPtr<USMViewModel_GuestLogin> GuestLoginViewModel;
+	TObjectPtr<USMGuestLoginViewModel> GuestLoginViewModel;
 
 	void CreateGuestLoginWidget();
 	

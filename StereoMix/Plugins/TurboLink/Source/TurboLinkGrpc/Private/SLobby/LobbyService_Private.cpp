@@ -6,18 +6,15 @@ void ULobbyServiceCreateRoomLambdaWrapper::OnResponse(FGrpcContextHandle _Handle
 	if (_Handle != this->Handle) return;
 
 	ResponseLambda(GrpcResult, Response);
+	InnerClient->OnCreateRoomResponse.RemoveDynamic(this, &ULobbyServiceCreateRoomLambdaWrapper::OnResponse);
 }
 
-void ULobbyServiceCreateRoomLambdaWrapper::OnContextStateChanged(FGrpcContextHandle _Handle, EGrpcContextState NewState)
+void ULobbyServiceQuickMatchLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyQuickMatchResponse& Response)
 {
 	if (_Handle != this->Handle) return;
-	if (NewState == EGrpcContextState::Done)
-	{
-		FinishLambda();
 
-		InnerClient->OnCreateRoomResponse.RemoveDynamic(this, &ULobbyServiceCreateRoomLambdaWrapper::OnResponse);
-		InnerClient->OnContextStateChange.RemoveDynamic(this, &ULobbyServiceCreateRoomLambdaWrapper::OnContextStateChanged);
-	}
+	ResponseLambda(GrpcResult, Response);
+	InnerClient->OnQuickMatchResponse.RemoveDynamic(this, &ULobbyServiceQuickMatchLambdaWrapper::OnResponse);
 }
 
 void ULobbyServiceJoinRoomLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomResponse& Response)
@@ -26,6 +23,14 @@ void ULobbyServiceJoinRoomLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, 
 
 	ResponseLambda(GrpcResult, Response);
 	InnerClient->OnJoinRoomResponse.RemoveDynamic(this, &ULobbyServiceJoinRoomLambdaWrapper::OnResponse);
+}
+
+void ULobbyServiceJoinRoomWithCodeLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomWithCodeResponse& Response)
+{
+	if (_Handle != this->Handle) return;
+
+	ResponseLambda(GrpcResult, Response);
+	InnerClient->OnJoinRoomWithCodeResponse.RemoveDynamic(this, &ULobbyServiceJoinRoomWithCodeLambdaWrapper::OnResponse);
 }
 
 void ULobbyServiceGetRoomListLambdaWrapper::OnResponse(FGrpcContextHandle _Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyGetRoomListResponse& Response)

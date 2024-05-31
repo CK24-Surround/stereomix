@@ -5,7 +5,9 @@
 #include "LobbyClient.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceCreateRoomResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyCreateRoomResponse&, Response);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceQuickMatchResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyQuickMatchResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceJoinRoomResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyJoinRoomResponse&, Response);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceJoinRoomWithCodeResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyJoinRoomWithCodeResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceGetRoomListResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyGetRoomListResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceUpdateRoomStateResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdateRoomStateResponse&, Response);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FOnLobbyServiceUpdateRoomConfigResponse, FGrpcContextHandle, Handle, const FGrpcResult&, GrpcResult, const FGrpcLobbyUpdateRoomConfigResponse&, Response);
@@ -24,7 +26,13 @@ public:
 	FOnLobbyServiceCreateRoomResponse OnCreateRoomResponse;
 
 	UPROPERTY(BlueprintAssignable)
+	FOnLobbyServiceQuickMatchResponse OnQuickMatchResponse;
+
+	UPROPERTY(BlueprintAssignable)
 	FOnLobbyServiceJoinRoomResponse OnJoinRoomResponse;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnLobbyServiceJoinRoomWithCodeResponse OnJoinRoomWithCodeResponse;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnLobbyServiceGetRoomListResponse OnGetRoomListResponse;
@@ -55,10 +63,22 @@ public:
 	void CreateRoom(FGrpcContextHandle Handle, const FGrpcLobbyCreateRoomRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink)
+	FGrpcContextHandle InitQuickMatch();
+
+	UFUNCTION(BlueprintCallable, Category = TurboLink, meta = (AdvancedDisplay = 2))
+	void QuickMatch(FGrpcContextHandle Handle, const FGrpcLobbyQuickMatchRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	UFUNCTION(BlueprintCallable, Category = TurboLink)
 	FGrpcContextHandle InitJoinRoom();
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink, meta = (AdvancedDisplay = 2))
 	void JoinRoom(FGrpcContextHandle Handle, const FGrpcLobbyJoinRoomRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
+
+	UFUNCTION(BlueprintCallable, Category = TurboLink)
+	FGrpcContextHandle InitJoinRoomWithCode();
+
+	UFUNCTION(BlueprintCallable, Category = TurboLink, meta = (AdvancedDisplay = 2))
+	void JoinRoomWithCode(FGrpcContextHandle Handle, const FGrpcLobbyJoinRoomWithCodeRequest& Request, FGrpcMetaData MetaData = FGrpcMetaData(), float DeadLineSeconds = 0.f);
 
 	UFUNCTION(BlueprintCallable, Category = TurboLink)
 	FGrpcContextHandle InitGetRoomList();

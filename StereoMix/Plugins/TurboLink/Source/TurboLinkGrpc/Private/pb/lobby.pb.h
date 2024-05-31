@@ -94,9 +94,21 @@ extern JoinRoomRequestDefaultTypeInternal _JoinRoomRequest_default_instance_;
 class JoinRoomResponse;
 struct JoinRoomResponseDefaultTypeInternal;
 extern JoinRoomResponseDefaultTypeInternal _JoinRoomResponse_default_instance_;
+class JoinRoomWithCodeRequest;
+struct JoinRoomWithCodeRequestDefaultTypeInternal;
+extern JoinRoomWithCodeRequestDefaultTypeInternal _JoinRoomWithCodeRequest_default_instance_;
+class JoinRoomWithCodeResponse;
+struct JoinRoomWithCodeResponseDefaultTypeInternal;
+extern JoinRoomWithCodeResponseDefaultTypeInternal _JoinRoomWithCodeResponse_default_instance_;
 class ListenRoomUpdatesRequest;
 struct ListenRoomUpdatesRequestDefaultTypeInternal;
 extern ListenRoomUpdatesRequestDefaultTypeInternal _ListenRoomUpdatesRequest_default_instance_;
+class QuickMatchRequest;
+struct QuickMatchRequestDefaultTypeInternal;
+extern QuickMatchRequestDefaultTypeInternal _QuickMatchRequest_default_instance_;
+class QuickMatchResponse;
+struct QuickMatchResponseDefaultTypeInternal;
+extern QuickMatchResponseDefaultTypeInternal _QuickMatchResponse_default_instance_;
 class Room;
 struct RoomDefaultTypeInternal;
 extern RoomDefaultTypeInternal _Room_default_instance_;
@@ -145,7 +157,15 @@ template <>
 template <>
 ::lobby::JoinRoomResponse* Arena::CreateMaybeMessage<::lobby::JoinRoomResponse>(Arena*);
 template <>
+::lobby::JoinRoomWithCodeRequest* Arena::CreateMaybeMessage<::lobby::JoinRoomWithCodeRequest>(Arena*);
+template <>
+::lobby::JoinRoomWithCodeResponse* Arena::CreateMaybeMessage<::lobby::JoinRoomWithCodeResponse>(Arena*);
+template <>
 ::lobby::ListenRoomUpdatesRequest* Arena::CreateMaybeMessage<::lobby::ListenRoomUpdatesRequest>(Arena*);
+template <>
+::lobby::QuickMatchRequest* Arena::CreateMaybeMessage<::lobby::QuickMatchRequest>(Arena*);
+template <>
+::lobby::QuickMatchResponse* Arena::CreateMaybeMessage<::lobby::QuickMatchResponse>(Arena*);
 template <>
 ::lobby::Room* Arena::CreateMaybeMessage<::lobby::Room>(Arena*);
 template <>
@@ -163,45 +183,6 @@ template <>
 PROTOBUF_NAMESPACE_CLOSE
 
 namespace lobby {
-enum RoomDeploymentStatus : int {
-  ROOM_DEPLOYMENT_STATUS_UNSPECIFIED = 0,
-  ROOM_DEPLOYMENT_STATUS_INITIALIZING = 1,
-  ROOM_DEPLOYMENT_STATUS_SEEKING = 2,
-  ROOM_DEPLOYMENT_STATUS_SEEKED = 3,
-  ROOM_DEPLOYMENT_STATUS_SCANNING = 4,
-  ROOM_DEPLOYMENT_STATUS_DEPLOYING = 5,
-  ROOM_DEPLOYMENT_STATUS_READY = 6,
-  ROOM_DEPLOYMENT_STATUS_TERMINATED = 7,
-  ROOM_DEPLOYMENT_STATUS_ERROR = 8,
-  RoomDeploymentStatus_INT_MIN_SENTINEL_DO_NOT_USE_ =
-      std::numeric_limits<::int32_t>::min(),
-  RoomDeploymentStatus_INT_MAX_SENTINEL_DO_NOT_USE_ =
-      std::numeric_limits<::int32_t>::max(),
-};
-
-bool RoomDeploymentStatus_IsValid(int value);
-constexpr RoomDeploymentStatus RoomDeploymentStatus_MIN = static_cast<RoomDeploymentStatus>(0);
-constexpr RoomDeploymentStatus RoomDeploymentStatus_MAX = static_cast<RoomDeploymentStatus>(8);
-constexpr int RoomDeploymentStatus_ARRAYSIZE = 8 + 1;
-const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
-RoomDeploymentStatus_descriptor();
-template <typename T>
-const std::string& RoomDeploymentStatus_Name(T value) {
-  static_assert(std::is_same<T, RoomDeploymentStatus>::value ||
-                    std::is_integral<T>::value,
-                "Incorrect type passed to RoomDeploymentStatus_Name().");
-  return RoomDeploymentStatus_Name(static_cast<RoomDeploymentStatus>(value));
-}
-template <>
-inline const std::string& RoomDeploymentStatus_Name(RoomDeploymentStatus value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::NameOfDenseEnum<RoomDeploymentStatus_descriptor,
-                                                 0, 8>(
-      static_cast<int>(value));
-}
-inline bool RoomDeploymentStatus_Parse(absl::string_view name, RoomDeploymentStatus* value) {
-  return ::PROTOBUF_NAMESPACE_ID::internal::ParseNamedEnum<RoomDeploymentStatus>(
-      RoomDeploymentStatus_descriptor(), name, value);
-}
 enum RoomState : int {
   ROOM_STATE_UNSPECIFIED = 0,
   ROOM_STATE_OPEN = 1,
@@ -846,7 +827,7 @@ class Room final :
 
   enum : int {
     kRoomIdFieldNumber = 1,
-    kShortRoomIdFieldNumber = 2,
+    kRoomCodeFieldNumber = 2,
     kOwnerIdFieldNumber = 3,
     kConfigFieldNumber = 4,
     kConnectionFieldNumber = 8,
@@ -874,24 +855,24 @@ class Room final :
   std::string* _internal_mutable_room_id();
 
   public:
-  // string short_room_id = 2;
-  void clear_short_room_id() ;
-  const std::string& short_room_id() const;
+  // string room_code = 2;
+  void clear_room_code() ;
+  const std::string& room_code() const;
 
 
 
 
   template <typename Arg_ = const std::string&, typename... Args_>
-  void set_short_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_short_room_id();
-  PROTOBUF_NODISCARD std::string* release_short_room_id();
-  void set_allocated_short_room_id(std::string* ptr);
+  void set_room_code(Arg_&& arg, Args_... args);
+  std::string* mutable_room_code();
+  PROTOBUF_NODISCARD std::string* release_room_code();
+  void set_allocated_room_code(std::string* ptr);
 
   private:
-  const std::string& _internal_short_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_short_room_id(
+  const std::string& _internal_room_code() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_code(
       const std::string& value);
-  std::string* _internal_mutable_short_room_id();
+  std::string* _internal_mutable_room_code();
 
   public:
   // string owner_id = 3;
@@ -983,7 +964,7 @@ class Room final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
-    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr short_room_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_code_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr owner_id_;
     ::lobby::RoomConfig* config_;
     ::lobby::RoomConnectionInfo* connection_;
@@ -1327,10 +1308,9 @@ class CreateRoomResponse final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kConnectionFieldNumber = 2,
-    kDeployStatusFieldNumber = 1,
+    kConnectionFieldNumber = 1,
   };
-  // .lobby.RoomConnectionInfo connection = 2;
+  // .lobby.RoomConnectionInfo connection = 1;
   bool has_connection() const;
   void clear_connection() ;
   const ::lobby::RoomConnectionInfo& connection() const;
@@ -1344,16 +1324,6 @@ class CreateRoomResponse final :
   void unsafe_arena_set_allocated_connection(
       ::lobby::RoomConnectionInfo* connection);
   ::lobby::RoomConnectionInfo* unsafe_arena_release_connection();
-  // .lobby.RoomDeploymentStatus deploy_status = 1;
-  void clear_deploy_status() ;
-  ::lobby::RoomDeploymentStatus deploy_status() const;
-  void set_deploy_status(::lobby::RoomDeploymentStatus value);
-
-  private:
-  ::lobby::RoomDeploymentStatus _internal_deploy_status() const;
-  void _internal_set_deploy_status(::lobby::RoomDeploymentStatus value);
-
-  public:
   // @@protoc_insertion_point(class_scope:lobby.CreateRoomResponse)
  private:
   class _Internal;
@@ -1365,7 +1335,290 @@ class CreateRoomResponse final :
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
     ::lobby::RoomConnectionInfo* connection_;
-    int deploy_status_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_lobby_2eproto;
+};// -------------------------------------------------------------------
+
+class QuickMatchRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:lobby.QuickMatchRequest) */ {
+ public:
+  inline QuickMatchRequest() : QuickMatchRequest(nullptr) {}
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR QuickMatchRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  QuickMatchRequest(const QuickMatchRequest& from);
+  QuickMatchRequest(QuickMatchRequest&& from) noexcept
+    : QuickMatchRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline QuickMatchRequest& operator=(const QuickMatchRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline QuickMatchRequest& operator=(QuickMatchRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const QuickMatchRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const QuickMatchRequest* internal_default_instance() {
+    return reinterpret_cast<const QuickMatchRequest*>(
+               &_QuickMatchRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    5;
+
+  friend void swap(QuickMatchRequest& a, QuickMatchRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(QuickMatchRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(QuickMatchRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  QuickMatchRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<QuickMatchRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const QuickMatchRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const QuickMatchRequest& from) {
+    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
+  public:
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "lobby.QuickMatchRequest";
+  }
+  protected:
+  explicit QuickMatchRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // @@protoc_insertion_point(class_scope:lobby.QuickMatchRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+  };
+  friend struct ::TableStruct_lobby_2eproto;
+};// -------------------------------------------------------------------
+
+class QuickMatchResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.QuickMatchResponse) */ {
+ public:
+  inline QuickMatchResponse() : QuickMatchResponse(nullptr) {}
+  ~QuickMatchResponse() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR QuickMatchResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  QuickMatchResponse(const QuickMatchResponse& from);
+  QuickMatchResponse(QuickMatchResponse&& from) noexcept
+    : QuickMatchResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline QuickMatchResponse& operator=(const QuickMatchResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline QuickMatchResponse& operator=(QuickMatchResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const QuickMatchResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const QuickMatchResponse* internal_default_instance() {
+    return reinterpret_cast<const QuickMatchResponse*>(
+               &_QuickMatchResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    6;
+
+  friend void swap(QuickMatchResponse& a, QuickMatchResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(QuickMatchResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(QuickMatchResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  QuickMatchResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<QuickMatchResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const QuickMatchResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const QuickMatchResponse& from) {
+    QuickMatchResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(QuickMatchResponse* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "lobby.QuickMatchResponse";
+  }
+  protected:
+  explicit QuickMatchResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kConnectionFieldNumber = 1,
+  };
+  // .lobby.RoomConnectionInfo connection = 1;
+  bool has_connection() const;
+  void clear_connection() ;
+  const ::lobby::RoomConnectionInfo& connection() const;
+  PROTOBUF_NODISCARD ::lobby::RoomConnectionInfo* release_connection();
+  ::lobby::RoomConnectionInfo* mutable_connection();
+  void set_allocated_connection(::lobby::RoomConnectionInfo* connection);
+  private:
+  const ::lobby::RoomConnectionInfo& _internal_connection() const;
+  ::lobby::RoomConnectionInfo* _internal_mutable_connection();
+  public:
+  void unsafe_arena_set_allocated_connection(
+      ::lobby::RoomConnectionInfo* connection);
+  ::lobby::RoomConnectionInfo* unsafe_arena_release_connection();
+  // @@protoc_insertion_point(class_scope:lobby.QuickMatchResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::lobby::RoomConnectionInfo* connection_;
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_lobby_2eproto;
@@ -1422,18 +1675,12 @@ class JoinRoomRequest final :
   static const JoinRoomRequest& default_instance() {
     return *internal_default_instance();
   }
-  enum IdCase {
-    kRoomId = 1,
-    kShortRoomId = 2,
-    ID_NOT_SET = 0,
-  };
-
   static inline const JoinRoomRequest* internal_default_instance() {
     return reinterpret_cast<const JoinRoomRequest*>(
                &_JoinRoomRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    5;
+    7;
 
   friend void swap(JoinRoomRequest& a, JoinRoomRequest& b) {
     a.Swap(&b);
@@ -1505,32 +1752,10 @@ class JoinRoomRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kPasswordFieldNumber = 3,
     kRoomIdFieldNumber = 1,
-    kShortRoomIdFieldNumber = 2,
+    kPasswordFieldNumber = 2,
   };
-  // string password = 3;
-  void clear_password() ;
-  const std::string& password() const;
-
-
-
-
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_password(Arg_&& arg, Args_... args);
-  std::string* mutable_password();
-  PROTOBUF_NODISCARD std::string* release_password();
-  void set_allocated_password(std::string* ptr);
-
-  private:
-  const std::string& _internal_password() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_password(
-      const std::string& value);
-  std::string* _internal_mutable_password();
-
-  public:
   // string room_id = 1;
-  bool has_room_id() const;
   void clear_room_id() ;
   const std::string& room_id() const;
 
@@ -1550,52 +1775,37 @@ class JoinRoomRequest final :
   std::string* _internal_mutable_room_id();
 
   public:
-  // string short_room_id = 2;
-  bool has_short_room_id() const;
-  void clear_short_room_id() ;
-  const std::string& short_room_id() const;
+  // string password = 2;
+  void clear_password() ;
+  const std::string& password() const;
 
 
 
 
   template <typename Arg_ = const std::string&, typename... Args_>
-  void set_short_room_id(Arg_&& arg, Args_... args);
-  std::string* mutable_short_room_id();
-  PROTOBUF_NODISCARD std::string* release_short_room_id();
-  void set_allocated_short_room_id(std::string* ptr);
+  void set_password(Arg_&& arg, Args_... args);
+  std::string* mutable_password();
+  PROTOBUF_NODISCARD std::string* release_password();
+  void set_allocated_password(std::string* ptr);
 
   private:
-  const std::string& _internal_short_room_id() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_short_room_id(
+  const std::string& _internal_password() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_password(
       const std::string& value);
-  std::string* _internal_mutable_short_room_id();
+  std::string* _internal_mutable_password();
 
   public:
-  void clear_id();
-  IdCase id_case() const;
   // @@protoc_insertion_point(class_scope:lobby.JoinRoomRequest)
  private:
   class _Internal;
-  void set_has_room_id();
-  void set_has_short_room_id();
-
-  inline bool has_id() const;
-  inline void clear_has_id();
 
   template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
-    union IdUnion {
-      constexpr IdUnion() : _constinit_{} {}
-        ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized _constinit_;
-      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
-      ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr short_room_id_;
-    } id_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
-    ::uint32_t _oneof_case_[1];
-
   };
   union { Impl_ _impl_; };
   friend struct ::TableStruct_lobby_2eproto;
@@ -1657,7 +1867,7 @@ class JoinRoomResponse final :
                &_JoinRoomResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    6;
+    8;
 
   friend void swap(JoinRoomResponse& a, JoinRoomResponse& b) {
     a.Swap(&b);
@@ -1761,6 +1971,331 @@ class JoinRoomResponse final :
   friend struct ::TableStruct_lobby_2eproto;
 };// -------------------------------------------------------------------
 
+class JoinRoomWithCodeRequest final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.JoinRoomWithCodeRequest) */ {
+ public:
+  inline JoinRoomWithCodeRequest() : JoinRoomWithCodeRequest(nullptr) {}
+  ~JoinRoomWithCodeRequest() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR JoinRoomWithCodeRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  JoinRoomWithCodeRequest(const JoinRoomWithCodeRequest& from);
+  JoinRoomWithCodeRequest(JoinRoomWithCodeRequest&& from) noexcept
+    : JoinRoomWithCodeRequest() {
+    *this = ::std::move(from);
+  }
+
+  inline JoinRoomWithCodeRequest& operator=(const JoinRoomWithCodeRequest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline JoinRoomWithCodeRequest& operator=(JoinRoomWithCodeRequest&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const JoinRoomWithCodeRequest& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const JoinRoomWithCodeRequest* internal_default_instance() {
+    return reinterpret_cast<const JoinRoomWithCodeRequest*>(
+               &_JoinRoomWithCodeRequest_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    9;
+
+  friend void swap(JoinRoomWithCodeRequest& a, JoinRoomWithCodeRequest& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(JoinRoomWithCodeRequest* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(JoinRoomWithCodeRequest* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  JoinRoomWithCodeRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<JoinRoomWithCodeRequest>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const JoinRoomWithCodeRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const JoinRoomWithCodeRequest& from) {
+    JoinRoomWithCodeRequest::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(JoinRoomWithCodeRequest* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "lobby.JoinRoomWithCodeRequest";
+  }
+  protected:
+  explicit JoinRoomWithCodeRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kRoomCodeFieldNumber = 1,
+  };
+  // string room_code = 1;
+  void clear_room_code() ;
+  const std::string& room_code() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_room_code(Arg_&& arg, Args_... args);
+  std::string* mutable_room_code();
+  PROTOBUF_NODISCARD std::string* release_room_code();
+  void set_allocated_room_code(std::string* ptr);
+
+  private:
+  const std::string& _internal_room_code() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_room_code(
+      const std::string& value);
+  std::string* _internal_mutable_room_code();
+
+  public:
+  // @@protoc_insertion_point(class_scope:lobby.JoinRoomWithCodeRequest)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_code_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_lobby_2eproto;
+};// -------------------------------------------------------------------
+
+class JoinRoomWithCodeResponse final :
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.JoinRoomWithCodeResponse) */ {
+ public:
+  inline JoinRoomWithCodeResponse() : JoinRoomWithCodeResponse(nullptr) {}
+  ~JoinRoomWithCodeResponse() override;
+  template<typename = void>
+  explicit PROTOBUF_CONSTEXPR JoinRoomWithCodeResponse(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
+
+  JoinRoomWithCodeResponse(const JoinRoomWithCodeResponse& from);
+  JoinRoomWithCodeResponse(JoinRoomWithCodeResponse&& from) noexcept
+    : JoinRoomWithCodeResponse() {
+    *this = ::std::move(from);
+  }
+
+  inline JoinRoomWithCodeResponse& operator=(const JoinRoomWithCodeResponse& from) {
+    CopyFrom(from);
+    return *this;
+  }
+  inline JoinRoomWithCodeResponse& operator=(JoinRoomWithCodeResponse&& from) noexcept {
+    if (this == &from) return *this;
+    if (GetOwningArena() == from.GetOwningArena()
+  #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        && GetOwningArena() != nullptr
+  #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+    ) {
+      InternalSwap(&from);
+    } else {
+      CopyFrom(from);
+    }
+    return *this;
+  }
+
+  inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const {
+    return _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance);
+  }
+  inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields() {
+    return _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+  }
+
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor() {
+    return GetDescriptor();
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor() {
+    return default_instance().GetMetadata().descriptor;
+  }
+  static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection() {
+    return default_instance().GetMetadata().reflection;
+  }
+  static const JoinRoomWithCodeResponse& default_instance() {
+    return *internal_default_instance();
+  }
+  static inline const JoinRoomWithCodeResponse* internal_default_instance() {
+    return reinterpret_cast<const JoinRoomWithCodeResponse*>(
+               &_JoinRoomWithCodeResponse_default_instance_);
+  }
+  static constexpr int kIndexInFileMessages =
+    10;
+
+  friend void swap(JoinRoomWithCodeResponse& a, JoinRoomWithCodeResponse& b) {
+    a.Swap(&b);
+  }
+  inline void Swap(JoinRoomWithCodeResponse* other) {
+    if (other == this) return;
+  #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() != nullptr &&
+        GetOwningArena() == other->GetOwningArena()) {
+   #else  // PROTOBUF_FORCE_COPY_IN_SWAP
+    if (GetOwningArena() == other->GetOwningArena()) {
+  #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+      InternalSwap(other);
+    } else {
+      ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap(this, other);
+    }
+  }
+  void UnsafeArenaSwap(JoinRoomWithCodeResponse* other) {
+    if (other == this) return;
+    ABSL_DCHECK(GetOwningArena() == other->GetOwningArena());
+    InternalSwap(other);
+  }
+
+  // implements Message ----------------------------------------------
+
+  JoinRoomWithCodeResponse* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
+    return CreateMaybeMessage<JoinRoomWithCodeResponse>(arena);
+  }
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const JoinRoomWithCodeResponse& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const JoinRoomWithCodeResponse& from) {
+    JoinRoomWithCodeResponse::MergeImpl(*this, from);
+  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
+  public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(JoinRoomWithCodeResponse* other);
+
+  private:
+  friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+  static ::absl::string_view FullMessageName() {
+    return "lobby.JoinRoomWithCodeResponse";
+  }
+  protected:
+  explicit JoinRoomWithCodeResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  public:
+
+  static const ClassData _class_data_;
+  const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*GetClassData() const final;
+
+  ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  enum : int {
+    kConnectionFieldNumber = 1,
+  };
+  // .lobby.RoomConnectionInfo connection = 1;
+  bool has_connection() const;
+  void clear_connection() ;
+  const ::lobby::RoomConnectionInfo& connection() const;
+  PROTOBUF_NODISCARD ::lobby::RoomConnectionInfo* release_connection();
+  ::lobby::RoomConnectionInfo* mutable_connection();
+  void set_allocated_connection(::lobby::RoomConnectionInfo* connection);
+  private:
+  const ::lobby::RoomConnectionInfo& _internal_connection() const;
+  ::lobby::RoomConnectionInfo* _internal_mutable_connection();
+  public:
+  void unsafe_arena_set_allocated_connection(
+      ::lobby::RoomConnectionInfo* connection);
+  ::lobby::RoomConnectionInfo* unsafe_arena_release_connection();
+  // @@protoc_insertion_point(class_scope:lobby.JoinRoomWithCodeResponse)
+ private:
+  class _Internal;
+
+  template <typename T> friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+  typedef void InternalArenaConstructable_;
+  typedef void DestructorSkippable_;
+  struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::lobby::RoomConnectionInfo* connection_;
+  };
+  union { Impl_ _impl_; };
+  friend struct ::TableStruct_lobby_2eproto;
+};// -------------------------------------------------------------------
+
 class GetRoomListRequest final :
     public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.GetRoomListRequest) */ {
  public:
@@ -1817,7 +2352,7 @@ class GetRoomListRequest final :
                &_GetRoomListRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    7;
+    11;
 
   friend void swap(GetRoomListRequest& a, GetRoomListRequest& b) {
     a.Swap(&b);
@@ -1996,7 +2531,7 @@ class GetRoomListResponse final :
                &_GetRoomListResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    8;
+    12;
 
   friend void swap(GetRoomListResponse& a, GetRoomListResponse& b) {
     a.Swap(&b);
@@ -2161,7 +2696,7 @@ class UpdateRoomStateRequest final :
                &_UpdateRoomStateRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    9;
+    13;
 
   friend void swap(UpdateRoomStateRequest& a, UpdateRoomStateRequest& b) {
     a.Swap(&b);
@@ -2316,7 +2851,7 @@ class UpdateRoomStateResponse final :
                &_UpdateRoomStateResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    10;
+    14;
 
   friend void swap(UpdateRoomStateResponse& a, UpdateRoomStateResponse& b) {
     a.Swap(&b);
@@ -2471,7 +3006,7 @@ class UpdateRoomConfigRequest final :
                &_UpdateRoomConfigRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    11;
+    15;
 
   friend void swap(UpdateRoomConfigRequest& a, UpdateRoomConfigRequest& b) {
     a.Swap(&b);
@@ -2631,7 +3166,7 @@ class UpdateRoomConfigResponse final :
                &_UpdateRoomConfigResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    12;
+    16;
 
   friend void swap(UpdateRoomConfigResponse& a, UpdateRoomConfigResponse& b) {
     a.Swap(&b);
@@ -2791,7 +3326,7 @@ class ChangeRoomPasswordRequest final :
                &_ChangeRoomPasswordRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    13;
+    17;
 
   friend void swap(ChangeRoomPasswordRequest& a, ChangeRoomPasswordRequest& b) {
     a.Swap(&b);
@@ -2956,7 +3491,7 @@ class ChangeRoomPasswordResponse final :
                &_ChangeRoomPasswordResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    14;
+    18;
 
   friend void swap(ChangeRoomPasswordResponse& a, ChangeRoomPasswordResponse& b) {
     a.Swap(&b);
@@ -3121,7 +3656,7 @@ class ChangeRoomOwnerRequest final :
                &_ChangeRoomOwnerRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    15;
+    19;
 
   friend void swap(ChangeRoomOwnerRequest& a, ChangeRoomOwnerRequest& b) {
     a.Swap(&b);
@@ -3286,7 +3821,7 @@ class ChangeRoomOwnerResponse final :
                &_ChangeRoomOwnerResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    16;
+    20;
 
   friend void swap(ChangeRoomOwnerResponse& a, ChangeRoomOwnerResponse& b) {
     a.Swap(&b);
@@ -3450,7 +3985,7 @@ class DeleteRoomRequest final :
                &_DeleteRoomRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    17;
+    21;
 
   friend void swap(DeleteRoomRequest& a, DeleteRoomRequest& b) {
     a.Swap(&b);
@@ -3574,7 +4109,7 @@ class DeleteRoomResponse final :
                &_DeleteRoomResponse_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    18;
+    22;
 
   friend void swap(DeleteRoomResponse& a, DeleteRoomResponse& b) {
     a.Swap(&b);
@@ -3698,7 +4233,7 @@ class ListenRoomUpdatesRequest final :
                &_ListenRoomUpdatesRequest_default_instance_);
   }
   static constexpr int kIndexInFileMessages =
-    19;
+    23;
 
   friend void swap(ListenRoomUpdatesRequest& a, ListenRoomUpdatesRequest& b) {
     a.Swap(&b);
@@ -4012,51 +4547,51 @@ inline void Room::set_allocated_room_id(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:lobby.Room.room_id)
 }
 
-// string short_room_id = 2;
-inline void Room::clear_short_room_id() {
-  _impl_.short_room_id_.ClearToEmpty();
+// string room_code = 2;
+inline void Room::clear_room_code() {
+  _impl_.room_code_.ClearToEmpty();
 }
-inline const std::string& Room::short_room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.Room.short_room_id)
-  return _internal_short_room_id();
+inline const std::string& Room::room_code() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.room_code)
+  return _internal_room_code();
 }
 template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void Room::set_short_room_id(Arg_&& arg,
+inline PROTOBUF_ALWAYS_INLINE void Room::set_room_code(Arg_&& arg,
                                                      Args_... args) {
   ;
-  _impl_.short_room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.Room.short_room_id)
+  _impl_.room_code_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.Room.room_code)
 }
-inline std::string* Room::mutable_short_room_id() {
-  std::string* _s = _internal_mutable_short_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.Room.short_room_id)
+inline std::string* Room::mutable_room_code() {
+  std::string* _s = _internal_mutable_room_code();
+  // @@protoc_insertion_point(field_mutable:lobby.Room.room_code)
   return _s;
 }
-inline const std::string& Room::_internal_short_room_id() const {
-  return _impl_.short_room_id_.Get();
+inline const std::string& Room::_internal_room_code() const {
+  return _impl_.room_code_.Get();
 }
-inline void Room::_internal_set_short_room_id(const std::string& value) {
+inline void Room::_internal_set_room_code(const std::string& value) {
   ;
 
 
-  _impl_.short_room_id_.Set(value, GetArenaForAllocation());
+  _impl_.room_code_.Set(value, GetArenaForAllocation());
 }
-inline std::string* Room::_internal_mutable_short_room_id() {
+inline std::string* Room::_internal_mutable_room_code() {
   ;
-  return _impl_.short_room_id_.Mutable( GetArenaForAllocation());
+  return _impl_.room_code_.Mutable( GetArenaForAllocation());
 }
-inline std::string* Room::release_short_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.Room.short_room_id)
-  return _impl_.short_room_id_.Release();
+inline std::string* Room::release_room_code() {
+  // @@protoc_insertion_point(field_release:lobby.Room.room_code)
+  return _impl_.room_code_.Release();
 }
-inline void Room::set_allocated_short_room_id(std::string* value) {
-  _impl_.short_room_id_.SetAllocated(value, GetArenaForAllocation());
+inline void Room::set_allocated_room_code(std::string* value) {
+  _impl_.room_code_.SetAllocated(value, GetArenaForAllocation());
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.short_room_id_.IsDefault()) {
-          _impl_.short_room_id_.Set("", GetArenaForAllocation());
+        if (_impl_.room_code_.IsDefault()) {
+          _impl_.room_code_.Set("", GetArenaForAllocation());
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:lobby.Room.short_room_id)
+  // @@protoc_insertion_point(field_set_allocated:lobby.Room.room_code)
 }
 
 // string owner_id = 3;
@@ -4529,27 +5064,7 @@ inline void CreateRoomRequest::set_allocated_config(::lobby::RoomConfig* config)
 
 // CreateRoomResponse
 
-// .lobby.RoomDeploymentStatus deploy_status = 1;
-inline void CreateRoomResponse::clear_deploy_status() {
-  _impl_.deploy_status_ = 0;
-}
-inline ::lobby::RoomDeploymentStatus CreateRoomResponse::deploy_status() const {
-  // @@protoc_insertion_point(field_get:lobby.CreateRoomResponse.deploy_status)
-  return _internal_deploy_status();
-}
-inline void CreateRoomResponse::set_deploy_status(::lobby::RoomDeploymentStatus value) {
-   _internal_set_deploy_status(value);
-  // @@protoc_insertion_point(field_set:lobby.CreateRoomResponse.deploy_status)
-}
-inline ::lobby::RoomDeploymentStatus CreateRoomResponse::_internal_deploy_status() const {
-  return static_cast<::lobby::RoomDeploymentStatus>(_impl_.deploy_status_);
-}
-inline void CreateRoomResponse::_internal_set_deploy_status(::lobby::RoomDeploymentStatus value) {
-  ;
-  _impl_.deploy_status_ = value;
-}
-
-// .lobby.RoomConnectionInfo connection = 2;
+// .lobby.RoomConnectionInfo connection = 1;
 inline bool CreateRoomResponse::has_connection() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.connection_ != nullptr);
@@ -4638,20 +5153,106 @@ inline void CreateRoomResponse::set_allocated_connection(::lobby::RoomConnection
 
 // -------------------------------------------------------------------
 
+// QuickMatchRequest
+
+// -------------------------------------------------------------------
+
+// QuickMatchResponse
+
+// .lobby.RoomConnectionInfo connection = 1;
+inline bool QuickMatchResponse::has_connection() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.connection_ != nullptr);
+  return value;
+}
+inline void QuickMatchResponse::clear_connection() {
+  if (_impl_.connection_ != nullptr) _impl_.connection_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::lobby::RoomConnectionInfo& QuickMatchResponse::_internal_connection() const {
+  const ::lobby::RoomConnectionInfo* p = _impl_.connection_;
+  return p != nullptr ? *p : reinterpret_cast<const ::lobby::RoomConnectionInfo&>(
+      ::lobby::_RoomConnectionInfo_default_instance_);
+}
+inline const ::lobby::RoomConnectionInfo& QuickMatchResponse::connection() const {
+  // @@protoc_insertion_point(field_get:lobby.QuickMatchResponse.connection)
+  return _internal_connection();
+}
+inline void QuickMatchResponse::unsafe_arena_set_allocated_connection(
+    ::lobby::RoomConnectionInfo* connection) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.connection_);
+  }
+  _impl_.connection_ = connection;
+  if (connection) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.QuickMatchResponse.connection)
+}
+inline ::lobby::RoomConnectionInfo* QuickMatchResponse::release_connection() {
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::lobby::RoomConnectionInfo* temp = _impl_.connection_;
+  _impl_.connection_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::lobby::RoomConnectionInfo* QuickMatchResponse::unsafe_arena_release_connection() {
+  // @@protoc_insertion_point(field_release:lobby.QuickMatchResponse.connection)
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::lobby::RoomConnectionInfo* temp = _impl_.connection_;
+  _impl_.connection_ = nullptr;
+  return temp;
+}
+inline ::lobby::RoomConnectionInfo* QuickMatchResponse::_internal_mutable_connection() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.connection_ == nullptr) {
+    auto* p = CreateMaybeMessage<::lobby::RoomConnectionInfo>(GetArenaForAllocation());
+    _impl_.connection_ = p;
+  }
+  return _impl_.connection_;
+}
+inline ::lobby::RoomConnectionInfo* QuickMatchResponse::mutable_connection() {
+  ::lobby::RoomConnectionInfo* _msg = _internal_mutable_connection();
+  // @@protoc_insertion_point(field_mutable:lobby.QuickMatchResponse.connection)
+  return _msg;
+}
+inline void QuickMatchResponse::set_allocated_connection(::lobby::RoomConnectionInfo* connection) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.connection_;
+  }
+  if (connection) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(connection);
+    if (message_arena != submessage_arena) {
+      connection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, connection, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.connection_ = connection;
+  // @@protoc_insertion_point(field_set_allocated:lobby.QuickMatchResponse.connection)
+}
+
+// -------------------------------------------------------------------
+
 // JoinRoomRequest
 
 // string room_id = 1;
-inline bool JoinRoomRequest::has_room_id() const {
-  return id_case() == kRoomId;
-}
-inline void JoinRoomRequest::set_has_room_id() {
-  _impl_._oneof_case_[0] = kRoomId;
-}
 inline void JoinRoomRequest::clear_room_id() {
-  if (id_case() == kRoomId) {
-    _impl_.id_.room_id_.Destroy();
-    clear_has_id();
-  }
+  _impl_.room_id_.ClearToEmpty();
 }
 inline const std::string& JoinRoomRequest::room_id() const {
   // @@protoc_insertion_point(field_get:lobby.JoinRoomRequest.room_id)
@@ -4660,13 +5261,8 @@ inline const std::string& JoinRoomRequest::room_id() const {
 template <typename Arg_, typename... Args_>
 inline PROTOBUF_ALWAYS_INLINE void JoinRoomRequest::set_room_id(Arg_&& arg,
                                                      Args_... args) {
-  if (id_case() != kRoomId) {
-    clear_id();
-
-    set_has_room_id();
-    _impl_.id_.room_id_.InitDefault();
-  }
-  _impl_.id_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  ;
+  _impl_.room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
   // @@protoc_insertion_point(field_set:lobby.JoinRoomRequest.room_id)
 }
 inline std::string* JoinRoomRequest::mutable_room_id() {
@@ -4675,130 +5271,33 @@ inline std::string* JoinRoomRequest::mutable_room_id() {
   return _s;
 }
 inline const std::string& JoinRoomRequest::_internal_room_id() const {
-  if (id_case() != kRoomId) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
-  }
-  return _impl_.id_.room_id_.Get();
+  return _impl_.room_id_.Get();
 }
 inline void JoinRoomRequest::_internal_set_room_id(const std::string& value) {
-  if (id_case() != kRoomId) {
-    clear_id();
-
-    set_has_room_id();
-    _impl_.id_.room_id_.InitDefault();
-  }
+  ;
 
 
-  _impl_.id_.room_id_.Set(value, GetArenaForAllocation());
+  _impl_.room_id_.Set(value, GetArenaForAllocation());
 }
 inline std::string* JoinRoomRequest::_internal_mutable_room_id() {
-  if (id_case() != kRoomId) {
-    clear_id();
-
-    set_has_room_id();
-    _impl_.id_.room_id_.InitDefault();
-  }
-  return _impl_.id_.room_id_.Mutable( GetArenaForAllocation());
+  ;
+  return _impl_.room_id_.Mutable( GetArenaForAllocation());
 }
 inline std::string* JoinRoomRequest::release_room_id() {
   // @@protoc_insertion_point(field_release:lobby.JoinRoomRequest.room_id)
-  if (id_case() != kRoomId) {
-    return nullptr;
-  }
-  clear_has_id();
-  return _impl_.id_.room_id_.Release();
+  return _impl_.room_id_.Release();
 }
 inline void JoinRoomRequest::set_allocated_room_id(std::string* value) {
-  if (has_id()) {
-    clear_id();
-  }
-  if (value != nullptr) {
-    set_has_room_id();
-    _impl_.id_.room_id_.InitAllocated(value, GetArenaForAllocation());
-  }
+  _impl_.room_id_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.room_id_.IsDefault()) {
+          _impl_.room_id_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomRequest.room_id)
 }
 
-// string short_room_id = 2;
-inline bool JoinRoomRequest::has_short_room_id() const {
-  return id_case() == kShortRoomId;
-}
-inline void JoinRoomRequest::set_has_short_room_id() {
-  _impl_._oneof_case_[0] = kShortRoomId;
-}
-inline void JoinRoomRequest::clear_short_room_id() {
-  if (id_case() == kShortRoomId) {
-    _impl_.id_.short_room_id_.Destroy();
-    clear_has_id();
-  }
-}
-inline const std::string& JoinRoomRequest::short_room_id() const {
-  // @@protoc_insertion_point(field_get:lobby.JoinRoomRequest.short_room_id)
-  return _internal_short_room_id();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void JoinRoomRequest::set_short_room_id(Arg_&& arg,
-                                                     Args_... args) {
-  if (id_case() != kShortRoomId) {
-    clear_id();
-
-    set_has_short_room_id();
-    _impl_.id_.short_room_id_.InitDefault();
-  }
-  _impl_.id_.short_room_id_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
-  // @@protoc_insertion_point(field_set:lobby.JoinRoomRequest.short_room_id)
-}
-inline std::string* JoinRoomRequest::mutable_short_room_id() {
-  std::string* _s = _internal_mutable_short_room_id();
-  // @@protoc_insertion_point(field_mutable:lobby.JoinRoomRequest.short_room_id)
-  return _s;
-}
-inline const std::string& JoinRoomRequest::_internal_short_room_id() const {
-  if (id_case() != kShortRoomId) {
-    return ::PROTOBUF_NAMESPACE_ID::internal::GetEmptyStringAlreadyInited();
-  }
-  return _impl_.id_.short_room_id_.Get();
-}
-inline void JoinRoomRequest::_internal_set_short_room_id(const std::string& value) {
-  if (id_case() != kShortRoomId) {
-    clear_id();
-
-    set_has_short_room_id();
-    _impl_.id_.short_room_id_.InitDefault();
-  }
-
-
-  _impl_.id_.short_room_id_.Set(value, GetArenaForAllocation());
-}
-inline std::string* JoinRoomRequest::_internal_mutable_short_room_id() {
-  if (id_case() != kShortRoomId) {
-    clear_id();
-
-    set_has_short_room_id();
-    _impl_.id_.short_room_id_.InitDefault();
-  }
-  return _impl_.id_.short_room_id_.Mutable( GetArenaForAllocation());
-}
-inline std::string* JoinRoomRequest::release_short_room_id() {
-  // @@protoc_insertion_point(field_release:lobby.JoinRoomRequest.short_room_id)
-  if (id_case() != kShortRoomId) {
-    return nullptr;
-  }
-  clear_has_id();
-  return _impl_.id_.short_room_id_.Release();
-}
-inline void JoinRoomRequest::set_allocated_short_room_id(std::string* value) {
-  if (has_id()) {
-    clear_id();
-  }
-  if (value != nullptr) {
-    set_has_short_room_id();
-    _impl_.id_.short_room_id_.InitAllocated(value, GetArenaForAllocation());
-  }
-  // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomRequest.short_room_id)
-}
-
-// string password = 3;
+// string password = 2;
 inline void JoinRoomRequest::clear_password() {
   _impl_.password_.ClearToEmpty();
 }
@@ -4845,15 +5344,6 @@ inline void JoinRoomRequest::set_allocated_password(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomRequest.password)
 }
 
-inline bool JoinRoomRequest::has_id() const {
-  return id_case() != ID_NOT_SET;
-}
-inline void JoinRoomRequest::clear_has_id() {
-  _impl_._oneof_case_[0] = ID_NOT_SET;
-}
-inline JoinRoomRequest::IdCase JoinRoomRequest::id_case() const {
-  return JoinRoomRequest::IdCase(_impl_._oneof_case_[0]);
-}
 // -------------------------------------------------------------------
 
 // JoinRoomResponse
@@ -4943,6 +5433,148 @@ inline void JoinRoomResponse::set_allocated_connection(::lobby::RoomConnectionIn
   }
   _impl_.connection_ = connection;
   // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomResponse.connection)
+}
+
+// -------------------------------------------------------------------
+
+// JoinRoomWithCodeRequest
+
+// string room_code = 1;
+inline void JoinRoomWithCodeRequest::clear_room_code() {
+  _impl_.room_code_.ClearToEmpty();
+}
+inline const std::string& JoinRoomWithCodeRequest::room_code() const {
+  // @@protoc_insertion_point(field_get:lobby.JoinRoomWithCodeRequest.room_code)
+  return _internal_room_code();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void JoinRoomWithCodeRequest::set_room_code(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.room_code_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.JoinRoomWithCodeRequest.room_code)
+}
+inline std::string* JoinRoomWithCodeRequest::mutable_room_code() {
+  std::string* _s = _internal_mutable_room_code();
+  // @@protoc_insertion_point(field_mutable:lobby.JoinRoomWithCodeRequest.room_code)
+  return _s;
+}
+inline const std::string& JoinRoomWithCodeRequest::_internal_room_code() const {
+  return _impl_.room_code_.Get();
+}
+inline void JoinRoomWithCodeRequest::_internal_set_room_code(const std::string& value) {
+  ;
+
+
+  _impl_.room_code_.Set(value, GetArenaForAllocation());
+}
+inline std::string* JoinRoomWithCodeRequest::_internal_mutable_room_code() {
+  ;
+  return _impl_.room_code_.Mutable( GetArenaForAllocation());
+}
+inline std::string* JoinRoomWithCodeRequest::release_room_code() {
+  // @@protoc_insertion_point(field_release:lobby.JoinRoomWithCodeRequest.room_code)
+  return _impl_.room_code_.Release();
+}
+inline void JoinRoomWithCodeRequest::set_allocated_room_code(std::string* value) {
+  _impl_.room_code_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.room_code_.IsDefault()) {
+          _impl_.room_code_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomWithCodeRequest.room_code)
+}
+
+// -------------------------------------------------------------------
+
+// JoinRoomWithCodeResponse
+
+// .lobby.RoomConnectionInfo connection = 1;
+inline bool JoinRoomWithCodeResponse::has_connection() const {
+  bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
+  PROTOBUF_ASSUME(!value || _impl_.connection_ != nullptr);
+  return value;
+}
+inline void JoinRoomWithCodeResponse::clear_connection() {
+  if (_impl_.connection_ != nullptr) _impl_.connection_->Clear();
+  _impl_._has_bits_[0] &= ~0x00000001u;
+}
+inline const ::lobby::RoomConnectionInfo& JoinRoomWithCodeResponse::_internal_connection() const {
+  const ::lobby::RoomConnectionInfo* p = _impl_.connection_;
+  return p != nullptr ? *p : reinterpret_cast<const ::lobby::RoomConnectionInfo&>(
+      ::lobby::_RoomConnectionInfo_default_instance_);
+}
+inline const ::lobby::RoomConnectionInfo& JoinRoomWithCodeResponse::connection() const {
+  // @@protoc_insertion_point(field_get:lobby.JoinRoomWithCodeResponse.connection)
+  return _internal_connection();
+}
+inline void JoinRoomWithCodeResponse::unsafe_arena_set_allocated_connection(
+    ::lobby::RoomConnectionInfo* connection) {
+  if (GetArenaForAllocation() == nullptr) {
+    delete reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(_impl_.connection_);
+  }
+  _impl_.connection_ = connection;
+  if (connection) {
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  // @@protoc_insertion_point(field_unsafe_arena_set_allocated:lobby.JoinRoomWithCodeResponse.connection)
+}
+inline ::lobby::RoomConnectionInfo* JoinRoomWithCodeResponse::release_connection() {
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::lobby::RoomConnectionInfo* temp = _impl_.connection_;
+  _impl_.connection_ = nullptr;
+#ifdef PROTOBUF_FORCE_COPY_IN_RELEASE
+  auto* old =  reinterpret_cast<::PROTOBUF_NAMESPACE_ID::MessageLite*>(temp);
+  temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  if (GetArenaForAllocation() == nullptr) { delete old; }
+#else  // PROTOBUF_FORCE_COPY_IN_RELEASE
+  if (GetArenaForAllocation() != nullptr) {
+    temp = ::PROTOBUF_NAMESPACE_ID::internal::DuplicateIfNonNull(temp);
+  }
+#endif  // !PROTOBUF_FORCE_COPY_IN_RELEASE
+  return temp;
+}
+inline ::lobby::RoomConnectionInfo* JoinRoomWithCodeResponse::unsafe_arena_release_connection() {
+  // @@protoc_insertion_point(field_release:lobby.JoinRoomWithCodeResponse.connection)
+  _impl_._has_bits_[0] &= ~0x00000001u;
+  ::lobby::RoomConnectionInfo* temp = _impl_.connection_;
+  _impl_.connection_ = nullptr;
+  return temp;
+}
+inline ::lobby::RoomConnectionInfo* JoinRoomWithCodeResponse::_internal_mutable_connection() {
+  _impl_._has_bits_[0] |= 0x00000001u;
+  if (_impl_.connection_ == nullptr) {
+    auto* p = CreateMaybeMessage<::lobby::RoomConnectionInfo>(GetArenaForAllocation());
+    _impl_.connection_ = p;
+  }
+  return _impl_.connection_;
+}
+inline ::lobby::RoomConnectionInfo* JoinRoomWithCodeResponse::mutable_connection() {
+  ::lobby::RoomConnectionInfo* _msg = _internal_mutable_connection();
+  // @@protoc_insertion_point(field_mutable:lobby.JoinRoomWithCodeResponse.connection)
+  return _msg;
+}
+inline void JoinRoomWithCodeResponse::set_allocated_connection(::lobby::RoomConnectionInfo* connection) {
+  ::PROTOBUF_NAMESPACE_ID::Arena* message_arena = GetArenaForAllocation();
+  if (message_arena == nullptr) {
+    delete _impl_.connection_;
+  }
+  if (connection) {
+    ::PROTOBUF_NAMESPACE_ID::Arena* submessage_arena =
+        ::PROTOBUF_NAMESPACE_ID::Arena::InternalGetOwningArena(connection);
+    if (message_arena != submessage_arena) {
+      connection = ::PROTOBUF_NAMESPACE_ID::internal::GetOwnedMessage(
+          message_arena, connection, submessage_arena);
+    }
+    _impl_._has_bits_[0] |= 0x00000001u;
+  } else {
+    _impl_._has_bits_[0] &= ~0x00000001u;
+  }
+  _impl_.connection_ = connection;
+  // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomWithCodeResponse.connection)
 }
 
 // -------------------------------------------------------------------
@@ -5517,12 +6149,6 @@ inline void ChangeRoomOwnerResponse::set_allocated_owner_id(std::string* value) 
 
 PROTOBUF_NAMESPACE_OPEN
 
-template <>
-struct is_proto_enum<::lobby::RoomDeploymentStatus> : std::true_type {};
-template <>
-inline const EnumDescriptor* GetEnumDescriptor<::lobby::RoomDeploymentStatus>() {
-  return ::lobby::RoomDeploymentStatus_descriptor();
-}
 template <>
 struct is_proto_enum<::lobby::RoomState> : std::true_type {};
 template <>

@@ -24,12 +24,24 @@ public:
 
 	UFUNCTION()
 	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyCreateRoomResponse& Response);
-	UFUNCTION()
-	void OnContextStateChanged(FGrpcContextHandle Handle, EGrpcContextState NewState);
 public:
 	FGrpcContextHandle Handle;
 	ULobbyService::FCreateRoomResponseLambda ResponseLambda;
-	ULobbyService::FCreateRoomFinishLambda FinishLambda;
+};
+
+UCLASS()
+class ULobbyServiceQuickMatchLambdaWrapper : public UObject
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	ULobbyServiceClient* InnerClient;
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyQuickMatchResponse& Response);
+public:
+	FGrpcContextHandle Handle;
+	ULobbyService::FQuickMatchResponseLambda ResponseLambda;
 };
 
 UCLASS()
@@ -45,6 +57,21 @@ public:
 public:
 	FGrpcContextHandle Handle;
 	ULobbyService::FJoinRoomResponseLambda ResponseLambda;
+};
+
+UCLASS()
+class ULobbyServiceJoinRoomWithCodeLambdaWrapper : public UObject
+{
+	GENERATED_BODY()
+public:
+	UPROPERTY()
+	ULobbyServiceClient* InnerClient;
+
+	UFUNCTION()
+	void OnResponse(FGrpcContextHandle Handle, const FGrpcResult& GrpcResult, const FGrpcLobbyJoinRoomWithCodeResponse& Response);
+public:
+	FGrpcContextHandle Handle;
+	ULobbyService::FJoinRoomWithCodeResponseLambda ResponseLambda;
 };
 
 UCLASS()

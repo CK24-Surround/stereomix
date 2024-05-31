@@ -23,5 +23,5 @@ public:
 protected:
 
 	UPROPERTY(Transient)
-	TObjectPtr<class USMViewModel_MainMenu> MainMenuViewModel;
+	TObjectPtr<class USMMainMenuViewModel> MainMenuViewModel;
 };

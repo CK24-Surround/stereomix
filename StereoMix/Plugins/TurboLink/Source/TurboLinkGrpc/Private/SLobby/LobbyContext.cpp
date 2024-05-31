@@ -19,7 +19,8 @@ void GrpcContext_LobbyService_CreateRoom::Call(const FGrpcLobbyCreateRoomRequest
 	TURBOLINK_TO_GRPC(&Request, &rpcRequest);
 
 	ULobbyService* service = (ULobbyService*)Service;
-	RpcReaderWriter = service->d->Stub->AsyncCreateRoom(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get(), InitialTag);
+	RpcReaderWriter = service->d->Stub->AsyncCreateRoom(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get());
+	RpcReaderWriter->ReadInitialMetadata(InitialTag);
 }
 
 void GrpcContext_LobbyService_CreateRoom::OnRpcEvent(bool Ok, const void* EventTag)
@@ -35,6 +36,41 @@ void GrpcContext_LobbyService_CreateRoom::OnRpcEvent(bool Ok, const void* EventT
 				GRPC_TO_TURBOLINK(_RpcResponse, &response);
 			}
 			client->OnCreateRoomResponse.Broadcast(Handle, _Result, response);
+		}
+	);
+}
+
+GrpcContext_LobbyService_QuickMatch::GrpcContext_LobbyService_QuickMatch(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
+	: Super(_Handle, _Service, _Client)
+{
+}
+
+void GrpcContext_LobbyService_QuickMatch::Call(const FGrpcLobbyQuickMatchRequest& Request)
+{
+	check(GetState() == EGrpcContextState::Ready);
+	UpdateState(EGrpcContextState::Initialing);
+
+	::lobby::QuickMatchRequest rpcRequest;
+	TURBOLINK_TO_GRPC(&Request, &rpcRequest);
+
+	ULobbyService* service = (ULobbyService*)Service;
+	RpcReaderWriter = service->d->Stub->AsyncQuickMatch(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get());
+	RpcReaderWriter->ReadInitialMetadata(InitialTag);
+}
+
+void GrpcContext_LobbyService_QuickMatch::OnRpcEvent(bool Ok, const void* EventTag)
+{
+	Super::OnRpcEventInternal(Ok, EventTag, 
+		[this](const FGrpcResult& _Result, ::lobby::QuickMatchResponse* _RpcResponse) 
+		{
+			ULobbyServiceClient* client = (ULobbyServiceClient*)(this->Client);
+			if (!(client->OnQuickMatchResponse.IsBound())) return;
+
+			FGrpcLobbyQuickMatchResponse response;
+			if (_RpcResponse) {
+				GRPC_TO_TURBOLINK(_RpcResponse, &response);
+			}
+			client->OnQuickMatchResponse.Broadcast(Handle, _Result, response);
 		}
 	);
 }
@@ -70,6 +106,41 @@ void GrpcContext_LobbyService_JoinRoom::OnRpcEvent(bool Ok, const void* EventTag
 				GRPC_TO_TURBOLINK(_RpcResponse, &response);
 			}
 			client->OnJoinRoomResponse.Broadcast(Handle, _Result, response);
+		}
+	);
+}
+
+GrpcContext_LobbyService_JoinRoomWithCode::GrpcContext_LobbyService_JoinRoomWithCode(FGrpcContextHandle _Handle, UGrpcService* _Service, UGrpcClient* _Client)
+	: Super(_Handle, _Service, _Client)
+{
+}
+
+void GrpcContext_LobbyService_JoinRoomWithCode::Call(const FGrpcLobbyJoinRoomWithCodeRequest& Request)
+{
+	check(GetState() == EGrpcContextState::Ready);
+	UpdateState(EGrpcContextState::Initialing);
+
+	::lobby::JoinRoomWithCodeRequest rpcRequest;
+	TURBOLINK_TO_GRPC(&Request, &rpcRequest);
+
+	ULobbyService* service = (ULobbyService*)Service;
+	RpcReaderWriter = service->d->Stub->AsyncJoinRoomWithCode(RpcContext.get(), rpcRequest, service->TurboLinkManager->d->CompletionQueue.get());
+	RpcReaderWriter->ReadInitialMetadata(InitialTag);
+}
+
+void GrpcContext_LobbyService_JoinRoomWithCode::OnRpcEvent(bool Ok, const void* EventTag)
+{
+	Super::OnRpcEventInternal(Ok, EventTag, 
+		[this](const FGrpcResult& _Result, ::lobby::JoinRoomWithCodeResponse* _RpcResponse) 
+		{
+			ULobbyServiceClient* client = (ULobbyServiceClient*)(this->Client);
+			if (!(client->OnJoinRoomWithCodeResponse.IsBound())) return;
+
+			FGrpcLobbyJoinRoomWithCodeResponse response;
+			if (_RpcResponse) {
+				GRPC_TO_TURBOLINK(_RpcResponse, &response);
+			}
+			client->OnJoinRoomWithCodeResponse.Broadcast(Handle, _Result, response);
 		}
 	);
 }

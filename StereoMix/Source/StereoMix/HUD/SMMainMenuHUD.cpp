@@ -4,7 +4,7 @@
 #include "SMMainMenuHUD.h"
 
 #include "Connection/SMClientConnectionSubsystem.h"
-#include "UI/ViewModel/SMViewModel_MainMenu.h"
+#include "UI/ViewModel/SMMainMenuViewModel.h"
 
 ASMMainMenuHUD::ASMMainMenuHUD()
 {
@@ -16,7 +16,7 @@ void ASMMainMenuHUD::BeginPlay()
 
 	if (MainWidget)
 	{
-		if (auto ViewModel = GetViewModelFromWidget<USMViewModel_MainMenu>(MainWidget, TEXT("SMViewModel_MainMenu")))
+		if (auto ViewModel = GetViewModelFromWidget<USMMainMenuViewModel>(MainWidget, TEXT("SMViewModel_MainMenu")))
 		{
 			MainMenuViewModel = ViewModel;
 		}

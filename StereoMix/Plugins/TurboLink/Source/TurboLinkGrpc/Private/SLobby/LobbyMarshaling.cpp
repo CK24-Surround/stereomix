@@ -32,7 +32,7 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyRoomConfig* in, ::lobby::RoomConfig* out)
 void GRPC_TO_TURBOLINK(const ::lobby::Room* in, FGrpcLobbyRoom* out)
 {
     out->RoomId=StringCast<TCHAR>((const UTF8CHAR*)(in->room_id().c_str())).Get();
-    out->ShortRoomId=StringCast<TCHAR>((const UTF8CHAR*)(in->short_room_id().c_str())).Get();
+    out->RoomCode=StringCast<TCHAR>((const UTF8CHAR*)(in->room_code().c_str())).Get();
     out->OwnerId=StringCast<TCHAR>((const UTF8CHAR*)(in->owner_id().c_str())).Get();
     GRPC_TO_TURBOLINK(&(in->config()), &(out->Config));
     out->State=StaticCast<EGrpcLobbyRoomState>(in->state());
@@ -44,7 +44,7 @@ void GRPC_TO_TURBOLINK(const ::lobby::Room* in, FGrpcLobbyRoom* out)
 void TURBOLINK_TO_GRPC(const FGrpcLobbyRoom* in, ::lobby::Room* out)
 {
     out->set_room_id((const char*)StringCast<UTF8CHAR>(*(in->RoomId)).Get());
-    out->set_short_room_id((const char*)StringCast<UTF8CHAR>(*(in->ShortRoomId)).Get());
+    out->set_room_code((const char*)StringCast<UTF8CHAR>(*(in->RoomCode)).Get());
     out->set_owner_id((const char*)StringCast<UTF8CHAR>(*(in->OwnerId)).Get());
     TURBOLINK_TO_GRPC(&(in->Config), out->mutable_config());
     out->set_state(::lobby::RoomState(static_cast<uint8>(in->State)));
@@ -69,43 +69,41 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyCreateRoomRequest* in, ::lobby::CreateRoo
 
 void GRPC_TO_TURBOLINK(const ::lobby::CreateRoomResponse* in, FGrpcLobbyCreateRoomResponse* out)
 {
-    out->DeployStatus=StaticCast<EGrpcLobbyRoomDeploymentStatus>(in->deploy_status());
     GRPC_TO_TURBOLINK(&(in->connection()), &(out->Connection));
 }
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyCreateRoomResponse* in, ::lobby::CreateRoomResponse* out)
 {
-    out->set_deploy_status(::lobby::RoomDeploymentStatus(static_cast<uint8>(in->DeployStatus)));
+    TURBOLINK_TO_GRPC(&(in->Connection), out->mutable_connection());
+}
+
+void GRPC_TO_TURBOLINK(const ::lobby::QuickMatchRequest* in, FGrpcLobbyQuickMatchRequest* out)
+{
+}
+
+void TURBOLINK_TO_GRPC(const FGrpcLobbyQuickMatchRequest* in, ::lobby::QuickMatchRequest* out)
+{
+}
+
+void GRPC_TO_TURBOLINK(const ::lobby::QuickMatchResponse* in, FGrpcLobbyQuickMatchResponse* out)
+{
+    GRPC_TO_TURBOLINK(&(in->connection()), &(out->Connection));
+}
+
+void TURBOLINK_TO_GRPC(const FGrpcLobbyQuickMatchResponse* in, ::lobby::QuickMatchResponse* out)
+{
     TURBOLINK_TO_GRPC(&(in->Connection), out->mutable_connection());
 }
 
 void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomRequest* in, FGrpcLobbyJoinRoomRequest* out)
 {
-    switch(in->id_case())
-    {
-    case ::lobby::JoinRoomRequest::kRoomId:
-        out->Id.RoomId=StringCast<TCHAR>((const UTF8CHAR*)(in->room_id().c_str())).Get();
-        out->Id.IdCase = EGrpcLobbyJoinRoomRequestId::RoomId;
-        break;
-    case ::lobby::JoinRoomRequest::kShortRoomId:
-        out->Id.ShortRoomId=StringCast<TCHAR>((const UTF8CHAR*)(in->short_room_id().c_str())).Get();
-        out->Id.IdCase = EGrpcLobbyJoinRoomRequestId::ShortRoomId;
-        break;
-    }
+    out->RoomId=StringCast<TCHAR>((const UTF8CHAR*)(in->room_id().c_str())).Get();
     out->Password=StringCast<TCHAR>((const UTF8CHAR*)(in->password().c_str())).Get();
 }
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomRequest* in, ::lobby::JoinRoomRequest* out)
 {
-    switch (in->Id.IdCase)
-    {
-    case EGrpcLobbyJoinRoomRequestId::RoomId:
-        out->set_room_id((const char*)StringCast<UTF8CHAR>(*(in->Id.RoomId)).Get());
-        break;
-    case EGrpcLobbyJoinRoomRequestId::ShortRoomId:
-        out->set_short_room_id((const char*)StringCast<UTF8CHAR>(*(in->Id.ShortRoomId)).Get());
-        break;
-    }
+    out->set_room_id((const char*)StringCast<UTF8CHAR>(*(in->RoomId)).Get());
     out->set_password((const char*)StringCast<UTF8CHAR>(*(in->Password)).Get());
 }
 
@@ -115,6 +113,26 @@ void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomResponse* in, FGrpcLobbyJoinRoomRe
 }
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomResponse* in, ::lobby::JoinRoomResponse* out)
+{
+    TURBOLINK_TO_GRPC(&(in->Connection), out->mutable_connection());
+}
+
+void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomWithCodeRequest* in, FGrpcLobbyJoinRoomWithCodeRequest* out)
+{
+    out->RoomCode=StringCast<TCHAR>((const UTF8CHAR*)(in->room_code().c_str())).Get();
+}
+
+void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomWithCodeRequest* in, ::lobby::JoinRoomWithCodeRequest* out)
+{
+    out->set_room_code((const char*)StringCast<UTF8CHAR>(*(in->RoomCode)).Get());
+}
+
+void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomWithCodeResponse* in, FGrpcLobbyJoinRoomWithCodeResponse* out)
+{
+    GRPC_TO_TURBOLINK(&(in->connection()), &(out->Connection));
+}
+
+void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomWithCodeResponse* in, ::lobby::JoinRoomWithCodeResponse* out)
 {
     TURBOLINK_TO_GRPC(&(in->Connection), out->mutable_connection());
 }

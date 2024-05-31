@@ -15,6 +15,12 @@ class STEREOMIX_API USMViewModel : public UMVVMViewModelBase
 	GENERATED_BODY()
 
 public:
+	UPROPERTY()
+	TWeakObjectPtr<AGameStateBase> OwningGameState;
+
+	UPROPERTY()
+	TWeakObjectPtr<APlayerController> OwningPlayerController;
+	
 	USMViewModel();
 
 	virtual void InitializeViewModel(UWorld* InWorld);

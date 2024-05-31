@@ -19,11 +19,23 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyCreateRoomRequest* in, ::lobby::CreateRoo
 void GRPC_TO_TURBOLINK(const ::lobby::CreateRoomResponse* in, FGrpcLobbyCreateRoomResponse* out);
 void TURBOLINK_TO_GRPC(const FGrpcLobbyCreateRoomResponse* in, ::lobby::CreateRoomResponse* out);
 
+void GRPC_TO_TURBOLINK(const ::lobby::QuickMatchRequest* in, FGrpcLobbyQuickMatchRequest* out);
+void TURBOLINK_TO_GRPC(const FGrpcLobbyQuickMatchRequest* in, ::lobby::QuickMatchRequest* out);
+
+void GRPC_TO_TURBOLINK(const ::lobby::QuickMatchResponse* in, FGrpcLobbyQuickMatchResponse* out);
+void TURBOLINK_TO_GRPC(const FGrpcLobbyQuickMatchResponse* in, ::lobby::QuickMatchResponse* out);
+
 void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomRequest* in, FGrpcLobbyJoinRoomRequest* out);
 void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomRequest* in, ::lobby::JoinRoomRequest* out);
 
 void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomResponse* in, FGrpcLobbyJoinRoomResponse* out);
 void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomResponse* in, ::lobby::JoinRoomResponse* out);
+
+void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomWithCodeRequest* in, FGrpcLobbyJoinRoomWithCodeRequest* out);
+void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomWithCodeRequest* in, ::lobby::JoinRoomWithCodeRequest* out);
+
+void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomWithCodeResponse* in, FGrpcLobbyJoinRoomWithCodeResponse* out);
+void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomWithCodeResponse* in, ::lobby::JoinRoomWithCodeResponse* out);
 
 void GRPC_TO_TURBOLINK(const ::lobby::GetRoomListRequest* in, FGrpcLobbyGetRoomListRequest* out);
 void TURBOLINK_TO_GRPC(const FGrpcLobbyGetRoomListRequest* in, ::lobby::GetRoomListRequest* out);
@@ -64,8 +76,10 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyDeleteRoomResponse* in, ::lobby::DeleteRo
 void GRPC_TO_TURBOLINK(const ::lobby::ListenRoomUpdatesRequest* in, FGrpcLobbyListenRoomUpdatesRequest* out);
 void TURBOLINK_TO_GRPC(const FGrpcLobbyListenRoomUpdatesRequest* in, ::lobby::ListenRoomUpdatesRequest* out);
 
-typedef grpc::ClientAsyncReader<::lobby::CreateRoomResponse> LobbyService_CreateRoom_ReaderWriter;
+typedef grpc::ClientAsyncResponseReader<::lobby::CreateRoomResponse> LobbyService_CreateRoom_ReaderWriter;
+typedef grpc::ClientAsyncResponseReader<::lobby::QuickMatchResponse> LobbyService_QuickMatch_ReaderWriter;
 typedef grpc::ClientAsyncResponseReader<::lobby::JoinRoomResponse> LobbyService_JoinRoom_ReaderWriter;
+typedef grpc::ClientAsyncResponseReader<::lobby::JoinRoomWithCodeResponse> LobbyService_JoinRoomWithCode_ReaderWriter;
 typedef grpc::ClientAsyncResponseReader<::lobby::GetRoomListResponse> LobbyService_GetRoomList_ReaderWriter;
 typedef grpc::ClientAsyncResponseReader<::lobby::UpdateRoomStateResponse> LobbyService_UpdateRoomState_ReaderWriter;
 typedef grpc::ClientAsyncResponseReader<::lobby::UpdateRoomConfigResponse> LobbyService_UpdateRoomConfig_ReaderWriter;

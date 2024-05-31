@@ -5,7 +5,7 @@
 
 #include "StereoMix.h"
 #include "Games/SMCharacterSelectState.h"
-#include "UI/ViewModel/SMViewModel_CharacterSelect.h"
+#include "UI/ViewModel/SMCharacterSelectionViewModel.h"
 
 ASMCharacterSelectHUD::ASMCharacterSelectHUD()
 {
@@ -17,7 +17,7 @@ void ASMCharacterSelectHUD::BeginPlay()
 
 	if (MainWidget)
 	{
-		if (USMViewModel_CharacterSelect* ViewModel = GetViewModelFromWidget<USMViewModel_CharacterSelect>(MainWidget, TEXT("SMViewModel_CharacterSelect")))
+		if (USMCharacterSelectionViewModel* ViewModel = GetViewModelFromWidget<USMCharacterSelectionViewModel>(MainWidget, TEXT("SMViewModel_CharacterSelect")))
 		{
 			CharacterSelectViewModel = ViewModel;
 		}

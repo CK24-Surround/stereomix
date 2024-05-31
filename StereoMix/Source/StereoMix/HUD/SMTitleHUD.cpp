@@ -7,8 +7,8 @@
 #include "Blueprint/UserWidget.h"
 #include "Connection/SMClientConnectionSubsystem.h"
 #include "Kismet/GameplayStatics.h"
-#include "UI/ViewModel/SMViewModel_GuestLogin.h"
-#include "UI/ViewModel/SMViewModel_Title.h"
+#include "UI/ViewModel/SMGuestLoginViewModel.h"
+#include "UI/ViewModel/SMTitleViewModel.h"
 
 ASMTitleHUD::ASMTitleHUD()
 {
@@ -20,17 +20,7 @@ void ASMTitleHUD::BeginPlay()
 
 	if (MainWidget)
 	{
-		if (auto ViewModel = GetViewModelFromWidget<USMViewModel_Title>(MainWidget, TEXT("SMViewModel_Title")))
-		{
-			TitleViewModel = ViewModel;
-		}
-	}
-
-	if (const auto ConnectionSubsystem = GetGameInstance()->GetSubsystem<USMClientConnectionSubsystem>())
-	{
-		ConnectionSubsystem->AuthServiceStateChangedEvent.AddUniqueDynamic(this, &ASMTitleHUD::OnAuthServiceStateChanged);
-		ConnectionSubsystem->LoginEvent.AddUniqueDynamic(this, &ASMTitleHUD::OnLogin);
-		ConnectionSubsystem->ConnectAuthService();
+		UMVVMView* MainWidgetView = UMVVMSubsystem::GetViewFromUserWidget(MainWidget);
 	}
 }
 
@@ -51,7 +41,7 @@ void ASMTitleHUD::CreateGuestLoginWidget()
 	GuestLoginWidget = AddWidgetToViewport(GuestLoginWidgetClass);
 	if (GuestLoginWidget)
 	{
-		if (auto View = GetViewModelFromWidget<USMViewModel_GuestLogin>(GuestLoginWidget, TEXT("SMViewModel_GuestLogin")))
+		if (auto View = GetViewModelFromWidget<USMGuestLoginViewModel>(GuestLoginWidget, TEXT("SMViewModel_GuestLogin")))
 		{
 			GuestLoginViewModel = View;
 			GuestLoginViewModel->OnSubmit.BindUObject(this, &ASMTitleHUD::OnGuestLoginSubmit);

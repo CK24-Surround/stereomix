@@ -6,7 +6,7 @@
 #include "SMBaseHUD.h"
 #include "Games/SMRoomState.h"
 #include "Player/SMRoomPlayerState.h"
-#include "UI/ViewModel/SMViewModel_Room.h"
+#include "UI/ViewModel/SMRoomViewModel.h"
 #include "SMRoomHUD.generated.h"
 
 /**
@@ -30,5 +30,5 @@ public:
 
 protected:
 	UPROPERTY(Transient)
-	TObjectPtr<USMViewModel_Room> RoomViewModel;
+	TObjectPtr<USMRoomViewModel> RoomViewModel;
 };

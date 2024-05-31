@@ -36,6 +36,28 @@ namespace _pb = ::PROTOBUF_NAMESPACE_ID;
 namespace _pbi = ::PROTOBUF_NAMESPACE_ID::internal;
 namespace auth {
 template <typename>
+PROTOBUF_CONSTEXPR UserAccount::UserAccount(
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.user_id_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.user_name_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_._cached_size_)*/{}} {}
+struct UserAccountDefaultTypeInternal {
+  PROTOBUF_CONSTEXPR UserAccountDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
+  ~UserAccountDefaultTypeInternal() {}
+  union {
+    UserAccount _instance;
+  };
+};
+
+PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
+    PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 UserAccountDefaultTypeInternal _UserAccount_default_instance_;
+template <typename>
 PROTOBUF_CONSTEXPR GuestLoginRequest::GuestLoginRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_.user_name_)*/ {
@@ -56,11 +78,17 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 template <typename>
 PROTOBUF_CONSTEXPR LoginResponse::LoginResponse(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.token_)*/ {
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.access_token_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+  , /*decltype(_impl_.refresh_token_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.user_account_)*/nullptr} {}
 struct LoginResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR LoginResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~LoginResponseDefaultTypeInternal() {}
@@ -74,7 +102,7 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 template <typename>
 PROTOBUF_CONSTEXPR ValidateUserTokenRequest::ValidateUserTokenRequest(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.token_)*/ {
+    /*decltype(_impl_.access_token_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
@@ -92,17 +120,11 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 template <typename>
 PROTOBUF_CONSTEXPR ValidateUserTokenResponse::ValidateUserTokenResponse(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.user_id_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
-  , /*decltype(_impl_.user_name_)*/ {
-    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
-  }
-
+    /*decltype(_impl_._has_bits_)*/{}
+  , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.user_account_)*/nullptr
   , /*decltype(_impl_.is_valid_)*/ false
-
-  , /*decltype(_impl_._cached_size_)*/{}} {}
+} {}
 struct ValidateUserTokenResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR ValidateUserTokenResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~ValidateUserTokenResponseDefaultTypeInternal() {}
@@ -114,13 +136,23 @@ struct ValidateUserTokenResponseDefaultTypeInternal {
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 ValidateUserTokenResponseDefaultTypeInternal _ValidateUserTokenResponse_default_instance_;
 }  // namespace auth
-static ::_pb::Metadata file_level_metadata_auth_2eproto[4];
+static ::_pb::Metadata file_level_metadata_auth_2eproto[5];
 static constexpr const ::_pb::EnumDescriptor**
     file_level_enum_descriptors_auth_2eproto = nullptr;
 static constexpr const ::_pb::ServiceDescriptor**
     file_level_service_descriptors_auth_2eproto = nullptr;
 const ::uint32_t TableStruct_auth_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     protodesc_cold) = {
+    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::auth::UserAccount, _internal_metadata_),
+    ~0u,  // no _extensions_
+    ~0u,  // no _oneof_case_
+    ~0u,  // no _weak_field_map_
+    ~0u,  // no _inlined_string_donated_
+    ~0u,  // no _split_
+    ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::auth::UserAccount, _impl_.user_id_),
+    PROTOBUF_FIELD_OFFSET(::auth::UserAccount, _impl_.user_name_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::auth::GuestLoginRequest, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -130,7 +162,7 @@ const ::uint32_t TableStruct_auth_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
     PROTOBUF_FIELD_OFFSET(::auth::GuestLoginRequest, _impl_.user_name_),
-    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::auth::LoginResponse, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::auth::LoginResponse, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
@@ -138,7 +170,12 @@ const ::uint32_t TableStruct_auth_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::auth::LoginResponse, _impl_.token_),
+    PROTOBUF_FIELD_OFFSET(::auth::LoginResponse, _impl_.access_token_),
+    PROTOBUF_FIELD_OFFSET(::auth::LoginResponse, _impl_.refresh_token_),
+    PROTOBUF_FIELD_OFFSET(::auth::LoginResponse, _impl_.user_account_),
+    ~0u,
+    ~0u,
+    0,
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenRequest, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -147,8 +184,8 @@ const ::uint32_t TableStruct_auth_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenRequest, _impl_.token_),
-    ~0u,  // no _has_bits_
+    PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenRequest, _impl_.access_token_),
+    PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenResponse, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenResponse, _internal_metadata_),
     ~0u,  // no _extensions_
     ~0u,  // no _oneof_case_
@@ -157,48 +194,54 @@ const ::uint32_t TableStruct_auth_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
     PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenResponse, _impl_.is_valid_),
-    PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenResponse, _impl_.user_id_),
-    PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenResponse, _impl_.user_name_),
+    PROTOBUF_FIELD_OFFSET(::auth::ValidateUserTokenResponse, _impl_.user_account_),
+    ~0u,
+    0,
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-        { 0, -1, -1, sizeof(::auth::GuestLoginRequest)},
-        { 9, -1, -1, sizeof(::auth::LoginResponse)},
-        { 18, -1, -1, sizeof(::auth::ValidateUserTokenRequest)},
-        { 27, -1, -1, sizeof(::auth::ValidateUserTokenResponse)},
+        { 0, -1, -1, sizeof(::auth::UserAccount)},
+        { 10, -1, -1, sizeof(::auth::GuestLoginRequest)},
+        { 19, 30, -1, sizeof(::auth::LoginResponse)},
+        { 33, -1, -1, sizeof(::auth::ValidateUserTokenRequest)},
+        { 42, 52, -1, sizeof(::auth::ValidateUserTokenResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
+    &::auth::_UserAccount_default_instance_._instance,
     &::auth::_GuestLoginRequest_default_instance_._instance,
     &::auth::_LoginResponse_default_instance_._instance,
     &::auth::_ValidateUserTokenRequest_default_instance_._instance,
     &::auth::_ValidateUserTokenResponse_default_instance_._instance,
 };
 const char descriptor_table_protodef_auth_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
-    "\n\nauth.proto\022\004auth\"&\n\021GuestLoginRequest\022"
-    "\021\n\tuser_name\030\001 \001(\t\"\036\n\rLoginResponse\022\r\n\005t"
-    "oken\030\002 \001(\t\")\n\030ValidateUserTokenRequest\022\r"
-    "\n\005token\030\001 \001(\t\"Q\n\031ValidateUserTokenRespon"
-    "se\022\020\n\010is_valid\030\001 \001(\010\022\017\n\007user_id\030\002 \001(\t\022\021\n"
-    "\tuser_name\030\003 \001(\t2\237\001\n\013AuthService\022:\n\nGues"
-    "tLogin\022\027.auth.GuestLoginRequest\032\023.auth.L"
-    "oginResponse\022T\n\021ValidateUserToken\022\036.auth"
-    ".ValidateUserTokenRequest\032\037.auth.Validat"
-    "eUserTokenResponseB\024\370\001\001\252\002\016StereoMix.Auth"
-    "b\006proto3"
+    "\n\nauth.proto\022\004auth\"1\n\013UserAccount\022\017\n\007use"
+    "r_id\030\001 \001(\t\022\021\n\tuser_name\030\002 \001(\t\"&\n\021GuestLo"
+    "ginRequest\022\021\n\tuser_name\030\001 \001(\t\"e\n\rLoginRe"
+    "sponse\022\024\n\014access_token\030\001 \001(\t\022\025\n\rrefresh_"
+    "token\030\002 \001(\t\022\'\n\014user_account\030\003 \001(\0132\021.auth"
+    ".UserAccount\"0\n\030ValidateUserTokenRequest"
+    "\022\024\n\014access_token\030\001 \001(\t\"V\n\031ValidateUserTo"
+    "kenResponse\022\020\n\010is_valid\030\001 \001(\010\022\'\n\014user_ac"
+    "count\030\002 \001(\0132\021.auth.UserAccount2\237\001\n\013AuthS"
+    "ervice\022:\n\nGuestLogin\022\027.auth.GuestLoginRe"
+    "quest\032\023.auth.LoginResponse\022T\n\021ValidateUs"
+    "erToken\022\036.auth.ValidateUserTokenRequest\032"
+    "\037.auth.ValidateUserTokenResponseB\024\370\001\001\252\002\016"
+    "StereoMix.Authb\006proto3"
 };
 static ::absl::once_flag descriptor_table_auth_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_auth_2eproto = {
     false,
     false,
-    408,
+    542,
     descriptor_table_protodef_auth_2eproto,
     "auth.proto",
     &descriptor_table_auth_2eproto_once,
     nullptr,
     0,
-    4,
+    5,
     schemas,
     file_default_instances,
     TableStruct_auth_2eproto::offsets,
@@ -225,6 +268,249 @@ PROTOBUF_ATTRIBUTE_WEAK const ::_pbi::DescriptorTable* descriptor_table_auth_2ep
 PROTOBUF_ATTRIBUTE_INIT_PRIORITY2
 static ::_pbi::AddDescriptorsRunner dynamic_init_dummy_auth_2eproto(&descriptor_table_auth_2eproto);
 namespace auth {
+// ===================================================================
+
+class UserAccount::_Internal {
+ public:
+};
+
+UserAccount::UserAccount(::PROTOBUF_NAMESPACE_ID::Arena* arena)
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
+  // @@protoc_insertion_point(arena_constructor:auth.UserAccount)
+}
+UserAccount::UserAccount(const UserAccount& from)
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  UserAccount* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.user_id_) {}
+
+    , decltype(_impl_.user_name_) {}
+
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.user_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.user_id_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_user_id().empty()) {
+    _this->_impl_.user_id_.Set(from._internal_user_id(), _this->GetArenaForAllocation());
+  }
+  _impl_.user_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.user_name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_user_name().empty()) {
+    _this->_impl_.user_name_.Set(from._internal_user_name(), _this->GetArenaForAllocation());
+  }
+  // @@protoc_insertion_point(copy_constructor:auth.UserAccount)
+}
+
+inline void UserAccount::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.user_id_) {}
+
+    , decltype(_impl_.user_name_) {}
+
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.user_id_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.user_id_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.user_name_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.user_name_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
+
+UserAccount::~UserAccount() {
+  // @@protoc_insertion_point(destructor:auth.UserAccount)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
+
+inline void UserAccount::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.user_id_.Destroy();
+  _impl_.user_name_.Destroy();
+}
+
+void UserAccount::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void UserAccount::Clear() {
+// @@protoc_insertion_point(message_clear_start:auth.UserAccount)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.user_id_.ClearToEmpty();
+  _impl_.user_name_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* UserAccount::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string user_id = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_user_id();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "auth.UserAccount.user_id"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // string user_name = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_user_name();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "auth.UserAccount.user_name"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* UserAccount::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:auth.UserAccount)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string user_id = 1;
+  if (!this->_internal_user_id().empty()) {
+    const std::string& _s = this->_internal_user_id();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.UserAccount.user_id");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // string user_name = 2;
+  if (!this->_internal_user_name().empty()) {
+    const std::string& _s = this->_internal_user_name();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.UserAccount.user_name");
+    target = stream->WriteStringMaybeAliased(2, _s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:auth.UserAccount)
+  return target;
+}
+
+::size_t UserAccount::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:auth.UserAccount)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string user_id = 1;
+  if (!this->_internal_user_id().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_user_id());
+  }
+
+  // string user_name = 2;
+  if (!this->_internal_user_name().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_user_name());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
+
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData UserAccount::_class_data_ = {
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    UserAccount::MergeImpl
+};
+const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*UserAccount::GetClassData() const { return &_class_data_; }
+
+
+void UserAccount::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<UserAccount*>(&to_msg);
+  auto& from = static_cast<const UserAccount&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:auth.UserAccount)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  if (!from._internal_user_id().empty()) {
+    _this->_internal_set_user_id(from._internal_user_id());
+  }
+  if (!from._internal_user_name().empty()) {
+    _this->_internal_set_user_name(from._internal_user_name());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
+
+void UserAccount::CopyFrom(const UserAccount& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:auth.UserAccount)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool UserAccount::IsInitialized() const {
+  return true;
+}
+
+void UserAccount::InternalSwap(UserAccount* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_id_, lhs_arena,
+                                       &other->_impl_.user_id_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_name_, lhs_arena,
+                                       &other->_impl_.user_name_, rhs_arena);
+}
+
+::PROTOBUF_NAMESPACE_ID::Metadata UserAccount::GetMetadata() const {
+  return ::_pbi::AssignDescriptors(
+      &descriptor_table_auth_2eproto_getter, &descriptor_table_auth_2eproto_once,
+      file_level_metadata_auth_2eproto[0]);
+}
 // ===================================================================
 
 class GuestLoginRequest::_Internal {
@@ -419,14 +705,25 @@ void GuestLoginRequest::InternalSwap(GuestLoginRequest* other) {
 ::PROTOBUF_NAMESPACE_ID::Metadata GuestLoginRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_auth_2eproto_getter, &descriptor_table_auth_2eproto_once,
-      file_level_metadata_auth_2eproto[0]);
+      file_level_metadata_auth_2eproto[1]);
 }
 // ===================================================================
 
 class LoginResponse::_Internal {
  public:
+  using HasBits = decltype(std::declval<LoginResponse>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(LoginResponse, _impl_._has_bits_);
+  static const ::auth::UserAccount& user_account(const LoginResponse* msg);
+  static void set_has_user_account(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
 };
 
+const ::auth::UserAccount&
+LoginResponse::_Internal::user_account(const LoginResponse* msg) {
+  return *msg->_impl_.user_account_;
+}
 LoginResponse::LoginResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor(arena);
@@ -436,17 +733,31 @@ LoginResponse::LoginResponse(const LoginResponse& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   LoginResponse* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.token_) {}
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.access_token_) {}
 
-    , /*decltype(_impl_._cached_size_)*/{}};
+    , decltype(_impl_.refresh_token_) {}
+
+    , decltype(_impl_.user_account_){nullptr}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.token_.InitDefault();
+  _impl_.access_token_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.token_.Set("", GetArenaForAllocation());
+        _impl_.access_token_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_token().empty()) {
-    _this->_impl_.token_.Set(from._internal_token(), _this->GetArenaForAllocation());
+  if (!from._internal_access_token().empty()) {
+    _this->_impl_.access_token_.Set(from._internal_access_token(), _this->GetArenaForAllocation());
+  }
+  _impl_.refresh_token_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.refresh_token_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_refresh_token().empty()) {
+    _this->_impl_.refresh_token_.Set(from._internal_refresh_token(), _this->GetArenaForAllocation());
+  }
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.user_account_ = new ::auth::UserAccount(*from._impl_.user_account_);
   }
   // @@protoc_insertion_point(copy_constructor:auth.LoginResponse)
 }
@@ -454,13 +765,21 @@ LoginResponse::LoginResponse(const LoginResponse& from)
 inline void LoginResponse::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.token_) {}
-
+      decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.access_token_) {}
+
+    , decltype(_impl_.refresh_token_) {}
+
+    , decltype(_impl_.user_account_){nullptr}
   };
-  _impl_.token_.InitDefault();
+  _impl_.access_token_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.token_.Set("", GetArenaForAllocation());
+        _impl_.access_token_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.refresh_token_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.refresh_token_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -475,7 +794,9 @@ LoginResponse::~LoginResponse() {
 
 inline void LoginResponse::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.token_.Destroy();
+  _impl_.access_token_.Destroy();
+  _impl_.refresh_token_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.user_account_;
 }
 
 void LoginResponse::SetCachedSize(int size) const {
@@ -488,23 +809,51 @@ void LoginResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.token_.ClearToEmpty();
+  _impl_.access_token_.ClearToEmpty();
+  _impl_.refresh_token_.ClearToEmpty();
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    ABSL_DCHECK(_impl_.user_account_ != nullptr);
+    _impl_.user_account_->Clear();
+  }
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* LoginResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string token = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_token();
+      // string access_token = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_access_token();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "auth.LoginResponse.token"));
+          CHK_(::_pbi::VerifyUTF8(str, "auth.LoginResponse.access_token"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // string refresh_token = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
+          auto str = _internal_mutable_refresh_token();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "auth.LoginResponse.refresh_token"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .auth.UserAccount user_account = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
+          ptr = ctx->ParseMessage(_internal_mutable_user_account(), ptr);
+          CHK_(ptr);
         } else {
           goto handle_unusual;
         }
@@ -525,6 +874,7 @@ const char* LoginResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext*
     CHK_(ptr != nullptr);
   }  // while
 message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -538,12 +888,28 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string token = 2;
-  if (!this->_internal_token().empty()) {
-    const std::string& _s = this->_internal_token();
+  // string access_token = 1;
+  if (!this->_internal_access_token().empty()) {
+    const std::string& _s = this->_internal_access_token();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.LoginResponse.token");
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.LoginResponse.access_token");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // string refresh_token = 2;
+  if (!this->_internal_refresh_token().empty()) {
+    const std::string& _s = this->_internal_refresh_token();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.LoginResponse.refresh_token");
     target = stream->WriteStringMaybeAliased(2, _s, target);
+  }
+
+  cached_has_bits = _impl_._has_bits_[0];
+  // .auth.UserAccount user_account = 3;
+  if (cached_has_bits & 0x00000001u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(3, _Internal::user_account(this),
+        _Internal::user_account(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -562,10 +928,24 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string token = 2;
-  if (!this->_internal_token().empty()) {
+  // string access_token = 1;
+  if (!this->_internal_access_token().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_token());
+                                    this->_internal_access_token());
+  }
+
+  // string refresh_token = 2;
+  if (!this->_internal_refresh_token().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_refresh_token());
+  }
+
+  // .auth.UserAccount user_account = 3;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.user_account_);
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -586,8 +966,15 @@ void LoginResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_token().empty()) {
-    _this->_internal_set_token(from._internal_token());
+  if (!from._internal_access_token().empty()) {
+    _this->_internal_set_access_token(from._internal_access_token());
+  }
+  if (!from._internal_refresh_token().empty()) {
+    _this->_internal_set_refresh_token(from._internal_refresh_token());
+  }
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_mutable_user_account()->::auth::UserAccount::MergeFrom(
+        from._internal_user_account());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -608,14 +995,18 @@ void LoginResponse::InternalSwap(LoginResponse* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.token_, lhs_arena,
-                                       &other->_impl_.token_, rhs_arena);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.access_token_, lhs_arena,
+                                       &other->_impl_.access_token_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.refresh_token_, lhs_arena,
+                                       &other->_impl_.refresh_token_, rhs_arena);
+  swap(_impl_.user_account_, other->_impl_.user_account_);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata LoginResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_auth_2eproto_getter, &descriptor_table_auth_2eproto_once,
-      file_level_metadata_auth_2eproto[1]);
+      file_level_metadata_auth_2eproto[2]);
 }
 // ===================================================================
 
@@ -632,17 +1023,17 @@ ValidateUserTokenRequest::ValidateUserTokenRequest(const ValidateUserTokenReques
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ValidateUserTokenRequest* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.token_) {}
+      decltype(_impl_.access_token_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.token_.InitDefault();
+  _impl_.access_token_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.token_.Set("", GetArenaForAllocation());
+        _impl_.access_token_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_token().empty()) {
-    _this->_impl_.token_.Set(from._internal_token(), _this->GetArenaForAllocation());
+  if (!from._internal_access_token().empty()) {
+    _this->_impl_.access_token_.Set(from._internal_access_token(), _this->GetArenaForAllocation());
   }
   // @@protoc_insertion_point(copy_constructor:auth.ValidateUserTokenRequest)
 }
@@ -650,13 +1041,13 @@ ValidateUserTokenRequest::ValidateUserTokenRequest(const ValidateUserTokenReques
 inline void ValidateUserTokenRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.token_) {}
+      decltype(_impl_.access_token_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.token_.InitDefault();
+  _impl_.access_token_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.token_.Set("", GetArenaForAllocation());
+        _impl_.access_token_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
@@ -671,7 +1062,7 @@ ValidateUserTokenRequest::~ValidateUserTokenRequest() {
 
 inline void ValidateUserTokenRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.token_.Destroy();
+  _impl_.access_token_.Destroy();
 }
 
 void ValidateUserTokenRequest::SetCachedSize(int size) const {
@@ -684,7 +1075,7 @@ void ValidateUserTokenRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.token_.ClearToEmpty();
+  _impl_.access_token_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
@@ -694,13 +1085,13 @@ const char* ValidateUserTokenRequest::_InternalParse(const char* ptr, ::_pbi::Pa
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string token = 1;
+      // string access_token = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
-          auto str = _internal_mutable_token();
+          auto str = _internal_mutable_access_token();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "auth.ValidateUserTokenRequest.token"));
+          CHK_(::_pbi::VerifyUTF8(str, "auth.ValidateUserTokenRequest.access_token"));
         } else {
           goto handle_unusual;
         }
@@ -734,11 +1125,11 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string token = 1;
-  if (!this->_internal_token().empty()) {
-    const std::string& _s = this->_internal_token();
+  // string access_token = 1;
+  if (!this->_internal_access_token().empty()) {
+    const std::string& _s = this->_internal_access_token();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.ValidateUserTokenRequest.token");
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.ValidateUserTokenRequest.access_token");
     target = stream->WriteStringMaybeAliased(1, _s, target);
   }
 
@@ -758,10 +1149,10 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string token = 1;
-  if (!this->_internal_token().empty()) {
+  // string access_token = 1;
+  if (!this->_internal_access_token().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_token());
+                                    this->_internal_access_token());
   }
 
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
@@ -782,8 +1173,8 @@ void ValidateUserTokenRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_ms
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_token().empty()) {
-    _this->_internal_set_token(from._internal_token());
+  if (!from._internal_access_token().empty()) {
+    _this->_internal_set_access_token(from._internal_access_token());
   }
   _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -804,21 +1195,32 @@ void ValidateUserTokenRequest::InternalSwap(ValidateUserTokenRequest* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.token_, lhs_arena,
-                                       &other->_impl_.token_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.access_token_, lhs_arena,
+                                       &other->_impl_.access_token_, rhs_arena);
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ValidateUserTokenRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_auth_2eproto_getter, &descriptor_table_auth_2eproto_once,
-      file_level_metadata_auth_2eproto[2]);
+      file_level_metadata_auth_2eproto[3]);
 }
 // ===================================================================
 
 class ValidateUserTokenResponse::_Internal {
  public:
+  using HasBits = decltype(std::declval<ValidateUserTokenResponse>()._impl_._has_bits_);
+  static constexpr ::int32_t kHasBitsOffset =
+    8 * PROTOBUF_FIELD_OFFSET(ValidateUserTokenResponse, _impl_._has_bits_);
+  static const ::auth::UserAccount& user_account(const ValidateUserTokenResponse* msg);
+  static void set_has_user_account(HasBits* has_bits) {
+    (*has_bits)[0] |= 1u;
+  }
 };
 
+const ::auth::UserAccount&
+ValidateUserTokenResponse::_Internal::user_account(const ValidateUserTokenResponse* msg) {
+  return *msg->_impl_.user_account_;
+}
 ValidateUserTokenResponse::ValidateUserTokenResponse(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
   SharedCtor(arena);
@@ -828,28 +1230,15 @@ ValidateUserTokenResponse::ValidateUserTokenResponse(const ValidateUserTokenResp
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   ValidateUserTokenResponse* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.user_id_) {}
-
-    , decltype(_impl_.user_name_) {}
-
+      decltype(_impl_._has_bits_){from._impl_._has_bits_}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.user_account_){nullptr}
     , decltype(_impl_.is_valid_) {}
-
-    , /*decltype(_impl_._cached_size_)*/{}};
+  };
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_user_id().empty()) {
-    _this->_impl_.user_id_.Set(from._internal_user_id(), _this->GetArenaForAllocation());
-  }
-  _impl_.user_name_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_name_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  if (!from._internal_user_name().empty()) {
-    _this->_impl_.user_name_.Set(from._internal_user_name(), _this->GetArenaForAllocation());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_impl_.user_account_ = new ::auth::UserAccount(*from._impl_.user_account_);
   }
   _this->_impl_.is_valid_ = from._impl_.is_valid_;
   // @@protoc_insertion_point(copy_constructor:auth.ValidateUserTokenResponse)
@@ -858,22 +1247,12 @@ ValidateUserTokenResponse::ValidateUserTokenResponse(const ValidateUserTokenResp
 inline void ValidateUserTokenResponse::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.user_id_) {}
-
-    , decltype(_impl_.user_name_) {}
-
+      decltype(_impl_._has_bits_){}
+    , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.user_account_){nullptr}
     , decltype(_impl_.is_valid_) { false }
 
-    , /*decltype(_impl_._cached_size_)*/{}
   };
-  _impl_.user_id_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_id_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  _impl_.user_name_.InitDefault();
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        _impl_.user_name_.Set("", GetArenaForAllocation());
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 ValidateUserTokenResponse::~ValidateUserTokenResponse() {
@@ -887,8 +1266,7 @@ ValidateUserTokenResponse::~ValidateUserTokenResponse() {
 
 inline void ValidateUserTokenResponse::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
-  _impl_.user_id_.Destroy();
-  _impl_.user_name_.Destroy();
+  if (this != internal_default_instance()) delete _impl_.user_account_;
 }
 
 void ValidateUserTokenResponse::SetCachedSize(int size) const {
@@ -901,14 +1279,19 @@ void ValidateUserTokenResponse::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  _impl_.user_id_.ClearToEmpty();
-  _impl_.user_name_.ClearToEmpty();
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    ABSL_DCHECK(_impl_.user_account_ != nullptr);
+    _impl_.user_account_->Clear();
+  }
   _impl_.is_valid_ = false;
+  _impl_._has_bits_.Clear();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
 
 const char* ValidateUserTokenResponse::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
 #define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  _Internal::HasBits has_bits{};
   while (!ctx->Done(&ptr)) {
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
@@ -922,24 +1305,11 @@ const char* ValidateUserTokenResponse::_InternalParse(const char* ptr, ::_pbi::P
           goto handle_unusual;
         }
         continue;
-      // string user_id = 2;
+      // .auth.UserAccount user_account = 2;
       case 2:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
-          auto str = _internal_mutable_user_id();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          ptr = ctx->ParseMessage(_internal_mutable_user_account(), ptr);
           CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "auth.ValidateUserTokenResponse.user_id"));
-        } else {
-          goto handle_unusual;
-        }
-        continue;
-      // string user_name = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
-          auto str = _internal_mutable_user_name();
-          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
-          CHK_(ptr);
-          CHK_(::_pbi::VerifyUTF8(str, "auth.ValidateUserTokenResponse.user_name"));
         } else {
           goto handle_unusual;
         }
@@ -960,6 +1330,7 @@ const char* ValidateUserTokenResponse::_InternalParse(const char* ptr, ::_pbi::P
     CHK_(ptr != nullptr);
   }  // while
 message_done:
+  _impl_._has_bits_.Or(has_bits);
   return ptr;
 failure:
   ptr = nullptr;
@@ -980,20 +1351,12 @@ failure:
         1, this->_internal_is_valid(), target);
   }
 
-  // string user_id = 2;
-  if (!this->_internal_user_id().empty()) {
-    const std::string& _s = this->_internal_user_id();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.ValidateUserTokenResponse.user_id");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
-
-  // string user_name = 3;
-  if (!this->_internal_user_name().empty()) {
-    const std::string& _s = this->_internal_user_name();
-    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "auth.ValidateUserTokenResponse.user_name");
-    target = stream->WriteStringMaybeAliased(3, _s, target);
+  cached_has_bits = _impl_._has_bits_[0];
+  // .auth.UserAccount user_account = 2;
+  if (cached_has_bits & 0x00000001u) {
+    target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
+      InternalWriteMessage(2, _Internal::user_account(this),
+        _Internal::user_account(this).GetCachedSize(), target, stream);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1012,16 +1375,12 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string user_id = 2;
-  if (!this->_internal_user_id().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_user_id());
-  }
-
-  // string user_name = 3;
-  if (!this->_internal_user_name().empty()) {
-    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
-                                    this->_internal_user_name());
+  // .auth.UserAccount user_account = 2;
+  cached_has_bits = _impl_._has_bits_[0];
+  if (cached_has_bits & 0x00000001u) {
+    total_size += 1 +
+      ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
+        *_impl_.user_account_);
   }
 
   // bool is_valid = 1;
@@ -1047,11 +1406,9 @@ void ValidateUserTokenResponse::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_m
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  if (!from._internal_user_id().empty()) {
-    _this->_internal_set_user_id(from._internal_user_id());
-  }
-  if (!from._internal_user_name().empty()) {
-    _this->_internal_set_user_name(from._internal_user_name());
+  if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
+    _this->_internal_mutable_user_account()->::auth::UserAccount::MergeFrom(
+        from._internal_user_account());
   }
   if (from._internal_is_valid() != 0) {
     _this->_internal_set_is_valid(from._internal_is_valid());
@@ -1072,25 +1429,28 @@ bool ValidateUserTokenResponse::IsInitialized() const {
 
 void ValidateUserTokenResponse::InternalSwap(ValidateUserTokenResponse* other) {
   using std::swap;
-  auto* lhs_arena = GetArenaForAllocation();
-  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_id_, lhs_arena,
-                                       &other->_impl_.user_id_, rhs_arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.user_name_, lhs_arena,
-                                       &other->_impl_.user_name_, rhs_arena);
-
-  swap(_impl_.is_valid_, other->_impl_.is_valid_);
+  swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::PROTOBUF_NAMESPACE_ID::internal::memswap<
+      PROTOBUF_FIELD_OFFSET(ValidateUserTokenResponse, _impl_.is_valid_)
+      + sizeof(ValidateUserTokenResponse::_impl_.is_valid_)
+      - PROTOBUF_FIELD_OFFSET(ValidateUserTokenResponse, _impl_.user_account_)>(
+          reinterpret_cast<char*>(&_impl_.user_account_),
+          reinterpret_cast<char*>(&other->_impl_.user_account_));
 }
 
 ::PROTOBUF_NAMESPACE_ID::Metadata ValidateUserTokenResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
       &descriptor_table_auth_2eproto_getter, &descriptor_table_auth_2eproto_once,
-      file_level_metadata_auth_2eproto[3]);
+      file_level_metadata_auth_2eproto[4]);
 }
 // @@protoc_insertion_point(namespace_scope)
 }  // namespace auth
 PROTOBUF_NAMESPACE_OPEN
+template<> PROTOBUF_NOINLINE ::auth::UserAccount*
+Arena::CreateMaybeMessage< ::auth::UserAccount >(Arena* arena) {
+  return Arena::CreateMessageInternal< ::auth::UserAccount >(arena);
+}
 template<> PROTOBUF_NOINLINE ::auth::GuestLoginRequest*
 Arena::CreateMaybeMessage< ::auth::GuestLoginRequest >(Arena* arena) {
   return Arena::CreateMessageInternal< ::auth::GuestLoginRequest >(arena);

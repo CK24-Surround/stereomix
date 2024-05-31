@@ -15,7 +15,7 @@ void ASMRoomHUD::BeginPlay()
 
 	if (MainWidget)
 	{
-		if (USMViewModel_Room* ViewModel = GetViewModelFromWidget<USMViewModel_Room>(MainWidget, TEXT("SMViewModel_Room")))
+		if (USMRoomViewModel* ViewModel = GetViewModelFromWidget<USMRoomViewModel>(MainWidget, TEXT("SMViewModel_Room")))
 		{
 			RoomViewModel = ViewModel;
 		}

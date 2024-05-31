@@ -59,7 +59,7 @@ void ULobbyService::Shutdown()
 	}
 }
 
-void ULobbyService::CallCreateRoom(const FGrpcLobbyCreateRoomRequest& Request, FCreateRoomResponseLambda ResponseLambda, FCreateRoomFinishLambda FinishLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+void ULobbyService::CallCreateRoom(const FGrpcLobbyCreateRoomRequest& Request, FCreateRoomResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
 {
 	if (InnerClient == nullptr)
 	{
@@ -68,11 +68,23 @@ void ULobbyService::CallCreateRoom(const FGrpcLobbyCreateRoomRequest& Request, F
 	ULobbyServiceCreateRoomLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceCreateRoomLambdaWrapper>();
 	lambdaWrapper->InnerClient = InnerClient;
 	lambdaWrapper->ResponseLambda = ResponseLambda;
-	lambdaWrapper->FinishLambda = FinishLambda;
 	lambdaWrapper->Handle = InnerClient->InitCreateRoom();
 	InnerClient->OnCreateRoomResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceCreateRoomLambdaWrapper::OnResponse);
-	InnerClient->OnContextStateChange.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceCreateRoomLambdaWrapper::OnContextStateChanged);
 	InnerClient->CreateRoom(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallQuickMatch(const FGrpcLobbyQuickMatchRequest& Request, FQuickMatchResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceQuickMatchLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceQuickMatchLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->Handle = InnerClient->InitQuickMatch();
+	InnerClient->OnQuickMatchResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceQuickMatchLambdaWrapper::OnResponse);
+	InnerClient->QuickMatch(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
 }
 
 void ULobbyService::CallJoinRoom(const FGrpcLobbyJoinRoomRequest& Request, FJoinRoomResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
@@ -87,6 +99,20 @@ void ULobbyService::CallJoinRoom(const FGrpcLobbyJoinRoomRequest& Request, FJoin
 	lambdaWrapper->Handle = InnerClient->InitJoinRoom();
 	InnerClient->OnJoinRoomResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceJoinRoomLambdaWrapper::OnResponse);
 	InnerClient->JoinRoom(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
+}
+
+void ULobbyService::CallJoinRoomWithCode(const FGrpcLobbyJoinRoomWithCodeRequest& Request, FJoinRoomWithCodeResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	if (InnerClient == nullptr)
+	{
+		InnerClient = MakeClient();
+	}
+	ULobbyServiceJoinRoomWithCodeLambdaWrapper* lambdaWrapper = NewObject<ULobbyServiceJoinRoomWithCodeLambdaWrapper>();
+	lambdaWrapper->InnerClient = InnerClient;
+	lambdaWrapper->ResponseLambda = ResponseLambda;
+	lambdaWrapper->Handle = InnerClient->InitJoinRoomWithCode();
+	InnerClient->OnJoinRoomWithCodeResponse.AddUniqueDynamic(lambdaWrapper, &ULobbyServiceJoinRoomWithCodeLambdaWrapper::OnResponse);
+	InnerClient->JoinRoomWithCode(lambdaWrapper->Handle, Request, MetaData, DeadLineSeconds);
 }
 
 void ULobbyService::CallGetRoomList(const FGrpcLobbyGetRoomListRequest& Request, FGetRoomListResponseLambda ResponseLambda, FGrpcMetaData MetaData, float DeadLineSeconds)

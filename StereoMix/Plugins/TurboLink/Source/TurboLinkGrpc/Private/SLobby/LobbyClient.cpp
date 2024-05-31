@@ -37,6 +37,38 @@ void ULobbyServiceClient::CreateRoom(FGrpcContextHandle Handle, const FGrpcLobby
 	}
 }
 
+FGrpcContextHandle ULobbyServiceClient::InitQuickMatch()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_QuickMatch>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::QuickMatch(FGrpcContextHandle Handle, const FGrpcLobbyQuickMatchRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextQuickMatch = StaticCastSharedPtr<GrpcContext_LobbyService_QuickMatch>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextQuickMatch->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextQuickMatch->RpcContext->set_deadline(deadLine);
+		}
+		contextQuickMatch->Call(Request);
+	}
+}
+
 FGrpcContextHandle ULobbyServiceClient::InitJoinRoom()
 {
 	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
@@ -66,6 +98,38 @@ void ULobbyServiceClient::JoinRoom(FGrpcContextHandle Handle, const FGrpcLobbyJo
 			contextJoinRoom->RpcContext->set_deadline(deadLine);
 		}
 		contextJoinRoom->Call(Request);
+	}
+}
+
+FGrpcContextHandle ULobbyServiceClient::InitJoinRoomWithCode()
+{
+	FGrpcContextHandle handle = Service->TurboLinkManager->GetNextContextHandle();
+	auto context = UGrpcClient::MakeContext<GrpcContext_LobbyService_JoinRoomWithCode>(handle);
+	context->RpcContext = UTurboLinkGrpcManager::Private::CreateRpcClientContext();
+	return context->GetHandle();
+}
+
+void ULobbyServiceClient::JoinRoomWithCode(FGrpcContextHandle Handle, const FGrpcLobbyJoinRoomWithCodeRequest& Request, FGrpcMetaData MetaData, float DeadLineSeconds)
+{
+	auto context = UGrpcClient::GetContext(Handle);
+	if (context != nullptr)
+	{
+		auto contextJoinRoomWithCode = StaticCastSharedPtr<GrpcContext_LobbyService_JoinRoomWithCode>(*context);
+		for (const auto& metaDataPair : MetaData.MetaData)
+		{
+			contextJoinRoomWithCode->RpcContext->AddMetadata(
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Key)).Get(),
+				(const char*)StringCast<UTF8CHAR>(*(metaDataPair.Value)).Get()
+			);
+		}
+
+		if (DeadLineSeconds > 0.f)
+		{
+			std::chrono::time_point deadLine = std::chrono::system_clock::now() + 
+				std::chrono::milliseconds((int32)(1000.f * DeadLineSeconds));
+			contextJoinRoomWithCode->RpcContext->set_deadline(deadLine);
+		}
+		contextJoinRoomWithCode->Call(Request);
 	}
 }
 
@@ -305,7 +369,9 @@ void ULobbyServiceClient::TryCancel(FGrpcContextHandle Handle)
 void ULobbyServiceClient::Shutdown()
 {
 	OnCreateRoomResponse.Clear();
+	OnQuickMatchResponse.Clear();
 	OnJoinRoomResponse.Clear();
+	OnJoinRoomWithCodeResponse.Clear();
 	OnGetRoomListResponse.Clear();
 	OnUpdateRoomStateResponse.Clear();
 	OnUpdateRoomConfigResponse.Clear();
