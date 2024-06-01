@@ -93,7 +93,9 @@ void ASMGameMode::EndVictoryDefeatTimer()
 		return;
 	}
 
+	// 클라이언트들을 메인 메뉴로 돌려보내고 서버를 종료합니다.
 	ReturnToMainMenuHost();
+	// FGenericPlatformMisc::RequestExit(false);
 }
 
 void ASMGameMode::OnWaitTimeEndCallback()
