@@ -102,6 +102,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "주기")
 	float Interval = 0.5f;
 
+	/** 트리거 되는 영역의 크기를 보여줄지 여부입니다.*/
 	UPROPERTY(EditAnywhere, Category = "Design")
 	uint32 bDrawDebug:1 = false;
 

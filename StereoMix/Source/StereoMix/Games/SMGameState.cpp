@@ -54,6 +54,12 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamPhaseScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamPhaseScore);
 	DOREPLIFETIME(ASMGameState, ShortRoomId)
+	DOREPLIFETIME(ASMGameState, ReplicatedRemainCountdownTime)
+}
+
+void ASMGameState::OnRep_ReplicatedRemainCountdownTime()
+{
+	(void)OnChangeCountdownTime.ExecuteIfBound(ReplicatedRemainCountdownTime);
 }
 
 void ASMGameState::OnRep_ReplicatedRemainRoundTime()

@@ -15,6 +15,7 @@
 
 ASMGameMode::ASMGameMode()
 {
+	bDelayedStart = true;
 	bUseSeamlessTravel = true;
 	GameSessionClass = ASMGameSession::StaticClass();
 }
@@ -22,6 +23,10 @@ ASMGameMode::ASMGameMode()
 void ASMGameMode::BeginPlay()
 {
 	Super::BeginPlay();
+
+	// 대기 시간동안 기다립니다.
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnWaitTimeEndCallback, WaitTime);
 }
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
@@ -53,18 +58,7 @@ void ASMGameMode::StartMatch()
 	Super::StartMatch();
 
 	NET_LOG(this, Warning, TEXT("게임 시작"));
-
-	const float OneSecond = GetWorldSettings()->GetEffectiveTimeDilation();
-
-	// 남은 라운드 시간을 초기화해줍니다.
-	SetRemainRoundTime(RoundTime);
-	GetWorldTimerManager().SetTimer(RoundTimerHandle, this, &ASMGameMode::PerformRoundTime, OneSecond, true);
-
-	// 남은 페이즈 시간을 초기화해줍니다.
-	SetRemainPhaseTime(PhaseTime);
-	SetCurrentPhaseNumber(1);
-	GetWorldTimerManager().SetTimer(PhaseTimerHandle, this, &ASMGameMode::PerformPhaseTime, OneSecond, true);
-
+	StartRound();
 	OnStartMatch.Broadcast();
 }
 
@@ -93,10 +87,65 @@ void ASMGameMode::BindToGameState()
 
 void ASMGameMode::EndVictoryDefeatTimer()
 {
-	ReturnToMainMenuHost();
+	if (bUseRestart)
+	{
+		RestartGame();
+		return;
+	}
 
-	// FString CurrentLevelPath = TEXT("/Game/StereoMix/Levels/Round1/L_Round1");
-	// GetWorld()->ServerTravel(CurrentLevelPath);
+	ReturnToMainMenuHost();
+}
+
+void ASMGameMode::OnWaitTimeEndCallback()
+{
+	const float OneSecond = GetWorldSettings()->GetEffectiveTimeDilation();
+
+	SetRemainCountdownTime(CountdownTime);
+	GetWorldTimerManager().SetTimer(CountdownTimeHandle, this, &ThisClass::PerformCountdownTime, OneSecond, true);
+}
+
+void ASMGameMode::SetRemainCountdownTime(int32 InRemainCountdownTime)
+{
+	RemainCountdownTime = InRemainCountdownTime;
+
+	// 게임 스테이트로 복제합니다.
+	if (ensure(CachedSMGameState.Get()))
+	{
+		CachedSMGameState->SetReplicatedRemainCountdownTime(RemainCountdownTime);
+	}
+}
+
+void ASMGameMode::PerformCountdownTime()
+{
+	if (RemainCountdownTime <= 0)
+	{
+		GetWorldTimerManager().ClearTimer(CountdownTimeHandle);
+		CountdownTimeHandle.Invalidate();
+
+		OnCountdownTimeEnd();
+		return;
+	}
+
+	SetRemainCountdownTime(RemainCountdownTime - 1);
+}
+
+void ASMGameMode::OnCountdownTimeEnd()
+{
+	StartMatch();
+}
+
+void ASMGameMode::StartRound()
+{
+	const float OneSecond = GetWorldSettings()->GetEffectiveTimeDilation();
+
+	// 남은 라운드 시간을 초기화해줍니다.
+	SetRemainRoundTime(RoundTime);
+	GetWorldTimerManager().SetTimer(RoundTimerHandle, this, &ASMGameMode::PerformRoundTime, OneSecond, true);
+
+	// 남은 페이즈 시간을 초기화해줍니다.
+	SetRemainPhaseTime(PhaseTime);
+	SetCurrentPhaseNumber(1);
+	GetWorldTimerManager().SetTimer(PhaseTimerHandle, this, &ASMGameMode::PerformPhaseTime, OneSecond, true);
 }
 
 void ASMGameMode::SetRemainRoundTime(int32 InRemainRoundTime)
