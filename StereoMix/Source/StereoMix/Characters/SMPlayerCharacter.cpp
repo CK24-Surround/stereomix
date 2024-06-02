@@ -27,6 +27,8 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
+#include "GameFramework/GameMode.h"
+#include "Games/SMGameState.h"
 #include "Tiles/SMTile.h"
 
 ASMPlayerCharacter::ASMPlayerCharacter()
@@ -201,6 +203,9 @@ void ASMPlayerCharacter::BeginPlay()
 	{
 		TrajectoryFXComponent->Activate(true);
 	}
+
+	CachedSMGameState = GetWorld()->GetGameState<ASMGameState>();
+	check(CachedSMGameState.Get());
 }
 
 void ASMPlayerCharacter::Tick(float DeltaTime)
@@ -408,6 +413,15 @@ void ASMPlayerCharacter::GiveDefaultAbilities()
 
 void ASMPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
 {
+	// 게임 시작 이전이라면 막습니다.
+	if (CachedSMGameState.Get())
+	{
+		if (CachedSMGameState->GetMatchState() == MatchState::WaitingToStart)
+		{
+			return;
+		}
+	}
+
 	if (!ASC.Get())
 	{
 		NET_LOG(this, Warning, TEXT("ASC가 유효하지 않습니다."));
@@ -430,6 +444,15 @@ void ASMPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
 
 void ASMPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
 {
+	// 게임 시작 이전이라면 막습니다.
+	if (CachedSMGameState.Get())
+	{
+		if (CachedSMGameState->GetMatchState() == MatchState::WaitingToStart)
+		{
+			return;
+		}
+	}
+
 	if (!ASC.Get())
 	{
 		NET_LOG(this, Warning, TEXT("ASC가 유효하지 않습니다."));
@@ -458,6 +481,15 @@ void ASMPlayerCharacter::MulticastRPCApplyAttachOffset_Implementation()
 
 void ASMPlayerCharacter::Move(const FInputActionValue& InputActionValue)
 {
+	// 게임 시작 이전이라면 막습니다.
+	if (CachedSMGameState.Get())
+	{
+		if (CachedSMGameState->GetMatchState() == MatchState::WaitingToStart)
+		{
+			return;
+		}
+	}
+
 	const UAbilitySystemComponent* CachedASC = ASC.Get();
 	if (!CachedASC)
 	{

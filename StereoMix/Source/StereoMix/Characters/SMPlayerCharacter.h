@@ -12,6 +12,7 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMPlayerCharacter.generated.h"
 
+class ASMGameState;
 class UNiagaraComponent;
 class UNiagaraSystem;
 class USMCatchInteractionComponent_Character;
@@ -132,6 +133,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "FX|ImmuneMove")
 	TObjectPtr<UNiagaraComponent> ImmuneMoveTrailFXComponent;
 // ~Component Section
+
+// ~GameState Section
+protected:
+	TWeakObjectPtr<ASMGameState> CachedSMGameState;
+// ~GameState Section
 
 // ~Data Section
 public:
@@ -350,6 +356,7 @@ protected:
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
 // ~Trail Section
 
+// Temp Section
 // TODO: 임시 함수입니다. 스매시 엔드 포인트를 그려줍니다. 이 캐릭터 클래스는 모든 캐릭터의 부모 클래스이기에 스매시 엔드포인트를 그려주는 함수가 여기 존재해서는 안됩니다. 단지 느낌을 보기 위한 프로토타이핑입니다.
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Design|Trajectory")
@@ -360,4 +367,5 @@ protected:
 
 protected:
 	void DrawSmashEndPoint();
+// Temp Section
 };
