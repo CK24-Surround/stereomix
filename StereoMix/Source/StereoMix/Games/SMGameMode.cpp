@@ -119,6 +119,8 @@ void ASMGameMode::SetRemainCountdownTime(int32 InRemainCountdownTime)
 
 void ASMGameMode::PerformCountdownTime()
 {
+	SetRemainCountdownTime(RemainCountdownTime - 1);
+
 	if (RemainCountdownTime <= 0)
 	{
 		GetWorldTimerManager().ClearTimer(CountdownTimeHandle);
@@ -127,8 +129,6 @@ void ASMGameMode::PerformCountdownTime()
 		OnCountdownTimeEnd();
 		return;
 	}
-
-	SetRemainCountdownTime(RemainCountdownTime - 1);
 }
 
 void ASMGameMode::OnCountdownTimeEnd()

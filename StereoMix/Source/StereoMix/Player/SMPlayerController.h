@@ -8,6 +8,7 @@
 #include "GameFramework/PlayerController.h"
 #include "SMPlayerController.generated.h"
 
+class USMUserWidget_StartCountdown;
 class ASMPlayerCharacter;
 class USMUserWidget_ScreenIndicator;
 class USMUserWidget_VictoryDefeat;
@@ -98,4 +99,10 @@ protected:
 
 	UPROPERTY()
 	TMap<AActor*, TObjectPtr<USMUserWidget_ScreenIndicator>> OffScreenIndicators;
+
+	UPROPERTY(EditAnywhere, Category = "Design|UI|StartCountdown")
+	TSubclassOf<USMUserWidget_StartCountdown> StartCountdownWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<USMUserWidget_StartCountdown> StartCountdownWidget;
 };

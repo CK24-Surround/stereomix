@@ -13,6 +13,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "UI/SMUserWidget_HUD.h"
 #include "UI/SMUserWidget_ScreenIndicator.h"
+#include "UI/SMUserWidget_StartCountdown.h"
 #include "UI/SMUserWidget_VictoryDefeat.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMLog.h"
@@ -69,6 +70,9 @@ void ASMPlayerController::OnRep_PlayerState()
 	UAbilitySystemComponent* SourceASC = SMPlayerState->GetAbilitySystemComponent();
 	HUDWidget->SetASC(SourceASC);
 	VictoryDefeatWidget->SetASC(SourceASC);
+
+	StartCountdownWidget = CreateWidget<USMUserWidget_StartCountdown>(this, StartCountdownWidgetClass);
+	StartCountdownWidget->AddToViewport(1);
 }
 
 void ASMPlayerController::InitControl()
@@ -93,8 +97,9 @@ void ASMPlayerController::InitControl()
 void ASMPlayerController::SpawnTimerCallback()
 {
 	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	if (!ensureAlways(GameMode))
+	if (!GameMode)
 	{
+		NET_LOG(this, Error, TEXT("게임모드가 유효하지 않습니다."));
 		return;
 	}
 
