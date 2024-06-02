@@ -24,6 +24,13 @@ void ASMGameMode::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (bIsIgnoreWait)
+	{
+		// 이 경우 즉시 호출합니다.
+		OnWaitTimeEndCallback();
+		return;
+	}
+
 	// 대기 시간동안 기다립니다.
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnWaitTimeEndCallback, WaitTime);

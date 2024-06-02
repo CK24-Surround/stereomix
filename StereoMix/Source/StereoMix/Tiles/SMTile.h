@@ -29,7 +29,7 @@ public:
 	void TileTrigger(ESMTeam InTeam);
 
 protected:
-	UFUNCTION()
+	UFUNCTION(BlueprintNativeEvent)
 	void OnChangeTeamCallback();
 
 public:

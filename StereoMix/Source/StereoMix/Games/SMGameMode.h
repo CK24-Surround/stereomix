@@ -7,7 +7,7 @@
 #include "Data/SMTeam.h"
 #include "SMGameMode.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnStartMatchSignature);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartMatchSignature);
 
 class ASMProjectile;
 class USMProjectilePool;
@@ -36,6 +36,8 @@ protected:
 	virtual void EndMatch() override;
 
 public:
+	/** 게임 시작시 호출됩니다. */
+	UPROPERTY(BlueprintAssignable)
 	FOnStartMatchSignature OnStartMatch;
 
 protected:
@@ -68,6 +70,9 @@ protected:
 	/** 게임 시작 후 대기 시간입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Wait")
 	int32 WaitTime = 10;
+
+	UPROPERTY(EditAnywhere, Category = "Design|Wait")
+	uint32 bIsIgnoreWait:1 = false;
 
 	FTimerHandle CountdownTimeHandle;
 

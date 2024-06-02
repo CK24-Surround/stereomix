@@ -65,7 +65,7 @@ void ASMTile::TileTrigger(ESMTeam InTeam)
 	}
 }
 
-void ASMTile::OnChangeTeamCallback()
+void ASMTile::OnChangeTeamCallback_Implementation()
 {
 	const ESMTeam Team = TeamComponent->GetTeam();
 

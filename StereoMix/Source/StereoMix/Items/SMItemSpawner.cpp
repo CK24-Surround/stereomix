@@ -35,11 +35,11 @@ void ASMItemSpawner::BeginPlay()
 		{
 			if (bUseImmediatelySpawn)
 			{
-				SMGameMode->OnStartMatch.AddUObject(this, &ThisClass::SpawnItem);
+				SMGameMode->OnStartMatch.AddDynamic(this, &ThisClass::SpawnItem);
 			}
 			else
 			{
-				SMGameMode->OnStartMatch.AddUObject(this, &ThisClass::SpawnTimerStart);
+				SMGameMode->OnStartMatch.AddDynamic(this, &ThisClass::SpawnTimerStart);
 			}
 		}
 	}

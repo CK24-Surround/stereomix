@@ -31,12 +31,14 @@ protected:
 
 protected:
 	/** 스폰 타이머를 시작합니다. */
+	UFUNCTION()
 	void SpawnTimerStart();
 
 	/** 스폰 타이머가 만료될때 호출됩니다. */
 	void SpawnTimerCallback();
 
 	/** 아이템을 스폰합니다. */
+	UFUNCTION()
 	void SpawnItem();
 
 	void OnUsedItem();
