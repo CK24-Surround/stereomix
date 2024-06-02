@@ -30,6 +30,9 @@ public:
 	void TileTrigger(ESMTeam InTeam);
 
 protected:
+	/** 머티리얼로 타일 애니메이션을 넣기 위해 필요한 머티리얼을 다이나믹 머티리얼로 변경합니다. 그리고 저장합니다. */
+	void ChangeMaterialInstanceDynamic();
+
 	UFUNCTION()
 	void OnChangeTeamCallback();
 
@@ -57,6 +60,10 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMTileAssetData> AssetData;
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design")
+	TArray<TObjectPtr<UMaterialInstanceDynamic>> MeshMIDs;
 
 public:
 	FOnChangeTileWithTeamInformationSignature OnChangeTileWithTeamInformation;

@@ -49,6 +49,8 @@ void ASMTile::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	ChangeMaterialInstanceDynamic();
+
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMTile::OnChangeTeamCallback);
 }
 
@@ -65,6 +67,14 @@ void ASMTile::TileTrigger(ESMTeam InTeam)
 	}
 }
 
+void ASMTile::ChangeMaterialInstanceDynamic()
+{
+	for (int32 i = 0; i < TileMesh->GetNumMaterials(); ++i)
+	{
+		MeshMIDs.Add(TileMesh->CreateAndSetMaterialInstanceDynamic(i));
+	}
+}
+
 void ASMTile::OnChangeTeamCallback()
 {
 	const ESMTeam Team = TeamComponent->GetTeam();
@@ -75,7 +85,7 @@ void ASMTile::OnChangeTeamCallback()
 		TileMesh->SetMaterial(1, AssetData->TileMaterial[Team]);
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), AssetData->TileChangeFX[Team], TileMesh->GetComponentLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
 	}
-	
+
 	OnChangeTile.Broadcast();
 }
 
