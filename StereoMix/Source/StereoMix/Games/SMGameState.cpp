@@ -34,7 +34,7 @@ void ASMGameState::PostInitializeComponents()
 			}
 
 			++TotalTileCount;
-			Tile->OnChangeTile.AddUObject(this, &ASMGameState::OnChangeTile);
+			Tile->OnChangeTileWithTeamInformation.AddUObject(this, &ASMGameState::OnChangeTile);
 		}
 
 		NET_LOG(this, Warning, TEXT("현재 타일 개수: %d"), TotalTileCount)

@@ -12,7 +12,8 @@ class USMTeamComponent;
 class USMTileAssetData;
 class UBoxComponent;
 
-DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangeTileSignature, ESMTeam /*PreviousTeam*/, ESMTeam /*NewTeam*/);
+DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangeTileWithTeamInformationSignature, ESMTeam /*PreviousTeam*/, ESMTeam /*NewTeam*/);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangeTileSignature);
 
 UCLASS()
 class STEREOMIX_API ASMTile : public AActor, public ISMTeamInterface
@@ -29,7 +30,7 @@ public:
 	void TileTrigger(ESMTeam InTeam);
 
 protected:
-	UFUNCTION(BlueprintNativeEvent)
+	UFUNCTION()
 	void OnChangeTeamCallback();
 
 public:
@@ -58,5 +59,8 @@ protected:
 	TObjectPtr<USMTileAssetData> AssetData;
 
 public:
+	FOnChangeTileWithTeamInformationSignature OnChangeTileWithTeamInformation;
+
+	UPROPERTY(BlueprintAssignable)
 	FOnChangeTileSignature OnChangeTile;
 };
