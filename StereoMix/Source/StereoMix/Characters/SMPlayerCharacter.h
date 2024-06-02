@@ -134,11 +134,6 @@ protected:
 	TObjectPtr<UNiagaraComponent> ImmuneMoveTrailFXComponent;
 // ~Component Section
 
-// ~GameState Section
-protected:
-	TWeakObjectPtr<ASMGameState> CachedSMGameState;
-// ~GameState Section
-
 // ~Data Section
 public:
 	const TArray<TObjectPtr<UMaterialInterface>>& GetOriginalMaterials() { return OriginalMaterials; }
