@@ -54,9 +54,13 @@ void USMGrpcSubsystem::SetTargetEndPoint(const EConnectionEndPointTargets Target
 		break;
 
 	case EConnectionEndPointTargets::Local:
-		TurboLinkConfig->EnableServerSideTLS = false;
-		TurboLinkConfig->ServerRootCerts = TEXT("");
-		TurboLinkConfig->DefaultEndPoint = LocalServerEndPoint;
+		// 임시 코드
+		TurboLinkConfig->EnableServerSideTLS = true;
+		TurboLinkConfig->ServerRootCerts = ServerRootCerts;
+		TurboLinkConfig->DefaultEndPoint = DevelopmentServerEndPoint;
+		// TurboLinkConfig->EnableServerSideTLS = false;
+		// TurboLinkConfig->ServerRootCerts = TEXT("");
+		// TurboLinkConfig->DefaultEndPoint = LocalServerEndPoint;
 		break;
 	}
 }
