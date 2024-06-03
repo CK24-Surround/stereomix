@@ -21,6 +21,7 @@ class STEREOMIX_API ASMCharacterSelectMode : public AGameModeBase
 
 	
 public:
+	
 	ASMCharacterSelectMode();
 
 	virtual void InitGameState() override;

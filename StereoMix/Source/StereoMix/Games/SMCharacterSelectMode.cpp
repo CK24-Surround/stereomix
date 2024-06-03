@@ -47,7 +47,7 @@ void ASMCharacterSelectMode::OnCountdownFinished()
 	if (CharacterSelectState.IsValid())
 	{
 		CharacterSelectState->SetCharacterSelectionState(ECharacterSelectionState::End);
-		
+
 		// 임시 코드
 		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
 		{
