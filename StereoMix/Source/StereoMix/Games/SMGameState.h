@@ -177,5 +177,5 @@ protected:
 
 public:
 	FOnEndRoundSignature OnEndRound;
-	// ~VictoryDefeat Section
+// ~VictoryDefeat Section
 };
