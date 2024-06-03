@@ -51,6 +51,17 @@ void ASMPlayerController::BeginPlay()
 	InitControl();
 }
 
+void ASMPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (HasAuthority())
+	{
+		FString EndPlayReasonString = UEnum::GetValueAsString(EndPlayReason);
+		NET_LOG(this, Log, TEXT("%s"), *EndPlayReasonString);
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
 void ASMPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();

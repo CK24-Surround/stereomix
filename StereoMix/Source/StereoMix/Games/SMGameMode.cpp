@@ -83,6 +83,11 @@ void ASMGameMode::EndMatch()
 	Super::EndMatch();
 }
 
+void ASMGameMode::PrintPlayerNum()
+{
+	NET_LOG(this, Log, TEXT("플레이어 수: %d"), GetNumPlayers());
+}
+
 void ASMGameMode::BindToGameState()
 {
 	CachedSMGameState = GetGameState<ASMGameState>();

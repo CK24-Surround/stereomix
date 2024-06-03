@@ -35,6 +35,11 @@ protected:
 
 	virtual void EndMatch() override;
 
+// ~Command Line
+	UFUNCTION(Exec)
+	void PrintPlayerNum();
+// ~Command Line
+
 public:
 	/** 게임 시작시 호출됩니다. */
 	UPROPERTY(BlueprintAssignable)
