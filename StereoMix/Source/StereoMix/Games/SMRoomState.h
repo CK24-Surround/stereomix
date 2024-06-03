@@ -20,28 +20,28 @@ UCLASS()
 class STEREOMIX_API ASMRoomState : public AGameStateBase, public ISMGameStateNotify
 {
 	GENERATED_BODY()
-	
+
 	UPROPERTY()
 	TObjectPtr<UCountdownTimerComponent> CountdownTimer;
-	
-	UPROPERTY(ReplicatedUsing=OnRep_UnreadyPlayers)
-	TArray<ASMRoomPlayerState*> UnreadyPlayers;
-	
-	UPROPERTY(ReplicatedUsing=OnRep_TeamEdmPlayers)
-	TArray<ASMRoomPlayerState*> TeamEdmPlayers;
 
-	UPROPERTY(ReplicatedUsing=OnRep_TeamFutureBassPlayers)
-	TArray<ASMRoomPlayerState*> TeamFutureBassPlayers;
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_UnreadyPlayers, meta=(AllowPrivateAccess=true))
+	TArray<TObjectPtr<ASMRoomPlayerState>> UnreadyPlayers;
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_TeamEdmPlayers, meta=(AllowPrivateAccess=true))
+	TArray<TObjectPtr<ASMRoomPlayerState>> TeamEdmPlayers;
+
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_TeamFutureBassPlayers, meta=(AllowPrivateAccess=true))
+	TArray<TObjectPtr<ASMRoomPlayerState>> TeamFutureBassPlayers;
 
 	UFUNCTION()
 	void OnRep_UnreadyPlayers() const;
-	
+
 	UFUNCTION()
 	void OnRep_TeamEdmPlayers() const;
 
 	UFUNCTION()
 	void OnRep_TeamFutureBassPlayers() const;
-	
+
 public:
 	UPROPERTY(BlueprintAssignable)
 	FPlayerJoined OnPlayerJoined;
@@ -51,17 +51,17 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FTeamPlayersUpdated OnTeamPlayersUpdated;
-	
-	UPROPERTY(EditDefaultsOnly, Replicated)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated)
 	int32 ReplicatedMaxPlayersInGame;
-	
-	UPROPERTY(EditDefaultsOnly, Replicated)
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated)
 	int32 ReplicatedMaxPlayersInTeam;
-	
+
 	UPROPERTY(EditDefaultsOnly)
 	int32 CountdownTime;
-	
-	UPROPERTY(Replicated)
+
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	FString ShortRoomCode;
 
 	ASMRoomState();
@@ -71,14 +71,17 @@ public:
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
+	
 	UCountdownTimerComponent* GetCountdownTimer() const { return CountdownTimer.Get(); }
 
-	const TArray<ASMRoomPlayerState*>& GetTeamEdmPlayers() const { return TeamEdmPlayers; }
+	UFUNCTION(BlueprintCallable)
+	TArray<ASMRoomPlayerState*> GetTeamEdmPlayers() const { return TeamEdmPlayers; }
 
-	const TArray<ASMRoomPlayerState*>& GetTeamFutureBassPlayers() const { return TeamFutureBassPlayers; }
+	UFUNCTION(BlueprintCallable)
+	TArray<ASMRoomPlayerState*> GetTeamFutureBassPlayers() const { return TeamFutureBassPlayers; }
 
-	const TArray<ASMRoomPlayerState*>& GetTeamPlayers(ESMTeam Team) const;
+	UFUNCTION(BlueprintCallable)
+	TArray<ASMRoomPlayerState*> GetTeamPlayers(ESMTeam Team) const;
 
 public:
 	virtual void NotifyPlayerJoined(ASMPlayerState* JoinedPlayer) override;

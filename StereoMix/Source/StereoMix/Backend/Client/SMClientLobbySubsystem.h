@@ -66,9 +66,16 @@ class STEREOMIX_API USMClientLobbySubsystem : public USMLobbySubsystem
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable)
 	FCreateRoomResponseDelegate OnCreateRoomResponse;
+	
+	UPROPERTY(BlueprintAssignable)
 	FQuickMatchResponseDelegate OnQuickMatchResponse;
+	
+	UPROPERTY(BlueprintAssignable)
 	FJoinRoomResponseDelegate OnJoinRoomResponse;
+	
+	UPROPERTY(BlueprintAssignable)
 	FJoinRoomResponseDelegate OnJoinRoomWithCodeResponse;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;

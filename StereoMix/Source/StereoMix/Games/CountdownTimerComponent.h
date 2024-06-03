@@ -17,15 +17,20 @@ class STEREOMIX_API UCountdownTimerComponent : public UActorComponent
 
 	// TODO: float으로 바꾸고 tick interval을 변경 가능하도록 수정하기
 	
-	UPROPERTY(ReplicatedUsing=OnRep_RemainingTime)
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, ReplicatedUsing=OnRep_RemainingTime, meta=(AllowPrivateAccess=true))
 	int32 RemainingTime;
 
 	UFUNCTION()
 	void OnRep_RemainingTime() const;
 	
 public:
+	UPROPERTY(BlueprintAssignable)
 	FTCountdownimerDelegate OnCountdownTick;
+
+	UPROPERTY(BlueprintAssignable)
 	FTCountdownimerDelegate OnCountdownFinished;
+	
+	UPROPERTY(BlueprintAssignable)
 	FTCountdownimerDelegate OnCountdownCancelled;
 	
 	UCountdownTimerComponent();

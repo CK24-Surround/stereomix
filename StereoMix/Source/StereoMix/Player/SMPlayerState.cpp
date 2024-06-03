@@ -53,20 +53,16 @@ void ASMPlayerState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void ASMPlayerState::OnRep_Team(const ESMTeam PreviousTeam)
 {
+	// NET_LOG(this, Verbose, TEXT("[SMPlayerState_OnRep] Player %s team changed: %s -> %s"), *GetPlayerName(), *UEnum::GetValueAsString(PreviousTeam), *UEnum::GetValueAsString(Team))
 	// 플레이어가 레플리케이티드 변수까지 전부 초기화 된 이후에만 OnTeamChanged 호출 가능
-	if (IsActorBeginningPlay() && !IsActorBeingDestroyed())
-	{
-		OnTeamChanged(PreviousTeam, Team);
-	}
+	OnTeamChanged(PreviousTeam, Team);
 }
 
 void ASMPlayerState::OnRep_CharacterType(const ESMCharacterType PreviousCharacterType)
 {
+	// NET_LOG(this, Verbose, TEXT("[SMPlayerState_OnRep] Player %s character changed: %s -> %s"), *GetPlayerName(), *UEnum::GetValueAsString(PreviousCharacterType), *UEnum::GetValueAsString(CharacterType))
 	// 플레이어가 레플리케이티드 변수까지 전부 초기화 된 이후에만 OnCharacterTypeChanged 호출 가능
-	if (IsActorBeginningPlay() && !IsActorBeingDestroyed())
-	{
-		OnCharacterTypeChanged(PreviousCharacterType, CharacterType);
-	}
+	OnCharacterTypeChanged(PreviousCharacterType, CharacterType);
 }
 
 void ASMPlayerState::OnTeamChanged(const ESMTeam PreviousTeam, const ESMTeam NewTeam)
@@ -103,7 +99,7 @@ void ASMPlayerState::OnCharacterTypeChanged(const ESMCharacterType PreviousChara
 	}
 }
 
-void ASMPlayerState::SetCharacterType_Implementation(ESMCharacterType NewCharacterType)
+void ASMPlayerState::SetCharacterType(ESMCharacterType NewCharacterType)
 {
 	if (!CanChangeCharacterType(NewCharacterType))
 	{
@@ -114,9 +110,9 @@ void ASMPlayerState::SetCharacterType_Implementation(ESMCharacterType NewCharact
 	OnCharacterTypeChanged(PreviousCharacterType, NewCharacterType);
 }
 
-void ASMPlayerState::SetTeam_Implementation(const ESMTeam NewTeam)
+void ASMPlayerState::SetTeam(const ESMTeam NewTeam)
 {
-	UE_LOG(LogStereoMix, Verbose, TEXT("[SMPlayerState] Player %s requested to change team to %s"), *GetPlayerName(), *UEnum::GetValueAsString(NewTeam))
+	NET_LOG(this, Verbose, TEXT("[SMPlayerState] Player %s requested to change team to %s"), *GetPlayerName(), *UEnum::GetValueAsString(NewTeam))
 	if (!CanChangeTeam(NewTeam))
 	{
 		return;

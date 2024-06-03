@@ -3,7 +3,7 @@
     <configuration_1>
       <option name="CONFIGURATION" value="Development Editor" />
       <option name="PLATFORM" value="Win64" />
-      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/Intermediate/ProjectFiles/StereoMix.vcxproj" />
+      <option name="PROJECT_FILE_PATH" value="$PROJECT_DIR$/StereoMix.uproject" />
       <option name="CURRENT_LAUNCH_PROFILE" value="Local" />
       <option name="EXE_PATH" value="$(LocalDebuggerCommand)" />
       <option name="PROGRAM_PARAMETERS" value="$(LocalDebuggerCommandArguments)" />

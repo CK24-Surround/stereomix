@@ -34,6 +34,7 @@ class STEREOMIX_API USMClientAuthSubsystem : public USMAuthSubsystem
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable)
 	FLoginResponseDelegate OnLoginResponse;
 	
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
@@ -50,6 +51,7 @@ public:
 	 * 사용자 계정을 가져옵니다. 로그인되지 않은 경우 nullptr을 반환합니다.
 	 * @return 사용자 계정
 	 */
+	UFUNCTION(BlueprintPure)
 	USMUserAccount* GetUserAccount() const { return UserAccount; }
 
 	/**
@@ -57,6 +59,7 @@ public:
 	 * @param UserName 게스트 이름
 	 * @return 로그인 요청이 성공적으로 시작되었는지 여부를 반환합니다. 서브시스템이 아직 초기화되지 않았거나 다른 로그인 요청이 이미 진행 중인 경우 false를 반환합니다.
 	 */
+	UFUNCTION(BlueprintCallable)
 	bool LoginAsGuest(const FString& UserName);
 
 protected:

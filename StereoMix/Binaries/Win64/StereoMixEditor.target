@@ -5894,6 +5894,34 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Runtime/CommonUI/Binaries/Win64/UnrealEditor-CommonInput.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/CommonUI/Binaries/Win64/UnrealEditor-CommonInput.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/CommonUI/Binaries/Win64/UnrealEditor-CommonUI.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/CommonUI/Binaries/Win64/UnrealEditor-CommonUI.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/CommonUI/Binaries/Win64/UnrealEditor-CommonUIEditor.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/CommonUI/Binaries/Win64/UnrealEditor-CommonUIEditor.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(EngineDir)/Plugins/Runtime/CommonUI/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Runtime/CustomMeshComponent/Binaries/Win64/UnrealEditor-CustomMeshComponent.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -29540,6 +29568,10 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(EngineDir)/Plugins/Runtime/CommonUI/CommonUI.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(EngineDir)/Plugins/Runtime/CustomMeshComponent/CustomMeshComponent.uplugin",
 			"Type": "UFS"
 		},
@@ -29733,6 +29765,7 @@
 		"ChunkDownloader",
 		"CmdLinkServer",
 		"CodeLiteSourceCodeAccess",
+		"CommonUI",
 		"ContentBrowserAssetDataSource",
 		"ContentBrowserClassDataSource",
 		"ContentBrowserFileDataSource",

@@ -24,6 +24,9 @@ public:
 	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ChangeTeam(ESMTeam NewTeam);
+
 protected:
 	virtual bool CanChangeTeam(ESMTeam NewTeam) const override;
 	

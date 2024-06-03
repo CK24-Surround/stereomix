@@ -62,8 +62,10 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	UFUNCTION(BlueprintCallable)
 	UCountdownTimerComponent* GetCountdownTimer() const { return CountdownTimer.Get(); }
 
+	UFUNCTION(BlueprintCallable)
 	void SetCharacterSelectionState(ECharacterSelectionState NewCharacterSelectionState);
 	
 	virtual void NotifyPlayerJoined(ASMPlayerState* JoinedPlayer) override;

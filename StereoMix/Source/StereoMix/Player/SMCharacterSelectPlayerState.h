@@ -25,4 +25,7 @@ public:
 	virtual bool CanChangeTeam(ESMTeam NewTeam) const override;
 
 	virtual bool CanChangeCharacterType(ESMCharacterType NewCharacterType) const override;
+
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void ChangeCharacterType(ESMCharacterType NewCharacterType);
 };

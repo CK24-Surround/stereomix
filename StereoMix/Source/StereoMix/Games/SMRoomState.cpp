@@ -24,10 +24,13 @@ void ASMRoomState::AddPlayerState(APlayerState* PlayerState)
 
 	// TODO: 지금 방법은 쓰레기 플레이어 (목록에 있는데 존재하지 않는 플레이어) 생길 수 있음. 새로운 방법을 찾아야 함.
 
-	if (ASMRoomPlayerState* RoomPlayerState = Cast<ASMRoomPlayerState>(PlayerState))
+	if (HasAuthority())
 	{
-		UnreadyPlayers.Add(RoomPlayerState);
-		OnTeamPlayersUpdated.Broadcast(ESMTeam::None);
+		if (ASMRoomPlayerState* RoomPlayerState = Cast<ASMRoomPlayerState>(PlayerState))
+		{
+			UnreadyPlayers.Add(RoomPlayerState);
+			OnTeamPlayersUpdated.Broadcast(ESMTeam::None);
+		}
 	}
 }
 
@@ -35,24 +38,27 @@ void ASMRoomState::RemovePlayerState(APlayerState* PlayerState)
 {
 	Super::RemovePlayerState(PlayerState);
 
-	if (ASMRoomPlayerState* RoomPlayerState = Cast<ASMRoomPlayerState>(PlayerState))
+	if (HasAuthority())
 	{
-		switch (RoomPlayerState->GetTeam())
+		if (ASMRoomPlayerState* RoomPlayerState = Cast<ASMRoomPlayerState>(PlayerState))
 		{
-		case ESMTeam::None:
-			UnreadyPlayers.Remove(RoomPlayerState);
-			OnTeamPlayersUpdated.Broadcast(ESMTeam::None);
-			break;
-		case ESMTeam::EDM:
-			TeamEdmPlayers.Remove(RoomPlayerState);
-			OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
-			break;
-		case ESMTeam::FutureBass:
-			TeamFutureBassPlayers.Remove(RoomPlayerState);
-			OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
-			break;
-		default:
-			break;
+			switch (RoomPlayerState->GetTeam())
+			{
+			case ESMTeam::None:
+				UnreadyPlayers.Remove(RoomPlayerState);
+				OnTeamPlayersUpdated.Broadcast(ESMTeam::None);
+				break;
+			case ESMTeam::EDM:
+				TeamEdmPlayers.Remove(RoomPlayerState);
+				OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
+				break;
+			case ESMTeam::FutureBass:
+				TeamFutureBassPlayers.Remove(RoomPlayerState);
+				OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 }
@@ -69,7 +75,7 @@ void ASMRoomState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(ThisClass, ShortRoomCode);
 }
 
-const TArray<ASMRoomPlayerState*>& ASMRoomState::GetTeamPlayers(const ESMTeam Team) const
+TArray<ASMRoomPlayerState*> ASMRoomState::GetTeamPlayers(const ESMTeam Team) const
 {
 	switch (Team)
 	{
@@ -108,38 +114,41 @@ void ASMRoomState::NotifyPlayerTeamChanged(ASMPlayerState* Player, const ESMTeam
 	}
 
 #if WITH_SERVER_CODE
-	switch (NewTeam)
+	if (HasAuthority())
 	{
-	case ESMTeam::EDM:
-		TeamEdmPlayers.Add(RoomPlayer);
-		OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
-		break;
-	case ESMTeam::FutureBass:
-		TeamFutureBassPlayers.Add(RoomPlayer);
-		OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
-		break;
-	case ESMTeam::None:
-	default:
-		UnreadyPlayers.Add(RoomPlayer);
-		OnTeamPlayersUpdated.Broadcast(ESMTeam::None);
-		break;
-	}
+		switch (NewTeam)
+		{
+		case ESMTeam::EDM:
+			TeamEdmPlayers.Add(RoomPlayer);
+			OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
+			break;
+		case ESMTeam::FutureBass:
+			TeamFutureBassPlayers.Add(RoomPlayer);
+			OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
+			break;
+		case ESMTeam::None:
+		default:
+			UnreadyPlayers.Add(RoomPlayer);
+			OnTeamPlayersUpdated.Broadcast(ESMTeam::None);
+			break;
+		}
 
-	switch (PreviousTeam)
-	{
-	case ESMTeam::EDM:
-		TeamEdmPlayers.Remove(RoomPlayer);
-		OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
-		break;
-	case ESMTeam::FutureBass:
-		TeamFutureBassPlayers.Remove(RoomPlayer);
-		OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
-		break;
-	case ESMTeam::None:
-	default:
-		UnreadyPlayers.Remove(RoomPlayer);
-		OnTeamPlayersUpdated.Broadcast(ESMTeam::None);
-		break;;
+		switch (PreviousTeam)
+		{
+		case ESMTeam::EDM:
+			TeamEdmPlayers.Remove(RoomPlayer);
+			OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
+			break;
+		case ESMTeam::FutureBass:
+			TeamFutureBassPlayers.Remove(RoomPlayer);
+			OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
+			break;
+		case ESMTeam::None:
+		default:
+			UnreadyPlayers.Remove(RoomPlayer);
+			OnTeamPlayersUpdated.Broadcast(ESMTeam::None);
+			break;;
+		}
 	}
 #endif
 }

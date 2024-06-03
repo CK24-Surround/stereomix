@@ -20,7 +20,9 @@ public:
 
 	UAuthService* GetAuthService() const { return Cast<UAuthService>(GrpcService); }
 
+	UFUNCTION(BlueprintPure)
 	virtual bool IsAuthenticated() const;
 
+	UFUNCTION(BlueprintCallable)
 	virtual void RestAuthentication();
 };

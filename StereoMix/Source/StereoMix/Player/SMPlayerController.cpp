@@ -31,13 +31,15 @@ ASMPlayerController::ASMPlayerController()
 	}
 
 	bShowMouseCursor = true;
+	DefaultMouseCursor = EMouseCursor::Type::Crosshairs;
 }
 
 void ASMPlayerController::InitPlayerState()
 {
 	Super::InitPlayerState();
 
-	if (HasAuthority())
+	// 에디터에서 해당 클래스를 상속한 블루프린트를 열 때 오류가 발생하기 때문에 GameMode 인스턴스 존재 여부를 확인함
+	if (HasAuthority() && GetWorld()->GetAuthGameMode())
 	{
 		// 오류를 방지하기위해 지연 스폰합니다.
 		GetWorldTimerManager().SetTimerForNextTick(this, &ThisClass::SpawnTimerCallback);

@@ -24,3 +24,9 @@ bool ASMCharacterSelectPlayerState::CanChangeCharacterType(ESMCharacterType NewC
 {
 	return Super::CanChangeCharacterType(NewCharacterType);
 }
+
+void ASMCharacterSelectPlayerState::ChangeCharacterType_Implementation(ESMCharacterType NewCharacterType)
+{
+	SetCharacterType(NewCharacterType);
+}
+

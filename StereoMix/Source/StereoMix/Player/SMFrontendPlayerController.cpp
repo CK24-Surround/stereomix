@@ -6,11 +6,10 @@
 ASMFrontendPlayerController::ASMFrontendPlayerController()
 {
 	bShowMouseCursor = true;
+	DefaultMouseCursor = EMouseCursor::Type::Default;
 }
 
 void ASMFrontendPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
-	SetInputMode(FInputModeUIOnly());
 }

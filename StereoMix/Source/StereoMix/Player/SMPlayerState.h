@@ -57,10 +57,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ESMCharacterType GetCharacterType() const { return CharacterType; }
 
-	UFUNCTION(Reliable, Server)
 	void SetTeam(ESMTeam NewTeam);
 
-	UFUNCTION(Reliable, Server)
 	void SetCharacterType(ESMCharacterType NewCharacterType);
 
 protected:

@@ -20,6 +20,11 @@ void ASMRoomPlayerState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 }
 
+void ASMRoomPlayerState::ChangeTeam_Implementation(ESMTeam NewTeam)
+{
+	SetTeam(NewTeam);
+}
+
 bool ASMRoomPlayerState::CanChangeTeam(const ESMTeam NewTeam) const
 {
 	if (GetTeam() == NewTeam)

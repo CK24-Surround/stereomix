@@ -32,7 +32,9 @@ bool USMClientLobbySubsystem::CreateRoom(const FString& RoomName, FGrpcLobbyRoom
 	Request.Password = Password;
 	Request.Config = RoomConfig;
 	GrpcContextHandle = LobbyClient->InitCreateRoom();
-	LobbyClient->CreateRoom(GrpcContextHandle, Request, ClientAuthService->GetUserAccount()->GetAuthorizationHeader());
+
+	const FGrpcMetaData MetaData = ClientAuthService->GetUserAccount()->GetAuthorizationHeader();
+	LobbyClient->CreateRoom(GrpcContextHandle, Request, MetaData);
 	return true;
 }
 
@@ -45,7 +47,9 @@ bool USMClientLobbySubsystem::QuickMatch()
 
 	FGrpcLobbyQuickMatchRequest Request;
 	GrpcContextHandle = LobbyClient->InitQuickMatch();
-	LobbyClient->QuickMatch(GrpcContextHandle, Request, ClientAuthService->GetUserAccount()->GetAuthorizationHeader());
+
+	const FGrpcMetaData MetaData = ClientAuthService->GetUserAccount()->GetAuthorizationHeader();
+	LobbyClient->QuickMatch(GrpcContextHandle, Request, MetaData);
 	return true;
 }
 
@@ -60,7 +64,9 @@ bool USMClientLobbySubsystem::JoinRoom(const FString& RoomId, const FString& Pas
 	Request.RoomId = RoomId;
 	Request.Password = Password;
 	GrpcContextHandle = LobbyClient->InitJoinRoom();
-	LobbyClient->JoinRoom(GrpcContextHandle, Request, ClientAuthService->GetUserAccount()->GetAuthorizationHeader());
+
+	const FGrpcMetaData MetaData = ClientAuthService->GetUserAccount()->GetAuthorizationHeader();
+	LobbyClient->JoinRoom(GrpcContextHandle, Request, MetaData);
 	return true;
 }
 
@@ -73,13 +79,16 @@ bool USMClientLobbySubsystem::JoinRoomWithCode(const FString& RoomCode)
 
 	FGrpcLobbyJoinRoomWithCodeRequest Request;
 	Request.RoomCode = RoomCode;
-	GrpcContextHandle = LobbyClient->InitJoinRoom();
-	LobbyClient->JoinRoomWithCode(GrpcContextHandle, Request, ClientAuthService->GetUserAccount()->GetAuthorizationHeader());
+	GrpcContextHandle = LobbyClient->InitJoinRoomWithCode();
+
+	const FGrpcMetaData MetaData = ClientAuthService->GetUserAccount()->GetAuthorizationHeader();
+	LobbyClient->JoinRoomWithCode(GrpcContextHandle, Request, MetaData);
 	return true;
 }
 
 void USMClientLobbySubsystem::Cancel() const
 {
+	UE_LOG(LogStereoMix, Log, TEXT("[SMClientLobbySubsystem] Cancel requested"));
 	LobbyClient->TryCancel(GrpcContextHandle);
 }
 
@@ -355,7 +364,7 @@ void USMClientLobbySubsystem::OnGrpcJoinRoomWithCodeResponse(FGrpcContextHandle 
 		Result = EJoinRoomResult::UnknownError;
 		break;
 	}
-	OnJoinRoomResponse.Broadcast(Result, ServerUrl);
+	OnJoinRoomWithCodeResponse.Broadcast(Result, ServerUrl);
 }
 
 FString USMClientLobbySubsystem::GetServerUrl(const FGrpcLobbyRoomConnectionInfo& ConnectionInfo)

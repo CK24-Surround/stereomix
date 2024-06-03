@@ -6,9 +6,8 @@
 #include "GameFramework/PlayerController.h"
 #include "SMFrontendPlayerController.generated.h"
 
-class USMGuestLoginViewModel;
 /**
- * 
+ * StereoMix Frontend Player Controller
  */
 UCLASS()
 class STEREOMIX_API ASMFrontendPlayerController : public APlayerController

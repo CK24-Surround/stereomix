@@ -23,12 +23,16 @@ public:
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+	UFUNCTION(BlueprintPure)
 	const FString& GetServiceName() const { return ServiceName; }
 
+	UFUNCTION(BlueprintPure)
 	virtual UGrpcService* GetGrpcService() const;
 
+	UFUNCTION(BlueprintCallable)
 	virtual void Connect() const;
 
+	UFUNCTION(BlueprintPure)
 	virtual bool IsBusy() const { return false; }
 
 protected:
