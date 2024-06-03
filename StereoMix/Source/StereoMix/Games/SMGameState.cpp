@@ -51,7 +51,6 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(ASMGameState, ReplicatedCurrentPhaseNumber);
 	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamPhaseScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamPhaseScore);
-	DOREPLIFETIME(ASMGameState, ShortRoomId)
 	DOREPLIFETIME(ASMGameState, ReplicatedRemainCountdownTime)
 }
 
