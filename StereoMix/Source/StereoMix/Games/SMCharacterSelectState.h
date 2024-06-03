@@ -39,7 +39,7 @@ private:
 	void OnRep_CharacterSelectionState() const;
 	
 public:
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Countdown)
 	int32 CountdownTime;
 
 	UPROPERTY(BlueprintAssignable)
