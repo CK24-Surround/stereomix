@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{f3b521a4-3469-41ce-a814-20717a8e879d}">
+		<property name="assetPath">
+			<value>ESM_Sci-fi_Passby_Whoosh_2_Glitch_Morph_Mechanism_Texture_Futuristic.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.5</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{19071a00-b218-4d0a-880e-ebfbf0b0ee72}</destination>
+		</relationship>
+	</object>
+</objects>
