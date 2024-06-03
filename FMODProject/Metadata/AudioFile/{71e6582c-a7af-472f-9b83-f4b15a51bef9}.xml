@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{71e6582c-a7af-472f-9b83-f4b15a51bef9}">
+		<property name="assetPath">
+			<value>BRS_Whoosh_Stick_Wood_Fst_Dbl_1.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>1</value>
+		</property>
+		<property name="length">
+			<value>0.73142857142857143</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{19071a00-b218-4d0a-880e-ebfbf0b0ee72}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{02af496d-8bc8-44d8-aac9-d2ac85e40e3e}">
+		<property name="assetPath">
+			<value>GLTCH_SFX_ChopChop.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>96</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.054802083333333335</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{19071a00-b218-4d0a-880e-ebfbf0b0ee72}</destination>
+		</relationship>
+	</object>
+</objects>

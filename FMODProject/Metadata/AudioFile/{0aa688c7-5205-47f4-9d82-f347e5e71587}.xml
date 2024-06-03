@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{0aa688c7-5205-47f4-9d82-f347e5e71587}">
+		<property name="assetPath">
+			<value>ESM_Sci-fi_Door_Close_or_Shut_6_Glitch_Morph_Mechanism_Texture_Futuristic.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.75</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{19071a00-b218-4d0a-880e-ebfbf0b0ee72}</destination>
+		</relationship>
+	</object>
+</objects>
