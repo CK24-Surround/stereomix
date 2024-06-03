@@ -22,13 +22,15 @@ void USMUserWidget_StartCountdown::NativeOnInitialized()
 void USMUserWidget_StartCountdown::BindGameState()
 {
 	CachedGameState = GetWorld()->GetGameState<ASMGameState>();
-	if (!CachedGameState.Get())
+	if (CachedGameState.Get())
 	{
-		NET_LOG(GetOwningPlayer(), Error, TEXT("무효한 게임 스테이트입니다."))
-		return;
+		CachedGameState->OnChangeCountdownTime.BindUObject(this, &ThisClass::OnCountdownTimeChangeCallback);
 	}
-
-	CachedGameState->OnChangeCountdownTime.BindUObject(this, &ThisClass::OnCountdownTimeChangeCallback);
+	else
+	{
+		// 만약 바인드에 실패하면 계속 시도합니다.`
+		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::BindGameState);
+	}
 }
 
 void USMUserWidget_StartCountdown::OnCountdownTimeChangeCallback(int32 CountdownNumber)
