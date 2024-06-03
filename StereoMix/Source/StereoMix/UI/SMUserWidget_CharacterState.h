@@ -23,7 +23,7 @@ public:
 
 protected:
 	void BindToPlayerState();
-	
+
 	void UpdateNickname(const FString& InNickname);
 
 	void OnChangeCurrentHealth(const FOnAttributeChangeData& OnAttributeChangeData);
@@ -37,6 +37,9 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UProgressBar> PB_Health;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> HitAnimation;
 
 protected:
 	float CurrentHealth = 0.0f;

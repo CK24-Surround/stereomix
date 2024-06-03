@@ -21,7 +21,7 @@ void USMUserWidget_CharacterState::SetASC(UAbilitySystemComponent* InASC)
 	BindToPlayerState();
 
 	InASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetPostureGaugeAttribute()).AddUObject(this, &USMUserWidget_CharacterState::OnChangeCurrentHealth);
-	
+
 	InASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetMaxPostureGaugeAttribute()).AddUObject(this, &USMUserWidget_CharacterState::OnChangeMaxHealth);
 
 	const USMCharacterAttributeSet* SourceAttributeSet = InASC->GetSet<USMCharacterAttributeSet>();
@@ -36,7 +36,7 @@ void USMUserWidget_CharacterState::SetASC(UAbilitySystemComponent* InASC)
 void USMUserWidget_CharacterState::BindToPlayerState()
 {
 	APlayerState* PlayerState = Cast<APlayerState>(ASC->GetOwnerActor());
-	if (ensure(PlayerState))
+	if (PlayerState)
 	{
 		UpdateNickname(PlayerState->GetPlayerName());
 	}
@@ -56,6 +56,8 @@ void USMUserWidget_CharacterState::OnChangeCurrentHealth(const FOnAttributeChang
 {
 	CurrentHealth = OnAttributeChangeData.NewValue;
 	UpdateHealth();
+
+	PlayAnimation(HitAnimation);
 }
 
 void USMUserWidget_CharacterState::OnChangeMaxHealth(const FOnAttributeChangeData& OnAttributeChangeData)
