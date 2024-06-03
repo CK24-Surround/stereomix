@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMFrontendPlayerController.h"
+#include "SMPlayerState.h"
 #include "Games/SMCharacterSelectState.h"
 #include "SMCharacterSelectPlayerController.generated.h"
 
@@ -19,11 +20,17 @@ class STEREOMIX_API ASMCharacterSelectPlayerController : public ASMFrontendPlaye
 	TWeakObjectPtr<ASMCharacterSelectPlayerState> CharacterSelectPlayerState;
 	
 public:
+	UPROPERTY(BlueprintAssignable)
+	FCharacterTypeChangedEvent CharacterTypeChangedEvent;
+	
 	ASMCharacterSelectPlayerController();
 
-	virtual void InitPlayerState() override;
+	virtual void OnRep_PlayerState() override;
 
 	virtual void BeginPlay() override;
+
+	UFUNCTION(Reliable, Server)
+	void ChangeCharacterType(ESMCharacterType NewCharacterType);
 
 protected:
 	UFUNCTION()

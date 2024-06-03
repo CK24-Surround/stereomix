@@ -3,6 +3,7 @@
 
 #include "SMRoomPlayerState.h"
 
+#include "SMRoomPlayerController.h"
 #include "Games/SMRoomState.h"
 
 ASMRoomPlayerState::ASMRoomPlayerState()

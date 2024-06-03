@@ -3,6 +3,7 @@
 
 #include "SMCharacterSelectPlayerState.h"
 
+#include "SMCharacterSelectPlayerController.h"
 #include "Games/SMCharacterSelectState.h"
 
 ASMCharacterSelectPlayerState::ASMCharacterSelectPlayerState()

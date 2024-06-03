@@ -5,6 +5,7 @@
 
 #include "CountdownTimerComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Player/SMPlayerState.h"
 
 void ASMCharacterSelectState::OnRep_CharacterSelectionState() const
 {
@@ -22,6 +23,14 @@ ASMCharacterSelectState::ASMCharacterSelectState()
 void ASMCharacterSelectState::AddPlayerState(APlayerState* PlayerState)
 {
 	Super::AddPlayerState(PlayerState);
+	if(HasAuthority())
+	{
+		ASMPlayerState* SMPlayerState = Cast<ASMPlayerState>(PlayerState);
+		if(SMPlayerState && SMPlayerState->GetTeam() == ESMTeam::None)
+		{
+			SMPlayerState->SetTeam(ESMTeam::FutureBass);
+		}
+	}
 }
 
 void ASMCharacterSelectState::RemovePlayerState(APlayerState* PlayerState)
