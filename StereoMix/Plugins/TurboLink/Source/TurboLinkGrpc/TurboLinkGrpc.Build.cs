@@ -50,6 +50,8 @@ public class TurboLinkGrpc : ModuleRules
 		
 		//ThirdParty Libraries
 		ConfigurePlatform(Target.Platform.ToString(), Target.Configuration);
+		
+		// OptimizeCode = CodeOptimization.Never;
 	}
 
 	private TurboLinkPlatform GetTurboLinkPlatformInstance(ReadOnlyTargetRules Target)

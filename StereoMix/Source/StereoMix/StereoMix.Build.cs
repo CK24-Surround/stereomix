@@ -12,7 +12,7 @@ public class StereoMix : ModuleRules
 		
 		PublicDependencyModuleNames.AddRange(new[]
 		{
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "CommonUI", "AnimGraphRuntime", "Niagara"
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "CommonUI", "ModelViewViewModel", "AnimGraphRuntime", "Niagara"
 		});
 		PrivateDependencyModuleNames.AddRange(new[]
 		{
@@ -20,11 +20,17 @@ public class StereoMix : ModuleRules
 		});
 		
 		// Uncomment if you are using Slate UI
-		PrivateDependencyModuleNames.AddRange(new[] { "Slate", "SlateCore" });
+		PrivateDependencyModuleNames.AddRange(new[]
+		{
+			"Slate", "SlateCore"
+		});
 		
 		// Uncomment if you are using online features
 		// PrivateDependencyModuleNames.Add("OnlineSubsystem");
 		
 		// To include OnlineSubsystemSteam, add it to the plugins section in your uproject file with the Enabled attribute set to true
+		
+		
+		// OptimizeCode = CodeOptimization.Never;
 	}
 }

@@ -4,6 +4,7 @@
 #include "SMGrpcSubsystem.h"
 
 #include "StereoMix.h"
+#include "StereoMixLog.h"
 #include "TurboLinkGrpcConfig.h"
 #include "TurboLinkGrpcManager.h"
 #include "Kismet/GameplayStatics.h"

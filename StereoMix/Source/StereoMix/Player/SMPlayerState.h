@@ -57,9 +57,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FORCEINLINE ESMCharacterType GetCharacterType() const { return CharacterType; }
 
-	void SetTeam(ESMTeam NewTeam);
+	bool SetTeam(ESMTeam NewTeam);
 
-	void SetCharacterType(ESMCharacterType NewCharacterType);
+	bool SetCharacterType(ESMCharacterType NewCharacterType);
 
 protected:
 	virtual bool CanChangeTeam(ESMTeam NewTeam) const;

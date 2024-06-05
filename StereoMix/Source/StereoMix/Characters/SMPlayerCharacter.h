@@ -22,7 +22,7 @@ class USMAbilitySystemComponent;
 class UGameplayEffect;
 class UGameplayAbility;
 class ASMPlayerCharacter;
-class ASMPlayerController;
+class ASMGamePlayerController;
 struct FInputActionValue;
 class USphereComponent;
 class UCameraComponent;
@@ -155,7 +155,7 @@ protected:
 // ~Caching Section
 protected:
 	UPROPERTY()
-	TObjectPtr<ASMPlayerController> CachedSMPlayerController;
+	TObjectPtr<ASMGamePlayerController> CachedSMPlayerController;
 // ~Caching Section
 
 // ~GAS Section

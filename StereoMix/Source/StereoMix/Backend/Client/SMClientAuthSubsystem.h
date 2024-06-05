@@ -54,6 +54,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	USMUserAccount* GetUserAccount() const { return UserAccount; }
 
+	UFUNCTION(BlueprintCallable)
+	void ResetAccount();
+
 	/**
 	 * 게스트 계정으로 로그인합니다. 로그인 완료 시 OnLoginResponse 이벤트가 호출됩니다.
 	 * @param UserName 게스트 이름

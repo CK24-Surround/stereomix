@@ -5,6 +5,7 @@
 
 #include "SMUserAccount.h"
 #include "StereoMix.h"
+#include "StereoMixLog.h"
 #include "SAuth/AuthService.h"
 
 bool USMClientAuthSubsystem::ShouldCreateSubsystem(UObject* Outer) const
@@ -17,6 +18,11 @@ void USMClientAuthSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	Super::Initialize(Collection);
 	AuthClient = GetAuthService()->MakeClient();
 	AuthClient->OnGuestLoginResponse.AddUniqueDynamic(this, &USMClientAuthSubsystem::OnGrpcLoginResponse);
+}
+
+void USMClientAuthSubsystem::ResetAccount()
+{
+	UserAccount = nullptr;
 }
 
 bool USMClientAuthSubsystem::LoginAsGuest(const FString& UserName)
@@ -51,7 +57,7 @@ void USMClientAuthSubsystem::OnGrpcLoginResponse(const FGrpcContextHandle Handle
 		return;
 	}
 
-	UE_LOG(LogStereoMix, Log, TEXT("[SMClientAuthSubsystem] login success."))
+	UE_LOG(LogStereoMix, Log, TEXT("[SMClientAuthSubsystem] User logged in successfully. UserId: %s, UserName: %s"), *Response.UserAccount.UserId, *Response.UserAccount.UserName)
 
 	InitUserAccount(Response.AccessToken, Response.RefreshToken, Response.UserAccount);
 	if (OnLoginResponse.IsBound())

@@ -17,9 +17,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "Player/SMPlayerController.h"
+#include "Player/SMGamePlayerController.h"
 #include "Player/SMGamePlayerState.h"
-#include "UI/SMUserWidget_CharacterState.h"
 #include "UI/SMWidgetComponent.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
@@ -27,9 +26,9 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
-#include "GameFramework/GameMode.h"
-#include "Games/SMGameState.h"
 #include "Tiles/SMTile.h"
+#include "UI/Widget/Game/SMUserWidget_CharacterState.h"
+
 
 ASMPlayerCharacter::ASMPlayerCharacter()
 {
@@ -152,7 +151,7 @@ void ASMPlayerCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	CachedSMPlayerController = GetController<ASMPlayerController>();
+	CachedSMPlayerController = GetController<ASMGamePlayerController>();
 	check(CachedSMPlayerController);
 
 	InitASC();
@@ -174,7 +173,7 @@ void ASMPlayerCharacter::OnRep_Controller()
 {
 	Super::OnRep_Controller();
 
-	CachedSMPlayerController = GetController<ASMPlayerController>();
+	CachedSMPlayerController = GetController<ASMGamePlayerController>();
 	check(CachedSMPlayerController);
 
 	CachedSMPlayerController->SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
@@ -222,7 +221,7 @@ void ASMPlayerCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputC
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(PlayerInputComponent);
-	const ASMPlayerController* PlayerController = CastChecked<ASMPlayerController>(Controller);
+	const ASMGamePlayerController* PlayerController = CastChecked<ASMGamePlayerController>(Controller);
 	const USMControlData* ControlData = PlayerController->GetControlData();
 	if (ControlData)
 	{
@@ -328,7 +327,7 @@ USMCatchInteractionComponent* ASMPlayerCharacter::GetCatchInteractionComponent()
 void ASMPlayerCharacter::SetupGASInputComponent()
 {
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
-	const ASMPlayerController* PlayerController = CastChecked<ASMPlayerController>(Controller);
+	const ASMGamePlayerController* PlayerController = CastChecked<ASMGamePlayerController>(Controller);
 	const USMControlData* ControlData = PlayerController->GetControlData();
 	EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility::Launch);
 	EnhancedInputComponent->BindAction(ControlData->CatchAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility::Catch);
@@ -616,7 +615,7 @@ void ASMPlayerCharacter::MulticastRPCAddScreenIndicatorToSelf_Implementation(AAc
 	}
 
 	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 추가해줍니다.
-	ASMPlayerController* LocalPlayerController = Cast<ASMPlayerController>(GetWorld()->GetFirstPlayerController());
+	ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController());
 	if (ensureAlways(LocalPlayerController))
 	{
 		LocalPlayerController->AddScreendIndicator(TargetActor);
@@ -638,7 +637,7 @@ void ASMPlayerCharacter::MulticastRPCRemoveScreenIndicatorToSelf_Implementation(
 	}
 
 	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 제거합니다.
-	ASMPlayerController* LocalPlayerController = Cast<ASMPlayerController>(GetWorld()->GetFirstPlayerController());
+	ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController());
 	if (ensureAlways(LocalPlayerController))
 	{
 		LocalPlayerController->RemoveScreenIndicator(TargetActor);
@@ -753,21 +752,21 @@ void ASMPlayerCharacter::OnRep_CharacterMoveTrailState()
 
 	switch (CharacterMoveTrailState)
 	{
-		case ECharacterMoveTrailState::None:
+	case ECharacterMoveTrailState::None:
 		{
 			break;
 		}
-		case ECharacterMoveTrailState::Default:
+	case ECharacterMoveTrailState::Default:
 		{
 			ActivateDefaultMoveTrail();
 			break;
 		}
-		case ECharacterMoveTrailState::Catch:
+	case ECharacterMoveTrailState::Catch:
 		{
 			ActivateCatchMoveTrail();
 			break;
 		}
-		case ECharacterMoveTrailState::Immune:
+	case ECharacterMoveTrailState::Immune:
 		{
 			ActivateImmuneMoveTrail();
 			break;

@@ -6,6 +6,7 @@
 #include "SMClientAuthSubsystem.h"
 #include "SMUserAccount.h"
 #include "StereoMix.h"
+#include "StereoMixLog.h"
 
 void USMClientLobbySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -88,7 +89,7 @@ bool USMClientLobbySubsystem::JoinRoomWithCode(const FString& RoomCode)
 
 void USMClientLobbySubsystem::Cancel() const
 {
-	UE_LOG(LogStereoMix, Log, TEXT("[SMClientLobbySubsystem] Cancel requested"));
+	UE_LOG(LogStereoMix, Warning, TEXT("[SMClientLobbySubsystem] Cancel requested"));
 	LobbyClient->TryCancel(GrpcContextHandle);
 }
 
@@ -319,49 +320,45 @@ void USMClientLobbySubsystem::OnGrpcJoinRoomWithCodeResponse(FGrpcContextHandle 
 		return;
 	}
 
-	EJoinRoomResult Result;
+	EJoinRoomWithCodeResult Result;
 	FString ServerUrl;
 	switch (GrpcResult.Code)
 	{
 	case EGrpcResultCode::Ok:
-		Result = EJoinRoomResult::Success;
+		Result = EJoinRoomWithCodeResult::Success;
 		ServerUrl = GetServerUrl(Response.Connection);
 		break;
 
 	case EGrpcResultCode::Unauthenticated:
-		Result = EJoinRoomResult::Unauthenticated;
+		Result = EJoinRoomWithCodeResult::Unauthenticated;
 		break;
 
 	case EGrpcResultCode::InvalidArgument:
-		Result = EJoinRoomResult::InvalidArgument;
+		Result = EJoinRoomWithCodeResult::InvalidArgument;
 		break;
 
 	case EGrpcResultCode::NotFound:
-		Result = EJoinRoomResult::RoomNotFound;
-		break;
-
-	case EGrpcResultCode::PermissionDenied:
-		Result = EJoinRoomResult::InvalidPassword;
+		Result = EJoinRoomWithCodeResult::RoomNotFound;
 		break;
 
 	case EGrpcResultCode::Aborted:
-		Result = EJoinRoomResult::RoomFull;
+		Result = EJoinRoomWithCodeResult::RoomFull;
 		break;
 
 	case EGrpcResultCode::Internal:
-		Result = EJoinRoomResult::InternalError;
+		Result = EJoinRoomWithCodeResult::InternalError;
 		break;
 
 	case EGrpcResultCode::DeadlineExceeded:
-		Result = EJoinRoomResult::DeadlineExceeded;
+		Result = EJoinRoomWithCodeResult::DeadlineExceeded;
 		break;
 
 	case EGrpcResultCode::ConnectionFailed:
-		Result = EJoinRoomResult::ConnectionError;
+		Result = EJoinRoomWithCodeResult::ConnectionError;
 		break;
 
 	default:
-		Result = EJoinRoomResult::UnknownError;
+		Result = EJoinRoomWithCodeResult::UnknownError;
 		break;
 	}
 	OnJoinRoomWithCodeResponse.Broadcast(Result, ServerUrl);

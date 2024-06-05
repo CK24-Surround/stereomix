@@ -44,11 +44,26 @@ enum EJoinRoomResult : uint8
 	InternalError,
 	DeadlineExceeded,
 	Unauthenticated,
+	ConnectionError,
 	InvalidArgument,
 	InvalidPassword,
 	RoomNotFound,
 	RoomFull,
+};
+
+UENUM(BlueprintType)
+enum class EJoinRoomWithCodeResult : uint8
+{
+	Success,
+	Cancelled,
+	UnknownError,
+	InternalError,
+	DeadlineExceeded,
+	Unauthenticated,
 	ConnectionError,
+	InvalidArgument,
+	RoomNotFound,
+	RoomFull,
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCreateRoomResponseDelegate, ECreateRoomResult, Result, const FString&, ServerUrl);
@@ -56,6 +71,8 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCreateRoomResponseDelegate, ECreat
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FQuickMatchResponseDelegate, EQuickMatchResult, Result, const FString&, ServerUrl);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FJoinRoomResponseDelegate, EJoinRoomResult, Result, const FString&, ServerUrl);
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FJoinRoomWithCodeResponseDelegate, EJoinRoomWithCodeResult, Result, const FString&, ServerUrl);
 
 /**
  * StereoMix Lobby Subsystem for Client
@@ -76,7 +93,7 @@ public:
 	FJoinRoomResponseDelegate OnJoinRoomResponse;
 	
 	UPROPERTY(BlueprintAssignable)
-	FJoinRoomResponseDelegate OnJoinRoomWithCodeResponse;
+	FJoinRoomWithCodeResponseDelegate OnJoinRoomWithCodeResponse;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
@@ -102,6 +119,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void Cancel() const;
 
+	virtual bool IsBusy() const override;
+	
 protected:
 	FGrpcContextHandle GrpcContextHandle;
 
@@ -110,8 +129,6 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<ULobbyServiceClient> LobbyClient;
-
-	virtual bool IsBusy() const override;
 
 	bool IsAuthenticated() const;
 

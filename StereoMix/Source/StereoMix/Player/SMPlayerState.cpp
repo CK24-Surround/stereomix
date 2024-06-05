@@ -4,6 +4,7 @@
 #include "SMPlayerState.h"
 
 #include "StereoMix.h"
+#include "StereoMixLog.h"
 #include "Games/SMGameState.h"
 #include "Games/SMGameStateNotify.h"
 #include "Net/UnrealNetwork.h"
@@ -53,15 +54,11 @@ void ASMPlayerState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void ASMPlayerState::OnRep_Team(const ESMTeam PreviousTeam)
 {
-	// NET_LOG(this, Verbose, TEXT("[SMPlayerState_OnRep] Player %s team changed: %s -> %s"), *GetPlayerName(), *UEnum::GetValueAsString(PreviousTeam), *UEnum::GetValueAsString(Team))
-	// 플레이어가 레플리케이티드 변수까지 전부 초기화 된 이후에만 OnTeamChanged 호출 가능
 	OnTeamChanged(PreviousTeam, Team);
 }
 
 void ASMPlayerState::OnRep_CharacterType(const ESMCharacterType PreviousCharacterType)
 {
-	// NET_LOG(this, Verbose, TEXT("[SMPlayerState_OnRep] Player %s character changed: %s -> %s"), *GetPlayerName(), *UEnum::GetValueAsString(PreviousCharacterType), *UEnum::GetValueAsString(CharacterType))
-	// 플레이어가 레플리케이티드 변수까지 전부 초기화 된 이후에만 OnCharacterTypeChanged 호출 가능
 	OnCharacterTypeChanged(PreviousCharacterType, CharacterType);
 }
 
@@ -99,27 +96,28 @@ void ASMPlayerState::OnCharacterTypeChanged(const ESMCharacterType PreviousChara
 	}
 }
 
-void ASMPlayerState::SetCharacterType(ESMCharacterType NewCharacterType)
+bool ASMPlayerState::SetCharacterType(ESMCharacterType NewCharacterType)
 {
 	if (!CanChangeCharacterType(NewCharacterType))
 	{
-		return;
+		return false;
 	}
 	const ESMCharacterType PreviousCharacterType = CharacterType;
 	CharacterType = NewCharacterType;
 	OnCharacterTypeChanged(PreviousCharacterType, NewCharacterType);
+	return true;
 }
 
-void ASMPlayerState::SetTeam(const ESMTeam NewTeam)
+bool ASMPlayerState::SetTeam(const ESMTeam NewTeam)
 {
-	NET_LOG(this, Verbose, TEXT("[SMPlayerState] Player %s requested to change team to %s"), *GetPlayerName(), *UEnum::GetValueAsString(NewTeam))
 	if (!CanChangeTeam(NewTeam))
 	{
-		return;
+		return false;
 	}
 	const ESMTeam PreviousTeam = Team;
 	Team = NewTeam;
 	OnTeamChanged(PreviousTeam, NewTeam);
+	return true;
 }
 
 bool ASMPlayerState::CanChangeTeam(const ESMTeam NewTeam) const

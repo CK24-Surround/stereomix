@@ -33,6 +33,7 @@ void UCountdownTimerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
+	DOREPLIFETIME(ThisClass, InitTime)
 	DOREPLIFETIME(ThisClass, RemainingTime)
 }
 
@@ -54,6 +55,7 @@ void UCountdownTimerComponent::PerformCountdownTick()
 		if (const UWorld* CurrentWorld = GetWorld())
 		{
 			CurrentWorld->GetTimerManager().ClearTimer(TimerHandle);
+			TimerHandle.Invalidate();
 		}
 		if (OnCountdownFinished.IsBound())
 		{
@@ -76,6 +78,7 @@ void UCountdownTimerComponent::StartCountdown(const int32 Seconds)
 		NET_LOG(GetOwner(), Warning, TEXT("Countdown already running."))
 	}
 
+	InitTime = Seconds;
 	RemainingTime = Seconds;
 	if (const UWorld* CurrentWorld = GetWorld())
 	{
@@ -99,6 +102,7 @@ void UCountdownTimerComponent::CancelCountdown()
 	{
 		NET_LOG(GetOwner(), Verbose, TEXT("Countdown cancelled."))
 		CurrentWorld->GetTimerManager().ClearTimer(TimerHandle);
+		TimerHandle.Invalidate();
 		if (OnCountdownCancelled.IsBound())
 		{
 			OnCountdownCancelled.Broadcast();

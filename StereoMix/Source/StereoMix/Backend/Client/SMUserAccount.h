@@ -19,6 +19,14 @@ class STEREOMIX_API USMUserAccount : public UObject
 	GENERATED_BODY()
 
 public:
+	/** 사용자의 액세스 토큰을 반환합니다. */
+	UFUNCTION(BlueprintCallable)
+	const FString& GetAccessToken() const { return AccessToken; }
+
+	/** 사용자의 리프레시 토큰을 반환합니다. */
+	UFUNCTION(BlueprintCallable)
+	const FString& GetRefreshToken() const { return RefreshToken; }
+	
 	/** 사용자의 아이디를 반환합니다. */
 	UFUNCTION(BlueprintCallable)
 	const FString& GetUserId() const { return UserId; }
@@ -36,6 +44,7 @@ public:
 	void Init(const FString& UserAccessToken, const FString& UserRefreshToken, const FGrpcAuthUserAccount& GrpcUserAccount);
 
 	/** 사용자의 인증 헤더를 반환합니다. */
+	UFUNCTION(BlueprintPure)
 	const FGrpcMetaData& GetAuthorizationHeader() const { return AuthorizationHeader; }
 
 private:

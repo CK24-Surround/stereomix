@@ -44,9 +44,14 @@
 		{
 			"Name": "FMODStudioNiagara",
 			"Enabled": true
+		},
+		{
+			"Name": "ModelViewViewModel",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
-		"Windows"
+		"Windows",
+		"Linux"
 	]
 }

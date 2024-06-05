@@ -16,26 +16,37 @@ class STEREOMIX_API UCountdownTimerComponent : public UActorComponent
 	FTimerHandle TimerHandle;
 
 	// TODO: float으로 바꾸고 tick interval을 변경 가능하도록 수정하기
-	
+
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, ReplicatedUsing=OnRep_RemainingTime, meta=(AllowPrivateAccess=true))
 	int32 RemainingTime;
 
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Replicated, meta=(AllowPrivateAccess=true))
+	int32 InitTime;
+	
 	UFUNCTION()
 	void OnRep_RemainingTime() const;
-	
+
 public:
 	UPROPERTY(BlueprintAssignable)
 	FTCountdownimerDelegate OnCountdownTick;
 
 	UPROPERTY(BlueprintAssignable)
 	FTCountdownimerDelegate OnCountdownFinished;
-	
+
 	UPROPERTY(BlueprintAssignable)
 	FTCountdownimerDelegate OnCountdownCancelled;
-	
+
 	UCountdownTimerComponent();
 
+	int32 GetInitTime() const { return InitTime; }
+	
 	int32 GetRemainingTime() const { return RemainingTime; }
+
+	bool IsRunning() const { return TimerHandle.IsValid(); }
+
+	void StartCountdown(int32 Seconds);
+
+	void CancelCountdown();
 
 protected:
 	virtual void BeginPlay() override;
@@ -45,9 +56,4 @@ protected:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PerformCountdownTick();
-
-public:
-	void StartCountdown(int32 Seconds);
-
-	void CancelCountdown();
 };

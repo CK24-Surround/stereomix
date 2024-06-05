@@ -18,6 +18,7 @@ class STEREOMIX_API USMAuthSubsystem : public USMGrpcClientSubsystem
 public:
 	USMAuthSubsystem();
 
+	UFUNCTION(BlueprintPure)
 	UAuthService* GetAuthService() const { return Cast<UAuthService>(GrpcService); }
 
 	UFUNCTION(BlueprintPure)

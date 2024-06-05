@@ -4,10 +4,8 @@
 #include "SMGameMode.h"
 
 #include "SMGameState.h"
-#include "StereoMix.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
-#include "Projectiles/SMProjectile.h"
 #include "Projectiles/SMProjectilePool.h"
 #include "Session/SMGameSession.h"
 #include "Utilities/SMLog.h"

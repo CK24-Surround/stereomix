@@ -7,7 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Player/SMGamePlayerState.h"
-#include "Player/SMPlayerController.h"
+#include "Player/SMGamePlayerController.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
@@ -61,7 +61,7 @@ void ASMTeamSelectTriggerBox::RespawnCharacter(AActor* TargetActor)
 		return;
 	}
 
-	ASMPlayerController* TargetController = TargetCharacter->GetController<ASMPlayerController>();
+	ASMGamePlayerController* TargetController = TargetCharacter->GetController<ASMGamePlayerController>();
 	if (!ensureAlways(TargetController))
 	{
 		return;

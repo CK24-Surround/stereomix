@@ -17,18 +17,20 @@ class STEREOMIX_API USMGrpcClientSubsystem : public UGameInstanceSubsystem
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintAssignable)
+	FOnServiceStateChanged OnServiceStateChanged;
+	
 	USMGrpcClientSubsystem();
 
 	explicit USMGrpcClientSubsystem(const FString& InServiceName);
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
+	virtual void Deinitialize() override;
+
 	UFUNCTION(BlueprintPure)
 	const FString& GetServiceName() const { return ServiceName; }
-
-	UFUNCTION(BlueprintPure)
-	virtual UGrpcService* GetGrpcService() const;
-
+	
 	UFUNCTION(BlueprintCallable)
 	virtual void Connect() const;
 
@@ -48,6 +50,8 @@ protected:
 	UPROPERTY(VisibleDefaultsOnly)
 	FString ServiceName;
 	
+	virtual UGrpcService* GetGrpcService() const;
+	
 	UFUNCTION()
-	virtual void OnServiceStateChanged(EGrpcServiceState ServiceState);
+	virtual void HandleServiceStateChanged(EGrpcServiceState ServiceState);
 };
