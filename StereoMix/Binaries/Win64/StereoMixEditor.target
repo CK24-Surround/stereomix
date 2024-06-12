@@ -6678,6 +6678,18 @@
 			"Type": "RequiredResource"
 		},
 		{
+			"Path": "$(ProjectDir)/Plugins/RefreshAllNodes/Binaries/Win64/UnrealEditor-RefreshAllNodes.dll",
+			"Type": "DynamicLibrary"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/RefreshAllNodes/Binaries/Win64/UnrealEditor-RefreshAllNodes.pdb",
+			"Type": "SymbolFile"
+		},
+		{
+			"Path": "$(ProjectDir)/Plugins/RefreshAllNodes/Binaries/Win64/UnrealEditor.modules",
+			"Type": "RequiredResource"
+		},
+		{
 			"Path": "$(ProjectDir)/Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkEditor.dll",
 			"Type": "DynamicLibrary"
 		},
@@ -29760,6 +29772,10 @@
 			"Type": "UFS"
 		},
 		{
+			"Path": "$(ProjectDir)/Plugins/RefreshAllNodes/RefreshAllNodes.uplugin",
+			"Type": "UFS"
+		},
+		{
 			"Path": "$(ProjectDir)/Plugins/TurboLink/TurboLink.uplugin",
 			"Type": "UFS"
 		},
@@ -29910,6 +29926,7 @@
 		"PropertyAccessNode",
 		"ProxyLODPlugin",
 		"PythonScriptPlugin",
+		"RefreshAllNodes",
 		"RenderDocPlugin",
 		"RenderGraphInsights",
 		"ResonanceAudio",
