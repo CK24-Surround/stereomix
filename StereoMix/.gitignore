@@ -143,10 +143,10 @@ Plugins/KawaiiPhysics/Binaries/**/*.pdb
 !Plugins/KawaiiPhysics/Binaries/**/UnrealEditor-KawaiiPhysicsEd.dll
 # KawaiiPhysics
 
-#TurboLink ThirdParty
+# TurboLink ThirdParty
 Plugins/TurboLink/Source/ThirdParty
 
-#TurboLink Tools
+# TurboLink Tools
 !Plugins/TurboLink/Tools/**
 
 # TurboLink Binaries
@@ -155,3 +155,11 @@ Plugins/TurboLink/Binaries/Win64/*
 !Plugins/TurboLink/Binaries/Win64/UnrealEditor.modules
 !Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkEditor.dll
 !Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkGrpc.dll
+
+# RefreshAllNodes
+Plugins/RefreshAllNodes/Binaries/*
+!Plugins/RefreshAllNodes/Binaries/Win64
+Plugins/RefreshAllNodes/Binaries/**/*.pdb
+!Plugins/RefreshAllNodes/Binaries/**/UnrealEditor.modules
+!Plugins/RefreshAllNodes/Binaries/**/UnrealEditor-RefreshAllNodes.dll
+# RefreshAllNodes
