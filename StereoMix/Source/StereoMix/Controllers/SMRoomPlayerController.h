@@ -25,6 +25,9 @@ public:
 
 	ASMRoomPlayerState* GetRoomPlayerState() const { return RoomPlayerState.Get(); }
 
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void RequestImmediateStartGame();
+
 protected:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<USMLoadingScreenWidget> LoadingScreenWidgetClass;

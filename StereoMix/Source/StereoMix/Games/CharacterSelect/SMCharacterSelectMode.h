@@ -33,6 +33,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsAllPlayerReadyToSelect() const;
 
+	UFUNCTION(BlueprintCallable)
+	void ImmediateStart();
+
 protected:
 	UFUNCTION()
 	void WaitingTimerTick();

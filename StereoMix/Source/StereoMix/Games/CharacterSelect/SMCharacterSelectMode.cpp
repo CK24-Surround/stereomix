@@ -60,6 +60,17 @@ bool ASMCharacterSelectMode::IsAllPlayerReadyToSelect() const
 	return false;
 }
 
+void ASMCharacterSelectMode::ImmediateStart()
+{
+	if (!CharacterSelectState.IsValid() || CharacterSelectState->GetCurrentState() != ECharacterSelectionStateType::Select)
+	{
+		return;
+	}
+
+	CharacterSelectState->GetCountdownTimer()->CancelCountdown();
+	OnCharacterSelectCountdownFinished();
+}
+
 void ASMCharacterSelectMode::WaitingTimerTick()
 {
 	RemainingWaitingTime--;

@@ -4,6 +4,7 @@
 #include "SMCharacterSelectPlayerController.h"
 
 #include "EngineUtils.h"
+#include "Games/CharacterSelect/SMCharacterSelectMode.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "Utilities/SMLog.h"
 
@@ -41,6 +42,17 @@ void ASMCharacterSelectPlayerController::OnRep_PlayerState()
 			InitPlayer();
 		});
 	}
+}
+
+void ASMCharacterSelectPlayerController::RequestImmediateStartGame_Implementation()
+{
+#if WITH_SERVER_CODE
+	if (GetWorld() && GetWorld()->GetAuthGameMode())
+	{
+		ASMCharacterSelectMode* CharacterSelectMode = CastChecked<ASMCharacterSelectMode>(GetWorld()->GetAuthGameMode());
+		CharacterSelectMode->ImmediateStart();
+	}
+#endif
 }
 
 void ASMCharacterSelectPlayerController::InitPlayer()

@@ -73,6 +73,9 @@ public:
 
 	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
 
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void RequestImmediateResetPosition();
+
 protected:
 	UPROPERTY()
 	TObjectPtr<const USMControlData> ControlData;

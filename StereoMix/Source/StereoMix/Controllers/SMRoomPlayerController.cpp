@@ -4,6 +4,7 @@
 #include "SMRoomPlayerController.h"
 
 #include "StereoMixLog.h"
+#include "Games/Room/SMRoomMode.h"
 
 ASMRoomPlayerController::ASMRoomPlayerController()
 {
@@ -41,4 +42,29 @@ void ASMRoomPlayerController::OnRep_PlayerState()
 	}, 1.0f, false);
 
 	UE_LOG(LogStereoMix, Log, TEXT("ASMRoomPlayerController::OnRep_PlayerState"));
+}
+
+void ASMRoomPlayerController::RequestImmediateStartGame_Implementation()
+{
+#if WITH_SERVER_CODE
+	if (GetWorld() && GetWorld()->GetAuthGameMode())
+	{
+		ASMRoomMode* RoomMode = CastChecked<ASMRoomMode>(GetWorld()->GetAuthGameMode());
+		if (RoomState.IsValid())
+		{
+			for (TObjectPtr<APlayerState> PS : RoomState->PlayerArray)
+			{
+				// 모든 플레이어가 팀에 소속되야 게임을 시작할 수 있습니다.
+				const ASMRoomPlayerState* RoomPlayer = CastChecked<ASMRoomPlayerState>(PS);
+				if (RoomPlayer->GetTeam() == ESMTeam::None)
+				{
+					return;
+				}
+			}
+
+			// 팀 균형이 안맞아도 강제 시작
+			RoomMode->StartGame();
+		}
+	}
+#endif
 }

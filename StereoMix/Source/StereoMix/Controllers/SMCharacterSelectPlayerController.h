@@ -42,6 +42,9 @@ public:
 
 	ASMCharacterSelectPlayerState* GetCharacterSelectPlayerState() const { return CharacterSelectPlayerState.Get(); }
 
+	UFUNCTION(BlueprintCallable, Server, Reliable)
+	void RequestImmediateStartGame();
+
 protected:
 	void InitPlayer();
 

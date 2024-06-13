@@ -122,13 +122,20 @@ void ASMRoomMode::OnCountdownTick()
 
 void ASMRoomMode::OnCountdownFinished()
 {
-	if (IsReadyToStart())
-	{
-		StartGame();
-	}
+	StartGameIfReadyToStart();
 }
 
 void ASMRoomMode::StartGame()
 {
 	ProcessServerTravel("/Game/StereoMix/Levels/CharacterSelect/L_CharacterSelect");
+}
+
+bool ASMRoomMode::StartGameIfReadyToStart()
+{
+	if (IsReadyToStart())
+	{
+		StartGame();
+		return true;
+	}
+	return false;
 }

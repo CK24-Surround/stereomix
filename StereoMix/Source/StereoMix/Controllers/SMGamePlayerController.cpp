@@ -11,6 +11,7 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "Data/SMControlData.h"
 #include "GameFramework/GameModeBase.h"
+#include "Games/SMGameMode.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"
 #include "UI/Widget/Game/SMUserWidget_ScreenIndicator.h"
 #include "UI/Widget/Game/SMUserWidget_StartCountdown.h"
@@ -286,4 +287,56 @@ void ASMGamePlayerController::OnTargetDestroyedWithIndicator(AActor* DestroyedAc
 	// 대상이 게임에서 나가거나 어떤 이유로 유효하지 않게된 경우 인디케이터를 제거해줍니다.
 	NET_LOG(this, Warning, TEXT("유효하지 않은 타겟의 인디케이터 제거"));
 	RemoveScreenIndicator(DestroyedActor);
+}
+
+void ASMGamePlayerController::RequestImmediateResetPosition_Implementation()
+{
+#if WITH_SERVER_CODE
+	ACharacter* PlayerCharacter = GetCharacter();
+	if (!PlayerCharacter)
+	{
+		return;
+	}
+
+	const ASMGamePlayerState* SMPlayerState = Cast<ASMGamePlayerState>(PlayerState);
+	if (!SMPlayerState)
+	{
+		return;
+	}
+
+	const ESMTeam Team = SMPlayerState->GetTeam();
+
+	// 플레이어 스타트를 통해 알맞은 스폰 장소를 설정합니다.
+	FVector NewLocation;
+	FRotator NewRotation;
+	if (AGameModeBase* GameMode = GetWorld()->GetAuthGameMode(); ensureAlways(GameMode))
+	{
+		FString TeamStarterTag;
+		switch (Team)
+		{
+		case ESMTeam::EDM:
+			{
+				TeamStarterTag = TEXT("Starter_EDM");
+				break;
+			}
+		case ESMTeam::FutureBass:
+			{
+				TeamStarterTag = TEXT("Starter_FB");
+				break;
+			}
+		default:
+			{
+				break;
+			}
+		}
+
+		if (const AActor* PlayerStarter = GameMode->FindPlayerStart(this, TeamStarterTag); ensureAlways(PlayerStarter))
+		{
+			NewLocation = PlayerStarter->GetActorLocation();
+			NewRotation = PlayerStarter->GetActorRotation();
+		}
+	}
+
+	PlayerCharacter->TeleportTo(NewLocation, NewRotation);
+#endif
 }
