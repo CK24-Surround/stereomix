@@ -3,9 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMFrontendPlayerController.h"
 #include "Games/Room/SMRoomPlayerState.h"
-#include "Player/SMPlayerState.h"
 #include "UI/Widget/Loading/SMLoadingScreenWidget.h"
 #include "UI/Widget/Room/SMRoomWidget.h"
 #include "SMRoomPlayerController.generated.h"

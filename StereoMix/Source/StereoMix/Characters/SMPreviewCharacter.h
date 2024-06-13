@@ -5,8 +5,11 @@
 #include "CoreMinimal.h"
 #include "FMODEvent.h"
 #include "GameFramework/Actor.h"
-#include "Player/SMPlayerState.h"
+#include "Data/SMTeam.h"
+#include "Data/SMCharacterType.h"
 #include "SMPreviewCharacter.generated.h"
+
+class ASMPlayerState;
 
 UCLASS()
 class STEREOMIX_API ASMPreviewCharacter : public AActor
@@ -17,9 +20,9 @@ public:
 	ASMPreviewCharacter();
 
 	virtual void OnConstruction(const FTransform& Transform) override;
-	
+
 	virtual void PostInitializeComponents() override;
-	
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void InitPlayerState(ASMPlayerState* PlayerState);
@@ -31,22 +34,21 @@ public:
 	ESMCharacterType GetCharacterType() const { return CharacterType; }
 
 	void PlaySelectAnimation() const;
-	
+
 protected:
 	virtual void BeginPlay() override;
-	
 
 private:
 	// =============================================================================
 	// Components
-	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess))
 	TObjectPtr<USkeletalMeshComponent> CharacterMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess))
 	TObjectPtr<USceneCaptureComponent2D> SceneCaptureComponent;
 
-	
+
 	// =============================================================================
 	// Variables
 
@@ -70,7 +72,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
 	TObjectPtr<UFMODEvent> CharacterSelectSound;
-	
+
 	UPROPERTY()
 	ASMPlayerState* OwningPlayerState;
 };

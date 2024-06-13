@@ -3,10 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMFrontendPlayerController.h"
 #include "Characters/SMPreviewCharacter.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
-#include "Player/SMPlayerState.h"
 #include "UI/Widget/CharacterSelect/SMCharacterSelectWidget.h"
 #include "UI/Widget/Loading/SMLoadingScreenWidget.h"
 #include "SMCharacterSelectPlayerController.generated.h"

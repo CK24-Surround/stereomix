@@ -4,8 +4,8 @@
 #include "SMCharacterSelectState.h"
 
 #include "Games/CountdownTimerComponent.h"
+#include "Games/SMPlayerState.h"
 #include "Net/UnrealNetwork.h"
-#include "Player/SMPlayerState.h"
 #include "Utilities/SMLog.h"
 
 ASMCharacterSelectState::ASMCharacterSelectState()

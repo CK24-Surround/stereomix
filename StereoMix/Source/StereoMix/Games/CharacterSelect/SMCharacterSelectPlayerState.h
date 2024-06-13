@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Player/SMPlayerState.h"
+#include "Games/SMPlayerState.h"
 #include "SMCharacterSelectPlayerState.generated.h"
 
 class ASMCharacterSelectState;

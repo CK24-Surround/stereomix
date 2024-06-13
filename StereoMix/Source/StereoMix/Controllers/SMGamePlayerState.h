@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "SMPlayerState.h"
+#include "Games/SMPlayerState.h"
 #include "SMGamePlayerState.generated.h"
 
 class USMAbilitySystemComponent;

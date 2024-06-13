@@ -4,7 +4,7 @@
 #include "SMLoginViewModel.h"
 
 #include "SMFrontendViewModel.h"
-#include "Controller/SMFrontendPlayerController.h"
+#include "Controllers/SMFrontendPlayerController.h"
 
 USMLoginViewModel::USMLoginViewModel()
 {

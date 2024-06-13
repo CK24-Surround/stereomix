@@ -6,7 +6,7 @@
 #include "SMCharacterSelectPlayerState.h"
 #include "SMCharacterSelectState.h"
 #include "StereoMixLog.h"
-#include "Controller/SMCharacterSelectPlayerController.h"
+#include "Controllers/SMCharacterSelectPlayerController.h"
 #include "Games/CountdownTimerComponent.h"
 #include "Session/SMGameSession.h"
 

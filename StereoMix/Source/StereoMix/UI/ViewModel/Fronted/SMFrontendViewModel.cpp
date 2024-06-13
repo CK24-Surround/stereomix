@@ -4,7 +4,7 @@
 #include "SMFrontendViewModel.h"
 
 #include "StereoMixLog.h"
-#include "Controller/SMFrontendPlayerController.h"
+#include "Controllers/SMFrontendPlayerController.h"
 
 USMFrontendViewModel::USMFrontendViewModel()
 {

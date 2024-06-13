@@ -6,8 +6,8 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/SMTeamComponent.h"
-#include "Player/SMGamePlayerState.h"
-#include "Player/SMGamePlayerController.h"
+#include "Controllers/SMGamePlayerController.h"
+#include "Controllers/SMGamePlayerState.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 

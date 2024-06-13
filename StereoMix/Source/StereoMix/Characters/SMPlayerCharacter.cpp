@@ -17,8 +17,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "Player/SMGamePlayerController.h"
-#include "Player/SMGamePlayerState.h"
 #include "UI/SMWidgetComponent.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
@@ -26,6 +24,8 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
+#include "Controllers/SMGamePlayerController.h"
+#include "Controllers/SMGamePlayerState.h"
 #include "Tiles/SMTile.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 

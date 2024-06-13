@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMRoomState.h"
-#include "Player/SMPlayerState.h"
+#include "Games/SMPlayerState.h"
 #include "SMRoomPlayerState.generated.h"
 
 UENUM(BlueprintType)

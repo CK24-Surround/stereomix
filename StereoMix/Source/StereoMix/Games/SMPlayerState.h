@@ -14,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterTypeChangedEvent, ESMChara
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API ASMPlayerState : public APlayerState
 {
 	GENERATED_BODY()
