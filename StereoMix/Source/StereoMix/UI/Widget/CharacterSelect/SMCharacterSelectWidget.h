@@ -62,6 +62,9 @@ protected:
 	void UpdatePlayerList() const;
 
 	UFUNCTION()
+	void OnCharacterSelectStateChanged(ECharacterSelectionStateType NewCharacterSelectionState);
+	
+	UFUNCTION()
 	void OnLocalPlayerCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 	
 	UFUNCTION()
@@ -119,18 +122,21 @@ private:
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Background", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Background", meta=(AllowPrivateAccess))
 	FSMCharacterSelectWidgetBackgroundData EdmBackgroundData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Background", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Background", meta=(AllowPrivateAccess))
 	FSMCharacterSelectWidgetBackgroundData FutureBassBackgroundData;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Sound", meta=(AllowPrivateAccess))
+	TObjectPtr<UFMODEvent> CountdownSound;
+	
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="My Character", meta=(AllowPrivateAccess))
+	ESMCharacterType CurrentCharacter;
+	
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectState> OwningCharacterSelectState;
 
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectPlayerState> OwningPlayerState;
-
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="My Character", meta=(AllowPrivateAccess))
-	ESMCharacterType CurrentCharacter;
 };

@@ -3,6 +3,7 @@
 
 #include "SMCharacterSelectWidget.h"
 
+#include "FMODBlueprintStatics.h"
 #include "SMCharacterSelectPlayerEntryItem.h"
 #include "Games/CountdownTimerComponent.h"
 
@@ -41,6 +42,7 @@ void USMCharacterSelectWidget::InitWidget(ASMCharacterSelectState* CharacterSele
 	
 	OwningPlayerState->OnCharacterChangeResponse.AddDynamic(this, &USMCharacterSelectWidget::OnLocalPlayerCharacterChangeResponse);
 
+	OwningCharacterSelectState->OnCurrentStateChanged.AddDynamic(this, &USMCharacterSelectWidget::OnCharacterSelectStateChanged);
 	OwningCharacterSelectState->OnPlayerJoined.AddDynamic(this, &USMCharacterSelectWidget::OnPlayerJoin);
 	OwningCharacterSelectState->OnPlayerLeft.AddDynamic(this, &USMCharacterSelectWidget::OnPlayerLeft);
 	OwningCharacterSelectState->OnPlayerCharacterChanged.AddDynamic(this, &USMCharacterSelectWidget::OnPlayerCharacterChanged);
@@ -76,6 +78,14 @@ void USMCharacterSelectWidget::UpdatePlayerList() const
 			EntryItem->Init(TargetPlayerState);
 			PlayerListView->AddItem(EntryItem);
 		}
+	}
+}
+
+void USMCharacterSelectWidget::OnCharacterSelectStateChanged(const ECharacterSelectionStateType NewCharacterSelectionState)
+{
+	if (CountdownSound && NewCharacterSelectionState == ECharacterSelectionStateType::End)
+	{
+		UFMODBlueprintStatics::PlayEvent2D(GetWorld(), CountdownSound, true);
 	}
 }
 
