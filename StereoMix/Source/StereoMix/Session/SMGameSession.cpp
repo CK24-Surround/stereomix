@@ -51,10 +51,12 @@ FString ASMGameSession::ApproveLogin(const FString& Options)
 {
 	UE_LOG(LogSMGameSession, Verbose, TEXT("ApproveLogin: %s"), *Options)
 
+#if !WITH_EDITOR
 	if (!bCanEnterRoom)
 	{
 		return TEXT("Room is closed.");
 	}
+#endif
 	
 	return Super::ApproveLogin(Options);
 }
