@@ -99,6 +99,7 @@ void ASMCharacterSelectMode::OnCharacterSelectCountdownFinished()
 		CharacterSelectState->GetCountdownTimer()->OnCountdownFinished.AddUniqueDynamic(this, &ASMCharacterSelectMode::StartGame);
 
 		UE_LOG(LogStereoMix, Verbose, TEXT("Game will start in 5 seconds."))
+		CharacterSelectState->SetCurrentState(ECharacterSelectionStateType::End);
 		CharacterSelectState->GetCountdownTimer()->StartCountdown(5);
 	}
 }
