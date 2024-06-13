@@ -149,6 +149,19 @@ void ASMGameState::OnChangeTile(ESMTeam PreviousTeam, ESMTeam NewTeam)
 		// 이미 다른팀이 점령한 타일을 점령하는 경우 스코어를 스왑해줍니다.
 		SwapScore(PreviousTeam, NewTeam);
 	}
+
+	if (TeamScores[ESMTeam::FutureBass] == TeamScores[ESMTeam::EDM])
+	{
+		SetMusicOwner(ESMTeam::None);
+	}
+	else
+	{
+		const ESMTeam CurrentWinner = TeamScores[ESMTeam::EDM] > TeamScores[ESMTeam::FutureBass] ? ESMTeam::EDM : ESMTeam::FutureBass;
+		if (GetCurrentMusicOwner() != CurrentWinner)
+		{
+			SetMusicOwner(CurrentWinner);
+		}
+	}
 }
 
 void ASMGameState::AddTeamScore(ESMTeam InTeam)
@@ -189,11 +202,6 @@ void ASMGameState::EndPhase()
 	{
 		const ESMTeam VictoryTeam = CalculateVictoryTeam();
 		SetTeamPhaseScores(VictoryTeam, TeamPhaseScores[VictoryTeam] + 1);
-
-		if (GetCurrentMusicOwner() != VictoryTeam)
-		{
-			SetMusicOwner(VictoryTeam);
-		}
 	}
 #endif
 }
@@ -252,15 +260,15 @@ void ASMGameState::OnRep_ReplicatedCurrentMusicPlayer()
 		NET_LOG(this, Verbose, TEXT("서버로부터 BGM 변경됨: %s"), *UEnum::GetValueAsString(ReplicatedCurrentMusicOwner))
 		switch (ReplicatedCurrentMusicOwner)
 		{
-			case ESMTeam::None:
-				UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_NONE);
-				break;
-			case ESMTeam::EDM:
-				UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_EDM);
-				break;
-			case ESMTeam::FutureBass:
-				UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_FUTURE_BASS);
-				break;
+		case ESMTeam::None:
+			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_NONE);
+			break;
+		case ESMTeam::EDM:
+			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_EDM);
+			break;
+		case ESMTeam::FutureBass:
+			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_FUTURE_BASS);
+			break;
 		}
 	}
 }
