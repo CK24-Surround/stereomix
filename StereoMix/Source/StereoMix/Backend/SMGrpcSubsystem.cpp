@@ -26,7 +26,7 @@ void USMGrpcSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 #if WITH_EDITOR
 		Target = EConnectionEndPointTargets::Local;
 #elif UE_BUILD_DEVELOPMENT
-		Target = EConnectionEndPointTargets::Development;
+		Target = EConnectionEndPointTargets::Live;
 #elif UE_BUILD_SHIPPING
 		Target = EConnectionEndPointTargets::Live;
 #endif
@@ -51,14 +51,14 @@ void USMGrpcSubsystem::SetTargetEndPoint(const EConnectionEndPointTargets Target
 	case EConnectionEndPointTargets::Development:
 		TurboLinkConfig->EnableServerSideTLS = true;
 		TurboLinkConfig->ServerRootCerts = ServerRootCerts;
-		TurboLinkConfig->DefaultEndPoint = DevelopmentServerEndPoint;
+		TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
 		break;
 
 	case EConnectionEndPointTargets::Local:
 		// 임시 코드
 		TurboLinkConfig->EnableServerSideTLS = true;
 		TurboLinkConfig->ServerRootCerts = ServerRootCerts;
-		TurboLinkConfig->DefaultEndPoint = DevelopmentServerEndPoint;
+		TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
 		// TurboLinkConfig->EnableServerSideTLS = false;
 		// TurboLinkConfig->ServerRootCerts = TEXT("");
 		// TurboLinkConfig->DefaultEndPoint = LocalServerEndPoint;
