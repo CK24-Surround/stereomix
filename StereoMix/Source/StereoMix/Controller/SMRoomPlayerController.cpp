@@ -17,7 +17,7 @@ void ASMRoomPlayerController::BeginPlay()
 
 	RoomState = GetWorld()->GetGameStateChecked<ASMRoomState>();
 	
-	SetInputMode(FInputModeUIOnly());
+	// SetInputMode(FInputModeUIOnly());
 	UE_LOG(LogStereoMix, Log, TEXT("ASMRoomPlayerController::BeginPlay"));
 }
 

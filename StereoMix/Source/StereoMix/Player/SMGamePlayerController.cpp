@@ -76,7 +76,7 @@ void ASMGamePlayerController::OnRep_PlayerState()
 
 	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, HUDWidgetClass);
 	HUDWidget->AddToViewport(0);
-
+	
 	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass);
 	VictoryDefeatWidget->AddToViewport(1);
 
@@ -102,9 +102,9 @@ void ASMGamePlayerController::InitControl()
 		Subsystem->AddMappingContext(ControlData->DefaultMappingContext, 0);
 	}
 
-	FInputModeGameOnly InputModeGameOnly;
-	InputModeGameOnly.SetConsumeCaptureMouseDown(false);
-	SetInputMode(InputModeGameOnly);
+	// FInputModeGameOnly InputModeGameOnly;
+	// InputModeGameOnly.SetConsumeCaptureMouseDown(true);
+	// SetInputMode(InputModeGameOnly);
 }
 
 void ASMGamePlayerController::SpawnTimerCallback()

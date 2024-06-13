@@ -8,11 +8,12 @@
 #include "GameFramework/PlayerController.h"
 #include "SMGamePlayerController.generated.h"
 
+class USMUserWidget_HUD;
 class USMUserWidget_StartCountdown;
 class ASMPlayerCharacter;
 class USMUserWidget_ScreenIndicator;
 class USMUserWidget_VictoryDefeat;
-class USMUserWidget_HUD;
+class USMUserWidget_GameHUD;
 class USMControlData;
 
 USTRUCT(BlueprintType)

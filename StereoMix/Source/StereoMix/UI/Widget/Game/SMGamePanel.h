@@ -1,18 +1,17 @@
-// Copyright Surround, Inc. All Rights Reserved.
+﻿// Copyright Surround, Inc. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "CommonUserWidget.h"
-#include "Blueprint/UserWidget.h"
-#include "SMUserWidget.generated.h"
+#include "CommonActivatableWidget.h"
+#include "SMGamePanel.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API USMUserWidget : public UCommonUserWidget, public IAbilitySystemInterface
+class STEREOMIX_API USMGamePanel : public UCommonActivatableWidget, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 

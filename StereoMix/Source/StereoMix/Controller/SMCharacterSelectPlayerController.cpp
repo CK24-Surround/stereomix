@@ -16,7 +16,7 @@ ASMCharacterSelectPlayerController::ASMCharacterSelectPlayerController()
 void ASMCharacterSelectPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	SetInputMode(FInputModeUIOnly());
+	// SetInputMode(FInputModeUIOnly());
 }
 
 void ASMCharacterSelectPlayerController::OnRep_PlayerState()
