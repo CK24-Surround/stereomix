@@ -3,10 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FMODBlueprintStatics.h"
 #include "GameFramework/GameState.h"
 #include "Data/SMTeam.h"
 #include "SMGameState.generated.h"
 
+class UFMODEvent;
 class USMWidget_RoomId;
 
 DECLARE_DELEGATE_OneParam(FOnChangeTimeSignature, int32 /*RemainTime*/);
@@ -27,9 +29,20 @@ class STEREOMIX_API ASMGameState : public AGameState
 public:
 	ASMGameState();
 
+	// ~AGameState Section
+	
 	virtual void PostInitializeComponents() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	virtual void OnRep_MatchState() override;
+
+	virtual void HandleMatchHasStarted() override;
+
+	virtual void HandleMatchHasEnded() override;
+
+	// ~AGameState Section
+	
 // ~Countdown Time Section
 public:
 	FORCEINLINE int32 GetReplicatedRemainCountdownTime() const { return ReplicatedRemainCountdownTime; }
@@ -160,6 +173,7 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedCurrentPhaseNumber")
 	int32 ReplicatedCurrentPhaseNumber = 0;
+	
 // ~Phase Section
 
 // ~VictoryDefeat Section
@@ -178,4 +192,29 @@ protected:
 public:
 	FOnEndRoundSignature OnEndRound;
 // ~VictoryDefeat Section
+
+	// ~Sound Section
+public:
+	void PlayBackgroundMusic();
+	
+	ESMTeam GetCurrentMusicOwner() const { return ReplicatedCurrentMusicOwner; }
+	void SetMusicOwner(ESMTeam InTeam);
+	
+private:
+	const float BGM_PARAMETER_NONE = 0.f;
+	const float BGM_PARAMETER_FUTURE_BASS = 1.f;
+	const float BGM_PARAMETER_EDM = 2.f;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sound", meta=(AllowPrivateAccess))
+	TObjectPtr<UFMODEvent> BackgroundMusic;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Sound", meta=(AllowPrivateAccess))
+	FFMODEventInstance BackgroundMusicEventInstance;
+
+	UPROPERTY(ReplicatedUsing=OnRep_ReplicatedCurrentMusicPlayer)
+	ESMTeam ReplicatedCurrentMusicOwner = ESMTeam::None;
+
+	UFUNCTION()
+	void OnRep_ReplicatedCurrentMusicPlayer();
+	// ~Sound Section
 };

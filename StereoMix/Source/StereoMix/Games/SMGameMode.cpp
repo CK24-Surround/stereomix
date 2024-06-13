@@ -3,6 +3,7 @@
 
 #include "SMGameMode.h"
 
+#include "FMODBlueprintStatics.h"
 #include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"

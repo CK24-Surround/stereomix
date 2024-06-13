@@ -4,6 +4,8 @@
 #include "SMGameState.h"
 
 #include "EngineUtils.h"
+#include "FMODBlueprintStatics.h"
+#include "StereoMixLog.h"
 #include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMLog.h"
@@ -52,6 +54,40 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamPhaseScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamPhaseScore);
 	DOREPLIFETIME(ASMGameState, ReplicatedRemainCountdownTime)
+	DOREPLIFETIME(ASMGameState, ReplicatedCurrentMusicOwner)
+}
+
+void ASMGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	// 사운드 리소스 정리
+	if (BackgroundMusicEventInstance.Instance)
+	{
+		BackgroundMusicEventInstance.Instance->release();
+	}
+}
+
+void ASMGameState::OnRep_MatchState()
+{
+	Super::OnRep_MatchState();
+}
+
+void ASMGameState::HandleMatchHasStarted()
+{
+	Super::HandleMatchHasStarted();
+
+	// 클라이언트만 배경음악 재생
+	if (GetNetMode() == NM_Client)
+	{
+		NET_LOG(this, Verbose, TEXT("배경음악 재생"))
+		PlayBackgroundMusic();
+	}
+}
+
+void ASMGameState::HandleMatchHasEnded()
+{
+	Super::HandleMatchHasEnded();
 }
 
 void ASMGameState::OnRep_ReplicatedRemainCountdownTime()
@@ -151,8 +187,18 @@ void ASMGameState::OnRep_ReplicatedFutureBassTeamPhaseScore()
 
 void ASMGameState::EndPhase()
 {
-	const ESMTeam VictoryTeam = CalculateVictoryTeam();
-	SetTeamPhaseScores(VictoryTeam, TeamPhaseScores[VictoryTeam] + 1);
+#if WITH_SERVER_CODE
+	if (HasAuthority())
+	{
+		const ESMTeam VictoryTeam = CalculateVictoryTeam();
+		SetTeamPhaseScores(VictoryTeam, TeamPhaseScores[VictoryTeam] + 1);
+
+		if (GetCurrentMusicOwner() != VictoryTeam)
+		{
+			SetMusicOwner(VictoryTeam);
+		}
+	}
+#endif
 }
 
 void ASMGameState::OnRep_ReplicatedRemainPhaseTime()
@@ -182,7 +228,48 @@ void ASMGameState::EndRoundVictoryDefeatResult()
 	MulticastRPCSendEndRoundResult(CalculateVictoryTeam());
 }
 
+void ASMGameState::PlayBackgroundMusic()
+{
+	if (ensure(BackgroundMusic))
+	{
+		BackgroundMusicEventInstance = UFMODBlueprintStatics::PlayEvent2D(this, BackgroundMusic, true);
+		BackgroundMusicEventInstance.Instance->setParameterByName("Winner", BGM_PARAMETER_NONE);
+	}
+}
+
+void ASMGameState::SetMusicOwner(const ESMTeam InTeam)
+{
+#if WITH_SERVER_CODE
+	if (HasAuthority())
+	{
+		NET_LOG(this, Verbose, TEXT("BGM 변경: %s"), *UEnum::GetValueAsString(InTeam))
+		ReplicatedCurrentMusicOwner = InTeam;
+	}
+#endif
+}
+
+void ASMGameState::OnRep_ReplicatedCurrentMusicPlayer()
+{
+	if (BackgroundMusicEventInstance.Instance)
+	{
+		NET_LOG(this, Verbose, TEXT("서버로부터 BGM 변경됨: %s"), *UEnum::GetValueAsString(ReplicatedCurrentMusicOwner))
+		switch (ReplicatedCurrentMusicOwner)
+		{
+		case ESMTeam::None:
+			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_NONE);
+			break;
+		case ESMTeam::EDM:
+			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_EDM);
+			break;
+		case ESMTeam::FutureBass:
+			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_FUTURE_BASS);
+			break;
+		}
+	}
+}
+
 void ASMGameState::MulticastRPCSendEndRoundResult_Implementation(ESMTeam VictoryTeam)
 {
+	NET_LOG(this, Log, TEXT("Round Victory Team: %s"), *UEnum::GetValueAsString(VictoryTeam))
 	OnEndRound.Broadcast(VictoryTeam);
 }

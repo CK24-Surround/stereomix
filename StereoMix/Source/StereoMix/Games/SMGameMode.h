@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FMODBlueprintStatics.h"
+#include "FMODEvent.h"
 #include "GameFramework/GameMode.h"
 #include "Data/SMTeam.h"
 #include "SMGameMode.generated.h"
@@ -92,7 +94,7 @@ protected:
 	/** 라운드 시작를 시작합니다. */
 	void StartRound();
 
-	/** 남은 라운스 타임을 설정합니다. GameState에 복제됩니다. */
+	/** 남은 라운드 타임을 설정합니다. GameState에 복제됩니다. */
 	void SetRemainRoundTime(int32 InRemainRoundTime);
 
 	/** 1초 주기로 라운드 타임과 관련된 처리를 합니다. */
