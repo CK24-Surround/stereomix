@@ -89,7 +89,7 @@ void ASMCharacterSelectMode::OnCharacterSelectCountdownFinished()
 				if (CharacterSelectPlayerState->GetCharacterType() == ESMCharacterType::None)
 				{
 					// 임시로 기본 기타로 설정
-					CharacterSelectPlayerState->SetCharacterType(ESMCharacterType::ElectricGuitar);
+					CharacterSelectPlayerState->ChangeCharacterType(ESMCharacterType::ElectricGuitar);
 				}
 				UE_LOG(LogStereoMix, Log, TEXT("Player %s automatically select character %s."), *CharacterSelectPlayerState->GetPlayerName(), *UEnum::GetValueAsString(CharacterSelectPlayerState->GetCharacterType()))
 			}
