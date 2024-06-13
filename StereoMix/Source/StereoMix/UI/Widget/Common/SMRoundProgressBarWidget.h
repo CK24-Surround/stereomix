@@ -17,7 +17,7 @@ class STEREOMIX_API USMRoundProgressBarWidget : public UUserWidget
 
 public:
 	void SetPercent(float Percent);
-	
+
 private:
 	// =============================================================================
 	// Bindings

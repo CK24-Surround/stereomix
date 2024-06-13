@@ -29,7 +29,7 @@ struct FSMCharacterSelectWidgetBackgroundData
 	TObjectPtr<UTexture2D> Background3;
 
 	FSMCharacterSelectWidgetBackgroundData() = default;
-	
+
 	FSMCharacterSelectWidgetBackgroundData(const FSMCharacterSelectWidgetBackgroundData& Other)
 	{
 		Background1 = Other.Background1;
@@ -63,22 +63,22 @@ protected:
 
 	UFUNCTION()
 	void OnCharacterSelectStateChanged(ECharacterSelectionStateType NewCharacterSelectionState);
-	
+
 	UFUNCTION()
 	void OnLocalPlayerCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
-	
+
 	UFUNCTION()
 	void OnPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter);
-	
+
 	UFUNCTION()
 	void OnPlayerJoin(ASMPlayerState* JoinedPlayer);
 
 	UFUNCTION()
 	void OnPlayerLeft(ASMPlayerState* LeftPlayer);
-	
+
 	UFUNCTION()
 	void OnCountdownTick();
-	
+
 private:
 	// =============================================================================
 	// Bindings
@@ -91,16 +91,16 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> Background3Image;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMRoundProgressBarWidget> CountdownProgressBar;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonTextBlock> CountdownTextBlock;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonListView> PlayerListView;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCharacterPreviewWidget> CharacterPreview;
 
@@ -112,12 +112,12 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCharacterSelectButton> BassSelectButton;
- 
+
 	// =============================================================================
 	// Animations
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> TransitionAnim;
-	
+
 
 	// =============================================================================
 	// Variables
@@ -130,10 +130,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Sound", meta=(AllowPrivateAccess))
 	TObjectPtr<UFMODEvent> CountdownSound;
-	
+
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="My Character", meta=(AllowPrivateAccess))
 	ESMCharacterType CurrentCharacter;
-	
+
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectState> OwningCharacterSelectState;
 

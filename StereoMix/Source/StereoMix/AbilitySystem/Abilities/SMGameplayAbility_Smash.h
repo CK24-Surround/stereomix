@@ -41,7 +41,6 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-protected:
 	/** 타겟데이터를 수신 받으면 호출됩니다. */
 	void OnReceiveTargetData(const FGameplayAbilityTargetDataHandle& GameplayAbilityTargetDataHandle, FGameplayTag GameplayTag);
 
@@ -53,7 +52,6 @@ protected:
 	UFUNCTION()
 	void OnSmashEnd(FGameplayEventData Payload);
 
-protected:
 	/** 사거리 내를 타게팅 했다면 InTargetLocation이 그대로, 사거리 밖을 타게팅 했다면 사거리에 맞게 조정된 InTargetLocation이 반환됩니다. */
 	FVector CalculateMaxDistanceLocation(const FVector& InStartLocation, const FVector& InTargetLocation);
 
@@ -63,7 +61,6 @@ protected:
 	/** 정점 높이를 기준으로 타겟을 향하는 벨로시티를 통해 캐릭터를 도약 시킵니다. */
 	void LaunchCharacterToTargetWithApex(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ);
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SmashMontage;
 
@@ -73,7 +70,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
 	TSubclassOf<UGameplayEffect> DamageGE;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "매치기 대미지")
 	float SmashDamage = 40.0f;
 
@@ -88,7 +84,6 @@ protected:
 
 	float OriginalGravityScale = 0.0f;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "매치기 1회에 타일이 트리거 되는 횟수")
 	int32 MaxTriggerCount = 3;
 };

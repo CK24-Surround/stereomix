@@ -36,7 +36,7 @@ protected:
 
 	UFUNCTION()
 	void OnQuitButtonClicked();
-	
+
 private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
 	TSubclassOf<USMLobbyWidget> LobbyWidgetClass;
@@ -46,7 +46,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
 	TSoftObjectPtr<UWorld> TutorialLevel;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
 	TObjectPtr<USMCommonButton> LobbyButton;
 

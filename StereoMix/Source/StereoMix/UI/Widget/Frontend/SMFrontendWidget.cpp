@@ -36,9 +36,7 @@ FLinearColor FBackgroundColorState::TransitionBackgroundColorOnTick(const float 
 	return CurrentColor;
 }
 
-USMFrontendWidget::USMFrontendWidget()
-{
-}
+USMFrontendWidget::USMFrontendWidget() {}
 
 void USMFrontendWidget::NativePreConstruct()
 {
@@ -111,9 +109,7 @@ void USMFrontendWidget::RemoveElementWidgetInternal(USMFrontendElementWidget* Wi
 
 void USMFrontendWidget::AddElementWidget(const TSubclassOf<USMFrontendElementWidget> WidgetClass)
 {
-	AddElementWidget(WidgetClass, [](USMFrontendElementWidget&)
-	{
-	});
+	AddElementWidget(WidgetClass, [](USMFrontendElementWidget&) {});
 }
 
 void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> WidgetClass, TFunctionRef<void(USMFrontendElementWidget&)> InstanceInitFunc)
@@ -134,8 +130,8 @@ void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> W
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidget - TransitionOut"), *GetName())
 		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this, [&, WidgetClass, InstanceInitFunc](UUMGSequencePlayer&)
 		{
-			 USMFrontendElementWidget* NewWidget = AddElementWidgetInternal(WidgetClass);
-			 InstanceInitFunc(*NewWidget);
+			USMFrontendElementWidget* NewWidget = AddElementWidgetInternal(WidgetClass);
+			InstanceInitFunc(*NewWidget);
 		});
 	}
 	else
@@ -155,7 +151,7 @@ void USMFrontendWidget::AddElementWidgetInstance(USMFrontendElementWidget& Widge
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidgetInstance - NewWidget: %s"), *GetName(), *WidgetInstance.GetName())
 		WidgetInstance.ActivateWidget();
 	};
-	
+
 	// 기존 위젯 트랜지션 아웃 애니메이션 재생
 	UCommonActivatableWidget* CurrentActiveWidget = MainStack->GetActiveWidget();
 	if (!CurrentActiveWidget)
@@ -262,6 +258,4 @@ void USMFrontendWidget::ChangeBackgroundColor(const FLinearColor NewColor)
 	BackgroundColorState.ChangeBackgroundColor(NewColor);
 }
 
-void USMFrontendWidget::OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer)
-{
-}
+void USMFrontendWidget::OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer) {}

@@ -49,10 +49,10 @@ void USMCatchInteractionComponent_CatchableItem_AttributeChanger::InternalOnSmas
 	if (TriggeredTile)
 	{
 		const FVector TileLocation = TriggeredTile->GetTileLocation();
-		
+
 		// FX 재생을 위해 약간 어긋난 아이템의 위치를 보정합니다.
 		SourceItem->SetActorLocation(TileLocation);
-		
+
 		SaveTriggeredTilesBySmash(TriggeredTile, InMagnitude);
 
 		// 스매시 이펙트를 재생합니다.

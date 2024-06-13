@@ -19,7 +19,6 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-protected:
 	UPROPERTY(VisibleAnywhere, Category = "SceneComponent")
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -29,7 +28,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "ItemSocketComponent")
 	TObjectPtr<USceneComponent> ItemSocketComponent;
 
-protected:
 	/** 스폰 타이머를 시작합니다. */
 	UFUNCTION()
 	void SpawnTimerStart();
@@ -49,7 +47,6 @@ protected:
 	/** 스포너의 상태를 초기화합니다. Item 포인터를 null로, 델리게이트를 해제합니다. */
 	void ResetSpawnerState();
 
-protected:
 	/** 스폰 시킬 아이템 클래스입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<ASMItem> SpawnItemClass;

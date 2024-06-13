@@ -39,12 +39,12 @@ public:
 	virtual void OnRep_PlayerState() override;
 
 	ASMCharacterSelectState* GetCharacterSelectState() const { return CharacterSelectState.Get(); }
-	
+
 	ASMCharacterSelectPlayerState* GetCharacterSelectPlayerState() const { return CharacterSelectPlayerState.Get(); }
 
 protected:
 	void InitPlayer();
-	
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<USMLoadingScreenWidget> LoadingScreenWidgetClass;
@@ -69,7 +69,7 @@ private:
 
 	UFUNCTION()
 	void OnCurrentCharacterSelectStateChanged(ECharacterSelectionStateType NewCharacterSelectionState);
-	
+
 	UFUNCTION()
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 };

@@ -29,14 +29,13 @@ class STEREOMIX_API USMAnimInstance : public UAnimInstance
 public:
 	virtual void NativeInitializeAnimation() override;
 
-public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 protected:
 	void UpdateMovementInfo();
+
 	void UpdateDirection();
 
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
 	TObjectPtr<UAnimSequence> Idle;
 
@@ -55,7 +54,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|MoveCycle")
 	TObjectPtr<UAnimSequence> LeftMove;
 
-protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Reference")
 	TObjectPtr<ASMPlayerCharacter> SourceCharacter;
 
@@ -89,10 +87,6 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	EDirection Direction;
 
-// ~State Section
-protected:
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	uint32 bAmICatching:1 = false;
-// ~State Section
-	
 };

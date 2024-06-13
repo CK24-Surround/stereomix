@@ -17,7 +17,7 @@ class STEREOMIX_API USMCommonButton : public UCommonButtonBase
 
 protected:
 	virtual void HandleFocusReceived() override;
-	
+
 	virtual void NativeOnHovered() override;
 
 	virtual void NativeOnClicked() override;

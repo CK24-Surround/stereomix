@@ -20,7 +20,6 @@ protected:
 
 	virtual bool OnRemove_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) override;
 
-protected:
 	/** FX가 시작할때 호출됩니다. 서브 클래스에서 직접 동작 방식을 구현해줘야합니다. */
 	virtual void OnStartFX(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystemWithAttach);
 
@@ -30,7 +29,6 @@ protected:
 	/** FX가 끝날때 호출됩니다. 서브 클래스에서 직접 동작 방식을 구현해줘야합니다. */
 	virtual void OnEndFX(AActor* SourceActor, const FGameplayCueParameters& Parameters) const PURE_VIRTUAL(USMGameplayCueNotify::PlayNiagaraSystem);
 
-protected:
 	UPROPERTY()
 	TObjectPtr<UNiagaraComponent> LoopingFXComponent;
 };

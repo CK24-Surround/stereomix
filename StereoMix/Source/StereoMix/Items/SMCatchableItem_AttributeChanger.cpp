@@ -219,7 +219,7 @@ TArray<AActor*> ASMCatchableItem_AttributeChanger::GetActorsOnTriggeredTiles(ECo
 		FVector CollisionHalfExtend;
 		if (HalfTileHorizonSize > 0.0f)
 		{
-			const float Height = 50.0f;
+			constexpr float Height = 50.0f;
 			CollisionHalfExtend = FVector(HalfTileHorizonSize, HalfTileHorizonSize, Height);
 			Start.Z += Height;
 		}

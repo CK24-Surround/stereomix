@@ -29,7 +29,7 @@ void USMCharacterSelectButton::InitWidget(USMCharacterSelectWidget* Widget)
 	InteractableSection->SetVisibility(ESlateVisibility::Hidden);
 
 	SetIsEnabled(!bNotSupportedCharacter);
-	
+
 	if (GetIsEnabled())
 	{
 		CharacterImage->SetBrushFromTexture(CharacterData.DefaultTexture);
@@ -108,7 +108,7 @@ void USMCharacterSelectButton::OnCharacterChangeResponse(bool bSuccess, ESMChara
 	{
 		SetIsEnabled(false);
 	}
-	else if(!bNotSupportedCharacter)
+	else if (!bNotSupportedCharacter)
 	{
 		SetIsEnabled(true);
 	}

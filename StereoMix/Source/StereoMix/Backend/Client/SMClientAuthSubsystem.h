@@ -36,7 +36,7 @@ class STEREOMIX_API USMClientAuthSubsystem : public USMAuthSubsystem
 public:
 	UPROPERTY(BlueprintAssignable)
 	FLoginResponseDelegate OnLoginResponse;
-	
+
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
 
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
@@ -46,7 +46,7 @@ public:
 	 * @return 클라이언트의 인증 여부
 	 */
 	virtual bool IsAuthenticated() const override { return UserAccount != nullptr; }
-	
+
 	/**
 	 * 사용자 계정을 가져옵니다. 로그인되지 않은 경우 nullptr을 반환합니다.
 	 * @return 사용자 계정
@@ -73,13 +73,13 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMUserAccount> UserAccount;
-	
+
 private:
 	UFUNCTION()
 	void OnGrpcLoginResponse(FGrpcContextHandle Handle, const FGrpcResult& Result, const FGrpcAuthLoginResponse& Response);
-	
+
 	static ELoginResult GetLoginFailReason(EGrpcResultCode Code);
-	
+
 	virtual bool IsBusy() const override;
 
 	void InitUserAccount(const FString& UserAccessToken, const FString& UserRefreshToken, const FGrpcAuthUserAccount& GrpcUserAccount);

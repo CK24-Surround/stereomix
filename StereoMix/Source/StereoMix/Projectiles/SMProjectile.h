@@ -34,7 +34,6 @@ protected:
 public:
 	virtual void Tick(float DeltaTime) override;
 
-public:
 	/** 투사체를 발사합니다. 서버에서 호출되어야합니다. */
 	void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InMagnitude = 0.0f);
 
@@ -60,7 +59,6 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastRPCEndLifeTimeInternal();
 
-protected:
 	/** 투사체가 최대 사정거리를 벗어나는 경우 투사체를 풀로 반환합니다. 사정거리 구현을 위해 사용됩니다. */
 	void ReturnToPoolIfOutOfMaxDistance();
 
@@ -100,7 +98,6 @@ protected:
 // ~Date Section
 
 // ~GAS Section
-protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
 	FGameplayTagContainer IgnoreTargetStateTags;
 

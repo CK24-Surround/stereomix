@@ -94,7 +94,7 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SmashSplashHit);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SmashSuccessWithHealItem);
 		}
-		
+
 		namespace JumpPad
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(UseJumpPad);

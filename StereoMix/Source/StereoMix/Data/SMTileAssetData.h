@@ -29,7 +29,6 @@ public:
 		TileChangeFX.Add(ESMTeam::FutureBass, nullptr);
 	}
 
-public:
 	UPROPERTY(EditAnywhere, Category = "Material")
 	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> TileMaterial;
 

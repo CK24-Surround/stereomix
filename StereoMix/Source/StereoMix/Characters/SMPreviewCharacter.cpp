@@ -17,7 +17,7 @@ ASMPreviewCharacter::ASMPreviewCharacter()
 	CharacterMeshComponent->SetupAttachment(SceneComponent);
 	// CharacterMeshComponent->SetSkeletalMesh(CharacterMesh);
 	// CharacterMeshComponent->SetAnimInstanceClass(CharacterAnimInstanceClass);
-	
+
 	SceneCaptureComponent = CreateDefaultSubobject<USceneCaptureComponent2D>(TEXT("SceneCaptureComponent"));
 	SceneCaptureComponent->SetupAttachment(SceneComponent);
 	SceneCaptureComponent->PrimitiveRenderMode = ESceneCapturePrimitiveRenderMode::PRM_RenderScenePrimitives;
@@ -28,7 +28,7 @@ ASMPreviewCharacter::ASMPreviewCharacter()
 void ASMPreviewCharacter::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
-	
+
 	CharacterMeshComponent->SetSkeletalMesh(CharacterMesh);
 	CharacterMeshComponent->SetAnimInstanceClass(CharacterAnimInstanceClass);
 	SceneCaptureComponent->TextureTarget = CharacterRenderTarget;
@@ -65,4 +65,3 @@ void ASMPreviewCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 }
-

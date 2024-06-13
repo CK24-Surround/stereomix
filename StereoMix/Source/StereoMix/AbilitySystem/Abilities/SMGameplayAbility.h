@@ -20,9 +20,8 @@ class STEREOMIX_API USMGameplayAbility : public UGameplayAbility
 public:
 	USMGameplayAbility();
 
-public:
 	USMAbilitySystemComponent* GetSMAbilitySystemComponentFromActorInfo() const;
-	
+
 	ASMPlayerCharacter* GetSMPlayerCharacterFromActorInfo() const;
 
 	/** 리플리케이션을 활성화 한 경우에만 호출됩니다.*/

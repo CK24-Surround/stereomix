@@ -46,7 +46,7 @@ void USMRoomTeamWidget::InitWidget(USMRoomWidget* RoomWidget, const ESMTeam Targ
 
 	// RoomWidget->GetOwningPlayerState()->TeamChangedEvent.AddDynamic(this, &USMRoomTeamWidget::OnLocalPlayerTeamChanged);
 	RoomWidget->GetOwningPlayerState()->OnTeamChangeResponse.AddDynamic(this, &USMRoomTeamWidget::OnLocalPlayerTeamChangeResponse);
-	
+
 	RoomWidget->GetOwningRoomState()->OnTeamPlayersUpdated.AddDynamic(this, &USMRoomTeamWidget::OnTeamPlayersUpdated);
 
 	PlayAnimationTimeRange(SelectAnim, 0.f, SelectAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
@@ -79,47 +79,47 @@ void USMRoomTeamWidget::SetButtonState(const ERoomTeamSelectButtonState NewState
 	UE_LOG(LogStereoMixUI, Verbose, TEXT("[USMRoomTeamWidget] %s: SetButtonState: %s"), *UEnum::GetValueAsString(Team), *UEnum::GetValueAsString(NewState));
 	switch (NewState)
 	{
-	case ERoomTeamSelectButtonState::Idle:
-		if (PrevState == ERoomTeamSelectButtonState::Focused)
-		{
-			//QueuePlayAnimationTimeRange(SelectAnim, FocusAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
-		}
-		else if (PrevState == ERoomTeamSelectButtonState::Selected)
-		{
-			//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
-		}
-		break;
+		case ERoomTeamSelectButtonState::Idle:
+			if (PrevState == ERoomTeamSelectButtonState::Focused)
+			{
+				//QueuePlayAnimationTimeRange(SelectAnim, FocusAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
+			}
+			else if (PrevState == ERoomTeamSelectButtonState::Selected)
+			{
+				//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
+			}
+			break;
 
-	case ERoomTeamSelectButtonState::Focused:
-		if (PrevState == ERoomTeamSelectButtonState::Idle)
-		{
-			//QueuePlayAnimationTimeRange(SelectAnim, 0.f, FocusAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
-		}
-		else if (PrevState == ERoomTeamSelectButtonState::Selected)
-		{
-			//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, FocusAnimDuration.EndTime, 1, EUMGSequencePlayMode::Reverse);
-		}
-		break;
+		case ERoomTeamSelectButtonState::Focused:
+			if (PrevState == ERoomTeamSelectButtonState::Idle)
+			{
+				//QueuePlayAnimationTimeRange(SelectAnim, 0.f, FocusAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
+			}
+			else if (PrevState == ERoomTeamSelectButtonState::Selected)
+			{
+				//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, FocusAnimDuration.EndTime, 1, EUMGSequencePlayMode::Reverse);
+			}
+			break;
 
-	case ERoomTeamSelectButtonState::Selected:
-		if (PrevState == ERoomTeamSelectButtonState::Idle)
-		{
-			//QueuePlayAnimationTimeRange(SelectAnim, 0.f, SelectAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
-		}
-		break;
-		
-	case ERoomTeamSelectButtonState::Disabled:
-		if (PrevState == ERoomTeamSelectButtonState::Focused)
-		{
-			//QueuePlayAnimationTimeRange(SelectAnim, FocusAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
-		}
-		else if (PrevState == ERoomTeamSelectButtonState::Selected)
-		{
-			//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
-		}
-		break;
-	default:
-		break;
+		case ERoomTeamSelectButtonState::Selected:
+			if (PrevState == ERoomTeamSelectButtonState::Idle)
+			{
+				//QueuePlayAnimationTimeRange(SelectAnim, 0.f, SelectAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
+			}
+			break;
+
+		case ERoomTeamSelectButtonState::Disabled:
+			if (PrevState == ERoomTeamSelectButtonState::Focused)
+			{
+				//QueuePlayAnimationTimeRange(SelectAnim, FocusAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
+			}
+			else if (PrevState == ERoomTeamSelectButtonState::Selected)
+			{
+				//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
+			}
+			break;
+		default:
+			break;
 	}
 }
 
@@ -188,7 +188,7 @@ void USMRoomTeamWidget::OnLocalPlayerTeamChangeResponse(bool bSuccess, const ESM
 	{
 		return;
 	}
-	
+
 	if (NewTeam == Team)
 	{
 		OnSelected();

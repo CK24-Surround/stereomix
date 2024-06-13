@@ -22,10 +22,8 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 
-protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
-protected:
 	void Jump(ACharacter* InCharacter, const FVector& TargetLocation);
 
 	void TargetLanded(ASMPlayerCharacter* LandedCharacter);
@@ -40,7 +38,6 @@ protected:
 	UFUNCTION(NetMulticast, Unreliable)
 	void MulticastRPCPlayLandedFX(ASMPlayerCharacter* SourceCharacter);
 
-protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -53,7 +50,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "JumpTarget")
 	TObjectPtr<USceneComponent> JumpTarget;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Jump")
 	float GravityScale = 4.0f;
 

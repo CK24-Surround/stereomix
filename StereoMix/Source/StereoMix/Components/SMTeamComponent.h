@@ -22,14 +22,13 @@ protected:
 
 public:
 	FORCEINLINE ESMTeam GetTeam() const { return Team; }
-	
+
 	void SetTeam(ESMTeam InTeam);
 
 protected:
 	UFUNCTION()
 	void OnRep_Team();
 
-protected:
 	/** 자신이 속한 팀을 나타냅니다.*/
 	UPROPERTY(EditAnywhere, Category = "Team", ReplicatedUsing = "OnRep_Team")
 	ESMTeam Team;

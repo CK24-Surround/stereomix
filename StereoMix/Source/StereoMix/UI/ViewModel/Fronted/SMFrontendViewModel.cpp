@@ -25,9 +25,8 @@ void USMFrontendViewModel::SetUiState(const EFrontendUiState NewUiState)
 	{
 		return;
 	}
-	
+
 	UE_LOG(LogStereoMixUI, Verbose, TEXT("[SMFrontendViewModel] SetUiState: %s"), *UEnum::GetValueAsString(NewUiState));
-	
 }
 
 void USMFrontendViewModel::SetBackgroundColor(const FLinearColor NewColor)
@@ -35,6 +34,4 @@ void USMFrontendViewModel::SetBackgroundColor(const FLinearColor NewColor)
 	UE_MVVM_SET_PROPERTY_VALUE(BackgroundColor, NewColor);
 }
 
-void USMFrontendViewModel::SetCurrentElementViewModel(USMFrontendElementViewModel* NewElementViewModel)
-{
-}
+void USMFrontendViewModel::SetCurrentElementViewModel(USMFrontendElementViewModel* NewElementViewModel) {}

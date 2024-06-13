@@ -33,10 +33,10 @@ public:
 	virtual void BeginDestroy() override;
 
 	ELoginUiState GetUiState() const { return UiState; }
-	
+
 protected:
 	TWeakObjectPtr<USMClientAuthSubsystem> AuthSubsystem;
-	
+
 	void SetUiState(ELoginUiState NewState);
 
 	virtual void OnSubmit();

@@ -19,14 +19,13 @@ class STEREOMIX_API USMFrontendElementWidget : public USMActivatableWidget
 	GENERATED_BODY()
 
 	friend class USMFrontendWidget;
-	
+
 public:
 	USMFrontendElementWidget();
-	
-	UUMGSequencePlayer* PlayTransitionIn();
-	
-	UUMGSequencePlayer* PlayTransitionOut();
 
+	UUMGSequencePlayer* PlayTransitionIn();
+
+	UUMGSequencePlayer* PlayTransitionOut();
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StereoMix Frontend")
@@ -34,10 +33,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "StereoMix Frontend")
 	TObjectPtr<UFMODEvent> TransitionOutSound;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StereoMix Frontend")
 	FLinearColor BackgroundColor;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "StereoMix Frontend")
 	bool bAutoTransitionOnActivate = true;
 
@@ -52,7 +51,7 @@ protected:
 	virtual bool NativeOnHandleBackAction() override;
 
 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
-	
+
 	USMFrontendWidget* GetParentFrontendWidget() const { return ParentFrontendWidget.Get(); }
 
 	bool IsTransitioning() const { return bTransitioning; }
@@ -60,10 +59,10 @@ protected:
 private:
 	UPROPERTY(Transient, BlueprintReadOnly, meta=(BindWidgetOptional, AllowPrivateAccess))
 	TObjectPtr<USMCommonButton> BackButton;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, meta=(BindWidgetAnimOptional, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> TransitionAnim;
-	
+
 	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess))
 	TWeakObjectPtr<USMFrontendWidget> ParentFrontendWidget;
 

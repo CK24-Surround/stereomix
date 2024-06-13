@@ -30,15 +30,12 @@ protected:
 
 	virtual void PlaySoundWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const override;
 
-protected:
 	/** 로컬에서 플레이하고 있는 팀과 시전자의 팀이 같은지 확인합니다. */
 	bool IsSameTeamWithLocalTeam(AActor* SourceActor) const;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|FX|Effect")
 	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> Effect;
 
 	UPROPERTY(EditAnywhere, Category = "Design|FX|Sound")
 	TMap<ESMLocalTeam, TObjectPtr<UFMODEvent>> Sound;
-	
 };

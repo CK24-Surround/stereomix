@@ -29,7 +29,6 @@ class STEREOMIX_API USMUserWidget_VictoryDefeat : public USMUserWidget
 public:
 	virtual void NativeConstruct() override;
 
-public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
 
 protected:
@@ -37,12 +36,10 @@ protected:
 
 	void OnEndRound(ESMTeam VictoryTeam);
 
-protected:
 	void ShowResult(EVictoryDefeatResult InResult, ESMTeam InSourceTeam);
 
 	void PlayResultAnimation(EVictoryDefeatResult InResult, ESMTeam InSourceTeam);
 
-protected:
 	TMap<EVictoryDefeatResult, TObjectPtr<UPanelWidget>> Panels;
 
 	UPROPERTY(meta = (BindWidget))
@@ -54,7 +51,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> DrawPanel;
 
-protected:
 	TMap<EVictoryDefeatResult, TMap<ESMTeam, TObjectPtr<UPanelWidget>>> TeamPanels;
 
 	UPROPERTY(meta = (BindWidget))
@@ -63,7 +59,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> VictoryBackgroundPanel_FB;
 
-protected:
 	TMap<EVictoryDefeatResult, TMap<ESMTeam, TObjectPtr<UWidgetAnimation>>> WidgetAnimations;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))

@@ -1,4 +1,3 @@
-
 #pragma once
 
 DECLARE_LOG_CATEGORY_CLASS(LogStereoMixNetwork, Log, All);

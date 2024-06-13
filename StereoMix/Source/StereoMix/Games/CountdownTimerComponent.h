@@ -22,7 +22,7 @@ class STEREOMIX_API UCountdownTimerComponent : public UActorComponent
 
 	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Replicated, meta=(AllowPrivateAccess=true))
 	int32 InitTime;
-	
+
 	UFUNCTION()
 	void OnRep_RemainingTime() const;
 
@@ -39,7 +39,7 @@ public:
 	UCountdownTimerComponent();
 
 	int32 GetInitTime() const { return InitTime; }
-	
+
 	int32 GetRemainingTime() const { return RemainingTime; }
 
 	bool IsRunning() const { return TimerHandle.IsValid(); }

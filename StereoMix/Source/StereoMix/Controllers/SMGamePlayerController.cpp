@@ -76,7 +76,7 @@ void ASMGamePlayerController::OnRep_PlayerState()
 
 	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, HUDWidgetClass);
 	HUDWidget->AddToViewport(0);
-	
+
 	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass);
 	VictoryDefeatWidget->AddToViewport(1);
 

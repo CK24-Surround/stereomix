@@ -16,6 +16,7 @@ enum class ERoomPlayerStateType : uint8
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRoomPlayerStateTypeChanged, ERoomPlayerStateType, NewState);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamChangeResponse, bool, bSuccess, ESMTeam, NewTeam);
 
 /**
@@ -31,15 +32,15 @@ public:
 	FOnRoomPlayerStateTypeChanged OnCurrentStateChanged;
 
 	FOnTeamChangeResponse OnTeamChangeResponse;
-	
+
 	ASMRoomPlayerState();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PostInitializeComponents() override;
-	
+
 	virtual void BeginPlay() override;
-	
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	UFUNCTION(Server, Reliable, BlueprintCallable)
@@ -64,9 +65,9 @@ protected:
 
 	UFUNCTION()
 	virtual void OnRep_CurrentState();
-	
+
 	virtual bool CanChangeTeam(ESMTeam NewTeam) const override;
-	
+
 	virtual void OnTeamChanged(ESMTeam PreviousTeam, ESMTeam NewTeam) override;
 
 	virtual bool CanChangeCharacterType(ESMCharacterType NewCharacterType) const override;

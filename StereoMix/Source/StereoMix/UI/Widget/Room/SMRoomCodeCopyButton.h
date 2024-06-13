@@ -24,7 +24,7 @@ protected:
 private:
 	// =============================================================================
 	// Bindings
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonTextBlock> RoomCodeTextBlock;
 };

@@ -16,7 +16,7 @@ class STEREOMIX_API USMViewModel : public UMVVMViewModelBase
 
 public:
 	USMViewModel();
-	
+
 	virtual void InitViewModel(APlayerController* PlayerController);
 
 	APlayerController* GetOwningController() const { return OwningController.Get(); }

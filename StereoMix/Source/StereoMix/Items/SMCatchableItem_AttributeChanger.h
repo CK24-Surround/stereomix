@@ -13,6 +13,12 @@ class UGameplayEffect;
 class USMTeamComponent;
 class ASMTile;
 
+struct FCatchableItemTriggerData
+{
+	FTimerHandle TimerHandle;
+	int32 CurrentTriggerCount = 0;
+};
+
 UCLASS()
 class STEREOMIX_API ASMCatchableItem_AttributeChanger : public ASMCatchableItem
 {
@@ -21,10 +27,8 @@ class STEREOMIX_API ASMCatchableItem_AttributeChanger : public ASMCatchableItem
 public:
 	ASMCatchableItem_AttributeChanger();
 
-public:
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override;
 
-public:
 	virtual void ActivateItem(AActor* InActivator) override;
 
 protected:
@@ -60,19 +64,11 @@ protected:
 	/** 로컬에서 플레이하고 있는 팀과 시전자의 팀이 같은지 확인합니다. 추후 펑션 라이브러리 클래스로 옮길 예정입니다. */
 	bool IsSameTeamWithLocalTeam(AActor* TargetActor) const;
 
-protected:
 	UPROPERTY(VisibleAnywhere, Category = "CIC")
 	TObjectPtr<USMCatchInteractionComponent_CatchableItem_AttributeChanger> CIC;
 
 	UPROPERTY(VisibleAnywhere, Category = "TeamComponent")
 	TObjectPtr<USMTeamComponent> TeamComponent;
-
-public:
-	struct FTriggerData
-	{
-		FTimerHandle TimerHandle;
-		int32 CurrentTriggerCount = 0;
-	};
 
 public:
 	/** 아이템 활성자입니다. */
@@ -87,7 +83,7 @@ public:
 	/** 활성자의 팀원에게 적용할 트리거 당 적용량입니다. */
 	float TeamAmount = 0;
 
-	FTriggerData TriggerData;
+	FCatchableItemTriggerData TriggerData;
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "Design|FX")
@@ -106,7 +102,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	uint32 bDrawDebug:1 = false;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "즉시 적용 GE")
 	TSubclassOf<UGameplayEffect> ActivatorInstantGE;
 
@@ -125,7 +120,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "주기")
 	float ActivatorInterval = 0.5f;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Team", DisplayName = "즉시 적용 GE")
 	TSubclassOf<UGameplayEffect> TeamInstantGE;
 

@@ -22,7 +22,6 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
-public:
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 protected:

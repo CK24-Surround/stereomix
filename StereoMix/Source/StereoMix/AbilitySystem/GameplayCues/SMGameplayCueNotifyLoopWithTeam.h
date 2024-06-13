@@ -22,7 +22,6 @@ protected:
 
 	ESMTeam GetTeamForSource(const AActor* SourceActor) const;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> StartFX;
 

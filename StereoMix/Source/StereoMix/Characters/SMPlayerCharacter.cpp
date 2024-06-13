@@ -257,9 +257,9 @@ void ASMPlayerCharacter::OnRep_PlayerState()
 void ASMPlayerCharacter::InitCamera()
 {
 	const FRotator CameraRotation(-50.0f, 0.0, 0.0);
-	const float CameraDistance = 1800.0f;
+	constexpr float CameraDistance = 1800.0f;
 	const FVector CameraTargetOffset(-50.0, 0.0, 0.0);
-	const float CameraFOV = 75.0f;
+	constexpr float CameraFOV = 75.0f;
 
 	CameraBoom->SetRelativeRotation(CameraRotation);
 	CameraBoom->bInheritPitch = false;
@@ -720,10 +720,7 @@ void ASMPlayerCharacter::OnCatchRelease()
 	}
 }
 
-void ASMPlayerCharacter::OnTeamChangeCallback()
-{
-	return;
-}
+void ASMPlayerCharacter::OnTeamChangeCallback() {}
 
 bool ASMPlayerCharacter::bAmICatching()
 {
@@ -752,21 +749,21 @@ void ASMPlayerCharacter::OnRep_CharacterMoveTrailState()
 
 	switch (CharacterMoveTrailState)
 	{
-	case ECharacterMoveTrailState::None:
+		case ECharacterMoveTrailState::None:
 		{
 			break;
 		}
-	case ECharacterMoveTrailState::Default:
+		case ECharacterMoveTrailState::Default:
 		{
 			ActivateDefaultMoveTrail();
 			break;
 		}
-	case ECharacterMoveTrailState::Catch:
+		case ECharacterMoveTrailState::Catch:
 		{
 			ActivateCatchMoveTrail();
 			break;
 		}
-	case ECharacterMoveTrailState::Immune:
+		case ECharacterMoveTrailState::Immune:
 		{
 			ActivateImmuneMoveTrail();
 			break;
@@ -820,7 +817,7 @@ void ASMPlayerCharacter::DrawSmashEndPoint()
 		FVector AlignedSourceZ = InStartLocation;
 		AlignedSourceZ.Z = InTargetLocation.Z;
 
-		const float TileSize = 150.0f;
+		constexpr float TileSize = 150.0f;
 		const float Range = TileSize * 6;
 		if (FVector::DistSquared(AlignedSourceZ, InTargetLocation) > FMath::Square(Range))
 		{

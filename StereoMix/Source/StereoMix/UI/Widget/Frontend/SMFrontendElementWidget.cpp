@@ -60,7 +60,7 @@ void USMFrontendElementWidget::NativeOnActivated()
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnActivated - No AutoTransitionOnActivate"), *GetName())
 	}
-	
+
 	GetWorld()->GetTimerManager().SetTimerForNextTick([this]
 	{
 		GetParentFrontendWidget()->ChangeBackgroundColor(BackgroundColor);
@@ -106,7 +106,7 @@ UUMGSequencePlayer* USMFrontendElementWidget::PlayTransitionIn()
 		bTransitioning = true;
 		return Player;
 	}
-	
+
 	return nullptr;
 }
 
@@ -131,7 +131,7 @@ bool USMFrontendElementWidget::NativeOnHandleBackAction()
 	{
 		return false;
 	}
-	
+
 	if (bIsBackHandler)
 	{
 		GetParentFrontendWidget()->RemoveElementWidget(this);

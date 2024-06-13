@@ -3,9 +3,7 @@
 
 #include "SMLobbySubsystem.h"
 
-USMLobbySubsystem::USMLobbySubsystem() : Super(TEXT("LobbyService"))
-{
-}
+USMLobbySubsystem::USMLobbySubsystem() : Super(TEXT("LobbyService")) {}
 
 void USMLobbySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {

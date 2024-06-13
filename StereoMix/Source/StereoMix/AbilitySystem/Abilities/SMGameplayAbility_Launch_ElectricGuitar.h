@@ -19,7 +19,6 @@ protected:
 
 	void LaunchTimerCallback();
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Projectile|ElectricGuitar", DisplayName = "시전 당 투사체 개수")
 	int32 ProjectileCount = 3;
 

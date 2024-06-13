@@ -33,11 +33,11 @@ public:
 	FOnCharacterSelectPlayerStateTypeChanged OnCurrentStateChanged;
 
 	FCharacterChangeResponse OnCharacterChangeResponse;
-	
+
 	ASMCharacterSelectPlayerState();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
@@ -55,7 +55,7 @@ public:
 	ASMCharacterSelectState* GetCharacterSelectState() const { return CharacterSelectState.Get(); }
 
 	ECharacterSelectPlayerStateType GetCurrentState() const { return CurrentState; }
-	
+
 	UFUNCTION(Reliable, Server)
 	void SetCurrentState(ECharacterSelectPlayerStateType NewState);
 

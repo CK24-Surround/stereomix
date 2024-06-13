@@ -26,6 +26,4 @@ void USMLoginViewModel::SetUiState(const ELoginUiState NewState)
 	}
 }
 
-void USMLoginViewModel::OnSubmit()
-{
-}
+void USMLoginViewModel::OnSubmit() {}

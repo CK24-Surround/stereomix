@@ -90,14 +90,14 @@ bool ASMRoomPlayerState::CanChangeTeam(const ESMTeam NewTeam) const
 	{
 		switch (NewTeam)
 		{
-		case ESMTeam::None:
-			return true;
-		case ESMTeam::EDM:
-			return RoomState->GetTeamEdmPlayers().Num() < RoomState->MaxPlayersInTeam;
-		case ESMTeam::FutureBass:
-			return RoomState->GetTeamFutureBassPlayers().Num() < RoomState->MaxPlayersInTeam;
-		default:
-			return false;
+			case ESMTeam::None:
+				return true;
+			case ESMTeam::EDM:
+				return RoomState->GetTeamEdmPlayers().Num() < RoomState->MaxPlayersInTeam;
+			case ESMTeam::FutureBass:
+				return RoomState->GetTeamFutureBassPlayers().Num() < RoomState->MaxPlayersInTeam;
+			default:
+				return false;
 		}
 	}
 	return false;
@@ -112,15 +112,15 @@ void ASMRoomPlayerState::OnTeamChanged(const ESMTeam PreviousTeam, const ESMTeam
 	{
 		switch (NewTeam)
 		{
-		case ESMTeam::EDM:
-		case ESMTeam::FutureBass:
-			CurrentState = ERoomPlayerStateType::Ready;
-			break;
-			
-		case ESMTeam::None:
-		default:
-			CurrentState = ERoomPlayerStateType::Unready;
-			break;
+			case ESMTeam::EDM:
+			case ESMTeam::FutureBass:
+				CurrentState = ERoomPlayerStateType::Ready;
+				break;
+
+			case ESMTeam::None:
+			default:
+				CurrentState = ERoomPlayerStateType::Unready;
+				break;
 		}
 	}
 #endif

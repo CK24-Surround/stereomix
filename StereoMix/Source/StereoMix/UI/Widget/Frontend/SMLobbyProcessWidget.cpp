@@ -21,10 +21,10 @@ void USMLobbyProcessWidget::NativeConstruct()
 void USMLobbyProcessWidget::NativeOnActivated()
 {
 	Super::NativeOnActivated();
-	
+
 	AuthSubsystem = GetGameInstance()->GetSubsystem<USMClientAuthSubsystem>();
 	LobbySubsystem = GetGameInstance()->GetSubsystem<USMClientLobbySubsystem>();
-	
+
 	UiState = ELobbyProcessUiState::Idle;
 	SetProgressVisibility(ESlateVisibility::Collapsed);
 }
@@ -89,6 +89,6 @@ void USMLobbyProcessWidget::ConnectToGameServer(const FString& ServerUrl) const
 	const FString& UserName = UserAccount->GetUserName();
 
 	UGameplayStatics::OpenLevel(GetWorld(), FName(ServerUrl), true, FString::Printf(TEXT("UserId=%s?Nickname=%s"), *UserId, *UserName));
-	
+
 	// GetOwningPlayer()->ClientTravel(FString::Printf(TEXT("%s?UserId=%s?Nickname=%s"), *ServerUrl, *UserId, *UserName), TRAVEL_Absolute);
 }

@@ -28,7 +28,7 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	UTurboLinkGrpcManager* GetGrpcManager() const { return GrpcManager; }
-	
+
 protected:
 	/**
 	 * gRPC 서비스에 접속할 엔드포인트를 설정합니다.

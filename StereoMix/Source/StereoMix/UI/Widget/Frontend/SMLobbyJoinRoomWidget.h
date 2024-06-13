@@ -17,12 +17,12 @@ class STEREOMIX_API USMLobbyJoinRoomWidget : public USMLobbyProcessWidget
 public:
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadWrite, Category = "Lobby")
 	FString RoomCode;
-	
+
 	USMLobbyJoinRoomWidget();
 
 protected:
 	virtual void NativeConstruct() override;
-	
+
 	virtual void NativeOnActivated() override;
 
 	virtual void NativeOnDeactivated() override;

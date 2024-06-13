@@ -37,18 +37,15 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> CatchMontage;
 
 	UPROPERTY()
 	TObjectPtr<UAnimMontage> CachedCatchMontage;
 
-protected:
 	UFUNCTION()
 	void OnCatchAnimNotify(FGameplayEventData Payload);
 
-protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCRequestCatch(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantize10& InCursorLocation);
 
@@ -64,7 +61,6 @@ protected:
 	/** 지정된 위치에 가장 가까운 캐릭터를 얻어냅니다. */
 	AActor* GetClosestActorFromLocation(const TArray<AActor*>& InActors, const FVector& InLocation);
 
-protected:
 	/** 시전 위치입니다. */
 	FVector StartLocation;
 

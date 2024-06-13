@@ -86,5 +86,3 @@ void ASMCharacterSelectPlayerState::OnRep_CurrentState()
 		OnCurrentStateChanged.Broadcast(CurrentState);
 	}
 }
-
-

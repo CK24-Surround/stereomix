@@ -21,7 +21,7 @@ public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
 
 	virtual void NativeOnActivated() override;
-	
+
 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
 
 protected:

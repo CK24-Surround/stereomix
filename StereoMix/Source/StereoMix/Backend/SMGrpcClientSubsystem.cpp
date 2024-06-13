@@ -7,18 +7,14 @@
 #include "StereoMixLog.h"
 #include "TurboLinkGrpcManager.h"
 
-USMGrpcClientSubsystem::USMGrpcClientSubsystem()
-{
-}
+USMGrpcClientSubsystem::USMGrpcClientSubsystem() {}
 
-USMGrpcClientSubsystem::USMGrpcClientSubsystem(const FString& InServiceName) : ServiceName(InServiceName)
-{
-}
+USMGrpcClientSubsystem::USMGrpcClientSubsystem(const FString& InServiceName) : ServiceName(InServiceName) {}
 
 void USMGrpcClientSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
-	
+
 	GrpcSubsystem = Collection.InitializeDependency<USMGrpcSubsystem>();
 	GrpcManager = GrpcSubsystem->GetGrpcManager();
 	GrpcService = GrpcManager->MakeService(ServiceName);

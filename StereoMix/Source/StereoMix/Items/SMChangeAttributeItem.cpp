@@ -14,7 +14,7 @@ ASMChangeAttributeItem::ASMChangeAttributeItem()
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
-	
+
 	SpawnerMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("SpawnerMeshComponent"));
 	SpawnerMeshComponent->SetupAttachment(SceneComponent);
 	SpawnerMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
@@ -22,7 +22,7 @@ ASMChangeAttributeItem::ASMChangeAttributeItem()
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->SetupAttachment(SpawnerMeshComponent);
 	SphereComponent->SetCollisionProfileName(SMCollisionProfileName::HealPack);
-	
+
 	ItemMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
 	ItemMeshComponent->SetupAttachment(SphereComponent);
 	ItemMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);

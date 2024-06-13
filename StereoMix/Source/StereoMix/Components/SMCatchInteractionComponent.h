@@ -18,7 +18,6 @@ class STEREOMIX_API USMCatchInteractionComponent : public UActorComponent
 public:
 	USMCatchInteractionComponent();
 
-public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
@@ -46,19 +45,16 @@ public:
 	/** 특수 액션 종료 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
 	virtual void OnSpecialActionEnded(AActor* Instigator, ESpecialAction InSpecialAction, float InMagnitude, TSubclassOf<UGameplayEffect> DamageGE, float DamageAmount) PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionEnded)
 
-public:
 	FOnCatchSignature OnStartCaught;
 
 protected:
 	UFUNCTION()
 	void OnRepCatchingMeActor();
 
-protected:
 	/** 자신을 잡고 있는 액터입니다. */
 	UPROPERTY(ReplicatedUsing = "OnRepCatchingMeActor")
 	TWeakObjectPtr<AActor> CatchingMeActor;
 
-protected:
 	UPROPERTY()
 	TObjectPtr<AActor> SourceActor;
 };

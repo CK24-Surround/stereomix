@@ -45,7 +45,7 @@ bool USMGuestLoginPopup::IsValidUserName(const FString& UserName) const
 	{
 		return false;
 	}
-	
+
 	FRegexMatcher UserNameMatcher(ValidUserNamePattern, UserName);
 	return UserNameMatcher.FindNext();
 }

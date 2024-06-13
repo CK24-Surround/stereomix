@@ -203,14 +203,12 @@ FVector2D USMUserWidget_ScreenIndicator::GetScreenLocationForTargetBehindCamera(
 
 		return ScreenLocation;
 	}
-	// 만약이지만 정상적인 상황을 처리해야할 경우가 존재할 수 있어 이에 대한 처리입니다.
-	else
-	{
-		ScreenLocation.X = ScreenCenter.X + (RightDot / ForwardDot) * ScreenCenter.X;
-		ScreenLocation.Y = ScreenCenter.Y - (UpDot / ForwardDot) * ScreenCenter.Y;
 
-		return ScreenLocation;
-	}
+	// 만약이지만 정상적인 상황을 처리해야할 경우가 존재할 수 있어 이에 대한 처리입니다.
+	ScreenLocation.X = ScreenCenter.X + (RightDot / ForwardDot) * ScreenCenter.X;
+	ScreenLocation.Y = ScreenCenter.Y - (UpDot / ForwardDot) * ScreenCenter.Y;
+
+	return ScreenLocation;
 }
 
 void USMUserWidget_ScreenIndicator::SetTarget(AActor* InTargetActor)
@@ -241,7 +239,7 @@ void USMUserWidget_ScreenIndicator::SetTarget(AActor* InTargetActor)
 				UMaterialInstanceDynamic* BodyMID = IMG_Body->GetDynamicMaterial();
 				ArrowMaterial->SetScalarParameterValue(TEXT("Team"), 1.0f);
 				BodyMID->SetScalarParameterValue(TEXT("Team"), 1.0f);
-				
+
 				break;
 			}
 		}

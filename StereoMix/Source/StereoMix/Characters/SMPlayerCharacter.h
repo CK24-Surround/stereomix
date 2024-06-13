@@ -58,7 +58,6 @@ class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySys
 public:
 	ASMPlayerCharacter();
 
-public:
 	virtual void PostInitializeComponents() override;
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -84,8 +83,7 @@ protected:
 
 	void UpdateCameraLocation();
 
-protected:
-	/** 카메라 이동에 사용될 마우스 인식 범위입니다. */
+/** 카메라 이동에 사용될 마우스 인식 범위입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
 	float CameraMoveMouseThreshold = 1150.0f;
 
@@ -153,13 +151,11 @@ protected:
 // ~Data Section
 
 // ~Caching Section
-protected:
 	UPROPERTY()
 	TObjectPtr<ASMGamePlayerController> CachedSMPlayerController;
 // ~Caching Section
 
 // ~GAS Section
-protected:
 	// GAS에서 사용할 액티브 GA들을 바인드합니다.
 	void SetupGASInputComponent();
 
@@ -174,7 +170,6 @@ protected:
 	// 액티브 GA와 바인드 된 함수입니다. 놓을때 트리거됩니다.
 	void GAInputReleased(EActiveAbility InInputID);
 
-protected:
 	UPROPERTY()
 	TWeakObjectPtr<USMAbilitySystemComponent> ASC;
 
@@ -215,7 +210,6 @@ public:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCApplyAttachOffset();
 
-public:
 	FOnLandedSignature OnLanded;
 
 protected:
@@ -230,8 +224,7 @@ protected:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
-protected:
-	// 이동속도 리플리케이션을 위한 변수로 직접 수정되어서는 안됩니다. SetMaxWalkSpeed를 사용해 수정해주세요.
+// 이동속도 리플리케이션을 위한 변수로 직접 수정되어서는 안됩니다. SetMaxWalkSpeed를 사용해 수정해주세요.
 	UPROPERTY(ReplicatedUsing = "OnRep_MaxWalkSpeed")
 	float MaxWalkSpeed;
 // ~Movement Section
@@ -256,7 +249,6 @@ public:
 // ~Widget Section
 
 // ~State Section
-public:
 	void SetEnableCollision(bool bInEnableCollision);
 
 	UFUNCTION()
@@ -279,7 +271,6 @@ protected:
 	/* 무언가를 놓거나 놓칠때 호출됩니다. */
 	void OnCatchRelease();
 
-protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableCollision")
 	uint32 bEnableCollision:1 = true;
 
@@ -301,7 +292,6 @@ protected:
 	TWeakObjectPtr<AActor> LastAttackInstigator;
 // ~Damage Section
 
-protected:
 	UFUNCTION()
 	void OnTeamChangeCallback();
 
@@ -311,13 +301,11 @@ public:
 // ~Animation Section
 
 // ~Catch Section
-public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design|Socket")
 	FName CatchSocket = TEXT("CatchSlot");
 // ~Catch Section
 
 // ~Trail Section
-public:
 	ECharacterMoveTrailState GetCharacterMoveTrailState() { return CharacterMoveTrailState; }
 
 	void SetCharacterMoveTrailState(ECharacterMoveTrailState NewCharacterMoveTrailState);
@@ -334,7 +322,6 @@ protected:
 
 	void ActivateImmuneMoveTrail();
 
-protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_CharacterMoveTrailState")
 	ECharacterMoveTrailState CharacterMoveTrailState;
 
@@ -353,14 +340,12 @@ protected:
 
 // Temp Section
 // TODO: 임시 함수입니다. 스매시 엔드 포인트를 그려줍니다. 이 캐릭터 클래스는 모든 캐릭터의 부모 클래스이기에 스매시 엔드포인트를 그려주는 함수가 여기 존재해서는 안됩니다. 단지 느낌을 보기 위한 프로토타이핑입니다.
-protected:
 	UPROPERTY(VisibleAnywhere, Category = "Design|Trajectory")
 	TObjectPtr<UNiagaraComponent> TrajectoryFXComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Design|Tragectory")
 	TObjectPtr<UStaticMeshComponent> TrajectoryMeshComponent;
 
-protected:
 	void DrawSmashEndPoint();
 // Temp Section
 };

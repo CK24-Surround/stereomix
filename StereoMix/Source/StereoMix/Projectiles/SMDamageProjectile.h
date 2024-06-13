@@ -27,7 +27,6 @@ protected:
 	/** 블로킹 판정 발생 시 호출됩니다. 보통 벽에 부딪힐때 호출됩니다. */
 	virtual void NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
 
-protected:
 	virtual bool IsValidateTarget(AActor* InTarget) override;
 
 	/** GE를 통해 데미지를 적용합니다. */

@@ -11,7 +11,7 @@
 ASMCharacterSelectState::ASMCharacterSelectState()
 {
 	CharacterSelectCountdownTime = 30;
-	
+
 	CurrentState = ECharacterSelectionStateType::Wait;
 	CountdownTimer = CreateDefaultSubobject<UCountdownTimerComponent>(TEXT("RoomCountdownTimer"));
 }
@@ -19,11 +19,11 @@ ASMCharacterSelectState::ASMCharacterSelectState()
 void ASMCharacterSelectState::AddPlayerState(APlayerState* PlayerState)
 {
 	Super::AddPlayerState(PlayerState);
-	if(HasAuthority())
+	if (HasAuthority())
 	{
 		// 캐릭터 선택 레벨에서 테스트하기 위해 임시로 팀 설정
 		ASMPlayerState* SMPlayerState = Cast<ASMPlayerState>(PlayerState);
-		if(SMPlayerState && SMPlayerState->GetTeam() == ESMTeam::None)
+		if (SMPlayerState && SMPlayerState->GetTeam() == ESMTeam::None)
 		{
 			SMPlayerState->SetTeam(ESMTeam::FutureBass);
 		}

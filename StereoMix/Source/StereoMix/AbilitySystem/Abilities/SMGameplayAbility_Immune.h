@@ -21,14 +21,12 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-protected:
 	UFUNCTION()
 	void OnFinishDelay();
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|FX|Immune")
 	TObjectPtr<UFMODEvent> ImmuneSound;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Design|Immune")
 	float MoveSpeedMultiply = 1.5f;
 

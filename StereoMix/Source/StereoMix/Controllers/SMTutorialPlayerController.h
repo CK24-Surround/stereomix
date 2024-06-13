@@ -19,11 +19,11 @@ public:
 	ASMTutorialPlayerController();
 
 	virtual void BeginPlay() override;
-	
+
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<USMTutorialWidget> TutorialWidgetClass;
-	
+
 	UPROPERTY(Transient)
 	TObjectPtr<USMTutorialWidget> TutorialWidget;
 };

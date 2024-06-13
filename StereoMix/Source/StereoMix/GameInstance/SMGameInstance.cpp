@@ -3,9 +3,7 @@
 
 #include "SMGameInstance.h"
 
-USMGameInstance::USMGameInstance()
-{
-}
+USMGameInstance::USMGameInstance() {}
 
 void USMGameInstance::Init()
 {
@@ -15,13 +13,8 @@ void USMGameInstance::Init()
 void USMGameInstance::StartGameInstance()
 {
 	Super::StartGameInstance();
-
 }
 
-void USMGameInstance::ShowLoadingScreen()
-{
-}
+void USMGameInstance::ShowLoadingScreen() {}
 
-void USMGameInstance::HideLoadingScreen()
-{
-}
+void USMGameInstance::HideLoadingScreen() {}

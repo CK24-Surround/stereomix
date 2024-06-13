@@ -21,10 +21,8 @@ struct FCharacterSpawnData
 {
 	GENERATED_BODY()
 
-public:
 	FCharacterSpawnData() {}
 
-public:
 	UPROPERTY(EditAnywhere)
 	TMap<ESMTeam, TSubclassOf<ASMPlayerCharacter>> CharacterClass;
 };
@@ -49,7 +47,6 @@ protected:
 
 	virtual void OnRep_PlayerState() override;
 
-protected:
 	void InitControl();
 
 	/**
@@ -74,14 +71,12 @@ public:
 	UFUNCTION()
 	void OnTargetDestroyedWithIndicator(AActor* DestroyedActor);
 
-public:
 	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
 
 protected:
 	UPROPERTY()
 	TObjectPtr<const USMControlData> ControlData;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Character|Class")
 	TMap<ESMCharacterType, FCharacterSpawnData> CharacterClass;
 

@@ -36,11 +36,11 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMClientLobbySubsystem> LobbySubsystem;
-	
+
 	virtual void NativeConstruct() override;
 
 	virtual void NativeOnActivated() override;
-	
+
 	virtual bool NativeOnHandleBackAction() override;
 
 	void SetProgressText(const FText& Text) const;

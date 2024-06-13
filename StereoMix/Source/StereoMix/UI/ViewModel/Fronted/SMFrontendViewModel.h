@@ -29,17 +29,17 @@ class STEREOMIX_API USMFrontendViewModel : public USMViewModel
 
 public:
 	USMFrontendViewModel();
-	
+
 	virtual void InitViewModel(APlayerController* PlayerController) override;
-	
+
 	EFrontendUiState GetUiState() const { return UiState; }
-	
+
 	void SetUiState(EFrontendUiState NewUiState);
 
 	USMFrontendElementViewModel* GetCurrentElementViewModel() const { return CurrentElementViewModel.Get(); }
 
 	ASMFrontendPlayerController* GetFrontendPlayerController() const { return FrontendPlayerController.Get(); }
-	
+
 	/**
 	 *	배경색을 변경합니다.
 	 * @param NewColor 변경할 색상
@@ -47,9 +47,8 @@ public:
 	void SetBackgroundColor(FLinearColor NewColor);
 
 protected:
-	
 	void SetCurrentElementViewModel(USMFrontendElementViewModel* NewElementViewModel);
-	
+
 private:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess))
 	EFrontendUiState UiState;
@@ -59,6 +58,6 @@ private:
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere, FieldNotify, Setter, meta=(AllowPrivateAccess))
 	FLinearColor BackgroundColor;
-	
+
 	TWeakObjectPtr<ASMFrontendPlayerController> FrontendPlayerController;
 };

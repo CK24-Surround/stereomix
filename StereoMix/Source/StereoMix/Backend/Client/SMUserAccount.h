@@ -26,7 +26,7 @@ public:
 	/** 사용자의 리프레시 토큰을 반환합니다. */
 	UFUNCTION(BlueprintCallable)
 	const FString& GetRefreshToken() const { return RefreshToken; }
-	
+
 	/** 사용자의 아이디를 반환합니다. */
 	UFUNCTION(BlueprintCallable)
 	const FString& GetUserId() const { return UserId; }
@@ -53,10 +53,10 @@ private:
 
 	UPROPERTY(VisibleDefaultsOnly, Category="UserAccount", meta=(AllowPrivateAccess="true"))
 	FString RefreshToken;
-	
+
 	UPROPERTY(VisibleDefaultsOnly, Category="UserAccount", meta=(AllowPrivateAccess="true"))
 	FString UserId;
-	
+
 	UPROPERTY(VisibleDefaultsOnly, Category="UserAccount", meta=(AllowPrivateAccess="true"))
 	FString UserName;
 

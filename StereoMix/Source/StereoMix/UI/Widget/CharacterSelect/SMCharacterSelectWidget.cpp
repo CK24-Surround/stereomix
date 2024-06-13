@@ -39,7 +39,7 @@ void USMCharacterSelectWidget::InitWidget(ASMCharacterSelectState* CharacterSele
 	UpdatePlayerList();
 	OnCountdownTick();
 	CharacterPreview->SetPreviewImage(ESMTeam::None, ESMCharacterType::None);
-	
+
 	OwningPlayerState->OnCharacterChangeResponse.AddDynamic(this, &USMCharacterSelectWidget::OnLocalPlayerCharacterChangeResponse);
 
 	OwningCharacterSelectState->OnCurrentStateChanged.AddDynamic(this, &USMCharacterSelectWidget::OnCharacterSelectStateChanged);
@@ -64,10 +64,10 @@ void USMCharacterSelectWidget::UpdatePlayerList() const
 	{
 		return;
 	}
-	
+
 	TArray<TObjectPtr<APlayerState>> Players = CharacterSelectState->PlayerArray;
 	PlayerListView->ClearListItems();
-	
+
 	const ESMTeam LocalPlayerTeam = GetOwningPlayerState()->GetTeam();
 	for (TObjectPtr<APlayerState> PlayerState : Players)
 	{

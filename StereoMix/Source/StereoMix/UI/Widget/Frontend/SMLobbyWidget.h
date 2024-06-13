@@ -38,10 +38,10 @@ protected:
 
 	UFUNCTION()
 	void OnQuickMatchButtonClicked();
-	
+
 	UFUNCTION()
 	void OnJoinRoomButtonClicked();
-	
+
 	UFUNCTION()
 	void OnSubmitRoomCode();
 
@@ -63,7 +63,7 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
 	TObjectPtr<UCommonActivatableWidgetStack> LobbyPopupStack;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
 	TObjectPtr<USMCommonButton> CreateRoomButton;
 
@@ -72,7 +72,7 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
 	TObjectPtr<USMCommonButton> JoinRoomButton;
-	
+
 	UPROPERTY(BlueprintReadOnly, Category="Widgets", meta=(AllowPrivateAccess))
 	TWeakObjectPtr<USMLobbyRoomCodePopup> RoomCodePopup;
 

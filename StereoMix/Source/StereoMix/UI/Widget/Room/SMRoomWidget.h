@@ -27,19 +27,19 @@ public:
 	ASMRoomState* GetOwningRoomState() const { return OwningRoomState.Get(); }
 
 	ASMRoomPlayerState* GetOwningPlayerState() const { return OwningPlayerState.Get(); }
-	
+
 protected:
 	virtual void NativeConstruct() override;
 
 	UFUNCTION()
 	void UpdatePlayerCount() const;
-	
+
 	UFUNCTION()
 	void OnQuitButtonClicked();
 
 	UFUNCTION()
 	void OnPlayerJoin(ASMPlayerState* JoinedPlayer);
-	
+
 	UFUNCTION()
 	void OnPlayerLeft(ASMPlayerState* LeftPlayer);
 
@@ -52,13 +52,13 @@ protected:
 private:
 	// =============================================================================
 	// Bindings
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCommonButton> QuitButton;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonTextBlock> PlayerCountTextBlock;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMRoomCodeCopyButton> CodeCopyButton;
 
@@ -67,7 +67,7 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> FutureBassCharacterImage;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMRoomTeamWidget> EdmTeamWidget;
 
@@ -76,10 +76,10 @@ private:
 
 	// =============================================================================
 	// Animations
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> TransitionAnim;
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> EdmSelectAnim;
 
@@ -94,7 +94,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
 	TArray<TObjectPtr<UTexture2D>> FutureBassCharacterTextures;
-	
+
 	UPROPERTY()
 	TWeakObjectPtr<ASMRoomState> OwningRoomState;
 

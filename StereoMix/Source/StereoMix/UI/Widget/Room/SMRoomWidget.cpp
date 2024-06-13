@@ -18,7 +18,7 @@ void USMRoomWidget::InitWidget(ASMRoomState* RoomState, ASMRoomPlayerState* Play
 
 	// OwningPlayerState->TeamChangedEvent.AddDynamic(this, &USMRoomWidget::OnLocalPlayerTeamChanged);
 	OwningPlayerState->OnTeamChangeResponse.AddDynamic(this, &USMRoomWidget::OnTeamChangeResponse);
-	
+
 	OwningRoomState->OnPlayerJoined.AddDynamic(this, &USMRoomWidget::OnPlayerJoin);
 	OwningRoomState->OnPlayerLeft.AddDynamic(this, &USMRoomWidget::OnPlayerLeft);
 	OwningRoomState->OnTeamPlayersUpdated.AddDynamic(this, &USMRoomWidget::OnTeamPlayersUpdated);
@@ -28,7 +28,7 @@ void USMRoomWidget::InitWidget(ASMRoomState* RoomState, ASMRoomPlayerState* Play
 	CodeCopyButton->SetRoomCode(RoomState->GetRoomCode());
 
 	UpdatePlayerCount();
-	
+
 	PlayAnimationForward(TransitionAnim);
 }
 
@@ -76,7 +76,7 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 		return;
 	}
 	UE_LOG(LogStereoMixUI, Verbose, TEXT("[USMRoomWidget] OnLocalPlayerTeamChanged: %s"), *UEnum::GetValueAsString(NewTeam))
-	
+
 	const ESMTeam PrevTeam = CurrentTeam;
 	CurrentTeam = NewTeam;
 
@@ -88,14 +88,14 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 	{
 		QueuePlayAnimationReverse(FutureBassSelectAnim);
 	}
-	
+
 	if (NewTeam == ESMTeam::EDM)
 	{
 		UTexture2D* NewCharacterTexture = EdmCharacterTextures[FMath::RandRange(0, EdmCharacterTextures.Num() - 1)];
 		EdmCharacterImage->SetBrushFromTexture(NewCharacterTexture);
 		QueuePlayAnimationForward(EdmSelectAnim);
 	}
-	else if(NewTeam == ESMTeam::FutureBass)
+	else if (NewTeam == ESMTeam::FutureBass)
 	{
 		UTexture2D* NewCharacterTexture = FutureBassCharacterTextures[FMath::RandRange(0, FutureBassCharacterTextures.Num() - 1)];
 		FutureBassCharacterImage->SetBrushFromTexture(NewCharacterTexture);
@@ -103,6 +103,4 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 	}
 }
 
-void USMRoomWidget::OnTeamPlayersUpdated(ESMTeam UpdatedTeam)
-{
-}
+void USMRoomWidget::OnTeamPlayersUpdated(ESMTeam UpdatedTeam) {}

@@ -31,16 +31,15 @@ public:
 	ASMRoomState* GetRoomState() const { return RoomState.Get(); }
 
 protected:
-	
 	UFUNCTION()
 	void OnTeamPlayersUpdated(ESMTeam UpdatedTeam);
-	
+
 	UFUNCTION()
 	void OnCountdownTick();
-	
+
 	UFUNCTION()
 	void OnCountdownFinished();
-	
+
 	virtual void StartGame();
 
 private:

@@ -3,15 +3,11 @@
 
 #include "SMAuthSubsystem.h"
 
-USMAuthSubsystem::USMAuthSubsystem() : Super(TEXT("AuthService"))
-{
-}
+USMAuthSubsystem::USMAuthSubsystem() : Super(TEXT("AuthService")) {}
 
 bool USMAuthSubsystem::IsAuthenticated() const
 {
 	return false;
 }
 
-void USMAuthSubsystem::RestAuthentication()
-{
-}
+void USMAuthSubsystem::RestAuthentication() {}

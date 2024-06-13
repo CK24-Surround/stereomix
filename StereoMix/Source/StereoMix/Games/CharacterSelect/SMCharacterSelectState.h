@@ -65,9 +65,7 @@ public:
 	virtual void NotifyPlayerLeft(ASMPlayerState* LeftPlayer) override;
 	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override;
 
-	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override
-	{
-	}
+	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override {}
 
 private:
 	UPROPERTY()

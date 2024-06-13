@@ -17,7 +17,7 @@ class STEREOMIX_API USMAnimNotify : public UAnimNotify
 
 public:
 	virtual FString GetNotifyName_Implementation() const override;
-	
+
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
 
 protected:

@@ -231,8 +231,6 @@ void USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
 	{
 		SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
 	}
-
-	return;
 }
 
 void USMCatchInteractionComponent_Character::OnDestroyedIAmCatchingActor(AActor* DestroyedActor)

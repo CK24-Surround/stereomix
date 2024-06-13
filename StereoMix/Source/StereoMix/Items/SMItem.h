@@ -16,10 +16,8 @@ class STEREOMIX_API ASMItem : public AActor
 public:
 	ASMItem();
 
-public:
 	/** 아이템을 활성화합니다. 서브클래스에서 이를 상속하고 구현해줘야합니다. */
 	virtual void ActivateItem(AActor* InActivator);
 
-public:
 	FOnUsedItemSignature OnUsedItem;
 };

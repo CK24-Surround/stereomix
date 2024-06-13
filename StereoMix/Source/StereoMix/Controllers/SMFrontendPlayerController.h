@@ -24,10 +24,10 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<USMFrontendWidget> FrontendWidgetClass;
-	
+
 	UPROPERTY(Transient)
 	TObjectPtr<USMFrontendWidget> FrontendWidget;
-	
+
 	UPROPERTY(Transient)
 	TObjectPtr<USMFrontendViewModel> FrontendViewModel;
 };

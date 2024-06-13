@@ -16,12 +16,11 @@ class STEREOMIX_API ASMRoomPlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
-
 public:
 	ASMRoomPlayerController();
 
 	virtual void BeginPlay() override;
-	
+
 	virtual void OnRep_PlayerState() override;
 
 	ASMRoomPlayerState* GetRoomPlayerState() const { return RoomPlayerState.Get(); }
@@ -41,7 +40,7 @@ protected:
 
 	UPROPERTY(Transient)
 	TWeakObjectPtr<ASMRoomState> RoomState;
-	
+
 	UPROPERTY(Transient)
 	TWeakObjectPtr<ASMRoomPlayerState> RoomPlayerState;
 };

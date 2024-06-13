@@ -16,7 +16,7 @@ void ASMRoomPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	RoomState = GetWorld()->GetGameStateChecked<ASMRoomState>();
-	
+
 	// SetInputMode(FInputModeUIOnly());
 	UE_LOG(LogStereoMix, Log, TEXT("ASMRoomPlayerController::BeginPlay"));
 }
@@ -26,11 +26,11 @@ void ASMRoomPlayerController::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	RoomPlayerState = CastChecked<ASMRoomPlayerState>(PlayerState);
 	RoomPlayerState->SetCurrentState(ERoomPlayerStateType::Unready);
-	
+
 	LoadingScreenWidget = CreateWidget<USMLoadingScreenWidget>(this, LoadingScreenWidgetClass);
 	LoadingScreenWidget->SetLoadingText(FText::FromString(TEXT("로딩 중 입니다...")));
 	LoadingScreenWidget->AddToViewport(10);
-	
+
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, [this]
 	{

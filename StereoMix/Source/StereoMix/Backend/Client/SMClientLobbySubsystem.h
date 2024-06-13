@@ -85,13 +85,13 @@ class STEREOMIX_API USMClientLobbySubsystem : public USMLobbySubsystem
 public:
 	UPROPERTY(BlueprintAssignable)
 	FCreateRoomResponseDelegate OnCreateRoomResponse;
-	
+
 	UPROPERTY(BlueprintAssignable)
 	FQuickMatchResponseDelegate OnQuickMatchResponse;
-	
+
 	UPROPERTY(BlueprintAssignable)
 	FJoinRoomResponseDelegate OnJoinRoomResponse;
-	
+
 	UPROPERTY(BlueprintAssignable)
 	FJoinRoomWithCodeResponseDelegate OnJoinRoomWithCodeResponse;
 
@@ -120,7 +120,7 @@ public:
 	void Cancel() const;
 
 	virtual bool IsBusy() const override;
-	
+
 protected:
 	FGrpcContextHandle GrpcContextHandle;
 

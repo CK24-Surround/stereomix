@@ -19,7 +19,6 @@ class STEREOMIX_API USMCharacterAttributeSet : public USMAttributeSet
 public:
 	USMCharacterAttributeSet();
 
-public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
@@ -27,7 +26,6 @@ public:
 	virtual bool PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data) override;
 	virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
 
-public:
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, PostureGauge);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MaxPostureGauge);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MoveSpeed);
@@ -35,7 +33,6 @@ public:
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Damage);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Heal);
 
-public:
 	float GetBaseMoveSpeed() const { return MoveSpeed.GetBaseValue(); }
 
 protected:
@@ -48,7 +45,6 @@ protected:
 	UFUNCTION()
 	void OnRep_MoveSpeed(const FGameplayAttributeData& OldValue);
 
-protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Posture", ReplicatedUsing = "OnRep_PostureGauge")
 	FGameplayAttributeData PostureGauge;
 
@@ -58,13 +54,11 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Posture", ReplicatedUsing = "OnRep_MoveSpeed")
 	FGameplayAttributeData MoveSpeed;
 
-protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData Damage;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Heal")
 	FGameplayAttributeData Heal;
 
-protected:
 	FGameplayTagContainer InvincibleStateTags;
 };

@@ -18,14 +18,14 @@ class STEREOMIX_API USMGuestLoginPopup : public USMPopup
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuestLoginPopup")
 	int32 MaxUserNameLength = 10;
-	
+
 	USMGuestLoginPopup();
 
 	FText GetUserName() const { return UserNameInputBox->GetText(); }
 
 protected:
 	virtual void NativeConstruct() override;
-	
+
 	virtual void NativeOnActivated() override;
 
 	virtual bool CanSubmit() override;

@@ -137,7 +137,6 @@ void ASMGameMode::PerformCountdownTime()
 		CountdownTimeHandle.Invalidate();
 
 		OnCountdownTimeEnd();
-		return;
 	}
 }
 

@@ -11,8 +11,11 @@ enum class ESMCharacterType : uint8;
 class ASMPlayerState;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerJoined, ASMPlayerState*, JoinedPlayer);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FPlayerLeft, ASMPlayerState*, LeftPlayer);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_ThreeParams(FPlayerTeamChanged, ASMPlayerState*, Player, ESMTeam, PreviousTeam, ESMTeam, NewTeam);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPlayerCharacterChanged, ASMPlayerState*, Player, ESMCharacterType, NewCharacter);
 
 // This class does not need to be modified.

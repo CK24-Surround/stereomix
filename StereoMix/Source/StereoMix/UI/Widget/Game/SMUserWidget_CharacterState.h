@@ -31,7 +31,6 @@ protected:
 
 	void UpdateHealth();
 
-protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TB_Nickname;
 
@@ -41,7 +40,6 @@ protected:
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> HitAnimation;
 
-protected:
 	float CurrentHealth = 0.0f;
 	float MaxHealth = 0.0f;
 };

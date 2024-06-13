@@ -19,7 +19,6 @@ class STEREOMIX_API USMUserWidget_StartCountdown : public USMUserWidget
 protected:
 	virtual void NativeOnInitialized() override;
 
-protected:
 	/** 편하게 관리하기위해 맵으로 위젯들을 묶습니다. */
 	UPROPERTY()
 	TMap<int32, TWeakObjectPtr<UWidget>> CountdownBoxes;
@@ -36,7 +35,6 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScaleBox> CountdownGoBox;
 
-protected:
 	void BindGameState();
 
 	/** 카운트 다운이 변경될때마다 호출됩니다. */
@@ -48,6 +46,5 @@ protected:
 	/** 카운트다운을 비활성화합니다. */
 	void DisableCountdown();
 
-protected:
 	TWeakObjectPtr<ASMGameState> CachedGameState;
 };

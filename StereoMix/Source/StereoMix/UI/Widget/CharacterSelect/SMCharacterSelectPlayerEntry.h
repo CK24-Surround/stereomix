@@ -28,7 +28,7 @@ protected:
 private:
 	// =============================================================================
 	// Bindings
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonTextBlock> PlayerNameTextBlock;
 
@@ -41,10 +41,10 @@ private:
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UPanelWidget> NotReadyIconSection;
 
-	
+
 	// =============================================================================
 	// Style
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style", meta=(AllowPrivateAccess))
 	TSubclassOf<UCommonTextStyle> LocalPlayerNameTextStyle;
 

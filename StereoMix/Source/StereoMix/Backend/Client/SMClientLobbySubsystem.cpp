@@ -133,38 +133,38 @@ void USMClientLobbySubsystem::OnGrpcCreateRoomResponse(FGrpcContextHandle Handle
 	FString ServerUrl;
 	switch (GrpcResult.Code)
 	{
-	case EGrpcResultCode::Ok:
-		Result = ECreateRoomResult::Success;
-		ServerUrl = GetServerUrl(Response.Connection);
-		break;
+		case EGrpcResultCode::Ok:
+			Result = ECreateRoomResult::Success;
+			ServerUrl = GetServerUrl(Response.Connection);
+			break;
 
-	case EGrpcResultCode::Cancelled:
-		Result = ECreateRoomResult::Cancelled;
-		break;
+		case EGrpcResultCode::Cancelled:
+			Result = ECreateRoomResult::Cancelled;
+			break;
 
-	case EGrpcResultCode::Internal:
-		Result = ECreateRoomResult::InternalError;
-		break;
+		case EGrpcResultCode::Internal:
+			Result = ECreateRoomResult::InternalError;
+			break;
 
-	case EGrpcResultCode::DeadlineExceeded:
-		Result = ECreateRoomResult::DeadlineExceeded;
-		break;
+		case EGrpcResultCode::DeadlineExceeded:
+			Result = ECreateRoomResult::DeadlineExceeded;
+			break;
 
-	case EGrpcResultCode::Unauthenticated:
-		Result = ECreateRoomResult::Unauthenticated;
-		break;
+		case EGrpcResultCode::Unauthenticated:
+			Result = ECreateRoomResult::Unauthenticated;
+			break;
 
-	case EGrpcResultCode::InvalidArgument:
-		Result = ECreateRoomResult::InvalidArgument;
-		break;
+		case EGrpcResultCode::InvalidArgument:
+			Result = ECreateRoomResult::InvalidArgument;
+			break;
 
-	case EGrpcResultCode::ConnectionFailed:
-		Result = ECreateRoomResult::ConnectionError;
-		break;
+		case EGrpcResultCode::ConnectionFailed:
+			Result = ECreateRoomResult::ConnectionError;
+			break;
 
-	default:
-		Result = ECreateRoomResult::UnknownError;
-		break;
+		default:
+			Result = ECreateRoomResult::UnknownError;
+			break;
 	}
 	OnCreateRoomResponse.Broadcast(Result, ServerUrl);
 }
@@ -194,38 +194,38 @@ void USMClientLobbySubsystem::OnGrpcQuickMatchResponse(FGrpcContextHandle Handle
 	FString ServerUrl;
 	switch (GrpcResult.Code)
 	{
-	case EGrpcResultCode::Ok:
-		Result = EQuickMatchResult::Success;
-		ServerUrl = GetServerUrl(Response.Connection);
-		break;
+		case EGrpcResultCode::Ok:
+			Result = EQuickMatchResult::Success;
+			ServerUrl = GetServerUrl(Response.Connection);
+			break;
 
-	case EGrpcResultCode::Cancelled:
-		Result = EQuickMatchResult::Cancelled;
-		break;
+		case EGrpcResultCode::Cancelled:
+			Result = EQuickMatchResult::Cancelled;
+			break;
 
-	case EGrpcResultCode::Internal:
-		Result = EQuickMatchResult::InternalError;
-		break;
+		case EGrpcResultCode::Internal:
+			Result = EQuickMatchResult::InternalError;
+			break;
 
-	case EGrpcResultCode::DeadlineExceeded:
-		Result = EQuickMatchResult::DeadlineExceeded;
-		break;
+		case EGrpcResultCode::DeadlineExceeded:
+			Result = EQuickMatchResult::DeadlineExceeded;
+			break;
 
-	case EGrpcResultCode::Unauthenticated:
-		Result = EQuickMatchResult::Unauthenticated;
-		break;
+		case EGrpcResultCode::Unauthenticated:
+			Result = EQuickMatchResult::Unauthenticated;
+			break;
 
-	case EGrpcResultCode::InvalidArgument:
-		Result = EQuickMatchResult::InvalidArgument;
-		break;
+		case EGrpcResultCode::InvalidArgument:
+			Result = EQuickMatchResult::InvalidArgument;
+			break;
 
-	case EGrpcResultCode::ConnectionFailed:
-		Result = EQuickMatchResult::ConnectionError;
-		break;
+		case EGrpcResultCode::ConnectionFailed:
+			Result = EQuickMatchResult::ConnectionError;
+			break;
 
-	default:
-		Result = EQuickMatchResult::UnknownError;
-		break;
+		default:
+			Result = EQuickMatchResult::UnknownError;
+			break;
 	}
 	OnQuickMatchResponse.Broadcast(Result, ServerUrl);
 }
@@ -255,46 +255,46 @@ void USMClientLobbySubsystem::OnGrpcJoinRoomResponse(FGrpcContextHandle Handle, 
 	FString ServerUrl;
 	switch (GrpcResult.Code)
 	{
-	case EGrpcResultCode::Ok:
-		Result = EJoinRoomResult::Success;
-		ServerUrl = GetServerUrl(Response.Connection);
-		break;
+		case EGrpcResultCode::Ok:
+			Result = Success;
+			ServerUrl = GetServerUrl(Response.Connection);
+			break;
 
-	case EGrpcResultCode::Unauthenticated:
-		Result = EJoinRoomResult::Unauthenticated;
-		break;
+		case EGrpcResultCode::Unauthenticated:
+			Result = Unauthenticated;
+			break;
 
-	case EGrpcResultCode::InvalidArgument:
-		Result = EJoinRoomResult::InvalidArgument;
-		break;
+		case EGrpcResultCode::InvalidArgument:
+			Result = InvalidArgument;
+			break;
 
-	case EGrpcResultCode::NotFound:
-		Result = EJoinRoomResult::RoomNotFound;
-		break;
+		case EGrpcResultCode::NotFound:
+			Result = RoomNotFound;
+			break;
 
-	case EGrpcResultCode::PermissionDenied:
-		Result = EJoinRoomResult::InvalidPassword;
-		break;
+		case EGrpcResultCode::PermissionDenied:
+			Result = InvalidPassword;
+			break;
 
-	case EGrpcResultCode::Aborted:
-		Result = EJoinRoomResult::RoomFull;
-		break;
+		case EGrpcResultCode::Aborted:
+			Result = RoomFull;
+			break;
 
-	case EGrpcResultCode::Internal:
-		Result = EJoinRoomResult::InternalError;
-		break;
+		case EGrpcResultCode::Internal:
+			Result = InternalError;
+			break;
 
-	case EGrpcResultCode::DeadlineExceeded:
-		Result = EJoinRoomResult::DeadlineExceeded;
-		break;
+		case EGrpcResultCode::DeadlineExceeded:
+			Result = DeadlineExceeded;
+			break;
 
-	case EGrpcResultCode::ConnectionFailed:
-		Result = EJoinRoomResult::ConnectionError;
-		break;
+		case EGrpcResultCode::ConnectionFailed:
+			Result = ConnectionError;
+			break;
 
-	default:
-		Result = EJoinRoomResult::UnknownError;
-		break;
+		default:
+			Result = UnknownError;
+			break;
 	}
 	OnJoinRoomResponse.Broadcast(Result, ServerUrl);
 }
@@ -324,42 +324,42 @@ void USMClientLobbySubsystem::OnGrpcJoinRoomWithCodeResponse(FGrpcContextHandle 
 	FString ServerUrl;
 	switch (GrpcResult.Code)
 	{
-	case EGrpcResultCode::Ok:
-		Result = EJoinRoomWithCodeResult::Success;
-		ServerUrl = GetServerUrl(Response.Connection);
-		break;
+		case EGrpcResultCode::Ok:
+			Result = EJoinRoomWithCodeResult::Success;
+			ServerUrl = GetServerUrl(Response.Connection);
+			break;
 
-	case EGrpcResultCode::Unauthenticated:
-		Result = EJoinRoomWithCodeResult::Unauthenticated;
-		break;
+		case EGrpcResultCode::Unauthenticated:
+			Result = EJoinRoomWithCodeResult::Unauthenticated;
+			break;
 
-	case EGrpcResultCode::InvalidArgument:
-		Result = EJoinRoomWithCodeResult::InvalidArgument;
-		break;
+		case EGrpcResultCode::InvalidArgument:
+			Result = EJoinRoomWithCodeResult::InvalidArgument;
+			break;
 
-	case EGrpcResultCode::NotFound:
-		Result = EJoinRoomWithCodeResult::RoomNotFound;
-		break;
+		case EGrpcResultCode::NotFound:
+			Result = EJoinRoomWithCodeResult::RoomNotFound;
+			break;
 
-	case EGrpcResultCode::Aborted:
-		Result = EJoinRoomWithCodeResult::RoomFull;
-		break;
+		case EGrpcResultCode::Aborted:
+			Result = EJoinRoomWithCodeResult::RoomFull;
+			break;
 
-	case EGrpcResultCode::Internal:
-		Result = EJoinRoomWithCodeResult::InternalError;
-		break;
+		case EGrpcResultCode::Internal:
+			Result = EJoinRoomWithCodeResult::InternalError;
+			break;
 
-	case EGrpcResultCode::DeadlineExceeded:
-		Result = EJoinRoomWithCodeResult::DeadlineExceeded;
-		break;
+		case EGrpcResultCode::DeadlineExceeded:
+			Result = EJoinRoomWithCodeResult::DeadlineExceeded;
+			break;
 
-	case EGrpcResultCode::ConnectionFailed:
-		Result = EJoinRoomWithCodeResult::ConnectionError;
-		break;
+		case EGrpcResultCode::ConnectionFailed:
+			Result = EJoinRoomWithCodeResult::ConnectionError;
+			break;
 
-	default:
-		Result = EJoinRoomWithCodeResult::UnknownError;
-		break;
+		default:
+			Result = EJoinRoomWithCodeResult::UnknownError;
+			break;
 	}
 	OnJoinRoomWithCodeResponse.Broadcast(Result, ServerUrl);
 }

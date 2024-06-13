@@ -26,10 +26,8 @@ protected:
 
 	virtual void PlaySoundWithAttach(AActor* SourceActor, const FGameplayCueParameters& Parameters) const override;
 
-protected:
 	ESMTeam GetTeamForSource(const AActor* SourceActor) const;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Design|FX|Effect")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> Effect;
 

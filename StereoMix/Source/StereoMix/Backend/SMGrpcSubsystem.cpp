@@ -19,7 +19,7 @@ void USMGrpcSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	ensureMsgf(!LocalServerEndPoint.IsEmpty(), TEXT("LocalServerEndPoint must be specified in the config file."));
 
 	GrpcManager = Collection.InitializeDependency<UTurboLinkGrpcManager>();
-	
+
 	EConnectionEndPointTargets Target = EConnectionEndPointTargets::Local;
 	if (!UGameplayStatics::HasLaunchOption("local"))
 	{
@@ -37,31 +37,31 @@ void USMGrpcSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 void USMGrpcSubsystem::SetTargetEndPoint(const EConnectionEndPointTargets Target)
 {
 	UE_LOG(LogStereoMix, Verbose, TEXT("[SMGrpcSubsystem] SetTargetEndPoint: %s"), *UEnum::GetValueAsString(Target))
-	
+
 	UTurboLinkGrpcConfig* TurboLinkConfig = GetMutableDefault<UTurboLinkGrpcConfig>();
 	// 로컬을 제외하고는 모두 SecureChannel을 사용해야 합니다.
 	switch (Target)
 	{
-	case EConnectionEndPointTargets::Live:
-		TurboLinkConfig->EnableServerSideTLS = true;
-		TurboLinkConfig->ServerRootCerts = ServerRootCerts;
-		TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
-		break;
+		case EConnectionEndPointTargets::Live:
+			TurboLinkConfig->EnableServerSideTLS = true;
+			TurboLinkConfig->ServerRootCerts = ServerRootCerts;
+			TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
+			break;
 
-	case EConnectionEndPointTargets::Development:
-		TurboLinkConfig->EnableServerSideTLS = true;
-		TurboLinkConfig->ServerRootCerts = ServerRootCerts;
-		TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
-		break;
+		case EConnectionEndPointTargets::Development:
+			TurboLinkConfig->EnableServerSideTLS = true;
+			TurboLinkConfig->ServerRootCerts = ServerRootCerts;
+			TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
+			break;
 
-	case EConnectionEndPointTargets::Local:
-		// 임시 코드
-		TurboLinkConfig->EnableServerSideTLS = true;
-		TurboLinkConfig->ServerRootCerts = ServerRootCerts;
-		TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
+		case EConnectionEndPointTargets::Local:
+			// 임시 코드
+			TurboLinkConfig->EnableServerSideTLS = true;
+			TurboLinkConfig->ServerRootCerts = ServerRootCerts;
+			TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
 		// TurboLinkConfig->EnableServerSideTLS = false;
 		// TurboLinkConfig->ServerRootCerts = TEXT("");
 		// TurboLinkConfig->DefaultEndPoint = LocalServerEndPoint;
-		break;
+			break;
 	}
 }

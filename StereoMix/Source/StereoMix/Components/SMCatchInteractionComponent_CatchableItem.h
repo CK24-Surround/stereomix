@@ -15,7 +15,6 @@ class STEREOMIX_API USMCatchInteractionComponent_CatchableItem : public USMCatch
 public:
 	virtual void BeginPlay() override;
 
-public:
 	virtual bool IsCatchable(AActor* TargetActor) const override;
 
 	virtual void OnCaught(AActor* TargetActor) override;
@@ -27,6 +26,5 @@ protected:
 
 	void InternalOnCaughtReleased(AActor* TargetActor);
 
-protected:
 	TWeakObjectPtr<AActor> SourceActor;
 };

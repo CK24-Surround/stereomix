@@ -9,6 +9,7 @@
 #include "SMPlayerState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamChangedEvent, ESMTeam, NewTeam);
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterTypeChangedEvent, ESMCharacterType, NewCharacterType);
 
 /**
@@ -27,7 +28,7 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
 	// ============================================================================
 	// Team, Character Type
 
@@ -37,13 +38,13 @@ private:
 
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing= OnRep_CharacterType)
 	ESMCharacterType CharacterType;
-	
+
 	UFUNCTION()
 	void OnRep_Team(ESMTeam PreviousTeam);
 
 	UFUNCTION()
 	void OnRep_CharacterType(ESMCharacterType PreviousCharacterType);
-	
+
 public:
 	UPROPERTY(BlueprintAssignable)
 	FTeamChangedEvent TeamChangedEvent;

@@ -43,19 +43,17 @@ public:
 private:
 	// =============================================================================
 	// Bindings
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> PreviewImage;
 
-	
+
 	// =============================================================================
 	// Variables
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Preview Materials", meta=(AllowPrivateAccess))
 	TArray<FCharacterPreviewWidgetData> EdmCharacterPreviewDataList;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Preview Materials", meta=(AllowPrivateAccess))
 	TArray<FCharacterPreviewWidgetData> FutureBassCharacterPreviewDataList;
-
-	
 };

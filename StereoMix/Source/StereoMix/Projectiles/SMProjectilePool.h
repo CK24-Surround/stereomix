@@ -31,7 +31,6 @@ protected:
 	/** 투사체를 생성하고 EndLifeTime 델리게이트에 바인드합니다. */
 	void SpawnProjectile();
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Projectile")
 	TSubclassOf<ASMProjectile> ProjectileClass;
 

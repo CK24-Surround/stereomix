@@ -22,7 +22,7 @@ public:
 
 protected:
 	static bool IsValidUserName(const FText& UserNameToCheck);
-	
+
 	void SetInputUserName(const FText& UserName);
 
 	virtual void OnSubmit() override;

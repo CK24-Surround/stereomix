@@ -17,7 +17,6 @@ class STEREOMIX_API ASMCharacterSelectMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
-	
 	ASMCharacterSelectMode();
 
 	virtual void InitGameState() override;
@@ -37,7 +36,7 @@ public:
 protected:
 	UFUNCTION()
 	void WaitingTimerTick();
-	
+
 	UFUNCTION()
 	void OnCharacterSelectCountdownFinished();
 

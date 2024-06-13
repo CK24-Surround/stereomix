@@ -19,13 +19,10 @@ class STEREOMIX_API ASMCatchableItem : public ASMItem, public ISMCatchInteractio
 public:
 	ASMCatchableItem();
 
-public:
 	virtual void ActivateItem(AActor* InActivator) override;
 
-public:
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override PURE_VIRTUAL(ASMCatchableItem::GetCatchInteractionComponent, return nullptr;)
 
-public:
 	/** 게임플레이 큐를 재생할때 사용할 태그입니다.*/
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (Categories = "GameplayCue"))
 	FGameplayTag SmashGCTag;

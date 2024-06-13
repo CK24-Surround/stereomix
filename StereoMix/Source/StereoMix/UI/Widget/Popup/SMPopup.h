@@ -18,13 +18,13 @@ class STEREOMIX_API USMPopup : public USMActivatableWidget
 public:
 	FSimpleDelegate OnSubmit;
 	FSimpleDelegate OnClose;
-	
+
 	USMPopup();
 
 	virtual void NativeConstruct() override;
 
 	virtual void NativeOnActivated() override;
-	
+
 	virtual bool NativeOnHandleBackAction() override;
 
 protected:
@@ -33,11 +33,11 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
 	TObjectPtr<UCommonButtonBase> CloseButton;
-	
+
 	virtual bool CanSubmit() { return true; }
 
 	virtual void PerformSubmit();
-	
+
 	virtual void OnSubmitButtonClicked();
 
 	virtual void OnCloseButtonClicked();

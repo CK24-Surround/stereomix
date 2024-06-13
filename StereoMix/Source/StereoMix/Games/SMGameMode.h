@@ -53,7 +53,6 @@ protected:
 	/** 승패 확인 타이머가 만료된 후 처리를 합니다. */
 	void EndVictoryDefeatTimer();
 
-protected:
 	TWeakObjectPtr<ASMGameState> CachedSMGameState;
 
 	/** 시간이 만료되면 현재 레벨을 재시작할지 여부입니다. 테스트용으로 사용됩니다. */
@@ -61,7 +60,6 @@ protected:
 	uint32 bUseRestart:1 = false;
 
 // ~Wait And Countdown Section
-protected:
 	/** 대기 시간 만료시 호출됩니다. */
 	void OnWaitTimeEndCallback();
 
@@ -73,7 +71,6 @@ protected:
 	/** 카운트 다운 만료시 호출됩니다. */
 	void OnCountdownTimeEnd();
 
-protected:
 	/** 게임 시작 후 대기 시간입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Wait")
 	int32 WaitTime = 10;
@@ -90,7 +87,6 @@ protected:
 // ~Wait And Countdown Section
 
 // ~Round Time Section
-protected:
 	/** 라운드 시작를 시작합니다. */
 	void StartRound();
 
@@ -100,7 +96,6 @@ protected:
 	/** 1초 주기로 라운드 타임과 관련된 처리를 합니다. */
 	void PerformRoundTime();
 
-protected:
 	FTimerHandle RoundTimerHandle;
 
 	int32 RemainRoundTime = 0;
@@ -128,7 +123,6 @@ protected:
 	/** 현재 페이즈 수를 설정합니다. */
 	void SetCurrentPhaseNumber(int32 InCurrentPhaseNumber);
 
-protected:
 	FTimerHandle PhaseTimerHandle;
 
 	int32 RemainPhaseTime = 0;

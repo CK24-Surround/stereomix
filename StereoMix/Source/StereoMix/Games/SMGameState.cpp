@@ -62,10 +62,7 @@ void ASMGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	Super::EndPlay(EndPlayReason);
 
 	// 사운드 리소스 정리
-	if (BackgroundMusicEventInstance.Instance)
-	{
-		BackgroundMusicEventInstance.Instance->release();
-	}
+	UFMODBlueprintStatics::EventInstanceStop(BackgroundMusicEventInstance, true);
 }
 
 void ASMGameState::OnRep_MatchState()

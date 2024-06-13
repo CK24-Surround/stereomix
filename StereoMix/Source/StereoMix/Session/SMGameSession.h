@@ -13,11 +13,10 @@ class STEREOMIX_API ASMGameSession : public AGameSession
 {
 	GENERATED_BODY()
 
-
 public:
 	UPROPERTY()
 	bool bCanEnterRoom;
-	
+
 	// Sets default values for this actor's properties
 	ASMGameSession();
 

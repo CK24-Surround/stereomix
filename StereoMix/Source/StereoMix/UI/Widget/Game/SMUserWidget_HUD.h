@@ -18,7 +18,7 @@ class STEREOMIX_API USMUserWidget_HUD : public USMUserWidget
 
 public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
-	
+
 protected:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(BindWidget))
 	TObjectPtr<UCommonActivatableWidgetStack> GameStack;

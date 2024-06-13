@@ -18,14 +18,13 @@ class STEREOMIX_API USMLobbyRoomCodePopup : public USMPopup
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuestLoginPopup")
 	int32 RoomCodeDesiredLength = 6;
-	
+
 	USMLobbyRoomCodePopup();
 
 	UFUNCTION()
 	FText GetRoomCode() const { return RoomCodeInputBox->GetText(); }
 
 protected:
-	
 	virtual void NativeConstruct() override;
 
 	virtual void NativeOnActivated() override;

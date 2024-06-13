@@ -7,9 +7,7 @@
 #include "StereoMixLog.h"
 #include "Kismet/GameplayStatics.h"
 
-USMLobbyQuickMatchWidget::USMLobbyQuickMatchWidget()
-{
-}
+USMLobbyQuickMatchWidget::USMLobbyQuickMatchWidget() {}
 
 void USMLobbyQuickMatchWidget::NativeOnActivated()
 {
@@ -62,33 +60,33 @@ void USMLobbyQuickMatchWidget::OnQuickMatchResponse(const EQuickMatchResult Resu
 
 	switch (Result)
 	{
-	case EQuickMatchResult::Cancelled:
-		break;
+		case EQuickMatchResult::Cancelled:
+			break;
 
-	case EQuickMatchResult::Unauthenticated:
-		GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&]
-		{
-			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-		});
-		break;
+		case EQuickMatchResult::Unauthenticated:
+			GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&]
+			{
+				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+			});
+			break;
 
-	case EQuickMatchResult::ConnectionError:
-		GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
-		{
-			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-		});
-		break;
+		case EQuickMatchResult::ConnectionError:
+			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
+			{
+				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+			});
+			break;
 
-	case EQuickMatchResult::InvalidArgument:
-	case EQuickMatchResult::UnknownError:
-	case EQuickMatchResult::InternalError:
-	case EQuickMatchResult::DeadlineExceeded:
-	default:
-		GetParentFrontendWidget()->ShowAlert(TEXT("매칭에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
-		{
-			GetParentFrontendWidget()->RemoveElementWidget(this);
-		});
-		break;
+		case EQuickMatchResult::InvalidArgument:
+		case EQuickMatchResult::UnknownError:
+		case EQuickMatchResult::InternalError:
+		case EQuickMatchResult::DeadlineExceeded:
+		default:
+			GetParentFrontendWidget()->ShowAlert(TEXT("매칭에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
+			{
+				GetParentFrontendWidget()->RemoveElementWidget(this);
+			});
+			break;
 	}
 
 	UiState = ELobbyProcessUiState::Failure;

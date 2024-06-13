@@ -43,7 +43,7 @@ public:
 	ASMRoomState();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
 	virtual void AddPlayerState(APlayerState* PlayerState) override;
 
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
@@ -58,24 +58,24 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	TArray<ASMRoomPlayerState*> GetPlayersInTeam(ESMTeam Team) const;
-	
+
 	UFUNCTION(BlueprintPure)
 	const FString& GetRoomName() const { return RoomName; }
+
 	void SetRoomName(const FString& NewRoomName) { RoomName = NewRoomName; }
 
 	UFUNCTION(BlueprintPure)
 	const FString& GetRoomCode() const { return RoomCode; }
+
 	void SetRoomCode(const FString& NewRoomCode) { RoomCode = NewRoomCode; }
-	
+
 	// ~ Begin ISMGameStateNotify
 
 	virtual void NotifyPlayerJoined(ASMPlayerState* JoinedPlayer) override;
 	virtual void NotifyPlayerLeft(ASMPlayerState* LeftPlayer) override;
 	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override;
 
-	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override
-	{
-	}
+	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override {}
 
 	// ~ End ISMGameStateNotify
 

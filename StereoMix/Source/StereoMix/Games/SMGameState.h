@@ -30,7 +30,7 @@ public:
 	ASMGameState();
 
 	// ~AGameState Section
-	
+
 	virtual void PostInitializeComponents() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
@@ -42,9 +42,8 @@ public:
 	virtual void HandleMatchHasEnded() override;
 
 	// ~AGameState Section
-	
+
 // ~Countdown Time Section
-public:
 	FORCEINLINE int32 GetReplicatedRemainCountdownTime() const { return ReplicatedRemainCountdownTime; }
 
 	FORCEINLINE void SetReplicatedRemainCountdownTime(int32 InReplicatedRemainCountdownTime) { ReplicatedRemainCountdownTime = InReplicatedRemainCountdownTime; }
@@ -173,7 +172,6 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedCurrentPhaseNumber")
 	int32 ReplicatedCurrentPhaseNumber = 0;
-	
 // ~Phase Section
 
 // ~VictoryDefeat Section
@@ -194,17 +192,16 @@ public:
 // ~VictoryDefeat Section
 
 	// ~Sound Section
-public:
 	void PlayBackgroundMusic();
-	
+
 	ESMTeam GetCurrentMusicOwner() const { return ReplicatedCurrentMusicOwner; }
 	void SetMusicOwner(ESMTeam InTeam);
-	
+
 private:
 	const float BGM_PARAMETER_NONE = 0.f;
 	const float BGM_PARAMETER_FUTURE_BASS = 1.f;
 	const float BGM_PARAMETER_EDM = 2.f;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sound", meta=(AllowPrivateAccess))
 	TObjectPtr<UFMODEvent> BackgroundMusic;
 

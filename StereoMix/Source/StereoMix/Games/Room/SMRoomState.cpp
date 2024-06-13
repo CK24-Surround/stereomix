@@ -44,16 +44,16 @@ void ASMRoomState::RemovePlayerState(APlayerState* PlayerState)
 		{
 			switch (RoomPlayerState->GetTeam())
 			{
-			case ESMTeam::EDM:
-				TeamEdmPlayers.Remove(RoomPlayerState);
-				OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
-				break;
-			case ESMTeam::FutureBass:
-				TeamFutureBassPlayers.Remove(RoomPlayerState);
-				OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
-				break;
-			default:
-				break;
+				case ESMTeam::EDM:
+					TeamEdmPlayers.Remove(RoomPlayerState);
+					OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
+					break;
+				case ESMTeam::FutureBass:
+					TeamFutureBassPlayers.Remove(RoomPlayerState);
+					OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
+					break;
+				default:
+					break;
 			}
 		}
 	}
@@ -63,14 +63,14 @@ TArray<ASMRoomPlayerState*> ASMRoomState::GetPlayersInTeam(const ESMTeam Team) c
 {
 	switch (Team)
 	{
-	case ESMTeam::EDM:
-		return TeamEdmPlayers;
+		case ESMTeam::EDM:
+			return TeamEdmPlayers;
 
-	case ESMTeam::FutureBass:
-		return TeamFutureBassPlayers;
+		case ESMTeam::FutureBass:
+			return TeamFutureBassPlayers;
 
-	default:
-		return TArray<ASMRoomPlayerState*>();
+		default:
+			return TArray<ASMRoomPlayerState*>();
 	}
 }
 
@@ -103,46 +103,42 @@ void ASMRoomState::NotifyPlayerTeamChanged(ASMPlayerState* Player, const ESMTeam
 	{
 		switch (PreviousTeam)
 		{
-		case ESMTeam::EDM:
-			TeamEdmPlayers.Remove(RoomPlayer);
-			OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
-			break;
+			case ESMTeam::EDM:
+				TeamEdmPlayers.Remove(RoomPlayer);
+				OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
+				break;
 
-		case ESMTeam::FutureBass:
-			TeamFutureBassPlayers.Remove(RoomPlayer);
-			OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
-			break;
+			case ESMTeam::FutureBass:
+				TeamFutureBassPlayers.Remove(RoomPlayer);
+				OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
+				break;
 
-		default:
-			break;;
+			default:
+				break;
 		}
 
 		switch (NewTeam)
 		{
-		case ESMTeam::EDM:
-			TeamEdmPlayers.Add(RoomPlayer);
-			OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
-			break;
+			case ESMTeam::EDM:
+				TeamEdmPlayers.Add(RoomPlayer);
+				OnTeamPlayersUpdated.Broadcast(ESMTeam::EDM);
+				break;
 
-		case ESMTeam::FutureBass:
-			TeamFutureBassPlayers.Add(RoomPlayer);
-			OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
-			break;
+			case ESMTeam::FutureBass:
+				TeamFutureBassPlayers.Add(RoomPlayer);
+				OnTeamPlayersUpdated.Broadcast(ESMTeam::FutureBass);
+				break;
 
-		default:
-			break;
+			default:
+				break;
 		}
 	}
 #endif
 }
 
-void ASMRoomState::OnRep_RoomName()
-{
-}
+void ASMRoomState::OnRep_RoomName() {}
 
-void ASMRoomState::OnRep_RoomCode()
-{
-}
+void ASMRoomState::OnRep_RoomCode() {}
 
 void ASMRoomState::OnRep_TeamEdmPlayers()
 {

@@ -237,7 +237,7 @@ FVector USMGameplayAbility_Smash::CalculateMaxDistanceLocation(const FVector& In
 
 	// 사거리를 제한 합니다.
 	// TODO: 임시로 150으로 타일 사이즈를 하드코딩 해두었습니다.
-	const float TileSize = 150.0f;
+	constexpr float TileSize = 150.0f;
 	const float Range = TileSize * SmashRangeByTile;
 	if (FVector::DistSquared(AlignedSourceZ, InTargetLocation) > FMath::Square(Range))
 	{

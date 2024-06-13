@@ -6,9 +6,7 @@
 #include "StereoMix.h"
 #include "Blueprint/UserWidget.h"
 
-UGameFlowSubsystem::UGameFlowSubsystem()
-{
-}
+UGameFlowSubsystem::UGameFlowSubsystem() {}
 
 void UGameFlowSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {

@@ -17,7 +17,7 @@ class STEREOMIX_API USMLobbyProgressSectionWidget : public UCommonUserWidget
 
 public:
 	void SetProgressText(const FText& InText);
-	
+
 private:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
 	TObjectPtr<UCommonTextBlock> ProgressTextBlock;

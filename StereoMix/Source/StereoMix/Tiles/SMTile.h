@@ -61,7 +61,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<USMTileAssetData> AssetData;
 
-protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design")
 	TArray<TObjectPtr<UMaterialInstanceDynamic>> MeshMIDs;
 

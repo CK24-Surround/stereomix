@@ -44,7 +44,7 @@ protected:
 	void OnChangePhase(int32 CurrentPhaseNumber);
 
 	void OnChangeEDMPhaseScore(int32 Score);
-	
+
 	void OnChangeFutureBassPhaseScore(int32 Score);
 
 public:

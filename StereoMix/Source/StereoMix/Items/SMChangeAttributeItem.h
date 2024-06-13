@@ -20,16 +20,13 @@ public:
 protected:
 	virtual void PostInitializeComponents() override;
 
-protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
-protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCSetHidden(bool bNewHidden);
 
 	void HealRespawnTimerCallback();
 
-protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -42,7 +39,6 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "ItemMesh")
 	TObjectPtr<UStaticMeshComponent> ItemMeshComponent;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> GE;
 

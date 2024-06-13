@@ -45,16 +45,16 @@ public:
 	float BackgroundTransitionSpeed = 5.0f;
 
 	FString RequestRoomCode;
-	
+
 	USMFrontendWidget();
 
 	USMFrontendWidgetStack* GetMainStack() const { return MainStack; }
-	
+
 	UFUNCTION(BlueprintCallable)
 	void AddElementWidget(TSubclassOf<USMFrontendElementWidget> WidgetClass);
 	void AddElementWidget(TSubclassOf<USMFrontendElementWidget> WidgetClass, TFunctionRef<void(USMFrontendElementWidget&)> InstanceInitFunc);
 	void AddElementWidgetInstance(USMFrontendElementWidget& WidgetInstance);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void RemoveElementWidget(USMFrontendElementWidget* Widget);
 
@@ -63,7 +63,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	USMAlertPopup* ShowAlert(const FString& AlertText);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void RemoveTopElementWidget();
 
@@ -80,7 +80,7 @@ protected:
 	USMFrontendElementWidget* AddElementWidgetInternal(const TSubclassOf<USMFrontendElementWidget>& WidgetClass);
 
 	void RemoveElementWidgetInternal(USMFrontendElementWidget* Widget);
-	
+
 private:
 	UPROPERTY(Transient, BlueprintReadOnly, meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMFrontendWidgetStack> MainStack;
@@ -93,14 +93,14 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
 	TSubclassOf<USMAlertPopup> AlertPopupClass;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
 	TSubclassOf<USMFrontendElementWidget> LoginWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
 	TSubclassOf<USMFrontendElementWidget> MainMenuWidgetClass;
-	
+
 	FBackgroundColorState BackgroundColorState;
-	
+
 	void OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer);
 };

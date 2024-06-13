@@ -1,4 +1,3 @@
-
 #pragma once
 
 #define ATTRIBUTE_ACCESSORS(ClassName, PropertyName) \

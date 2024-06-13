@@ -5,9 +5,7 @@
 
 #include "HUD/SMClientHUD.h"
 
-ASMPlayerController::ASMPlayerController()
-{
-}
+ASMPlayerController::ASMPlayerController() {}
 
 void ASMPlayerController::OnRep_PlayerState()
 {

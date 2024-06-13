@@ -26,7 +26,7 @@ struct FSMCharacterSelectButtonData
 	TObjectPtr<UTexture2D> DisabledTexture;
 
 	FSMCharacterSelectButtonData() = default;
-	
+
 	FSMCharacterSelectButtonData(const FSMCharacterSelectButtonData& Other)
 	{
 		DefaultTexture = Other.DefaultTexture;
@@ -47,7 +47,7 @@ public:
 	void InitWidget(USMCharacterSelectWidget* Widget);
 
 	USMCharacterSelectWidget* GetParentWidget() const { return ParentCharacterSelectWidget.Get(); }
-	
+
 protected:
 	virtual void NativePreConstruct() override;
 
@@ -62,11 +62,10 @@ protected:
 	virtual void NativeOnDisabled() override;
 
 	virtual void NativeOnClicked() override;
-	
+
 	UFUNCTION()
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
-	
-	
+
 private:
 	// =============================================================================
 	// Bindings
@@ -80,10 +79,10 @@ private:
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UPanelWidget> InteractableSection;
 
-	
+
 	// =============================================================================
 	// Animations
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> HoverAnim;
 
@@ -96,7 +95,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Button", meta=(AllowPrivateAccess))
 	TObjectPtr<UTexture2D> FocusedButtonTexture;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
 	FSMCharacterSelectButtonData EdmCharacterData;
 
@@ -108,7 +107,7 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
 	bool bNotSupportedCharacter;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
 	ESMCharacterType CharacterType;
 

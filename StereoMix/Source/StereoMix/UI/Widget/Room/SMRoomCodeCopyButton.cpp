@@ -13,6 +13,6 @@ void USMRoomCodeCopyButton::SetRoomCode(const FString& RoomCode)
 void USMRoomCodeCopyButton::NativeOnClicked()
 {
 	Super::NativeOnClicked();
-	
+
 	USMPlatformBlueprintLibrary::CopyToClipboard(RoomCodeTextBlock->GetText().ToString());
 }

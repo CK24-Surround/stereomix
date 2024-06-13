@@ -80,21 +80,21 @@ ELoginResult USMClientAuthSubsystem::GetLoginFailReason(const EGrpcResultCode Co
 {
 	switch (Code)
 	{
-	case EGrpcResultCode::InvalidArgument:
-		return ELoginResult::InvalidArgument;
+		case EGrpcResultCode::InvalidArgument:
+			return ELoginResult::InvalidArgument;
 
-	case EGrpcResultCode::Internal:
-		return ELoginResult::InternalError;
+		case EGrpcResultCode::Internal:
+			return ELoginResult::InternalError;
 
-	case EGrpcResultCode::Unauthenticated:
-		return ELoginResult::InvalidPassword;
+		case EGrpcResultCode::Unauthenticated:
+			return ELoginResult::InvalidPassword;
 
-	case EGrpcResultCode::DeadlineExceeded:
-	case EGrpcResultCode::ConnectionFailed:
-		return ELoginResult::ConnectionError;
+		case EGrpcResultCode::DeadlineExceeded:
+		case EGrpcResultCode::ConnectionFailed:
+			return ELoginResult::ConnectionError;
 
-	default:
-		return ELoginResult::UnknownError;
+		default:
+			return ELoginResult::UnknownError;
 	}
 }
 

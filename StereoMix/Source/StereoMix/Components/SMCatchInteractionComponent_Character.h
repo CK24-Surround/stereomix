@@ -20,13 +20,11 @@ protected:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-protected:
 	virtual void BeginPlay() override;
 
 public:
 	void InitASC(USMAbilitySystemComponent* NewASC);
 
-public:
 	virtual bool IsCatchable(AActor* TargetActor) const override;
 
 	virtual void OnCaught(AActor* TargetActor) override;
@@ -37,7 +35,6 @@ public:
 
 	virtual void OnSpecialActionEnded(AActor* Instigator, ESpecialAction InSpecialAction, float InMagnitude, TSubclassOf<UGameplayEffect> DamageGE, float InDamageAmount) override;
 
-public:
 	FORCEINLINE AActor* GetActorIAmCatching() { return IAmCatchingActor.Get(); }
 
 	/** 잡은 대상을 설정할 때 사용합니다. 추가 처리로, 유효한 타겟이면 잡기태그를 추가하고, nullptr이면 잡기 태그를 제거합니다. */
@@ -88,7 +85,6 @@ protected:
 	UFUNCTION()
 	void OnRep_IAmCatchingActor();
 
-protected:
 	/** 자신이 잡고 있는 액터입니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_IAmCatchingActor")
 	TWeakObjectPtr<AActor> IAmCatchingActor;
@@ -96,7 +92,6 @@ protected:
 	/** 한 캐릭터에게 여러번 잡히지 않도록 자신을 잡았던 캐릭터들을 담아둡니다. 서버에서만 유효합니다. */
 	TArray<TWeakObjectPtr<ASMPlayerCharacter>> CapturedMeCharcters;
 
-protected:
 	UPROPERTY()
 	TObjectPtr<ASMPlayerCharacter> SourceCharacter;
 

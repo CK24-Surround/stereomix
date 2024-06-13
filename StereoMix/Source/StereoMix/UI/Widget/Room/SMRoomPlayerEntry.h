@@ -22,7 +22,7 @@ public:
 	const FString& GetPlayerName() const;
 
 	bool IsLocalPlayer() const;
-	
+
 	virtual void NativeOnListItemObjectSet(UObject* ListItemObject) override;
 
 protected:
@@ -34,7 +34,7 @@ protected:
 private:
 	// =============================================================================
 	// Bindings
-	
+
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> BackgroundImage;
 
@@ -43,7 +43,7 @@ private:
 
 	// =============================================================================
 	// Style
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Style", meta=(AllowPrivateAccess))
 	TObjectPtr<UTexture2D> BackgroundOnEmpty;
 

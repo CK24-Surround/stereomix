@@ -25,7 +25,7 @@ class STEREOMIX_API UGameFlowSubsystem : public UGameInstanceSubsystem
 
 public:
 	UGameFlowSubsystem();
-	
+
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	virtual void Deinitialize() override;
@@ -33,13 +33,13 @@ public:
 private:
 	UPROPERTY(Config)
 	TSubclassOf<UUserWidget> InGameLoadingScreenClass;
-	
+
 	UPROPERTY(Config)
 	TSubclassOf<UUserWidget> OutGameLoadingScreenClass;
 
 	UPROPERTY(Transient)
 	TObjectPtr<USMUserWidget_LoadingScreen> InGameLoadingScreenWidget;
-	
+
 	UPROPERTY(Transient)
 	TObjectPtr<USMUserWidget_LoadingScreen> OutGameLoadingScreenWidget;
 };

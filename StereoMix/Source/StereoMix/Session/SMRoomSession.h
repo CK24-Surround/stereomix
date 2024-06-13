@@ -17,7 +17,7 @@ public:
 	virtual void RegisterServer() override;
 
 	virtual void InitOptions(const FString& Options) override;
-	
+
 protected:
 	virtual void BeginPlay() override;
 

@@ -57,7 +57,7 @@ FString ASMGameSession::ApproveLogin(const FString& Options)
 		return TEXT("Room is closed.");
 	}
 #endif
-	
+
 	return Super::ApproveLogin(Options);
 }
 

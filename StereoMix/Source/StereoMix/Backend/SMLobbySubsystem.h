@@ -23,7 +23,7 @@ public:
 	ULobbyService* GetLobbyService() const { return Cast<ULobbyService>(GrpcService); }
 
 	FName GetGameVersion() const { return GameVersion; }
-	
+
 private:
 	UPROPERTY(Config)
 	FName GameVersion;

@@ -26,7 +26,6 @@ public:
 protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-protected:
 	void UpdateIndicator(const FGeometry& MyGeometry);
 
 	/** 타겟의 스크린 위치가 경계 안에 존재하는지 확인합니다. */
@@ -41,7 +40,6 @@ protected:
 	 */
 	FVector2D GetScreenLocationForTargetBehindCamera(const FVector& TargetLocation, const FVector2D& ViewportSize, const FVector2D& ScreenCenter);
 
-protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> Base;
 

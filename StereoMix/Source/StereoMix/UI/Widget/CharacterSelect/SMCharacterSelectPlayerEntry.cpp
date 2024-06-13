@@ -21,30 +21,31 @@ void USMCharacterSelectPlayerEntry::NativeOnListItemObjectSet(UObject* ListItemO
 		const FString& PlayerName = PlayerState->GetPlayerName();
 		const ESMCharacterType CharacterType = PlayerState->GetCharacterType();
 		const bool bLocalPlayer = GetOwningPlayer()->PlayerState == PlayerState;
-		
+
 		PlayerNameTextBlock->SetStyle(bLocalPlayer ? LocalPlayerNameTextStyle : RemotePlayerNameTextStyle);
 		PlayerNameTextBlock->SetText(FText::FromString(PlayerName));
-		
-		switch (CharacterType) {
-		case ESMCharacterType::None:
-			SetReady(false);
-			CharacterNameTextBlock->SetText(FText::FromString(TEXT("선택 중")));
-			break;
-			
-		case ESMCharacterType::ElectricGuitar:
-			SetReady(true);
-			CharacterNameTextBlock->SetText(FText::FromString(TEXT("일렉기타")));
-			break;
-			
-		case ESMCharacterType::Piano:
-			SetReady(true);
-			CharacterNameTextBlock->SetText(FText::FromString(TEXT("피아노")));
-			break;
-			
-		case ESMCharacterType::Bass:
-			SetReady(true);
-			CharacterNameTextBlock->SetText(FText::FromString(TEXT("베이스")));
-			break;
+
+		switch (CharacterType)
+		{
+			case ESMCharacterType::None:
+				SetReady(false);
+				CharacterNameTextBlock->SetText(FText::FromString(TEXT("선택 중")));
+				break;
+
+			case ESMCharacterType::ElectricGuitar:
+				SetReady(true);
+				CharacterNameTextBlock->SetText(FText::FromString(TEXT("일렉기타")));
+				break;
+
+			case ESMCharacterType::Piano:
+				SetReady(true);
+				CharacterNameTextBlock->SetText(FText::FromString(TEXT("피아노")));
+				break;
+
+			case ESMCharacterType::Bass:
+				SetReady(true);
+				CharacterNameTextBlock->SetText(FText::FromString(TEXT("베이스")));
+				break;
 		}
 	}
 }

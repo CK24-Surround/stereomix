@@ -41,7 +41,6 @@ class STEREOMIX_API USMGameplayAbility_Stun : public USMGameplayAbility
 public:
 	USMGameplayAbility_Stun();
 
-public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
@@ -50,7 +49,6 @@ protected:
 	UFUNCTION()
 	void OnStunTimeEnd();
 
-protected:
 	/** 스턴이 끝나는 시점에 스매시 중이라면 스매시의 이벤트를 기다립니다.*/
 	void ProcessBuzzerBeaterSmashed();
 
@@ -67,12 +65,10 @@ protected:
 	/** 스턴 상태에서 벗어납니다. */
 	void ResetStunState();
 
-protected:
 	/** 스턴이 종료될때 필요한 처리를 합니다.. */
 	UFUNCTION()
 	void OnStunEnd();
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> StunMontage;
 
@@ -94,7 +90,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TArray<TSubclassOf<UGameplayEffect>> StunEndedGEs;
 
-protected:
 	UPROPERTY(EditAnywhere, Category = "Stun")
 	float StunTime = 6.5f;
 };

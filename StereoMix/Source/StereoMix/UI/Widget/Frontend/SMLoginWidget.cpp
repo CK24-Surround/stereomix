@@ -46,13 +46,13 @@ void USMLoginWidget::NativeOnActivated()
 void USMLoginWidget::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
-	
+
 	if (AuthSubsystem)
 	{
 		AuthSubsystem->OnServiceStateChanged.RemoveDynamic(this, &USMLoginWidget::OnAuthServiceStateChanged);
 		AuthSubsystem->OnLoginResponse.RemoveDynamic(this, &USMLoginWidget::OnLoginResponse);
 	}
-	
+
 	if (GuestLoginPopup)
 	{
 		GuestLoginPopup->OnSubmit.Unbind();
@@ -77,33 +77,34 @@ void USMLoginWidget::OnAuthServiceStateChanged(EGrpcServiceState ServiceState)
 
 void USMLoginWidget::OnLoginResponse(ELoginResult Result)
 {
-	switch (Result) {
-	case ELoginResult::Success:
-		UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-		break;
-		
-	case ELoginResult::InvalidPassword:
-		GetParentFrontendWidget()->ShowAlert(TEXT("비밀번호가 틀립니다."))->OnSubmit.BindWeakLambda(this, [&]
-		{
-			GuestLoginPopup = LoginPopupStack->AddWidget<USMGuestLoginPopup>(GuestLoginPopupClass);
-		});
-		break;
-		
-	case ELoginResult::UnknownError:
-	case ELoginResult::InvalidArgument:
-	case ELoginResult::InternalError:
-		GetParentFrontendWidget()->ShowAlert(TEXT("내부 오류로 인해 로그인하지 못했습니다."))->OnSubmit.BindWeakLambda(this, [&]
-		{
+	switch (Result)
+	{
+		case ELoginResult::Success:
 			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-		});
-		break;
-		
-	case ELoginResult::ConnectionError:
-		GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
-		{
-			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-		});
-		break;
+			break;
+
+		case ELoginResult::InvalidPassword:
+			GetParentFrontendWidget()->ShowAlert(TEXT("비밀번호가 틀립니다."))->OnSubmit.BindWeakLambda(this, [&]
+			{
+				GuestLoginPopup = LoginPopupStack->AddWidget<USMGuestLoginPopup>(GuestLoginPopupClass);
+			});
+			break;
+
+		case ELoginResult::UnknownError:
+		case ELoginResult::InvalidArgument:
+		case ELoginResult::InternalError:
+			GetParentFrontendWidget()->ShowAlert(TEXT("내부 오류로 인해 로그인하지 못했습니다."))->OnSubmit.BindWeakLambda(this, [&]
+			{
+				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+			});
+			break;
+
+		case ELoginResult::ConnectionError:
+			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
+			{
+				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+			});
+			break;
 	}
 }
 
