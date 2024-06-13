@@ -94,7 +94,7 @@ void USMLobbyWidget::OnJoinRoomButtonClicked()
 void USMLobbyWidget::OnSubmitRoomCode()
 {
 	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] OnSubmitRoomCode"), *GetName())
-	
+
 	// TODO: 임시로 RoomCode를 RequestRoomCode에 저장하고 JoinRoomWidget을 띄움. 추후 룸 코드를 직접 넘길 수 있도록 변경해야 함.
 	GetParentFrontendWidget()->RequestRoomCode = RoomCodePopup->GetRoomCode().ToString();
 	GetParentFrontendWidget()->AddElementWidget(JoinRoomWidgetClass);
@@ -123,13 +123,10 @@ void USMLobbyWidget::OnLobbyServiceStateChanged(const EGrpcServiceState ServiceS
 {
 	if (ServiceState == EGrpcServiceState::Ready)
 	{
-		SetVisibility(ESlateVisibility::HitTestInvisible);
 		if (UUMGSequencePlayer* TransitionPlayer = PlayTransitionIn())
 		{
-			TransitionPlayer->OnSequenceFinishedPlaying().AddWeakLambda(this, [this](UUMGSequencePlayer&)
-			{
-				SetVisibility(ESlateVisibility::Visible);
-			});
+			TransitionPlayer->OnSequenceFinishedPlaying().AddWeakLambda(this, [this](UUMGSequencePlayer&) { SetVisibility(ESlateVisibility::Visible); });
+			GetWorld()->GetTimerManager().SetTimerForNextTick([this] { SetVisibility(ESlateVisibility::HitTestInvisible); });
 		}
 		else
 		{
