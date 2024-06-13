@@ -24,13 +24,13 @@ void ASMRoomMode::InitGame(const FString& MapName, const FString& Options, FStri
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
 
-	UE_LOG(LogTemp, Warning, TEXT("[SMRoomMode] InitGame"))
+	UE_LOG(LogStereoMix, Warning, TEXT("[SMRoomMode] InitGame: %s, %s"), *MapName, *Options)
 }
 
 void ASMRoomMode::InitGameState()
 {
 	Super::InitGameState();
-	UE_LOG(LogTemp, Warning, TEXT("[SMRoomMode] InitGameState"))
+	UE_LOG(LogStereoMix, Warning, TEXT("[SMRoomMode] InitGameState"))
 	RoomState = CastChecked<ASMRoomState>(GameState);
 
 	if (GameSession)
