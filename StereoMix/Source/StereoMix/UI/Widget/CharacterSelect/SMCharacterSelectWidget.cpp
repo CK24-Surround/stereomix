@@ -57,7 +57,13 @@ void USMCharacterSelectWidget::NativeConstruct()
 
 void USMCharacterSelectWidget::UpdatePlayerList() const
 {
-	TArray<TObjectPtr<APlayerState>> Players = GetOwningCharacterSelectState()->PlayerArray;
+	const ASMCharacterSelectState* CharacterSelectState = GetOwningCharacterSelectState();
+	if (!CharacterSelectState)
+	{
+		return;
+	}
+	
+	TArray<TObjectPtr<APlayerState>> Players = CharacterSelectState->PlayerArray;
 	PlayerListView->ClearListItems();
 	
 	const ESMTeam LocalPlayerTeam = GetOwningPlayerState()->GetTeam();
