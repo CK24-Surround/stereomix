@@ -314,17 +314,17 @@ void ASMGamePlayerController::RequestImmediateResetPosition_Implementation()
 		FString TeamStarterTag;
 		switch (Team)
 		{
-		case ESMTeam::EDM:
+			case ESMTeam::EDM:
 			{
 				TeamStarterTag = TEXT("Starter_EDM");
 				break;
 			}
-		case ESMTeam::FutureBass:
+			case ESMTeam::FutureBass:
 			{
 				TeamStarterTag = TEXT("Starter_FB");
 				break;
 			}
-		default:
+			default:
 			{
 				break;
 			}

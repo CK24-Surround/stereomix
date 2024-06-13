@@ -260,15 +260,15 @@ void ASMGameState::OnRep_ReplicatedCurrentMusicPlayer()
 		NET_LOG(this, Verbose, TEXT("서버로부터 BGM 변경됨: %s"), *UEnum::GetValueAsString(ReplicatedCurrentMusicOwner))
 		switch (ReplicatedCurrentMusicOwner)
 		{
-		case ESMTeam::None:
-			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_NONE);
-			break;
-		case ESMTeam::EDM:
-			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_EDM);
-			break;
-		case ESMTeam::FutureBass:
-			UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_FUTURE_BASS);
-			break;
+			case ESMTeam::None:
+				UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_NONE);
+				break;
+			case ESMTeam::EDM:
+				UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_EDM);
+				break;
+			case ESMTeam::FutureBass:
+				UFMODBlueprintStatics::SetGlobalParameterByName(TEXT("Winner"), BGM_PARAMETER_FUTURE_BASS);
+				break;
 		}
 	}
 }
