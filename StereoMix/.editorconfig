@@ -12,13 +12,10 @@ tab_width = 4
 trim_trailing_whitespace = false
 max_line_length = 0
 
-[*.{h,cpp}]
 # ReSharper properties
-resharper_cpp_keep_user_linebreaks = true
+resharper_cpp_keep_user_linebreaks = false
 resharper_cpp_wrap_before_colon = true
 resharper_cpp_line_break_before_comma_in_member_initializer_lists = true
-resharper_cpp_indent_switch_labels = true
-resharper_cpp_indent_comment = false
 
 # MSBuild
 [*.{csproj,proj,projitems,shproj,fsproj,target,props}]
