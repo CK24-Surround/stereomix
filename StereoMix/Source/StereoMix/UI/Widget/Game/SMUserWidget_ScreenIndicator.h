@@ -47,10 +47,13 @@ protected:
 	TObjectPtr<UScaleBox> Arrow;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> IMG_Arrow;
+	TObjectPtr<UImage> ArrowImage;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> IMG_Body;
+	TObjectPtr<UScaleBox> OnScreen;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UScaleBox> OffScreen;
 
 public:
 	// 인디케이터가 가리킬 대상을 설정하고 인디케이터를 활성화합니다.

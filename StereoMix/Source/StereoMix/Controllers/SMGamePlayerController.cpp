@@ -10,6 +10,7 @@
 #include "Blueprint/UserWidget.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Data/SMControlData.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "GameFramework/GameModeBase.h"
 #include "Games/SMGameMode.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"
@@ -240,6 +241,12 @@ void ASMGamePlayerController::AddScreendIndicator(AActor* TargetActor)
 
 	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 추가합니다. 
 	if (!Cast<ASMPlayerCharacter>(GetPawn()))
+	{
+		return;
+	}
+
+	// 같은 팀인 경우 인디케이터를 생성하지 않습니다.
+	if (USMTeamBlueprintLibrary::IsSameTeam(TargetActor))
 	{
 		return;
 	}
