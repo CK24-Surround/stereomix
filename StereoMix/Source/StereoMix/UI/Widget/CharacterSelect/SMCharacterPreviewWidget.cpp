@@ -5,7 +5,7 @@
 
 void USMCharacterPreviewWidget::SetPreviewImage(ESMTeam Team, ESMCharacterType CharacterType)
 {
-	if (Team == ESMTeam::EDM || Team == ESMTeam::None)
+	if (Team == ESMTeam::EDM)
 	{
 		for (const auto& [TargetCharacterType, TargetCharacterMaterial] : EdmCharacterPreviewDataList)
 		{

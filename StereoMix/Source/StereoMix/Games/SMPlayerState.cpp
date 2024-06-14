@@ -24,6 +24,7 @@ void ASMPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
 
 	UE_LOG(LogStereoMix, Verbose, TEXT("[SMPlayerState] Player %s seamless traveled to %s"), *GetPlayerName(), *NewPlayerState->GetWorld()->GetMapName())
 
+	// TODO: CopyProperties로 코드 옮기기
 	if (ASMPlayerState* SMPlayerState = Cast<ASMPlayerState>(NewPlayerState))
 	{
 		SMPlayerState->Team = Team;

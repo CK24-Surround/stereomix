@@ -5,6 +5,7 @@
 
 #include "SMCharacterSelectState.h"
 #include "Net/UnrealNetwork.h"
+#include "Utilities/SMLog.h"
 
 
 ASMCharacterSelectPlayerState::ASMCharacterSelectPlayerState()
@@ -19,20 +20,20 @@ void ASMCharacterSelectPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeP
 	DOREPLIFETIME(ThisClass, CurrentState)
 }
 
+void ASMCharacterSelectPlayerState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+	if (DefaultOptions)
+	{
+		SetTeam(DefaultOptions->DefaultTeam);
+		NET_LOG(this, Warning, TEXT("ASMCharacterSelectPlayerState::PostInitializeComponents, Team: %s"), *UEnum::GetValueAsString(GetTeam()))
+	}
+}
+
 void ASMCharacterSelectPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 	CharacterSelectState = GetWorld()->GetGameState<ASMCharacterSelectState>();
-
-#if WITH_SERVER_CODE
-	if (HasAuthority())
-	{
-		if (GetTeam() == ESMTeam::None)
-		{
-			SetTeam(ESMTeam::EDM);
-		}
-	}
-#endif
 }
 
 void ASMCharacterSelectPlayerState::ChangeCharacterType_Implementation(ESMCharacterType NewCharacterType)
@@ -63,11 +64,6 @@ bool ASMCharacterSelectPlayerState::CanChangeCharacterType(const ESMCharacterTyp
 void ASMCharacterSelectPlayerState::OnCharacterTypeChanged(const ESMCharacterType PreviousCharacterType, const ESMCharacterType NewCharacterType)
 {
 	Super::OnCharacterTypeChanged(PreviousCharacterType, NewCharacterType);
-}
-
-bool ASMCharacterSelectPlayerState::CanChangeTeam(ESMTeam NewTeam) const
-{
-	return false;
 }
 
 void ASMCharacterSelectPlayerState::SetCurrentState_Implementation(const ECharacterSelectPlayerStateType NewState)

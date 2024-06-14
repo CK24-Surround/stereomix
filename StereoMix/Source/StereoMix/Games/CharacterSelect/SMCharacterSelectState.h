@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/SMCharacterSelectOptionData.h"
 #include "GameFramework/GameStateBase.h"
 #include "Games/SMGameStateNotify.h"
 #include "SMCharacterSelectState.generated.h"
@@ -68,6 +69,7 @@ public:
 	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override {}
 
 private:
+	
 	UPROPERTY()
 	TObjectPtr<UCountdownTimerComponent> CountdownTimer;
 

@@ -76,7 +76,7 @@ void USMRoomTeamWidget::SetButtonState(const ERoomTeamSelectButtonState NewState
 	}
 
 	ButtonState = NewState;
-	UE_LOG(LogStereoMixUI, Verbose, TEXT("[USMRoomTeamWidget] %s: SetButtonState: %s"), *UEnum::GetValueAsString(Team), *UEnum::GetValueAsString(NewState));
+	// UE_LOG(LogStereoMixUI, Verbose, TEXT("[USMRoomTeamWidget] %s: SetButtonState: %s"), *UEnum::GetValueAsString(Team), *UEnum::GetValueAsString(NewState));
 	switch (NewState)
 	{
 		case ERoomTeamSelectButtonState::Idle:

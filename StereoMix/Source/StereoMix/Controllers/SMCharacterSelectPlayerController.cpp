@@ -30,7 +30,6 @@ void ASMCharacterSelectPlayerController::OnRep_PlayerState()
 
 	if (GetWorld()->GetGameState())
 	{
-		NET_LOG(this, Verbose, TEXT("GameState is already set"))
 		InitPlayer();
 	}
 	else
@@ -54,7 +53,7 @@ void ASMCharacterSelectPlayerController::RequestImmediateStartGame_Implementatio
 	}
 #endif
 }
-
+ 
 void ASMCharacterSelectPlayerController::InitPlayer()
 {
 	CharacterSelectState = GetWorld()->GetGameStateChecked<ASMCharacterSelectState>();
@@ -66,7 +65,7 @@ void ASMCharacterSelectPlayerController::InitPlayer()
 	ESMTeam Team = CharacterSelectPlayerState->GetTeam();
 	if (Team == ESMTeam::None)
 	{
-		Team = ESMTeam::EDM;
+		// Team = ESMTeam::EDM;
 	}
 	for (TActorIterator<AActor> It(GetWorld(), ASMPreviewCharacter::StaticClass()); It; ++It)
 	{
