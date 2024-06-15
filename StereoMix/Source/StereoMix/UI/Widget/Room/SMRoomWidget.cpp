@@ -105,15 +105,17 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 
 	if (NewTeam == ESMTeam::EDM)
 	{
-		UTexture2D* NewCharacterTexture = EdmCharacterTextures[FMath::RandRange(0, EdmCharacterTextures.Num() - 1)];
-		EdmCharacterImage->SetBrushFromTexture(NewCharacterTexture);
+		// 임시로 이미지 고정
+		// UTexture2D* NewCharacterTexture = EdmCharacterTextures[FMath::RandRange(0, EdmCharacterTextures.Num() - 1)];
+		// EdmCharacterImage->SetBrushFromTexture(NewCharacterTexture);
 		PlayAnimationForward(EdmSelectAnim);
 		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 2.f);
 	}
 	else if (NewTeam == ESMTeam::FutureBass)
 	{
-		UTexture2D* NewCharacterTexture = FutureBassCharacterTextures[FMath::RandRange(0, FutureBassCharacterTextures.Num() - 1)];
-		FutureBassCharacterImage->SetBrushFromTexture(NewCharacterTexture);
+		// 임시로 이미지 고정
+		// UTexture2D* NewCharacterTexture = FutureBassCharacterTextures[FMath::RandRange(0, FutureBassCharacterTextures.Num() - 1)];
+		// FutureBassCharacterImage->SetBrushFromTexture(NewCharacterTexture);
 		PlayAnimationForward(FutureBassSelectAnim);
 		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 1.f);
 	}
