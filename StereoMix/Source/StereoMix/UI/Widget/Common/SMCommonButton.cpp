@@ -10,14 +10,14 @@ void USMCommonButton::HandleFocusReceived()
 {
 	Super::HandleFocusReceived();
 
-	if (const USMButtonStyle* ButtonStyle = Cast<USMButtonStyle>(GetStyleCDO()); ButtonStyle && ButtonStyle->HoverSound)
-	{
-		UFMODBlueprintStatics::PlayEvent2D(this, ButtonStyle->HoverSound, true);
-	}
-	else if (HoverSound)
-	{
-		UFMODBlueprintStatics::PlayEvent2D(this, HoverSound, true);
-	}
+	// if (const USMButtonStyle* ButtonStyle = Cast<USMButtonStyle>(GetStyleCDO()); ButtonStyle && ButtonStyle->HoverSound)
+	// {
+	// 	UFMODBlueprintStatics::PlayEvent2D(this, ButtonStyle->HoverSound, true);
+	// }
+	// else if (HoverSound)
+	// {
+	// 	UFMODBlueprintStatics::PlayEvent2D(this, HoverSound, true);
+	// }
 }
 
 void USMCommonButton::NativeOnHovered()

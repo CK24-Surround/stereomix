@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CommonTextBlock.h"
 #include "CommonUserWidget.h"
+#include "FMODBlueprintStatics.h"
 #include "SMRoomCodeCopyButton.h"
 #include "SMRoomTeamWidget.h"
 #include "Games/Room/SMRoomPlayerState.h"
@@ -30,6 +31,8 @@ public:
 
 protected:
 	virtual void NativeConstruct() override;
+
+	virtual void NativeDestruct() override;
 
 	UFUNCTION()
 	void UpdatePlayerCount() const;
@@ -89,10 +92,13 @@ private:
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	TObjectPtr<UFMODEvent> BackgroundMusic;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
 	TArray<TObjectPtr<UTexture2D>> EdmCharacterTextures;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
 	TArray<TObjectPtr<UTexture2D>> FutureBassCharacterTextures;
 
 	UPROPERTY()
@@ -103,4 +109,6 @@ private:
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Team", meta=(AllowPrivateAccess))
 	ESMTeam CurrentTeam;
+	
+	FFMODEventInstance BackgroundMusicEventInstance;
 };

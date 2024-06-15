@@ -3,6 +3,7 @@
 
 #include "SMRoomWidget.h"
 
+#include "FMODBlueprintStatics.h"
 #include "StereoMixLog.h"
 
 void USMRoomWidget::InitWidget(ASMRoomState* RoomState, ASMRoomPlayerState* PlayerState)
@@ -30,6 +31,12 @@ void USMRoomWidget::InitWidget(ASMRoomState* RoomState, ASMRoomPlayerState* Play
 	UpdatePlayerCount();
 
 	PlayAnimationForward(TransitionAnim);
+
+	if (ensure(BackgroundMusic))
+	{
+		BackgroundMusicEventInstance = UFMODBlueprintStatics::PlayEvent2D(GetWorld(), BackgroundMusic, true);
+		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 0.f);
+	}
 }
 
 void USMRoomWidget::NativeConstruct()
@@ -37,6 +44,13 @@ void USMRoomWidget::NativeConstruct()
 	Super::NativeConstruct();
 
 	QuitButton->OnClicked().AddUObject(this, &USMRoomWidget::OnQuitButtonClicked);
+}
+
+void USMRoomWidget::NativeDestruct()
+{
+	Super::NativeDestruct();
+	UFMODBlueprintStatics::EventInstanceStop(BackgroundMusicEventInstance, true);
+	UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 0.f);
 }
 
 void USMRoomWidget::UpdatePlayerCount() const
@@ -82,25 +96,33 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 
 	if (PrevTeam == ESMTeam::EDM)
 	{
-		QueuePlayAnimationReverse(EdmSelectAnim);
+		PlayAnimationReverse(EdmSelectAnim);
 	}
 	else if (PrevTeam == ESMTeam::FutureBass)
 	{
-		QueuePlayAnimationReverse(FutureBassSelectAnim);
+		PlayAnimationReverse(FutureBassSelectAnim);
 	}
 
 	if (NewTeam == ESMTeam::EDM)
 	{
 		UTexture2D* NewCharacterTexture = EdmCharacterTextures[FMath::RandRange(0, EdmCharacterTextures.Num() - 1)];
 		EdmCharacterImage->SetBrushFromTexture(NewCharacterTexture);
-		QueuePlayAnimationForward(EdmSelectAnim);
+		PlayAnimationForward(EdmSelectAnim);
+		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 2.f);
 	}
 	else if (NewTeam == ESMTeam::FutureBass)
 	{
 		UTexture2D* NewCharacterTexture = FutureBassCharacterTextures[FMath::RandRange(0, FutureBassCharacterTextures.Num() - 1)];
 		FutureBassCharacterImage->SetBrushFromTexture(NewCharacterTexture);
-		QueuePlayAnimationForward(FutureBassSelectAnim);
+		PlayAnimationForward(FutureBassSelectAnim);
+		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 1.f);
+	}
+	else
+	{
+		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 0.f);
 	}
 }
 
-void USMRoomWidget::OnTeamPlayersUpdated(ESMTeam UpdatedTeam) {}
+void USMRoomWidget::OnTeamPlayersUpdated(ESMTeam UpdatedTeam)
+{
+}
