@@ -21,6 +21,12 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+	virtual void PreClientTravel(const FString& PendingURL, ETravelType TravelType, bool bIsSeamlessTravel) override;
+	
+	void OnCompleteLoading();
+
 	virtual void OnRep_PlayerState() override;
 
 	ASMRoomPlayerState* GetRoomPlayerState() const { return RoomPlayerState.Get(); }
@@ -29,6 +35,9 @@ public:
 	void RequestImmediateStartGame();
 
 protected:
+	UFUNCTION()
+	void OnTeamChanged(ESMTeam NewTeam);
+	
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<USMLoadingScreenWidget> LoadingScreenWidgetClass;
 
@@ -46,4 +55,6 @@ protected:
 
 	UPROPERTY(Transient)
 	TWeakObjectPtr<ASMRoomPlayerState> RoomPlayerState;
+
+	bool bTravelingToCharacterSelect = false;
 };

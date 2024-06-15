@@ -32,6 +32,7 @@ public:
 	// ~AGameState Section
 
 	virtual void PostInitializeComponents() override;
+	virtual void HandleMatchIsWaitingToStart() override;
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 

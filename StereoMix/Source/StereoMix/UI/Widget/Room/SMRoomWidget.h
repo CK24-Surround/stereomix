@@ -93,9 +93,6 @@ private:
 	// Variables
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
-	TObjectPtr<UFMODEvent> BackgroundMusic;
-	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
 	TArray<TObjectPtr<UTexture2D>> EdmCharacterTextures;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
@@ -109,6 +106,4 @@ private:
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Team", meta=(AllowPrivateAccess))
 	ESMTeam CurrentTeam;
-	
-	FFMODEventInstance BackgroundMusicEventInstance;
 };

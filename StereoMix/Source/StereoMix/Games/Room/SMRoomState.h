@@ -22,24 +22,6 @@ class STEREOMIX_API ASMRoomState : public AGameStateBase, public ISMGameStateNot
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(BlueprintAssignable)
-	FPlayerJoined OnPlayerJoined;
-
-	UPROPERTY(BlueprintAssignable)
-	FPlayerLeft OnPlayerLeft;
-
-	UPROPERTY(BlueprintAssignable)
-	FTeamPlayersUpdated OnTeamPlayersUpdated;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated)
-	int32 MaxPlayersInGame = 2;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated)
-	int32 MaxPlayersInTeam = 1;
-
-	UPROPERTY(EditDefaultsOnly)
-	int32 CountdownTime;
-
 	ASMRoomState();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -69,28 +51,46 @@ public:
 
 	void SetRoomCode(const FString& NewRoomCode) { RoomCode = NewRoomCode; }
 
-	// ~ Begin ISMGameStateNotify
-
 	virtual void NotifyPlayerJoined(ASMPlayerState* JoinedPlayer) override;
+
 	virtual void NotifyPlayerLeft(ASMPlayerState* LeftPlayer) override;
+
 	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override;
 
-	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override {}
+	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override
+	{
+	}
 
-	// ~ End ISMGameStateNotify
+	UPROPERTY(BlueprintAssignable)
+	FPlayerJoined OnPlayerJoined;
 
+	UPROPERTY(BlueprintAssignable)
+	FPlayerLeft OnPlayerLeft;
+
+	UPROPERTY(BlueprintAssignable)
+	FTeamPlayersUpdated OnTeamPlayersUpdated;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated)
+	int32 MaxPlayersInGame = 2;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated)
+	int32 MaxPlayersInTeam = 1;
+
+	UPROPERTY(EditDefaultsOnly)
+	int32 CountdownTime;
+	
 protected:
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_RoomName)
-	FString RoomName;
-
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_RoomCode)
-	FString RoomCode;
-
 	UFUNCTION()
 	virtual void OnRep_RoomName();
 
 	UFUNCTION()
 	virtual void OnRep_RoomCode();
+
+	UFUNCTION()
+	virtual void OnRep_TeamEdmPlayers();
+
+	UFUNCTION()
+	virtual void OnRep_TeamFutureBassPlayers();
 
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_TeamEdmPlayers)
 	TArray<TObjectPtr<ASMRoomPlayerState>> TeamEdmPlayers;
@@ -98,11 +98,11 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_TeamFutureBassPlayers)
 	TArray<TObjectPtr<ASMRoomPlayerState>> TeamFutureBassPlayers;
 
-	UFUNCTION()
-	virtual void OnRep_TeamEdmPlayers();
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_RoomName)
+	FString RoomName;
 
-	UFUNCTION()
-	virtual void OnRep_TeamFutureBassPlayers();
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_RoomCode)
+	FString RoomCode;
 
 private:
 	UPROPERTY()

@@ -13,6 +13,9 @@ void ASMTutorialPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	TutorialWidget = CreateWidget<USMTutorialWidget>(this, TutorialWidgetClass);
-	TutorialWidget->AddToViewport();
+	if (GetWorld()->GetGameViewport())
+	{
+		TutorialWidget = CreateWidget<USMTutorialWidget>(this, TutorialWidgetClass);
+		TutorialWidget->AddToViewport();
+	}
 }

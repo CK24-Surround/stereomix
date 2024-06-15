@@ -6,6 +6,7 @@
 #include "EngineUtils.h"
 #include "Games/CharacterSelect/SMCharacterSelectMode.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
+#include "Subsystem/SMBackgroundMusicSubsystem.h"
 #include "Utilities/SMLog.h"
 
 ASMCharacterSelectPlayerController::ASMCharacterSelectPlayerController()
@@ -17,17 +18,25 @@ ASMCharacterSelectPlayerController::ASMCharacterSelectPlayerController()
 void ASMCharacterSelectPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	// SetInputMode(FInputModeUIOnly());
+
+	if (GetWorld()->GetGameViewport())
+	{
+		LoadingScreenWidget = CreateWidget<USMLoadingScreenWidget>(this, LoadingScreenWidgetClass);
+		LoadingScreenWidget->SetLoadingText(FText::FromString(TEXT("다른 플레이어들을 기다리는 중 입니다...")));
+		LoadingScreenWidget->AddToViewport(10);
+	}
+}
+
+void ASMCharacterSelectPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->StopAndReleaseBackgroundMusic();
 }
 
 void ASMCharacterSelectPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-
-	LoadingScreenWidget = CreateWidget<USMLoadingScreenWidget>(this, LoadingScreenWidgetClass);
-	LoadingScreenWidget->SetLoadingText(FText::FromString(TEXT("다른 플레이어들을 기다리는 중 입니다...")));
-	LoadingScreenWidget->AddToViewport(10);
-
+	
 	if (GetWorld()->GetGameState())
 	{
 		InitPlayer();
@@ -37,7 +46,6 @@ void ASMCharacterSelectPlayerController::OnRep_PlayerState()
 		NET_LOG(this, Verbose, TEXT("GameState is not set yet. Register GameStateSetEvent."))
 		GetWorld()->GameStateSetEvent.AddLambda([this](AGameStateBase*)
 		{
-			NET_LOG(this, Verbose, TEXT("GameStateSetEvent"))
 			InitPlayer();
 		});
 	}
@@ -53,20 +61,16 @@ void ASMCharacterSelectPlayerController::RequestImmediateStartGame_Implementatio
 	}
 #endif
 }
- 
+
 void ASMCharacterSelectPlayerController::InitPlayer()
 {
 	CharacterSelectState = GetWorld()->GetGameStateChecked<ASMCharacterSelectState>();
 	CharacterSelectState->OnCurrentStateChanged.AddDynamic(this, &ASMCharacterSelectPlayerController::OnCurrentCharacterSelectStateChanged);
-	NET_LOG(this, Verbose, TEXT("Register CurrentStateChanged event"))
+
 	CharacterSelectPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState);
 	CharacterSelectPlayerState->OnCharacterChangeResponse.AddDynamic(this, &ASMCharacterSelectPlayerController::OnCharacterChangeResponse);
 
 	ESMTeam Team = CharacterSelectPlayerState->GetTeam();
-	if (Team == ESMTeam::None)
-	{
-		// Team = ESMTeam::EDM;
-	}
 	for (TActorIterator<AActor> It(GetWorld(), ASMPreviewCharacter::StaticClass()); It; ++It)
 	{
 		if (ASMPreviewCharacter* TargetCharacter = Cast<ASMPreviewCharacter>(*It); TargetCharacter && TargetCharacter->GetTeam() == Team)
@@ -88,6 +92,9 @@ void ASMCharacterSelectPlayerController::OnCurrentCharacterSelectStateChanged(EC
 		CharacterSelectWidget = CreateWidget<USMCharacterSelectWidget>(this, CharacterSelectWidgetClass);
 		CharacterSelectWidget->InitWidget(GetCharacterSelectState(), GetCharacterSelectPlayerState());
 		CharacterSelectWidget->AddToViewport();
+		
+		GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(CharacterSelectPlayerState->GetTeam());
+		NET_LOG(this, Verbose, TEXT("PlayTeamBackgroundMusic: %s"), *UEnum::GetValueAsString(CharacterSelectPlayerState->GetTeam()))
 	}
 }
 

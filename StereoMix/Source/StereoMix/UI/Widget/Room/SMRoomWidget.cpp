@@ -31,12 +31,6 @@ void USMRoomWidget::InitWidget(ASMRoomState* RoomState, ASMRoomPlayerState* Play
 	UpdatePlayerCount();
 
 	PlayAnimationForward(TransitionAnim);
-
-	if (ensure(BackgroundMusic))
-	{
-		BackgroundMusicEventInstance = UFMODBlueprintStatics::PlayEvent2D(GetWorld(), BackgroundMusic, true);
-		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 0.f);
-	}
 }
 
 void USMRoomWidget::NativeConstruct()
@@ -49,8 +43,6 @@ void USMRoomWidget::NativeConstruct()
 void USMRoomWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
-	UFMODBlueprintStatics::EventInstanceStop(BackgroundMusicEventInstance, true);
-	UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 0.f);
 }
 
 void USMRoomWidget::UpdatePlayerCount() const
@@ -109,7 +101,6 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 		// UTexture2D* NewCharacterTexture = EdmCharacterTextures[FMath::RandRange(0, EdmCharacterTextures.Num() - 1)];
 		// EdmCharacterImage->SetBrushFromTexture(NewCharacterTexture);
 		PlayAnimationForward(EdmSelectAnim);
-		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 2.f);
 	}
 	else if (NewTeam == ESMTeam::FutureBass)
 	{
@@ -117,11 +108,6 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 		// UTexture2D* NewCharacterTexture = FutureBassCharacterTextures[FMath::RandRange(0, FutureBassCharacterTextures.Num() - 1)];
 		// FutureBassCharacterImage->SetBrushFromTexture(NewCharacterTexture);
 		PlayAnimationForward(FutureBassSelectAnim);
-		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 1.f);
-	}
-	else
-	{
-		UFMODBlueprintStatics::SetGlobalParameterByName("Winner", 0.f);
 	}
 }
 

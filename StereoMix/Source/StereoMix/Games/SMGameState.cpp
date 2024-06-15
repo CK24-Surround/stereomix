@@ -41,6 +41,18 @@ void ASMGameState::PostInitializeComponents()
 	}
 }
 
+void ASMGameState::HandleMatchIsWaitingToStart()
+{
+	Super::HandleMatchIsWaitingToStart();
+
+	// 클라이언트만 배경음악 재생
+	if (GetNetMode() == NM_Client)
+	{
+		NET_LOG(this, Verbose, TEXT("배경음악 재생"))
+		PlayBackgroundMusic();
+	}
+}
+
 void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -73,13 +85,6 @@ void ASMGameState::OnRep_MatchState()
 void ASMGameState::HandleMatchHasStarted()
 {
 	Super::HandleMatchHasStarted();
-
-	// 클라이언트만 배경음악 재생
-	if (GetNetMode() == NM_Client)
-	{
-		NET_LOG(this, Verbose, TEXT("배경음악 재생"))
-		PlayBackgroundMusic();
-	}
 }
 
 void ASMGameState::HandleMatchHasEnded()

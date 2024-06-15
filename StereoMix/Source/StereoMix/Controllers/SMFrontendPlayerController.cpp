@@ -13,6 +13,9 @@ void ASMFrontendPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	FrontendWidget = CreateWidget<USMFrontendWidget>(this, FrontendWidgetClass);
-	FrontendWidget->AddToViewport();
+	if (GetWorld()->GetGameViewport())
+	{
+		FrontendWidget = CreateWidget<USMFrontendWidget>(this, FrontendWidgetClass);
+		FrontendWidget->AddToViewport();
+	}
 }

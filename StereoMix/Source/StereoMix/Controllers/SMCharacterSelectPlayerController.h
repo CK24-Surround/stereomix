@@ -36,6 +36,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void OnRep_PlayerState() override;
 
 	ASMCharacterSelectState* GetCharacterSelectState() const { return CharacterSelectState.Get(); }
@@ -49,6 +51,12 @@ protected:
 	void InitPlayer();
 
 private:
+	UFUNCTION()
+	void OnCurrentCharacterSelectStateChanged(ECharacterSelectionStateType NewCharacterSelectionState);
+
+	UFUNCTION()
+	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
+
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<USMLoadingScreenWidget> LoadingScreenWidgetClass;
 
@@ -69,10 +77,4 @@ private:
 
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectPlayerState> CharacterSelectPlayerState;
-
-	UFUNCTION()
-	void OnCurrentCharacterSelectStateChanged(ECharacterSelectionStateType NewCharacterSelectionState);
-
-	UFUNCTION()
-	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 };

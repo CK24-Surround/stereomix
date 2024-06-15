@@ -3,8 +3,9 @@
 
 #include "SMRoomPlayerController.h"
 
-#include "StereoMixLog.h"
 #include "Games/Room/SMRoomMode.h"
+#include "Subsystem/SMBackgroundMusicSubsystem.h"
+#include "Utilities/SMLog.h"
 
 ASMRoomPlayerController::ASMRoomPlayerController()
 {
@@ -15,11 +16,31 @@ ASMRoomPlayerController::ASMRoomPlayerController()
 void ASMRoomPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-
 	RoomState = GetWorld()->GetGameStateChecked<ASMRoomState>();
 
-	// SetInputMode(FInputModeUIOnly());
-	UE_LOG(LogStereoMix, Log, TEXT("ASMRoomPlayerController::BeginPlay"));
+	if (GetWorld()->GetGameViewport())
+	{
+		LoadingScreenWidget = CreateWidget<USMLoadingScreenWidget>(this, LoadingScreenWidgetClass);
+		LoadingScreenWidget->SetLoadingText(FText::FromString(TEXT("로딩 중 입니다...")));
+		LoadingScreenWidget->AddToViewport(10);
+	}
+}
+
+void ASMRoomPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (GetWorld()->GetGameViewport())
+	{
+		if (bTravelingToCharacterSelect)
+		{
+			GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(ESMTeam::None);
+		}
+		else
+		{
+			GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->StopAndReleaseBackgroundMusic();
+		}
+	}
 }
 
 void ASMRoomPlayerController::OnRep_PlayerState()
@@ -27,21 +48,44 @@ void ASMRoomPlayerController::OnRep_PlayerState()
 	Super::OnRep_PlayerState();
 	RoomPlayerState = CastChecked<ASMRoomPlayerState>(PlayerState);
 	RoomPlayerState->SetCurrentState(ERoomPlayerStateType::Unready);
+	RoomPlayerState->TeamChangedEvent.AddDynamic(this, &ASMRoomPlayerController::OnTeamChanged);
 
-	LoadingScreenWidget = CreateWidget<USMLoadingScreenWidget>(this, LoadingScreenWidgetClass);
-	LoadingScreenWidget->SetLoadingText(FText::FromString(TEXT("로딩 중 입니다...")));
-	LoadingScreenWidget->AddToViewport(10);
+	OnCompleteLoading();
+}
 
+void ASMRoomPlayerController::PreClientTravel(const FString& PendingURL, ETravelType TravelType, bool bIsSeamlessTravel)
+{
+	Super::PreClientTravel(PendingURL, TravelType, bIsSeamlessTravel);
+
+	const FURL NextURL = FURL(&GetWorld()->URL, *PendingURL, TravelType);
+	bTravelingToCharacterSelect = NextURL.Map == TEXT("/Game/StereoMix/Levels/CharacterSelect/L_CharacterSelect");
+	NET_LOG(this, Verbose, TEXT("bTravelingToCharacterSelect: %d"), bTravelingToCharacterSelect)
+}
+
+void ASMRoomPlayerController::OnCompleteLoading()
+{
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, [this]
 	{
-		LoadingScreenWidget->HideLoadingScreen();
-		RoomWidget = CreateWidget<USMRoomWidget>(this, RoomWidgetClass);
-		RoomWidget->AddToViewport();
-		RoomWidget->InitWidget(RoomState.Get(), RoomPlayerState.Get());
-	}, 1.0f, false);
+		RoomPlayerState->SetCurrentState(ERoomPlayerStateType::Unready);
 
-	UE_LOG(LogStereoMix, Log, TEXT("ASMRoomPlayerController::OnRep_PlayerState"));
+		if (GetWorld()->GetGameViewport())
+		{
+			LoadingScreenWidget->HideLoadingScreen();
+			RoomWidget = CreateWidget<USMRoomWidget>(this, RoomWidgetClass);
+			RoomWidget->AddToViewport();
+			RoomWidget->InitWidget(RoomState.Get(), RoomPlayerState.Get());
+			GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(ESMTeam::None);
+		}
+	}, 1.0f, false);
+}
+
+void ASMRoomPlayerController::OnTeamChanged(ESMTeam NewTeam)
+{
+	if (GetWorld()->GetGameViewport())
+	{
+		GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(NewTeam);
+	}
 }
 
 void ASMRoomPlayerController::RequestImmediateStartGame_Implementation()
