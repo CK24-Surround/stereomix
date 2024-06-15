@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{892dcdb3-0fac-4442-9a5c-74cdc6657f57}">
 		<property name="name">
-			<value>Roll Over</value>
+			<value>Roll-Over</value>
 		</property>
 		<property name="outputFormat">
 			<value>1</value>

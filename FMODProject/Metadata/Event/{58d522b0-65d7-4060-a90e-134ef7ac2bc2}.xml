@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{58d522b0-65d7-4060-a90e-134ef7ac2bc2}">
 		<property name="name">
-			<value>Slide Out</value>
+			<value>Slide-Out</value>
 		</property>
 		<property name="outputFormat">
 			<value>0</value>

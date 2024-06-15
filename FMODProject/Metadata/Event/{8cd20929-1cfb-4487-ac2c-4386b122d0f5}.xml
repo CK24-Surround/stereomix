@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{8cd20929-1cfb-4487-ac2c-4386b122d0f5}">
 		<property name="name">
-			<value>Game Enter Countdown</value>
+			<value>Game-Enter-Countdown</value>
 		</property>
 		<property name="outputFormat">
 			<value>1</value>

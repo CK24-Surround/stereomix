@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{48cbdf5f-041d-4f8b-8834-3895a8e6b35a}">
 		<property name="name">
-			<value>Chr-Roll Over</value>
+			<value>Chr-Roll-Over</value>
 		</property>
 		<property name="outputFormat">
 			<value>0</value>
