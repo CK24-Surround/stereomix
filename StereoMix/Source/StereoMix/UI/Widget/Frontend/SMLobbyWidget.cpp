@@ -125,8 +125,11 @@ void USMLobbyWidget::OnLobbyServiceStateChanged(const EGrpcServiceState ServiceS
 	{
 		if (UUMGSequencePlayer* TransitionPlayer = PlayTransitionIn())
 		{
-			TransitionPlayer->OnSequenceFinishedPlaying().AddWeakLambda(this, [this](UUMGSequencePlayer&) { SetVisibility(ESlateVisibility::Visible); });
-			GetWorld()->GetTimerManager().SetTimerForNextTick([this] { SetVisibility(ESlateVisibility::HitTestInvisible); });
+			TransitionPlayer->OnSequenceFinishedPlaying().AddWeakLambda(this, [this](UUMGSequencePlayer&)
+			{
+				SetVisibility(ESlateVisibility::Visible);
+			});
+			SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
 		else
 		{
