@@ -65,7 +65,7 @@ protected:
 	 * 결과적으로 작은 값을 쓸수록 오프셋이 커집니다.
 	 */
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float VerticalOffsetRatio = 10.0f;
+	float VerticalOffsetRatio = 7.5f;
 
 	UPROPERTY()
 	TWeakObjectPtr<AActor> TargetActor;
