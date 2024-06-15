@@ -4,6 +4,7 @@
 #include "SMGameplayCueNotifyLoopWithTeam_Stun.h"
 
 #include "NiagaraFunctionLibrary.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "Utilities/SMLog.h"
 
 void ASMGameplayCueNotifyLoopWithTeam_Stun::OnStartFX(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
@@ -26,6 +27,17 @@ void ASMGameplayCueNotifyLoopWithTeam_Stun::OnStartFX(AActor* SourceActor, const
 	}
 
 	UNiagaraFunctionLibrary::SpawnSystemAttached(StartFX[Team], AttachToComponent, NAME_None, Location, Rotation, EAttachLocation::SnapToTarget, false, true, ENCPoolMethod::AutoRelease);
+
+	ASMPlayerCharacter* SourceCharacter = Cast<ASMPlayerCharacter>(SourceActor);
+	if (SourceCharacter)
+	{
+		USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
+		if (SourceMesh)
+		{
+			SourceMesh->SetRenderCustomDepth(true);
+			SourceMesh->CustomDepthStencilValue = 1;
+		}
+	}
 }
 
 void ASMGameplayCueNotifyLoopWithTeam_Stun::OnLoopingStartFX(AActor* SourceActor, const FGameplayCueParameters& Parameters)
@@ -66,4 +78,15 @@ void ASMGameplayCueNotifyLoopWithTeam_Stun::OnEndFX(AActor* SourceActor, const F
 	}
 
 	UNiagaraFunctionLibrary::SpawnSystemAttached(EndFX[Team], AttachToComponent, NAME_None, Location, Rotation, EAttachLocation::SnapToTarget, false, true, ENCPoolMethod::AutoRelease);
+
+	ASMPlayerCharacter* SourceCharacter = Cast<ASMPlayerCharacter>(SourceActor);
+	if (SourceCharacter)
+	{
+		USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
+		if (SourceMesh)
+		{
+			SourceMesh->SetRenderCustomDepth(false);
+			SourceMesh->CustomDepthStencilValue = 0;
+		}
+	}
 }
