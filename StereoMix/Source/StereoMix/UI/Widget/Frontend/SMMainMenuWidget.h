@@ -58,4 +58,13 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
 	TObjectPtr<USMCommonButton> QuitButton;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
+	TObjectPtr<UCommonTextBlock> UserIdTextBlock;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
+	TObjectPtr<UCommonTextBlock> UserNameTextBlock;
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
+	TObjectPtr<UCommonTextBlock> GameVersionTextBlock;
 };

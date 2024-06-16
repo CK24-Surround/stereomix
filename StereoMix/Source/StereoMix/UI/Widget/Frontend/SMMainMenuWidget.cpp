@@ -4,6 +4,8 @@
 #include "SMMainMenuWidget.h"
 
 #include "SMFrontendWidget.h"
+#include "StereoMixLog.h"
+#include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 USMMainMenuWidget::USMMainMenuWidget()
@@ -19,6 +21,19 @@ void USMMainMenuWidget::NativeConstruct()
 	TutorialButton->OnClicked().AddUObject(this, &USMMainMenuWidget::OnTutorialButtonClicked);
 	SettingsButton->OnClicked().AddUObject(this, &USMMainMenuWidget::OnSettingsButtonClicked);
 	QuitButton->OnClicked().AddUObject(this, &USMMainMenuWidget::OnQuitButtonClicked);
+
+	if (USMClientAuthSubsystem* AuthSubsystem = GetGameInstance()->GetSubsystem<USMClientAuthSubsystem>(); AuthSubsystem && AuthSubsystem->IsAuthenticated())
+	{
+		UserIdTextBlock->SetText(FText::FromString(AuthSubsystem->GetUserAccount()->GetUserId()));
+		UserNameTextBlock->SetText(FText::FromString(AuthSubsystem->GetUserAccount()->GetUserName()));
+	}
+	else
+	{
+		UE_LOG(LogStereoMixUI, Warning, TEXT("[SMMainMenuWidget] Failed to get user account"))
+		UserIdTextBlock->SetText(FText::FromString(TEXT("Unknown")));
+		UserNameTextBlock->SetText(FText::FromString(TEXT("Unknown")));
+	}
+	GameVersionTextBlock->SetText(FText::FromString(USMGameInstance::GetGameVersion()));
 }
 
 void USMMainMenuWidget::NativeDestruct()
