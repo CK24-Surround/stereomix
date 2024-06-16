@@ -17,7 +17,7 @@ class STEREOMIX_API USMGuestLoginPopup : public USMPopup
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "GuestLoginPopup")
-	int32 MaxUserNameLength = 10;
+	int32 MaxUserNameLength = 20;
 
 	USMGuestLoginPopup();
 

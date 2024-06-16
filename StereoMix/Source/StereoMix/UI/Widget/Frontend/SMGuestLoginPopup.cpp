@@ -34,6 +34,12 @@ void USMGuestLoginPopup::PerformSubmit()
 
 void USMGuestLoginPopup::OnUserNameTextChanged(const FText& ChangedUserName)
 {
+	FString UserName = ChangedUserName.ToString();
+	if (UserName.Len() > MaxUserNameLength)
+	{
+		UserName = UserName.Left(MaxUserNameLength);
+	}
+	UserNameInputBox->SetText(FText::FromString(UserName));
 	SubmitButton->SetIsEnabled(IsValidUserName(ChangedUserName.ToString()));
 }
 
