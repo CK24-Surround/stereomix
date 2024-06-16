@@ -100,10 +100,6 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 	GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
 	SourceASC->AddGameplayCue(SMTags::GameplayCue::Stun, GCParams);
 
-	// 스턴 사운드를 재생합니다.
-	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
-	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::StunStart_Sound, GCParams);
-
 	// 캐릭터 상태 위젯을 숨깁니다.
 	SourceCharacter->SetCharacterStateVisibility(false);
 
@@ -126,9 +122,6 @@ void USMGameplayAbility_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle
 		Super::EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
 		return;
 	}
-
-	// 스턴 이펙트를 종료합니다.
-	SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Stun);
 
 	if (!bWasCancelled)
 	{
@@ -325,10 +318,8 @@ void USMGameplayAbility_Stun::ResetStunState()
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::OnStunEnd);
 	PlayMontageAndWaitTask->ReadyForActivation();
 
-	// 기상 사운드를 재생합니다.
-	FGameplayCueParameters GCParams;
-	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
-	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::StunEnd_Sound, GCParams);
+	// 스턴 이펙트를 종료합니다.
+	SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Stun);
 }
 
 void USMGameplayAbility_Stun::OnStunEnd()
