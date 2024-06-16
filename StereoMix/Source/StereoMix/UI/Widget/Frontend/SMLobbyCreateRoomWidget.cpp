@@ -31,7 +31,7 @@ void USMLobbyCreateRoomWidget::NativeOnActivated()
 		RoomConfig.Visibility = EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC;
 		RoomConfig.Map = EGrpcLobbyGameMap::GAME_MAP_DEFAULT;
 		RoomConfig.Mode = EGrpcLobbyGameMode::GAME_MODE_DEFAULT;
-		if (!LobbySubsystem->CreateRoom(TEXT("CustomRoom"), RoomConfig))
+		if (!LobbySubsystem->CreateRoom(RoomName, RoomConfig))
 		{
 			UiState = ELobbyProcessUiState::Failure;
 			UE_LOG(LogStereoMixUI, Error, TEXT("[SMLobbyCreateRoomWidget] Failed to create room"));
