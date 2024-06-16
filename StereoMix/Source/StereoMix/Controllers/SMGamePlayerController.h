@@ -14,6 +14,7 @@ class ASMPlayerCharacter;
 class USMUserWidget_ScreenIndicator;
 class USMUserWidget_VictoryDefeat;
 class USMUserWidget_GameHUD;
+class USMUserWidget_GameStatistics;
 class USMControlData;
 
 USTRUCT(BlueprintType)
@@ -43,6 +44,8 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void OnRep_PlayerState() override;
@@ -53,6 +56,8 @@ protected:
 	 * BeginPlay에서 생성할때 오류를 방지하고자 지연 스폰합니다.
 	 */
 	void SpawnTimerCallback();
+
+	virtual void UpdateGameStatistics();
 
 public:
 	/**
@@ -71,12 +76,18 @@ public:
 	UFUNCTION()
 	void OnTargetDestroyedWithIndicator(AActor* DestroyedActor);
 
-	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
+	FORCEINLINE const USMControlData* GetControlData() const
+	{
+		return ControlData;
+	}
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void RequestImmediateResetPosition();
 
 protected:
+	UPROPERTY(EditAnywhere, Category="GameStatistics")
+	float GameStatisticsUpdateInterval = 0.5f;
+	
 	UPROPERTY()
 	TObjectPtr<const USMControlData> ControlData;
 
@@ -106,4 +117,13 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMUserWidget_StartCountdown> StartCountdownWidget;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Design|UI|GameStatistics")
+	TSubclassOf<USMUserWidget_GameStatistics> GameStatisticsWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<USMUserWidget_GameStatistics> GameStatisticsWidget;
+
+private:
+	float GameStatisticsUpdateTime = 0.f;
 };

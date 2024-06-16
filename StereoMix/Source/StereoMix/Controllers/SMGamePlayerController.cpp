@@ -13,6 +13,7 @@
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "GameFramework/GameModeBase.h"
 #include "Games/SMGameMode.h"
+#include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"
 #include "UI/Widget/Game/SMUserWidget_ScreenIndicator.h"
 #include "UI/Widget/Game/SMUserWidget_StartCountdown.h"
@@ -55,6 +56,18 @@ void ASMGamePlayerController::BeginPlay()
 	InitControl();
 }
 
+void ASMGamePlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	GameStatisticsUpdateTime += DeltaSeconds;
+	if (GameStatisticsUpdateTime >= GameStatisticsUpdateInterval)
+	{
+		GameStatisticsUpdateTime = 0.f;
+		UpdateGameStatistics();
+	}
+}
+
 void ASMGamePlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	if (HasAuthority())
@@ -88,6 +101,9 @@ void ASMGamePlayerController::OnRep_PlayerState()
 
 	StartCountdownWidget = CreateWidget<USMUserWidget_StartCountdown>(this, StartCountdownWidgetClass);
 	StartCountdownWidget->AddToViewport(1);
+
+	GameStatisticsWidget = CreateWidget<USMUserWidget_GameStatistics>(this, GameStatisticsWidgetClass);
+	GameStatisticsWidget->AddToViewport(10);
 }
 
 void ASMGamePlayerController::InitControl()
@@ -127,6 +143,19 @@ void ASMGamePlayerController::SpawnTimerCallback()
 	//
 	// const FVector NewLocation = PlayerStarter->GetActorLocation();
 	SpawnCharacter();
+}
+
+void ASMGamePlayerController::UpdateGameStatistics()
+{
+	if (!PlayerState || GetNetMode() != NM_Client)
+	{
+		return;
+	}
+
+	if (GameStatisticsWidget)
+	{
+		GameStatisticsWidget->UpdatePingText(PlayerState->GetCompressedPing());
+	}
 }
 
 void ASMGamePlayerController::SpawnCharacter(const FVector* InLocation, const FRotator* InRotation)
