@@ -5,12 +5,14 @@
 
 #include "Interfaces/SMTeamInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "Utilities/SMLog.h"
 
 ESMTeam USMTeamBlueprintLibrary::GetTeam(const AActor* SourceActor)
 {
 	const ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(SourceActor);
-	if (!ensureAlways(SourceTeamInterface))
+	if (!SourceTeamInterface)
 	{
+		NET_LOG(SourceActor, Warning, TEXT("팀 인터페이스를 소유하고 있지 않습니다."));
 		return ESMTeam();
 	}
 
