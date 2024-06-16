@@ -39,6 +39,7 @@ void GRPC_TO_TURBOLINK(const ::lobby::Room* in, FGrpcLobbyRoom* out)
     out->MaxPlayers=in->max_players();
     out->CurrentPlayers=in->current_players();
     GRPC_TO_TURBOLINK(&(in->connection()), &(out->Connection));
+    out->GameVersion=StringCast<TCHAR>((const UTF8CHAR*)(in->game_version().c_str())).Get();
 }
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyRoom* in, ::lobby::Room* out)
@@ -51,10 +52,12 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyRoom* in, ::lobby::Room* out)
     out->set_max_players(in->MaxPlayers);
     out->set_current_players(in->CurrentPlayers);
     TURBOLINK_TO_GRPC(&(in->Connection), out->mutable_connection());
+    out->set_game_version((const char*)StringCast<UTF8CHAR>(*(in->GameVersion)).Get());
 }
 
 void GRPC_TO_TURBOLINK(const ::lobby::CreateRoomRequest* in, FGrpcLobbyCreateRoomRequest* out)
 {
+    out->GameVersion=StringCast<TCHAR>((const UTF8CHAR*)(in->game_version().c_str())).Get();
     out->RoomName=StringCast<TCHAR>((const UTF8CHAR*)(in->room_name().c_str())).Get();
     out->Password=StringCast<TCHAR>((const UTF8CHAR*)(in->password().c_str())).Get();
     GRPC_TO_TURBOLINK(&(in->config()), &(out->Config));
@@ -62,6 +65,7 @@ void GRPC_TO_TURBOLINK(const ::lobby::CreateRoomRequest* in, FGrpcLobbyCreateRoo
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyCreateRoomRequest* in, ::lobby::CreateRoomRequest* out)
 {
+    out->set_game_version((const char*)StringCast<UTF8CHAR>(*(in->GameVersion)).Get());
     out->set_room_name((const char*)StringCast<UTF8CHAR>(*(in->RoomName)).Get());
     out->set_password((const char*)StringCast<UTF8CHAR>(*(in->Password)).Get());
     TURBOLINK_TO_GRPC(&(in->Config), out->mutable_config());
@@ -79,10 +83,12 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyCreateRoomResponse* in, ::lobby::CreateRo
 
 void GRPC_TO_TURBOLINK(const ::lobby::QuickMatchRequest* in, FGrpcLobbyQuickMatchRequest* out)
 {
+    out->GameVersion=StringCast<TCHAR>((const UTF8CHAR*)(in->game_version().c_str())).Get();
 }
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyQuickMatchRequest* in, ::lobby::QuickMatchRequest* out)
 {
+    out->set_game_version((const char*)StringCast<UTF8CHAR>(*(in->GameVersion)).Get());
 }
 
 void GRPC_TO_TURBOLINK(const ::lobby::QuickMatchResponse* in, FGrpcLobbyQuickMatchResponse* out)
@@ -97,12 +103,14 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyQuickMatchResponse* in, ::lobby::QuickMat
 
 void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomRequest* in, FGrpcLobbyJoinRoomRequest* out)
 {
+    out->GameVersion=StringCast<TCHAR>((const UTF8CHAR*)(in->game_version().c_str())).Get();
     out->RoomId=StringCast<TCHAR>((const UTF8CHAR*)(in->room_id().c_str())).Get();
     out->Password=StringCast<TCHAR>((const UTF8CHAR*)(in->password().c_str())).Get();
 }
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomRequest* in, ::lobby::JoinRoomRequest* out)
 {
+    out->set_game_version((const char*)StringCast<UTF8CHAR>(*(in->GameVersion)).Get());
     out->set_room_id((const char*)StringCast<UTF8CHAR>(*(in->RoomId)).Get());
     out->set_password((const char*)StringCast<UTF8CHAR>(*(in->Password)).Get());
 }
@@ -119,11 +127,13 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomResponse* in, ::lobby::JoinRoomRe
 
 void GRPC_TO_TURBOLINK(const ::lobby::JoinRoomWithCodeRequest* in, FGrpcLobbyJoinRoomWithCodeRequest* out)
 {
+    out->GameVersion=StringCast<TCHAR>((const UTF8CHAR*)(in->game_version().c_str())).Get();
     out->RoomCode=StringCast<TCHAR>((const UTF8CHAR*)(in->room_code().c_str())).Get();
 }
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomWithCodeRequest* in, ::lobby::JoinRoomWithCodeRequest* out)
 {
+    out->set_game_version((const char*)StringCast<UTF8CHAR>(*(in->GameVersion)).Get());
     out->set_room_code((const char*)StringCast<UTF8CHAR>(*(in->RoomCode)).Get());
 }
 
@@ -139,6 +149,7 @@ void TURBOLINK_TO_GRPC(const FGrpcLobbyJoinRoomWithCodeResponse* in, ::lobby::Jo
 
 void GRPC_TO_TURBOLINK(const ::lobby::GetRoomListRequest* in, FGrpcLobbyGetRoomListRequest* out)
 {
+    out->GameVersion=StringCast<TCHAR>((const UTF8CHAR*)(in->game_version().c_str())).Get();
     out->Visibility=StaticCast<EGrpcLobbyRoomVisibility>(in->visibility());
     out->Mode=StaticCast<EGrpcLobbyGameMode>(in->mode());
     out->Map=StaticCast<EGrpcLobbyGameMap>(in->map());
@@ -146,6 +157,7 @@ void GRPC_TO_TURBOLINK(const ::lobby::GetRoomListRequest* in, FGrpcLobbyGetRoomL
 
 void TURBOLINK_TO_GRPC(const FGrpcLobbyGetRoomListRequest* in, ::lobby::GetRoomListRequest* out)
 {
+    out->set_game_version((const char*)StringCast<UTF8CHAR>(*(in->GameVersion)).Get());
     out->set_visibility(::lobby::RoomVisibility(static_cast<uint8>(in->Visibility)));
     out->set_mode(::lobby::GameMode(static_cast<uint8>(in->Mode)));
     out->set_map(::lobby::GameMap(static_cast<uint8>(in->Map)));

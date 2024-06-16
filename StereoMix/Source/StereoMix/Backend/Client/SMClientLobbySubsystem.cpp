@@ -5,8 +5,8 @@
 
 #include "SMClientAuthSubsystem.h"
 #include "SMUserAccount.h"
-#include "StereoMix.h"
 #include "StereoMixLog.h"
+#include "GameInstance/SMGameInstance.h"
 
 void USMClientLobbySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -29,6 +29,7 @@ bool USMClientLobbySubsystem::CreateRoom(const FString& RoomName, FGrpcLobbyRoom
 	}
 
 	FGrpcLobbyCreateRoomRequest Request;
+	Request.GameVersion = USMGameInstance::GetGameVersion();
 	Request.RoomName = RoomName;
 	Request.Password = Password;
 	Request.Config = RoomConfig;
@@ -47,6 +48,7 @@ bool USMClientLobbySubsystem::QuickMatch()
 	}
 
 	FGrpcLobbyQuickMatchRequest Request;
+	Request.GameVersion = USMGameInstance::GetGameVersion();
 	GrpcContextHandle = LobbyClient->InitQuickMatch();
 
 	const FGrpcMetaData MetaData = ClientAuthService->GetUserAccount()->GetAuthorizationHeader();
@@ -62,6 +64,7 @@ bool USMClientLobbySubsystem::JoinRoom(const FString& RoomId, const FString& Pas
 	}
 
 	FGrpcLobbyJoinRoomRequest Request;
+	Request.GameVersion = USMGameInstance::GetGameVersion();
 	Request.RoomId = RoomId;
 	Request.Password = Password;
 	GrpcContextHandle = LobbyClient->InitJoinRoom();
@@ -79,6 +82,7 @@ bool USMClientLobbySubsystem::JoinRoomWithCode(const FString& RoomCode)
 	}
 
 	FGrpcLobbyJoinRoomWithCodeRequest Request;
+	Request.GameVersion = USMGameInstance::GetGameVersion();
 	Request.RoomCode = RoomCode;
 	GrpcContextHandle = LobbyClient->InitJoinRoomWithCode();
 

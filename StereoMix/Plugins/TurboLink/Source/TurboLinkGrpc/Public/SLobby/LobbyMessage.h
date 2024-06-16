@@ -95,6 +95,9 @@ struct FGrpcLobbyRoom : public FGrpcMessage
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
     FGrpcLobbyRoomConnectionInfo Connection;
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString GameVersion = "";
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Lobby.CreateRoomRequest"))
@@ -102,6 +105,9 @@ struct FGrpcLobbyCreateRoomRequest : public FGrpcMessage
 {
     GENERATED_BODY()
     DECLARE_JSON_FUNCTIONS()
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString GameVersion = "";
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
     FString RoomName = "";
@@ -128,6 +134,9 @@ struct FGrpcLobbyQuickMatchRequest : public FGrpcMessage
 {
     GENERATED_BODY()
     DECLARE_JSON_FUNCTIONS()
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString GameVersion = "";
 };
 
 USTRUCT(BlueprintType, meta = (DisplayName="Lobby.QuickMatchResponse"))
@@ -145,6 +154,9 @@ struct FGrpcLobbyJoinRoomRequest : public FGrpcMessage
 {
     GENERATED_BODY()
     DECLARE_JSON_FUNCTIONS()
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString GameVersion = "";
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
     FString RoomId = "";
@@ -170,6 +182,9 @@ struct FGrpcLobbyJoinRoomWithCodeRequest : public FGrpcMessage
     DECLARE_JSON_FUNCTIONS()
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString GameVersion = "";
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
     FString RoomCode = "";
 };
 
@@ -188,6 +203,9 @@ struct FGrpcLobbyGetRoomListRequest : public FGrpcMessage
 {
     GENERATED_BODY()
     DECLARE_JSON_FUNCTIONS()
+
+    UPROPERTY(BlueprintReadWrite, Category = TurboLink)
+    FString GameVersion = "";
 
     UPROPERTY(BlueprintReadWrite, Category = TurboLink)
     EGrpcLobbyRoomVisibility Visibility = static_cast<EGrpcLobbyRoomVisibility>(0);

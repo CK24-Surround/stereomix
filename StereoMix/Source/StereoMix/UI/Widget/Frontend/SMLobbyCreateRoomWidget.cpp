@@ -23,8 +23,11 @@ void USMLobbyCreateRoomWidget::NativeOnActivated()
 	{
 		LobbySubsystem->OnCreateRoomResponse.AddDynamic(this, &USMLobbyCreateRoomWidget::OnCreateRoomResponse);
 
+		const FString& UserName = AuthSubsystem->GetUserAccount()->GetUserName();
+		FString RoomName = FString::Printf(TEXT("%s의 방"), *UserName);
+		
 		FGrpcLobbyRoomConfig RoomConfig;
-		RoomConfig.RoomName = TEXT("CustomRoom");
+		RoomConfig.RoomName = RoomName;
 		RoomConfig.Visibility = EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC;
 		RoomConfig.Map = EGrpcLobbyGameMap::GAME_MAP_DEFAULT;
 		RoomConfig.Mode = EGrpcLobbyGameMode::GAME_MODE_DEFAULT;

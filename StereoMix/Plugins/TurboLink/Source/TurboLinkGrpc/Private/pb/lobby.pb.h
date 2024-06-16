@@ -829,11 +829,12 @@ class Room final :
     kRoomIdFieldNumber = 1,
     kRoomCodeFieldNumber = 2,
     kOwnerIdFieldNumber = 3,
-    kConfigFieldNumber = 4,
-    kConnectionFieldNumber = 8,
-    kStateFieldNumber = 5,
-    kMaxPlayersFieldNumber = 6,
-    kCurrentPlayersFieldNumber = 7,
+    kGameVersionFieldNumber = 10,
+    kConfigFieldNumber = 5,
+    kConnectionFieldNumber = 9,
+    kStateFieldNumber = 6,
+    kMaxPlayersFieldNumber = 7,
+    kCurrentPlayersFieldNumber = 8,
   };
   // string room_id = 1;
   void clear_room_id() ;
@@ -895,7 +896,27 @@ class Room final :
   std::string* _internal_mutable_owner_id();
 
   public:
-  // .lobby.RoomConfig config = 4;
+  // string game_version = 10;
+  void clear_game_version() ;
+  const std::string& game_version() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_game_version(Arg_&& arg, Args_... args);
+  std::string* mutable_game_version();
+  PROTOBUF_NODISCARD std::string* release_game_version();
+  void set_allocated_game_version(std::string* ptr);
+
+  private:
+  const std::string& _internal_game_version() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_game_version(
+      const std::string& value);
+  std::string* _internal_mutable_game_version();
+
+  public:
+  // .lobby.RoomConfig config = 5;
   bool has_config() const;
   void clear_config() ;
   const ::lobby::RoomConfig& config() const;
@@ -909,7 +930,7 @@ class Room final :
   void unsafe_arena_set_allocated_config(
       ::lobby::RoomConfig* config);
   ::lobby::RoomConfig* unsafe_arena_release_config();
-  // .lobby.RoomConnectionInfo connection = 8;
+  // .lobby.RoomConnectionInfo connection = 9;
   bool has_connection() const;
   void clear_connection() ;
   const ::lobby::RoomConnectionInfo& connection() const;
@@ -923,7 +944,7 @@ class Room final :
   void unsafe_arena_set_allocated_connection(
       ::lobby::RoomConnectionInfo* connection);
   ::lobby::RoomConnectionInfo* unsafe_arena_release_connection();
-  // .lobby.RoomState state = 5;
+  // .lobby.RoomState state = 6;
   void clear_state() ;
   ::lobby::RoomState state() const;
   void set_state(::lobby::RoomState value);
@@ -933,7 +954,7 @@ class Room final :
   void _internal_set_state(::lobby::RoomState value);
 
   public:
-  // int32 max_players = 6;
+  // int32 max_players = 7;
   void clear_max_players() ;
   ::int32_t max_players() const;
   void set_max_players(::int32_t value);
@@ -943,7 +964,7 @@ class Room final :
   void _internal_set_max_players(::int32_t value);
 
   public:
-  // int32 current_players = 7;
+  // int32 current_players = 8;
   void clear_current_players() ;
   ::int32_t current_players() const;
   void set_current_players(::int32_t value);
@@ -966,6 +987,7 @@ class Room final :
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_code_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr owner_id_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr game_version_;
     ::lobby::RoomConfig* config_;
     ::lobby::RoomConnectionInfo* connection_;
     int state_;
@@ -1104,11 +1126,32 @@ class CreateRoomRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRoomNameFieldNumber = 1,
-    kPasswordFieldNumber = 2,
-    kConfigFieldNumber = 3,
+    kGameVersionFieldNumber = 1,
+    kRoomNameFieldNumber = 2,
+    kPasswordFieldNumber = 3,
+    kConfigFieldNumber = 4,
   };
-  // string room_name = 1;
+  // string game_version = 1;
+  void clear_game_version() ;
+  const std::string& game_version() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_game_version(Arg_&& arg, Args_... args);
+  std::string* mutable_game_version();
+  PROTOBUF_NODISCARD std::string* release_game_version();
+  void set_allocated_game_version(std::string* ptr);
+
+  private:
+  const std::string& _internal_game_version() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_game_version(
+      const std::string& value);
+  std::string* _internal_mutable_game_version();
+
+  public:
+  // string room_name = 2;
   void clear_room_name() ;
   const std::string& room_name() const;
 
@@ -1128,7 +1171,7 @@ class CreateRoomRequest final :
   std::string* _internal_mutable_room_name();
 
   public:
-  // string password = 2;
+  // string password = 3;
   void clear_password() ;
   const std::string& password() const;
 
@@ -1148,7 +1191,7 @@ class CreateRoomRequest final :
   std::string* _internal_mutable_password();
 
   public:
-  // .lobby.RoomConfig config = 3;
+  // .lobby.RoomConfig config = 4;
   bool has_config() const;
   void clear_config() ;
   const ::lobby::RoomConfig& config() const;
@@ -1172,6 +1215,7 @@ class CreateRoomRequest final :
   struct Impl_ {
     ::PROTOBUF_NAMESPACE_ID::internal::HasBits<1> _has_bits_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr game_version_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_name_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
     ::lobby::RoomConfig* config_;
@@ -1341,9 +1385,10 @@ class CreateRoomResponse final :
 };// -------------------------------------------------------------------
 
 class QuickMatchRequest final :
-    public ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:lobby.QuickMatchRequest) */ {
+    public ::PROTOBUF_NAMESPACE_ID::Message /* @@protoc_insertion_point(class_definition:lobby.QuickMatchRequest) */ {
  public:
   inline QuickMatchRequest() : QuickMatchRequest(nullptr) {}
+  ~QuickMatchRequest() override;
   template<typename = void>
   explicit PROTOBUF_CONSTEXPR QuickMatchRequest(::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized);
 
@@ -1424,15 +1469,29 @@ class QuickMatchRequest final :
   QuickMatchRequest* New(::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<QuickMatchRequest>(arena);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyFrom;
-  inline void CopyFrom(const QuickMatchRequest& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl(*this, from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+  void CopyFrom(const QuickMatchRequest& from);
+  using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+  void MergeFrom( const QuickMatchRequest& from) {
+    QuickMatchRequest::MergeImpl(*this, from);
   }
-  using ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeFrom;
-  void MergeFrom(const QuickMatchRequest& from) {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl(*this, from);
-  }
+  private:
+  static void MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg);
   public:
+  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+  bool IsInitialized() const final;
+
+  ::size_t ByteSizeLong() const final;
+  const char* _InternalParse(const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx) final;
+  ::uint8_t* _InternalSerialize(
+      ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const final;
+  int GetCachedSize() const final { return _impl_._cached_size_.Get(); }
+
+  private:
+  void SharedCtor(::PROTOBUF_NAMESPACE_ID::Arena* arena);
+  void SharedDtor();
+  void SetCachedSize(int size) const final;
+  void InternalSwap(QuickMatchRequest* other);
 
   private:
   friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
@@ -1452,6 +1511,29 @@ class QuickMatchRequest final :
 
   // accessors -------------------------------------------------------
 
+  enum : int {
+    kGameVersionFieldNumber = 1,
+  };
+  // string game_version = 1;
+  void clear_game_version() ;
+  const std::string& game_version() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_game_version(Arg_&& arg, Args_... args);
+  std::string* mutable_game_version();
+  PROTOBUF_NODISCARD std::string* release_game_version();
+  void set_allocated_game_version(std::string* ptr);
+
+  private:
+  const std::string& _internal_game_version() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_game_version(
+      const std::string& value);
+  std::string* _internal_mutable_game_version();
+
+  public:
   // @@protoc_insertion_point(class_scope:lobby.QuickMatchRequest)
  private:
   class _Internal;
@@ -1460,7 +1542,10 @@ class QuickMatchRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr game_version_;
+    mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
+  union { Impl_ _impl_; };
   friend struct ::TableStruct_lobby_2eproto;
 };// -------------------------------------------------------------------
 
@@ -1752,10 +1837,31 @@ class JoinRoomRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRoomIdFieldNumber = 1,
-    kPasswordFieldNumber = 2,
+    kGameVersionFieldNumber = 1,
+    kRoomIdFieldNumber = 2,
+    kPasswordFieldNumber = 3,
   };
-  // string room_id = 1;
+  // string game_version = 1;
+  void clear_game_version() ;
+  const std::string& game_version() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_game_version(Arg_&& arg, Args_... args);
+  std::string* mutable_game_version();
+  PROTOBUF_NODISCARD std::string* release_game_version();
+  void set_allocated_game_version(std::string* ptr);
+
+  private:
+  const std::string& _internal_game_version() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_game_version(
+      const std::string& value);
+  std::string* _internal_mutable_game_version();
+
+  public:
+  // string room_id = 2;
   void clear_room_id() ;
   const std::string& room_id() const;
 
@@ -1775,7 +1881,7 @@ class JoinRoomRequest final :
   std::string* _internal_mutable_room_id();
 
   public:
-  // string password = 2;
+  // string password = 3;
   void clear_password() ;
   const std::string& password() const;
 
@@ -1803,6 +1909,7 @@ class JoinRoomRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr game_version_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_id_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr password_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
@@ -2099,9 +2206,30 @@ class JoinRoomWithCodeRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kRoomCodeFieldNumber = 1,
+    kGameVersionFieldNumber = 1,
+    kRoomCodeFieldNumber = 2,
   };
-  // string room_code = 1;
+  // string game_version = 1;
+  void clear_game_version() ;
+  const std::string& game_version() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_game_version(Arg_&& arg, Args_... args);
+  std::string* mutable_game_version();
+  PROTOBUF_NODISCARD std::string* release_game_version();
+  void set_allocated_game_version(std::string* ptr);
+
+  private:
+  const std::string& _internal_game_version() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_game_version(
+      const std::string& value);
+  std::string* _internal_mutable_game_version();
+
+  public:
+  // string room_code = 2;
   void clear_room_code() ;
   const std::string& room_code() const;
 
@@ -2129,6 +2257,7 @@ class JoinRoomWithCodeRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr game_version_;
     ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr room_code_;
     mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
   };
@@ -2424,11 +2553,32 @@ class GetRoomListRequest final :
   // accessors -------------------------------------------------------
 
   enum : int {
-    kVisibilityFieldNumber = 1,
+    kGameVersionFieldNumber = 1,
+    kVisibilityFieldNumber = 2,
     kModeFieldNumber = 3,
     kMapFieldNumber = 4,
   };
-  // .lobby.RoomVisibility visibility = 1;
+  // string game_version = 1;
+  void clear_game_version() ;
+  const std::string& game_version() const;
+
+
+
+
+  template <typename Arg_ = const std::string&, typename... Args_>
+  void set_game_version(Arg_&& arg, Args_... args);
+  std::string* mutable_game_version();
+  PROTOBUF_NODISCARD std::string* release_game_version();
+  void set_allocated_game_version(std::string* ptr);
+
+  private:
+  const std::string& _internal_game_version() const;
+  inline PROTOBUF_ALWAYS_INLINE void _internal_set_game_version(
+      const std::string& value);
+  std::string* _internal_mutable_game_version();
+
+  public:
+  // .lobby.RoomVisibility visibility = 2;
   void clear_visibility() ;
   ::lobby::RoomVisibility visibility() const;
   void set_visibility(::lobby::RoomVisibility value);
@@ -2466,6 +2616,7 @@ class GetRoomListRequest final :
   typedef void InternalArenaConstructable_;
   typedef void DestructorSkippable_;
   struct Impl_ {
+    ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr game_version_;
     int visibility_;
     int mode_;
     int map_;
@@ -4641,7 +4792,7 @@ inline void Room::set_allocated_owner_id(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:lobby.Room.owner_id)
 }
 
-// .lobby.RoomConfig config = 4;
+// .lobby.RoomConfig config = 5;
 inline bool Room::has_config() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.config_ != nullptr);
@@ -4728,7 +4879,7 @@ inline void Room::set_allocated_config(::lobby::RoomConfig* config) {
   // @@protoc_insertion_point(field_set_allocated:lobby.Room.config)
 }
 
-// .lobby.RoomState state = 5;
+// .lobby.RoomState state = 6;
 inline void Room::clear_state() {
   _impl_.state_ = 0;
 }
@@ -4748,7 +4899,7 @@ inline void Room::_internal_set_state(::lobby::RoomState value) {
   _impl_.state_ = value;
 }
 
-// int32 max_players = 6;
+// int32 max_players = 7;
 inline void Room::clear_max_players() {
   _impl_.max_players_ = 0;
 }
@@ -4768,7 +4919,7 @@ inline void Room::_internal_set_max_players(::int32_t value) {
   _impl_.max_players_ = value;
 }
 
-// int32 current_players = 7;
+// int32 current_players = 8;
 inline void Room::clear_current_players() {
   _impl_.current_players_ = 0;
 }
@@ -4788,7 +4939,7 @@ inline void Room::_internal_set_current_players(::int32_t value) {
   _impl_.current_players_ = value;
 }
 
-// .lobby.RoomConnectionInfo connection = 8;
+// .lobby.RoomConnectionInfo connection = 9;
 inline bool Room::has_connection() const {
   bool value = (_impl_._has_bits_[0] & 0x00000002u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.connection_ != nullptr);
@@ -4875,11 +5026,105 @@ inline void Room::set_allocated_connection(::lobby::RoomConnectionInfo* connecti
   // @@protoc_insertion_point(field_set_allocated:lobby.Room.connection)
 }
 
+// string game_version = 10;
+inline void Room::clear_game_version() {
+  _impl_.game_version_.ClearToEmpty();
+}
+inline const std::string& Room::game_version() const {
+  // @@protoc_insertion_point(field_get:lobby.Room.game_version)
+  return _internal_game_version();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void Room::set_game_version(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.game_version_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.Room.game_version)
+}
+inline std::string* Room::mutable_game_version() {
+  std::string* _s = _internal_mutable_game_version();
+  // @@protoc_insertion_point(field_mutable:lobby.Room.game_version)
+  return _s;
+}
+inline const std::string& Room::_internal_game_version() const {
+  return _impl_.game_version_.Get();
+}
+inline void Room::_internal_set_game_version(const std::string& value) {
+  ;
+
+
+  _impl_.game_version_.Set(value, GetArenaForAllocation());
+}
+inline std::string* Room::_internal_mutable_game_version() {
+  ;
+  return _impl_.game_version_.Mutable( GetArenaForAllocation());
+}
+inline std::string* Room::release_game_version() {
+  // @@protoc_insertion_point(field_release:lobby.Room.game_version)
+  return _impl_.game_version_.Release();
+}
+inline void Room::set_allocated_game_version(std::string* value) {
+  _impl_.game_version_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.game_version_.IsDefault()) {
+          _impl_.game_version_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.Room.game_version)
+}
+
 // -------------------------------------------------------------------
 
 // CreateRoomRequest
 
-// string room_name = 1;
+// string game_version = 1;
+inline void CreateRoomRequest::clear_game_version() {
+  _impl_.game_version_.ClearToEmpty();
+}
+inline const std::string& CreateRoomRequest::game_version() const {
+  // @@protoc_insertion_point(field_get:lobby.CreateRoomRequest.game_version)
+  return _internal_game_version();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void CreateRoomRequest::set_game_version(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.game_version_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.CreateRoomRequest.game_version)
+}
+inline std::string* CreateRoomRequest::mutable_game_version() {
+  std::string* _s = _internal_mutable_game_version();
+  // @@protoc_insertion_point(field_mutable:lobby.CreateRoomRequest.game_version)
+  return _s;
+}
+inline const std::string& CreateRoomRequest::_internal_game_version() const {
+  return _impl_.game_version_.Get();
+}
+inline void CreateRoomRequest::_internal_set_game_version(const std::string& value) {
+  ;
+
+
+  _impl_.game_version_.Set(value, GetArenaForAllocation());
+}
+inline std::string* CreateRoomRequest::_internal_mutable_game_version() {
+  ;
+  return _impl_.game_version_.Mutable( GetArenaForAllocation());
+}
+inline std::string* CreateRoomRequest::release_game_version() {
+  // @@protoc_insertion_point(field_release:lobby.CreateRoomRequest.game_version)
+  return _impl_.game_version_.Release();
+}
+inline void CreateRoomRequest::set_allocated_game_version(std::string* value) {
+  _impl_.game_version_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.game_version_.IsDefault()) {
+          _impl_.game_version_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.CreateRoomRequest.game_version)
+}
+
+// string room_name = 2;
 inline void CreateRoomRequest::clear_room_name() {
   _impl_.room_name_.ClearToEmpty();
 }
@@ -4926,7 +5171,7 @@ inline void CreateRoomRequest::set_allocated_room_name(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:lobby.CreateRoomRequest.room_name)
 }
 
-// string password = 2;
+// string password = 3;
 inline void CreateRoomRequest::clear_password() {
   _impl_.password_.ClearToEmpty();
 }
@@ -4973,7 +5218,7 @@ inline void CreateRoomRequest::set_allocated_password(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:lobby.CreateRoomRequest.password)
 }
 
-// .lobby.RoomConfig config = 3;
+// .lobby.RoomConfig config = 4;
 inline bool CreateRoomRequest::has_config() const {
   bool value = (_impl_._has_bits_[0] & 0x00000001u) != 0;
   PROTOBUF_ASSUME(!value || _impl_.config_ != nullptr);
@@ -5155,6 +5400,53 @@ inline void CreateRoomResponse::set_allocated_connection(::lobby::RoomConnection
 
 // QuickMatchRequest
 
+// string game_version = 1;
+inline void QuickMatchRequest::clear_game_version() {
+  _impl_.game_version_.ClearToEmpty();
+}
+inline const std::string& QuickMatchRequest::game_version() const {
+  // @@protoc_insertion_point(field_get:lobby.QuickMatchRequest.game_version)
+  return _internal_game_version();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void QuickMatchRequest::set_game_version(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.game_version_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.QuickMatchRequest.game_version)
+}
+inline std::string* QuickMatchRequest::mutable_game_version() {
+  std::string* _s = _internal_mutable_game_version();
+  // @@protoc_insertion_point(field_mutable:lobby.QuickMatchRequest.game_version)
+  return _s;
+}
+inline const std::string& QuickMatchRequest::_internal_game_version() const {
+  return _impl_.game_version_.Get();
+}
+inline void QuickMatchRequest::_internal_set_game_version(const std::string& value) {
+  ;
+
+
+  _impl_.game_version_.Set(value, GetArenaForAllocation());
+}
+inline std::string* QuickMatchRequest::_internal_mutable_game_version() {
+  ;
+  return _impl_.game_version_.Mutable( GetArenaForAllocation());
+}
+inline std::string* QuickMatchRequest::release_game_version() {
+  // @@protoc_insertion_point(field_release:lobby.QuickMatchRequest.game_version)
+  return _impl_.game_version_.Release();
+}
+inline void QuickMatchRequest::set_allocated_game_version(std::string* value) {
+  _impl_.game_version_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.game_version_.IsDefault()) {
+          _impl_.game_version_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.QuickMatchRequest.game_version)
+}
+
 // -------------------------------------------------------------------
 
 // QuickMatchResponse
@@ -5250,7 +5542,54 @@ inline void QuickMatchResponse::set_allocated_connection(::lobby::RoomConnection
 
 // JoinRoomRequest
 
-// string room_id = 1;
+// string game_version = 1;
+inline void JoinRoomRequest::clear_game_version() {
+  _impl_.game_version_.ClearToEmpty();
+}
+inline const std::string& JoinRoomRequest::game_version() const {
+  // @@protoc_insertion_point(field_get:lobby.JoinRoomRequest.game_version)
+  return _internal_game_version();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void JoinRoomRequest::set_game_version(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.game_version_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.JoinRoomRequest.game_version)
+}
+inline std::string* JoinRoomRequest::mutable_game_version() {
+  std::string* _s = _internal_mutable_game_version();
+  // @@protoc_insertion_point(field_mutable:lobby.JoinRoomRequest.game_version)
+  return _s;
+}
+inline const std::string& JoinRoomRequest::_internal_game_version() const {
+  return _impl_.game_version_.Get();
+}
+inline void JoinRoomRequest::_internal_set_game_version(const std::string& value) {
+  ;
+
+
+  _impl_.game_version_.Set(value, GetArenaForAllocation());
+}
+inline std::string* JoinRoomRequest::_internal_mutable_game_version() {
+  ;
+  return _impl_.game_version_.Mutable( GetArenaForAllocation());
+}
+inline std::string* JoinRoomRequest::release_game_version() {
+  // @@protoc_insertion_point(field_release:lobby.JoinRoomRequest.game_version)
+  return _impl_.game_version_.Release();
+}
+inline void JoinRoomRequest::set_allocated_game_version(std::string* value) {
+  _impl_.game_version_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.game_version_.IsDefault()) {
+          _impl_.game_version_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomRequest.game_version)
+}
+
+// string room_id = 2;
 inline void JoinRoomRequest::clear_room_id() {
   _impl_.room_id_.ClearToEmpty();
 }
@@ -5297,7 +5636,7 @@ inline void JoinRoomRequest::set_allocated_room_id(std::string* value) {
   // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomRequest.room_id)
 }
 
-// string password = 2;
+// string password = 3;
 inline void JoinRoomRequest::clear_password() {
   _impl_.password_.ClearToEmpty();
 }
@@ -5439,7 +5778,54 @@ inline void JoinRoomResponse::set_allocated_connection(::lobby::RoomConnectionIn
 
 // JoinRoomWithCodeRequest
 
-// string room_code = 1;
+// string game_version = 1;
+inline void JoinRoomWithCodeRequest::clear_game_version() {
+  _impl_.game_version_.ClearToEmpty();
+}
+inline const std::string& JoinRoomWithCodeRequest::game_version() const {
+  // @@protoc_insertion_point(field_get:lobby.JoinRoomWithCodeRequest.game_version)
+  return _internal_game_version();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void JoinRoomWithCodeRequest::set_game_version(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.game_version_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.JoinRoomWithCodeRequest.game_version)
+}
+inline std::string* JoinRoomWithCodeRequest::mutable_game_version() {
+  std::string* _s = _internal_mutable_game_version();
+  // @@protoc_insertion_point(field_mutable:lobby.JoinRoomWithCodeRequest.game_version)
+  return _s;
+}
+inline const std::string& JoinRoomWithCodeRequest::_internal_game_version() const {
+  return _impl_.game_version_.Get();
+}
+inline void JoinRoomWithCodeRequest::_internal_set_game_version(const std::string& value) {
+  ;
+
+
+  _impl_.game_version_.Set(value, GetArenaForAllocation());
+}
+inline std::string* JoinRoomWithCodeRequest::_internal_mutable_game_version() {
+  ;
+  return _impl_.game_version_.Mutable( GetArenaForAllocation());
+}
+inline std::string* JoinRoomWithCodeRequest::release_game_version() {
+  // @@protoc_insertion_point(field_release:lobby.JoinRoomWithCodeRequest.game_version)
+  return _impl_.game_version_.Release();
+}
+inline void JoinRoomWithCodeRequest::set_allocated_game_version(std::string* value) {
+  _impl_.game_version_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.game_version_.IsDefault()) {
+          _impl_.game_version_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.JoinRoomWithCodeRequest.game_version)
+}
+
+// string room_code = 2;
 inline void JoinRoomWithCodeRequest::clear_room_code() {
   _impl_.room_code_.ClearToEmpty();
 }
@@ -5581,7 +5967,54 @@ inline void JoinRoomWithCodeResponse::set_allocated_connection(::lobby::RoomConn
 
 // GetRoomListRequest
 
-// .lobby.RoomVisibility visibility = 1;
+// string game_version = 1;
+inline void GetRoomListRequest::clear_game_version() {
+  _impl_.game_version_.ClearToEmpty();
+}
+inline const std::string& GetRoomListRequest::game_version() const {
+  // @@protoc_insertion_point(field_get:lobby.GetRoomListRequest.game_version)
+  return _internal_game_version();
+}
+template <typename Arg_, typename... Args_>
+inline PROTOBUF_ALWAYS_INLINE void GetRoomListRequest::set_game_version(Arg_&& arg,
+                                                     Args_... args) {
+  ;
+  _impl_.game_version_.Set(static_cast<Arg_&&>(arg), args..., GetArenaForAllocation());
+  // @@protoc_insertion_point(field_set:lobby.GetRoomListRequest.game_version)
+}
+inline std::string* GetRoomListRequest::mutable_game_version() {
+  std::string* _s = _internal_mutable_game_version();
+  // @@protoc_insertion_point(field_mutable:lobby.GetRoomListRequest.game_version)
+  return _s;
+}
+inline const std::string& GetRoomListRequest::_internal_game_version() const {
+  return _impl_.game_version_.Get();
+}
+inline void GetRoomListRequest::_internal_set_game_version(const std::string& value) {
+  ;
+
+
+  _impl_.game_version_.Set(value, GetArenaForAllocation());
+}
+inline std::string* GetRoomListRequest::_internal_mutable_game_version() {
+  ;
+  return _impl_.game_version_.Mutable( GetArenaForAllocation());
+}
+inline std::string* GetRoomListRequest::release_game_version() {
+  // @@protoc_insertion_point(field_release:lobby.GetRoomListRequest.game_version)
+  return _impl_.game_version_.Release();
+}
+inline void GetRoomListRequest::set_allocated_game_version(std::string* value) {
+  _impl_.game_version_.SetAllocated(value, GetArenaForAllocation());
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        if (_impl_.game_version_.IsDefault()) {
+          _impl_.game_version_.Set("", GetArenaForAllocation());
+        }
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  // @@protoc_insertion_point(field_set_allocated:lobby.GetRoomListRequest.game_version)
+}
+
+// .lobby.RoomVisibility visibility = 2;
 inline void GetRoomListRequest::clear_visibility() {
   _impl_.visibility_ = 0;
 }

@@ -3,7 +3,9 @@
 
 #include "SMGameInstance.h"
 
-USMGameInstance::USMGameInstance() {}
+USMGameInstance::USMGameInstance()
+{
+}
 
 void USMGameInstance::Init()
 {
@@ -15,6 +17,9 @@ void USMGameInstance::StartGameInstance()
 	Super::StartGameInstance();
 }
 
-void USMGameInstance::ShowLoadingScreen() {}
-
-void USMGameInstance::HideLoadingScreen() {}
+FString USMGameInstance::GetGameVersion()
+{
+	FString GameVersion;
+	GConfig->GetString(TEXT("/Script/EngineSettings.GeneralProjectSettings"), TEXT("ProjectVersion"), GameVersion, GGameIni);
+	return GameVersion;
+}

@@ -96,6 +96,10 @@ PROTOBUF_CONSTEXPR Room::Room(
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
+  , /*decltype(_impl_.game_version_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
   , /*decltype(_impl_.config_)*/nullptr
   , /*decltype(_impl_.connection_)*/nullptr
   , /*decltype(_impl_.state_)*/ 0
@@ -119,6 +123,10 @@ PROTOBUF_CONSTEXPR CreateRoomRequest::CreateRoomRequest(
     ::_pbi::ConstantInitialized): _impl_{
     /*decltype(_impl_._has_bits_)*/{}
   , /*decltype(_impl_._cached_size_)*/{}
+  , /*decltype(_impl_.game_version_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
   , /*decltype(_impl_.room_name_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
@@ -156,7 +164,12 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 CreateRoomResponseDefaultTypeInternal _CreateRoomResponse_default_instance_;
 template <typename>
 PROTOBUF_CONSTEXPR QuickMatchRequest::QuickMatchRequest(
-    ::_pbi::ConstantInitialized) {}
+    ::_pbi::ConstantInitialized): _impl_{
+    /*decltype(_impl_.game_version_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_._cached_size_)*/{}} {}
 struct QuickMatchRequestDefaultTypeInternal {
   PROTOBUF_CONSTEXPR QuickMatchRequestDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~QuickMatchRequestDefaultTypeInternal() {}
@@ -186,7 +199,11 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 template <typename>
 PROTOBUF_CONSTEXPR JoinRoomRequest::JoinRoomRequest(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_id_)*/ {
+    /*decltype(_impl_.game_version_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.room_id_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
@@ -224,7 +241,11 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 template <typename>
 PROTOBUF_CONSTEXPR JoinRoomWithCodeRequest::JoinRoomWithCodeRequest(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.room_code_)*/ {
+    /*decltype(_impl_.game_version_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.room_code_)*/ {
     &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
   }
 
@@ -258,7 +279,11 @@ PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
 template <typename>
 PROTOBUF_CONSTEXPR GetRoomListRequest::GetRoomListRequest(
     ::_pbi::ConstantInitialized): _impl_{
-    /*decltype(_impl_.visibility_)*/ 0
+    /*decltype(_impl_.game_version_)*/ {
+    &::_pbi::fixed_address_empty_string, ::_pbi::ConstantInitialized {}
+  }
+
+  , /*decltype(_impl_.visibility_)*/ 0
 
   , /*decltype(_impl_.mode_)*/ 0
 
@@ -510,6 +535,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.max_players_),
     PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.current_players_),
     PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.connection_),
+    PROTOBUF_FIELD_OFFSET(::lobby::Room, _impl_.game_version_),
     ~0u,
     ~0u,
     ~0u,
@@ -518,6 +544,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,
     ~0u,
     1,
+    ~0u,
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -526,9 +553,11 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_.game_version_),
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_.room_name_),
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_.password_),
     PROTOBUF_FIELD_OFFSET(::lobby::CreateRoomRequest, _impl_.config_),
+    ~0u,
     ~0u,
     ~0u,
     0,
@@ -550,6 +579,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::QuickMatchRequest, _impl_.game_version_),
     PROTOBUF_FIELD_OFFSET(::lobby::QuickMatchResponse, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::lobby::QuickMatchResponse, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -568,6 +598,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _impl_.game_version_),
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _impl_.room_id_),
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomRequest, _impl_.password_),
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomResponse, _impl_._has_bits_),
@@ -588,6 +619,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomWithCodeRequest, _impl_.game_version_),
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomWithCodeRequest, _impl_.room_code_),
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomWithCodeResponse, _impl_._has_bits_),
     PROTOBUF_FIELD_OFFSET(::lobby::JoinRoomWithCodeResponse, _internal_metadata_),
@@ -607,6 +639,7 @@ const ::uint32_t TableStruct_lobby_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE(
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
+    PROTOBUF_FIELD_OFFSET(::lobby::GetRoomListRequest, _impl_.game_version_),
     PROTOBUF_FIELD_OFFSET(::lobby::GetRoomListRequest, _impl_.visibility_),
     PROTOBUF_FIELD_OFFSET(::lobby::GetRoomListRequest, _impl_.mode_),
     PROTOBUF_FIELD_OFFSET(::lobby::GetRoomListRequest, _impl_.map_),
@@ -723,28 +756,28 @@ static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         { 0, -1, -1, sizeof(::lobby::RoomConnectionInfo)},
         { 10, -1, -1, sizeof(::lobby::RoomConfig)},
-        { 22, 38, -1, sizeof(::lobby::Room)},
-        { 46, 57, -1, sizeof(::lobby::CreateRoomRequest)},
-        { 60, 69, -1, sizeof(::lobby::CreateRoomResponse)},
-        { 70, -1, -1, sizeof(::lobby::QuickMatchRequest)},
-        { 78, 87, -1, sizeof(::lobby::QuickMatchResponse)},
-        { 88, -1, -1, sizeof(::lobby::JoinRoomRequest)},
-        { 98, 107, -1, sizeof(::lobby::JoinRoomResponse)},
-        { 108, -1, -1, sizeof(::lobby::JoinRoomWithCodeRequest)},
-        { 117, 126, -1, sizeof(::lobby::JoinRoomWithCodeResponse)},
-        { 127, -1, -1, sizeof(::lobby::GetRoomListRequest)},
-        { 138, -1, -1, sizeof(::lobby::GetRoomListResponse)},
-        { 147, -1, -1, sizeof(::lobby::UpdateRoomStateRequest)},
-        { 156, -1, -1, sizeof(::lobby::UpdateRoomStateResponse)},
-        { 165, 174, -1, sizeof(::lobby::UpdateRoomConfigRequest)},
-        { 175, 184, -1, sizeof(::lobby::UpdateRoomConfigResponse)},
-        { 185, -1, -1, sizeof(::lobby::ChangeRoomPasswordRequest)},
-        { 194, -1, -1, sizeof(::lobby::ChangeRoomPasswordResponse)},
-        { 203, -1, -1, sizeof(::lobby::ChangeRoomOwnerRequest)},
-        { 212, -1, -1, sizeof(::lobby::ChangeRoomOwnerResponse)},
-        { 221, -1, -1, sizeof(::lobby::DeleteRoomRequest)},
-        { 229, -1, -1, sizeof(::lobby::DeleteRoomResponse)},
-        { 237, -1, -1, sizeof(::lobby::ListenRoomUpdatesRequest)},
+        { 22, 39, -1, sizeof(::lobby::Room)},
+        { 48, 60, -1, sizeof(::lobby::CreateRoomRequest)},
+        { 64, 73, -1, sizeof(::lobby::CreateRoomResponse)},
+        { 74, -1, -1, sizeof(::lobby::QuickMatchRequest)},
+        { 83, 92, -1, sizeof(::lobby::QuickMatchResponse)},
+        { 93, -1, -1, sizeof(::lobby::JoinRoomRequest)},
+        { 104, 113, -1, sizeof(::lobby::JoinRoomResponse)},
+        { 114, -1, -1, sizeof(::lobby::JoinRoomWithCodeRequest)},
+        { 124, 133, -1, sizeof(::lobby::JoinRoomWithCodeResponse)},
+        { 134, -1, -1, sizeof(::lobby::GetRoomListRequest)},
+        { 146, -1, -1, sizeof(::lobby::GetRoomListResponse)},
+        { 155, -1, -1, sizeof(::lobby::UpdateRoomStateRequest)},
+        { 164, -1, -1, sizeof(::lobby::UpdateRoomStateResponse)},
+        { 173, 182, -1, sizeof(::lobby::UpdateRoomConfigRequest)},
+        { 183, 192, -1, sizeof(::lobby::UpdateRoomConfigResponse)},
+        { 193, -1, -1, sizeof(::lobby::ChangeRoomPasswordRequest)},
+        { 202, -1, -1, sizeof(::lobby::ChangeRoomPasswordResponse)},
+        { 211, -1, -1, sizeof(::lobby::ChangeRoomOwnerRequest)},
+        { 220, -1, -1, sizeof(::lobby::ChangeRoomOwnerResponse)},
+        { 229, -1, -1, sizeof(::lobby::DeleteRoomRequest)},
+        { 237, -1, -1, sizeof(::lobby::DeleteRoomResponse)},
+        { 245, -1, -1, sizeof(::lobby::ListenRoomUpdatesRequest)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -779,78 +812,82 @@ const char descriptor_table_protodef_lobby_2eproto[] PROTOBUF_SECTION_VARIABLE(p
     "onfig\022\021\n\troom_name\030\001 \001(\t\022)\n\nvisibility\030\003"
     " \001(\0162\025.lobby.RoomVisibility\022\035\n\004mode\030\004 \001("
     "\0162\017.lobby.GameMode\022\033\n\003map\030\005 \001(\0162\016.lobby."
-    "GameMap\"\335\001\n\004Room\022\017\n\007room_id\030\001 \001(\t\022\021\n\troo"
+    "GameMap\"\363\001\n\004Room\022\017\n\007room_id\030\001 \001(\t\022\021\n\troo"
     "m_code\030\002 \001(\t\022\020\n\010owner_id\030\003 \001(\t\022!\n\006config"
-    "\030\004 \001(\0132\021.lobby.RoomConfig\022\037\n\005state\030\005 \001(\016"
-    "2\020.lobby.RoomState\022\023\n\013max_players\030\006 \001(\005\022"
-    "\027\n\017current_players\030\007 \001(\005\022-\n\nconnection\030\010"
-    " \001(\0132\031.lobby.RoomConnectionInfo\"[\n\021Creat"
-    "eRoomRequest\022\021\n\troom_name\030\001 \001(\t\022\020\n\010passw"
-    "ord\030\002 \001(\t\022!\n\006config\030\003 \001(\0132\021.lobby.RoomCo"
-    "nfig\"C\n\022CreateRoomResponse\022-\n\nconnection"
-    "\030\001 \001(\0132\031.lobby.RoomConnectionInfo\"\023\n\021Qui"
-    "ckMatchRequest\"C\n\022QuickMatchResponse\022-\n\n"
-    "connection\030\001 \001(\0132\031.lobby.RoomConnectionI"
-    "nfo\"4\n\017JoinRoomRequest\022\017\n\007room_id\030\001 \001(\t\022"
-    "\020\n\010password\030\002 \001(\t\"A\n\020JoinRoomResponse\022-\n"
-    "\nconnection\030\001 \001(\0132\031.lobby.RoomConnection"
-    "Info\",\n\027JoinRoomWithCodeRequest\022\021\n\troom_"
-    "code\030\001 \001(\t\"I\n\030JoinRoomWithCodeResponse\022-"
-    "\n\nconnection\030\001 \001(\0132\031.lobby.RoomConnectio"
-    "nInfo\"{\n\022GetRoomListRequest\022)\n\nvisibilit"
-    "y\030\001 \001(\0162\025.lobby.RoomVisibility\022\035\n\004mode\030\003"
-    " \001(\0162\017.lobby.GameMode\022\033\n\003map\030\004 \001(\0162\016.lob"
-    "by.GameMap\"1\n\023GetRoomListResponse\022\032\n\005roo"
-    "ms\030\001 \003(\0132\013.lobby.Room\"9\n\026UpdateRoomState"
-    "Request\022\037\n\005state\030\001 \001(\0162\020.lobby.RoomState"
-    "\"B\n\027UpdateRoomStateResponse\022\'\n\rupdated_s"
-    "tate\030\001 \001(\0162\020.lobby.RoomState\"<\n\027UpdateRo"
-    "omConfigRequest\022!\n\006config\030\001 \001(\0132\021.lobby."
-    "RoomConfig\"E\n\030UpdateRoomConfigResponse\022)"
-    "\n\016updated_config\030\001 \001(\0132\021.lobby.RoomConfi"
-    "g\"-\n\031ChangeRoomPasswordRequest\022\020\n\010passwo"
-    "rd\030\001 \001(\t\"-\n\032ChangeRoomPasswordResponse\022\017"
-    "\n\007room_id\030\001 \001(\t\".\n\026ChangeRoomOwnerReques"
-    "t\022\024\n\014new_owner_id\030\001 \001(\t\"+\n\027ChangeRoomOwn"
-    "erResponse\022\020\n\010owner_id\030\001 \001(\t\"\023\n\021DeleteRo"
-    "omRequest\"\024\n\022DeleteRoomResponse\"\032\n\030Liste"
-    "nRoomUpdatesRequest*k\n\tRoomState\022\032\n\026ROOM"
-    "_STATE_UNSPECIFIED\020\000\022\023\n\017ROOM_STATE_OPEN\020"
-    "\001\022\026\n\022ROOM_STATE_PLAYING\020\002\022\025\n\021ROOM_STATE_"
-    "CLOSED\020\003*j\n\016RoomVisibility\022\037\n\033ROOM_VISIB"
-    "ILITY_UNSPECIFIED\020\000\022\032\n\026ROOM_VISIBILITY_P"
-    "UBLIC\020\001\022\033\n\027ROOM_VISIBILITY_PRIVATE\020\002*<\n\010"
-    "GameMode\022\031\n\025GAME_MODE_UNSPECIFIED\020\000\022\025\n\021G"
-    "AME_MODE_DEFAULT\020\001*9\n\007GameMap\022\030\n\024GAME_MA"
-    "P_UNSPECIFIED\020\000\022\024\n\020GAME_MAP_DEFAULT\020\0012\310\006"
-    "\n\014LobbyService\022A\n\nCreateRoom\022\030.lobby.Cre"
-    "ateRoomRequest\032\031.lobby.CreateRoomRespons"
-    "e\022A\n\nQuickMatch\022\030.lobby.QuickMatchReques"
-    "t\032\031.lobby.QuickMatchResponse\022;\n\010JoinRoom"
-    "\022\026.lobby.JoinRoomRequest\032\027.lobby.JoinRoo"
-    "mResponse\022S\n\020JoinRoomWithCode\022\036.lobby.Jo"
-    "inRoomWithCodeRequest\032\037.lobby.JoinRoomWi"
-    "thCodeResponse\022D\n\013GetRoomList\022\031.lobby.Ge"
-    "tRoomListRequest\032\032.lobby.GetRoomListResp"
-    "onse\022P\n\017UpdateRoomState\022\035.lobby.UpdateRo"
-    "omStateRequest\032\036.lobby.UpdateRoomStateRe"
-    "sponse\022S\n\020UpdateRoomConfig\022\036.lobby.Updat"
-    "eRoomConfigRequest\032\037.lobby.UpdateRoomCon"
-    "figResponse\022Y\n\022ChangeRoomPassword\022 .lobb"
-    "y.ChangeRoomPasswordRequest\032!.lobby.Chan"
-    "geRoomPasswordResponse\022P\n\017ChangeRoomOwne"
-    "r\022\035.lobby.ChangeRoomOwnerRequest\032\036.lobby"
-    ".ChangeRoomOwnerResponse\022A\n\nDeleteRoom\022\030"
-    ".lobby.DeleteRoomRequest\032\031.lobby.DeleteR"
-    "oomResponse\022C\n\021ListenRoomUpdates\022\037.lobby"
-    ".ListenRoomUpdatesRequest\032\013.lobby.Room0\001"
-    "B\025\370\001\001\252\002\017StereoMix.Lobbyb\006proto3"
+    "\030\005 \001(\0132\021.lobby.RoomConfig\022\037\n\005state\030\006 \001(\016"
+    "2\020.lobby.RoomState\022\023\n\013max_players\030\007 \001(\005\022"
+    "\027\n\017current_players\030\010 \001(\005\022-\n\nconnection\030\t"
+    " \001(\0132\031.lobby.RoomConnectionInfo\022\024\n\014game_"
+    "version\030\n \001(\t\"q\n\021CreateRoomRequest\022\024\n\014ga"
+    "me_version\030\001 \001(\t\022\021\n\troom_name\030\002 \001(\t\022\020\n\010p"
+    "assword\030\003 \001(\t\022!\n\006config\030\004 \001(\0132\021.lobby.Ro"
+    "omConfig\"C\n\022CreateRoomResponse\022-\n\nconnec"
+    "tion\030\001 \001(\0132\031.lobby.RoomConnectionInfo\")\n"
+    "\021QuickMatchRequest\022\024\n\014game_version\030\001 \001(\t"
+    "\"C\n\022QuickMatchResponse\022-\n\nconnection\030\001 \001"
+    "(\0132\031.lobby.RoomConnectionInfo\"J\n\017JoinRoo"
+    "mRequest\022\024\n\014game_version\030\001 \001(\t\022\017\n\007room_i"
+    "d\030\002 \001(\t\022\020\n\010password\030\003 \001(\t\"A\n\020JoinRoomRes"
+    "ponse\022-\n\nconnection\030\001 \001(\0132\031.lobby.RoomCo"
+    "nnectionInfo\"B\n\027JoinRoomWithCodeRequest\022"
+    "\024\n\014game_version\030\001 \001(\t\022\021\n\troom_code\030\002 \001(\t"
+    "\"I\n\030JoinRoomWithCodeResponse\022-\n\nconnecti"
+    "on\030\001 \001(\0132\031.lobby.RoomConnectionInfo\"\221\001\n\022"
+    "GetRoomListRequest\022\024\n\014game_version\030\001 \001(\t"
+    "\022)\n\nvisibility\030\002 \001(\0162\025.lobby.RoomVisibil"
+    "ity\022\035\n\004mode\030\003 \001(\0162\017.lobby.GameMode\022\033\n\003ma"
+    "p\030\004 \001(\0162\016.lobby.GameMap\"1\n\023GetRoomListRe"
+    "sponse\022\032\n\005rooms\030\001 \003(\0132\013.lobby.Room\"9\n\026Up"
+    "dateRoomStateRequest\022\037\n\005state\030\001 \001(\0162\020.lo"
+    "bby.RoomState\"B\n\027UpdateRoomStateResponse"
+    "\022\'\n\rupdated_state\030\001 \001(\0162\020.lobby.RoomStat"
+    "e\"<\n\027UpdateRoomConfigRequest\022!\n\006config\030\001"
+    " \001(\0132\021.lobby.RoomConfig\"E\n\030UpdateRoomCon"
+    "figResponse\022)\n\016updated_config\030\001 \001(\0132\021.lo"
+    "bby.RoomConfig\"-\n\031ChangeRoomPasswordRequ"
+    "est\022\020\n\010password\030\001 \001(\t\"-\n\032ChangeRoomPassw"
+    "ordResponse\022\017\n\007room_id\030\001 \001(\t\".\n\026ChangeRo"
+    "omOwnerRequest\022\024\n\014new_owner_id\030\001 \001(\t\"+\n\027"
+    "ChangeRoomOwnerResponse\022\020\n\010owner_id\030\001 \001("
+    "\t\"\023\n\021DeleteRoomRequest\"\024\n\022DeleteRoomResp"
+    "onse\"\032\n\030ListenRoomUpdatesRequest*k\n\tRoom"
+    "State\022\032\n\026ROOM_STATE_UNSPECIFIED\020\000\022\023\n\017ROO"
+    "M_STATE_OPEN\020\001\022\026\n\022ROOM_STATE_PLAYING\020\002\022\025"
+    "\n\021ROOM_STATE_CLOSED\020\003*j\n\016RoomVisibility\022"
+    "\037\n\033ROOM_VISIBILITY_UNSPECIFIED\020\000\022\032\n\026ROOM"
+    "_VISIBILITY_PUBLIC\020\001\022\033\n\027ROOM_VISIBILITY_"
+    "PRIVATE\020\002*<\n\010GameMode\022\031\n\025GAME_MODE_UNSPE"
+    "CIFIED\020\000\022\025\n\021GAME_MODE_DEFAULT\020\001*9\n\007GameM"
+    "ap\022\030\n\024GAME_MAP_UNSPECIFIED\020\000\022\024\n\020GAME_MAP"
+    "_DEFAULT\020\0012\310\006\n\014LobbyService\022A\n\nCreateRoo"
+    "m\022\030.lobby.CreateRoomRequest\032\031.lobby.Crea"
+    "teRoomResponse\022A\n\nQuickMatch\022\030.lobby.Qui"
+    "ckMatchRequest\032\031.lobby.QuickMatchRespons"
+    "e\022;\n\010JoinRoom\022\026.lobby.JoinRoomRequest\032\027."
+    "lobby.JoinRoomResponse\022S\n\020JoinRoomWithCo"
+    "de\022\036.lobby.JoinRoomWithCodeRequest\032\037.lob"
+    "by.JoinRoomWithCodeResponse\022D\n\013GetRoomLi"
+    "st\022\031.lobby.GetRoomListRequest\032\032.lobby.Ge"
+    "tRoomListResponse\022P\n\017UpdateRoomState\022\035.l"
+    "obby.UpdateRoomStateRequest\032\036.lobby.Upda"
+    "teRoomStateResponse\022S\n\020UpdateRoomConfig\022"
+    "\036.lobby.UpdateRoomConfigRequest\032\037.lobby."
+    "UpdateRoomConfigResponse\022Y\n\022ChangeRoomPa"
+    "ssword\022 .lobby.ChangeRoomPasswordRequest"
+    "\032!.lobby.ChangeRoomPasswordResponse\022P\n\017C"
+    "hangeRoomOwner\022\035.lobby.ChangeRoomOwnerRe"
+    "quest\032\036.lobby.ChangeRoomOwnerResponse\022A\n"
+    "\nDeleteRoom\022\030.lobby.DeleteRoomRequest\032\031."
+    "lobby.DeleteRoomResponse\022C\n\021ListenRoomUp"
+    "dates\022\037.lobby.ListenRoomUpdatesRequest\032\013"
+    ".lobby.Room0\001B\025\370\001\001\252\002\017StereoMix.Lobbyb\006pr"
+    "oto3"
 };
 static ::absl::once_flag descriptor_table_lobby_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_lobby_2eproto = {
     false,
     false,
-    2831,
+    2964,
     descriptor_table_protodef_lobby_2eproto,
     "lobby.proto",
     &descriptor_table_lobby_2eproto_once,
@@ -1507,6 +1544,8 @@ Room::Room(const Room& from)
 
     , decltype(_impl_.owner_id_) {}
 
+    , decltype(_impl_.game_version_) {}
+
     , decltype(_impl_.config_){nullptr}
     , decltype(_impl_.connection_){nullptr}
     , decltype(_impl_.state_) {}
@@ -1538,6 +1577,13 @@ Room::Room(const Room& from)
   if (!from._internal_owner_id().empty()) {
     _this->_impl_.owner_id_.Set(from._internal_owner_id(), _this->GetArenaForAllocation());
   }
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_game_version().empty()) {
+    _this->_impl_.game_version_.Set(from._internal_game_version(), _this->GetArenaForAllocation());
+  }
   if ((from._impl_._has_bits_[0] & 0x00000001u) != 0) {
     _this->_impl_.config_ = new ::lobby::RoomConfig(*from._impl_.config_);
   }
@@ -1561,6 +1607,8 @@ inline void Room::SharedCtor(::_pb::Arena* arena) {
 
     , decltype(_impl_.owner_id_) {}
 
+    , decltype(_impl_.game_version_) {}
+
     , decltype(_impl_.config_){nullptr}
     , decltype(_impl_.connection_){nullptr}
     , decltype(_impl_.state_) { 0 }
@@ -1582,6 +1630,10 @@ inline void Room::SharedCtor(::_pb::Arena* arena) {
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.owner_id_.Set("", GetArenaForAllocation());
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 Room::~Room() {
@@ -1598,6 +1650,7 @@ inline void Room::SharedDtor() {
   _impl_.room_id_.Destroy();
   _impl_.room_code_.Destroy();
   _impl_.owner_id_.Destroy();
+  _impl_.game_version_.Destroy();
   if (this != internal_default_instance()) delete _impl_.config_;
   if (this != internal_default_instance()) delete _impl_.connection_;
 }
@@ -1615,6 +1668,7 @@ void Room::Clear() {
   _impl_.room_id_.ClearToEmpty();
   _impl_.room_code_.ClearToEmpty();
   _impl_.owner_id_.ClearToEmpty();
+  _impl_.game_version_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
     if (cached_has_bits & 0x00000001u) {
@@ -1673,18 +1727,18 @@ const char* Room::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
           goto handle_unusual;
         }
         continue;
-      // .lobby.RoomConfig config = 4;
-      case 4:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
+      // .lobby.RoomConfig config = 5;
+      case 5:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 42)) {
           ptr = ctx->ParseMessage(_internal_mutable_config(), ptr);
           CHK_(ptr);
         } else {
           goto handle_unusual;
         }
         continue;
-      // .lobby.RoomState state = 5;
-      case 5:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 40)) {
+      // .lobby.RoomState state = 6;
+      case 6:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 48)) {
           ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
           _internal_set_state(static_cast<::lobby::RoomState>(val));
@@ -1692,29 +1746,40 @@ const char* Room::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
           goto handle_unusual;
         }
         continue;
-      // int32 max_players = 6;
-      case 6:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 48)) {
+      // int32 max_players = 7;
+      case 7:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
           _impl_.max_players_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else {
           goto handle_unusual;
         }
         continue;
-      // int32 current_players = 7;
-      case 7:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 56)) {
+      // int32 current_players = 8;
+      case 8:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 64)) {
           _impl_.current_players_ = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
         } else {
           goto handle_unusual;
         }
         continue;
-      // .lobby.RoomConnectionInfo connection = 8;
-      case 8:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 66)) {
+      // .lobby.RoomConnectionInfo connection = 9;
+      case 9:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 74)) {
           ptr = ctx->ParseMessage(_internal_mutable_connection(), ptr);
           CHK_(ptr);
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // string game_version = 10;
+      case 10:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 82)) {
+          auto str = _internal_mutable_game_version();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.Room.game_version"));
         } else {
           goto handle_unusual;
         }
@@ -1774,39 +1839,47 @@ failure:
   }
 
   cached_has_bits = _impl_._has_bits_[0];
-  // .lobby.RoomConfig config = 4;
+  // .lobby.RoomConfig config = 5;
   if (cached_has_bits & 0x00000001u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(4, _Internal::config(this),
+      InternalWriteMessage(5, _Internal::config(this),
         _Internal::config(this).GetCachedSize(), target, stream);
   }
 
-  // .lobby.RoomState state = 5;
+  // .lobby.RoomState state = 6;
   if (this->_internal_state() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        5, this->_internal_state(), target);
+        6, this->_internal_state(), target);
   }
 
-  // int32 max_players = 6;
+  // int32 max_players = 7;
   if (this->_internal_max_players() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-        6, this->_internal_max_players(), target);
+        7, this->_internal_max_players(), target);
   }
 
-  // int32 current_players = 7;
+  // int32 current_players = 8;
   if (this->_internal_current_players() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteInt32ToArray(
-        7, this->_internal_current_players(), target);
+        8, this->_internal_current_players(), target);
   }
 
-  // .lobby.RoomConnectionInfo connection = 8;
+  // .lobby.RoomConnectionInfo connection = 9;
   if (cached_has_bits & 0x00000002u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(8, _Internal::connection(this),
+      InternalWriteMessage(9, _Internal::connection(this),
         _Internal::connection(this).GetCachedSize(), target, stream);
+  }
+
+  // string game_version = 10;
+  if (!this->_internal_game_version().empty()) {
+    const std::string& _s = this->_internal_game_version();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.Room.game_version");
+    target = stream->WriteStringMaybeAliased(10, _s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -1843,16 +1916,22 @@ failure:
                                     this->_internal_owner_id());
   }
 
+  // string game_version = 10;
+  if (!this->_internal_game_version().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_game_version());
+  }
+
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
-    // .lobby.RoomConfig config = 4;
+    // .lobby.RoomConfig config = 5;
     if (cached_has_bits & 0x00000001u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
           *_impl_.config_);
     }
 
-    // .lobby.RoomConnectionInfo connection = 8;
+    // .lobby.RoomConnectionInfo connection = 9;
     if (cached_has_bits & 0x00000002u) {
       total_size += 1 +
         ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::MessageSize(
@@ -1860,19 +1939,19 @@ failure:
     }
 
   }
-  // .lobby.RoomState state = 5;
+  // .lobby.RoomState state = 6;
   if (this->_internal_state() != 0) {
     total_size += 1 +
                   ::_pbi::WireFormatLite::EnumSize(this->_internal_state());
   }
 
-  // int32 max_players = 6;
+  // int32 max_players = 7;
   if (this->_internal_max_players() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
         this->_internal_max_players());
   }
 
-  // int32 current_players = 7;
+  // int32 current_players = 8;
   if (this->_internal_current_players() != 0) {
     total_size += ::_pbi::WireFormatLite::Int32SizePlusOne(
         this->_internal_current_players());
@@ -1904,6 +1983,9 @@ void Room::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_
   }
   if (!from._internal_owner_id().empty()) {
     _this->_internal_set_owner_id(from._internal_owner_id());
+  }
+  if (!from._internal_game_version().empty()) {
+    _this->_internal_set_game_version(from._internal_game_version());
   }
   cached_has_bits = from._impl_._has_bits_[0];
   if (cached_has_bits & 0x00000003u) {
@@ -1951,6 +2033,8 @@ void Room::InternalSwap(Room* other) {
                                        &other->_impl_.room_code_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.owner_id_, lhs_arena,
                                        &other->_impl_.owner_id_, rhs_arena);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.game_version_, lhs_arena,
+                                       &other->_impl_.game_version_, rhs_arena);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(Room, _impl_.current_players_)
       + sizeof(Room::_impl_.current_players_)
@@ -1992,6 +2076,8 @@ CreateRoomRequest::CreateRoomRequest(const CreateRoomRequest& from)
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){from._impl_._has_bits_}
     , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.game_version_) {}
+
     , decltype(_impl_.room_name_) {}
 
     , decltype(_impl_.password_) {}
@@ -1999,6 +2085,13 @@ CreateRoomRequest::CreateRoomRequest(const CreateRoomRequest& from)
     , decltype(_impl_.config_){nullptr}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_game_version().empty()) {
+    _this->_impl_.game_version_.Set(from._internal_game_version(), _this->GetArenaForAllocation());
+  }
   _impl_.room_name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.room_name_.Set("", GetArenaForAllocation());
@@ -2024,12 +2117,18 @@ inline void CreateRoomRequest::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_{
       decltype(_impl_._has_bits_){}
     , /*decltype(_impl_._cached_size_)*/{}
+    , decltype(_impl_.game_version_) {}
+
     , decltype(_impl_.room_name_) {}
 
     , decltype(_impl_.password_) {}
 
     , decltype(_impl_.config_){nullptr}
   };
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.room_name_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.room_name_.Set("", GetArenaForAllocation());
@@ -2051,6 +2150,7 @@ CreateRoomRequest::~CreateRoomRequest() {
 
 inline void CreateRoomRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.game_version_.Destroy();
   _impl_.room_name_.Destroy();
   _impl_.password_.Destroy();
   if (this != internal_default_instance()) delete _impl_.config_;
@@ -2066,6 +2166,7 @@ void CreateRoomRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.game_version_.ClearToEmpty();
   _impl_.room_name_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
   cached_has_bits = _impl_._has_bits_[0];
@@ -2084,9 +2185,20 @@ const char* CreateRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseCont
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string room_name = 1;
+      // string game_version = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_game_version();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.CreateRoomRequest.game_version"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // string room_name = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_room_name();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -2095,9 +2207,9 @@ const char* CreateRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseCont
           goto handle_unusual;
         }
         continue;
-      // string password = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
+      // string password = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_password();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -2106,9 +2218,9 @@ const char* CreateRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseCont
           goto handle_unusual;
         }
         continue;
-      // .lobby.RoomConfig config = 3;
-      case 3:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
+      // .lobby.RoomConfig config = 4;
+      case 4:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 34)) {
           ptr = ctx->ParseMessage(_internal_mutable_config(), ptr);
           CHK_(ptr);
         } else {
@@ -2145,27 +2257,35 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string room_name = 1;
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    const std::string& _s = this->_internal_game_version();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.CreateRoomRequest.game_version");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // string room_name = 2;
   if (!this->_internal_room_name().empty()) {
     const std::string& _s = this->_internal_room_name();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.CreateRoomRequest.room_name");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
+    target = stream->WriteStringMaybeAliased(2, _s, target);
   }
 
-  // string password = 2;
+  // string password = 3;
   if (!this->_internal_password().empty()) {
     const std::string& _s = this->_internal_password();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.CreateRoomRequest.password");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
+    target = stream->WriteStringMaybeAliased(3, _s, target);
   }
 
   cached_has_bits = _impl_._has_bits_[0];
-  // .lobby.RoomConfig config = 3;
+  // .lobby.RoomConfig config = 4;
   if (cached_has_bits & 0x00000001u) {
     target = ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::
-      InternalWriteMessage(3, _Internal::config(this),
+      InternalWriteMessage(4, _Internal::config(this),
         _Internal::config(this).GetCachedSize(), target, stream);
   }
 
@@ -2185,19 +2305,25 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string room_name = 1;
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_game_version());
+  }
+
+  // string room_name = 2;
   if (!this->_internal_room_name().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                     this->_internal_room_name());
   }
 
-  // string password = 2;
+  // string password = 3;
   if (!this->_internal_password().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                     this->_internal_password());
   }
 
-  // .lobby.RoomConfig config = 3;
+  // .lobby.RoomConfig config = 4;
   cached_has_bits = _impl_._has_bits_[0];
   if (cached_has_bits & 0x00000001u) {
     total_size += 1 +
@@ -2223,6 +2349,9 @@ void CreateRoomRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, cons
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_game_version().empty()) {
+    _this->_internal_set_game_version(from._internal_game_version());
+  }
   if (!from._internal_room_name().empty()) {
     _this->_internal_set_room_name(from._internal_room_name());
   }
@@ -2253,6 +2382,8 @@ void CreateRoomRequest::InternalSwap(CreateRoomRequest* other) {
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   swap(_impl_._has_bits_[0], other->_impl_._has_bits_[0]);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.game_version_, lhs_arena,
+                                       &other->_impl_.game_version_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_name_, lhs_arena,
                                        &other->_impl_.room_name_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, lhs_arena,
@@ -2477,31 +2608,189 @@ class QuickMatchRequest::_Internal {
 };
 
 QuickMatchRequest::QuickMatchRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase(arena) {
+  : ::PROTOBUF_NAMESPACE_ID::Message(arena) {
+  SharedCtor(arena);
   // @@protoc_insertion_point(arena_constructor:lobby.QuickMatchRequest)
 }
 QuickMatchRequest::QuickMatchRequest(const QuickMatchRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase() {
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
   QuickMatchRequest* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.game_version_) {}
+
+    , /*decltype(_impl_._cached_size_)*/{}};
+
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_game_version().empty()) {
+    _this->_impl_.game_version_.Set(from._internal_game_version(), _this->GetArenaForAllocation());
+  }
   // @@protoc_insertion_point(copy_constructor:lobby.QuickMatchRequest)
 }
 
+inline void QuickMatchRequest::SharedCtor(::_pb::Arena* arena) {
+  (void)arena;
+  new (&_impl_) Impl_{
+      decltype(_impl_.game_version_) {}
 
+    , /*decltype(_impl_._cached_size_)*/{}
+  };
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+}
 
+QuickMatchRequest::~QuickMatchRequest() {
+  // @@protoc_insertion_point(destructor:lobby.QuickMatchRequest)
+  if (auto *arena = _internal_metadata_.DeleteReturnArena<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>()) {
+  (void)arena;
+    return;
+  }
+  SharedDtor();
+}
 
+inline void QuickMatchRequest::SharedDtor() {
+  ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.game_version_.Destroy();
+}
+
+void QuickMatchRequest::SetCachedSize(int size) const {
+  _impl_._cached_size_.Set(size);
+}
+
+void QuickMatchRequest::Clear() {
+// @@protoc_insertion_point(message_clear_start:lobby.QuickMatchRequest)
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  _impl_.game_version_.ClearToEmpty();
+  _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
+}
+
+const char* QuickMatchRequest::_InternalParse(const char* ptr, ::_pbi::ParseContext* ctx) {
+#define CHK_(x) if (PROTOBUF_PREDICT_FALSE(!(x))) goto failure
+  while (!ctx->Done(&ptr)) {
+    ::uint32_t tag;
+    ptr = ::_pbi::ReadTag(ptr, &tag);
+    switch (tag >> 3) {
+      // string game_version = 1;
+      case 1:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_game_version();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.QuickMatchRequest.game_version"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      default:
+        goto handle_unusual;
+    }  // switch
+  handle_unusual:
+    if ((tag == 0) || ((tag & 7) == 4)) {
+      CHK_(ptr);
+      ctx->SetLastTag(tag);
+      goto message_done;
+    }
+    ptr = UnknownFieldParse(
+        tag,
+        _internal_metadata_.mutable_unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(),
+        ptr, ctx);
+    CHK_(ptr != nullptr);
+  }  // while
+message_done:
+  return ptr;
+failure:
+  ptr = nullptr;
+  goto message_done;
+#undef CHK_
+}
+
+::uint8_t* QuickMatchRequest::_InternalSerialize(
+    ::uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream) const {
+  // @@protoc_insertion_point(serialize_to_array_start:lobby.QuickMatchRequest)
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
+
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    const std::string& _s = this->_internal_game_version();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.QuickMatchRequest.game_version");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
+    target = ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
+        _internal_metadata_.unknown_fields<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance), target, stream);
+  }
+  // @@protoc_insertion_point(serialize_to_array_end:lobby.QuickMatchRequest)
+  return target;
+}
+
+::size_t QuickMatchRequest::ByteSizeLong() const {
+// @@protoc_insertion_point(message_byte_size_start:lobby.QuickMatchRequest)
+  ::size_t total_size = 0;
+
+  ::uint32_t cached_has_bits = 0;
+  // Prevent compiler warnings about cached_has_bits being unused
+  (void) cached_has_bits;
+
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_game_version());
+  }
+
+  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
+}
 
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData QuickMatchRequest::_class_data_ = {
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::CopyImpl,
-    ::PROTOBUF_NAMESPACE_ID::internal::ZeroFieldsBase::MergeImpl,
+    ::PROTOBUF_NAMESPACE_ID::Message::CopyWithSourceCheck,
+    QuickMatchRequest::MergeImpl
 };
 const ::PROTOBUF_NAMESPACE_ID::Message::ClassData*QuickMatchRequest::GetClassData() const { return &_class_data_; }
 
 
+void QuickMatchRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg) {
+  auto* const _this = static_cast<QuickMatchRequest*>(&to_msg);
+  auto& from = static_cast<const QuickMatchRequest&>(from_msg);
+  // @@protoc_insertion_point(class_specific_merge_from_start:lobby.QuickMatchRequest)
+  ABSL_DCHECK_NE(&from, _this);
+  ::uint32_t cached_has_bits = 0;
+  (void) cached_has_bits;
 
+  if (!from._internal_game_version().empty()) {
+    _this->_internal_set_game_version(from._internal_game_version());
+  }
+  _this->_internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+}
 
+void QuickMatchRequest::CopyFrom(const QuickMatchRequest& from) {
+// @@protoc_insertion_point(class_specific_copy_from_start:lobby.QuickMatchRequest)
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
 
+bool QuickMatchRequest::IsInitialized() const {
+  return true;
+}
 
+void QuickMatchRequest::InternalSwap(QuickMatchRequest* other) {
+  using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
+  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.game_version_, lhs_arena,
+                                       &other->_impl_.game_version_, rhs_arena);
+}
 
 ::PROTOBUF_NAMESPACE_ID::Metadata QuickMatchRequest::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
@@ -2728,13 +3017,22 @@ JoinRoomRequest::JoinRoomRequest(const JoinRoomRequest& from)
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   JoinRoomRequest* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
+      decltype(_impl_.game_version_) {}
+
+    , decltype(_impl_.room_id_) {}
 
     , decltype(_impl_.password_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_game_version().empty()) {
+    _this->_impl_.game_version_.Set(from._internal_game_version(), _this->GetArenaForAllocation());
+  }
   _impl_.room_id_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.room_id_.Set("", GetArenaForAllocation());
@@ -2755,12 +3053,18 @@ JoinRoomRequest::JoinRoomRequest(const JoinRoomRequest& from)
 inline void JoinRoomRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_id_) {}
+      decltype(_impl_.game_version_) {}
+
+    , decltype(_impl_.room_id_) {}
 
     , decltype(_impl_.password_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.room_id_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.room_id_.Set("", GetArenaForAllocation());
@@ -2782,6 +3086,7 @@ JoinRoomRequest::~JoinRoomRequest() {
 
 inline void JoinRoomRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.game_version_.Destroy();
   _impl_.room_id_.Destroy();
   _impl_.password_.Destroy();
 }
@@ -2796,6 +3101,7 @@ void JoinRoomRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.game_version_.ClearToEmpty();
   _impl_.room_id_.ClearToEmpty();
   _impl_.password_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
@@ -2807,9 +3113,20 @@ const char* JoinRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseContex
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string room_id = 1;
+      // string game_version = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_game_version();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.JoinRoomRequest.game_version"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // string room_id = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_room_id();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -2818,9 +3135,9 @@ const char* JoinRoomRequest::_InternalParse(const char* ptr, ::_pbi::ParseContex
           goto handle_unusual;
         }
         continue;
-      // string password = 2;
-      case 2:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
+      // string password = 3;
+      case 3:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 26)) {
           auto str = _internal_mutable_password();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -2858,20 +3175,28 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string room_id = 1;
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    const std::string& _s = this->_internal_game_version();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomRequest.game_version");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // string room_id = 2;
   if (!this->_internal_room_id().empty()) {
     const std::string& _s = this->_internal_room_id();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomRequest.room_id");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
+    target = stream->WriteStringMaybeAliased(2, _s, target);
   }
 
-  // string password = 2;
+  // string password = 3;
   if (!this->_internal_password().empty()) {
     const std::string& _s = this->_internal_password();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomRequest.password");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
+    target = stream->WriteStringMaybeAliased(3, _s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -2890,13 +3215,19 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string room_id = 1;
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_game_version());
+  }
+
+  // string room_id = 2;
   if (!this->_internal_room_id().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                     this->_internal_room_id());
   }
 
-  // string password = 2;
+  // string password = 3;
   if (!this->_internal_password().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                     this->_internal_password());
@@ -2920,6 +3251,9 @@ void JoinRoomRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, const 
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_game_version().empty()) {
+    _this->_internal_set_game_version(from._internal_game_version());
+  }
   if (!from._internal_room_id().empty()) {
     _this->_internal_set_room_id(from._internal_room_id());
   }
@@ -2945,6 +3279,8 @@ void JoinRoomRequest::InternalSwap(JoinRoomRequest* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.game_version_, lhs_arena,
+                                       &other->_impl_.game_version_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_id_, lhs_arena,
                                        &other->_impl_.room_id_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.password_, lhs_arena,
@@ -3176,11 +3512,20 @@ JoinRoomWithCodeRequest::JoinRoomWithCodeRequest(const JoinRoomWithCodeRequest& 
   : ::PROTOBUF_NAMESPACE_ID::Message() {
   JoinRoomWithCodeRequest* const _this = this; (void)_this;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_code_) {}
+      decltype(_impl_.game_version_) {}
+
+    , decltype(_impl_.room_code_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}};
 
   _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_game_version().empty()) {
+    _this->_impl_.game_version_.Set(from._internal_game_version(), _this->GetArenaForAllocation());
+  }
   _impl_.room_code_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.room_code_.Set("", GetArenaForAllocation());
@@ -3194,10 +3539,16 @@ JoinRoomWithCodeRequest::JoinRoomWithCodeRequest(const JoinRoomWithCodeRequest& 
 inline void JoinRoomWithCodeRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.room_code_) {}
+      decltype(_impl_.game_version_) {}
+
+    , decltype(_impl_.room_code_) {}
 
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   _impl_.room_code_.InitDefault();
   #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
         _impl_.room_code_.Set("", GetArenaForAllocation());
@@ -3215,6 +3566,7 @@ JoinRoomWithCodeRequest::~JoinRoomWithCodeRequest() {
 
 inline void JoinRoomWithCodeRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.game_version_.Destroy();
   _impl_.room_code_.Destroy();
 }
 
@@ -3228,6 +3580,7 @@ void JoinRoomWithCodeRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.game_version_.ClearToEmpty();
   _impl_.room_code_.ClearToEmpty();
   _internal_metadata_.Clear<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>();
 }
@@ -3238,9 +3591,20 @@ const char* JoinRoomWithCodeRequest::_InternalParse(const char* ptr, ::_pbi::Par
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // string room_code = 1;
+      // string game_version = 1;
       case 1:
         if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_game_version();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.JoinRoomWithCodeRequest.game_version"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // string room_code = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 18)) {
           auto str = _internal_mutable_room_code();
           ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
           CHK_(ptr);
@@ -3278,12 +3642,20 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // string room_code = 1;
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    const std::string& _s = this->_internal_game_version();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomWithCodeRequest.game_version");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // string room_code = 2;
   if (!this->_internal_room_code().empty()) {
     const std::string& _s = this->_internal_room_code();
     ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.JoinRoomWithCodeRequest.room_code");
-    target = stream->WriteStringMaybeAliased(1, _s, target);
+    target = stream->WriteStringMaybeAliased(2, _s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -3302,7 +3674,13 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // string room_code = 1;
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_game_version());
+  }
+
+  // string room_code = 2;
   if (!this->_internal_room_code().empty()) {
     total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
                                     this->_internal_room_code());
@@ -3326,6 +3704,9 @@ void JoinRoomWithCodeRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_game_version().empty()) {
+    _this->_internal_set_game_version(from._internal_game_version());
+  }
   if (!from._internal_room_code().empty()) {
     _this->_internal_set_room_code(from._internal_room_code());
   }
@@ -3348,6 +3729,8 @@ void JoinRoomWithCodeRequest::InternalSwap(JoinRoomWithCodeRequest* other) {
   auto* lhs_arena = GetArenaForAllocation();
   auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.game_version_, lhs_arena,
+                                       &other->_impl_.game_version_, rhs_arena);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.room_code_, lhs_arena,
                                        &other->_impl_.room_code_, rhs_arena);
 }
@@ -3574,16 +3957,39 @@ GetRoomListRequest::GetRoomListRequest(::PROTOBUF_NAMESPACE_ID::Arena* arena)
   // @@protoc_insertion_point(arena_constructor:lobby.GetRoomListRequest)
 }
 GetRoomListRequest::GetRoomListRequest(const GetRoomListRequest& from)
-  : ::PROTOBUF_NAMESPACE_ID::Message(), _impl_(from._impl_) {
-  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(
-      from._internal_metadata_);
+  : ::PROTOBUF_NAMESPACE_ID::Message() {
+  GetRoomListRequest* const _this = this; (void)_this;
+  new (&_impl_) Impl_{
+      decltype(_impl_.game_version_) {}
+
+    , decltype(_impl_.visibility_) {}
+
+    , decltype(_impl_.mode_) {}
+
+    , decltype(_impl_.map_) {}
+
+    , /*decltype(_impl_._cached_size_)*/{}};
+
+  _internal_metadata_.MergeFrom<::PROTOBUF_NAMESPACE_ID::UnknownFieldSet>(from._internal_metadata_);
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
+  if (!from._internal_game_version().empty()) {
+    _this->_impl_.game_version_.Set(from._internal_game_version(), _this->GetArenaForAllocation());
+  }
+  ::memcpy(&_impl_.visibility_, &from._impl_.visibility_,
+    static_cast<::size_t>(reinterpret_cast<char*>(&_impl_.map_) -
+    reinterpret_cast<char*>(&_impl_.visibility_)) + sizeof(_impl_.map_));
   // @@protoc_insertion_point(copy_constructor:lobby.GetRoomListRequest)
 }
 
 inline void GetRoomListRequest::SharedCtor(::_pb::Arena* arena) {
   (void)arena;
   new (&_impl_) Impl_{
-      decltype(_impl_.visibility_) { 0 }
+      decltype(_impl_.game_version_) {}
+
+    , decltype(_impl_.visibility_) { 0 }
 
     , decltype(_impl_.mode_) { 0 }
 
@@ -3591,6 +3997,10 @@ inline void GetRoomListRequest::SharedCtor(::_pb::Arena* arena) {
 
     , /*decltype(_impl_._cached_size_)*/{}
   };
+  _impl_.game_version_.InitDefault();
+  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
+        _impl_.game_version_.Set("", GetArenaForAllocation());
+  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
 }
 
 GetRoomListRequest::~GetRoomListRequest() {
@@ -3604,6 +4014,7 @@ GetRoomListRequest::~GetRoomListRequest() {
 
 inline void GetRoomListRequest::SharedDtor() {
   ABSL_DCHECK(GetArenaForAllocation() == nullptr);
+  _impl_.game_version_.Destroy();
 }
 
 void GetRoomListRequest::SetCachedSize(int size) const {
@@ -3616,6 +4027,7 @@ void GetRoomListRequest::Clear() {
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
+  _impl_.game_version_.ClearToEmpty();
   ::memset(&_impl_.visibility_, 0, static_cast<::size_t>(
       reinterpret_cast<char*>(&_impl_.map_) -
       reinterpret_cast<char*>(&_impl_.visibility_)) + sizeof(_impl_.map_));
@@ -3628,9 +4040,20 @@ const char* GetRoomListRequest::_InternalParse(const char* ptr, ::_pbi::ParseCon
     ::uint32_t tag;
     ptr = ::_pbi::ReadTag(ptr, &tag);
     switch (tag >> 3) {
-      // .lobby.RoomVisibility visibility = 1;
+      // string game_version = 1;
       case 1:
-        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 8)) {
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 10)) {
+          auto str = _internal_mutable_game_version();
+          ptr = ::_pbi::InlineGreedyStringParser(str, ptr, ctx);
+          CHK_(ptr);
+          CHK_(::_pbi::VerifyUTF8(str, "lobby.GetRoomListRequest.game_version"));
+        } else {
+          goto handle_unusual;
+        }
+        continue;
+      // .lobby.RoomVisibility visibility = 2;
+      case 2:
+        if (PROTOBUF_PREDICT_TRUE(static_cast<::uint8_t>(tag) == 16)) {
           ::int32_t val = ::PROTOBUF_NAMESPACE_ID::internal::ReadVarint32(&ptr);
           CHK_(ptr);
           _internal_set_visibility(static_cast<::lobby::RoomVisibility>(val));
@@ -3687,11 +4110,19 @@ failure:
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
-  // .lobby.RoomVisibility visibility = 1;
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    const std::string& _s = this->_internal_game_version();
+    ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::VerifyUtf8String(
+        _s.data(), static_cast<int>(_s.length()), ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::SERIALIZE, "lobby.GetRoomListRequest.game_version");
+    target = stream->WriteStringMaybeAliased(1, _s, target);
+  }
+
+  // .lobby.RoomVisibility visibility = 2;
   if (this->_internal_visibility() != 0) {
     target = stream->EnsureSpace(target);
     target = ::_pbi::WireFormatLite::WriteEnumToArray(
-        1, this->_internal_visibility(), target);
+        2, this->_internal_visibility(), target);
   }
 
   // .lobby.GameMode mode = 3;
@@ -3724,7 +4155,13 @@ failure:
   // Prevent compiler warnings about cached_has_bits being unused
   (void) cached_has_bits;
 
-  // .lobby.RoomVisibility visibility = 1;
+  // string game_version = 1;
+  if (!this->_internal_game_version().empty()) {
+    total_size += 1 + ::PROTOBUF_NAMESPACE_ID::internal::WireFormatLite::StringSize(
+                                    this->_internal_game_version());
+  }
+
+  // .lobby.RoomVisibility visibility = 2;
   if (this->_internal_visibility() != 0) {
     total_size += 1 +
                   ::_pbi::WireFormatLite::EnumSize(this->_internal_visibility());
@@ -3760,6 +4197,9 @@ void GetRoomListRequest::MergeImpl(::PROTOBUF_NAMESPACE_ID::Message& to_msg, con
   ::uint32_t cached_has_bits = 0;
   (void) cached_has_bits;
 
+  if (!from._internal_game_version().empty()) {
+    _this->_internal_set_game_version(from._internal_game_version());
+  }
   if (from._internal_visibility() != 0) {
     _this->_internal_set_visibility(from._internal_visibility());
   }
@@ -3785,7 +4225,11 @@ bool GetRoomListRequest::IsInitialized() const {
 
 void GetRoomListRequest::InternalSwap(GetRoomListRequest* other) {
   using std::swap;
+  auto* lhs_arena = GetArenaForAllocation();
+  auto* rhs_arena = other->GetArenaForAllocation();
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
+  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.game_version_, lhs_arena,
+                                       &other->_impl_.game_version_, rhs_arena);
   ::PROTOBUF_NAMESPACE_ID::internal::memswap<
       PROTOBUF_FIELD_OFFSET(GetRoomListRequest, _impl_.map_)
       + sizeof(GetRoomListRequest::_impl_.map_)

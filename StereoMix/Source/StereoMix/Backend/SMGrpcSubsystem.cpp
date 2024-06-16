@@ -23,13 +23,13 @@ void USMGrpcSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	EConnectionEndPointTargets Target = EConnectionEndPointTargets::Local;
 	if (!UGameplayStatics::HasLaunchOption("local"))
 	{
-#if WITH_EDITOR
+		#if WITH_EDITOR
 		Target = EConnectionEndPointTargets::Local;
-#elif UE_BUILD_DEVELOPMENT
+		#elif UE_BUILD_DEVELOPMENT
 		Target = EConnectionEndPointTargets::Live;
-#elif UE_BUILD_SHIPPING
+		#elif UE_BUILD_SHIPPING
 		Target = EConnectionEndPointTargets::Live;
-#endif
+		#endif
 	}
 	SetTargetEndPoint(Target);
 }
@@ -56,12 +56,12 @@ void USMGrpcSubsystem::SetTargetEndPoint(const EConnectionEndPointTargets Target
 
 		case EConnectionEndPointTargets::Local:
 			// 임시 코드
-			TurboLinkConfig->EnableServerSideTLS = true;
-			TurboLinkConfig->ServerRootCerts = ServerRootCerts;
-			TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
-		// TurboLinkConfig->EnableServerSideTLS = false;
-		// TurboLinkConfig->ServerRootCerts = TEXT("");
-		// TurboLinkConfig->DefaultEndPoint = LocalServerEndPoint;
+			// TurboLinkConfig->EnableServerSideTLS = true;
+			// TurboLinkConfig->ServerRootCerts = ServerRootCerts;
+			// TurboLinkConfig->DefaultEndPoint = LiveServerEndPoint;
+			TurboLinkConfig->EnableServerSideTLS = false;
+			TurboLinkConfig->ServerRootCerts = TEXT("");
+			TurboLinkConfig->DefaultEndPoint = LocalServerEndPoint;
 			break;
 	}
 }
