@@ -18,7 +18,7 @@ class STEREOMIX_API USMUserWidget_GameStatistics : public USMUserWidget
 public:
 	virtual void NativeConstruct() override;
 	
-	void UpdatePingText(uint8 NewPing) const;
+	void UpdatePingText(int32 NewPing) const;
 	
 private:
 	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidget, AllowPrivateAccess = true))

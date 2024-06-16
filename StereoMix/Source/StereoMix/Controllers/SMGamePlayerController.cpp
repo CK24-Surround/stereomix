@@ -154,7 +154,9 @@ void ASMGamePlayerController::UpdateGameStatistics()
 
 	if (GameStatisticsWidget)
 	{
-		GameStatisticsWidget->UpdatePingText(PlayerState->GetCompressedPing());
+		// NET_LOG(this, Verbose, TEXT("Ping: %fms"), PlayerState->GetPingInMilliseconds())
+		const int32 Ping = FMath::CeilToInt(PlayerState->GetPingInMilliseconds());
+		GameStatisticsWidget->UpdatePingText(Ping);
 	}
 }
 

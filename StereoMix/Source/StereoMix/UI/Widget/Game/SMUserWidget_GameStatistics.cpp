@@ -9,7 +9,7 @@ void USMUserWidget_GameStatistics::NativeConstruct()
 	PingTextBlock->SetText(FText::FromString(TEXT("0ms")));
 }
 
-void USMUserWidget_GameStatistics::UpdatePingText(uint8 NewPing) const
+void USMUserWidget_GameStatistics::UpdatePingText(int32 NewPing) const
 {
 	PingTextBlock->SetText(FText::Format(FTextFormat::FromString(TEXT("{0}ms")), NewPing));
 }
