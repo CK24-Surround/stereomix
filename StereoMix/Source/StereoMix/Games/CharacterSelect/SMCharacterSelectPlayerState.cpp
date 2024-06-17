@@ -5,12 +5,12 @@
 
 #include "SMCharacterSelectState.h"
 #include "Net/UnrealNetwork.h"
-#include "Utilities/SMLog.h"
 
 
 ASMCharacterSelectPlayerState::ASMCharacterSelectPlayerState()
 {
 	CurrentState = ECharacterSelectPlayerStateType::Loading;
+	bCopyCharacterTypeOnSeamlessTravel = false;
 }
 
 void ASMCharacterSelectPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -26,7 +26,6 @@ void ASMCharacterSelectPlayerState::PostInitializeComponents()
 	if (DefaultOptions)
 	{
 		SetTeam(DefaultOptions->DefaultTeam);
-		NET_LOG(this, Warning, TEXT("ASMCharacterSelectPlayerState::PostInitializeComponents, Team: %s"), *UEnum::GetValueAsString(GetTeam()))
 	}
 }
 

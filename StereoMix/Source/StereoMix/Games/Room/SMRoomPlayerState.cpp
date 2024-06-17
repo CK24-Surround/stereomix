@@ -3,13 +3,15 @@
 
 #include "SMRoomPlayerState.h"
 
-#include "IMediaControls.h"
 #include "Net/UnrealNetwork.h"
 
 
 ASMRoomPlayerState::ASMRoomPlayerState()
 {
 	CurrentState = ERoomPlayerStateType::Loading;
+	
+	bCopyTeamOnSeamlessTravel = false;
+	bCopyCharacterTypeOnSeamlessTravel = false;
 }
 
 void ASMRoomPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -17,11 +19,6 @@ void ASMRoomPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, CurrentState);
-}
-
-void ASMRoomPlayerState::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
 }
 
 void ASMRoomPlayerState::BeginPlay()
@@ -126,7 +123,3 @@ void ASMRoomPlayerState::OnTeamChanged(const ESMTeam PreviousTeam, const ESMTeam
 #endif
 }
 
-bool ASMRoomPlayerState::CanChangeCharacterType(ESMCharacterType NewCharacterType) const
-{
-	return false;
-}

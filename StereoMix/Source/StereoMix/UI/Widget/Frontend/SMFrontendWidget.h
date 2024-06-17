@@ -6,12 +6,13 @@
 #include "CommonUserWidget.h"
 #include "SMFrontendWidgetStack.h"
 #include "Components/Border.h"
+#include "UI/Widget/CustomServer/SMCustomServerWidget.h"
 #include "UI/Widget/Popup/SMAlertPopup.h"
 #include "UI/Widget/Popup/SMPopup.h"
 #include "SMFrontendWidget.generated.h"
 
-USTRUCT()
-struct FBackgroundColorState
+USTRUCT(BlueprintType)
+struct FFrontendBackgroundColorState
 {
 	GENERATED_BODY()
 
@@ -35,24 +36,23 @@ struct FBackgroundColorState
 /**
  * StereoMix Frontend Widget
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMFrontendWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, Category="Background")
-	float BackgroundTransitionSpeed = 5.0f;
-
-	FString RequestRoomCode;
-
 	USMFrontendWidget();
 
+	void InitWidget(const FString& LevelOptions);
+	
 	USMFrontendWidgetStack* GetMainStack() const { return MainStack; }
 
 	UFUNCTION(BlueprintCallable)
 	void AddElementWidget(TSubclassOf<USMFrontendElementWidget> WidgetClass);
+	
 	void AddElementWidget(TSubclassOf<USMFrontendElementWidget> WidgetClass, TFunctionRef<void(USMFrontendElementWidget&)> InstanceInitFunc);
+	
 	void AddElementWidgetInstance(USMFrontendElementWidget& WidgetInstance);
 
 	UFUNCTION(BlueprintCallable)
@@ -70,6 +70,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void ChangeBackgroundColor(FLinearColor NewColor);
 
+	FString RequestRoomCode;
+
 protected:
 	virtual void NativePreConstruct() override;
 
@@ -82,16 +84,18 @@ protected:
 	void RemoveElementWidgetInternal(USMFrontendElementWidget* Widget);
 
 private:
-	UPROPERTY(Transient, BlueprintReadOnly, meta=(BindWidget, AllowPrivateAccess))
+	void OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer);
+	
+	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMFrontendWidgetStack> MainStack;
 
-	UPROPERTY(Transient, BlueprintReadOnly, meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonActivatableWidgetStack> PopupStack;
 
-	UPROPERTY(Transient, BlueprintReadOnly, meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
 	TObjectPtr<UBorder> Background;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Popup Elements", meta=(AllowPrivateAccess))
 	TSubclassOf<USMAlertPopup> AlertPopupClass;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
@@ -100,7 +104,15 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
 	TSubclassOf<USMFrontendElementWidget> MainMenuWidgetClass;
 
-	FBackgroundColorState BackgroundColorState;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
+	TSubclassOf<USMCustomServerWidget> CustomServerWidgetClass;
 
-	void OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer);
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, Category="Background", meta=(AllowPrivateAccess))
+	FFrontendBackgroundColorState BackgroundColorState;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Background", meta=(AllowPrivateAccess))
+	float BackgroundTransitionSpeed = 2.5f;
+
+	UPROPERTY(Transient)
+	TSubclassOf<USMFrontendElementWidget> InitWidgetClass;
 };

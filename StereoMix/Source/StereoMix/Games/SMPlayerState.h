@@ -68,4 +68,10 @@ protected:
 
 	virtual void OnTeamChanged(ESMTeam PreviousTeam, ESMTeam NewTeam);
 	virtual void OnCharacterTypeChanged(ESMCharacterType PreviousCharacterType, ESMCharacterType NewCharacterType);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=PlayerState)
+	bool bCopyTeamOnSeamlessTravel = true;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=PlayerState)
+	bool bCopyCharacterTypeOnSeamlessTravel = true;
 };
