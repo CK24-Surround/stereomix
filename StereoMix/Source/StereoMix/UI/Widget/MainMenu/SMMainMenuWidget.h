@@ -3,16 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMFrontendElementWidget.h"
-#include "SMLobbyWidget.h"
-#include "SMSettingsWidget.h"
+#include "UI/Widget/Frontend/SMFrontendElementWidget.h"
+#include "UI/Widget/Lobby/SMLobbyWidget.h"
+#include "UI/Widget/Settings/SMSettingsWidget.h"
 #include "UI/Widget/Common/SMCommonButton.h"
 #include "SMMainMenuWidget.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMMainMenuWidget : public USMFrontendElementWidget
 {
 	GENERATED_BODY()

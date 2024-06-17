@@ -10,7 +10,7 @@
 /**
  * StereoMix Alert Popup Widget
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMAlertPopup : public USMPopup
 {
 	GENERATED_BODY()

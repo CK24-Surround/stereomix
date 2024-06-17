@@ -13,7 +13,7 @@ class UTextBlock;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_CharacterState : public USMUserWidget
 {
 	GENERATED_BODY()

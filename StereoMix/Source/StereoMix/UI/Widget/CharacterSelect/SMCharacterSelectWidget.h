@@ -41,7 +41,7 @@ struct FSMCharacterSelectWidgetBackgroundData
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMCharacterSelectWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()

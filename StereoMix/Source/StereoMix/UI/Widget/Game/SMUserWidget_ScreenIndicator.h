@@ -13,7 +13,7 @@ class UScaleBox;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_ScreenIndicator : public USMUserWidget
 {
 	GENERATED_BODY()

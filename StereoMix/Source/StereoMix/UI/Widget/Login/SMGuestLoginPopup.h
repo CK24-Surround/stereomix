@@ -10,7 +10,7 @@
 /**
  * StereoMix Guest Login Popup Widget
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGuestLoginPopup : public USMPopup
 {
 	GENERATED_BODY()

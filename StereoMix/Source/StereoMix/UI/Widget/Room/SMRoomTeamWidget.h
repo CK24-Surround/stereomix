@@ -25,7 +25,7 @@ enum class ERoomTeamSelectButtonState : uint8
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMRoomTeamWidget : public USMCommonButton
 {
 	GENERATED_BODY()
