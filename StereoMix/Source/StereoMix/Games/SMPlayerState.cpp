@@ -27,8 +27,16 @@ void ASMPlayerState::SeamlessTravelTo(APlayerState* NewPlayerState)
 	// TODO: CopyProperties로 코드 옮기기
 	if (ASMPlayerState* SMPlayerState = Cast<ASMPlayerState>(NewPlayerState))
 	{
-		SMPlayerState->Team = Team;
-		SMPlayerState->CharacterType = CharacterType;
+		if (SMPlayerState->bCopyTeamOnSeamlessTravel)
+		{
+			UE_LOG(LogStereoMix, Verbose, TEXT("[SMPlayerState] Copy team: %s -> %s"), *UEnum::GetValueAsString(Team), *UEnum::GetValueAsString(SMPlayerState->Team))
+			SMPlayerState->Team = Team;
+		}
+		if (SMPlayerState->bCopyCharacterTypeOnSeamlessTravel)
+		{
+			UE_LOG(LogStereoMix, Verbose, TEXT("[SMPlayerState] Copy character type: %s -> %s"), *UEnum::GetValueAsString(CharacterType), *UEnum::GetValueAsString(SMPlayerState->CharacterType))
+			SMPlayerState->CharacterType = CharacterType;
+		}
 	}
 }
 

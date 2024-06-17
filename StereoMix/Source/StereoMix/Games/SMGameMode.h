@@ -33,9 +33,13 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
-	virtual void StartMatch() override;
+	virtual void HandleMatchIsWaitingToStart() override;
+	
+	virtual void HandleMatchHasStarted() override;
 
-	virtual void EndMatch() override;
+	virtual void HandleMatchHasEnded() override;
+
+	virtual void HandleLeavingMap() override;
 
 // ~Command Line
 	UFUNCTION(Exec)
@@ -49,9 +53,6 @@ public:
 
 protected:
 	void BindToGameState();
-
-	/** 승패 확인 타이머가 만료된 후 처리를 합니다. */
-	void EndVictoryDefeatTimer();
 
 	TWeakObjectPtr<ASMGameState> CachedSMGameState;
 

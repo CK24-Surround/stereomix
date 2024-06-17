@@ -6,6 +6,7 @@
 #include "FMODBlueprintStatics.h"
 #include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
+#include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Projectiles/SMProjectilePool.h"
 #include "Session/SMGameSession.h"
@@ -21,17 +22,6 @@ ASMGameMode::ASMGameMode()
 void ASMGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-
-	if (bIsIgnoreWait)
-	{
-		// 이 경우 즉시 호출합니다.
-		OnWaitTimeEndCallback();
-		return;
-	}
-
-	// 대기 시간동안 기다립니다.
-	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnWaitTimeEndCallback, WaitTime);
 }
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
@@ -58,17 +48,35 @@ void ASMGameMode::PostInitializeComponents()
 	InitProjectilePool();
 }
 
-void ASMGameMode::StartMatch()
+void ASMGameMode::HandleMatchIsWaitingToStart()
 {
-	Super::StartMatch();
+	Super::HandleMatchIsWaitingToStart();
+
+	if (bIsIgnoreWait)
+	{
+		// 이 경우 즉시 호출합니다.
+		OnWaitTimeEndCallback();
+		return;
+	}
+
+	// 대기 시간동안 기다립니다.
+	FTimerHandle TimerHandle;
+	GetWorldTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnWaitTimeEndCallback, WaitTime);
+}
+
+void ASMGameMode::HandleMatchHasStarted()
+{
+	Super::HandleMatchHasStarted();
 
 	NET_LOG(this, Warning, TEXT("게임 시작"));
 	StartRound();
 	OnStartMatch.Broadcast();
 }
 
-void ASMGameMode::EndMatch()
+void ASMGameMode::HandleMatchHasEnded()
 {
+	Super::HandleMatchHasEnded();
+
 	// 남은 시간을 승패 확인 시간으로 다시 초기화시킵니다.
 	SetRemainRoundTime(VictoryDefeatTime);
 
@@ -77,8 +85,35 @@ void ASMGameMode::EndMatch()
 	{
 		CachedSMGameState->EndRoundVictoryDefeatResult();
 	}
+}
 
-	Super::EndMatch();
+void ASMGameMode::HandleLeavingMap()
+{
+	Super::HandleLeavingMap();
+	
+	if (bUseRestart)
+	{
+		RestartGame();
+		return;
+	}
+
+	USMGameInstance* GameInstance = GetGameInstance<USMGameInstance>();
+	if (GameInstance->IsCustomGame())
+	{
+		ProcessServerTravel("/Game/StereoMix/Levels/Room/L_Room");
+	}
+	else
+	{
+		// 클라이언트들을 연결 종료시키고 서버를 종료합니다.
+		ReturnToMainMenuHost();
+		FTimerHandle TerminateTimerHandle;
+		GetWorldTimerManager().SetTimer(TerminateTimerHandle,
+			[] {
+				FGenericPlatformMisc::RequestExit(false);
+			},
+			10.f,
+			false);
+	}
 }
 
 void ASMGameMode::PrintPlayerNum()
@@ -93,19 +128,6 @@ void ASMGameMode::BindToGameState()
 	{
 		CachedSMGameState->SetReplicatedPhaseTime(PhaseTime);
 	}
-}
-
-void ASMGameMode::EndVictoryDefeatTimer()
-{
-	if (bUseRestart)
-	{
-		RestartGame();
-		return;
-	}
-
-	// 클라이언트들을 메인 메뉴로 돌려보내고 서버를 종료합니다.
-	ReturnToMainMenuHost();
-	// FGenericPlatformMisc::RequestExit(false);
 }
 
 void ASMGameMode::OnWaitTimeEndCallback()
@@ -183,7 +205,7 @@ void ASMGameMode::PerformRoundTime()
 	// 승패 확인 타이머 종료 시
 	if (bIsRoundEnd && RemainRoundTime <= 0)
 	{
-		EndVictoryDefeatTimer();
+		SetMatchState(MatchState::LeavingMap);
 		return;
 	}
 
