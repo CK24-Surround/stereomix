@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
 #include "Data/SMTeam.h"
-#include "SMGameplayAbility_Launch.generated.h"
+#include "SMGameplayAbility_LaunchOld.generated.h"
 
 class UNiagaraSystem;
 class ASMProjectile;
@@ -14,12 +14,12 @@ class ASMProjectile;
  * 클라이언트의 마우스 위치를 서버로 전송해 이 데이터를 기반으로 서버에서 투사체를 생성하는 어빌리티입니다.
  */
 UCLASS(Abstract)
-class STEREOMIX_API USMGameplayAbility_Launch : public USMGameplayAbility
+class STEREOMIX_API USMGameplayAbility_LaunchOld : public USMGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	USMGameplayAbility_Launch();
+	USMGameplayAbility_LaunchOld();
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

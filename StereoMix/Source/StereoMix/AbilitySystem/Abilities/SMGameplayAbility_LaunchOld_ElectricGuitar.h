@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility_Launch.h"
-#include "SMGameplayAbility_Launch_ElectricGuitar.generated.h"
+#include "SMGameplayAbility_LaunchOld.h"
+#include "SMGameplayAbility_LaunchOld_ElectricGuitar.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API USMGameplayAbility_Launch_ElectricGuitar : public USMGameplayAbility_Launch
+class STEREOMIX_API USMGameplayAbility_LaunchOld_ElectricGuitar : public USMGameplayAbility_LaunchOld
 {
 	GENERATED_BODY()
 
