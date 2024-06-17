@@ -69,6 +69,9 @@ protected:
 	UFUNCTION()
 	void OnStunEnd();
 
+	/** 스턴 이펙트를 제거합니다. */
+	void RemoveStunEffect();
+
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> StunMontage;
 

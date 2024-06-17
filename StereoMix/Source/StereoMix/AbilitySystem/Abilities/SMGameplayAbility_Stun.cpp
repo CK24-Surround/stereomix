@@ -218,8 +218,9 @@ void USMGameplayAbility_Stun::ProcessBuzzerBeaterSmashed()
 
 void USMGameplayAbility_Stun::OnBuzzerBeaterSmashEnded(FGameplayEventData Payload)
 {
-	// 버저비터 종료 애니메이션을 재생하고 이 애니메이션이 종료되면 스턴을 종료합니다. 이미 잡기는 풀린 상태입니다.
+	// 버저비터 종료 애니메이션을 재생하고 이 애니메이션이 종료되면 스턴을 종료합니다. 이미 잡기는 풀린 상태입니다. 추가로 스턴 이펙트도 제거합니다.
 	NET_LOG(GetSMPlayerCharacterFromActorInfo(), Log, TEXT("버저 비터 종료"));
+	RemoveStunEffect();
 	ClientRPCPlayMontage(CachedSmashedMontage, 1.0f, TEXT("End"));
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StandUp"), CachedSmashedMontage, 1.0f, TEXT("End"));
 	if (!ensureAlways(PlayMontageAndWaitTask))
@@ -254,8 +255,9 @@ void USMGameplayAbility_Stun::ProcessCaughtExit()
 		return;
 	}
 
-	// 잡히기 상태에서 탈출합니다.
+	// 잡히기 상태에서 탈출합니다. 추가로 스턴 이펙트도 제거합니다.
 	SourceCIC->OnCaughtReleased(SourceCIC->GetActorCatchingMe(), true);
+	RemoveStunEffect();
 
 	// 잡기 탈출이 완료되기까지 기다립니다. 이후 스턴을 종료합니다.
 	UAbilityTask_WaitGameplayEvent* WatiGameplayEvent = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::CaughtExitEnd);
@@ -307,7 +309,8 @@ void USMGameplayAbility_Stun::ResetStunState()
 		}
 	}
 
-	// 위에서 구분된 몽타주로 스턴 종료 애니메이션을 재생합니다. 애니메이션 재생이 완료되면 스턴을 종료합니다.
+	// 위에서 구분된 몽타주로 스턴 종료 애니메이션을 재생합니다. 애니메이션 재생이 완료되면 스턴을 종료합니다. 추가로 스턴 이펙트도 제거합니다.
+	RemoveStunEffect();
 	ClientRPCPlayMontage(EndMontage, 1.0f, TEXT("End"));
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("StunEnd"), EndMontage, 1.0f, TEXT("End"));
 	if (!ensureAlways(PlayMontageAndWaitTask))
@@ -318,8 +321,6 @@ void USMGameplayAbility_Stun::ResetStunState()
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::OnStunEnd);
 	PlayMontageAndWaitTask->ReadyForActivation();
 
-	// 스턴 이펙트를 종료합니다.
-	SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Stun);
 }
 
 void USMGameplayAbility_Stun::OnStunEnd()
@@ -362,4 +363,15 @@ void USMGameplayAbility_Stun::OnStunEnd()
 	SourceCharacter->SetCharacterStateVisibility(true);
 
 	K2_EndAbility();
+}
+
+void USMGameplayAbility_Stun::RemoveStunEffect()
+{
+	USMAbilitySystemComponent* SourceASC = GetSMAbilitySystemComponentFromActorInfo();
+	if (!ensureAlways(SourceASC))
+	{
+		return;
+	}
+
+	SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Stun);
 }
