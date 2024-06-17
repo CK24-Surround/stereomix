@@ -34,7 +34,7 @@ void ASMRoomPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	{
 		if (bTravelingToCharacterSelect)
 		{
-			GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(ESMTeam::None);
+			// GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(ESMTeam::None);
 		}
 		else
 		{

@@ -11,17 +11,10 @@
 UENUM(BlueprintType)
 enum class ETeamChoiceMusicParameterType : uint8
 {
-	FutureBass = 0,
-	None = 1,
+	None = 0,
+	FutureBass = 1,
 	EDM = 2,
 };
-
-namespace StereoMix::Audio::TeamChoiceMusicParameterType
-{
-	constexpr float FutureBass = 0.0f;
-	constexpr float None = 1.0f;
-	constexpr float EDM = 2.0f;
-}
 
 /**
  * Background Music Player Subsystem

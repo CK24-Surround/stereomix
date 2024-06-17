@@ -47,7 +47,7 @@ void USMBackgroundMusicSubsystem::PlayTeamBackgroundMusic(const ESMTeam Team)
 			break;
 	}
 
-	UFMODBlueprintStatics::EventInstanceSetParameter(TeamBackgroundMusicInstance, TEXT("teamchoice"), ParameterValue);
+	UFMODBlueprintStatics::SetGlobalParameterByName("Winner", ParameterValue);
 }
 
 void USMBackgroundMusicSubsystem::StopAndReleaseBackgroundMusic() const
