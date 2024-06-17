@@ -7,15 +7,17 @@
 #include "StereoMixLog.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Backend/Client/SMClientAuthSubsystem.h"
+#include "GameFramework/GameModeBase.h"
+#include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
-void FBackgroundColorState::ChangeBackgroundColor(const FLinearColor NewColor)
+void FFrontendBackgroundColorState::ChangeBackgroundColor(const FLinearColor NewColor)
 {
 	bIsTransitioning = true;
 	NextColor = NewColor;
 }
 
-FLinearColor FBackgroundColorState::TransitionBackgroundColorOnTick(const float DeltaTime)
+FLinearColor FFrontendBackgroundColorState::TransitionBackgroundColorOnTick(const float DeltaTime)
 {
 	if (bIsTransitioning)
 	{
@@ -38,6 +40,56 @@ FLinearColor FBackgroundColorState::TransitionBackgroundColorOnTick(const float 
 
 USMFrontendWidget::USMFrontendWidget() {}
 
+void USMFrontendWidget::InitWidget(const FString& LevelOptions)
+{
+	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] InitWidget - LevelOptions: %s"), *GetName(), *LevelOptions)
+
+	if (FString WidgetOverride; FParse::Value(*LevelOptions, TEXT("init="), WidgetOverride))
+	{
+		if (WidgetOverride == TEXT("login"))
+		{
+			InitWidgetClass = LoginWidgetClass;
+			return;
+		}
+		if (WidgetOverride == TEXT("mainmenu"))
+		{
+			InitWidgetClass = MainMenuWidgetClass;
+			return;
+		}
+
+		UE_LOG(LogStereoMixUI, Warning, TEXT("[%s] InitWidget - Invalid Widget Override: %s"), *GetName(), *WidgetOverride)
+	}
+
+	const USMGameInstance& GameInstance = GetGameInstanceChecked<USMGameInstance>();
+	if (GameInstance.IsDemoGame())
+	{
+		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] InitWidget - Demo Mode"), *GetName())
+		if (USMClientAuthSubsystem* AuthSubsystem = GetGameInstance()->GetSubsystem<USMClientAuthSubsystem>())
+		{
+			AuthSubsystem->ResetAccount();
+		}
+		InitWidgetClass = LoginWidgetClass;
+	}
+	else if (GameInstance.IsCustomGame())
+	{
+		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] InitWidget - CustomServer Mode"), *GetName())
+		InitWidgetClass = CustomServerWidgetClass;
+	}
+	else
+	{
+		if (GetGameInstance()->GetSubsystem<USMClientAuthSubsystem>()->IsAuthenticated())
+		{
+			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] InitWidget - MainMenu"), *GetName())
+			InitWidgetClass = MainMenuWidgetClass;
+		}
+		else
+		{
+			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] InitWidget - Login (Not Authenticated)"), *GetName())
+			InitWidgetClass = LoginWidgetClass;
+		}
+	}
+}
+
 void USMFrontendWidget::NativePreConstruct()
 {
 	Super::NativePreConstruct();
@@ -47,7 +99,7 @@ void USMFrontendWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
-	BackgroundColorState = FBackgroundColorState();
+	BackgroundColorState = FFrontendBackgroundColorState();
 	BackgroundColorState.bIsTransitioning = false;
 	BackgroundColorState.TransitionSpeed = BackgroundTransitionSpeed;
 	if (Background)
@@ -56,28 +108,9 @@ void USMFrontendWidget::NativeConstruct()
 		BackgroundColorState.NextColor = Background->GetBrushColor();
 	}
 
-	if (UGameplayStatics::HasLaunchOption(TEXT("-demo")))
+	if (ensure(InitWidgetClass))
 	{
-		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeConstruct - Demo Mode"), *GetName())
-		if (USMClientAuthSubsystem* AuthSubsystem = GetGameInstance()->GetSubsystem<USMClientAuthSubsystem>())
-		{
-			AuthSubsystem->ResetAccount();
-		}
-		AddElementWidget(LoginWidgetClass);
-	}
-	else
-	{
-		const USMClientAuthSubsystem* AuthSubsystem = GetGameInstance()->GetSubsystem<USMClientAuthSubsystem>();
-		if (AuthSubsystem->IsAuthenticated())
-		{
-			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeConstruct - Open MainMenu"), *GetName())
-			AddElementWidget(MainMenuWidgetClass);
-		}
-		else
-		{
-			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeConstruct - Open Login"), *GetName())
-			AddElementWidget(LoginWidgetClass);
-		}
+		AddElementWidget(InitWidgetClass);
 	}
 }
 
@@ -93,10 +126,10 @@ void USMFrontendWidget::NativeTick(const FGeometry& MyGeometry, const float InDe
 
 USMFrontendElementWidget* USMFrontendWidget::AddElementWidgetInternal(const TSubclassOf<USMFrontendElementWidget>& WidgetClass)
 {
-	USMFrontendElementWidget* NewWidget = MainStack->AddWidget<USMFrontendElementWidget>(WidgetClass, [&](USMFrontendElementWidget& AddedWidget)
-	{
-		AddedWidget.ParentFrontendWidget = this;
-	});
+	USMFrontendElementWidget* NewWidget = MainStack->AddWidget<USMFrontendElementWidget>(WidgetClass,
+		[&](USMFrontendElementWidget& AddedWidget) {
+			AddedWidget.ParentFrontendWidget = this;
+		});
 	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidgetInternal - NewWidget: %s"), *GetName(), *NewWidget->GetName())
 	NewWidget->ActivateWidget();
 	return NewWidget;
@@ -128,11 +161,11 @@ void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> W
 	if (UUMGSequencePlayer* TransitionOut = CurrentActiveElementWidget->PlayTransitionOut())
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidget - TransitionOut"), *GetName())
-		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this, [&, WidgetClass, InstanceInitFunc](UUMGSequencePlayer&)
-		{
-			USMFrontendElementWidget* NewWidget = AddElementWidgetInternal(WidgetClass);
-			InstanceInitFunc(*NewWidget);
-		});
+		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this,
+			[&, WidgetClass, InstanceInitFunc](UUMGSequencePlayer&) {
+				USMFrontendElementWidget* NewWidget = AddElementWidgetInternal(WidgetClass);
+				InstanceInitFunc(*NewWidget);
+			});
 	}
 	else
 	{
@@ -144,8 +177,7 @@ void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> W
 
 void USMFrontendWidget::AddElementWidgetInstance(USMFrontendElementWidget& WidgetInstance)
 {
-	auto AddWidgetFunc = [this, &WidgetInstance]
-	{
+	auto AddWidgetFunc = [this, &WidgetInstance] {
 		WidgetInstance.ParentFrontendWidget = this;
 		MainStack->AddWidgetInstance(WidgetInstance);
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidgetInstance - NewWidget: %s"), *GetName(), *WidgetInstance.GetName())
@@ -166,10 +198,10 @@ void USMFrontendWidget::AddElementWidgetInstance(USMFrontendElementWidget& Widge
 	if (TransitionOut)
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidgetInstance - TransitionOut"), *GetName())
-		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this, [AddWidgetFunc](UUMGSequencePlayer&)
-		{
-			AddWidgetFunc();
-		});
+		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this,
+			[AddWidgetFunc](UUMGSequencePlayer&) {
+				AddWidgetFunc();
+			});
 	}
 	else
 	{
@@ -193,11 +225,11 @@ void USMFrontendWidget::RemoveElementWidget(USMFrontendElementWidget* Widget)
 		if (TransitionOut)
 		{
 			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut"), *GetName())
-			TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this, [this, Widget](UUMGSequencePlayer&)
-			{
-				UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut Finished"), *GetName())
-				RemoveElementWidgetInternal(Widget);
-			});
+			TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this,
+				[this, Widget](UUMGSequencePlayer&) {
+					UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut Finished"), *GetName())
+					RemoveElementWidgetInternal(Widget);
+				});
 		}
 		else
 		{
@@ -222,10 +254,10 @@ USMPopup* USMFrontendWidget::AddPopup(const TSubclassOf<USMPopup> PopupClass)
 		Popup->OnSubmit.Unbind();
 		Popup->OnClose.Unbind();
 		Popup->OnDeactivated().RemoveAll(this);
-		Popup->OnDeactivated().AddWeakLambda(this, [this]
-		{
-			SetIsFocusable(true);
-		});
+		Popup->OnDeactivated().AddWeakLambda(this,
+			[this] {
+				SetIsFocusable(true);
+			});
 		SetIsFocusable(false);
 
 		return Popup;

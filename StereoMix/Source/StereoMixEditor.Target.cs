@@ -4,7 +4,7 @@ using UnrealBuildTool;
 
 public class StereoMixEditorTarget : TargetRules
 {
-	public StereoMixEditorTarget( TargetInfo Target) : base(Target)
+	public StereoMixEditorTarget( TargetInfo target) : base(target)
 	{
 		Type = TargetType.Editor;
 		DefaultBuildSettings = BuildSettingsVersion.V5;
