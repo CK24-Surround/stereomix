@@ -36,7 +36,7 @@ void ASMDamageProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 		}
 
 		ApplyDamage(OtherActor);
-		ApplyFX(OtherActor);
+		ExecuteHitFX(OtherActor);
 
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
 		EndLifeTime();
@@ -128,7 +128,7 @@ void ASMDamageProjectile::ApplyDamage(AActor* InTarget)
 	}
 }
 
-void ASMDamageProjectile::ApplyFX(AActor* InTarget)
+void ASMDamageProjectile::ExecuteHitFX(AActor* InTarget)
 {
 	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
 	if (!ensureAlways(SourceASC))
