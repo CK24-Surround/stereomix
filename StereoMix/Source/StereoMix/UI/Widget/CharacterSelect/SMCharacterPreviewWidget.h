@@ -32,7 +32,7 @@ struct FCharacterPreviewWidgetData
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMCharacterPreviewWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()

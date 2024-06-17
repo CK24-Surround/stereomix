@@ -11,7 +11,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget : public UCommonUserWidget, public IAbilitySystemInterface
 {
 	GENERATED_BODY()

@@ -16,7 +16,7 @@
 /**
  * StereoMix Lobby Widget
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMLobbyWidget : public USMFrontendElementWidget
 {
 	GENERATED_BODY()
@@ -25,6 +25,7 @@ public:
 	USMLobbyWidget();
 
 protected:
+	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 
 	virtual void NativeOnActivated() override;

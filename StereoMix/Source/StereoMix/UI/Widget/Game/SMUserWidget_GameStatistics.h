@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_GameStatistics : public USMUserWidget
 {
 	GENERATED_BODY()

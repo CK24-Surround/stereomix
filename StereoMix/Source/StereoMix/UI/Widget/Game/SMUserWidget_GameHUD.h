@@ -12,7 +12,7 @@ class USMUserWidget_Scoreboard;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_GameHUD : public USMGamePanel
 {
 	GENERATED_BODY()

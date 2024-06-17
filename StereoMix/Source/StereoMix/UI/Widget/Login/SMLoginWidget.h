@@ -3,16 +3,17 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMFrontendElementWidget.h"
-#include "SMFrontendWidgetStack.h"
+#include "UI/Widget/Frontend/SMFrontendElementWidget.h"
+#include "UI/Widget/Frontend/SMFrontendWidgetStack.h"
 #include "SMGuestLoginPopup.h"
 #include "Backend/Client/SMClientAuthSubsystem.h"
+#include "UI/Widget/Popup/SMAlertPopup.h"
 #include "SMLoginWidget.generated.h"
 
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMLoginWidget : public USMFrontendElementWidget
 {
 	GENERATED_BODY()
@@ -23,6 +24,7 @@ public:
 protected:
 	UPROPERTY()
 	TObjectPtr<USMClientAuthSubsystem> AuthSubsystem;
+
 
 	virtual void NativeConstruct() override;
 
@@ -48,4 +50,7 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category="Login Popup", meta=(AllowPrivateAccess))
 	TObjectPtr<USMGuestLoginPopup> GuestLoginPopup;
+	
+	UPROPERTY(Transient)
+	TWeakObjectPtr<USMAlertPopup> ConnectFailedPopup;
 };

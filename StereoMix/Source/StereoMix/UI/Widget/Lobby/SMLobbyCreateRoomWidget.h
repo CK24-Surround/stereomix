@@ -9,7 +9,7 @@
 /**
  * StereoMix Lobby Create Room Widget
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMLobbyCreateRoomWidget : public USMLobbyProcessWidget
 {
 	GENERATED_BODY()

@@ -10,7 +10,7 @@
 /**
  * StereoMix Lobby Room Code Popup Widget
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMLobbyRoomCodePopup : public USMPopup
 {
 	GENERATED_BODY()

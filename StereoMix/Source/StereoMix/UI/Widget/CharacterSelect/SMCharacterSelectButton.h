@@ -38,7 +38,7 @@ struct FSMCharacterSelectButtonData
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMCharacterSelectButton : public USMCommonButton
 {
 	GENERATED_BODY()

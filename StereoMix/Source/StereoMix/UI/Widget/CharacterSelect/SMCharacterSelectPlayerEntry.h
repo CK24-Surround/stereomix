@@ -12,7 +12,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMCharacterSelectPlayerEntry : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()

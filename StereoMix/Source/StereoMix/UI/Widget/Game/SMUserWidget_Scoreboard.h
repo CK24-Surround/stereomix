@@ -13,7 +13,7 @@ class UTextBlock;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_Scoreboard : public USMUserWidget
 {
 	GENERATED_BODY()
