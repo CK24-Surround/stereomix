@@ -1,7 +1,7 @@
 // Copyright Surround, Inc. All Rights Reserved.
 
 
-#include "SMGameplayAbility_Launch_ElectricGuitar.h"
+#include "SMGameplayAbility_LaunchOld_ElectricGuitar.h"
 
 #include "Characters/SMPlayerCharacter.h"
 #include "Games/SMGameMode.h"
@@ -11,7 +11,7 @@
 
 class ASMGameMode;
 
-void USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal)
+void USMGameplayAbility_LaunchOld_ElectricGuitar::LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal)
 {
 	LaunchData.OffsetLocations.Empty();
 	LaunchData.OffsetLocations.AddZeroed(ProjectileCount);
@@ -67,7 +67,7 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectile(const FVector& I
 	LaunchTimerCallback();
 }
 
-void USMGameplayAbility_Launch_ElectricGuitar::LaunchTimerCallback()
+void USMGameplayAbility_LaunchOld_ElectricGuitar::LaunchTimerCallback()
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!SourceCharacter)
@@ -115,7 +115,7 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchTimerCallback()
 	if (LaunchData.Count < ProjectileCount)
 	{
 		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_Launch_ElectricGuitar::LaunchTimerCallback, LaunchData.Rate, false);
+		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_LaunchOld_ElectricGuitar::LaunchTimerCallback, LaunchData.Rate, false);
 	}
 	else
 	{

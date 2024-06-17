@@ -1,7 +1,7 @@
 // Copyright Surround, Inc. All Rights Reserved.
 
 
-#include "SMGameplayAbility_Launch.h"
+#include "SMGameplayAbility_LaunchOld.h"
 
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
@@ -9,7 +9,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Utilities/SMLog.h"
 
-USMGameplayAbility_Launch::USMGameplayAbility_Launch()
+USMGameplayAbility_LaunchOld::USMGameplayAbility_LaunchOld()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
@@ -25,7 +25,7 @@ USMGameplayAbility_Launch::USMGameplayAbility_Launch()
 	ActivationBlockedTags = BlockedTags;
 }
 
-void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+void USMGameplayAbility_LaunchOld::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
@@ -61,7 +61,7 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 	SourceASC->PlayMontage(this, ActivationInfo, CachedMontage, 1.0f);
 }
 
-void USMGameplayAbility_Launch::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+void USMGameplayAbility_LaunchOld::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
 {
 	UGameplayEffect* CooldownGE = GetCooldownGameplayEffect();
 	if (CooldownGE)
@@ -84,12 +84,12 @@ void USMGameplayAbility_Launch::ApplyCooldown(const FGameplayAbilitySpecHandle H
 	}
 }
 
-void USMGameplayAbility_Launch::ServerRPCSendAimingData_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantizeNormal& Normal)
+void USMGameplayAbility_LaunchOld::ServerRPCSendAimingData_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantizeNormal& Normal)
 {
 	LaunchProjectile(SourceLocation, Normal);
 }
 
-void USMGameplayAbility_Launch::ExecuteLaunchFX(int32 LaunchCount)
+void USMGameplayAbility_LaunchOld::ExecuteLaunchFX(int32 LaunchCount)
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!SourceCharacter)
