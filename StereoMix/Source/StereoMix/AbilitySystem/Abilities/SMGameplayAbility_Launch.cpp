@@ -59,10 +59,6 @@ void USMGameplayAbility_Launch::ActivateAbility(const FGameplayAbilitySpecHandle
 
 	// 발사 애니메이션을 재생합니다.
 	SourceASC->PlayMontage(this, ActivationInfo, CachedMontage, 1.0f);
-
-	FGameplayCueParameters GCParams;
-	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
-	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch_Sound, GCParams);
 }
 
 void USMGameplayAbility_Launch::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
@@ -93,7 +89,7 @@ void USMGameplayAbility_Launch::ServerRPCSendAimingData_Implementation(const FVe
 	LaunchProjectile(SourceLocation, Normal);
 }
 
-void USMGameplayAbility_Launch::ExecuteLaunchFX()
+void USMGameplayAbility_Launch::ExecuteLaunchFX(int32 LaunchCount)
 {
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!SourceCharacter)
@@ -109,15 +105,10 @@ void USMGameplayAbility_Launch::ExecuteLaunchFX()
 		return;
 	}
 
-	// TODO: 이전 이펙트 재생 방식으로 임시로 남겨두었습니다.
-	// FGameplayCueParameters GCParams;
-	// GCParams.Location = SourceCharacter->GetActorLocation() + SourceCharacter->GetActorForwardVector() * 100.0f;
-	// GCParams.Normal = FRotationMatrix(SourceCharacter->GetActorRotation()).GetUnitAxis(EAxis::X);
-	// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
-
-	// 발사 FX를 재생합니다.
+	// 발사 FX를 재생합니다. RawMagnitude에 발사횟수를 넣어 초탄에만 사운드를 적용하도록 했습니다.
 	FGameplayCueParameters GCParams;
 	GCParams.Location = FVector::ForwardVector * 100.0f;
 	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+	GCParams.RawMagnitude = LaunchCount;
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
 }

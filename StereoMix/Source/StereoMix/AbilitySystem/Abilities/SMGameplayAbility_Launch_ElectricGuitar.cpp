@@ -110,7 +110,7 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchTimerCallback()
 	NewProjectile->Launch(SourceCharacter, NewStartLocation + LaunchData.OffsetLocations[LaunchData.Count], LaunchData.Angles[LaunchData.Count], ProjectileSpeed, MaxDistance, Damage);
 	++LaunchData.Count;
 
-	ExecuteLaunchFX();
+	ExecuteLaunchFX(LaunchData.Count);
 
 	if (LaunchData.Count < ProjectileCount)
 	{
