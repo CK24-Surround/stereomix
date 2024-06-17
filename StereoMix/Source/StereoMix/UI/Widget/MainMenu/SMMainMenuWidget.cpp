@@ -3,7 +3,7 @@
 
 #include "SMMainMenuWidget.h"
 
-#include "SMFrontendWidget.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "StereoMixLog.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"

@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMSettingsWidget : public USMFrontendElementWidget
 {
 	GENERATED_BODY()

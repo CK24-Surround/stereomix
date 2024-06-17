@@ -3,7 +3,7 @@
 
 #include "SMLobbyQuickMatchWidget.h"
 
-#include "SMFrontendWidget.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "StereoMixLog.h"
 #include "Kismet/GameplayStatics.h"
 

@@ -3,7 +3,7 @@
 
 #include "SMLobbyProcessWidget.h"
 
-#include "SMFrontendWidget.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "SMLobbyProgressSectionWidget.h"
 #include "Backend/Client/SMClientLobbySubsystem.h"
 #include "Kismet/GameplayStatics.h"

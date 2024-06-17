@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMTutorialWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()

@@ -13,7 +13,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMRoomPlayerEntry : public UUserWidget, public IUserObjectListEntry
 {
 	GENERATED_BODY()

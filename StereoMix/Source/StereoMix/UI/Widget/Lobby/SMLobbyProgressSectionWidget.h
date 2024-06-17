@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMLobbyProgressSectionWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()

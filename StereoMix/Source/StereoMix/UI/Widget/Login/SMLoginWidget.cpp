@@ -3,7 +3,7 @@
 
 #include "SMLoginWidget.h"
 
-#include "SMFrontendWidget.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "Kismet/GameplayStatics.h"
 #include "UI/Widget/Popup/SMAlertPopup.h"
 
@@ -61,16 +61,29 @@ void USMLoginWidget::NativeOnDeactivated()
 
 void USMLoginWidget::OnAuthServiceStateChanged(EGrpcServiceState ServiceState)
 {
-	if (ServiceState == EGrpcServiceState::Ready)
+	if (ServiceState == EGrpcServiceState::Ready && LoginPopupStack->GetNumWidgets() == 0)
 	{
+		if (ConnectFailedPopup.IsValid())
+		{
+			ConnectFailedPopup->DeactivateWidget();
+			ConnectFailedPopup.Reset();
+		}
 		GuestLoginPopup = LoginPopupStack->AddWidget<USMGuestLoginPopup>(GuestLoginPopupClass);
 		GuestLoginPopup->OnSubmit.BindUObject(this, &USMLoginWidget::OnSubmitGuestLogin);
 	}
-	else if (ServiceState == EGrpcServiceState::TransientFailure)
+	else if (ServiceState == EGrpcServiceState::TransientFailure && !ConnectFailedPopup.IsValid())
 	{
-		GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
+		ConnectFailedPopup = GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."));
+		ConnectFailedPopup->OnSubmit.BindWeakLambda(this, [&]
 		{
-			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+			// UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+
+			// 연속 시도 시 로그인 창이 중복으로 뜨는 버그가 있을 수 있음 
+			GetWorld()->GetTimerManager().SetTimerForNextTick([this]
+			{
+				AuthSubsystem->Connect();
+			});
+			ConnectFailedPopup.Reset();
 		});
 	}
 }
@@ -80,7 +93,7 @@ void USMLoginWidget::OnLoginResponse(ELoginResult Result)
 	switch (Result)
 	{
 		case ELoginResult::Success:
-			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld(), false, TEXT("init=mainmenu"));
 			break;
 
 		case ELoginResult::InvalidPassword:

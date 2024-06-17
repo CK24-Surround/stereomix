@@ -35,6 +35,7 @@ bool USMPopup::NativeOnHandleBackAction()
 {
 	if (Super::NativeOnHandleBackAction())
 	{
+		DeactivateWidget();
 		(void)OnClose.ExecuteIfBound();
 		return true;
 	}

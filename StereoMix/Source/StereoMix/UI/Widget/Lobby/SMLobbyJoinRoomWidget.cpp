@@ -3,7 +3,7 @@
 
 #include "SMLobbyJoinRoomWidget.h"
 
-#include "SMFrontendWidget.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "StereoMixLog.h"
 #include "Kismet/GameplayStatics.h"
 

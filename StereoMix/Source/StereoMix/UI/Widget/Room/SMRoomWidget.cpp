@@ -47,10 +47,13 @@ void USMRoomWidget::NativeDestruct()
 
 void USMRoomWidget::UpdatePlayerCount() const
 {
-	const int32 NumPlayers = GetOwningRoomState()->PlayerArray.Num();
-	const int32 MaxPlayers = GetOwningRoomState()->MaxPlayersInGame;
+	if (GetOwningRoomState())
+	{
+		const int32 NumPlayers = GetOwningRoomState()->PlayerArray.Num();
+		const int32 MaxPlayers = GetOwningRoomState()->MaxPlayersInGame;
 
-	PlayerCountTextBlock->SetText(FText::FromString(FString::Printf(TEXT("%d / %d"), NumPlayers, MaxPlayers)));
+		PlayerCountTextBlock->SetText(FText::FromString(FString::Printf(TEXT("%d / %d"), NumPlayers, MaxPlayers)));
+	}
 }
 
 void USMRoomWidget::OnQuitButtonClicked()

@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMLobbyQuickMatchWidget : public USMLobbyProcessWidget
 {
 	GENERATED_BODY()

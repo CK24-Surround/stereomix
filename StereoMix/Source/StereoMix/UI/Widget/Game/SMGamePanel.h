@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGamePanel : public UCommonActivatableWidget, public IAbilitySystemInterface
 {
 	GENERATED_BODY()

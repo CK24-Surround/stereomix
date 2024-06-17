@@ -21,7 +21,7 @@ enum class EVictoryDefeatResult : uint8
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_VictoryDefeat : public USMUserWidget
 {
 	GENERATED_BODY()

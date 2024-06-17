@@ -10,7 +10,7 @@ class UImage;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_PhaseTimerBar : public USMUserWidget
 {
 	GENERATED_BODY()

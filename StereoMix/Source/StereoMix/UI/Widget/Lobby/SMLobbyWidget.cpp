@@ -3,7 +3,7 @@
 
 #include "SMLobbyWidget.h"
 
-#include "SMFrontendWidget.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "StereoMixLog.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Kismet/GameplayStatics.h"
@@ -12,6 +12,12 @@ USMLobbyWidget::USMLobbyWidget()
 {
 	bIsBackHandler = true;
 	bAutoTransitionOnActivate = false;
+}
+
+void USMLobbyWidget::NativePreConstruct()
+{
+	Super::NativePreConstruct();
+	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativePreConstruct"), *GetName())
 }
 
 void USMLobbyWidget::NativeConstruct()
