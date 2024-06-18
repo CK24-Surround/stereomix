@@ -38,12 +38,57 @@ void USMGameplayAbility_Launch_ElectricGuitar::ActivateAbility(const FGameplayAb
 
 void USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectile()
 {
-	LaunchData.OffsetLocations.Empty();
-	LaunchData.OffsetLocations.AddZeroed(ProjectileCount);
-	LaunchData.Angles.Empty();
-	LaunchData.Angles.AddZeroed(ProjectileCount);
+	LaunchData.SpawnLocationOffsets.Empty();
+	LaunchData.SpawnLocationOffsets.AddZeroed(ProjectileCount); // 발사해야할 투사체의 개수만큼 사이즈를 초기화하고 0으로 채웁니다.
+	LaunchData.SpawnRotationOffsets.Empty();
+	LaunchData.SpawnRotationOffsets.AddZeroed(ProjectileCount); // 발사해야할 투사체의 개수만큼 사이즈를 초기화하고 0으로 채웁니다.
 	LaunchData.Count = 0;
 	LaunchData.Rate = TotalLaunchTime / static_cast<float>(ProjectileCount - 1);
+
+	// TODO: 디테일 로직
+	// const FVector StartLocation = FVector::LeftVector * (ProjectileWidth / 2.0f);
+	// const float SegmentLength = ProjectileWidth / (ProjectileCount - 1);
+	//
+	// const FVector StartNormal = InNormal.RotateAngleAxis(-ProjectileTotalAngle / 2.0f, FVector::UpVector);
+	// const float AngleStep = ProjectileTotalAngle / (ProjectileCount - 1);
+	//
+	// TArray<FVector> Points;
+	// TArray<FVector> Angles;
+	// for (int32 i = 0; i < ProjectileCount; ++i)
+	// {
+	// 	Points.Add(StartLocation * (i * SegmentLength));
+	// 	Angles.Add(StartNormal.RotateAngleAxis(AngleStep * i, FVector::UpVector));
+	// }
+	//
+	// const int32 MidIndex = Points.Num() / 2;
+	// LaunchData.OffsetLocations[0] = Points[MidIndex];
+	// LaunchData.Angles[0] = Angles[MidIndex];
+	//
+	// LaunchData.CenterOffsetLocation = -StartLocation * (ProjectileWidth / 2.0);
+	//
+	// int32 Left = MidIndex - 1;
+	// int32 Right = MidIndex + 1;
+	// int32 Index = 1;
+	//
+	// while (Left >= 0 || Right < ProjectileCount)
+	// {
+	// 	if (Left >= 0)
+	// 	{
+	// 		LaunchData.OffsetLocations[Index] = Points[Left];
+	// 		LaunchData.Angles[Index] = Angles[Left];
+	// 		++Index;
+	// 		--Left;
+	// 	}
+	//
+	// 	if (Right < ProjectileCount)
+	// 	{
+	// 		LaunchData.OffsetLocations[Index] = Points[Right];
+	// 		LaunchData.Angles[Index] = Angles[Right];
+	// 		++Index;
+	// 		++Right;
+	// 	}
+	// }
+	// TODO: 디테일 로직
 
 	LaunchProjectileTimerCallback();
 }

@@ -8,9 +8,8 @@
 
 struct FLaunchData
 {
-	TArray<FVector> OffsetLocations;
-	TArray<FVector> Angles;
-	FVector CenterOffsetLocation;
+	TArray<FVector> SpawnLocationOffsets;
+	TArray<FRotator> SpawnRotationOffsets;
 	int32 Count = 0;
 	float Rate = 0.0f;
 };
