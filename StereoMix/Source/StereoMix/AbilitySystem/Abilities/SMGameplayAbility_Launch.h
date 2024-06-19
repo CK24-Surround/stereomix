@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGameplayAbility_Launch : public USMGameplayAbility
 {
 	GENERATED_BODY()
