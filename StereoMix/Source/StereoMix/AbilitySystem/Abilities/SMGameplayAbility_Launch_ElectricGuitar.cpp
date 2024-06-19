@@ -12,6 +12,14 @@
 #include "Projectiles/SMProjectilePool.h"
 #include "Utilities/SMLog.h"
 
+USMGameplayAbility_Launch_ElectricGuitar::USMGameplayAbility_Launch_ElectricGuitar()
+{
+	ProjectileSpeed = 3750.0f;
+	LaunchRate = 1.75f;
+	MaxDistance = 1100.0f;
+	Damage = 6.0f;
+}
+
 void USMGameplayAbility_Launch_ElectricGuitar::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -45,51 +53,54 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectile()
 	LaunchData.Count = 0;
 	LaunchData.Rate = TotalLaunchTime / static_cast<float>(ProjectileCount - 1);
 
-	// TODO: 디테일 로직
-	// const FVector StartLocation = FVector::LeftVector * (ProjectileWidth / 2.0f);
-	// const float SegmentLength = ProjectileWidth / (ProjectileCount - 1);
-	//
-	// const FVector StartNormal = InNormal.RotateAngleAxis(-ProjectileTotalAngle / 2.0f, FVector::UpVector);
-	// const float AngleStep = ProjectileTotalAngle / (ProjectileCount - 1);
-	//
-	// TArray<FVector> Points;
-	// TArray<FVector> Angles;
-	// for (int32 i = 0; i < ProjectileCount; ++i)
-	// {
-	// 	Points.Add(StartLocation * (i * SegmentLength));
-	// 	Angles.Add(StartNormal.RotateAngleAxis(AngleStep * i, FVector::UpVector));
-	// }
-	//
-	// const int32 MidIndex = Points.Num() / 2;
-	// LaunchData.OffsetLocations[0] = Points[MidIndex];
-	// LaunchData.Angles[0] = Angles[MidIndex];
-	//
-	// LaunchData.CenterOffsetLocation = -StartLocation * (ProjectileWidth / 2.0);
-	//
-	// int32 Left = MidIndex - 1;
-	// int32 Right = MidIndex + 1;
-	// int32 Index = 1;
-	//
-	// while (Left >= 0 || Right < ProjectileCount)
-	// {
-	// 	if (Left >= 0)
-	// 	{
-	// 		LaunchData.OffsetLocations[Index] = Points[Left];
-	// 		LaunchData.Angles[Index] = Angles[Left];
-	// 		++Index;
-	// 		--Left;
-	// 	}
-	//
-	// 	if (Right < ProjectileCount)
-	// 	{
-	// 		LaunchData.OffsetLocations[Index] = Points[Right];
-	// 		LaunchData.Angles[Index] = Angles[Right];
-	// 		++Index;
-	// 		++Right;
-	// 	}
-	// }
-	// TODO: 디테일 로직
+	const FVector StartLocation = FVector::LeftVector * (ProjectileWidth / 2.0f); // 왼쪽 시작 위치입니다.
+	const float SegmentLocation = ProjectileWidth / (ProjectileCount - 1);
 
+	const FRotator StartRotation = FRotator(0.0, -(ProjectileTotalAngle / 2.0), 0.0); // 왼쪽 시작 각도 입니다.
+	const float SegmentRotation = ProjectileTotalAngle / (ProjectileCount - 1);
+
+	// 각 배열에 위치와 회전의 오프셋을 통해 순차적으로 저장합니다.
+	TArray<FVector> Locations;
+	TArray<FRotator> Rotations;
+	for (int32 i = 0; i < ProjectileCount; ++i)
+	{
+		const FVector OffsetLocation = FVector::RightVector * (i * SegmentLocation);
+		Locations.Add(StartLocation + OffsetLocation);
+
+		const float OffsetRotationYaw = i * SegmentRotation;
+		FRotator NewRotation(0.0, StartRotation.Yaw + OffsetRotationYaw, 0.0);
+		Rotations.Add(NewRotation);
+	}
+
+	// 중심 값을 먼저 배열에 저장합니다. 가운데서 먼저 발사되게 하기 위함입니다.
+	const int32 MidIndex = Locations.Num() / 2;
+	LaunchData.SpawnLocationOffsets[0] = Locations[MidIndex];
+	LaunchData.SpawnRotationOffsets[0] = Rotations[MidIndex];
+
+	// 좌우에 번갈아가며 순서대로 배열에 채워넣습니다. 결과적으로 중심, 좌, 우, 좌, 우... 이런식으로 배열에 저장되게됩니다.
+	int32 Left = MidIndex - 1;
+	int32 Right = MidIndex + 1;
+	int32 Index = 1;
+	while (Left >= 0 || Right < ProjectileCount)
+	{
+		if (Left >= 0)
+		{
+			LaunchData.SpawnLocationOffsets[Index] = Locations[Left];
+			LaunchData.SpawnRotationOffsets[Index] = Rotations[Left];
+			++Index;
+			--Left;
+		}
+
+		if (Right < ProjectileCount)
+		{
+			LaunchData.SpawnLocationOffsets[Index] = Locations[Right];
+			LaunchData.SpawnRotationOffsets[Index] = Rotations[Right];
+			++Index;
+			++Right;
+		}
+	}
+
+	// 첫발은 즉시 발사합니다.
 	LaunchProjectileTimerCallback();
 }
 
@@ -98,22 +109,30 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectileTimerCallback()
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!SourceCharacter)
 	{
-		NET_LOG(nullptr, Warning, TEXT("소스 캐릭터가 무효합니다."))
+		NET_LOG(nullptr, Warning, TEXT("소스 캐릭터가 무효합니다."));
 		return;
 	}
 
-	// 투사체를 발사합니다.
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocatiion = SourceCharacter->GetCursorTargetingPoint();
-	const FVector Normal = (TargetLocatiion - SourceLocation).GetSafeNormal2D();
-	ServerRPCLaunchProjectile(SourceLocation, Normal, ++LaunchData.Count);
+	const FRotator SourceToTargetRotation = (TargetLocatiion - SourceLocation).GetSafeNormal2D().Rotation(); // 타겟을 향하는 회전값입니다.
 
-	if (LaunchData.Count < ProjectileCount)
+	const FVector OffsetLocation = LaunchData.SpawnLocationOffsets[LaunchData.Count];
+	const FRotator OffsetRotation = LaunchData.SpawnRotationOffsets[LaunchData.Count];
+	const FRotator FinalRotation = SourceToTargetRotation + OffsetRotation;
+
+	const FMatrix RotationMatrix = FRotationMatrix(FinalRotation);
+	const FVector RotatingLocation = RotationMatrix.TransformVector(OffsetLocation);
+
+	// 주어진 위치와 회전을 기준으로 투사체를 발사합니다.
+	ServerRPCLaunchProjectile(SourceLocation + RotatingLocation, FinalRotation.Vector(), ++LaunchData.Count);
+
+	if (LaunchData.Count < ProjectileCount) // 아직 발사 횟수를 채우지 못했다면 다시 발사하기 위해 타이머를 작동시킵니다.
 	{
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectileTimerCallback, LaunchData.Rate);
 	}
-	else
+	else // 발사 횟수가 충족되면 GA를 종료합니다.
 	{
 		K2_EndAbility();
 	}
