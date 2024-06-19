@@ -14,7 +14,7 @@ ASMFrontendPlayerController::ASMFrontendPlayerController()
 void ASMFrontendPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	if (GetWorld()->GetGameViewport())
 	{
 		const FString& Options = GetWorld()->GetAuthGameMode()->OptionsString;
