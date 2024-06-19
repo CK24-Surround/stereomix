@@ -25,7 +25,6 @@ public:
 	USMLobbyWidget();
 
 protected:
-	virtual void NativePreConstruct() override;
 	virtual void NativeConstruct() override;
 
 	virtual void NativeOnActivated() override;
