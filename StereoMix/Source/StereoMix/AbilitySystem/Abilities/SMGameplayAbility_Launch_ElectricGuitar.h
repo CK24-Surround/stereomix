@@ -17,7 +17,7 @@ struct FLaunchData
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGameplayAbility_Launch_ElectricGuitar : public USMGameplayAbility_Launch_Custom
 {
 	GENERATED_BODY()
