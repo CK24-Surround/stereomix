@@ -38,7 +38,7 @@ void USMGameplayAbility_Launch_ElectricGuitar::ActivateAbility(const FGameplayAb
 		return;
 	}
 
-	if (IsLocallyControlled())
+	if (IsLocallyControlled()) // 커서의 정보를 갖고 있는 로컬에서부터 투사체 로직이 수행되어야합니다.
 	{
 		LaunchProjectile();
 	}
@@ -109,7 +109,7 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectileTimerCallback()
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!SourceCharacter)
 	{
-		NET_LOG(nullptr, Warning, TEXT("소스 캐릭터가 무효합니다."));
+		NET_LOG(nullptr, Error, TEXT("소스 캐릭터가 무효합니다."));
 		return;
 	}
 
@@ -117,10 +117,12 @@ void USMGameplayAbility_Launch_ElectricGuitar::LaunchProjectileTimerCallback()
 	const FVector TargetLocatiion = SourceCharacter->GetCursorTargetingPoint();
 	const FRotator SourceToTargetRotation = (TargetLocatiion - SourceLocation).GetSafeNormal2D().Rotation(); // 타겟을 향하는 회전값입니다.
 
+	// 순차적으로 저장된 배열에서 순서대로 오프셋을 불러옵니다.
 	const FVector OffsetLocation = LaunchData.SpawnLocationOffsets[LaunchData.Count];
 	const FRotator OffsetRotation = LaunchData.SpawnRotationOffsets[LaunchData.Count];
-	const FRotator FinalRotation = SourceToTargetRotation + OffsetRotation;
+	const FRotator FinalRotation = SourceToTargetRotation + OffsetRotation; // 최종 회전값입니다.
 
+	// 회전 행렬을 통해 오프셋 위치를 보정합니다. 영벡터 기준으로 좌우로 나열된 벡터들을 올바른 방향을 바라보도록 합니다.
 	const FMatrix RotationMatrix = FRotationMatrix(FinalRotation);
 	const FVector RotatingLocation = RotationMatrix.TransformVector(OffsetLocation);
 
@@ -167,22 +169,21 @@ void USMGameplayAbility_Launch_ElectricGuitar::ServerRPCLaunchProjectile_Impleme
 		return;
 	}
 
-	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceTeam);
+	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceTeam); // 게임모드의 일렉기타 투사체 풀에 접근합니다.
 	if (!ensureAlways(ProjectilePool))
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	ASMProjectile* NewProjectile = ProjectilePool->GetProjectile();
+	ASMProjectile* NewProjectile = ProjectilePool->GetProjectile(); // 투사체 풀에서 투사체를 가져옵니다.
 	if (!NewProjectile)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	// 투사체를 발사합니다.
-	NewProjectile->Launch(SourceCharacter, SourceLocation, Normal, ProjectileSpeed, MaxDistance, Damage);
+	NewProjectile->Launch(SourceCharacter, SourceLocation, Normal, ProjectileSpeed, MaxDistance, Damage); // 투사체를 발사합니다.
 
 	// FX를 실행합니다.
 	FGameplayCueParameters GCParams;
