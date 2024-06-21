@@ -3,7 +3,6 @@
 
 #include "SMGameMode.h"
 
-#include "FMODBlueprintStatics.h"
 #include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
 #include "GameInstance/SMGameInstance.h"
@@ -106,13 +105,11 @@ void ASMGameMode::HandleLeavingMap()
 	{
 		// 클라이언트들을 연결 종료시키고 서버를 종료합니다.
 		ReturnToMainMenuHost();
-		FTimerHandle TerminateTimerHandle;
-		GetWorldTimerManager().SetTimer(TerminateTimerHandle,
-			[] {
-				FGenericPlatformMisc::RequestExit(false);
-			},
-			10.f,
-			false);
+
+		if (ASMGameSession* Session = CastChecked<ASMGameSession>(GameSession); Session->IsValidRoom())
+		{
+			Session->DeleteRoom();
+		}
 	}
 }
 

@@ -28,12 +28,15 @@ public:
 
 	bool IsReadyToStart() const;
 
-	ASMRoomState* GetRoomState() const { return RoomState.Get(); }
+	ASMRoomState* GetRoomState() const
+	{
+		return RoomState.Get();
+	}
 
 	virtual void StartGame();
 
 	virtual bool StartGameIfReadyToStart();
-	
+
 protected:
 	UFUNCTION()
 	void OnTeamPlayersUpdated(ESMTeam UpdatedTeam);
@@ -43,7 +46,6 @@ protected:
 
 	UFUNCTION()
 	void OnCountdownFinished();
-
 
 private:
 	UPROPERTY()

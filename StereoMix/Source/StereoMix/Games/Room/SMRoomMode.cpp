@@ -5,17 +5,16 @@
 
 #include "SMRoomPlayerState.h"
 #include "SMRoomState.h"
-#include "StereoMix.h"
 #include "StereoMixLog.h"
 #include "Games/CountdownTimerComponent.h"
 #include "Kismet/GameplayStatics.h"
-#include "Session/SMRoomSession.h"
+#include "Session/SMGameSession.h"
 
 ASMRoomMode::ASMRoomMode()
 {
 	bUseSeamlessTravel = true;
 
-	GameSessionClass = ASMRoomSession::StaticClass();
+	GameSessionClass = ASMGameSession::StaticClass();
 	GameStateClass = ASMRoomState::StaticClass();
 	PlayerStateClass = ASMRoomPlayerState::StaticClass();
 }
@@ -23,6 +22,15 @@ ASMRoomMode::ASMRoomMode()
 void ASMRoomMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+	
+	if (ASMGameSession* Session = CastChecked<ASMGameSession>(GameSession))
+	{
+		Session->SetCanEnterRoom(true);
+		if (Session->IsValidRoom())
+		{
+			Session->UpdateRoomState(EGrpcLobbyRoomState::ROOM_STATE_OPEN);
+		}
+	}
 }
 
 void ASMRoomMode::InitGameState()
@@ -87,11 +95,7 @@ bool ASMRoomMode::IsReadyToStart() const
 	const int32 FutureBassPlayersCount = RoomState->GetTeamFutureBassPlayers().Num();
 	const bool bReadyToStart = EdmPlayersCount == RoomState->MaxPlayersInTeam && FutureBassPlayersCount == RoomState->MaxPlayersInTeam;
 
-	UE_LOG(LogStereoMix, Verbose,
-	       TEXT("[SMRoomMode] IsReadyToStart: %s (EDM: %d, FutureBass: %d)"),
-	       bReadyToStart ? TEXT("true") : TEXT("false"),
-	       EdmPlayersCount,
-	       FutureBassPlayersCount)
+	UE_LOG(LogStereoMix, Verbose, TEXT("[SMRoomMode] IsReadyToStart: %s (EDM: %d, FutureBass: %d)"), bReadyToStart ? TEXT("true") : TEXT("false"), EdmPlayersCount, FutureBassPlayersCount)
 
 	return bReadyToStart;
 }
@@ -124,6 +128,11 @@ void ASMRoomMode::OnCountdownFinished()
 
 void ASMRoomMode::StartGame()
 {
+	if (ASMGameSession* Session = CastChecked<ASMGameSession>(GameSession); Session->IsValidRoom())
+	{
+		Session->UpdateRoomState(EGrpcLobbyRoomState::ROOM_STATE_PLAYING);
+	}
+
 	ProcessServerTravel("/Game/StereoMix/Levels/CharacterSelect/L_CharacterSelect");
 }
 

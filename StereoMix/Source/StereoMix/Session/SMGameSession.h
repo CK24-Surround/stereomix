@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameSession.h"
+#include "SLobby/LobbyClient.h"
+#include "Subsystem/SMServerRoomSubsystem.h"
 #include "SMGameSession.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogSMGameSession, Log, All)
@@ -14,17 +16,21 @@ class STEREOMIX_API ASMGameSession : public AGameSession
 	GENERATED_BODY()
 
 public:
-	UPROPERTY()
-	bool bCanEnterRoom;
-
 	// Sets default values for this actor's properties
 	ASMGameSession();
 
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
+	bool IsValidRoom() const;
+
+	void UpdateRoomState(EGrpcLobbyRoomState NewState);
+
+	void DeleteRoom();
+
+	void SetCanEnterRoom(bool bCanEnter);
 
 protected:
 	// 게임 세션 초기화
@@ -39,23 +45,15 @@ protected:
 	// 로그인에 성공한 플레이어를 처리할 때 사용
 	virtual void PostLogin(APlayerController* NewPlayer) override;
 
-	// 온라인 서비스에 플레이어를 등록할 때 사용
-	virtual void RegisterPlayer(APlayerController* NewPlayer, const FUniqueNetIdRepl& UniqueId, bool bWasFromInvite) override;
-
 	// 로그아웃을 처리할 때 사용
 	virtual void NotifyLogout(const APlayerController* PC) override;
 
-	// 온라인 서비스에서 플레이어를 제거할 때 사용
-	virtual void UnregisterPlayer(const APlayerController* ExitingPlayer) override;
+	UPROPERTY()
+	bool bCanEnterRoom;
 
+	UPROPERTY()
+	TObjectPtr<USMServerRoomSubsystem> RoomSubsystem;
 
-	virtual void PostSeamlessTravel() override;
-
-	virtual bool HandleStartMatchRequest() override;
-
-	virtual void HandleMatchIsWaitingToStart() override;
-
-	virtual void HandleMatchHasStarted() override;
-
-	virtual void HandleMatchHasEnded() override;
+	UPROPERTY()
+	TObjectPtr<ULobbyServiceClient> LobbyServiceClient;
 };
