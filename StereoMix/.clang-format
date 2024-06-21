@@ -8,16 +8,20 @@ AlignConsecutiveDeclarations: None
 AlignEscapedNewlines: Left
 AlignOperands: AlignAfterOperator
 AlignTrailingComments: true
-AllowAllArgumentsOnNextLine: false 
+AllowAllArgumentsOnNextLine: true
+AllowAllConstructorInitializersOnNextLine : true
+AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: Empty
+AllowShortCaseExpressionOnASingleLine : false
+AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: InlineOnly
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: All
-AlwaysBreakTemplateDeclarations: true 
-BasedOnStyle: LLVM
-BinPackArguments: false
-BinPackParameters: false
+AlwaysBreakTemplateDeclarations: true
+# BasedOnStyle: LLVM
+# BinPackArguments: true
+# BinPackParameters: true
 BitFieldColonSpacing: Both
 BraceWrapping:
   AfterCaseLabel: true
@@ -32,35 +36,49 @@ BraceWrapping:
   AfterExternBlock: true
   BeforeCatch: true
   BeforeElse: true
-  BeforeLambdaBody: false
+  BeforeLambdaBody: true
   BeforeWhile: true
   IndentBraces: false
+  SplitEmptyFunction: true
+  SplitEmptyRecord: true
+  SplitEmptyNamespace: true
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeBraces: Custom
 BreakBeforeTernaryOperators: true
-BreakConstructorInitializers: BeforeComma
-BreakInheritanceList: BeforeComma
+BreakConstructorInitializers: BeforeColon
+BreakFunctionDefinitionParameters: false
+BreakInheritanceList: BeforeColon
 BreakStringLiterals: true
+BreakTemplateDeclarations: Yes
 ColumnLimit: 0
 Cpp11BracedListStyle: false
+EmptyLineAfterAccessModifier: Leave
 EmptyLineBeforeAccessModifier: LogicalBlock
 FixNamespaceComments: true
 IncludeBlocks: Preserve
+IndentAccessModifiers: false
 IndentCaseBlocks: false
 IndentCaseLabels: true
-IndentPPDirectives: BeforeHash
+IndentPPDirectives: None
+IndentWrappedFunctionNames: false
+InsertBraces: true
+InsertNewlineAtEOF: true
 IndentWidth: 4
+KeepEmptyLinesAtTheStartOfBlocks: false
 Language: Cpp
 MacroBlockBegin: "^UE_TRACE_.+_BEGIN"
 MacroBlockEnd: "^UE_TRACE_.+_END"
+MaxEmptyLinesToKeep: 2
 NamespaceIndentation: None
+PPIndentWidth: 0
 PackConstructorInitializers: CurrentLine
 PointerAlignment: Left
-QualifierAlignment: Leave
+QualifierAlignment: Left
 ReferenceAlignment: Left
 ReflowComments: true
-SeparateDefinitionBlocks: Leave
+SeparateDefinitionBlocks: Always
 SortIncludes: CaseSensitive
+SortUsingDeclarations: Lexicographic
 SpaceAfterTemplateKeyword: false
 SpaceBeforeCaseColon: false
 SpaceInEmptyBlock: true
