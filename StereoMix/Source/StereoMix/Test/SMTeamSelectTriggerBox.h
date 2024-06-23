@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/SMCharacterType.h"
 #include "GameFramework/Actor.h"
 #include "SMTeamSelectTriggerBox.generated.h"
 
@@ -32,4 +33,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Character")
+	ESMCharacterType CharacterType;
 };

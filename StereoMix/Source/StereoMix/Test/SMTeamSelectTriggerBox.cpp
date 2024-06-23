@@ -73,10 +73,11 @@ void ASMTeamSelectTriggerBox::RespawnCharacter(AActor* TargetActor)
 		return;
 	}
 
-	// 팀을 변경 후 캐릭터를 스폰합니다.
+	// 팀 및 캐릭터 변경 후 캐릭터를 스폰합니다.
 	OtherPlayerState->SetTeam(TeamComponent->GetTeam());
+	OtherPlayerState->SetCharacterType(CharacterType);
 	TargetController->SpawnCharacter();
 
 	const FString TeamName = UEnum::GetValueAsString(TEXT("StereoMix.ESMTeam"), TeamComponent->GetTeam());
-	NET_LOG(this, Log, TEXT("%s의 팀이 %s로 변경되었습니다."), *TargetCharacter->GetName(), *TeamName);
+	NET_LOG(this, Log, TEXT("%s의 팀이 %s, 캐릭터는 %s로 변경되었습니다."), *TargetCharacter->GetName(), *TeamName, *UEnum::GetValueAsString(CharacterType));
 }
