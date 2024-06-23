@@ -159,6 +159,7 @@ protected:
 
 // ~Object Pooling Section
 public:
+	/** 게임모드가 소유하고 있는 투사체 풀에서 투사체를 가져옵니다. */
 	ASMProjectile* GetProjectileFromProjectilePool(ESMTeam SourceTeam, ESMCharacterType SourceCharacterType);
 
 protected:

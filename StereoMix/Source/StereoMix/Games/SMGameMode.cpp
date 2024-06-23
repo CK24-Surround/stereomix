@@ -254,14 +254,15 @@ void ASMGameMode::SetCurrentPhaseNumber(int32 InCurrentPhaseNumber)
 
 ASMProjectile* ASMGameMode::GetProjectileFromProjectilePool(ESMTeam SourceTeam, ESMCharacterType SourceCharacterType)
 {
-	FProjectilePoolInstanceData* ProjectilePoolInstanceData = ProjectilePools.Find(SourceTeam);
-	if (ensureAlways(ProjectilePoolInstanceData))
+	FProjectilePoolInstanceData* ProjectilePoolInstanceDataPtr = ProjectilePools.Find(SourceTeam);
+	if (ensureAlways(ProjectilePoolInstanceDataPtr))
 	{
-		TMap<ESMCharacterType, TObjectPtr<USMProjectilePool>>& ProjectilePoolMap = ProjectilePoolInstanceData->ProjectilePoolMap;
-		TObjectPtr<USMProjectilePool>* ProjectilePool = ProjectilePoolMap.Find(SourceCharacterType);
+		TMap<ESMCharacterType, TObjectPtr<USMProjectilePool>>& ProjectilePoolMap = ProjectilePoolInstanceDataPtr->ProjectilePoolMap;
+		USMProjectilePool* ProjectilePool = ProjectilePoolMap.FindOrAdd(SourceCharacterType, nullptr);
 		if (ensureAlways(ProjectilePool))
 		{
-			return (*ProjectilePool)->GetProjectile();
+			// 투사체 풀에서 투사체를 꺼내서 반환합니다.
+			return ProjectilePool->GetProjectile();
 		}
 	}
 
