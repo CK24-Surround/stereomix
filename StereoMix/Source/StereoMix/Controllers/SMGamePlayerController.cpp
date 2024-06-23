@@ -230,7 +230,7 @@ void ASMGamePlayerController::SpawnCharacter(const FVector* InLocation, const FR
 	if (CharacterType == ESMCharacterType::None)
 	{
 		UE_LOG(LogStereoMix, Warning, TEXT("캐릭터 타입이 None으로 설정되어있습니다. 기본값으로 설정합니다."))
-		CharacterType = ESMCharacterType::ElectricGuitar;
+		CharacterType = DefaultType;
 	}
 
 	FCharacterSpawnData* CharacterSpawnData = CharacterClass.Find(CharacterType);

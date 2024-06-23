@@ -94,6 +94,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Character|Class")
 	TMap<ESMCharacterType, FCharacterSpawnData> CharacterClass;
 
+	UPROPERTY(EditAnywhere, Category = "Design|Character")
+	ESMCharacterType DefaultType = ESMCharacterType::None;
+
 	UPROPERTY(EditAnywhere, Category = "Design|UI|HUD")
 	TSubclassOf<USMUserWidget_HUD> HUDWidgetClass;
 
