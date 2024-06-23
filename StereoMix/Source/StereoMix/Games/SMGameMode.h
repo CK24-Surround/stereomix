@@ -5,15 +5,35 @@
 #include "CoreMinimal.h"
 #include "FMODBlueprintStatics.h"
 #include "FMODEvent.h"
+#include "Data/SMCharacterType.h"
 #include "GameFramework/GameMode.h"
 #include "Data/SMTeam.h"
 #include "SMGameMode.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartMatchSignature);
-
 class ASMProjectile;
 class USMProjectilePool;
 class ASMGameState;
+
+USTRUCT(BlueprintType)
+struct FProjectilePoolCreateData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere)
+	TMap<ESMCharacterType, TSubclassOf<USMProjectilePool>> ClassMapByCharacterType;
+};
+
+USTRUCT()
+struct FProjectilePoolInstanceData
+{
+	GENERATED_BODY()
+
+	UPROPERTY()
+	TMap<ESMCharacterType, TObjectPtr<USMProjectilePool>> ProjectilePoolMap;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartMatchSignature);
+
 /**
  * 
  */
@@ -34,7 +54,7 @@ protected:
 	virtual void PostInitializeComponents() override;
 
 	virtual void HandleMatchIsWaitingToStart() override;
-	
+
 	virtual void HandleMatchHasStarted() override;
 
 	virtual void HandleMatchHasEnded() override;
@@ -112,7 +132,10 @@ protected:
 
 // ~Phase Section
 public:
-	FORCEINLINE int32 GetPhaseTime() { return PhaseTime; }
+	FORCEINLINE int32 GetPhaseTime()
+	{
+		return PhaseTime;
+	}
 
 protected:
 	/** 페이즈의 남은 시간을 설정합니다. */
@@ -136,15 +159,15 @@ protected:
 
 // ~Object Pooling Section
 public:
-	USMProjectilePool* GetEletricGuitarProjectilePool(ESMTeam SourceTeam);
+	ASMProjectile* GetProjectileFromProjectilePool(ESMTeam SourceTeam, ESMCharacterType SourceCharacterType);
 
 protected:
 	void InitProjectilePool();
 
-	UPROPERTY(EditAnywhere, Category = "Design|Pool|Class")
-	TMap<ESMTeam, TSubclassOf<USMProjectilePool>> EletricGuitarProjectilePoolClass;
+	UPROPERTY(EditAnywhere, Category = "Design|Pool")
+	TMap<ESMTeam, FProjectilePoolCreateData> ProjectilePoolCreateDataMap;
 
 	UPROPERTY()
-	TMap<ESMTeam, TObjectPtr<USMProjectilePool>> EletricGuitarProjectilePool;
+	TMap<ESMTeam, FProjectilePoolInstanceData> ProjectilePools;
 // ~Object Pooling Section
 };

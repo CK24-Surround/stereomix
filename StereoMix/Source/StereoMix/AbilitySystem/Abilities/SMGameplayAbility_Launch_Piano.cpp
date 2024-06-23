@@ -80,14 +80,7 @@ void USMGameplayAbility_Launch_Piano::LaunchProjectileCallback()
 		return;
 	}
 
-	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceTeam); // 임시로 피아노 투사체 대신 일렉기타 투사체 풀에 접근합니다. 
-	if (!ensureAlways(ProjectilePool))
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	ASMProjectile* NewProjectile = ProjectilePool->GetProjectile(); // 투사체 풀에서 투사체를 가져옵니다.
+	ASMProjectile* NewProjectile = CachedSMGameMode->GetProjectileFromProjectilePool(SourceTeam, ESMCharacterType::Piano); // 게임모드의 투사체풀을 통해 투사체를 가져옵니다.
 	if (!NewProjectile)
 	{
 		EndAbilityByCancel();

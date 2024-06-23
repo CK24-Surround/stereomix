@@ -170,14 +170,7 @@ void USMGameplayAbility_Launch_ElectricGuitar::ServerRPCLaunchProjectile_Impleme
 		return;
 	}
 
-	USMProjectilePool* ProjectilePool = CachedSMGameMode->GetEletricGuitarProjectilePool(SourceTeam); // 게임모드의 일렉기타 투사체 풀에 접근합니다.
-	if (!ensureAlways(ProjectilePool))
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	ASMProjectile* NewProjectile = ProjectilePool->GetProjectile(); // 투사체 풀에서 투사체를 가져옵니다.
+	ASMProjectile* NewProjectile = CachedSMGameMode->GetProjectileFromProjectilePool(SourceTeam, ESMCharacterType::ElectricGuitar); // 게임모드의 투사체풀을 통해 투사체를 가져옵니다.
 	if (!NewProjectile)
 	{
 		EndAbilityByCancel();

@@ -90,7 +90,7 @@ void ASMGameMode::HandleMatchHasEnded()
 void ASMGameMode::HandleLeavingMap()
 {
 	Super::HandleLeavingMap();
-	
+
 	if (bUseRestart)
 	{
 		RestartGame();
@@ -252,31 +252,47 @@ void ASMGameMode::SetCurrentPhaseNumber(int32 InCurrentPhaseNumber)
 	}
 }
 
-USMProjectilePool* ASMGameMode::GetEletricGuitarProjectilePool(ESMTeam SourceTeam)
+ASMProjectile* ASMGameMode::GetProjectileFromProjectilePool(ESMTeam SourceTeam, ESMCharacterType SourceCharacterType)
 {
-	return EletricGuitarProjectilePool[SourceTeam];
+	FProjectilePoolInstanceData* ProjectilePoolInstanceData = ProjectilePools.Find(SourceTeam);
+	if (ensureAlways(ProjectilePoolInstanceData))
+	{
+		TMap<ESMCharacterType, TObjectPtr<USMProjectilePool>>& ProjectilePoolMap = ProjectilePoolInstanceData->ProjectilePoolMap;
+		TObjectPtr<USMProjectilePool>* ProjectilePool = ProjectilePoolMap.Find(SourceCharacterType);
+		if (ensureAlways(ProjectilePool))
+		{
+			return (*ProjectilePool)->GetProjectile();
+		}
+	}
+
+	return nullptr;
 }
 
 void ASMGameMode::InitProjectilePool()
 {
-	// 투사체 풀을 생성합니다.
-	TSubclassOf<USMProjectilePool>* ElectricGuitarProjectilePoolEDMClass = EletricGuitarProjectilePoolClass.Find(ESMTeam::EDM);
-	if (ensureAlways(ElectricGuitarProjectilePoolEDMClass))
+	// 투사체 풀을 생성합니다. 각 팀, 캐릭터에 맞는 투사체 풀을 생성하기위한 과정입니다. 이렇게 난해하게 처리하는 이유는 블루프린트에서 투사체 풀을 지정할 수 있도록하기 위함입니다.
+	for (auto& ProjectilePoolCreateDataMapPair : ProjectilePoolCreateDataMap) // 팀을 순회합니다.
 	{
-		EletricGuitarProjectilePool.Add(ESMTeam::EDM, NewObject<USMProjectilePool>(this, *ElectricGuitarProjectilePoolEDMClass));
-		if (ensureAlways(EletricGuitarProjectilePool[ESMTeam::EDM]))
-		{
-			EletricGuitarProjectilePool[ESMTeam::EDM]->Init();
-		}
-	}
+		ESMTeam& Team = ProjectilePoolCreateDataMapPair.Key;
+		TMap<ESMCharacterType, TSubclassOf<USMProjectilePool>>& ProjectilePoolClassMap = ProjectilePoolCreateDataMapPair.Value.ClassMapByCharacterType;
 
-	TSubclassOf<USMProjectilePool>* ElectricGuitarProjectilePoolFutureBassClass = EletricGuitarProjectilePoolClass.Find(ESMTeam::FutureBass);
-	if (ensureAlways(ElectricGuitarProjectilePoolFutureBassClass))
-	{
-		EletricGuitarProjectilePool.Add(ESMTeam::FutureBass, NewObject<USMProjectilePool>(this, *ElectricGuitarProjectilePoolFutureBassClass));
-		if (ensureAlways(EletricGuitarProjectilePool[ESMTeam::FutureBass]))
+		for (auto& ProjectilePoolClassMapPair : ProjectilePoolClassMap) // 캐릭터 타입을 순회합니다.
 		{
-			EletricGuitarProjectilePool[ESMTeam::FutureBass]->Init();
+			ESMCharacterType& CharacterType = ProjectilePoolClassMapPair.Key;
+			TSubclassOf<USMProjectilePool>& ProjectilePoolClass = ProjectilePoolClassMapPair.Value;
+
+			if (!ProjectilePoolClass)
+			{
+				NET_LOG(this, Warning, TEXT("투사체 풀 클래스가 무효합니다."));
+				continue;
+			}
+
+			// 투사체풀을 생성하고 초기화합니다.
+			USMProjectilePool* ProjectilePool = NewObject<USMProjectilePool>(this, ProjectilePoolClass);
+			ProjectilePool->Init();
+
+			TMap<ESMCharacterType, TObjectPtr<USMProjectilePool>>& ProjectilePoolMap = ProjectilePools.FindOrAdd(Team).ProjectilePoolMap;
+			ProjectilePoolMap.Add(CharacterType, ProjectilePool); // 투사체풀 인스턴스 맵에 팀과 캐릭터에 해당하는 투사체 풀을 저장합니다.
 		}
 	}
 }
