@@ -27,7 +27,8 @@ void USMGameplayAbility_Launch_ElectricGuitar::ActivateAbility(const FGameplayAb
 	ASMPlayerCharacter* SourceCharacter = GetSMPlayerCharacterFromActorInfo();
 	if (!SourceCharacter)
 	{
-		NET_LOG(nullptr, Warning, TEXT("소스 캐릭터가 무효합니다."))
+		NET_LOG(nullptr, Warning, TEXT("소스 캐릭터가 무효합니다."));
+		EndAbilityByCancel();
 		return;
 	}
 
