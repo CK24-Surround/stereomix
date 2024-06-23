@@ -6,7 +6,7 @@
 #include "SMGameplayAbility_Launch_Custom.h"
 #include "SMGameplayAbility_Launch_ElectricGuitar.generated.h"
 
-struct FLaunchData
+struct FElectricGuitarLaunchData
 {
 	TArray<FVector> SpawnLocationOffsets;
 	TArray<FRotator> SpawnRotationOffsets;
@@ -48,5 +48,5 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|ElectricGuitar", DisplayName = "전탄 발사 소요 시간")
 	float TotalLaunchTime = 0.175f;
 
-	FLaunchData LaunchData;
+	FElectricGuitarLaunchData LaunchData;
 };
