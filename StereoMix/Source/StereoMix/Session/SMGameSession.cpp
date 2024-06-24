@@ -14,67 +14,61 @@ ASMGameSession::ASMGameSession()
 	SessionName = TEXT("StereoMix GameSession");
 	MaxPlayers = 6;
 
-	#if WITH_EDITOR
+#if WITH_EDITOR
 	bCanEnterRoom = true;
-	#else
+#else
 	bCanEnterRoom = false;
-	#endif
+#endif
 }
 
-// Called when the game starts or when spawned
-void ASMGameSession::BeginPlay()
+bool ASMGameSession::IsConnectedWithBackend() const
 {
-	Super::BeginPlay();
-
-	UE_LOG(LogStereoMix, Warning, TEXT("SMGameSession BeginPlay"))
-}
-
-void ASMGameSession::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	Super::EndPlay(EndPlayReason);
-
-	UE_LOG(LogSMGameSession, Warning, TEXT("EndPlay: %s"), *UEnum::GetValueAsString(EndPlayReason))
-}
-
-bool ASMGameSession::IsValidRoom() const
-{
-	if (GetWorld() && GetWorld()->GetNetMode() != NM_DedicatedServer)
+	if (!RoomSubsystem)
 	{
 		return false;
 	}
-	return LobbyServiceClient != nullptr;
+
+	return RoomSubsystem->IsConnectedWithBackend();
 }
 
 void ASMGameSession::UpdateRoomState(const EGrpcLobbyRoomState NewState)
 {
+	if (!IsConnectedWithBackend())
+	{
+		return;
+	}
+
 	FGrpcLobbyUpdateRoomStateRequest Request;
 	Request.State = NewState;
-	RoomSubsystem->GetLobbyService()->CallUpdateRoomState(Request,
-		[this](const FGrpcResult& Result, const FGrpcLobbyUpdateRoomStateResponse& Response) {
-			if (Result.Code != EGrpcResultCode::Ok)
-			{
-				UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room state update failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
-				return;
-			}
-			UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room state updated: %s"), *UEnum::GetValueAsString(Response.UpdatedState))
-		},
-		RoomSubsystem->GetAuthentication());
+	RoomSubsystem->GetLobbyService()->CallUpdateRoomState(Request, [this](const FGrpcResult& Result, const FGrpcLobbyUpdateRoomStateResponse& Response)
+	{
+		if (Result.Code != EGrpcResultCode::Ok)
+		{
+			UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room state update failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
+			return;
+		}
+		UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room state updated: %s"), *UEnum::GetValueAsString(Response.UpdatedState))
+	}, RoomSubsystem->GetAuthentication());
 }
 
 void ASMGameSession::DeleteRoom()
 {
-	RoomSubsystem->GetLobbyService()->CallDeleteRoom(FGrpcLobbyDeleteRoomRequest(),
-		[this](const FGrpcResult& Result, const FGrpcLobbyDeleteRoomResponse&) {
-			if (Result.Code == EGrpcResultCode::Ok)
-			{
-				UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room deleted"))
-			}
-			else
-			{
-				UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room delete failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
-			}
-	},
-	RoomSubsystem->GetAuthentication());
+	if (!IsConnectedWithBackend())
+	{
+		return;
+	}
+
+	RoomSubsystem->GetLobbyService()->CallDeleteRoom(FGrpcLobbyDeleteRoomRequest(), [this](const FGrpcResult& Result, const FGrpcLobbyDeleteRoomResponse&)
+	{
+		if (Result.Code == EGrpcResultCode::Ok)
+		{
+			UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room deleted"))
+		}
+		else
+		{
+			UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room delete failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
+		}
+	}, RoomSubsystem->GetAuthentication());
 }
 
 void ASMGameSession::SetCanEnterRoom(const bool bCanEnter)
@@ -93,40 +87,23 @@ void ASMGameSession::InitOptions(const FString& Options)
 void ASMGameSession::RegisterServer()
 {
 	Super::RegisterServer();
-	UE_LOG(LogSMGameSession, Warning, TEXT("RegisterServer"))
-
 	RoomSubsystem = GetGameInstance()->GetSubsystem<USMServerRoomSubsystem>();
 	if (!RoomSubsystem)
 	{
-		UE_LOG(LogStereoMix, Error, TEXT("RoomSubsystem is invalid!"))
-		return;
+		UE_LOG(LogStereoMix, Warning, TEXT("RoomSubsystem is invalid. Room system disabled."))
 	}
-	ULobbyService* LobbyService = RoomSubsystem->GetLobbyService();
-	LobbyService->Connect();
-	LobbyServiceClient = LobbyService->MakeClient();
 }
 
 FString ASMGameSession::ApproveLogin(const FString& Options)
 {
 	UE_LOG(LogSMGameSession, Verbose, TEXT("ApproveLogin: %s"), *Options)
 
-	#if !WITH_EDITOR
+#if !WITH_EDITOR
 	if (!bCanEnterRoom)
 	{
-		return TEXT("Room is closed.");
+		return TEXT("Room can not join.");
 	}
-	#endif
+#endif
 
 	return Super::ApproveLogin(Options);
-}
-
-void ASMGameSession::PostLogin(APlayerController* NewPlayer)
-{
-	Super::PostLogin(NewPlayer);
-}
-
-void ASMGameSession::NotifyLogout(const APlayerController* PC)
-{
-	Super::NotifyLogout(PC);
-	UE_LOG(LogSMGameSession, Warning, TEXT("NotifyLogout"))
 }

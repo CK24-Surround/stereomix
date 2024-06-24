@@ -16,15 +16,9 @@ class STEREOMIX_API ASMGameSession : public AGameSession
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this actor's properties
 	ASMGameSession();
 
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
-	bool IsValidRoom() const;
+	bool IsConnectedWithBackend() const;
 
 	void UpdateRoomState(EGrpcLobbyRoomState NewState);
 
@@ -42,17 +36,14 @@ protected:
 	// 로그인을 승인할 때 사용
 	virtual FString ApproveLogin(const FString& Options) override;
 
-	// 로그인에 성공한 플레이어를 처리할 때 사용
-	virtual void PostLogin(APlayerController* NewPlayer) override;
-
-	// 로그아웃을 처리할 때 사용
-	virtual void NotifyLogout(const APlayerController* PC) override;
-
 	UPROPERTY()
 	bool bCanEnterRoom;
 
 	UPROPERTY()
 	TObjectPtr<USMServerRoomSubsystem> RoomSubsystem;
+
+	UPROPERTY()
+	TObjectPtr<ULobbyService> LobbyService;
 
 	UPROPERTY()
 	TObjectPtr<ULobbyServiceClient> LobbyServiceClient;

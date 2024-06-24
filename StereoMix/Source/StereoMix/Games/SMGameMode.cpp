@@ -23,6 +23,13 @@ void ASMGameMode::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ASMGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	RoomSession = Cast<ASMGameSession>(GameSession);
+}
+
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)
 {
 	const FString ErrorMessage = Super::InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
@@ -105,10 +112,10 @@ void ASMGameMode::HandleLeavingMap()
 	{
 		// 클라이언트들을 연결 종료시키고 서버를 종료합니다.
 		ReturnToMainMenuHost();
-
-		if (ASMGameSession* Session = CastChecked<ASMGameSession>(GameSession); Session->IsValidRoom())
+		
+		if (ensure(RoomSession.IsValid()) && RoomSession->IsConnectedWithBackend())
 		{
-			Session->DeleteRoom();
+			RoomSession->DeleteRoom();
 		}
 	}
 }

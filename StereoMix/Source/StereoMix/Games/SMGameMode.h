@@ -8,6 +8,7 @@
 #include "Data/SMCharacterType.h"
 #include "GameFramework/GameMode.h"
 #include "Data/SMTeam.h"
+#include "Session/SMGameSession.h"
 #include "SMGameMode.generated.h"
 
 class ASMProjectile;
@@ -47,6 +48,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
+
 protected:
 	/** 플레이어 입장시 전송된 닉네임으로 플레이어 스테이트를 초기화해줍니다. */
 	virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
@@ -61,10 +64,10 @@ protected:
 
 	virtual void HandleLeavingMap() override;
 
-// ~Command Line
+	// ~Command Line
 	UFUNCTION(Exec)
 	void PrintPlayerNum();
-// ~Command Line
+	// ~Command Line
 
 public:
 	/** 게임 시작시 호출됩니다. */
@@ -78,9 +81,9 @@ protected:
 
 	/** 시간이 만료되면 현재 레벨을 재시작할지 여부입니다. 테스트용으로 사용됩니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Test")
-	uint32 bUseRestart:1 = false;
+	uint32 bUseRestart : 1 = false;
 
-// ~Wait And Countdown Section
+	// ~Wait And Countdown Section
 	/** 대기 시간 만료시 호출됩니다. */
 	void OnWaitTimeEndCallback();
 
@@ -97,7 +100,7 @@ protected:
 	int32 WaitTime = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Design|Wait")
-	uint32 bIsIgnoreWait:1 = false;
+	uint32 bIsIgnoreWait : 1 = false;
 
 	FTimerHandle CountdownTimeHandle;
 
@@ -105,9 +108,9 @@ protected:
 
 	int32 RemainCountdownTime = 0;
 
-// ~Wait And Countdown Section
+	// ~Wait And Countdown Section
 
-// ~Round Time Section
+	// ~Round Time Section
 	/** 라운드 시작를 시작합니다. */
 	void StartRound();
 
@@ -128,9 +131,9 @@ protected:
 	int32 VictoryDefeatTime = 15;
 
 	uint32 bIsRoundEnd = false;
-// ~Round Time Section
+	// ~Round Time Section
 
-// ~Phase Section
+	// ~Phase Section
 public:
 	FORCEINLINE int32 GetPhaseTime()
 	{
@@ -155,9 +158,9 @@ protected:
 	int32 PhaseTime = 60;
 
 	int32 CurrentPhaseNumber = 0;
-// ~Phase Section
+	// ~Phase Section
 
-// ~Object Pooling Section
+	// ~Object Pooling Section
 public:
 	/** 게임모드가 소유하고 있는 투사체 풀에서 투사체를 가져옵니다. */
 	ASMProjectile* GetProjectileFromProjectilePool(ESMTeam SourceTeam, ESMCharacterType SourceCharacterType);
@@ -170,5 +173,8 @@ protected:
 
 	UPROPERTY()
 	TMap<ESMTeam, FProjectilePoolInstanceData> ProjectilePools;
-// ~Object Pooling Section
+	// ~Object Pooling Section
+
+	UPROPERTY()
+	TWeakObjectPtr<ASMGameSession> RoomSession;
 };

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Data/SMTeam.h"
 #include "GameFramework/GameModeBase.h"
+#include "Session/SMGameSession.h"
 #include "SMRoomMode.generated.h"
 
 class ASMRoomState;
@@ -19,6 +20,8 @@ class STEREOMIX_API ASMRoomMode : public AGameModeBase
 
 public:
 	ASMRoomMode();
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
 
@@ -47,7 +50,14 @@ protected:
 	UFUNCTION()
 	void OnCountdownFinished();
 
+	UFUNCTION()
+	virtual void EmptyRoomCheckTick();
+
+	UPROPERTY()
+	TWeakObjectPtr<ASMGameSession> RoomSession;
+
 private:
 	UPROPERTY()
 	TWeakObjectPtr<ASMRoomState> RoomState;
+	FTimerHandle EmptyRoomCheckTimerHandle;
 };

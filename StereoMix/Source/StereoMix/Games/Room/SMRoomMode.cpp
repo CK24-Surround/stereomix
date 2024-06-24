@@ -6,6 +6,7 @@
 #include "SMRoomPlayerState.h"
 #include "SMRoomState.h"
 #include "StereoMixLog.h"
+#include "GameInstance/SMGameInstance.h"
 #include "Games/CountdownTimerComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Session/SMGameSession.h"
@@ -19,16 +20,31 @@ ASMRoomMode::ASMRoomMode()
 	PlayerStateClass = ASMRoomPlayerState::StaticClass();
 }
 
+void ASMRoomMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	if (GetWorld() && EmptyRoomCheckTimerHandle.IsValid())
+	{
+		GetWorldTimerManager().ClearTimer(EmptyRoomCheckTimerHandle);
+	}
+}
+
 void ASMRoomMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
 {
 	Super::InitGame(MapName, Options, ErrorMessage);
+
+	RoomSession = Cast<ASMGameSession>(GameSession);
+
+	const USMGameInstance* GameInstance = GetGameInstance<USMGameInstance>();
+	check(GameInstance)
 	
-	if (ASMGameSession* Session = CastChecked<ASMGameSession>(GameSession))
+	if (RoomSession.IsValid())
 	{
-		Session->SetCanEnterRoom(true);
-		if (Session->IsValidRoom())
+		RoomSession->SetCanEnterRoom(true);
+		if (!GameInstance->IsCustomGame())
 		{
-			Session->UpdateRoomState(EGrpcLobbyRoomState::ROOM_STATE_OPEN);
+			GetWorldTimerManager().SetTimer(EmptyRoomCheckTimerHandle, this, &ASMRoomMode::EmptyRoomCheckTick, 10.f, true, 30.f);
 		}
 	}
 }
@@ -108,7 +124,6 @@ void ASMRoomMode::OnTeamPlayersUpdated(ESMTeam UpdatedTeam)
 	}
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
 void ASMRoomMode::OnCountdownTick()
 {
 	if (!IsReadyToStart())
@@ -126,11 +141,21 @@ void ASMRoomMode::OnCountdownFinished()
 	StartGameIfReadyToStart();
 }
 
+void ASMRoomMode::EmptyRoomCheckTick()
+{
+	check(RoomSession.IsValid())
+	if (GetNumPlayers() == 0 && RoomSession->IsConnectedWithBackend())
+	{
+		UE_LOG(LogStereoMix, Warning, TEXT("No players in this room. Room will close."))
+		RoomSession->DeleteRoom();
+	}
+}
+
 void ASMRoomMode::StartGame()
 {
-	if (ASMGameSession* Session = CastChecked<ASMGameSession>(GameSession); Session->IsValidRoom())
+	if (RoomSession.IsValid())
 	{
-		Session->UpdateRoomState(EGrpcLobbyRoomState::ROOM_STATE_PLAYING);
+		RoomSession->UpdateRoomState(EGrpcLobbyRoomState::ROOM_STATE_PLAYING);
 	}
 
 	ProcessServerTravel("/Game/StereoMix/Levels/CharacterSelect/L_CharacterSelect");

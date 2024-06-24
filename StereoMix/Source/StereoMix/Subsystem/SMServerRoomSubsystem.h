@@ -17,8 +17,12 @@ class STEREOMIX_API USMServerRoomSubsystem : public UGameInstanceSubsystem
 
 public:
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
+	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
+	
 	virtual void Deinitialize() override;
+
+	bool IsConnectedWithBackend();
 
 	const FGrpcMetaData& GetAuthentication() const
 	{

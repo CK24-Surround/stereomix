@@ -8,8 +8,6 @@
 
 void USMGameInstance::Init()
 {
-	Super::Init();
-
 	const TCHAR* GameArgs = FCommandLine::Get();
 	UE_LOG(LogStereoMix, Warning, TEXT("GameArgs: %s"), GameArgs);
 	bCustomGame = FParse::Param(GameArgs, TEXT("custom"));
@@ -28,6 +26,8 @@ void USMGameInstance::Init()
 	{
 		UE_LOG(LogStereoMix, Warning, TEXT("Demo mode on"))
 	}
+	
+	Super::Init();
 }
 
 void USMGameInstance::StartGameInstance()
