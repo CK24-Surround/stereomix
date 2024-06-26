@@ -38,7 +38,7 @@ void USMGameplayAbility_Launch_Bass::LaunchProjectile(const FVector& InStartLoca
 		return;
 	}
 
-	ASMProjectile* NewProjectile = CachedSMGameMode->GetProjectileFromProjectilePool(SourceTeam, ESMCharacterType::Piano); // 게임모드의 투사체풀을 통해 투사체를 가져옵니다. 피아노로 임시 지정
+	ASMProjectile* NewProjectile = CachedSMGameMode->GetProjectileFromProjectilePool(SourceTeam, ESMCharacterType::Bass); // 게임모드의 투사체풀을 통해 투사체를 가져옵니다.
 	if (!NewProjectile)
 	{
 		EndAbilityByCancel();
@@ -52,4 +52,6 @@ void USMGameplayAbility_Launch_Bass::LaunchProjectile(const FVector& InStartLoca
 	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 	GCParams.RawMagnitude = 1;
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
+
+	K2_EndAbility();
 }
