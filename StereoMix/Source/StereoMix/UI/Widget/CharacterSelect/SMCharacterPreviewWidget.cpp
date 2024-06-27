@@ -9,7 +9,7 @@ void USMCharacterPreviewWidget::SetPreviewImage(ESMTeam Team, ESMCharacterType C
 	{
 		for (const auto& [TargetCharacterType, TargetCharacterMaterial] : EdmCharacterPreviewDataList)
 		{
-			if (TargetCharacterType == CharacterType)
+			if (TargetCharacterType == CharacterType && TargetCharacterMaterial)
 			{
 				PreviewImage->SetBrushFromMaterial(TargetCharacterMaterial);
 				SetVisibility(ESlateVisibility::HitTestInvisible);
@@ -21,7 +21,7 @@ void USMCharacterPreviewWidget::SetPreviewImage(ESMTeam Team, ESMCharacterType C
 	{
 		for (const auto& [TargetCharacterType, TargetCharacterMaterial] : FutureBassCharacterPreviewDataList)
 		{
-			if (TargetCharacterType == CharacterType)
+			if (TargetCharacterType == CharacterType && TargetCharacterMaterial)
 			{
 				PreviewImage->SetBrushFromMaterial(TargetCharacterMaterial);
 				SetVisibility(ESlateVisibility::HitTestInvisible);
