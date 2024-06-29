@@ -33,7 +33,7 @@ indent_style = space
 indent_size = 4
 
 # YAML files
-[*.yaml]
+[{*.yaml,.clang-format}]
 indent_style = space
 indent_size = 2
 
