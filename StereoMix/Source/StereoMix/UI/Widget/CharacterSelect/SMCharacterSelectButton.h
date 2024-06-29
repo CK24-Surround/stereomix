@@ -7,6 +7,7 @@
 #include "Data/SMCharacterType.h"
 #include "Data/SMTeam.h"
 #include "UI/Widget/Common/SMCommonButton.h"
+
 #include "SMCharacterSelectButton.generated.h"
 
 class USMCharacterSelectWidget;
@@ -16,13 +17,13 @@ struct FSMCharacterSelectButtonData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> DefaultTexture;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> FocusedTexture;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> DisabledTexture;
 
 	FSMCharacterSelectButtonData() = default;
@@ -36,7 +37,7 @@ struct FSMCharacterSelectButtonData
 };
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMCharacterSelectButton : public USMCommonButton
@@ -70,48 +71,48 @@ private:
 	// =============================================================================
 	// Bindings
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> ButtonImage;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> CharacterImage;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UPanelWidget> InteractableSection;
 
 
 	// =============================================================================
 	// Animations
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animation", meta = (BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> HoverAnim;
 
 
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Button", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Button", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> DefaultButtonTexture;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Button", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Button", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> FocusedButtonTexture;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	FSMCharacterSelectButtonData EdmCharacterData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	FSMCharacterSelectButtonData FutureBassCharacterData;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	FSMCharacterSelectButtonData CharacterData;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	bool bNotSupportedCharacter;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	ESMCharacterType CharacterType;
 
-	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, VisibleInstanceOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	ESMTeam Team;
 
 	UPROPERTY()

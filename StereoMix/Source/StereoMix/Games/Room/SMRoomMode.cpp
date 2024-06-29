@@ -3,13 +3,13 @@
 
 #include "SMRoomMode.h"
 
-#include "SMRoomPlayerState.h"
-#include "SMRoomState.h"
-#include "StereoMixLog.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Games/CountdownTimerComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "SMRoomPlayerState.h"
+#include "SMRoomState.h"
 #include "Session/SMGameSession.h"
+#include "StereoMixLog.h"
 
 ASMRoomMode::ASMRoomMode()
 {
@@ -38,8 +38,8 @@ void ASMRoomMode::InitGame(const FString& MapName, const FString& Options, FStri
 
 	const USMGameInstance* GameInstance = GetGameInstance<USMGameInstance>();
 	check(GameInstance)
-	
-	if (RoomSession.IsValid())
+
+		if (RoomSession.IsValid())
 	{
 		RoomSession->SetCanEnterRoom(true);
 		if (!GameInstance->IsCustomGame())
@@ -143,8 +143,7 @@ void ASMRoomMode::OnCountdownFinished()
 
 void ASMRoomMode::EmptyRoomCheckTick()
 {
-	check(RoomSession.IsValid())
-	if (GetNumPlayers() == 0 && RoomSession->IsConnectedWithBackend())
+	check(RoomSession.IsValid()) if (GetNumPlayers() == 0 && RoomSession->IsConnectedWithBackend())
 	{
 		UE_LOG(LogStereoMix, Warning, TEXT("No players in this room. Room will close."))
 		RoomSession->DeleteRoom();

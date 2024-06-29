@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
 #include "Data/SMTeam.h"
+#include "SMGameplayAbility.h"
+
 #include "SMGameplayAbility_CaughtExit.generated.h"
 
 class ASMPlayerCharacter;
@@ -12,7 +13,7 @@ class ASMPlayerCharacter;
 /**
  * 24.04.13 수정
  * 잡기 상태를 탈출하는 GA입니다.
- * 
+ *
  * 이 어빌리티에서는 다음과 같은 처리가 이루어집니다.
  *      - 콜리전 활성화
  *      - 무브먼트 활성화 (여기서 무브먼트는 조작에 의한 움직임이 아닌 중력 등에 의한 상호작용 활성화를 말합니다.)

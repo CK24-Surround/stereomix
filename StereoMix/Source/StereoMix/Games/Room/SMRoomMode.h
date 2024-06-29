@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SMTeam.h"
 #include "GameFramework/GameModeBase.h"
+#include "Data/SMTeam.h"
 #include "Session/SMGameSession.h"
+
 #include "SMRoomMode.generated.h"
 
 class ASMRoomState;
@@ -31,10 +32,7 @@ public:
 
 	bool IsReadyToStart() const;
 
-	ASMRoomState* GetRoomState() const
-	{
-		return RoomState.Get();
-	}
+	ASMRoomState* GetRoomState() const { return RoomState.Get(); }
 
 	virtual void StartGame();
 

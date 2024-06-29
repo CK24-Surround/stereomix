@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
-#include "SMItem.h"
 #include "Data/SMTeam.h"
+#include "GameplayTagContainer.h"
 #include "Interfaces/SMCatchInteractionInterface.h"
+#include "SMItem.h"
+
 #include "SMCatchableItem.generated.h"
 
 class USMCatchInteractionComponent_CatchableItem_AttributeChanger;
@@ -23,8 +24,8 @@ public:
 
 	virtual USMCatchInteractionComponent* GetCatchInteractionComponent() override PURE_VIRTUAL(ASMCatchableItem::GetCatchInteractionComponent, return nullptr;)
 
-	/** 게임플레이 큐를 재생할때 사용할 태그입니다.*/
-	UPROPERTY(EditAnywhere, Category = "Design", meta = (Categories = "GameplayCue"))
+		/** 게임플레이 큐를 재생할때 사용할 태그입니다.*/
+		UPROPERTY(EditAnywhere, Category = "Design", meta = (Categories = "GameplayCue"))
 	FGameplayTag SmashGCTag;
 
 protected:

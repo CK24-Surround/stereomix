@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/ViewModel/SMViewModel.h"
+
 #include "SMFrontendElementViewModel.generated.h"
 
 class USMFrontendViewModel;

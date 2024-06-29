@@ -3,6 +3,7 @@
 
 #include "SMUserWidget_ScreenIndicator.h"
 
+#include "GameFramework/Character.h"
 #include "Blueprint/SlateBlueprintLibrary.h"
 #include "Blueprint/WidgetLayoutLibrary.h"
 #include "Components/CanvasPanel.h"
@@ -10,11 +11,12 @@
 #include "Components/Image.h"
 #include "Components/ScaleBox.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "GameFramework/Character.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMLog.h"
 
-USMUserWidget_ScreenIndicator::USMUserWidget_ScreenIndicator() {}
+USMUserWidget_ScreenIndicator::USMUserWidget_ScreenIndicator()
+{
+}
 
 bool USMUserWidget_ScreenIndicator::Initialize()
 {
@@ -225,7 +227,7 @@ void USMUserWidget_ScreenIndicator::SetTarget(AActor* InTargetActor)
 	// {
 	// 	ESMTeam TargetTeam = TargetTeamInterface->GetTeam();
 	//
-	// 	
+	//
 	//
 	// 	switch (TargetTeam)
 	// 	{

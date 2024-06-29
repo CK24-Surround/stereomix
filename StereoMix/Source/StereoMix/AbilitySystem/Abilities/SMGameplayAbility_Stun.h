@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
 #include "Data/SMTeam.h"
+#include "SMGameplayAbility.h"
+
 #include "SMGameplayAbility_Stun.generated.h"
 
 /**
@@ -13,7 +14,7 @@
  * 즉, 스턴 종료 시간이 되면 현재 활성화 된 GA에 필요한 처리를 하도록 이벤트를 발생시키고 각각 GA에서 처리가 완료되면 이 스턴 GA에서 스턴 종료 관련 처리를 수행합니다.
  *
  * 스턴 타이머가 만료된 시점부터 스턴이 종료되기 전까지 잡기 불가능 태그를 통해 다시 잡히는 일이 없도록 처리합니다.
- * 
+ *
  * 스턴이 시작되면 스턴시간 만큼의 타이머를 시작합니다.
  * 스턴 시간이 만료되어 타이머에 연결된 함수가 호출되면 현재 시전자의 상태를 체크합니다. 이렇게 상태를 체크하고 다음과 같은 처리를 수행합니다.
  *      - 잡혀 있는 상태라면 CatchExit GA를 활성화하고 잡기가 풀리고 난 후 스턴 관련 처리를 수행합니다.

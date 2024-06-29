@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/PlayerController.h"
 #include "Data/SMCharacterType.h"
 #include "Data/SMTeam.h"
-#include "GameFramework/PlayerController.h"
+
 #include "SMGamePlayerController.generated.h"
 
 class USMUserWidget_HUD;
@@ -22,14 +23,14 @@ struct FCharacterSpawnData
 {
 	GENERATED_BODY()
 
-	FCharacterSpawnData() {}
+	FCharacterSpawnData() { }
 
 	UPROPERTY(EditAnywhere)
 	TMap<ESMTeam, TSubclassOf<ASMPlayerCharacter>> CharacterClass;
 };
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMGamePlayerController : public APlayerController
@@ -76,18 +77,15 @@ public:
 	UFUNCTION()
 	void OnTargetDestroyedWithIndicator(AActor* DestroyedActor);
 
-	FORCEINLINE const USMControlData* GetControlData() const
-	{
-		return ControlData;
-	}
+	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void RequestImmediateResetPosition();
 
 protected:
-	UPROPERTY(EditAnywhere, Category="GameStatistics")
+	UPROPERTY(EditAnywhere, Category = "GameStatistics")
 	float GameStatisticsUpdateInterval = 0.5f;
-	
+
 	UPROPERTY()
 	TObjectPtr<const USMControlData> ControlData;
 

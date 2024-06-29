@@ -4,11 +4,13 @@
 #include "SMUserWidget_Scoreboard.h"
 
 #include "AbilitySystemComponent.h"
-#include "SMUserWidget_PhaseTimerBar.h"
 #include "Components/TextBlock.h"
 #include "Games/SMGameState.h"
+#include "SMUserWidget_PhaseTimerBar.h"
 
-USMUserWidget_Scoreboard::USMUserWidget_Scoreboard() {}
+USMUserWidget_Scoreboard::USMUserWidget_Scoreboard()
+{
+}
 
 bool USMUserWidget_Scoreboard::Initialize()
 {

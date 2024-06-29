@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
+
 #include "SMControlData.generated.h"
 
 class UInputAction;
 class UInputMappingContext;
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMControlData : public UDataAsset

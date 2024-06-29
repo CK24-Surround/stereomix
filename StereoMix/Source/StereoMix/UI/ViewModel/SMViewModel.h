@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "MVVMViewModelBase.h"
+
 #include "SMViewModel.generated.h"
 
 /**

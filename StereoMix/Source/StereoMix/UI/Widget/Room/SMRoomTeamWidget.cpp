@@ -82,40 +82,40 @@ void USMRoomTeamWidget::SetButtonState(const ERoomTeamSelectButtonState NewState
 		case ERoomTeamSelectButtonState::Idle:
 			if (PrevState == ERoomTeamSelectButtonState::Focused)
 			{
-				//QueuePlayAnimationTimeRange(SelectAnim, FocusAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
+				// QueuePlayAnimationTimeRange(SelectAnim, FocusAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
 			}
 			else if (PrevState == ERoomTeamSelectButtonState::Selected)
 			{
-				//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
+				// QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
 			}
 			break;
 
 		case ERoomTeamSelectButtonState::Focused:
 			if (PrevState == ERoomTeamSelectButtonState::Idle)
 			{
-				//QueuePlayAnimationTimeRange(SelectAnim, 0.f, FocusAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
+				// QueuePlayAnimationTimeRange(SelectAnim, 0.f, FocusAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
 			}
 			else if (PrevState == ERoomTeamSelectButtonState::Selected)
 			{
-				//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, FocusAnimDuration.EndTime, 1, EUMGSequencePlayMode::Reverse);
+				// QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, FocusAnimDuration.EndTime, 1, EUMGSequencePlayMode::Reverse);
 			}
 			break;
 
 		case ERoomTeamSelectButtonState::Selected:
 			if (PrevState == ERoomTeamSelectButtonState::Idle)
 			{
-				//QueuePlayAnimationTimeRange(SelectAnim, 0.f, SelectAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
+				// QueuePlayAnimationTimeRange(SelectAnim, 0.f, SelectAnimDuration.EndTime, 1, EUMGSequencePlayMode::Forward);
 			}
 			break;
 
 		case ERoomTeamSelectButtonState::Disabled:
 			if (PrevState == ERoomTeamSelectButtonState::Focused)
 			{
-				//QueuePlayAnimationTimeRange(SelectAnim, FocusAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
+				// QueuePlayAnimationTimeRange(SelectAnim, FocusAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
 			}
 			else if (PrevState == ERoomTeamSelectButtonState::Selected)
 			{
-				//QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
+				// QueuePlayAnimationTimeRange(SelectAnim, SelectAnimDuration.EndTime, 0.f, 1, EUMGSequencePlayMode::Reverse);
 			}
 			break;
 		default:

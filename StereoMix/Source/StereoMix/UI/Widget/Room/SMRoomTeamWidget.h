@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "CommonListView.h"
 #include "CommonUserWidget.h"
-#include "SMRoomPlayerEntry.h"
 #include "Data/SMTeam.h"
+#include "SMRoomPlayerEntry.h"
 #include "UI/Animation/UmgAnimationDuration.h"
 #include "UI/Widget/Common/SMCommonButton.h"
+
 #include "SMRoomTeamWidget.generated.h"
 
 class USMRoomWidget;
@@ -23,7 +24,7 @@ enum class ERoomTeamSelectButtonState : uint8
 };
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMRoomTeamWidget : public USMCommonButton
@@ -65,44 +66,44 @@ private:
 	// =============================================================================
 	// Animation
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animation", meta = (BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> SelectAnim;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess))
 	FUmgAnimationDuration FocusAnimDuration;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Animation", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation", meta = (AllowPrivateAccess))
 	FUmgAnimationDuration SelectAnimDuration;
 
 
 	// =============================================================================
 	// Bindings
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> TeamCoverImage;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> TeamLogoImage;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonListView> PlayerListView;
 
 
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Team", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Team", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> TeamCoverTexture;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Team", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Team", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> TeamLogoTexture;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Widgets", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess))
 	TWeakObjectPtr<USMRoomWidget> ParentRoomWidget;
 
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Team", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Team", meta = (AllowPrivateAccess))
 	ESMTeam Team = ESMTeam::None;
 
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Team", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Team", meta = (AllowPrivateAccess))
 	ERoomTeamSelectButtonState ButtonState = ERoomTeamSelectButtonState::Idle;
 };

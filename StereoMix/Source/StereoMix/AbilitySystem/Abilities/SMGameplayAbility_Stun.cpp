@@ -3,16 +3,16 @@
 
 #include "SMGameplayAbility_Stun.h"
 
-#include "AbilitySystemBlueprintLibrary.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "Characters/SMPlayerCharacter.h"
-#include "Utilities/SMLog.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "Characters/SMPlayerCharacter.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
 #include "FunctionLibraries/SMCatchInteractionBlueprintLibrary.h"
+#include "Utilities/SMLog.h"
 
 USMGameplayAbility_Stun::USMGameplayAbility_Stun()
 {
@@ -320,7 +320,6 @@ void USMGameplayAbility_Stun::ResetStunState()
 	}
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::OnStunEnd);
 	PlayMontageAndWaitTask->ReadyForActivation();
-
 }
 
 void USMGameplayAbility_Stun::OnStunEnd()

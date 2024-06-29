@@ -3,9 +3,9 @@
 
 #include "SMAnimInstance.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
 #include "KismetAnimationLibrary.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMLog.h"
 
 void USMAnimInstance::NativeInitializeAnimation()

@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMLobbyProgressSectionWidget.h"
 #include "Backend/Client/SMClientLobbySubsystem.h"
+#include "SMLobbyProgressSectionWidget.h"
 #include "UI/Widget/Frontend/SMFrontendElementWidget.h"
+
 #include "SMLobbyProcessWidget.generated.h"
 
 UENUM()
@@ -18,7 +19,7 @@ enum class ELobbyProcessUiState
 };
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMLobbyProcessWidget : public USMFrontendElementWidget
@@ -52,6 +53,6 @@ protected:
 	void ConnectToGameServer(const FString& ServerUrl) const;
 
 private:
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
 	TObjectPtr<USMLobbyProgressSectionWidget> Progress;
 };

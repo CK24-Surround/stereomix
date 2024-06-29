@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMTeam.h"
 #include "Engine/DataAsset.h"
+#include "SMTeam.h"
+
 #include "SMProjectileAssetData.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMProjectileAssetData : public UPrimaryDataAsset

@@ -3,8 +3,8 @@
 
 #include "SMLoginWidget.h"
 
-#include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "Kismet/GameplayStatics.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "UI/Widget/Popup/SMAlertPopup.h"
 
 USMLoginWidget::USMLoginWidget()
@@ -35,10 +35,7 @@ void USMLoginWidget::NativeOnActivated()
 		}
 		else
 		{
-			GetWorld()->GetTimerManager().SetTimerForNextTick([this]
-			{
-				AuthSubsystem->Connect();
-			});
+			GetWorld()->GetTimerManager().SetTimerForNextTick([this] { AuthSubsystem->Connect(); });
 		}
 	}
 }
@@ -74,17 +71,15 @@ void USMLoginWidget::OnAuthServiceStateChanged(EGrpcServiceState ServiceState)
 	else if (ServiceState == EGrpcServiceState::TransientFailure && !ConnectFailedPopup.IsValid())
 	{
 		ConnectFailedPopup = GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."));
-		ConnectFailedPopup->OnSubmit.BindWeakLambda(this, [&]
-		{
-			// UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-
-			// 연속 시도 시 로그인 창이 중복으로 뜨는 버그가 있을 수 있음 
-			GetWorld()->GetTimerManager().SetTimerForNextTick([this]
+		ConnectFailedPopup->OnSubmit.BindWeakLambda(this,
+			[&]
 			{
-				AuthSubsystem->Connect();
+				// UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+
+				// 연속 시도 시 로그인 창이 중복으로 뜨는 버그가 있을 수 있음
+				GetWorld()->GetTimerManager().SetTimerForNextTick([this] { AuthSubsystem->Connect(); });
+				ConnectFailedPopup.Reset();
 			});
-			ConnectFailedPopup.Reset();
-		});
 	}
 }
 
@@ -97,26 +92,17 @@ void USMLoginWidget::OnLoginResponse(ELoginResult Result)
 			break;
 
 		case ELoginResult::InvalidPassword:
-			GetParentFrontendWidget()->ShowAlert(TEXT("비밀번호가 틀립니다."))->OnSubmit.BindWeakLambda(this, [&]
-			{
-				GuestLoginPopup = LoginPopupStack->AddWidget<USMGuestLoginPopup>(GuestLoginPopupClass);
-			});
+			GetParentFrontendWidget()->ShowAlert(TEXT("비밀번호가 틀립니다."))->OnSubmit.BindWeakLambda(this, [&] { GuestLoginPopup = LoginPopupStack->AddWidget<USMGuestLoginPopup>(GuestLoginPopupClass); });
 			break;
 
 		case ELoginResult::UnknownError:
 		case ELoginResult::InvalidArgument:
 		case ELoginResult::InternalError:
-			GetParentFrontendWidget()->ShowAlert(TEXT("내부 오류로 인해 로그인하지 못했습니다."))->OnSubmit.BindWeakLambda(this, [&]
-			{
-				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-			});
+			GetParentFrontendWidget()->ShowAlert(TEXT("내부 오류로 인해 로그인하지 못했습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 
 		case ELoginResult::ConnectionError:
-			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
-			{
-				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-			});
+			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 	}
 }

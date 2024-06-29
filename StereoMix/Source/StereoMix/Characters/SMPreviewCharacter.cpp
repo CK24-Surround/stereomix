@@ -3,8 +3,8 @@
 
 #include "SMPreviewCharacter.h"
 
-#include "FMODBlueprintStatics.h"
 #include "Components/SceneCaptureComponent2D.h"
+#include "FMODBlueprintStatics.h"
 
 
 ASMPreviewCharacter::ASMPreviewCharacter()

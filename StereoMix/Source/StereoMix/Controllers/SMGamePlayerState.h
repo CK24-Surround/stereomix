@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "Games/SMPlayerState.h"
+
 #include "SMGamePlayerState.generated.h"
 
 class USMAbilitySystemComponent;
 class USMCharacterAttributeSet;
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMGamePlayerState : public ASMPlayerState, public IAbilitySystemInterface

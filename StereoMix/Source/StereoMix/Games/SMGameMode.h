@@ -3,12 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FMODBlueprintStatics.h"
-#include "FMODEvent.h"
-#include "Data/SMCharacterType.h"
 #include "GameFramework/GameMode.h"
+#include "Data/SMCharacterType.h"
 #include "Data/SMTeam.h"
 #include "Session/SMGameSession.h"
+
 #include "SMGameMode.generated.h"
 
 class ASMProjectile;
@@ -36,7 +35,7 @@ struct FProjectilePoolInstanceData
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartMatchSignature);
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMGameMode : public AGameMode
@@ -135,10 +134,7 @@ protected:
 
 	// ~Phase Section
 public:
-	FORCEINLINE int32 GetPhaseTime()
-	{
-		return PhaseTime;
-	}
+	FORCEINLINE int32 GetPhaseTime() { return PhaseTime; }
 
 protected:
 	/** 페이즈의 남은 시간을 설정합니다. */

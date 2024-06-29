@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
+
 #include "SMUserWidget_PhaseTimerBar.generated.h"
 
 class UImage;
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_PhaseTimerBar : public USMUserWidget

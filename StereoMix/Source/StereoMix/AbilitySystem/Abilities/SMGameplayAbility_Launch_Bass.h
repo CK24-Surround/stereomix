@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility_Launch_Single.h"
+
 #include "SMGameplayAbility_Launch_Bass.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility_Launch_Bass : public USMGameplayAbility_Launch_Single

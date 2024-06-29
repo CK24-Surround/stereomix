@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameModeBase.h"
+
 #include "SMCharacterSelectMode.generated.h"
 
 class ASMCharacterSelectState;
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMCharacterSelectMode : public AGameModeBase

@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "SMLobbyProcessWidget.h"
+
 #include "SMLobbyQuickMatchWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMLobbyQuickMatchWidget : public USMLobbyProcessWidget

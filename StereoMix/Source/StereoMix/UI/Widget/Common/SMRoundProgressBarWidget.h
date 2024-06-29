@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
+
 #include "SMRoundProgressBarWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMRoundProgressBarWidget : public UUserWidget
@@ -22,7 +23,7 @@ private:
 	// =============================================================================
 	// Bindings
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> ProgressBarImage;
 
 	UPROPERTY()

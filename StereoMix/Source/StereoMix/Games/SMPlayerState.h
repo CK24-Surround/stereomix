@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/PlayerState.h"
 #include "Data/SMCharacterType.h"
 #include "Data/SMTeam.h"
-#include "GameFramework/PlayerState.h"
+
 #include "SMPlayerState.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamChangedEvent, ESMTeam, NewTeam);
@@ -13,7 +14,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamChangedEvent, ESMTeam, NewTeam)
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterTypeChangedEvent, ESMCharacterType, NewCharacterType);
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API ASMPlayerState : public APlayerState
@@ -33,10 +34,10 @@ public:
 	// Team, Character Type
 
 private:
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing= OnRep_Team)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_Team)
 	ESMTeam Team;
 
-	UPROPERTY(VisibleAnywhere, ReplicatedUsing= OnRep_CharacterType)
+	UPROPERTY(VisibleAnywhere, ReplicatedUsing = OnRep_CharacterType)
 	ESMCharacterType CharacterType;
 
 	UFUNCTION()
@@ -69,9 +70,9 @@ protected:
 	virtual void OnTeamChanged(ESMTeam PreviousTeam, ESMTeam NewTeam);
 	virtual void OnCharacterTypeChanged(ESMCharacterType PreviousCharacterType, ESMCharacterType NewCharacterType);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=PlayerState)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = PlayerState)
 	bool bCopyTeamOnSeamlessTravel = true;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=PlayerState)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = PlayerState)
 	bool bCopyCharacterTypeOnSeamlessTravel = true;
 };

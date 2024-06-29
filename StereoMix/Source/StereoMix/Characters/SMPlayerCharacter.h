@@ -6,10 +6,11 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
-#include "SMCharacter.h"
 #include "Interfaces/SMCatchInteractionInterface.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMTeamInterface.h"
+#include "SMCharacter.h"
+
 #include "SMPlayerCharacter.generated.h"
 
 class ASMGameState;
@@ -76,23 +77,23 @@ public:
 
 	virtual void OnRep_PlayerState() override;
 
-// Camera Section
+	// Camera Section
 protected:
 	// 카메라 관련 데이터를 초기화합니다.
 	void InitCamera();
 
 	void UpdateCameraLocation();
 
-/** 카메라 이동에 사용될 마우스 인식 범위입니다. */
+	/** 카메라 이동에 사용될 마우스 인식 범위입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
 	float CameraMoveMouseThreshold = 1150.0f;
 
 	/** 카메라의 최대 이동 거리입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
 	float CameraMoveMaxDistance = 250.0f;
-// Camera Section
+	// Camera Section
 
-// ~Component Section
+	// ~Component Section
 public:
 	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
@@ -130,9 +131,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "FX|ImmuneMove")
 	TObjectPtr<UNiagaraComponent> ImmuneMoveTrailFXComponent;
-// ~Component Section
+	// ~Component Section
 
-// ~Data Section
+	// ~Data Section
 public:
 	const TArray<TObjectPtr<UMaterialInterface>>& GetOriginalMaterials() { return OriginalMaterials; }
 	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
@@ -148,14 +149,14 @@ protected:
 	/** 캐릭터의 원본 오버레이 머티리얼입니다. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Design|Material")
 	TObjectPtr<UMaterialInterface> OriginalOverlayMaterial;
-// ~Data Section
+	// ~Data Section
 
-// ~Caching Section
+	// ~Caching Section
 	UPROPERTY()
 	TObjectPtr<ASMGamePlayerController> CachedSMPlayerController;
-// ~Caching Section
+	// ~Caching Section
 
-// ~GAS Section
+	// ~GAS Section
 	// GAS에서 사용할 액티브 GA들을 바인드합니다.
 	void SetupGASInputComponent();
 
@@ -187,9 +188,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tag")
 	FGameplayTagContainer LockMovementTags;
-// ~GAS Section
+	// ~GAS Section
 
-// ~Movement Section
+	// ~Movement Section
 public:
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다. 기본값은 플레이어 캐릭터의 중심을 기준으로 하는 평면으로 계산됩니다. */
 	FVector GetCursorTargetingPoint(bool bIsZeroBasis = false);
@@ -224,12 +225,12 @@ protected:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
-// 이동속도 리플리케이션을 위한 변수로 직접 수정되어서는 안됩니다. SetMaxWalkSpeed를 사용해 수정해주세요.
+	// 이동속도 리플리케이션을 위한 변수로 직접 수정되어서는 안됩니다. SetMaxWalkSpeed를 사용해 수정해주세요.
 	UPROPERTY(ReplicatedUsing = "OnRep_MaxWalkSpeed")
 	float MaxWalkSpeed;
-// ~Movement Section
+	// ~Movement Section
 
-// ~Widget Section
+	// ~Widget Section
 public:
 	/** 캐릭터 상태 위젯의 가시성을 조절합니다. */
 	UFUNCTION(NetMulticast, Unreliable)
@@ -246,9 +247,9 @@ public:
 	/** 해당 클라이언트에서만 인디케이터를 제거합니다. */
 	UFUNCTION(Client, Reliable)
 	void ClientRPCRemoveScreendIndicatorToSelf(AActor* TargetActor);
-// ~Widget Section
+	// ~Widget Section
 
-// ~State Section
+	// ~State Section
 	void SetEnableCollision(bool bInEnableCollision);
 
 	UFUNCTION()
@@ -272,16 +273,16 @@ protected:
 	void OnCatchRelease();
 
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableCollision")
-	uint32 bEnableCollision:1 = true;
+	uint32 bEnableCollision : 1 = true;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_UseControllerRotation")
-	uint32 bUseControllerRotation:1 = true;
+	uint32 bUseControllerRotation : 1 = true;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableMovement")
-	uint32 bEnableMovement:1 = true;
-// ~State Section
+	uint32 bEnableMovement : 1 = true;
+	// ~State Section
 
-// ~Damage Section
+	// ~Damage Section
 public:
 	FORCEINLINE virtual AActor* GetLastAttackInstigator() override { return LastAttackInstigator.Get(); };
 
@@ -290,22 +291,22 @@ public:
 protected:
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<AActor> LastAttackInstigator;
-// ~Damage Section
+	// ~Damage Section
 
 	UFUNCTION()
 	void OnTeamChangeCallback();
 
-// ~Animation Section
+	// ~Animation Section
 public:
 	bool bAmICatching();
-// ~Animation Section
+	// ~Animation Section
 
-// ~Catch Section
+	// ~Catch Section
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design|Socket")
 	FName CatchSocket = TEXT("CatchSlot");
-// ~Catch Section
+	// ~Catch Section
 
-// ~Trail Section
+	// ~Trail Section
 	ECharacterMoveTrailState GetCharacterMoveTrailState() { return CharacterMoveTrailState; }
 
 	void SetCharacterMoveTrailState(ECharacterMoveTrailState NewCharacterMoveTrailState);
@@ -336,7 +337,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design|FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
-// ~Trail Section
+	// ~Trail Section
 
 // Temp Section
 // TODO: 임시 함수입니다. 스매시 엔드 포인트를 그려줍니다. 이 캐릭터 클래스는 모든 캐릭터의 부모 클래스이기에 스매시 엔드포인트를 그려주는 함수가 여기 존재해서는 안됩니다. 단지 느낌을 보기 위한 프로토타이핑입니다.

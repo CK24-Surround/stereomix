@@ -3,10 +3,10 @@
 
 #include "SMClientAuthSubsystem.h"
 
+#include "SAuth/AuthService.h"
 #include "SMUserAccount.h"
 #include "StereoMix.h"
 #include "StereoMixLog.h"
-#include "SAuth/AuthService.h"
 
 bool USMClientAuthSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {

@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayCueNotify.h"
 #include "Data/SMLocalTeam.h"
+#include "SMGameplayCueNotify.h"
+
 #include "SMGameplayCueNotify_WithLocalTeam.generated.h"
 
 class UFMODEvent;
 class UNiagaraSystem;
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayCueNotify_WithLocalTeam : public USMGameplayCueNotify

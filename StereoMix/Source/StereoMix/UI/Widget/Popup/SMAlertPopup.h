@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CommonRichTextBlock.h"
 #include "SMPopup.h"
+
 #include "SMAlertPopup.generated.h"
 
 /**

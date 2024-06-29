@@ -3,14 +3,14 @@
 
 #include "SMCatchInteractionComponent_Character.h"
 
-#include "AbilitySystemBlueprintLibrary.h"
+#include "Engine/OverlapResult.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Data/SMSpecialAction.h"
-#include "Engine/OverlapResult.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
@@ -210,7 +210,7 @@ void USMCatchInteractionComponent_Character::CaughtReleased(AActor* TargetActor)
 		SourceMovement->bIgnoreClientMovementErrorChecksAndCorrection = false;
 	}
 
-	// 회전을 재지정합니다. 
+	// 회전을 재지정합니다.
 	float NewYaw;
 	if (TargetActor)
 	{

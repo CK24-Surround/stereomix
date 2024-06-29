@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+
 #include "CountdownTimerComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTCountdownimerDelegate);
 
-UCLASS(ClassGroup=(Game), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Game), meta = (BlueprintSpawnableComponent))
 class STEREOMIX_API UCountdownTimerComponent : public UActorComponent
 {
 	GENERATED_BODY()
@@ -17,10 +18,10 @@ class STEREOMIX_API UCountdownTimerComponent : public UActorComponent
 
 	// TODO: float으로 바꾸고 tick interval을 변경 가능하도록 수정하기
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, ReplicatedUsing=OnRep_RemainingTime, meta=(AllowPrivateAccess=true))
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, ReplicatedUsing = OnRep_RemainingTime, meta = (AllowPrivateAccess = true))
 	int32 RemainingTime;
 
-	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Replicated, meta=(AllowPrivateAccess=true))
+	UPROPERTY(BlueprintReadOnly, VisibleAnywhere, Replicated, meta = (AllowPrivateAccess = true))
 	int32 InitTime;
 
 	UFUNCTION()

@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "Games/Room/SMRoomPlayerState.h"
 #include "UObject/Object.h"
+
 #include "SMRoomPlayerEntryItem.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMRoomPlayerEntryItem : public UObject

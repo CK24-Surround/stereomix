@@ -3,13 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
-#include "Data/SMTeam.h"
 #include "Data/SMLocalTeam.h"
+#include "Data/SMTeam.h"
+#include "Kismet/BlueprintFunctionLibrary.h"
+
 #include "SMTeamBlueprintLibrary.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMTeamBlueprintLibrary : public UBlueprintFunctionLibrary

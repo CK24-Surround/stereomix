@@ -4,8 +4,8 @@
 #include "SMGameplayCueNotify_WithTeam.h"
 
 #include "FMODBlueprintStatics.h"
-#include "NiagaraFunctionLibrary.h"
 #include "Interfaces/SMTeamInterface.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Utilities/SMLog.h"
 
 void USMGameplayCueNotify_WithTeam::PlayNiagaraSystem(AActor* SourceActor, const FGameplayCueParameters& Parameters) const
@@ -82,7 +82,7 @@ void USMGameplayCueNotify_WithTeam::PlaySound(AActor* SourceActor, const FGamepl
 	FVector Location;
 	FRotator Rotation;
 	GetLocationAndRotation(Parameters, Location, Rotation);
-	FTransform NewTransform{Rotation, Location};
+	FTransform NewTransform{ Rotation, Location };
 	UFMODBlueprintStatics::PlayEventAtLocation(SourceActor, Sound[Team], NewTransform, true);
 }
 

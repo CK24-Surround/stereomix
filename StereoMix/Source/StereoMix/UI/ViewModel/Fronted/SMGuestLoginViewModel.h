@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMLoginViewModel.h"
+
 #include "SMGuestLoginViewModel.generated.h"
 
 /**
@@ -14,7 +15,7 @@ class STEREOMIX_API USMGuestLoginViewModel : public USMLoginViewModel
 {
 	GENERATED_BODY()
 
-	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter=SetInputUserName, meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadWrite, FieldNotify, Setter = SetInputUserName, meta = (AllowPrivateAccess))
 	FText InputUserName;
 
 public:

@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMRoomState.h"
 #include "Games/SMPlayerState.h"
+#include "SMRoomState.h"
+
 #include "SMRoomPlayerState.generated.h"
 
 UENUM(BlueprintType)
@@ -20,7 +21,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnRoomPlayerStateTypeChanged, ERoom
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamChangeResponse, bool, bSuccess, ESMTeam, NewTeam);
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMRoomPlayerState : public ASMPlayerState
@@ -58,7 +59,7 @@ protected:
 	UPROPERTY(Transient)
 	TWeakObjectPtr<ASMRoomState> RoomState;
 
-	UPROPERTY(VisibleInstanceOnly, ReplicatedUsing=OnRep_CurrentState)
+	UPROPERTY(VisibleInstanceOnly, ReplicatedUsing = OnRep_CurrentState)
 	ERoomPlayerStateType CurrentState;
 
 	UFUNCTION()

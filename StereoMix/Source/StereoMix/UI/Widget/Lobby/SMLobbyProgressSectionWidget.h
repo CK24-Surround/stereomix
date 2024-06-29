@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "CommonTextBlock.h"
 #include "CommonUserWidget.h"
+
 #include "SMLobbyProgressSectionWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMLobbyProgressSectionWidget : public UCommonUserWidget

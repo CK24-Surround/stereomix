@@ -8,7 +8,7 @@
 USMBackgroundMusicSubsystem::USMBackgroundMusicSubsystem()
 {
 	static ConstructorHelpers::FObjectFinder<UFMODAsset> FMODTeamBackgroundMusicEvent(TEXT("/Script/FMODStudio.FMODEvent'/Game/FMOD/Events/BGM/TeamChoice.TeamChoice'"));
-	
+
 	BackgroundMusic = CastChecked<UFMODEvent>(FMODTeamBackgroundMusicEvent.Object);
 }
 

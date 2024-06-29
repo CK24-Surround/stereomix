@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SMCharacterSelectOptionData.h"
 #include "GameFramework/GameStateBase.h"
+#include "Data/SMCharacterSelectOptionData.h"
 #include "Games/SMGameStateNotify.h"
+
 #include "SMCharacterSelectState.generated.h"
 
 enum class ESMCharacterType : uint8;
@@ -22,7 +23,7 @@ enum class ECharacterSelectionStateType : uint8
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterSelectionStateChangedEvent, ECharacterSelectionStateType, NewCharacterSelectionState);
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMCharacterSelectState : public AGameStateBase, public ISMGameStateNotify
@@ -30,7 +31,7 @@ class STEREOMIX_API ASMCharacterSelectState : public AGameStateBase, public ISMG
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Countdown)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Countdown)
 	int32 CharacterSelectCountdownTime;
 
 	UPROPERTY(BlueprintAssignable)
@@ -66,14 +67,14 @@ public:
 	virtual void NotifyPlayerLeft(ASMPlayerState* LeftPlayer) override;
 	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override;
 
-	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override {}
+	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override { }
 
 private:
-	
+
 	UPROPERTY()
 	TObjectPtr<UCountdownTimerComponent> CountdownTimer;
 
-	UPROPERTY(VisibleInstanceOnly, ReplicatedUsing=OnRep_CurrentState)
+	UPROPERTY(VisibleInstanceOnly, ReplicatedUsing = OnRep_CurrentState)
 	ECharacterSelectionStateType CurrentState;
 
 	UFUNCTION()

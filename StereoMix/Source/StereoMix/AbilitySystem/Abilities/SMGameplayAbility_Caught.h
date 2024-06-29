@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
 #include "Data/SMTeam.h"
+#include "SMGameplayAbility.h"
+
 #include "SMGameplayAbility_Caught.generated.h"
 
 /**

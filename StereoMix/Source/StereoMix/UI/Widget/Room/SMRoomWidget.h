@@ -6,14 +6,15 @@
 #include "CommonTextBlock.h"
 #include "CommonUserWidget.h"
 #include "FMODBlueprintStatics.h"
-#include "SMRoomCodeCopyButton.h"
-#include "SMRoomTeamWidget.h"
 #include "Games/Room/SMRoomPlayerState.h"
 #include "Games/Room/SMRoomState.h"
+#include "SMRoomCodeCopyButton.h"
+#include "SMRoomTeamWidget.h"
+
 #include "SMRoomWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMRoomWidget : public UCommonUserWidget
@@ -56,46 +57,46 @@ private:
 	// =============================================================================
 	// Bindings
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCommonButton> QuitButton;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonTextBlock> PlayerCountTextBlock;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMRoomCodeCopyButton> CodeCopyButton;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> EdmCharacterImage;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> FutureBassCharacterImage;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMRoomTeamWidget> EdmTeamWidget;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMRoomTeamWidget> FutureBassTeamWidget;
 
 	// =============================================================================
 	// Animations
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animation", meta = (BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> TransitionAnim;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animation", meta = (BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> EdmSelectAnim;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animation", meta = (BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> FutureBassSelectAnim;
 
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TArray<TObjectPtr<UTexture2D>> EdmCharacterTextures;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TArray<TObjectPtr<UTexture2D>> FutureBassCharacterTextures;
 
 	UPROPERTY()
@@ -104,6 +105,6 @@ private:
 	UPROPERTY()
 	TWeakObjectPtr<ASMRoomPlayerState> OwningPlayerState;
 
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="Team", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Team", meta = (AllowPrivateAccess))
 	ESMTeam CurrentTeam;
 };

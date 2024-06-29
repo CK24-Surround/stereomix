@@ -3,8 +3,8 @@
 
 #include "SMItemSpawner.h"
 
-#include "SMItem.h"
 #include "Games/SMGameMode.h"
+#include "SMItem.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 

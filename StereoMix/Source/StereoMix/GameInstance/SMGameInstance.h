@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "SMGameInstance.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameInstance : public UGameInstance
@@ -22,10 +23,10 @@ public:
 
 	static FString GetGameVersion();
 
-	UFUNCTION(BlueprintPure, Category="Game")
+	UFUNCTION(BlueprintPure, Category = "Game")
 	bool IsCustomGame() const;
 
-	UFUNCTION(BlueprintPure, Category="Game")
+	UFUNCTION(BlueprintPure, Category = "Game")
 	bool IsDemoGame() const;
 
 private:

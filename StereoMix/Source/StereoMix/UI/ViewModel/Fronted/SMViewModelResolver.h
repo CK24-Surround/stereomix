@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "View/MVVMViewModelContextResolver.h"
+
 #include "SMViewModelResolver.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMViewModelResolver : public UMVVMViewModelContextResolver

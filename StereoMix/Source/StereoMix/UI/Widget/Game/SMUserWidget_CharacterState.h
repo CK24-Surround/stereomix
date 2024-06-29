@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Blueprint/UserWidget.h"
 #include "GameplayEffectTypes.h"
 #include "SMUserWidget.h"
-#include "Blueprint/UserWidget.h"
+
 #include "SMUserWidget_CharacterState.generated.h"
 
 class UProgressBar;
 class UTextBlock;
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_CharacterState : public USMUserWidget

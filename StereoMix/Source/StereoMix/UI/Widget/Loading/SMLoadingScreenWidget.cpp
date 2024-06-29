@@ -3,8 +3,8 @@
 
 #include "SMLoadingScreenWidget.h"
 
-#include "StereoMixLog.h"
 #include "Animation/UMGSequencePlayer.h"
+#include "StereoMixLog.h"
 
 void USMLoadingScreenWidget::ShowLoadingScreen()
 {
@@ -15,10 +15,7 @@ void USMLoadingScreenWidget::HideLoadingScreen()
 {
 	if (UUMGSequencePlayer* Player = PlayAnimation(TransitionAnim, 0.f, 1, EUMGSequencePlayMode::Forward, 1.f))
 	{
-		Player->OnSequenceFinishedPlaying().AddLambda([this](UUMGSequencePlayer&)
-		{
-			RemoveFromParent();
-		});
+		Player->OnSequenceFinishedPlaying().AddLambda([this](UUMGSequencePlayer&) { RemoveFromParent(); });
 	}
 	else
 	{

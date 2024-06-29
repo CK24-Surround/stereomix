@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "UObject/Object.h"
+
 #include "SMCharacterSelectPlayerEntryItem.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMCharacterSelectPlayerEntryItem : public UObject

@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMUserWidget.h"
 #include "Data/SMTeam.h"
+#include "SMUserWidget.h"
+
 #include "SMUserWidget_VictoryDefeat.generated.h"
 
 class UButton;
@@ -19,7 +20,7 @@ enum class EVictoryDefeatResult : uint8
 };
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_VictoryDefeat : public USMUserWidget

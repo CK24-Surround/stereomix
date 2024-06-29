@@ -5,11 +5,12 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data//SMTeam.h"
+
 #include "SMTeamComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnChangeTeamSignature);
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class STEREOMIX_API USMTeamComponent : public UActorComponent
 {
 	GENERATED_BODY()

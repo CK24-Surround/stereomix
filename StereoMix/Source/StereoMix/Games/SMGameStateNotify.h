@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+
 #include "SMGameStateNotify.generated.h"
 
 enum class ESMTeam : uint8;
@@ -26,7 +27,7 @@ class USMGameStateNotify : public UInterface
 };
 
 /**
- * 
+ *
  */
 class STEREOMIX_API ISMGameStateNotify
 {

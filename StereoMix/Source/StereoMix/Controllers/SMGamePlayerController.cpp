@@ -3,16 +3,16 @@
 
 #include "SMGamePlayerController.h"
 
+#include "GameFramework/GameModeBase.h"
 #include "AbilitySystemComponent.h"
-#include "EnhancedInputSubsystems.h"
-#include "SMGamePlayerState.h"
-#include "StereoMixLog.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Data/SMControlData.h"
+#include "EnhancedInputSubsystems.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "GameFramework/GameModeBase.h"
 #include "Games/SMGameMode.h"
+#include "SMGamePlayerState.h"
+#include "StereoMixLog.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"
 #include "UI/Widget/Game/SMUserWidget_ScreenIndicator.h"
@@ -253,7 +253,7 @@ void ASMGamePlayerController::SpawnCharacter(const FVector* InLocation, const FR
 		return;
 	}
 
-	// 기존 캐릭터를 제거합니다.  
+	// 기존 캐릭터를 제거합니다.
 	ASMPlayerCharacter* PreviousCharacter = GetPawn<ASMPlayerCharacter>();
 	if (PreviousCharacter)
 	{
@@ -270,7 +270,7 @@ void ASMGamePlayerController::AddScreendIndicator(AActor* TargetActor)
 		return;
 	}
 
-	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 추가합니다. 
+	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 추가합니다.
 	if (!Cast<ASMPlayerCharacter>(GetPawn()))
 	{
 		return;
@@ -299,7 +299,7 @@ void ASMGamePlayerController::RemoveScreenIndicator(AActor* TargetActor)
 		return;
 	}
 
-	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 제거합니다. 
+	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 제거합니다.
 	if (!Cast<ASMPlayerCharacter>(GetPawn()))
 	{
 		return;

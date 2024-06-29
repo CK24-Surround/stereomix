@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMFrontendElementViewModel.h"
 #include "Backend/Client/SMClientAuthSubsystem.h"
 #include "Components/Button.h"
+#include "SMFrontendElementViewModel.h"
+
 #include "SMLoginViewModel.generated.h"
 
 UENUM(BlueprintType)
@@ -42,6 +43,6 @@ protected:
 	virtual void OnSubmit();
 
 private:
-	UPROPERTY(BlueprintReadWrite, FieldNotify, meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadWrite, FieldNotify, meta = (AllowPrivateAccess))
 	ELoginUiState UiState;
 };

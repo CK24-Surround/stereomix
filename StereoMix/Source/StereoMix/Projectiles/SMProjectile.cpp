@@ -3,17 +3,17 @@
 
 #include "SMProjectile.h"
 
+#include "GameFramework/ProjectileMovementComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
-#include "NiagaraSystem.h"
-#include "NiagaraComponent.h"
-#include "GameFramework/ProjectileMovementComponent.h"
 #include "Interfaces/SMTeamInterface.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
-#include "AbilitySystem/SMTags.h"
-#include "Components/SMTeamComponent.h"
 
 ASMProjectile::ASMProjectile()
 {

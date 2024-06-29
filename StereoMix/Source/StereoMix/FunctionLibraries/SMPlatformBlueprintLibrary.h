@@ -7,7 +7,7 @@
 #include "SMPlatformBlueprintLibrary.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMPlatformBlueprintLibrary : public UBlueprintFunctionLibrary

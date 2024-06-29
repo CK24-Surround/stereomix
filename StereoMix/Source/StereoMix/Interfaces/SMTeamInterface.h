@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UObject/Interface.h"
 #include "Data/SMTeam.h"
+#include "UObject/Interface.h"
+
 #include "SMTeamInterface.generated.h"
 
 class USMTeamComponent;
@@ -16,7 +17,7 @@ class USMTeamInterface : public UInterface
 };
 
 /**
- * 
+ *
  */
 class STEREOMIX_API ISMTeamInterface
 {

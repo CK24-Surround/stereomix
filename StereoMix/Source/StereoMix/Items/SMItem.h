@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+
 #include "SMItem.generated.h"
 
 DECLARE_DELEGATE(FOnUsedItemSignature);

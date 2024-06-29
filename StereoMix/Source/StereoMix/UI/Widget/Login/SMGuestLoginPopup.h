@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/EditableTextBox.h"
 #include "UI/Widget/Popup/SMPopup.h"
+
 #include "SMGuestLoginPopup.generated.h"
 
 /**

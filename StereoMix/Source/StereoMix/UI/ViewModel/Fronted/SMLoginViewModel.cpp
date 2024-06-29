@@ -3,8 +3,8 @@
 
 #include "SMLoginViewModel.h"
 
-#include "SMFrontendViewModel.h"
 #include "Controllers/SMFrontendPlayerController.h"
+#include "SMFrontendViewModel.h"
 
 USMLoginViewModel::USMLoginViewModel()
 {
@@ -26,4 +26,6 @@ void USMLoginViewModel::SetUiState(const ELoginUiState NewState)
 	}
 }
 
-void USMLoginViewModel::OnSubmit() {}
+void USMLoginViewModel::OnSubmit()
+{
+}

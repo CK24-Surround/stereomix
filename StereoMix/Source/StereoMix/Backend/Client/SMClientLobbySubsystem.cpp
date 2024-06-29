@@ -3,10 +3,10 @@
 
 #include "SMClientLobbySubsystem.h"
 
+#include "GameInstance/SMGameInstance.h"
 #include "SMClientAuthSubsystem.h"
 #include "SMUserAccount.h"
 #include "StereoMixLog.h"
-#include "GameInstance/SMGameInstance.h"
 
 void USMClientLobbySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {

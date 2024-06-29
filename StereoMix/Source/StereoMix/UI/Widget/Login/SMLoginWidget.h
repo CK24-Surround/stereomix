@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Backend/Client/SMClientAuthSubsystem.h"
+#include "SMGuestLoginPopup.h"
 #include "UI/Widget/Frontend/SMFrontendElementWidget.h"
 #include "UI/Widget/Frontend/SMFrontendWidgetStack.h"
-#include "SMGuestLoginPopup.h"
-#include "Backend/Client/SMClientAuthSubsystem.h"
 #include "UI/Widget/Popup/SMAlertPopup.h"
+
 #include "SMLoginWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMLoginWidget : public USMFrontendElementWidget
@@ -42,15 +43,15 @@ protected:
 	void OnSubmitGuestLogin();
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Frontend Elements", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
 	TSubclassOf<USMGuestLoginPopup> GuestLoginPopupClass;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(AllowPrivateAccess, BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
 	TObjectPtr<UCommonActivatableWidgetStack> LoginPopupStack;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Login Popup", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Login Popup", meta = (AllowPrivateAccess))
 	TObjectPtr<USMGuestLoginPopup> GuestLoginPopup;
-	
+
 	UPROPERTY(Transient)
 	TWeakObjectPtr<USMAlertPopup> ConnectFailedPopup;
 };

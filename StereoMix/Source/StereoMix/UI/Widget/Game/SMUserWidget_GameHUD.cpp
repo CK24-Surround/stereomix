@@ -25,10 +25,7 @@ TOptional<FUIInputConfig> USMUserWidget_GameHUD::GetDesiredInputConfig() const
 
 	// TODO: 원래는 캡처가 안되어야 하는데, 캡처가 계속 되는 문제가 있어서 임시로 캡처 시 커서가 보이게 변경함. 추후 수정 필요
 
-	const FUIInputConfig InputConfig = FUIInputConfig(
-		ECommonInputMode::Game,
-		EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown,
-		EMouseLockMode::DoNotLock,
+	const FUIInputConfig InputConfig = FUIInputConfig(ECommonInputMode::Game, EMouseCaptureMode::CapturePermanently_IncludingInitialMouseDown, EMouseLockMode::DoNotLock,
 		false);
 
 	return TOptional(InputConfig);

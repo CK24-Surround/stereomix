@@ -3,8 +3,8 @@
 
 #include "SMFrontendViewModel.h"
 
-#include "StereoMixLog.h"
 #include "Controllers/SMFrontendPlayerController.h"
+#include "StereoMixLog.h"
 
 USMFrontendViewModel::USMFrontendViewModel()
 {
@@ -34,4 +34,6 @@ void USMFrontendViewModel::SetBackgroundColor(const FLinearColor NewColor)
 	UE_MVVM_SET_PROPERTY_VALUE(BackgroundColor, NewColor);
 }
 
-void USMFrontendViewModel::SetCurrentElementViewModel(USMFrontendElementViewModel* NewElementViewModel) {}
+void USMFrontendViewModel::SetCurrentElementViewModel(USMFrontendElementViewModel* NewElementViewModel)
+{
+}

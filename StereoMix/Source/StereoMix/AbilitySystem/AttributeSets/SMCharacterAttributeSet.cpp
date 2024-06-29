@@ -3,12 +3,12 @@
 
 #include "SMCharacterAttributeSet.h"
 
+#include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "GameplayEffectExtension.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "GameplayEffectExtension.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
-#include "AbilitySystem/SMTags.h"
 
 USMCharacterAttributeSet::USMCharacterAttributeSet()
 {

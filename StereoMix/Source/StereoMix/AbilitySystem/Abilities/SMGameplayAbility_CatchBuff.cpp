@@ -3,13 +3,13 @@
 
 #include "SMGameplayAbility_CatchBuff.h"
 
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Components/SMCatchInteractionComponent_Character.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "Utilities/SMLog.h"
 
 USMGameplayAbility_CatchBuff::USMGameplayAbility_CatchBuff()
@@ -64,7 +64,7 @@ void USMGameplayAbility_CatchBuff::ActivateAbility(const FGameplayAbilitySpecHan
 	{
 		SourceMovement->MaxWalkSpeed += MoveSpeedToAdd;
 
-		// 버프의 해제도 예측으로 종료되어야하기 때문에 로컬만 바인드합니다. 
+		// 버프의 해제도 예측으로 종료되어야하기 때문에 로컬만 바인드합니다.
 		SourceCIC->OnCatchRelease.AddUObject(this, &ThisClass::K2_EndAbility);
 	}
 

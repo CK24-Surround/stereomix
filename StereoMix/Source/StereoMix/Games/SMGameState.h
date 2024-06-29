@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FMODBlueprintStatics.h"
 #include "GameFramework/GameState.h"
 #include "Data/SMTeam.h"
+#include "FMODBlueprintStatics.h"
+
 #include "SMGameState.generated.h"
 
 class UFMODEvent;
@@ -19,7 +20,7 @@ DECLARE_MULTICAST_DELEGATE_OneParam(FOnEndRoundSignature, ESMTeam /*VictoryTeam*
 
 class USMDesignData;
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMGameState : public AGameState
@@ -44,7 +45,7 @@ public:
 
 	// ~AGameState Section
 
-// ~Countdown Time Section
+	// ~Countdown Time Section
 	FORCEINLINE int32 GetReplicatedRemainCountdownTime() const { return ReplicatedRemainCountdownTime; }
 
 	FORCEINLINE void SetReplicatedRemainCountdownTime(int32 InReplicatedRemainCountdownTime) { ReplicatedRemainCountdownTime = InReplicatedRemainCountdownTime; }
@@ -57,9 +58,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedRemainCountdownTime")
 	int32 ReplicatedRemainCountdownTime;
-// ~Countdown Time Section
+	// ~Countdown Time Section
 
-// ~Round Time Section
+	// ~Round Time Section
 public:
 	FORCEINLINE int32 GetReplicatedRemainRoundTime() const { return ReplicatedRemainRoundTime; }
 
@@ -74,9 +75,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedRemainRoundTime")
 	int32 ReplicatedRemainRoundTime = 0;
-// ~Round Time Section
+	// ~Round Time Section
 
-// ~Score Section
+	// ~Score Section
 public:
 	void SetTeamScores(ESMTeam InTeam, int32 InScore);
 
@@ -136,9 +137,9 @@ protected:
 	/** TMap은 리플리케이트 되지 않기 때문에 int32를 대신 사용합니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedFutureBassTeamPhaseScore")
 	int32 ReplicatedFutureBassTeamPhaseScore = 0;
-// ~Score Section
+	// ~Score Section
 
-// ~Phase Section
+	// ~Phase Section
 public:
 	FORCEINLINE int32 GetReplicatedRemainPhaseTime() { return ReplicatedRemainPhaseTime; }
 
@@ -173,9 +174,9 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = "OnRep_ReplicatedCurrentPhaseNumber")
 	int32 ReplicatedCurrentPhaseNumber = 0;
-// ~Phase Section
+	// ~Phase Section
 
-// ~VictoryDefeat Section
+	// ~VictoryDefeat Section
 public:
 	/** 현재 스코어로 승패 결과를 계산하여 이긴 팀을 반환합니다. */
 	ESMTeam CalculateVictoryTeam();
@@ -190,7 +191,7 @@ protected:
 
 public:
 	FOnEndRoundSignature OnEndRound;
-// ~VictoryDefeat Section
+	// ~VictoryDefeat Section
 
 	// ~Sound Section
 	void PlayBackgroundMusic();
@@ -203,10 +204,10 @@ private:
 	const float BGM_PARAMETER_FUTURE_BASS = 1.f;
 	const float BGM_PARAMETER_EDM = 2.f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sound", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sound", meta = (AllowPrivateAccess))
 	TObjectPtr<UFMODEvent> BackgroundMusic;
 
-	UPROPERTY(BlueprintReadOnly, Category = "Sound", meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadOnly, Category = "Sound", meta = (AllowPrivateAccess))
 	FFMODEventInstance BackgroundMusicEventInstance;
 
 	UPROPERTY(ReplicatedUsing=OnRep_ReplicatedCurrentMusicPlayer)

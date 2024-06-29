@@ -3,10 +3,10 @@
 
 #include "SMMainMenuWidget.h"
 
-#include "UI/Widget/Frontend/SMFrontendWidget.h"
-#include "StereoMixLog.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "StereoMixLog.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 
 USMMainMenuWidget::USMMainMenuWidget()
 {
@@ -72,8 +72,5 @@ void USMMainMenuWidget::OnQuitButtonClicked()
 	PlayTransitionOut();
 
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&]
-	{
-		UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, false);
-	}, 1.0f, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [&] { UKismetSystemLibrary::QuitGame(this, GetOwningPlayer(), EQuitPreference::Quit, false); }, 1.0f, false);
 }

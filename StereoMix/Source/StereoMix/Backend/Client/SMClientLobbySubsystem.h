@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMClientAuthSubsystem.h"
 #include "Backend/SMLobbySubsystem.h"
+#include "SMClientAuthSubsystem.h"
+
 #include "SMClientLobbySubsystem.generated.h"
 
-//TODO: gRPC 프로토버퍼에서 구현해서 백엔드에서 바로 넘겨주기
+// TODO: gRPC 프로토버퍼에서 구현해서 백엔드에서 바로 넘겨주기
 
 UENUM(BlueprintType)
 enum class ECreateRoomResult : uint8
@@ -98,7 +99,7 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	/**
-	 * 
+	 *
 	 * @param RoomName 방 이름
 	 * @param RoomConfig 방 설정
 	 * @param Password 방 비밀번호

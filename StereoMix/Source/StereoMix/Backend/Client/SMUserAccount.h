@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "TurboLinkGrpcClient.h"
 #include "UObject/Object.h"
+
 #include "SMUserAccount.generated.h"
 
 struct FGrpcMetaData;
@@ -48,16 +49,16 @@ public:
 	const FGrpcMetaData& GetAuthorizationHeader() const { return AuthorizationHeader; }
 
 private:
-	UPROPERTY(VisibleDefaultsOnly, Category="UserAccount", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleDefaultsOnly, Category = "UserAccount", meta = (AllowPrivateAccess = "true"))
 	FString AccessToken;
 
-	UPROPERTY(VisibleDefaultsOnly, Category="UserAccount", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleDefaultsOnly, Category = "UserAccount", meta = (AllowPrivateAccess = "true"))
 	FString RefreshToken;
 
-	UPROPERTY(VisibleDefaultsOnly, Category="UserAccount", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleDefaultsOnly, Category = "UserAccount", meta = (AllowPrivateAccess = "true"))
 	FString UserId;
 
-	UPROPERTY(VisibleDefaultsOnly, Category="UserAccount", meta=(AllowPrivateAccess="true"))
+	UPROPERTY(VisibleDefaultsOnly, Category = "UserAccount", meta=(AllowPrivateAccess="true"))
 	FString UserName;
 
 	FGrpcMetaData AuthorizationHeader;

@@ -7,6 +7,7 @@
 #include "Components/Image.h"
 #include "Data/SMCharacterType.h"
 #include "Data/SMTeam.h"
+
 #include "SMCharacterPreviewWidget.generated.h"
 
 USTRUCT(BlueprintType)
@@ -30,7 +31,7 @@ struct FCharacterPreviewWidgetData
 };
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMCharacterPreviewWidget : public UCommonUserWidget
@@ -44,16 +45,16 @@ private:
 	// =============================================================================
 	// Bindings
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> PreviewImage;
 
 
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Preview Materials", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Preview Materials", meta = (AllowPrivateAccess))
 	TArray<FCharacterPreviewWidgetData> EdmCharacterPreviewDataList;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Preview Materials", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Preview Materials", meta = (AllowPrivateAccess))
 	TArray<FCharacterPreviewWidgetData> FutureBassCharacterPreviewDataList;
 };

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
+
 #include "SMUserWidget_ScreenIndicator.generated.h"
 
 class UImage;
@@ -11,7 +12,7 @@ class UCanvasPanel;
 class UScaleBox;
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_ScreenIndicator : public USMUserWidget

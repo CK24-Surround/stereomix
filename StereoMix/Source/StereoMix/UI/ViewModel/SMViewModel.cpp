@@ -3,7 +3,9 @@
 
 #include "SMViewModel.h"
 
-USMViewModel::USMViewModel() {}
+USMViewModel::USMViewModel()
+{
+}
 
 void USMViewModel::InitViewModel(APlayerController* PlayerController)
 {

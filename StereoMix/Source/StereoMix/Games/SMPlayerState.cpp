@@ -3,11 +3,11 @@
 
 #include "SMPlayerState.h"
 
-#include "StereoMix.h"
-#include "StereoMixLog.h"
 #include "Games/SMGameState.h"
 #include "Games/SMGameStateNotify.h"
 #include "Net/UnrealNetwork.h"
+#include "StereoMix.h"
+#include "StereoMixLog.h"
 #include "Utilities/SMLog.h"
 
 void ASMPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

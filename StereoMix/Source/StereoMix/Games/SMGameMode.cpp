@@ -3,11 +3,11 @@
 
 #include "SMGameMode.h"
 
-#include "SMGameState.h"
 #include "GameFramework/PlayerState.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Projectiles/SMProjectilePool.h"
+#include "SMGameState.h"
 #include "Session/SMGameSession.h"
 #include "Utilities/SMLog.h"
 
@@ -112,7 +112,7 @@ void ASMGameMode::HandleLeavingMap()
 	{
 		// 클라이언트들을 연결 종료시키고 서버를 종료합니다.
 		ReturnToMainMenuHost();
-		
+
 		if (ensure(RoomSession.IsValid()) && RoomSession->IsConnectedWithBackend())
 		{
 			RoomSession->DeleteRoom();
@@ -234,7 +234,7 @@ void ASMGameMode::PerformPhaseTime()
 
 	if (RemainPhaseTime <= 0)
 	{
-		// 한 페이즈 종료시 마다 처리됩니다. 
+		// 한 페이즈 종료시 마다 처리됩니다.
 		SetCurrentPhaseNumber(CurrentPhaseNumber + 1);
 		SetRemainPhaseTime(PhaseTime);
 

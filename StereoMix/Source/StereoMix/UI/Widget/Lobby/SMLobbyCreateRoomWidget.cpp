@@ -3,12 +3,14 @@
 
 #include "SMLobbyCreateRoomWidget.h"
 
-#include "StereoMixLog.h"
 #include "Kismet/GameplayStatics.h"
+#include "StereoMixLog.h"
 #include "UI/Widget/Frontend/SMFrontendWidget.h"
 #include "UI/Widget/Popup/SMAlertPopup.h"
 
-USMLobbyCreateRoomWidget::USMLobbyCreateRoomWidget() {}
+USMLobbyCreateRoomWidget::USMLobbyCreateRoomWidget()
+{
+}
 
 void USMLobbyCreateRoomWidget::NativeOnActivated()
 {
@@ -25,7 +27,7 @@ void USMLobbyCreateRoomWidget::NativeOnActivated()
 
 		const FString& UserName = AuthSubsystem->GetUserAccount()->GetUserName();
 		FString RoomName = FString::Printf(TEXT("%s의 방"), *UserName);
-		
+
 		FGrpcLobbyRoomConfig RoomConfig;
 		RoomConfig.RoomName = RoomName;
 		RoomConfig.Visibility = EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC;
@@ -37,10 +39,7 @@ void USMLobbyCreateRoomWidget::NativeOnActivated()
 			UE_LOG(LogStereoMixUI, Error, TEXT("[SMLobbyCreateRoomWidget] Failed to create room"));
 
 			USMAlertPopup* Alert = GetParentFrontendWidget()->ShowAlert(TEXT("방 생성에 실패했습니다."));
-			Alert->OnSubmit.BindWeakLambda(this, [&]
-			{
-				GetParentFrontendWidget()->RemoveElementWidget(this);
-			});
+			Alert->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
 			return;
 		}
 
@@ -76,35 +75,23 @@ void USMLobbyCreateRoomWidget::OnCreateRoomResponse(const ECreateRoomResult Resu
 
 		case ECreateRoomResult::Unauthenticated:
 		{
-			GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&]
-			{
-				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-			});
+			GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 		}
 
 		case ECreateRoomResult::InvalidArgument:
-			GetParentFrontendWidget()->ShowAlert(TEXT("방 생성 정보가 잘못되었습니다."))->OnSubmit.BindWeakLambda(this, [&]
-			{
-				GetParentFrontendWidget()->RemoveElementWidget(this);
-			});
+			GetParentFrontendWidget()->ShowAlert(TEXT("방 생성 정보가 잘못되었습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
 			break;
 
 		case ECreateRoomResult::ConnectionError:
-			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
-			{
-				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-			});
+			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 
 		case ECreateRoomResult::UnknownError:
 		case ECreateRoomResult::InternalError:
 		case ECreateRoomResult::DeadlineExceeded:
 		default:
-			GetParentFrontendWidget()->ShowAlert(TEXT("방 생성에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&]
-			{
-				GetParentFrontendWidget()->RemoveElementWidget(this);
-			});
+			GetParentFrontendWidget()->ShowAlert(TEXT("방 생성에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
 			break;
 	}
 

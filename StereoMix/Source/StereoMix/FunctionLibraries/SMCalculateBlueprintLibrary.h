@@ -7,7 +7,7 @@
 #include "SMCalculateBlueprintLibrary.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMCalculateBlueprintLibrary : public UBlueprintFunctionLibrary

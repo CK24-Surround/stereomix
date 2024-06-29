@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameplayEffect.h"
+
 #include "SMGameplayEffect_DynamicTag.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayEffect_DynamicTag : public UGameplayEffect

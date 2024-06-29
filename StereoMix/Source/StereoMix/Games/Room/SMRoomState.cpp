@@ -4,10 +4,10 @@
 #include "SMRoomState.h"
 
 #include "Data/SMTeam.h"
-#include "Net/UnrealNetwork.h"
-#include "Utilities/SMLog.h"
 #include "Games/CountdownTimerComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "SMRoomPlayerState.h"
+#include "Utilities/SMLog.h"
 
 
 ASMRoomState::ASMRoomState()
@@ -136,9 +136,13 @@ void ASMRoomState::NotifyPlayerTeamChanged(ASMPlayerState* Player, const ESMTeam
 #endif
 }
 
-void ASMRoomState::OnRep_RoomName() {}
+void ASMRoomState::OnRep_RoomName()
+{
+}
 
-void ASMRoomState::OnRep_RoomCode() {}
+void ASMRoomState::OnRep_RoomCode()
+{
+}
 
 void ASMRoomState::OnRep_TeamEdmPlayers()
 {

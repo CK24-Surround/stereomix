@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemComponent.h"
+
 #include "SMAbilitySystemComponent.generated.h"
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangedTagSignature, const FGameplayTag& /*Tag*/, bool /*TagExists*/);
 
 class ASMPlayerCharacter;
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class STEREOMIX_API USMAbilitySystemComponent : public UAbilitySystemComponent
 {
 	GENERATED_BODY()

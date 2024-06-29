@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "SMFrontendElementViewModel.h"
-#include "UObject/Object.h"
 #include "UI/ViewModel/SMViewModel.h"
+#include "UObject/Object.h"
+
 #include "SMFrontendViewModel.generated.h"
 
 class ASMFrontendPlayerController;
@@ -22,7 +23,7 @@ enum class EFrontendUiState : uint8
 /**
  * StereoMix Frontend ViewModel
  */
-UCLASS(meta=(MVVMAllowedContextCreationType="Manual|CreateInstance"))
+UCLASS(meta = (MVVMAllowedContextCreationType = "Manual|CreateInstance"))
 class STEREOMIX_API USMFrontendViewModel : public USMViewModel
 {
 	GENERATED_BODY()
@@ -50,13 +51,13 @@ protected:
 	void SetCurrentElementViewModel(USMFrontendElementViewModel* NewElementViewModel);
 
 private:
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, FieldNotify, Setter, Getter, meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, FieldNotify, Setter, Getter, meta = (AllowPrivateAccess))
 	EFrontendUiState UiState;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, FieldNotify, Setter, meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, FieldNotify, Setter, meta = (AllowPrivateAccess))
 	TObjectPtr<USMFrontendElementViewModel> CurrentElementViewModel;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere, FieldNotify, Setter, meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, FieldNotify, Setter, meta = (AllowPrivateAccess))
 	FLinearColor BackgroundColor;
 
 	TWeakObjectPtr<ASMFrontendPlayerController> FrontendPlayerController;

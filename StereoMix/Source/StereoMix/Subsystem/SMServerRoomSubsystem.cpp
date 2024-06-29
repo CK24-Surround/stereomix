@@ -3,9 +3,9 @@
 
 #include "SMServerRoomSubsystem.h"
 
+#include "GameInstance/SMGameInstance.h"
 #include "StereoMixLog.h"
 #include "TurboLinkGrpcManager.h"
-#include "GameInstance/SMGameInstance.h"
 
 bool USMServerRoomSubsystem::ShouldCreateSubsystem(UObject* Outer) const
 {
@@ -30,7 +30,7 @@ void USMServerRoomSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 		UE_LOG(LogStereoMix, Error, TEXT("[RoomSubsystem] Failed to find Server auth token. Room system will disabled."))
 		return;
 	}
-	
+
 	RoomId = FPlatformMisc::GetEnvironmentVariable(TEXT("STEREOMIX_ROOM_ID"));
 	RoomCode = FPlatformMisc::GetEnvironmentVariable(TEXT("STEREOMIX_ROOM_CODE"));
 	AuthorizationHeader.MetaData.Add(TEXT("authorization"), TEXT("Bearer ") + AuthToken);
@@ -68,6 +68,6 @@ bool USMServerRoomSubsystem::IsConnectedWithBackend()
 	{
 		return false;
 	}
-	
+
 	return true;
 }

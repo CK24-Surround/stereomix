@@ -7,7 +7,7 @@
 #include "SMValidationBlueprintLibrary.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMValidationBlueprintLibrary : public UBlueprintFunctionLibrary

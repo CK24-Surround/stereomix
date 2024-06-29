@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMProjectile.h"
+
 #include "SMDamageProjectile.generated.h"
 
 UCLASS()

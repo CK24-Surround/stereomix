@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "SLobby/LobbyService.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+
 #include "SMServerRoomSubsystem.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMServerRoomSubsystem : public UGameInstanceSubsystem
@@ -17,32 +18,20 @@ class STEREOMIX_API USMServerRoomSubsystem : public UGameInstanceSubsystem
 
 public:
 	virtual bool ShouldCreateSubsystem(UObject* Outer) const override;
-	
+
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
-	
+
 	virtual void Deinitialize() override;
 
 	bool IsConnectedWithBackend();
 
-	const FGrpcMetaData& GetAuthentication() const
-	{
-		return AuthorizationHeader;
-	}
+	const FGrpcMetaData& GetAuthentication() const { return AuthorizationHeader; }
 
-	const FString& GetRoomId() const
-	{
-		return RoomId;
-	}
+	const FString& GetRoomId() const { return RoomId; }
 
-	const FString& GetRoomCode() const
-	{
-		return RoomCode;
-	}
+	const FString& GetRoomCode() const { return RoomCode; }
 
-	ULobbyService* GetLobbyService() const
-	{
-		return LobbyService;
-	}
+	ULobbyService* GetLobbyService() const { return LobbyService; }
 
 private:
 	EGrpcLobbyRoomState RoomState;

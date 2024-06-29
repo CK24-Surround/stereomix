@@ -12,7 +12,6 @@ ASMPlayerCharacter_Bass::ASMPlayerCharacter_Bass()
 void ASMPlayerCharacter_Bass::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 void ASMPlayerCharacter_Bass::Tick(float DeltaTime)

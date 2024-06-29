@@ -8,6 +8,7 @@
 #include "SAuth/AuthService.h"
 #include "SMUserAccount.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+
 #include "SMClientAuthSubsystem.generated.h"
 
 struct FGrpcContextHandle;

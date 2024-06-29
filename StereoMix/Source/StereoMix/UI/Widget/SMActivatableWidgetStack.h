@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
+
 #include "SMActivatableWidgetStack.generated.h"
 
 class USMActivatableWidget;
 
 /**
- * 
+ *
  */
 UCLASS(ClassGroup = "StereoMix Common UI")
 class STEREOMIX_API USMActivatableWidgetStack : public UCommonActivatableWidgetStack
@@ -17,7 +18,7 @@ class STEREOMIX_API USMActivatableWidgetStack : public UCommonActivatableWidgetS
 	GENERATED_BODY()
 
 public:
-	template <typename T = USMActivatableWidget>
+	template<typename T = USMActivatableWidget>
 	T* RegisterWidget(TSubclassOf<T> WidgetClass)
 	{
 		return GeneratedWidgetsPool.GetOrCreateInstance(WidgetClass);

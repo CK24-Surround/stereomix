@@ -3,15 +3,17 @@
 
 #include "SMDamageProjectile.h"
 
+#include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/SMTags.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMLog.h"
 
 
-ASMDamageProjectile::ASMDamageProjectile() {}
+ASMDamageProjectile::ASMDamageProjectile()
+{
+}
 
 void ASMDamageProjectile::BeginPlay()
 {

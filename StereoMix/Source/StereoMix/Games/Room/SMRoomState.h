@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/GameStateBase.h"
 #include "Games/SMGameStateNotify.h"
+
 #include "SMRoomState.generated.h"
 
 enum class ESMTeam : uint8;
@@ -57,9 +58,7 @@ public:
 
 	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override;
 
-	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override
-	{
-	}
+	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override { }
 
 	UPROPERTY(BlueprintAssignable)
 	FPlayerJoined OnPlayerJoined;
@@ -78,7 +77,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	int32 CountdownTime;
-	
+
 protected:
 	UFUNCTION()
 	virtual void OnRep_RoomName();
@@ -92,16 +91,16 @@ protected:
 	UFUNCTION()
 	virtual void OnRep_TeamFutureBassPlayers();
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_TeamEdmPlayers)
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_TeamEdmPlayers)
 	TArray<TObjectPtr<ASMRoomPlayerState>> TeamEdmPlayers;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_TeamFutureBassPlayers)
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_TeamFutureBassPlayers)
 	TArray<TObjectPtr<ASMRoomPlayerState>> TeamFutureBassPlayers;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_RoomName)
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_RoomName)
 	FString RoomName;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_RoomCode)
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadOnly, ReplicatedUsing = OnRep_RoomCode)
 	FString RoomCode;
 
 private:

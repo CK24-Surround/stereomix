@@ -3,11 +3,11 @@
 
 #include "SMGrpcSubsystem.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "StereoMix.h"
 #include "StereoMixLog.h"
 #include "TurboLinkGrpcConfig.h"
 #include "TurboLinkGrpcManager.h"
-#include "Kismet/GameplayStatics.h"
 
 void USMGrpcSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
@@ -23,13 +23,13 @@ void USMGrpcSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	EConnectionEndPointTargets Target = EConnectionEndPointTargets::Local;
 	if (!UGameplayStatics::HasLaunchOption("local"))
 	{
-		#if WITH_EDITOR
+#if WITH_EDITOR
 		Target = EConnectionEndPointTargets::Local;
-		#elif UE_BUILD_DEVELOPMENT
+#elif UE_BUILD_DEVELOPMENT
 		Target = EConnectionEndPointTargets::Live;
-		#elif UE_BUILD_SHIPPING
+#elif UE_BUILD_SHIPPING
 		Target = EConnectionEndPointTargets::Live;
-		#endif
+#endif
 	}
 	SetTargetEndPoint(Target);
 }

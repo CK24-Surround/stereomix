@@ -97,7 +97,7 @@ void USMGameplayAbility_Launch_Piano::LaunchProjectileCallback()
 	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 	GCParams.RawMagnitude = LaunchData.Count;
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ProjectileLaunch, GCParams);
-	
+
 	if (LaunchData.Count < ProjectileCount)
 	{
 		FTimerHandle TimerHandle;

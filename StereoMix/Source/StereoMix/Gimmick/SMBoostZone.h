@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "GameFramework/Actor.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
+
 #include "SMBoostZone.generated.h"
 
 class UAbilitySystemComponent;
@@ -13,8 +14,8 @@ class UBoxComponent;
 
 struct FBoostZoneDirectionData
 {
-	uint32 bOldIsCurrectDirection:1 = false;
-	uint32 bNewIsCurrectDirection:1 = false;
+	uint32 bOldIsCurrectDirection : 1 = false;
+	uint32 bNewIsCurrectDirection : 1 = false;
 };
 
 UCLASS()

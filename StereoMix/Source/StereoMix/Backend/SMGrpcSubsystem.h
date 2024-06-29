@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+
 #include "SMGrpcSubsystem.generated.h"
 
 class UTurboLinkGrpcManager;
@@ -19,7 +20,7 @@ enum class EConnectionEndPointTargets : uint8
 /**
  * StereoMix gRPC Subsystem
  */
-UCLASS(BlueprintType, Config=Game, DefaultConfig)
+UCLASS(BlueprintType, Config = Game, DefaultConfig)
 class STEREOMIX_API USMGrpcSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()
@@ -32,7 +33,7 @@ public:
 protected:
 	/**
 	 * gRPC 서비스에 접속할 엔드포인트를 설정합니다.
-	 * 
+	 *
 	 * @param Target gRPC 서비스 엔드포인트 타겟
 	 */
 	void SetTargetEndPoint(EConnectionEndPointTargets Target);

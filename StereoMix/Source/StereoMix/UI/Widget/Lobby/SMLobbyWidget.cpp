@@ -3,10 +3,10 @@
 
 #include "SMLobbyWidget.h"
 
-#include "UI/Widget/Frontend/SMFrontendWidget.h"
-#include "StereoMixLog.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Kismet/GameplayStatics.h"
+#include "StereoMixLog.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 
 USMLobbyWidget::USMLobbyWidget()
 {
@@ -32,16 +32,18 @@ void USMLobbyWidget::NativeOnActivated()
 	{
 		LobbySubsystem->OnServiceStateChanged.AddDynamic(this, &USMLobbyWidget::OnLobbyServiceStateChanged);
 
-		GetWorld()->GetTimerManager().SetTimerForNextTick([this] {
-			if (LobbySubsystem->GetLobbyService()->GetServiceState() == EGrpcServiceState::Ready)
+		GetWorld()->GetTimerManager().SetTimerForNextTick(
+			[this]
 			{
-				OnLobbyServiceStateChanged(EGrpcServiceState::Ready);
-			}
-			else
-			{
-				LobbySubsystem->Connect();
-			}
-		});
+				if (LobbySubsystem->GetLobbyService()->GetServiceState() == EGrpcServiceState::Ready)
+				{
+					OnLobbyServiceStateChanged(EGrpcServiceState::Ready);
+				}
+				else
+				{
+					LobbySubsystem->Connect();
+				}
+			});
 	}
 }
 
@@ -124,10 +126,7 @@ void USMLobbyWidget::OnLobbyServiceStateChanged(const EGrpcServiceState ServiceS
 	{
 		if (UUMGSequencePlayer* TransitionPlayer = PlayTransitionIn())
 		{
-			TransitionPlayer->OnSequenceFinishedPlaying().AddWeakLambda(this,
-				[this](UUMGSequencePlayer&) {
-					SetVisibility(ESlateVisibility::Visible);
-				});
+			TransitionPlayer->OnSequenceFinishedPlaying().AddWeakLambda(this, [this](UUMGSequencePlayer&) { SetVisibility(ESlateVisibility::Visible); });
 			SetVisibility(ESlateVisibility::HitTestInvisible);
 		}
 		else
@@ -138,9 +137,7 @@ void USMLobbyWidget::OnLobbyServiceStateChanged(const EGrpcServiceState ServiceS
 	else if (ServiceState == EGrpcServiceState::TransientFailure)
 	{
 		USMAlertPopup* Alert = GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."));
-		Alert->OnSubmit.BindWeakLambda(this,
-			[&] {
-				UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+		Alert->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
 			});
 	}
 }

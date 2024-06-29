@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
 #include "Data/SMTeam.h"
+#include "SMGameplayAbility.h"
+
 #include "SMGameplayAbility_Smash.generated.h"
 
 class UNiagaraSystem;
@@ -26,9 +27,9 @@ class ASMTile;
  *     5. 피격자 측 카메라 뷰 복귀
  *
  * 성공적으로 어빌리티가 종료되면 다음과 같은 태그 상태를 갖게 됩니다.
- * 시전 측 제거 태그: 잡기 상태 태그 
+ * 시전 측 제거 태그: 잡기 상태 태그
  * 피격 측 제거 태그: 잡힌 상태 태그
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility_Smash : public USMGameplayAbility

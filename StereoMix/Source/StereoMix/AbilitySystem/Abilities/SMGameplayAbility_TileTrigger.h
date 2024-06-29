@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
 #include "Data/SMTeam.h"
+#include "SMGameplayAbility.h"
+
 #include "SMGameplayAbility_TileTrigger.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMGameplayAbility_TileTrigger : public USMGameplayAbility
@@ -23,7 +24,7 @@ protected:
 
 	virtual void TileTrigger() PURE_VIRTUAL(TileTrigger)
 
-	FVector TriggerdTileLocation;
+		FVector TriggerdTileLocation;
 	ESMTeam SourceTeam = ESMTeam::None;
 
 	// 타일이 트리거 되야할 규모입니다.

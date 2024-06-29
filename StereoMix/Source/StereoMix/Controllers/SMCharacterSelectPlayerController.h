@@ -7,6 +7,7 @@
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 #include "UI/Widget/CharacterSelect/SMCharacterSelectWidget.h"
 #include "UI/Widget/Loading/SMLoadingScreenWidget.h"
+
 #include "SMCharacterSelectPlayerController.generated.h"
 
 class ASMCharacterSelectPlayerState;
@@ -24,7 +25,7 @@ struct FPreviewCharacterData
 };
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMCharacterSelectPlayerController : public APlayerController
@@ -63,7 +64,7 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<USMCharacterSelectWidget> CharacterSelectWidgetClass;
 
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TMap<ESMCharacterType, TObjectPtr<ASMPreviewCharacter>> PreviewCharacters;
 
 	UPROPERTY(Transient)

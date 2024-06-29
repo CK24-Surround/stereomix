@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SMCharacterType.h"
 #include "GameFramework/Actor.h"
+#include "Data/SMCharacterType.h"
+
 #include "SMTeamSelectTriggerBox.generated.h"
 
 class USMTeamComponent;

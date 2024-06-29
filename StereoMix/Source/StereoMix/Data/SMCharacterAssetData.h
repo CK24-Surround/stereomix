@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Data/SMTeam.h"
+
 #include "SMCharacterAssetData.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMCharacterAssetData : public UPrimaryDataAsset

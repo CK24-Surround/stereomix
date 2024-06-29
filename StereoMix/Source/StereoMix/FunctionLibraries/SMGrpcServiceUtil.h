@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "TurboLinkGrpcService.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "TurboLinkGrpcService.h"
+
 #include "SMGrpcServiceUtil.generated.h"
 
 struct FGrpcContextHandle;
 class UGrpcService;
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGrpcServiceUtil : public UBlueprintFunctionLibrary

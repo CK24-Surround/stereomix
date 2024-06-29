@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UI/Widget/SMActivatableWidgetStack.h"
+
 #include "SMFrontendWidgetStack.generated.h"
 
 class USMFrontendElementWidget;

@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
 #include "CommonActivatableWidget.h"
+
 #include "SMGamePanel.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMGamePanel : public UCommonActivatableWidget, public IAbilitySystemInterface

@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "FMODEvent.h"
-#include "UI/Widget/SMActivatableWidget.h"
 #include "UI/Widget/Common/SMCommonButton.h"
+#include "UI/Widget/SMActivatableWidget.h"
+
 #include "SMFrontendElementWidget.generated.h"
 
 class USMFrontendWidget;
@@ -57,15 +58,15 @@ protected:
 	bool IsTransitioning() const { return bTransitioning; }
 
 private:
-	UPROPERTY(Transient, BlueprintReadOnly, meta=(BindWidgetOptional, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidgetOptional, AllowPrivateAccess))
 	TObjectPtr<USMCommonButton> BackButton;
 
-	UPROPERTY(Transient, BlueprintReadOnly, meta=(BindWidgetAnimOptional, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidgetAnimOptional, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> TransitionAnim;
 
-	UPROPERTY(BlueprintReadOnly, meta=(AllowPrivateAccess))
+	UPROPERTY(BlueprintReadOnly, meta = (AllowPrivateAccess))
 	TWeakObjectPtr<USMFrontendWidget> ParentFrontendWidget;
 
-	UPROPERTY(Transient, BlueprintReadOnly, meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, meta = (AllowPrivateAccess))
 	bool bTransitioning = false;
 };

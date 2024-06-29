@@ -3,8 +3,8 @@
 
 #include "SMGamePlayerState.h"
 
-#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 
 ASMGamePlayerState::ASMGamePlayerState()
 {

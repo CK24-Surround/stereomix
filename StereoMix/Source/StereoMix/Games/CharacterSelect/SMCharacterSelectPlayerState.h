@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Data/SMCharacterSelectOptionData.h"
 #include "Games/SMPlayerState.h"
+
 #include "SMCharacterSelectPlayerState.generated.h"
 
 class ASMCharacterSelectState;
@@ -22,7 +23,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnCharacterSelectPlayerStateTypeCha
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FCharacterChangeResponse, bool, bSuccess, ESMCharacterType, NewCharacterType);
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMCharacterSelectPlayerState : public ASMPlayerState
@@ -61,10 +62,10 @@ public:
 	void SetCurrentState(ECharacterSelectPlayerStateType NewState);
 
 protected:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Options, meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = Options, meta = (AllowPrivateAccess))
 	TObjectPtr<USMCharacterSelectOptionData> DefaultOptions;
-	
-	UPROPERTY(VisibleInstanceOnly, ReplicatedUsing= OnRep_CurrentState)
+
+	UPROPERTY(VisibleInstanceOnly, ReplicatedUsing = OnRep_CurrentState)
 	ECharacterSelectPlayerStateType CurrentState;
 
 	UFUNCTION()

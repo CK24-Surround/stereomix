@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+
 #include "SMCharacter.generated.h"
 
 class USMCharacterAssetData;

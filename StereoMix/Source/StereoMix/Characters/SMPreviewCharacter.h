@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FMODEvent.h"
 #include "GameFramework/Actor.h"
-#include "Data/SMTeam.h"
 #include "Data/SMCharacterType.h"
+#include "Data/SMTeam.h"
+#include "FMODEvent.h"
+
 #include "SMPreviewCharacter.generated.h"
 
 class ASMPlayerState;
@@ -42,35 +43,35 @@ private:
 	// =============================================================================
 	// Components
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess))
 	TObjectPtr<USkeletalMeshComponent> CharacterMeshComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components", meta=(AllowPrivateAccess))
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess))
 	TObjectPtr<USceneCaptureComponent2D> SceneCaptureComponent;
 
 
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	ESMTeam Team;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	ESMCharacterType CharacterType;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TObjectPtr<USkeletalMesh> CharacterMesh;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TSubclassOf<UAnimInstance> CharacterAnimInstanceClass;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TObjectPtr<UAnimMontage> CharacterSelectAnimMontage;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TObjectPtr<UTextureRenderTarget2D> CharacterRenderTarget;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Character", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TObjectPtr<UFMODEvent> CharacterSelectSound;
 
 	UPROPERTY()

@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGrpcClientSubsystem.h"
 #include "SLobby/LobbyService.h"
+#include "SMGrpcClientSubsystem.h"
+
 #include "SMLobbySubsystem.generated.h"
 
 /**
  * StereoMix Lobby Subsystem
  */
-UCLASS(Abstract, Config=Game, DefaultConfig)
+UCLASS(Abstract, Config = Game, DefaultConfig)
 class STEREOMIX_API USMLobbySubsystem : public USMGrpcClientSubsystem
 {
 	GENERATED_BODY()

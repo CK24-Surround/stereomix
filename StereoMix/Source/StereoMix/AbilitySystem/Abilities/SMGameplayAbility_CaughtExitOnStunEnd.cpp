@@ -3,9 +3,9 @@
 
 #include "SMGameplayAbility_CaughtExitOnStunEnd.h"
 
+#include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "AbilitySystem/SMTags.h"
 
 USMGameplayAbility_CaughtExitOnStunEnd::USMGameplayAbility_CaughtExitOnStunEnd()
 {

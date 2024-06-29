@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+
 #include "SMCatchInteractionInterface.generated.h"
 
 class USMCatchInteractionComponent;
@@ -16,7 +17,7 @@ class USMCatchInteractionInterface : public UInterface
 };
 
 /**
- * 
+ *
  */
 class STEREOMIX_API ISMCatchInteractionInterface
 {

@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "CommonTextBlock.h"
 #include "UI/Widget/Common/SMCommonButton.h"
+
 #include "SMRoomCodeCopyButton.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMRoomCodeCopyButton : public USMCommonButton
@@ -25,6 +26,6 @@ private:
 	// =============================================================================
 	// Bindings
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonTextBlock> RoomCodeTextBlock;
 };

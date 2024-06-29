@@ -3,14 +3,15 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMCatchInteractionComponent.h"
 #include "Data/SMTeam.h"
+#include "SMCatchInteractionComponent.h"
+
 #include "SMCatchInteractionComponent_Character.generated.h"
 
 class USMAbilitySystemComponent;
 class ASMPlayerCharacter;
 
-UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
+UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class STEREOMIX_API USMCatchInteractionComponent_Character : public USMCatchInteractionComponent
 {
 	GENERATED_BODY()

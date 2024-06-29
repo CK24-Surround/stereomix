@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMCatchableItem.h"
 #include "Data/SMLocalTeam.h"
+#include "SMCatchableItem.h"
+
 #include "SMCatchableItem_AttributeChanger.generated.h"
 
 class UFMODEvent;
@@ -100,7 +101,7 @@ protected:
 
 	/** 트리거 되는 영역의 크기를 보여줄지 여부입니다.*/
 	UPROPERTY(EditAnywhere, Category = "Design")
-	uint32 bDrawDebug:1 = false;
+	uint32 bDrawDebug : 1 = false;
 
 	UPROPERTY(EditAnywhere, Category = "Design|Activator", DisplayName = "즉시 적용 GE")
 	TSubclassOf<UGameplayEffect> ActivatorInstantGE;

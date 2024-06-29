@@ -33,7 +33,6 @@ void USMGameplayAbility_Launch_Single::ActivateAbility(const FGameplayAbilitySpe
 		const FVector ProjectileDirection = (CursorLocation - StartLocation).GetSafeNormal2D();
 		ServerRPCSendAimingData(StartLocation, ProjectileDirection);
 	}
-
 }
 
 void USMGameplayAbility_Launch_Single::ServerRPCSendAimingData_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantizeNormal& Normal)

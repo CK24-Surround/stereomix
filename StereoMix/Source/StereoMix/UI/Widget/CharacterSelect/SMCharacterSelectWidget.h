@@ -6,12 +6,13 @@
 #include "CommonListView.h"
 #include "CommonTextBlock.h"
 #include "CommonUserWidget.h"
-#include "SMCharacterPreviewWidget.h"
-#include "SMCharacterSelectButton.h"
 #include "Components/Image.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
+#include "SMCharacterPreviewWidget.h"
+#include "SMCharacterSelectButton.h"
 #include "UI/Widget/Common/SMRoundProgressBarWidget.h"
+
 #include "SMCharacterSelectWidget.generated.h"
 
 USTRUCT(BlueprintType)
@@ -19,13 +20,13 @@ struct FSMCharacterSelectWidgetBackgroundData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Textures", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Textures", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> Background1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Textures", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Textures", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> Background2;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Textures", meta=(AllowPrivateAccess))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Textures", meta = (AllowPrivateAccess))
 	TObjectPtr<UTexture2D> Background3;
 
 	FSMCharacterSelectWidgetBackgroundData() = default;
@@ -39,7 +40,7 @@ struct FSMCharacterSelectWidgetBackgroundData
 };
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMCharacterSelectWidget : public UCommonUserWidget
@@ -83,55 +84,55 @@ private:
 	// =============================================================================
 	// Bindings
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> Background1Image;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> Background2Image;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UImage> Background3Image;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMRoundProgressBarWidget> CountdownProgressBar;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonTextBlock> CountdownTextBlock;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonListView> PlayerListView;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCharacterPreviewWidget> CharacterPreview;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCharacterSelectButton> ElectricGuitarSelectButton;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCharacterSelectButton> PianoSelectButton;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Components", meta=(BindWidget, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCharacterSelectButton> BassSelectButton;
 
 	// =============================================================================
 	// Animations
-	UPROPERTY(Transient, BlueprintReadOnly, Category="Animation", meta=(BindWidgetAnim, AllowPrivateAccess))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animation", meta = (BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> TransitionAnim;
 
 
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Background", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Background", meta = (AllowPrivateAccess))
 	FSMCharacterSelectWidgetBackgroundData EdmBackgroundData;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Background", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Background", meta = (AllowPrivateAccess))
 	FSMCharacterSelectWidgetBackgroundData FutureBassBackgroundData;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Sound", meta=(AllowPrivateAccess))
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Sound", meta = (AllowPrivateAccess))
 	TObjectPtr<UFMODEvent> CountdownSound;
 
-	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category="My Character", meta=(AllowPrivateAccess))
+	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "My Character", meta = (AllowPrivateAccess))
 	ESMCharacterType CurrentCharacter;
 
 	UPROPERTY()

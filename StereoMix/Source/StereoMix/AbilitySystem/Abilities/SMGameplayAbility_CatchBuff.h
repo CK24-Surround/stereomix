@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
+
 #include "SMGameplayAbility_CatchBuff.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility_CatchBuff : public USMGameplayAbility

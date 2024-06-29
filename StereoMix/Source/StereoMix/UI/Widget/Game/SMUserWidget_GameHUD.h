@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "SMGamePanel.h"
 #include "SMUserWidget.h"
+
 #include "SMUserWidget_GameHUD.generated.h"
 
 class USMUserWidget_Scoreboard;
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_GameHUD : public USMGamePanel
@@ -25,6 +26,6 @@ public:
 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
 
 protected:
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta=(BindWidget))
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget))
 	TObjectPtr<USMUserWidget_Scoreboard> ScoreboardWidget;
 };

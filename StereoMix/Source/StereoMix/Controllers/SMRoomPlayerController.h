@@ -6,10 +6,11 @@
 #include "Games/Room/SMRoomPlayerState.h"
 #include "UI/Widget/Loading/SMLoadingScreenWidget.h"
 #include "UI/Widget/Room/SMRoomWidget.h"
+
 #include "SMRoomPlayerController.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMRoomPlayerController : public APlayerController
@@ -22,9 +23,9 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-	
+
 	virtual void PreClientTravel(const FString& PendingURL, ETravelType TravelType, bool bIsSeamlessTravel) override;
-	
+
 	void OnCompleteLoading();
 
 	virtual void OnRep_PlayerState() override;
@@ -37,7 +38,7 @@ public:
 protected:
 	UFUNCTION()
 	void OnTeamChanged(ESMTeam NewTeam);
-	
+
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
 	TSubclassOf<USMLoadingScreenWidget> LoadingScreenWidgetClass;
 

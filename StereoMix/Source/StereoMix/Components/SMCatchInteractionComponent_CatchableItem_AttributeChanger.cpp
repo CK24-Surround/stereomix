@@ -3,18 +3,22 @@
 
 #include "SMCatchInteractionComponent_CatchableItem_AttributeChanger.h"
 
+#include "Engine/OverlapResult.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
-#include "Engine/OverlapResult.h"
 #include "Items/SMCatchableItem_AttributeChanger.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
 
 
-USMCatchInteractionComponent_CatchableItem_AttributeChanger::USMCatchInteractionComponent_CatchableItem_AttributeChanger() {}
+USMCatchInteractionComponent_CatchableItem_AttributeChanger::USMCatchInteractionComponent_CatchableItem_AttributeChanger()
+{
+}
 
-void USMCatchInteractionComponent_CatchableItem_AttributeChanger::OnSpecialActionPerformed(AActor* Instigator, ESpecialAction InSpecialAction) {}
+void USMCatchInteractionComponent_CatchableItem_AttributeChanger::OnSpecialActionPerformed(AActor* Instigator, ESpecialAction InSpecialAction)
+{
+}
 
 void USMCatchInteractionComponent_CatchableItem_AttributeChanger::OnSpecialActionEnded(AActor* Instigator, ESpecialAction InSpecialAction, float InMagnitude, TSubclassOf<UGameplayEffect> DamageGE, float DamageAmount)
 {

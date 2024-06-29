@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
+
 #include "SMDamageInterface.generated.h"
 
 // This class does not need to be modified.
@@ -14,7 +15,7 @@ class USMDamageInterface : public UInterface
 };
 
 /**
- * 
+ *
  */
 class STEREOMIX_API ISMDamageInterface
 {

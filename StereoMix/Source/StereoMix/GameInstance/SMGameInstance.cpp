@@ -3,8 +3,8 @@
 
 #include "SMGameInstance.h"
 
-#include "StereoMixLog.h"
 #include "Settings/SMGameUserSettings.h"
+#include "StereoMixLog.h"
 
 void USMGameInstance::Init()
 {
@@ -26,7 +26,7 @@ void USMGameInstance::Init()
 	{
 		UE_LOG(LogStereoMix, Warning, TEXT("Demo mode on"))
 	}
-	
+
 	Super::Init();
 }
 

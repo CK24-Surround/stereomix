@@ -3,15 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMUserWidget.h"
 #include "Components/Image.h"
 #include "Data/SMTeam.h"
+#include "SMUserWidget.h"
+
 #include "SMUserWidget_Scoreboard.generated.h"
 
 class USMUserWidget_PhaseTimerBar;
 class UTextBlock;
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_Scoreboard : public USMUserWidget

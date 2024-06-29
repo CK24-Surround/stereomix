@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "CommonUserWidget.h"
 #include "Blueprint/UserWidget.h"
+#include "CommonUserWidget.h"
+
 #include "SMUserWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget : public UCommonUserWidget, public IAbilitySystemInterface

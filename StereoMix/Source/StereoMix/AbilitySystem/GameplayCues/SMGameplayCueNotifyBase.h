@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameplayCueNotify_Static.h"
+
 #include "SMGameplayCueNotifyBase.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMGameplayCueNotifyBase : public UGameplayCueNotify_Static

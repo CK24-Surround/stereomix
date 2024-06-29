@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility_CaughtExit.h"
+
 #include "SMGameplayAbility_CaughtExitOnStunEnd.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility_CaughtExitOnStunEnd : public USMGameplayAbility_CaughtExit

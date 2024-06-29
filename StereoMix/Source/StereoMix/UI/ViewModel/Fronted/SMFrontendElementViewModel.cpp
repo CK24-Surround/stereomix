@@ -3,4 +3,6 @@
 
 #include "SMFrontendElementViewModel.h"
 
-USMFrontendElementViewModel::USMFrontendElementViewModel() {}
+USMFrontendElementViewModel::USMFrontendElementViewModel()
+{
+}

@@ -36,7 +36,7 @@ void ASMCharacterSelectPlayerController::EndPlay(const EEndPlayReason::Type EndP
 void ASMCharacterSelectPlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
-	
+
 	if (GetWorld()->GetGameState())
 	{
 		InitPlayer();
@@ -44,10 +44,7 @@ void ASMCharacterSelectPlayerController::OnRep_PlayerState()
 	else
 	{
 		NET_LOG(this, Verbose, TEXT("GameState is not set yet. Register GameStateSetEvent."))
-		GetWorld()->GameStateSetEvent.AddLambda([this](AGameStateBase*)
-		{
-			InitPlayer();
-		});
+		GetWorld()->GameStateSetEvent.AddLambda([this](AGameStateBase*) { InitPlayer(); });
 	}
 }
 
@@ -92,7 +89,7 @@ void ASMCharacterSelectPlayerController::OnCurrentCharacterSelectStateChanged(EC
 		CharacterSelectWidget = CreateWidget<USMCharacterSelectWidget>(this, CharacterSelectWidgetClass);
 		CharacterSelectWidget->InitWidget(GetCharacterSelectState(), GetCharacterSelectPlayerState());
 		CharacterSelectWidget->AddToViewport();
-		
+
 		GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(CharacterSelectPlayerState->GetTeam());
 		NET_LOG(this, Verbose, TEXT("PlayTeamBackgroundMusic: %s"), *UEnum::GetValueAsString(CharacterSelectPlayerState->GetTeam()))
 	}

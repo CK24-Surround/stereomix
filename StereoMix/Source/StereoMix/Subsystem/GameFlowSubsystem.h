@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+
 #include "GameFlowSubsystem.generated.h"
 
 class USMUserWidget_LoadingScreen;
@@ -16,9 +17,9 @@ enum class ELoginScreenType : uint8
 };
 
 /**
- * 
+ *
  */
-UCLASS(BlueprintType, Config=Game, DefaultConfig)
+UCLASS(BlueprintType, Config = Game, DefaultConfig)
 class STEREOMIX_API UGameFlowSubsystem : public UGameInstanceSubsystem
 {
 	GENERATED_BODY()

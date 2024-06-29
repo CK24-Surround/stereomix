@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "CommonActivatableWidget.h"
+
 #include "SMActivatableWidget.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS(ClassGroup = "StereoMix Common UI")
 class STEREOMIX_API USMActivatableWidget : public UCommonActivatableWidget

@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility_Launch_Custom.h"
+
 #include "SMGameplayAbility_Launch_ElectricGuitar.generated.h"
 
 struct FElectricGuitarLaunchData
@@ -15,7 +16,7 @@ struct FElectricGuitarLaunchData
 };
 
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMGameplayAbility_Launch_ElectricGuitar : public USMGameplayAbility_Launch_Custom

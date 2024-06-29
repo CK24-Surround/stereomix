@@ -6,10 +6,11 @@
 #include "AbilitySystemComponent.h"
 #include "SMAttributeSet.h"
 #include "Utilities/SMAttributeAccessor.h"
+
 #include "SMCharacterAttributeSet.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMCharacterAttributeSet : public USMAttributeSet

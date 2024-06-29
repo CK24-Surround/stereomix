@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayCueNotify_Static.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "Data/SMTeam.h"
+#include "GameplayCueNotify_Static.h"
+
 #include "SMGameplayCueNotify_ImmuneMaterial.generated.h"
 
 USTRUCT(BlueprintType)
@@ -13,14 +14,14 @@ struct FImmuneApplyIndexData
 {
 	GENERATED_BODY()
 
-	FImmuneApplyIndexData() {}
+	FImmuneApplyIndexData() { }
 
 	UPROPERTY(EditAnywhere)
 	TArray<int32> ApplyIndexNumbers;
 };
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayCueNotify_ImmuneMaterial : public UGameplayCueNotify_Static
@@ -38,7 +39,7 @@ protected:
 
 	/** 적용할지 적용을 해제할지 여부입니다. */
 	UPROPERTY(EditAnywhere, Category = "Asset")
-	uint32 bIsApply:1 = true;
+	uint32 bIsApply : 1 = true;
 
 	/** 먼역 머티리얼이 적용되야할 캐릭터 메시 머티리얼 인덱스입니다.*/
 	UPROPERTY(EditAnywhere, Category = "Asset", meta = (EditCondition = "bIsApply", EditConditionHides))

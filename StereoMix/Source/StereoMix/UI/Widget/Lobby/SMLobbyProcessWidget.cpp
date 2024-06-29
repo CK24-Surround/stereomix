@@ -3,10 +3,10 @@
 
 #include "SMLobbyProcessWidget.h"
 
-#include "UI/Widget/Frontend/SMFrontendWidget.h"
-#include "SMLobbyProgressSectionWidget.h"
 #include "Backend/Client/SMClientLobbySubsystem.h"
 #include "Kismet/GameplayStatics.h"
+#include "SMLobbyProgressSectionWidget.h"
+#include "UI/Widget/Frontend/SMFrontendWidget.h"
 
 USMLobbyProcessWidget::USMLobbyProcessWidget()
 {
@@ -70,10 +70,7 @@ bool USMLobbyProcessWidget::CheckIsAuthenticated() const
 		return true;
 	}
 
-	GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&]
-	{
-		UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-	});
+	GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 	return false;
 }
 

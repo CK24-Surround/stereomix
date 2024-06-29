@@ -3,11 +3,11 @@
 
 #include "SMGameState.h"
 
+#include "GameFramework/GameMode.h"
 #include "EngineUtils.h"
 #include "FMODBlueprintStatics.h"
-#include "StereoMixLog.h"
-#include "GameFramework/GameMode.h"
 #include "Net/UnrealNetwork.h"
+#include "StereoMixLog.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMLog.h"
 
@@ -91,13 +91,13 @@ void ASMGameState::HandleMatchHasStarted()
 void ASMGameState::HandleMatchHasEnded()
 {
 	Super::HandleMatchHasEnded();
-	
-	#if WITH_SERVER_CODE
+
+#if WITH_SERVER_CODE
 	if (HasAuthority())
 	{
 		SetMusicOwner(ESMTeam::None);
 	}
-	#endif
+#endif
 }
 
 void ASMGameState::OnRep_ReplicatedRemainCountdownTime()
@@ -213,13 +213,13 @@ void ASMGameState::OnRep_ReplicatedFutureBassTeamPhaseScore()
 
 void ASMGameState::EndPhase()
 {
-	#if WITH_SERVER_CODE
+#if WITH_SERVER_CODE
 	if (HasAuthority())
 	{
 		const ESMTeam VictoryTeam = CalculateVictoryTeam();
 		SetTeamPhaseScores(VictoryTeam, TeamPhaseScores[VictoryTeam] + 1);
 	}
-	#endif
+#endif
 }
 
 void ASMGameState::OnRep_ReplicatedRemainPhaseTime()
@@ -260,13 +260,13 @@ void ASMGameState::PlayBackgroundMusic()
 
 void ASMGameState::SetMusicOwner(const ESMTeam InTeam)
 {
-	#if WITH_SERVER_CODE
+#if WITH_SERVER_CODE
 	if (HasAuthority())
 	{
 		NET_LOG(this, Verbose, TEXT("BGM 변경: %s"), *UEnum::GetValueAsString(InTeam))
 		ReplicatedCurrentMusicOwner = InTeam;
 	}
-	#endif
+#endif
 }
 
 void ASMGameState::OnRep_ReplicatedCurrentMusicPlayer()

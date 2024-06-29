@@ -3,13 +3,13 @@
 
 #include "SMFrontendWidget.h"
 
-#include "SMFrontendElementWidget.h"
-#include "StereoMixLog.h"
+#include "GameFramework/GameModeBase.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Backend/Client/SMClientAuthSubsystem.h"
-#include "GameFramework/GameModeBase.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
+#include "SMFrontendElementWidget.h"
+#include "StereoMixLog.h"
 
 void FFrontendBackgroundColorState::ChangeBackgroundColor(const FLinearColor NewColor)
 {
@@ -38,7 +38,9 @@ FLinearColor FFrontendBackgroundColorState::TransitionBackgroundColorOnTick(cons
 	return CurrentColor;
 }
 
-USMFrontendWidget::USMFrontendWidget() {}
+USMFrontendWidget::USMFrontendWidget()
+{
+}
 
 void USMFrontendWidget::InitWidget(const FString& LevelOptions)
 {
@@ -126,10 +128,7 @@ void USMFrontendWidget::NativeTick(const FGeometry& MyGeometry, const float InDe
 
 USMFrontendElementWidget* USMFrontendWidget::AddElementWidgetInternal(const TSubclassOf<USMFrontendElementWidget>& WidgetClass)
 {
-	USMFrontendElementWidget* NewWidget = MainStack->AddWidget<USMFrontendElementWidget>(WidgetClass,
-		[&](USMFrontendElementWidget& AddedWidget) {
-			AddedWidget.ParentFrontendWidget = this;
-		});
+	USMFrontendElementWidget* NewWidget = MainStack->AddWidget<USMFrontendElementWidget>(WidgetClass, [&](USMFrontendElementWidget& AddedWidget) { AddedWidget.ParentFrontendWidget = this; });
 	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidgetInternal - NewWidget: %s"), *GetName(), *NewWidget->GetName())
 	NewWidget->ActivateWidget();
 	return NewWidget;
@@ -162,7 +161,8 @@ void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> W
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidget - TransitionOut"), *GetName())
 		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this,
-			[&, WidgetClass, InstanceInitFunc](UUMGSequencePlayer&) {
+			[&, WidgetClass, InstanceInitFunc](UUMGSequencePlayer&)
+			{
 				USMFrontendElementWidget* NewWidget = AddElementWidgetInternal(WidgetClass);
 				InstanceInitFunc(*NewWidget);
 			});
@@ -177,7 +177,8 @@ void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> W
 
 void USMFrontendWidget::AddElementWidgetInstance(USMFrontendElementWidget& WidgetInstance)
 {
-	auto AddWidgetFunc = [this, &WidgetInstance] {
+	auto AddWidgetFunc = [this, &WidgetInstance]
+	{
 		WidgetInstance.ParentFrontendWidget = this;
 		MainStack->AddWidgetInstance(WidgetInstance);
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidgetInstance - NewWidget: %s"), *GetName(), *WidgetInstance.GetName())
@@ -198,10 +199,7 @@ void USMFrontendWidget::AddElementWidgetInstance(USMFrontendElementWidget& Widge
 	if (TransitionOut)
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidgetInstance - TransitionOut"), *GetName())
-		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this,
-			[AddWidgetFunc](UUMGSequencePlayer&) {
-				AddWidgetFunc();
-			});
+		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this, [AddWidgetFunc](UUMGSequencePlayer&) { AddWidgetFunc(); });
 	}
 	else
 	{
@@ -226,7 +224,8 @@ void USMFrontendWidget::RemoveElementWidget(USMFrontendElementWidget* Widget)
 		{
 			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut"), *GetName())
 			TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this,
-				[this, Widget](UUMGSequencePlayer&) {
+				[this, Widget](UUMGSequencePlayer&)
+				{
 					UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut Finished"), *GetName())
 					RemoveElementWidgetInternal(Widget);
 				});
@@ -254,10 +253,7 @@ USMPopup* USMFrontendWidget::AddPopup(const TSubclassOf<USMPopup> PopupClass)
 		Popup->OnSubmit.Unbind();
 		Popup->OnClose.Unbind();
 		Popup->OnDeactivated().RemoveAll(this);
-		Popup->OnDeactivated().AddWeakLambda(this,
-			[this] {
-				SetIsFocusable(true);
-			});
+		Popup->OnDeactivated().AddWeakLambda(this, [this] { SetIsFocusable(true); });
 		SetIsFocusable(false);
 
 		return Popup;

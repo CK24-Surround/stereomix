@@ -3,31 +3,31 @@
 
 #include "SMPlayerCharacter.h"
 
-#include "EnhancedInputComponent.h"
-#include "NiagaraComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/SMCatchInteractionComponent_Character.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Controllers/SMGamePlayerController.h"
+#include "Controllers/SMGamePlayerState.h"
 #include "Data/SMCharacterAssetData.h"
 #include "Data/SMControlData.h"
 #include "Data/SMDesignData.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/SpringArmComponent.h"
+#include "EnhancedInputComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "NiagaraComponent.h"
+#include "Tiles/SMTile.h"
 #include "UI/SMWidgetComponent.h"
+#include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
-#include "AbilitySystem/SMTags.h"
-#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
-#include "Components/SMCatchInteractionComponent_Character.h"
-#include "Controllers/SMGamePlayerController.h"
-#include "Controllers/SMGamePlayerState.h"
-#include "Tiles/SMTile.h"
-#include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 
 
 ASMPlayerCharacter::ASMPlayerCharacter()
@@ -720,7 +720,9 @@ void ASMPlayerCharacter::OnCatchRelease()
 	}
 }
 
-void ASMPlayerCharacter::OnTeamChangeCallback() {}
+void ASMPlayerCharacter::OnTeamChangeCallback()
+{
+}
 
 bool ASMPlayerCharacter::bAmICatching()
 {
@@ -818,7 +820,7 @@ void ASMPlayerCharacter::DrawSmashEndPoint()
 		AlignedSourceZ.Z = InTargetLocation.Z;
 
 		constexpr float TileSize = 150.0f;
-		const float Range = TileSize * 6;
+		constexpr float Range = TileSize * 6;
 		if (FVector::DistSquared(AlignedSourceZ, InTargetLocation) > FMath::Square(Range))
 		{
 			const FVector SourceToTargetDirection = (InTargetLocation - AlignedSourceZ).GetSafeNormal();

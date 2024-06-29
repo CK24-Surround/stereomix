@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FMODBlueprintStatics.h"
 #include "Data/SMTeam.h"
+#include "FMODBlueprintStatics.h"
 #include "Subsystems/GameInstanceSubsystem.h"
+
 #include "SMBackgroundMusicSubsystem.generated.h"
 
 UENUM(BlueprintType)
@@ -38,7 +39,7 @@ public:
 	bool IsPlaying() const;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category="Background Music")
+	UPROPERTY(EditDefaultsOnly, Category = "Background Music")
 	TObjectPtr<UFMODEvent> BackgroundMusic;
 
 private:

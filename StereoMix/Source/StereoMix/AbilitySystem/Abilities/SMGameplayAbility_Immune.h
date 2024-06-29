@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
+
 #include "SMGameplayAbility_Immune.generated.h"
 
 class UFMODEvent;
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility_Immune : public USMGameplayAbility

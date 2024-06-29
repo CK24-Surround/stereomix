@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimInstance.h"
+
 #include "SMAnimInstance.generated.h"
 
 class UCharacterMovementComponent;
@@ -19,7 +20,7 @@ enum class EDirection : uint8
 
 class ASMPlayerCharacter;
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMAnimInstance : public UAnimInstance
@@ -61,13 +62,13 @@ protected:
 	TObjectPtr<UCharacterMovementComponent> SourceMovement;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	uint32 bHasAcceleration:1 = false;
+	uint32 bHasAcceleration : 1 = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector Acceleration2D;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	uint32 bHasVeloicity:1 = false;
+	uint32 bHasVeloicity : 1 = false;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector Velocity2D;

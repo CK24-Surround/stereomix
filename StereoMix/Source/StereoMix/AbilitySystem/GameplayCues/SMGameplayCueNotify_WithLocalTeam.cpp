@@ -3,11 +3,11 @@
 
 #include "SMGameplayCueNotify_WithLocalTeam.h"
 
-#include "FMODBlueprintStatics.h"
 #include "Data/SMTeam.h"
-#include "NiagaraFunctionLibrary.h"
+#include "FMODBlueprintStatics.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "NiagaraFunctionLibrary.h"
 
 USMGameplayCueNotify_WithLocalTeam::USMGameplayCueNotify_WithLocalTeam()
 {
@@ -77,7 +77,7 @@ void USMGameplayCueNotify_WithLocalTeam::PlaySound(AActor* SourceActor, const FG
 	FVector Location;
 	FRotator Rotation;
 	GetLocationAndRotation(Parameters, Location, Rotation);
-	FTransform NewTransform{Rotation, Location};
+	FTransform NewTransform{ Rotation, Location };
 	UFMODBlueprintStatics::PlayEventAtLocation(SourceActor, Sound[Team], NewTransform, true);
 }
 

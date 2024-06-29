@@ -3,10 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameplayTagContainer.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/SMTeamInterface.h"
 #include "Data/SMTeam.h"
+#include "GameplayTagContainer.h"
+#include "Interfaces/SMTeamInterface.h"
+
 #include "SMProjectile.generated.h"
 
 DECLARE_DELEGATE_OneParam(FOnProjectileLifeTimeSignature, ASMProjectile* /*Projectile*/);
@@ -82,7 +83,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
-// ~Component Section
+	// ~Component Section
 
 public:
 	/** 생명 주기가 끝나 회수되야할때 브로드캐스트합니다. */

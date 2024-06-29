@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "SMGameplayAbility_TileTrigger.h"
+
 #include "SMGameplayAbility_TileTrigger_Smash.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility_TileTrigger_Smash : public USMGameplayAbility_TileTrigger

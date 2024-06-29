@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/HUD.h"
+
 #include "SMClientHUD.generated.h"
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API ASMClientHUD : public AHUD

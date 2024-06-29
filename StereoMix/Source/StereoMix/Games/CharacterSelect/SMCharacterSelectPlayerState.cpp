@@ -3,8 +3,8 @@
 
 #include "SMCharacterSelectPlayerState.h"
 
-#include "SMCharacterSelectState.h"
 #include "Net/UnrealNetwork.h"
+#include "SMCharacterSelectState.h"
 
 
 ASMCharacterSelectPlayerState::ASMCharacterSelectPlayerState()

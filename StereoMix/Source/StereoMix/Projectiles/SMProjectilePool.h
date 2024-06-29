@@ -3,11 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
 #include "SMProjectilePool.generated.h"
 
 class ASMProjectile;
 /**
- * 
+ *
  */
 UCLASS(BlueprintType, Blueprintable)
 class STEREOMIX_API USMProjectilePool : public UObject

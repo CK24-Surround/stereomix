@@ -9,7 +9,7 @@
 ASMRoomPlayerState::ASMRoomPlayerState()
 {
 	CurrentState = ERoomPlayerStateType::Loading;
-	
+
 	bCopyTeamOnSeamlessTravel = false;
 	bCopyCharacterTypeOnSeamlessTravel = false;
 }
@@ -122,4 +122,3 @@ void ASMRoomPlayerState::OnTeamChanged(const ESMTeam PreviousTeam, const ESMTeam
 	}
 #endif
 }
-

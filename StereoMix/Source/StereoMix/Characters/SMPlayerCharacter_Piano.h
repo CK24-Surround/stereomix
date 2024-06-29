@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMPlayerCharacter.h"
+
 #include "SMPlayerCharacter_Piano.generated.h"
 
 UCLASS()

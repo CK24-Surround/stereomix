@@ -40,15 +40,18 @@ void ASMGameSession::UpdateRoomState(const EGrpcLobbyRoomState NewState)
 
 	FGrpcLobbyUpdateRoomStateRequest Request;
 	Request.State = NewState;
-	RoomSubsystem->GetLobbyService()->CallUpdateRoomState(Request, [this](const FGrpcResult& Result, const FGrpcLobbyUpdateRoomStateResponse& Response)
-	{
-		if (Result.Code != EGrpcResultCode::Ok)
+	RoomSubsystem->GetLobbyService()->CallUpdateRoomState(
+		Request,
+		[this](const FGrpcResult& Result, const FGrpcLobbyUpdateRoomStateResponse& Response)
 		{
-			UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room state update failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
-			return;
-		}
-		UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room state updated: %s"), *UEnum::GetValueAsString(Response.UpdatedState))
-	}, RoomSubsystem->GetAuthentication());
+			if (Result.Code != EGrpcResultCode::Ok)
+			{
+				UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room state update failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
+				return;
+			}
+			UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room state updated: %s"), *UEnum::GetValueAsString(Response.UpdatedState))
+		},
+		RoomSubsystem->GetAuthentication());
 }
 
 void ASMGameSession::DeleteRoom()
@@ -58,17 +61,20 @@ void ASMGameSession::DeleteRoom()
 		return;
 	}
 
-	RoomSubsystem->GetLobbyService()->CallDeleteRoom(FGrpcLobbyDeleteRoomRequest(), [this](const FGrpcResult& Result, const FGrpcLobbyDeleteRoomResponse&)
-	{
-		if (Result.Code == EGrpcResultCode::Ok)
+	RoomSubsystem->GetLobbyService()->CallDeleteRoom(
+		FGrpcLobbyDeleteRoomRequest(),
+		[this](const FGrpcResult& Result, const FGrpcLobbyDeleteRoomResponse&)
 		{
-			UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room deleted"))
-		}
-		else
-		{
-			UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room delete failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
-		}
-	}, RoomSubsystem->GetAuthentication());
+			if (Result.Code == EGrpcResultCode::Ok)
+			{
+				UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room deleted"))
+			}
+			else
+			{
+				UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room delete failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
+			}
+		},
+		RoomSubsystem->GetAuthentication());
 }
 
 void ASMGameSession::SetCanEnterRoom(const bool bCanEnter)
@@ -78,7 +84,7 @@ void ASMGameSession::SetCanEnterRoom(const bool bCanEnter)
 
 void ASMGameSession::InitOptions(const FString& Options)
 {
-	// BUG: MaxPlayers가 생성자가 아니라 실제 여기서 적용됨 
+	// BUG: MaxPlayers가 생성자가 아니라 실제 여기서 적용됨
 	MaxPlayers = 6;
 	Super::InitOptions(Options);
 	UE_LOG(LogSMGameSession, Warning, TEXT("InitOptions: %s"), *Options)

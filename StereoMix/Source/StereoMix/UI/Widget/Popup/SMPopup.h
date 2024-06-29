@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "CommonButtonBase.h"
 #include "UI/Widget/SMActivatableWidget.h"
+
 #include "SMPopup.generated.h"
 
 /**
@@ -28,10 +29,10 @@ public:
 	virtual bool NativeOnHandleBackAction() override;
 
 protected:
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidget))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidget))
 	TObjectPtr<UCommonButtonBase> SubmitButton;
 
-	UPROPERTY(BlueprintReadOnly, meta=(BindWidgetOptional))
+	UPROPERTY(BlueprintReadOnly, meta = (BindWidgetOptional))
 	TObjectPtr<UCommonButtonBase> CloseButton;
 
 	virtual bool CanSubmit() { return true; }

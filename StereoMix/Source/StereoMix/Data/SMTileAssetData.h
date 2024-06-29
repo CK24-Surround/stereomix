@@ -5,12 +5,13 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Data/SMTeam.h"
+
 #include "SMTileAssetData.generated.h"
 
 class UNiagaraSystem;
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMTileAssetData : public UPrimaryDataAsset

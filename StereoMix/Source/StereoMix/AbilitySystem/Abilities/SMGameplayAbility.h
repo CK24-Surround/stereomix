@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+
 #include "SMGameplayAbility.generated.h"
 
 class USMAbilitySystemComponent;
 class ASMPlayerCharacter;
 
 /**
- * 
+ *
  */
 UCLASS()
 class STEREOMIX_API USMGameplayAbility : public UGameplayAbility

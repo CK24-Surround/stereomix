@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGrpcClientSubsystem.h"
 #include "SAuth/AuthService.h"
+#include "SMGrpcClientSubsystem.h"
+
 #include "SMAuthSubsystem.generated.h"
 
 /**

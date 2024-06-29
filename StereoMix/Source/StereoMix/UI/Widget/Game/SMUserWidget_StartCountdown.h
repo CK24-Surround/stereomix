@@ -4,12 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "SMUserWidget.h"
+
 #include "SMUserWidget_StartCountdown.generated.h"
 
 class ASMGameState;
 class UScaleBox;
 /**
- * 
+ *
  */
 UCLASS(Abstract)
 class STEREOMIX_API USMUserWidget_StartCountdown : public USMUserWidget
