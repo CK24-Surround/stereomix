@@ -16,7 +16,7 @@ AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortFunctionsOnASingleLine: All
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: Inline
 AlwaysBreakTemplateDeclarations: Yes
@@ -37,7 +37,7 @@ BraceWrapping:
   AfterExternBlock: true
   BeforeCatch: true
   BeforeElse: true
-  BeforeLambdaBody: true
+  BeforeLambdaBody: false
   BeforeWhile: true
   IndentBraces: false
   SplitEmptyFunction: true
@@ -47,8 +47,7 @@ BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeTernaryOperators: true
 BreakInheritanceList: BeforeColon
 BreakStringLiterals: true
-BreakConstructorInitializers: BeforeColon
-ColumnLimit: 1000
+ColumnLimit: 0
 Cpp11BracedListStyle: false
 EmptyLineAfterAccessModifier: Leave
 EmptyLineBeforeAccessModifier: LogicalBlock
@@ -103,6 +102,6 @@ SpaceAfterTemplateKeyword: false
 SpaceBeforeCaseColon: false
 SpaceInEmptyBlock: true
 SpacesInContainerLiterals: false
-StatementMacros: [ 'UPROPERTY', 'UFUNCTION', 'UCLASS', 'USTRUCT', 'UENUM', 'UINTERFACE', 'GENERATED_BODY' ]
+StatementMacros: [ 'UPROPERTY', 'UFUNCTION', 'UCLASS', 'USTRUCT', 'UENUM', 'UINTERFACE', 'GENERATED_BODY', 'PURE_VIRTUAL' ]
 TabWidth: 4
 UseTab: Always
