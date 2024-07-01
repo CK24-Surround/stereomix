@@ -32,18 +32,16 @@ void USMLobbyWidget::NativeOnActivated()
 	{
 		LobbySubsystem->OnServiceStateChanged.AddDynamic(this, &USMLobbyWidget::OnLobbyServiceStateChanged);
 
-		GetWorld()->GetTimerManager().SetTimerForNextTick(
-			[this]
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this] {
+			if (LobbySubsystem->GetLobbyService()->GetServiceState() == EGrpcServiceState::Ready)
 			{
-				if (LobbySubsystem->GetLobbyService()->GetServiceState() == EGrpcServiceState::Ready)
-				{
-					OnLobbyServiceStateChanged(EGrpcServiceState::Ready);
-				}
-				else
-				{
-					LobbySubsystem->Connect();
-				}
-			});
+				OnLobbyServiceStateChanged(EGrpcServiceState::Ready);
+			}
+			else
+			{
+				LobbySubsystem->Connect();
+			}
+		});
 	}
 }
 
@@ -137,7 +135,8 @@ void USMLobbyWidget::OnLobbyServiceStateChanged(const EGrpcServiceState ServiceS
 	else if (ServiceState == EGrpcServiceState::TransientFailure)
 	{
 		USMAlertPopup* Alert = GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."));
-		Alert->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
+		Alert->OnSubmit.BindWeakLambda(this, [&] {
+			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
 			});
 	}
 }

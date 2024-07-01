@@ -24,7 +24,7 @@ protected:
 
 	virtual void TileTrigger() PURE_VIRTUAL(TileTrigger)
 
-		FVector TriggerdTileLocation;
+	FVector TriggerdTileLocation;
 	ESMTeam SourceTeam = ESMTeam::None;
 
 	// 타일이 트리거 되야할 규모입니다.

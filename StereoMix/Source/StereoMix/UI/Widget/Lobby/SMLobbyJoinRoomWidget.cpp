@@ -30,8 +30,7 @@ void USMLobbyJoinRoomWidget::NativeOnActivated()
 		LobbySubsystem->OnJoinRoomWithCodeResponse.AddDynamic(this, &USMLobbyJoinRoomWidget::OnJoinRoomWithCodeResponse);
 
 		GetWorld()->GetTimerManager().SetTimerForNextTick(
-			[this]
-			{
+			[this] {
 				RoomCode = GetParentFrontendWidget()->RequestRoomCode;
 				UE_LOG(LogStereoMixUI, Log, TEXT("[%s] NativeOnActivated - InputRoomCode: %s"), *GetName(), *RoomCode)
 

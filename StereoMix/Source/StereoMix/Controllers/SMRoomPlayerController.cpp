@@ -67,8 +67,7 @@ void ASMRoomPlayerController::OnCompleteLoading()
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(
 		TimerHandle,
-		[this]
-		{
+		[this] {
 			RoomPlayerState->SetCurrentState(ERoomPlayerStateType::Unready);
 
 			if (GetWorld()->GetGameViewport())

@@ -42,8 +42,7 @@ void ASMGameSession::UpdateRoomState(const EGrpcLobbyRoomState NewState)
 	Request.State = NewState;
 	RoomSubsystem->GetLobbyService()->CallUpdateRoomState(
 		Request,
-		[this](const FGrpcResult& Result, const FGrpcLobbyUpdateRoomStateResponse& Response)
-		{
+		[this](const FGrpcResult& Result, const FGrpcLobbyUpdateRoomStateResponse& Response) {
 			if (Result.Code != EGrpcResultCode::Ok)
 			{
 				UE_LOG(LogStereoMix, Error, TEXT("[SMGameSession] Room state update failed: %s, %s"), *Result.GetCodeString(), *Result.GetMessageString())
@@ -63,8 +62,7 @@ void ASMGameSession::DeleteRoom()
 
 	RoomSubsystem->GetLobbyService()->CallDeleteRoom(
 		FGrpcLobbyDeleteRoomRequest(),
-		[this](const FGrpcResult& Result, const FGrpcLobbyDeleteRoomResponse&)
-		{
+		[this](const FGrpcResult& Result, const FGrpcLobbyDeleteRoomResponse&) {
 			if (Result.Code == EGrpcResultCode::Ok)
 			{
 				UE_LOG(LogStereoMix, Warning, TEXT("[SMGameSession] Room deleted"))

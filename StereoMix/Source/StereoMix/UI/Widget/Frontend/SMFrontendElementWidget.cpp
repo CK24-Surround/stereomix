@@ -1,6 +1,5 @@
 ﻿// Copyright Surround, Inc. All Rights Reserved.
 
-
 #include "SMFrontendElementWidget.h"
 
 #include "Animation/UMGSequencePlayer.h"
@@ -45,8 +44,7 @@ void USMFrontendElementWidget::NativeOnActivated()
 		{
 			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnActivated - TransitionIn"), *GetName())
 			TransitionIn->OnSequenceFinishedPlaying().AddWeakLambda(this,
-				[this](UUMGSequencePlayer&)
-				{
+				[this](UUMGSequencePlayer&) {
 					UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnActivated - TransitionIn Finished"), *GetName())
 					SetVisibility(ESlateVisibility::Visible);
 				});
@@ -62,7 +60,9 @@ void USMFrontendElementWidget::NativeOnActivated()
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnActivated - No AutoTransitionOnActivate"), *GetName())
 	}
 
-	GetWorld()->GetTimerManager().SetTimerForNextTick([this] { GetParentFrontendWidget()->ChangeBackgroundColor(BackgroundColor); });
+	GetWorld()->GetTimerManager().SetTimerForNextTick([this] {
+		GetParentFrontendWidget()->ChangeBackgroundColor(BackgroundColor);
+	});
 
 	if (TransitionInSound)
 	{
@@ -97,7 +97,9 @@ UUMGSequencePlayer* USMFrontendElementWidget::PlayTransitionIn()
 	if (TransitionAnim)
 	{
 		UUMGSequencePlayer* Player = PlayAnimationForward(TransitionAnim);
-		Player->OnSequenceFinishedPlaying().AddWeakLambda(this, [&](UUMGSequencePlayer&) { bTransitioning = false; });
+		Player->OnSequenceFinishedPlaying().AddWeakLambda(this, [&](UUMGSequencePlayer&) {
+			bTransitioning = false;
+		});
 		bTransitioning = true;
 		return Player;
 	}
@@ -110,7 +112,9 @@ UUMGSequencePlayer* USMFrontendElementWidget::PlayTransitionOut()
 	if (TransitionAnim)
 	{
 		UUMGSequencePlayer* Player = PlayAnimationReverse(TransitionAnim);
-		Player->OnSequenceFinishedPlaying().AddWeakLambda(this, [&](UUMGSequencePlayer&) { bTransitioning = false; });
+		Player->OnSequenceFinishedPlaying().AddWeakLambda(this, [&](UUMGSequencePlayer&) {
+			bTransitioning = false;
+		});
 		bTransitioning = true;
 		return Player;
 	}

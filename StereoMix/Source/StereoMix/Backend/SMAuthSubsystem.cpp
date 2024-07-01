@@ -1,6 +1,5 @@
 ﻿// Copyright Surround, Inc. All Rights Reserved.
 
-
 #include "SMAuthSubsystem.h"
 
 USMAuthSubsystem::USMAuthSubsystem() : Super(TEXT("AuthService"))

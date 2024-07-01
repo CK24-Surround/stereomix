@@ -814,8 +814,7 @@ void ASMPlayerCharacter::DrawSmashEndPoint()
 		return;
 	}
 
-	auto CalculateMaxDistanceLocation = [](const FVector& InStartLocation, const FVector& InTargetLocation)
-	{
+	auto CalculateMaxDistanceLocation = [](const FVector& InStartLocation, const FVector& InTargetLocation) {
 		FVector AlignedSourceZ = InStartLocation;
 		AlignedSourceZ.Z = InTargetLocation.Z;
 

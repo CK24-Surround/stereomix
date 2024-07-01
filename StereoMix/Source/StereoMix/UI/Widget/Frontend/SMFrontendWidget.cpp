@@ -1,6 +1,5 @@
 ﻿// Copyright Surround, Inc. All Rights Reserved.
 
-
 #include "SMFrontendWidget.h"
 
 #include "GameFramework/GameModeBase.h"
@@ -160,12 +159,10 @@ void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> W
 	if (UUMGSequencePlayer* TransitionOut = CurrentActiveElementWidget->PlayTransitionOut())
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidget - TransitionOut"), *GetName())
-		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this,
-			[&, WidgetClass, InstanceInitFunc](UUMGSequencePlayer&)
-			{
-				USMFrontendElementWidget* NewWidget = AddElementWidgetInternal(WidgetClass);
-				InstanceInitFunc(*NewWidget);
-			});
+		TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this, [&, WidgetClass, InstanceInitFunc](UUMGSequencePlayer&) {
+			USMFrontendElementWidget* NewWidget = AddElementWidgetInternal(WidgetClass);
+			InstanceInitFunc(*NewWidget);
+		});
 	}
 	else
 	{
@@ -177,8 +174,7 @@ void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> W
 
 void USMFrontendWidget::AddElementWidgetInstance(USMFrontendElementWidget& WidgetInstance)
 {
-	auto AddWidgetFunc = [this, &WidgetInstance]
-	{
+	auto AddWidgetFunc = [this, &WidgetInstance] {
 		WidgetInstance.ParentFrontendWidget = this;
 		MainStack->AddWidgetInstance(WidgetInstance);
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddElementWidgetInstance - NewWidget: %s"), *GetName(), *WidgetInstance.GetName())
@@ -223,12 +219,10 @@ void USMFrontendWidget::RemoveElementWidget(USMFrontendElementWidget* Widget)
 		if (TransitionOut)
 		{
 			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut"), *GetName())
-			TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this,
-				[this, Widget](UUMGSequencePlayer&)
-				{
-					UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut Finished"), *GetName())
-					RemoveElementWidgetInternal(Widget);
-				});
+			TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this, [this, Widget](UUMGSequencePlayer&) {
+				UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut Finished"), *GetName())
+				RemoveElementWidgetInternal(Widget);
+			});
 		}
 		else
 		{
@@ -286,4 +280,6 @@ void USMFrontendWidget::ChangeBackgroundColor(const FLinearColor NewColor)
 	BackgroundColorState.ChangeBackgroundColor(NewColor);
 }
 
-void USMFrontendWidget::OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer) {}
+void USMFrontendWidget::OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer) 
+{
+}

@@ -16,13 +16,21 @@ DECLARE_LOG_CATEGORY_CLASS(LogStereoMixNetwork, Log, All);
 		if (Macro_NetOwner) \
 		{ \
 			const ENetMode Macro_NetMode = Macro_NetOwner->GetNetMode(); \
-			Macro_NetModeInfo = Macro_NetMode == NM_Client ? FString::Printf(TEXT("Client%d"), static_cast<int>(GPlayInEditorID)) : Macro_NetMode == NM_DedicatedServer ? TEXT("Server") : TEXT("Misc"); \
+			Macro_NetModeInfo = Macro_NetMode == NM_Client			? FString::Printf(TEXT("Client%d"), static_cast<int>(GPlayInEditorID)) \
+							  : Macro_NetMode == NM_DedicatedServer ? TEXT("Server") \
+																	: TEXT("Misc"); \
 \
 			const ENetRole Macro_LocalRole = Macro_NetOwner->GetLocalRole(); \
-			Macro_LocalRoleInfo = Macro_LocalRole == ROLE_Authority ? TEXT("Auth") : Macro_LocalRole == ROLE_AutonomousProxy ? TEXT("Auto") : Macro_LocalRole == ROLE_SimulatedProxy ? TEXT("Sim") : TEXT("None"); \
+			Macro_LocalRoleInfo = Macro_LocalRole == ROLE_Authority		  ? TEXT("Auth") \
+								: Macro_LocalRole == ROLE_AutonomousProxy ? TEXT("Auto") \
+								: Macro_LocalRole == ROLE_SimulatedProxy  ? TEXT("Sim") \
+																		  : TEXT("None"); \
 \
 			const ENetRole Macro_RemoteRole = Macro_NetOwner->GetRemoteRole(); \
-			Macro_RemoteRoleInfo = Macro_RemoteRole == ROLE_Authority ? TEXT("Auth") : Macro_RemoteRole == ROLE_AutonomousProxy ? TEXT("Auto") : Macro_RemoteRole == ROLE_SimulatedProxy ? TEXT("Sim") : TEXT("None"); \
+			Macro_RemoteRoleInfo = Macro_RemoteRole == ROLE_Authority		? TEXT("Auth") \
+								 : Macro_RemoteRole == ROLE_AutonomousProxy ? TEXT("Auto") \
+								 : Macro_RemoteRole == ROLE_SimulatedProxy	? TEXT("Sim") \
+																			: TEXT("None"); \
 		} \
 \
 		FString Macro_Log; \

@@ -120,8 +120,7 @@ void USMUserWidget_ScreenIndicator::UpdateIndicator(const FGeometry& MyGeometry)
 
 bool USMUserWidget_ScreenIndicator::IsInBounds(const FVector2D& TargetScreenLocation, const FVector2D& MinBoundary, const FVector2D& MaxBoundary)
 {
-	auto IsAxisInBounds = [](double Min, double Max, double Value)
-	{
+	auto IsAxisInBounds = [](double Min, double Max, double Value) {
 		return Min <= Value && Value <= Max;
 	};
 
@@ -143,8 +142,7 @@ FVector2D USMUserWidget_ScreenIndicator::GetOffScreenIndicatorScreenLocation(con
 	FVector2D OffScreenLocation = TargetScreenLocation;
 
 	// CheckX를 통해 사용되는 축이 X축인지 Y축인지 구별하는 람다식입니다.
-	auto CalculateIntersection = [&ScreenCenter, &Direction, &OffScreenLocation](bool CheckX, float ScreenCenterCoord, float DirectionCoord, float BoundaryCoord, float OtherMinBoundaryCoord, float OtherMaxBoundaryCoord)
-	{
+	auto CalculateIntersection = [&ScreenCenter, &Direction, &OffScreenLocation](bool CheckX, float ScreenCenterCoord, float DirectionCoord, float BoundaryCoord, float OtherMinBoundaryCoord, float OtherMaxBoundaryCoord) {
 		// 한 축의 중심을 기준으로 한 축의 경계까지의 길이를 구하고 이를 한 축의 방향으로 나눕니다. 이를 통해 어떤 길이를 가질떄 왼쪽 경계에 도달할 수 있는지 구할 수 있습니다.
 		const float DistanceToBoundary = (BoundaryCoord - ScreenCenterCoord) / DirectionCoord;
 		FVector2D Intersection = ScreenCenter + (Direction * DistanceToBoundary);
