@@ -14,8 +14,4 @@ UCLASS()
 class STEREOMIX_API USMDesignData : public UDataAsset
 {
 	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditDefaultsOnly, Category = "PlayerCharacter|Movement", DisplayName = "이동속도")
-	float MoveSpeed = 700.0f;
 };
