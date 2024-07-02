@@ -389,7 +389,9 @@ void ASMPlayerCharacter::GiveDefaultAbilities()
 		const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(ForInitGE, 0, GEContextHandle);
 		if (GESpecHandle.IsValid())
 		{
-			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MoveSpeed, DesignData->MoveSpeed);
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MoveSpeed, MoveSpeed);
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MaxHP, MaxHP);
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::CurrentHP, MaxHP);
 			ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
 	}

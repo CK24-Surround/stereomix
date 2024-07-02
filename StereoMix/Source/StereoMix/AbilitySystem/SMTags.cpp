@@ -19,6 +19,8 @@ namespace SMTags
 
 	namespace AttributeSet::Character::Init
 	{
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CurrentHP, "AttributeSet.Character.Init.CurrentHP", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MaxHP, "AttributeSet.Character.Init.MaxHP", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MoveSpeed, "AttributeSet.Character.Init.MoveSpeed", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
 	}
 

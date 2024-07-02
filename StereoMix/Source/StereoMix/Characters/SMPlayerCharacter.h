@@ -149,6 +149,14 @@ protected:
 	/** 캐릭터의 원본 오버레이 머티리얼입니다. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Design|Material")
 	TObjectPtr<UMaterialInterface> OriginalOverlayMaterial;
+
+	/** 캐릭터의 최대 HP입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design|Stat")
+	float MaxHP = 100.0f;
+
+	/** 캐릭터의 이동속도입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design|Stat")
+	float MoveSpeed = 600.0f;
 	// ~Data Section
 
 	// ~Caching Section
@@ -273,13 +281,13 @@ protected:
 	void OnCatchRelease();
 
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableCollision")
-	uint32 bEnableCollision : 1 = true;
+	uint32 bEnableCollision:1 = true;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_UseControllerRotation")
-	uint32 bUseControllerRotation : 1 = true;
+	uint32 bUseControllerRotation:1 = true;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_EnableMovement")
-	uint32 bEnableMovement : 1 = true;
+	uint32 bEnableMovement:1 = true;
 	// ~State Section
 
 	// ~Damage Section

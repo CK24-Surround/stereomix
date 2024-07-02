@@ -20,6 +20,8 @@ namespace SMTags
 
 	namespace AttributeSet::Character::Init
 	{
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CurrentHP);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(MaxHP);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(MoveSpeed);
 	}
 
