@@ -16,10 +16,17 @@ AllowAllParametersOfDeclarationOnNextLine: true
 AllowShortBlocksOnASingleLine: Empty
 AllowShortCaseLabelsOnASingleLine: false
 AllowShortEnumsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: All
+AllowShortFunctionsOnASingleLine: InlineOnly
 AllowShortIfStatementsOnASingleLine: Never
 AllowShortLambdasOnASingleLine: Inline
 AlwaysBreakTemplateDeclarations: Yes
+AttributeMacros:
+  - 'UPROPERTY'
+  - 'UFUNCTION'
+  - 'UCLASS'
+  - 'USTRUCT'
+  - 'UENUM'
+  - 'UINTERFACE'
 BinPackArguments: true
 BinPackParameters: true
 BitFieldColonSpacing: Both
@@ -45,10 +52,13 @@ BraceWrapping:
   SplitEmptyNamespace: true
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeTernaryOperators: true
+BreakConstructorInitializers: BeforeComma
+BreakConstructorInitializersBeforeComma: false
 BreakInheritanceList: BeforeColon
 BreakStringLiterals: true
 ColumnLimit: 0
 Cpp11BracedListStyle: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: false
 EmptyLineAfterAccessModifier: Leave
 EmptyLineBeforeAccessModifier: LogicalBlock
 FixNamespaceComments: false
@@ -95,13 +105,27 @@ PointerAlignment: Left
 QualifierAlignment: Left
 ReferenceAlignment: Left
 ReflowComments: true
-SeparateDefinitionBlocks: Leave
+SeparateDefinitionBlocks: Always
 SortIncludes: CaseSensitive
 SortUsingDeclarations: Lexicographic
 SpaceAfterTemplateKeyword: false
 SpaceBeforeCaseColon: false
 SpaceInEmptyBlock: true
 SpacesInContainerLiterals: false
-StatementMacros: [ 'UPROPERTY', 'UFUNCTION', 'UCLASS', 'USTRUCT', 'UENUM', 'UINTERFACE', 'GENERATED_BODY', 'PURE_VIRTUAL' ]
+StatementMacros:
+  - 'UPROPERTY'
+  - 'UFUNCTION'
+  - 'UCLASS'
+  - 'USTRUCT'
+  - 'UENUM'
+  - 'UINTERFACE'
+  - 'GENERATED_BODY'
+  - 'PURE_VIRTUAL'
+  - 'DOREPLIFETIME'
+  - 'check'
+  - 'checkf'
+  - 'checkSlow'
+  - 'checkfSlow'
 TabWidth: 4
 UseTab: Always
+...
