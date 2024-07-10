@@ -69,8 +69,10 @@ void ASMRoomMode::InitGameState()
 		RoomState->MaxPlayersInTeam = 3;
 	}
 
-	RoomState->GetCountdownTimer()->OnCountdownTick.AddDynamic(this, &ASMRoomMode::OnCountdownTick);
-	RoomState->GetCountdownTimer()->OnCountdownFinished.AddDynamic(this, &ASMRoomMode::OnCountdownFinished);
+	// 직접 게임시작으로 사양 변경됨
+	// RoomState->GetCountdownTimer()->OnCountdownTick.AddDynamic(this, &ASMRoomMode::OnCountdownTick);
+	// RoomState->GetCountdownTimer()->OnCountdownFinished.AddDynamic(this, &ASMRoomMode::OnCountdownFinished);
+
 	RoomState->OnTeamPlayersUpdated.AddDynamic(this, &ASMRoomMode::OnTeamPlayersUpdated);
 
 	const FString RoomCode = FPlatformMisc::GetEnvironmentVariable(TEXT("STEREOMIX_SHORT_ROOM_ID"));
@@ -118,10 +120,10 @@ bool ASMRoomMode::IsReadyToStart() const
 
 void ASMRoomMode::OnTeamPlayersUpdated(ESMTeam UpdatedTeam)
 {
-	if (RoomState.IsValid() && !RoomState->GetCountdownTimer()->IsRunning() && IsReadyToStart())
-	{
-		RoomState->GetCountdownTimer()->StartCountdown(RoomState->CountdownTime);
-	}
+	// if (RoomState.IsValid() && !RoomState->GetCountdownTimer()->IsRunning() && IsReadyToStart())
+	// {
+	// 	RoomState->GetCountdownTimer()->StartCountdown(RoomState->CountdownTime);
+	// }
 }
 
 void ASMRoomMode::OnCountdownTick()

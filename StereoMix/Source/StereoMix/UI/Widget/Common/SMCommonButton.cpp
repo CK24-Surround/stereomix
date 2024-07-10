@@ -38,12 +38,15 @@ void USMCommonButton::NativeOnClicked()
 {
 	Super::NativeOnClicked();
 
-	if (const USMButtonStyle* ButtonStyle = Cast<USMButtonStyle>(GetStyleCDO()); ButtonStyle && ButtonStyle->ClickSound)
+	if (!GetLocked())
 	{
-		UFMODBlueprintStatics::PlayEvent2D(this, ButtonStyle->ClickSound, true);
-	}
-	else if (ClickSound)
-	{
-		UFMODBlueprintStatics::PlayEvent2D(this, ClickSound, true);
+		if (const USMButtonStyle* ButtonStyle = Cast<USMButtonStyle>(GetStyleCDO()); ButtonStyle && ButtonStyle->ClickSound)
+		{
+			UFMODBlueprintStatics::PlayEvent2D(this, ButtonStyle->ClickSound, true);
+		}
+		else if (ClickSound)
+		{
+			UFMODBlueprintStatics::PlayEvent2D(this, ClickSound, true);
+		}
 	}
 }

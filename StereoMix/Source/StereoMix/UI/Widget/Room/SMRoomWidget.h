@@ -14,6 +14,7 @@
 #include "SMRoomWidget.generated.h"
 
 class USMChatWidget;
+
 /**
  *
  */
@@ -42,6 +43,9 @@ protected:
 
 	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
 
+	UFUNCTION(BlueprintCallable)
+	void OpenChatInput();
+
 	UFUNCTION()
 	void UpdatePlayerCount() const;
 
@@ -62,9 +66,6 @@ protected:
 
 	UFUNCTION()
 	void OnTeamPlayersUpdated(ESMTeam UpdatedTeam);
-
-	UFUNCTION(BlueprintCallable)
-	void OpenChatInput();
 
 private:
 	// =============================================================================

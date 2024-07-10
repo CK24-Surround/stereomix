@@ -23,18 +23,17 @@ void USMRoomWidget::InitWidget(ASMRoomState* RoomState, ASMRoomPlayerState* Play
 		OwningPlayerState = PlayerState;
 	}
 
-	// OwningPlayerState->TeamChangedEvent.AddDynamic(this, &USMRoomWidget::OnLocalPlayerTeamChanged);
-	OwningPlayerState->OnTeamChangeResponse.AddDynamic(this, &USMRoomWidget::OnTeamChangeResponse);
-
 	OwningRoomState->OnPlayerJoined.AddDynamic(this, &USMRoomWidget::OnPlayerJoin);
 	OwningRoomState->OnPlayerLeft.AddDynamic(this, &USMRoomWidget::OnPlayerLeft);
 	OwningRoomState->OnTeamPlayersUpdated.AddDynamic(this, &USMRoomWidget::OnTeamPlayersUpdated);
+	OwningPlayerState->OnTeamChangeResponse.AddDynamic(this, &USMRoomWidget::OnTeamChangeResponse);
 
 	EdmTeamWidget->InitWidget(this, ESMTeam::EDM);
 	FutureBassTeamWidget->InitWidget(this, ESMTeam::FutureBass);
 	CodeCopyButton->SetRoomCode(RoomState->GetRoomCode());
 
 	UpdatePlayerCount();
+	OnTeamPlayersUpdated(ESMTeam::None);
 
 	PlayAnimationForward(TransitionAnim);
 }
@@ -54,16 +53,20 @@ void USMRoomWidget::NativeDestruct()
 
 bool USMRoomWidget::NativeOnHandleBackAction()
 {
-	if (bIsBackHandler)
-	{
-		UE_LOG(LogStereoMixUI, Warning, TEXT("[USMRoomWidget] NativeOnHandleBackAction: Back action handled"))
-	}
 	return false;
 }
 
 TOptional<FUIInputConfig> USMRoomWidget::GetDesiredInputConfig() const
 {
 	return FUIInputConfig(ECommonInputMode::Menu, EMouseCaptureMode::NoCapture, EMouseLockMode::DoNotLock);
+}
+
+void USMRoomWidget::OpenChatInput()
+{
+	if (!ChatWidget->IsActivated())
+	{
+		ChatWidget->ActivateWidget();
+	}
 }
 
 void USMRoomWidget::UpdatePlayerCount() const
@@ -79,7 +82,14 @@ void USMRoomWidget::UpdatePlayerCount() const
 
 void USMRoomWidget::OnGameStartButtonClicked()
 {
-	// TODO: 인원 수가 맞는 지 검증
+	if (ensure(OwningRoomState.IsValid()))
+	{
+		if (OwningRoomState->GetTeamEdmPlayers().Num() != OwningRoomState->GetTeamFutureBassPlayers().Num())
+		{
+			return;
+		}
+	}
+
 	ASMRoomPlayerController* RoomPlayerController = CastChecked<ASMRoomPlayerController>(GetOwningPlayer());
 	RoomPlayerController->RequestImmediateStartGame();
 }
@@ -144,12 +154,5 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 
 void USMRoomWidget::OnTeamPlayersUpdated(ESMTeam UpdatedTeam)
 {
-}
-
-void USMRoomWidget::OpenChatInput()
-{
-	if (!ChatWidget->IsActivated())
-	{
-		ChatWidget->ActivateWidget();
-	}
+	check(OwningRoomState.IsValid())
 }

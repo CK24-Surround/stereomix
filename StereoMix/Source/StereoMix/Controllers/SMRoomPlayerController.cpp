@@ -65,21 +65,17 @@ void ASMRoomPlayerController::PreClientTravel(const FString& PendingURL, ETravel
 void ASMRoomPlayerController::OnCompleteLoading()
 {
 	FTimerHandle TimerHandle;
-	GetWorldTimerManager().SetTimer(
-		TimerHandle,
-		[this] {
-			RoomPlayerState->SetCurrentState(ERoomPlayerStateType::Unready);
-
-			if (GetWorld()->GetGameViewport())
-			{
-				LoadingScreenWidget->HideLoadingScreen();
-				RoomWidget = CreateWidget<USMRoomWidget>(this, RoomWidgetClass);
-				RoomWidget->AddToViewport();
-				RoomWidget->InitWidget(RoomState.Get(), RoomPlayerState.Get());
-				GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(ESMTeam::None);
-			}
-		},
-		1.0f, false);
+	GetWorldTimerManager().SetTimer(TimerHandle, [this] {
+		RoomPlayerState->SetCurrentState(ERoomPlayerStateType::Unready);
+		if (GetWorld()->GetGameViewport())
+		{
+			LoadingScreenWidget->HideLoadingScreen();
+			RoomWidget = CreateWidget<USMRoomWidget>(this, RoomWidgetClass);
+			RoomWidget->AddToViewport();
+			RoomWidget->InitWidget(RoomState.Get(), RoomPlayerState.Get());
+			GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(ESMTeam::None);
+		}
+	}, 1.0f, false);
 }
 
 void ASMRoomPlayerController::OnTeamChanged(ESMTeam NewTeam)
@@ -108,8 +104,10 @@ void ASMRoomPlayerController::RequestImmediateStartGame_Implementation()
 				}
 			}
 
-			// 팀 균형이 안맞아도 강제 시작
-			RoomMode->StartGame();
+			if (RoomState->GetTeamEdmPlayers().Num() == RoomState->GetTeamFutureBassPlayers().Num())
+			{
+				RoomMode->StartGame();
+			}
 		}
 	}
 #endif
