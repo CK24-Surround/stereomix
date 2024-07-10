@@ -3,8 +3,14 @@
 
 #include "SMRoomWidget.h"
 
-#include "FMODBlueprintStatics.h"
 #include "StereoMixLog.h"
+#include "Controllers/SMRoomPlayerController.h"
+#include "UI/Widget/Chat/SMChatWidget.h"
+
+USMRoomWidget::USMRoomWidget()
+{
+	bAutoActivate = true;
+}
 
 void USMRoomWidget::InitWidget(ASMRoomState* RoomState, ASMRoomPlayerState* PlayerState)
 {
@@ -37,12 +43,27 @@ void USMRoomWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	GameStartButton->OnClicked().AddUObject(this, &USMRoomWidget::OnGameStartButtonClicked);
 	QuitButton->OnClicked().AddUObject(this, &USMRoomWidget::OnQuitButtonClicked);
 }
 
 void USMRoomWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
+}
+
+bool USMRoomWidget::NativeOnHandleBackAction()
+{
+	if (bIsBackHandler)
+	{
+		UE_LOG(LogStereoMixUI, Warning, TEXT("[USMRoomWidget] NativeOnHandleBackAction: Back action handled"))
+	}
+	return false;
+}
+
+TOptional<FUIInputConfig> USMRoomWidget::GetDesiredInputConfig() const
+{
+	return FUIInputConfig(ECommonInputMode::Menu, EMouseCaptureMode::NoCapture, EMouseLockMode::DoNotLock);
 }
 
 void USMRoomWidget::UpdatePlayerCount() const
@@ -54,6 +75,13 @@ void USMRoomWidget::UpdatePlayerCount() const
 
 		PlayerCountTextBlock->SetText(FText::FromString(FString::Printf(TEXT("%d / %d"), NumPlayers, MaxPlayers)));
 	}
+}
+
+void USMRoomWidget::OnGameStartButtonClicked()
+{
+	// TODO: 인원 수가 맞는 지 검증
+	ASMRoomPlayerController* RoomPlayerController = CastChecked<ASMRoomPlayerController>(GetOwningPlayer());
+	RoomPlayerController->RequestImmediateStartGame();
 }
 
 void USMRoomWidget::OnQuitButtonClicked()
@@ -116,4 +144,12 @@ void USMRoomWidget::OnTeamChangeResponse(const bool bSuccess, const ESMTeam NewT
 
 void USMRoomWidget::OnTeamPlayersUpdated(ESMTeam UpdatedTeam)
 {
+}
+
+void USMRoomWidget::OpenChatInput()
+{
+	if (!ChatWidget->IsActivated())
+	{
+		ChatWidget->ActivateWidget();
+	}
 }

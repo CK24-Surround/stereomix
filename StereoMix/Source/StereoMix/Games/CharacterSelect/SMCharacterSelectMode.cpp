@@ -4,11 +4,11 @@
 #include "SMCharacterSelectMode.h"
 
 #include "Controllers/SMCharacterSelectPlayerController.h"
-#include "Games/CountdownTimerComponent.h"
 #include "SMCharacterSelectPlayerState.h"
 #include "SMCharacterSelectState.h"
 #include "Session/SMGameSession.h"
 #include "StereoMixLog.h"
+#include "Games/SMCountdownTimerComponent.h"
 
 ASMCharacterSelectMode::ASMCharacterSelectMode()
 {

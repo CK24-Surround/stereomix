@@ -4,7 +4,7 @@
 #include "SMCharacterSelectWidget.h"
 
 #include "FMODBlueprintStatics.h"
-#include "Games/CountdownTimerComponent.h"
+#include "Games/SMCountdownTimerComponent.h"
 #include "SMCharacterSelectPlayerEntryItem.h"
 
 void USMCharacterSelectWidget::InitWidget(ASMCharacterSelectState* CharacterSelectState, ASMCharacterSelectPlayerState* PlayerState)

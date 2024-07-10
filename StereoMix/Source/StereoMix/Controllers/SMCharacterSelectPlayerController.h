@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Characters/SMPreviewCharacter.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
+#include "SMPlayerController.h"
 #include "UI/Widget/CharacterSelect/SMCharacterSelectWidget.h"
 #include "UI/Widget/Loading/SMLoadingScreenWidget.h"
 
@@ -28,7 +29,7 @@ struct FPreviewCharacterData
  *
  */
 UCLASS()
-class STEREOMIX_API ASMCharacterSelectPlayerController : public APlayerController
+class STEREOMIX_API ASMCharacterSelectPlayerController : public ASMPlayerController
 {
 	GENERATED_BODY()
 

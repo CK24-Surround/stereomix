@@ -5,12 +5,12 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 
-#include "CountdownTimerComponent.generated.h"
+#include "SMCountdownTimerComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FTCountdownimerDelegate);
 
 UCLASS(ClassGroup = (Game), meta = (BlueprintSpawnableComponent))
-class STEREOMIX_API UCountdownTimerComponent : public UActorComponent
+class STEREOMIX_API USMCountdownTimerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
@@ -37,7 +37,7 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FTCountdownimerDelegate OnCountdownCancelled;
 
-	UCountdownTimerComponent();
+	USMCountdownTimerComponent();
 
 	int32 GetInitTime() const { return InitTime; }
 

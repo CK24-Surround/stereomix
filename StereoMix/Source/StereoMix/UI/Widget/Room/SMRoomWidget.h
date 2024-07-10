@@ -5,24 +5,25 @@
 #include "CoreMinimal.h"
 #include "CommonTextBlock.h"
 #include "CommonUserWidget.h"
-#include "FMODBlueprintStatics.h"
 #include "Games/Room/SMRoomPlayerState.h"
 #include "Games/Room/SMRoomState.h"
 #include "SMRoomCodeCopyButton.h"
 #include "SMRoomTeamWidget.h"
+#include "UI/Widget/SMActivatableWidget.h"
 
 #include "SMRoomWidget.generated.h"
 
+class USMChatWidget;
 /**
  *
  */
 UCLASS(Abstract)
-class STEREOMIX_API USMRoomWidget : public UCommonUserWidget
+class STEREOMIX_API USMRoomWidget : public USMActivatableWidget
 {
 	GENERATED_BODY()
 
 public:
-	bool bWaitForResponseTeamChange = false;
+	USMRoomWidget();
 
 	void InitWidget(ASMRoomState* RoomState, ASMRoomPlayerState* PlayerState);
 
@@ -30,13 +31,22 @@ public:
 
 	ASMRoomPlayerState* GetOwningPlayerState() const { return OwningPlayerState.Get(); }
 
+	bool bWaitForResponseTeamChange = false;
+
 protected:
 	virtual void NativeConstruct() override;
 
 	virtual void NativeDestruct() override;
 
+	virtual bool NativeOnHandleBackAction() override;
+
+	virtual TOptional<FUIInputConfig> GetDesiredInputConfig() const override;
+
 	UFUNCTION()
 	void UpdatePlayerCount() const;
+
+	UFUNCTION()
+	void OnGameStartButtonClicked();
 
 	UFUNCTION()
 	void OnQuitButtonClicked();
@@ -53,9 +63,15 @@ protected:
 	UFUNCTION()
 	void OnTeamPlayersUpdated(ESMTeam UpdatedTeam);
 
+	UFUNCTION(BlueprintCallable)
+	void OpenChatInput();
+
 private:
 	// =============================================================================
 	// Bindings
+
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
+	TObjectPtr<USMCommonButton> GameStartButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCommonButton> QuitButton;
@@ -78,6 +94,10 @@ private:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMRoomTeamWidget> FutureBassTeamWidget;
 
+	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
+	TObjectPtr<USMChatWidget> ChatWidget;
+
+
 	// =============================================================================
 	// Animations
 
@@ -89,6 +109,7 @@ private:
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Animation", meta = (BindWidgetAnim, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> FutureBassSelectAnim;
+
 
 	// =============================================================================
 	// Variables
@@ -106,5 +127,5 @@ private:
 	TWeakObjectPtr<ASMRoomPlayerState> OwningPlayerState;
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Team", meta = (AllowPrivateAccess))
-	ESMTeam CurrentTeam;
+	ESMTeam CurrentTeam = ESMTeam::None;
 };

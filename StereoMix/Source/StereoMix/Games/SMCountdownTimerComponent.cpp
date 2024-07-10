@@ -1,24 +1,24 @@
 ﻿// Copyright Surround, Inc. All Rights Reserved.
 
 
-#include "CountdownTimerComponent.h"
+#include "SMCountdownTimerComponent.h"
 
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
 
-UCountdownTimerComponent::UCountdownTimerComponent()
+USMCountdownTimerComponent::USMCountdownTimerComponent()
 {
 	SetIsReplicatedByDefault(true);
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-void UCountdownTimerComponent::BeginPlay()
+void USMCountdownTimerComponent::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void UCountdownTimerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void USMCountdownTimerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 	if (const UWorld* CurrentWorld = GetWorld())
@@ -30,7 +30,7 @@ void UCountdownTimerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	}
 }
 
-void UCountdownTimerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+void USMCountdownTimerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
@@ -38,7 +38,7 @@ void UCountdownTimerComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(ThisClass, RemainingTime)
 }
 
-void UCountdownTimerComponent::OnRep_RemainingTime() const
+void USMCountdownTimerComponent::OnRep_RemainingTime() const
 {
 	NET_LOG(GetOwner(), Verbose, TEXT("Remaining time: %d"), RemainingTime)
 	if (OnCountdownTick.IsBound())
@@ -47,7 +47,7 @@ void UCountdownTimerComponent::OnRep_RemainingTime() const
 	}
 }
 
-void UCountdownTimerComponent::PerformCountdownTick()
+void USMCountdownTimerComponent::PerformCountdownTick()
 {
 	--RemainingTime;
 	if (RemainingTime <= 0)
@@ -72,7 +72,7 @@ void UCountdownTimerComponent::PerformCountdownTick()
 	}
 }
 
-void UCountdownTimerComponent::StartCountdown(const int32 Seconds)
+void USMCountdownTimerComponent::StartCountdown(const int32 Seconds)
 {
 	if (TimerHandle.IsValid())
 	{
@@ -83,7 +83,7 @@ void UCountdownTimerComponent::StartCountdown(const int32 Seconds)
 	RemainingTime = Seconds;
 	if (const UWorld* CurrentWorld = GetWorld())
 	{
-		CurrentWorld->GetTimerManager().SetTimer(TimerHandle, this, &UCountdownTimerComponent::PerformCountdownTick, 1.0f, true);
+		CurrentWorld->GetTimerManager().SetTimer(TimerHandle, this, &USMCountdownTimerComponent::PerformCountdownTick, 1.0f, true);
 		NET_LOG(GetOwner(), Verbose, TEXT("Countdown started."))
 	}
 	else
@@ -92,7 +92,7 @@ void UCountdownTimerComponent::StartCountdown(const int32 Seconds)
 	}
 }
 
-void UCountdownTimerComponent::CancelCountdown()
+void USMCountdownTimerComponent::CancelCountdown()
 {
 	if (!TimerHandle.IsValid())
 	{

@@ -8,9 +8,10 @@
 
 #include "SMRoomState.generated.h"
 
+
 enum class ESMTeam : uint8;
 class ASMRoomPlayerState;
-class UCountdownTimerComponent;
+class USMCountdownTimerComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTeamPlayersUpdated, ESMTeam, UpdatedTeam);
 
@@ -31,7 +32,7 @@ public:
 
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 
-	UCountdownTimerComponent* GetCountdownTimer() const { return CountdownTimer.Get(); }
+	USMCountdownTimerComponent* GetCountdownTimer() const { return CountdownTimer.Get(); }
 
 	UFUNCTION(BlueprintCallable)
 	TArray<ASMRoomPlayerState*> GetTeamEdmPlayers() { return TeamEdmPlayers; }
@@ -58,7 +59,9 @@ public:
 
 	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override;
 
-	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override { }
+	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override
+	{
+	}
 
 	UPROPERTY(BlueprintAssignable)
 	FPlayerJoined OnPlayerJoined;
@@ -105,5 +108,5 @@ protected:
 
 private:
 	UPROPERTY()
-	TObjectPtr<UCountdownTimerComponent> CountdownTimer;
+	TObjectPtr<USMCountdownTimerComponent> CountdownTimer;
 };

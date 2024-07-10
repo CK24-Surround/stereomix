@@ -10,7 +10,7 @@
 #include "SMCharacterSelectState.generated.h"
 
 enum class ESMCharacterType : uint8;
-class UCountdownTimerComponent;
+class USMCountdownTimerComponent;
 
 UENUM(BlueprintType)
 enum class ECharacterSelectionStateType : uint8
@@ -55,7 +55,7 @@ public:
 	virtual void RemovePlayerState(APlayerState* PlayerState) override;
 
 	UFUNCTION(BlueprintCallable)
-	UCountdownTimerComponent* GetCountdownTimer() const { return CountdownTimer.Get(); }
+	USMCountdownTimerComponent* GetCountdownTimer() const { return CountdownTimer.Get(); }
 
 	UFUNCTION(BlueprintPure)
 	ECharacterSelectionStateType GetCurrentState() const { return CurrentState; }
@@ -72,7 +72,7 @@ public:
 private:
 
 	UPROPERTY()
-	TObjectPtr<UCountdownTimerComponent> CountdownTimer;
+	TObjectPtr<USMCountdownTimerComponent> CountdownTimer;
 
 	UPROPERTY(VisibleInstanceOnly, ReplicatedUsing = OnRep_CurrentState)
 	ECharacterSelectionStateType CurrentState;

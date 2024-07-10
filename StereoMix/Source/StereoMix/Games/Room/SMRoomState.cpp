@@ -4,7 +4,7 @@
 #include "SMRoomState.h"
 
 #include "Data/SMTeam.h"
-#include "Games/CountdownTimerComponent.h"
+#include "Games/SMCountdownTimerComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "SMRoomPlayerState.h"
 #include "Utilities/SMLog.h"
@@ -13,7 +13,7 @@
 ASMRoomState::ASMRoomState()
 {
 	CountdownTime = 5;
-	CountdownTimer = CreateDefaultSubobject<UCountdownTimerComponent>(TEXT("RoomCountdownTimer"));
+	CountdownTimer = CreateDefaultSubobject<USMCountdownTimerComponent>(TEXT("RoomCountdownTimer"));
 }
 
 void ASMRoomState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

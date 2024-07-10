@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Games/Room/SMRoomPlayerState.h"
+#include "SMPlayerController.h"
 #include "UI/Widget/Loading/SMLoadingScreenWidget.h"
 #include "UI/Widget/Room/SMRoomWidget.h"
 
@@ -13,7 +14,7 @@
  *
  */
 UCLASS()
-class STEREOMIX_API ASMRoomPlayerController : public APlayerController
+class STEREOMIX_API ASMRoomPlayerController : public ASMPlayerController
 {
 	GENERATED_BODY()
 

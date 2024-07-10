@@ -3,7 +3,7 @@
 
 #include "SMCharacterSelectState.h"
 
-#include "Games/CountdownTimerComponent.h"
+#include "Games/SMCountdownTimerComponent.h"
 #include "Games/SMPlayerState.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
@@ -13,7 +13,7 @@ ASMCharacterSelectState::ASMCharacterSelectState()
 	CharacterSelectCountdownTime = 30;
 
 	CurrentState = ECharacterSelectionStateType::Wait;
-	CountdownTimer = CreateDefaultSubobject<UCountdownTimerComponent>(TEXT("RoomCountdownTimer"));
+	CountdownTimer = CreateDefaultSubobject<USMCountdownTimerComponent>(TEXT("RoomCountdownTimer"));
 }
 
 void ASMCharacterSelectState::AddPlayerState(APlayerState* PlayerState)

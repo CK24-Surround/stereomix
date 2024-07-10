@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "SMPlayerController.h"
 #include "Data/SMCharacterType.h"
 #include "Data/SMTeam.h"
 
@@ -23,7 +24,9 @@ struct FCharacterSpawnData
 {
 	GENERATED_BODY()
 
-	FCharacterSpawnData() { }
+	FCharacterSpawnData()
+	{
+	}
 
 	UPROPERTY(EditAnywhere)
 	TMap<ESMTeam, TSubclassOf<ASMPlayerCharacter>> CharacterClass;
@@ -33,7 +36,7 @@ struct FCharacterSpawnData
  *
  */
 UCLASS()
-class STEREOMIX_API ASMGamePlayerController : public APlayerController
+class STEREOMIX_API ASMGamePlayerController : public ASMPlayerController
 {
 	GENERATED_BODY()
 
@@ -50,8 +53,6 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void OnRep_PlayerState() override;
-
-	void InitControl();
 
 	/**
 	 * BeginPlay에서 생성할때 오류를 방지하고자 지연 스폰합니다.
@@ -77,17 +78,12 @@ public:
 	UFUNCTION()
 	void OnTargetDestroyedWithIndicator(AActor* DestroyedActor);
 
-	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
-
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void RequestImmediateResetPosition();
 
 protected:
 	UPROPERTY(EditAnywhere, Category = "GameStatistics")
 	float GameStatisticsUpdateInterval = 0.5f;
-
-	UPROPERTY()
-	TObjectPtr<const USMControlData> ControlData;
 
 	UPROPERTY(EditAnywhere, Category = "Design|Character|Class")
 	TMap<ESMCharacterType, FCharacterSpawnData> CharacterClass;

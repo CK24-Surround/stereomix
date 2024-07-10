@@ -7,8 +7,6 @@
 #include "AbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "Characters/SMPlayerCharacter.h"
-#include "Data/SMControlData.h"
-#include "EnhancedInputSubsystems.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Games/SMGameMode.h"
 #include "SMGamePlayerState.h"
@@ -18,21 +16,10 @@
 #include "UI/Widget/Game/SMUserWidget_ScreenIndicator.h"
 #include "UI/Widget/Game/SMUserWidget_StartCountdown.h"
 #include "UI/Widget/Game/SMUserWidget_VictoryDefeat.h"
-#include "Utilities/SMAssetPath.h"
 #include "Utilities/SMLog.h"
 
 ASMGamePlayerController::ASMGamePlayerController()
 {
-	static ConstructorHelpers::FObjectFinder<USMControlData> ControlDataRef(SMAssetPath::ControlData);
-	if (ControlDataRef.Object)
-	{
-		ControlData = ControlDataRef.Object;
-	}
-	else
-	{
-		UE_LOG(LogLoad, Error, TEXT("ControlData 로드에 실패했습니다."));
-	}
-
 	bShowMouseCursor = true;
 	DefaultMouseCursor = EMouseCursor::Type::Crosshairs;
 }
@@ -104,25 +91,6 @@ void ASMGamePlayerController::OnRep_PlayerState()
 
 	GameStatisticsWidget = CreateWidget<USMUserWidget_GameStatistics>(this, GameStatisticsWidgetClass);
 	GameStatisticsWidget->AddToViewport(10);
-}
-
-void ASMGamePlayerController::InitControl()
-{
-	if (!IsLocalController())
-	{
-		return;
-	}
-
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	if (Subsystem)
-	{
-		Subsystem->ClearAllMappings();
-		Subsystem->AddMappingContext(ControlData->DefaultMappingContext, 0);
-	}
-
-	// FInputModeGameOnly InputModeGameOnly;
-	// InputModeGameOnly.SetConsumeCaptureMouseDown(true);
-	// SetInputMode(InputModeGameOnly);
 }
 
 void ASMGamePlayerController::SpawnTimerCallback()

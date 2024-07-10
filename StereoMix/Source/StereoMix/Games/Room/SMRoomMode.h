@@ -9,6 +9,8 @@
 
 #include "SMRoomMode.generated.h"
 
+
+class USMGameChatComponent;
 class ASMRoomState;
 
 /**
