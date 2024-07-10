@@ -5,7 +5,6 @@
 #include "CommonListView.h"
 #include "SMChatEntryItem.h"
 #include "SMChatTypeButton.h"
-#include "StereoMixLog.h"
 #include "Components/EditableTextBox.h"
 #include "Controllers/SMPlayerController.h"
 #include "Games/SMPlayerState.h"
@@ -117,7 +116,6 @@ TOptional<FUIInputConfig> USMChatWidget::GetDesiredInputConfig() const
 
 FReply USMChatWidget::NativeOnKeyChar(const FGeometry& InGeometry, const FCharacterEvent& InCharEvent)
 {
-	UE_LOG(LogStereoMixUI, Warning, TEXT("[SMChatWidget] NativeOnKeyChar Triggered: %s"), *InCharEvent.ToText().ToString())
 	if (InCharEvent.GetCharacter() == '\t' && !InCharEvent.IsRepeat())
 	{
 		ChangeChatType();
@@ -129,7 +127,6 @@ FReply USMChatWidget::NativeOnKeyChar(const FGeometry& InGeometry, const FCharac
 
 void USMChatWidget::OpenChat()
 {
-	UE_LOG(LogStereoMixUI, Warning, TEXT("[SMChatWidget] EnableChatAction Triggered"))
 	if (!IsActivated())
 	{
 		ActivateWidget();
@@ -142,7 +139,6 @@ void USMChatWidget::OpenChat()
 
 void USMChatWidget::ChangeChatType()
 {
-	UE_LOG(LogStereoMixUI, Warning, TEXT("[SMChatWidget] ChangeChatTypeAction Triggered"))
 	if (bCanChangeChatType)
 	{
 		SetChatType(GetChatType() == EChatType::All ? EChatType::Team : EChatType::All);
@@ -164,19 +160,16 @@ void USMChatWidget::OnOwningPlayerTeamChanged(ESMTeam NewTeam)
 
 void USMChatWidget::OnChatReceivedFromServer(const FString& Name, const FString& ChatMessage)
 {
-	UE_LOG(LogStereoMixUI, Warning, TEXT("[SMChatWidget] OnChatReceivedFromServer Triggered: %s"), *ChatMessage)
 	AddMessage(false, Name, ChatMessage);
 }
 
 void USMChatWidget::OnTeamChatReceivedFromServer(const FString& Name, const FString& ChatMessage)
 {
-	UE_LOG(LogStereoMixUI, Warning, TEXT("[SMChatWidget] OnTeamChatReceivedFromServer Triggered: %s"), *ChatMessage)
 	AddMessage(true, Name, ChatMessage);
 }
 
 void USMChatWidget::OnMessageInputBoxCommitted(const FText& Text, ETextCommit::Type CommitMethod)
 {
-	UE_LOG(LogStereoMixUI, Warning, TEXT("[SMChatWidget] OnMessageInputBoxCommitted Triggered: %s"), *Text.ToString())
 	if (!IsActivated())
 	{
 		return;

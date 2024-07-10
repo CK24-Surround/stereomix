@@ -26,15 +26,11 @@ void USMFrontendElementWidget::NativeConstruct()
 	{
 		BackButton->OnClicked().AddUObject(this, &USMFrontendElementWidget::HandleBackAction);
 	}
-
-	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeConstruct. Parent: %s"), *GetName(), GetParentFrontendWidget() != nullptr ? *GetParentFrontendWidget()->GetName() : TEXT("Invalid"));
 }
 
 void USMFrontendElementWidget::NativeOnActivated()
 {
 	Super::NativeOnActivated();
-
-	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnActivated. Parent: %s"), *GetName(), GetParentFrontendWidget() != nullptr ? *GetParentFrontendWidget()->GetName() : TEXT("Invalid"));
 
 	if (bAutoTransitionOnActivate)
 	{
@@ -43,11 +39,10 @@ void USMFrontendElementWidget::NativeOnActivated()
 		if (TransitionIn)
 		{
 			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnActivated - TransitionIn"), *GetName())
-			TransitionIn->OnSequenceFinishedPlaying().AddWeakLambda(this,
-				[this](UUMGSequencePlayer&) {
-					UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnActivated - TransitionIn Finished"), *GetName())
-					SetVisibility(ESlateVisibility::Visible);
-				});
+			TransitionIn->OnSequenceFinishedPlaying().AddWeakLambda(this, [this](UUMGSequencePlayer&) {
+				UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnActivated - TransitionIn Finished"), *GetName())
+				SetVisibility(ESlateVisibility::Visible);
+			});
 		}
 		else
 		{
@@ -73,8 +68,6 @@ void USMFrontendElementWidget::NativeOnActivated()
 void USMFrontendElementWidget::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
-	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeOnDeactivated. Parent: %s"), *GetName(), GetParentFrontendWidget() != nullptr ? *GetParentFrontendWidget()->GetName() : TEXT("Invalid"));
-
 	if (TransitionOutSound)
 	{
 		UFMODBlueprintStatics::PlayEvent2D(this, TransitionOutSound, true);
@@ -84,7 +77,6 @@ void USMFrontendElementWidget::NativeOnDeactivated()
 void USMFrontendElementWidget::NativeDestruct()
 {
 	Super::NativeDestruct();
-	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] NativeDestruct. Parent: %s"), *GetName(), GetParentFrontendWidget() != nullptr ? *GetParentFrontendWidget()->GetName() : TEXT("Invalid"));
 
 	if (BackButton)
 	{

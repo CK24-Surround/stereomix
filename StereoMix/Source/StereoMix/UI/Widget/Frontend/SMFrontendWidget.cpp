@@ -140,7 +140,8 @@ void USMFrontendWidget::RemoveElementWidgetInternal(USMFrontendElementWidget* Wi
 
 void USMFrontendWidget::AddElementWidget(const TSubclassOf<USMFrontendElementWidget> WidgetClass)
 {
-	AddElementWidget(WidgetClass, [](USMFrontendElementWidget&) {});
+	AddElementWidget(WidgetClass, [](USMFrontendElementWidget&) {
+	});
 }
 
 void USMFrontendWidget::AddElementWidget(TSubclassOf<USMFrontendElementWidget> WidgetClass, TFunctionRef<void(USMFrontendElementWidget&)> InstanceInitFunc)
@@ -218,15 +219,12 @@ void USMFrontendWidget::RemoveElementWidget(USMFrontendElementWidget* Widget)
 		UUMGSequencePlayer* TransitionOut = Widget->PlayTransitionOut();
 		if (TransitionOut)
 		{
-			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut"), *GetName())
 			TransitionOut->OnSequenceFinishedPlaying().AddWeakLambda(this, [this, Widget](UUMGSequencePlayer&) {
-				UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - TransitionOut Finished"), *GetName())
 				RemoveElementWidgetInternal(Widget);
 			});
 		}
 		else
 		{
-			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] RemoveElementWidget - No TransitionOut"), *GetName())
 			RemoveElementWidgetInternal(Widget);
 		}
 	}
@@ -280,6 +278,6 @@ void USMFrontendWidget::ChangeBackgroundColor(const FLinearColor NewColor)
 	BackgroundColorState.ChangeBackgroundColor(NewColor);
 }
 
-void USMFrontendWidget::OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer) 
+void USMFrontendWidget::OnTransitionInFinished(UUMGSequencePlayer& SequencePlayer)
 {
 }
