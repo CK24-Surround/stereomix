@@ -21,6 +21,7 @@ void ASMCharacterSelectPlayerController::BeginPlay()
 
 	if (GetWorld()->GetGameViewport())
 	{
+		GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(ESMTeam::None);
 		LoadingScreenWidget = CreateWidget<USMLoadingScreenWidget>(this, LoadingScreenWidgetClass);
 		LoadingScreenWidget->SetLoadingText(FText::FromString(TEXT("다른 플레이어들을 기다리는 중 입니다...")));
 		LoadingScreenWidget->AddToViewport(10);
@@ -72,18 +73,22 @@ void ASMCharacterSelectPlayerController::InitPlayer()
 	{
 		if (ASMPreviewCharacter* TargetCharacter = Cast<ASMPreviewCharacter>(*It); TargetCharacter && TargetCharacter->GetTeam() == Team)
 		{
-			NET_LOG(this, Verbose, TEXT("PreviewCharacter: %s - %s"), *UEnum::GetValueAsString(TargetCharacter->GetTeam()), *UEnum::GetValueAsString(TargetCharacter->GetCharacterType()))
 			PreviewCharacters.Add(TargetCharacter->GetCharacterType(), TargetCharacter);
 		}
 	}
 
 	CharacterSelectPlayerState->SetCurrentState(ECharacterSelectPlayerStateType::Unready);
+
+	// 로딩이 엄청 걸려서 늦게 초기화 완료된 경우 직접 호출
+	if (CharacterSelectState->GetCurrentState() != ECharacterSelectionStateType::Wait)
+	{
+		OnCurrentCharacterSelectStateChanged(CharacterSelectState->GetCurrentState());
+	}
 }
 
 void ASMCharacterSelectPlayerController::OnCurrentCharacterSelectStateChanged(ECharacterSelectionStateType NewCharacterSelectionState)
 {
-	NET_LOG(this, Verbose, TEXT("Current character selection state: %s"), *UEnum::GetValueAsString(NewCharacterSelectionState));
-	if (NewCharacterSelectionState == ECharacterSelectionStateType::Select)
+	if (NewCharacterSelectionState == ECharacterSelectionStateType::Select && !CharacterSelectWidget)
 	{
 		LoadingScreenWidget->HideLoadingScreen();
 		CharacterSelectWidget = CreateWidget<USMCharacterSelectWidget>(this, CharacterSelectWidgetClass);
@@ -91,7 +96,6 @@ void ASMCharacterSelectPlayerController::OnCurrentCharacterSelectStateChanged(EC
 		CharacterSelectWidget->AddToViewport();
 
 		GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(CharacterSelectPlayerState->GetTeam());
-		NET_LOG(this, Verbose, TEXT("PlayTeamBackgroundMusic: %s"), *UEnum::GetValueAsString(CharacterSelectPlayerState->GetTeam()))
 	}
 }
 

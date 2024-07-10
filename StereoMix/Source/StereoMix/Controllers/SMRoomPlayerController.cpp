@@ -32,11 +32,7 @@ void ASMRoomPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	if (GetWorld()->GetGameViewport())
 	{
-		if (bTravelingToCharacterSelect)
-		{
-			// GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(ESMTeam::None);
-		}
-		else
+		if (!bTravelingToCharacterSelect)
 		{
 			GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->StopAndReleaseBackgroundMusic();
 		}

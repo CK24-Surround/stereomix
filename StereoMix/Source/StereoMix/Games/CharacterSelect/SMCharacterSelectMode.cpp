@@ -30,7 +30,7 @@ void ASMCharacterSelectMode::StartPlay()
 	Super::StartPlay();
 
 	RemainingWaitingTime = 30;
-	GetWorldTimerManager().SetTimer(WaitingTimerHandle, this, &ASMCharacterSelectMode::WaitingTimerTick, 1.0f, true, 3.0f);
+	GetWorldTimerManager().SetTimer(WaitingTimerHandle, this, &ASMCharacterSelectMode::WaitingTimerTick, 1.0f, true, 10.0f);
 }
 
 void ASMCharacterSelectMode::PostLogin(APlayerController* NewPlayer)
