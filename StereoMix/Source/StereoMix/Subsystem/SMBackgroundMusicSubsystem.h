@@ -39,7 +39,7 @@ public:
 	bool IsPlaying() const;
 
 protected:
-	UPROPERTY(EditDefaultsOnly, Category = "Background Music")
+	UPROPERTY()
 	TObjectPtr<UFMODEvent> BackgroundMusic;
 
 private:

@@ -3,7 +3,6 @@
 
 #include "SMGameInstance.h"
 
-#include "Settings/SMGameUserSettings.h"
 #include "StereoMixLog.h"
 
 void USMGameInstance::Init()
@@ -38,20 +37,6 @@ void USMGameInstance::StartGameInstance()
 void USMGameInstance::OnStart()
 {
 	Super::OnStart();
-
-	// 임시 그래픽 세팅
-	UGameUserSettings* Settings = USMGameUserSettings::GetGameUserSettings();
-	Settings->SetFrameRateLimit(60.f);
-	// Settings->SetTextureQuality(3);
-	// Settings->SetReflectionQuality(3);
-	// Settings->SetShadingQuality(3);
-	// Settings->SetShadowQuality(3);
-	// Settings->SetAntiAliasingQuality(3);
-	// Settings->SetGlobalIlluminationQuality(3);
-	// Settings->SetPostProcessingQuality(3);
-	// Settings->SetVisualEffectQuality(3);
-	// Settings->SetVSyncEnabled(true);
-	Settings->ApplySettings(false);
 }
 
 FString USMGameInstance::GetGameVersion()
