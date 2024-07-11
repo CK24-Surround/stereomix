@@ -23,13 +23,20 @@ public:
 
 	static FString GetGameVersion();
 
+	UFUNCTION(BlueprintCallable, Category = "Game")
+	void SetViewedSplashScreen(const bool bViewed) { bViewedSplashScreen = bViewed; }
+
 	UFUNCTION(BlueprintPure, Category = "Game")
 	bool IsCustomGame() const;
 
 	UFUNCTION(BlueprintPure, Category = "Game")
 	bool IsDemoGame() const;
 
+	UFUNCTION(BlueprintPure, Category = "Game")
+	bool IsViewedSplashScreen() const { return bViewedSplashScreen; }
+
 private:
 	bool bDemoGame = false;
 	bool bCustomGame = false;
+	bool bViewedSplashScreen = false;
 };

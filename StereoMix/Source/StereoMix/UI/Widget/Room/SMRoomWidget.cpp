@@ -101,7 +101,8 @@ void USMRoomWidget::OnQuitButtonClicked()
 		UE_LOG(LogStereoMixUI, Error, TEXT("[USMRoomWidget] OnQuitButtonClicked: GetOwningPlayer() is nullptr"))
 		return;
 	}
-	GetGameInstance()->ReturnToMainMenu();
+
+	GetOwningPlayer()->ClientReturnToMainMenuWithTextReason(FText::GetEmpty());
 }
 
 void USMRoomWidget::OnPlayerJoin(ASMPlayerState* JoinedPlayer)
