@@ -40,6 +40,10 @@ public:
 
 	virtual bool StartGameIfReadyToStart();
 
+	virtual void OnPostLogin(AController* NewPlayer) override;
+
+	virtual void Logout(AController* Exiting) override;
+
 protected:
 	UFUNCTION()
 	void OnTeamPlayersUpdated(ESMTeam UpdatedTeam);

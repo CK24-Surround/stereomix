@@ -40,6 +40,12 @@ public:
 	UFUNCTION(Reliable, Server)
 	void ServerSendTeamChat(const FString& ChatMessage);
 
+	UFUNCTION(Reliable, Client)
+	void ClientReceiveChat(const FString& Name, const FString& ChatMessage);
+
+	UFUNCTION(Reliable, Client)
+	void ClientReceiveTeamChat(const FString& Name, const FString& ChatMessage);
+
 	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
 
 	/** 채팅 매시지를 받았을 때 호출되는 델리게이트입니다. */
@@ -56,12 +62,6 @@ protected:
 	virtual void OnRep_PlayerState() override;
 
 	void InitControl();
-
-	UFUNCTION(Reliable, Client)
-	void ClientReceiveChat(const FString& Name, const FString& ChatMessage);
-
-	UFUNCTION(Reliable, Client)
-	void ClientReceiveTeamChat(const FString& Name, const FString& ChatMessage);
 
 private:
 	void BroadcastChat(const FString& SenderName, const FString& ChatMessage, bool bTeamChat);

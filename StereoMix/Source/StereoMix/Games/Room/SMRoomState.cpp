@@ -7,6 +7,7 @@
 #include "Games/SMCountdownTimerComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "SMRoomPlayerState.h"
+#include "Controllers/SMPlayerController.h"
 #include "Utilities/SMLog.h"
 
 

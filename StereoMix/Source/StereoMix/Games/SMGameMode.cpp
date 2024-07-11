@@ -8,6 +8,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "Projectiles/SMProjectilePool.h"
 #include "SMGameState.h"
+#include "Controllers/SMPlayerController.h"
 #include "Session/SMGameSession.h"
 #include "Utilities/SMLog.h"
 
@@ -28,6 +29,26 @@ void ASMGameMode::InitGame(const FString& MapName, const FString& Options, FStri
 	Super::InitGame(MapName, Options, ErrorMessage);
 
 	RoomSession = Cast<ASMGameSession>(GameSession);
+}
+
+void ASMGameMode::OnPostLogin(AController* NewPlayer)
+{
+	Super::OnPostLogin(NewPlayer);
+	for (auto TargetPlayerState : GameState->PlayerArray)
+	{
+		ASMPlayerController* TargetPlayerController = Cast<ASMPlayerController>(TargetPlayerState->GetOwner());
+		TargetPlayerController->ClientReceiveChat(TEXT("시스템"), FString::Printf(TEXT("%s 님이 입장했습니다."), *NewPlayer->PlayerState->GetPlayerName()));
+	}
+}
+
+void ASMGameMode::Logout(AController* Exiting)
+{
+	Super::Logout(Exiting);
+	for (auto TargetPlayerState : GameState->PlayerArray)
+	{
+		ASMPlayerController* TargetPlayerController = Cast<ASMPlayerController>(TargetPlayerState->GetOwner());
+		TargetPlayerController->ClientReceiveChat(TEXT("시스템"), FString::Printf(TEXT("%s 님이 나갔습니다."), *Exiting->PlayerState->GetPlayerName()));
+	}
 }
 
 FString ASMGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal)

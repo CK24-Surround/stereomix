@@ -110,6 +110,12 @@ void ASMCharacterSelectMode::OnCharacterSelectCountdownFinished()
 		CharacterSelectState->GetCountdownTimer()->OnCountdownFinished.AddUniqueDynamic(this, &ASMCharacterSelectMode::StartGame);
 
 		UE_LOG(LogStereoMix, Verbose, TEXT("Game will start in 5 seconds."))
+		for (auto TargetPlayerState : GameState->PlayerArray)
+		{
+			ASMPlayerController* TargetPlayerController = Cast<ASMPlayerController>(TargetPlayerState->GetOwner());
+			TargetPlayerController->ClientReceiveChat(TEXT("시스템"), FString::Printf(TEXT("5초 뒤에 게임이 시작됩니다.")));
+		}
+
 		CharacterSelectState->SetCurrentState(ECharacterSelectionStateType::End);
 		CharacterSelectState->GetCountdownTimer()->StartCountdown(5);
 	}
