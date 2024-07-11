@@ -29,7 +29,7 @@ AttributeMacros:
   - 'UINTERFACE'
 BinPackArguments: true
 BinPackParameters: true
-BitFieldColonSpacing: Both
+BitFieldColonSpacing: None
 BreakBeforeBraces: Custom
 BraceWrapping:
   AfterCaseLabel: true
@@ -128,4 +128,3 @@ StatementMacros:
   - 'checkfSlow'
 TabWidth: 4
 UseTab: Always
-...
