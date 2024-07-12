@@ -12,7 +12,8 @@ USMGameUserSettings* USMGameUserSettings::GetStereoMixUserSettings()
 	return Cast<USMGameUserSettings>(GetGameUserSettings());
 }
 
-USMGameUserSettings::USMGameUserSettings()
+USMGameUserSettings::USMGameUserSettings(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	static ConstructorHelpers::FObjectFinder<UFMODAsset> MasterVcaAsset(TEXT("/Script/FMODStudio.FMODVCA'/Game/FMOD/VCAs/Master_VCA.Master_VCA'"));
 	static ConstructorHelpers::FObjectFinder<UFMODAsset> BgmBusAsset(TEXT("/Script/FMODStudio.FMODBus'/Game/FMOD/Buses/BGM.BGM'"));

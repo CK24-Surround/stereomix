@@ -4,7 +4,7 @@ using UnrealBuildTool;
 
 public class StereoMixTarget : TargetRules
 {
-	public StereoMixTarget(TargetInfo Target) : base(Target)
+	public StereoMixTarget(TargetInfo target) : base(target)
 	{
 		Type = TargetType.Game;
 		DefaultBuildSettings = BuildSettingsVersion.V5;

@@ -4,6 +4,7 @@
 #include "SMGameInstance.h"
 
 #include "StereoMixLog.h"
+#include "Settings/SMGameUserSettings.h"
 
 void USMGameInstance::Init()
 {
@@ -37,6 +38,10 @@ void USMGameInstance::StartGameInstance()
 void USMGameInstance::OnStart()
 {
 	Super::OnStart();
+
+	USMGameUserSettings* GameUserSettings = USMGameUserSettings::GetStereoMixUserSettings();
+	GameUserSettings->LoadSettings();
+	GameUserSettings->ApplySettings(true);
 }
 
 FString USMGameInstance::GetGameVersion()

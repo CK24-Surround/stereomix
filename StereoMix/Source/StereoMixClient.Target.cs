@@ -10,7 +10,7 @@ public class StereoMixClientTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
 		ExtraModuleNames.Add("StereoMix");
-		
+
 		ProjectDefinitions.Add("UE_ALLOW_MAP_OVERRIDE_IN_SHIPPING");
 	}
 }

@@ -13,16 +13,16 @@ class UFMODBus;
 /**
  *
  */
-UCLASS()
-class STEREOMIX_API USMGameUserSettings : public UGameUserSettings
+UCLASS(Config = StereoMixGameUserSettings, ConfigDoNotCheckDefaults, MinimalAPI)
+class USMGameUserSettings : public UGameUserSettings
 {
 	GENERATED_BODY()
 
 public:
+	USMGameUserSettings(const FObjectInitializer& ObjectInitializer);
+
 	UFUNCTION(BlueprintCallable)
 	static USMGameUserSettings* GetStereoMixUserSettings();
-
-	USMGameUserSettings();
 
 	virtual void ApplySettings(bool bCheckForCommandLineOverrides) override;
 
