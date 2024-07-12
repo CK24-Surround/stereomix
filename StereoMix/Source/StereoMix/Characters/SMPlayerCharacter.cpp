@@ -15,20 +15,19 @@
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Controllers/SMGamePlayerController.h"
-#include "Controllers/SMGamePlayerState.h"
 #include "Data/SMCharacterAssetData.h"
 #include "Data/SMControlData.h"
 #include "Data/SMDesignData.h"
 #include "EnhancedInputComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "NiagaraComponent.h"
+#include "Games/SMGamePlayerState.h"
 #include "Tiles/SMTile.h"
 #include "UI/SMWidgetComponent.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
-
 
 ASMPlayerCharacter::ASMPlayerCharacter()
 {

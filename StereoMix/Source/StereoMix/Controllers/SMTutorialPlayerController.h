@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "SMPlayerController.h"
 #include "UI/Widget/Tutorial/SMTutorialWidget.h"
 
 #include "SMTutorialPlayerController.generated.h"
@@ -12,7 +13,7 @@
  *
  */
 UCLASS()
-class STEREOMIX_API ASMTutorialPlayerController : public APlayerController
+class STEREOMIX_API ASMTutorialPlayerController : public ASMPlayerController
 {
 	GENERATED_BODY()
 

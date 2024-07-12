@@ -7,7 +7,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Controllers/SMGamePlayerController.h"
-#include "Controllers/SMGamePlayerState.h"
+#include "Games/SMGamePlayerState.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 

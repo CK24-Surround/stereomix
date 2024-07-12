@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/PlayerController.h"
+#include "SMPlayerController.h"
 #include "UI/ViewModel/Fronted/SMFrontendViewModel.h"
 #include "UI/Widget/Frontend/SMFrontendWidget.h"
 
@@ -13,7 +14,7 @@
  * StereoMix Frontend Player Controller
  */
 UCLASS()
-class STEREOMIX_API ASMFrontendPlayerController : public APlayerController
+class STEREOMIX_API ASMFrontendPlayerController : public ASMPlayerController
 {
 	GENERATED_BODY()
 
