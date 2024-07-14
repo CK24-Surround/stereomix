@@ -71,7 +71,7 @@ bool USMLobbyProcessWidget::CheckIsAuthenticated() const
 		return true;
 	}
 
-	GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
+	GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 	return false;
 }
 

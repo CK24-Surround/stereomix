@@ -47,10 +47,10 @@ protected:
 	void OnJoinRoomButtonClicked();
 
 	UFUNCTION()
-	void OnSubmitCreateRoomOptions();
+	void OnSubmitCreateRoomOptions(USMPopup* Popup);
 
 	UFUNCTION()
-	void OnSubmitRoomCode();
+	void OnSubmitRoomCode(USMPopup* Popup);
 
 	UFUNCTION()
 	void OnClosePopup();

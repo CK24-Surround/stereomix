@@ -10,7 +10,7 @@
 #include "SMLoginViewModel.generated.h"
 
 UENUM(BlueprintType)
-enum class ELoginUiState : uint8
+enum class ELoginViewModelUiState : uint8
 {
 	Idle,
 	ReadyToSubmit,
@@ -33,16 +33,16 @@ public:
 
 	virtual void BeginDestroy() override;
 
-	ELoginUiState GetUiState() const { return UiState; }
+	ELoginViewModelUiState GetUiState() const { return UiState; }
 
 protected:
 	TWeakObjectPtr<USMClientAuthSubsystem> AuthSubsystem;
 
-	void SetUiState(ELoginUiState NewState);
+	void SetUiState(ELoginViewModelUiState NewState);
 
 	virtual void OnSubmit();
 
 private:
 	UPROPERTY(BlueprintReadWrite, FieldNotify, meta = (AllowPrivateAccess))
-	ELoginUiState UiState;
+	ELoginViewModelUiState UiState;
 };

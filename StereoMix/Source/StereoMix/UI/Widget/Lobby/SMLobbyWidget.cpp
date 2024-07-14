@@ -90,7 +90,7 @@ void USMLobbyWidget::OnJoinRoomButtonClicked()
 	PopupWidget->OnClose.BindUObject(this, &USMLobbyWidget::OnClosePopup);
 }
 
-void USMLobbyWidget::OnSubmitCreateRoomOptions()
+void USMLobbyWidget::OnSubmitCreateRoomOptions(USMPopup* Popup)
 {
 	if (!PopupWidget)
 	{
@@ -104,7 +104,7 @@ void USMLobbyWidget::OnSubmitCreateRoomOptions()
 	GetParentFrontendWidget()->AddElementWidget(CreateRoomWidgetClass.Get());
 }
 
-void USMLobbyWidget::OnSubmitRoomCode()
+void USMLobbyWidget::OnSubmitRoomCode(USMPopup* Popup)
 {
 	if (!PopupWidget)
 	{
@@ -146,6 +146,6 @@ void USMLobbyWidget::OnLobbyServiceStateChanged(const EGrpcServiceState ServiceS
 	else if (ServiceState == EGrpcServiceState::TransientFailure)
 	{
 		USMAlertPopup* Alert = GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."));
-		Alert->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
+		Alert->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 	}
 }

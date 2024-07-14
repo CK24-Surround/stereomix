@@ -55,7 +55,7 @@ bool USMPopup::NativeOnHandleBackAction()
 
 void USMPopup::PerformSubmit()
 {
-	(void)OnSubmit.ExecuteIfBound();
+	(void)OnSubmit.ExecuteIfBound(this);
 	DeactivateWidget();
 }
 

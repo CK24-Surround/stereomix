@@ -3,13 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "UI/Widget/Common/SMCommonButton.h"
 #include "UI/Widget/Frontend/SMFrontendElementWidget.h"
-#include "UI/Widget/Lobby/SMLobbyWidget.h"
-#include "UI/Widget/Settings/SMSettingsWidget.h"
 
 #include "SMMainMenuWidget.generated.h"
 
+class UCommonTextBlock;
+class USMSettingsWidget;
+class USMLobbyWidget;
 /**
  *
  */

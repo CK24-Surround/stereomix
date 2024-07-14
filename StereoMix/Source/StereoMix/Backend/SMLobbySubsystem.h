@@ -11,7 +11,7 @@
 /**
  * StereoMix Lobby Subsystem
  */
-UCLASS(Abstract, Config = Game, DefaultConfig)
+UCLASS(Abstract)
 class STEREOMIX_API USMLobbySubsystem : public USMGrpcClientSubsystem
 {
 	GENERATED_BODY()
@@ -22,10 +22,4 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 	ULobbyService* GetLobbyService() const { return Cast<ULobbyService>(GrpcService); }
-
-	FName GetGameVersion() const { return GameVersion; }
-
-private:
-	UPROPERTY(Config)
-	FName GameVersion;
 };

@@ -8,7 +8,7 @@
 
 USMLoginViewModel::USMLoginViewModel()
 {
-	UiState = ELoginUiState::Idle;
+	UiState = ELoginViewModelUiState::Idle;
 }
 
 void USMLoginViewModel::BeginDestroy()
@@ -16,11 +16,11 @@ void USMLoginViewModel::BeginDestroy()
 	Super::BeginDestroy();
 }
 
-void USMLoginViewModel::SetUiState(const ELoginUiState NewState)
+void USMLoginViewModel::SetUiState(const ELoginViewModelUiState NewState)
 {
 	UE_MVVM_SET_PROPERTY_VALUE(UiState, NewState);
 
-	if (NewState == ELoginUiState::Submit)
+	if (NewState == ELoginViewModelUiState::Submit)
 	{
 		OnSubmit();
 	}

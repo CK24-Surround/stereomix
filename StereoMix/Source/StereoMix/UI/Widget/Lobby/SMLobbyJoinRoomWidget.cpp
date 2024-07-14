@@ -38,7 +38,7 @@ void USMLobbyJoinRoomWidget::NativeOnActivated()
 			{
 				UiState = ELobbyProcessUiState::Failure;
 				UE_LOG(LogStereoMixUI, Error, TEXT("[SMLobbyJoinRoomWidget] Failed to join room with code"));
-				GetParentFrontendWidget()->ShowAlert(TEXT("방 참가에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
+				GetParentFrontendWidget()->ShowAlert(TEXT("방 참가에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { GetParentFrontendWidget()->RemoveElementWidget(this); });
 				return;
 			}
 
@@ -74,29 +74,29 @@ void USMLobbyJoinRoomWidget::OnJoinRoomWithCodeResponse(const EJoinRoomWithCodeR
 			break;
 
 		case EJoinRoomWithCodeResult::Unauthenticated:
-			GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
+			GetParentFrontendWidget()->ShowAlert(TEXT("인증 정보가 유효하지 않습니다."))->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 
 		case EJoinRoomWithCodeResult::InvalidArgument:
-			GetParentFrontendWidget()->ShowAlert(TEXT("입장 코드가 잘못되었습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
+			GetParentFrontendWidget()->ShowAlert(TEXT("입장 코드가 잘못되었습니다."))->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { GetParentFrontendWidget()->RemoveElementWidget(this); });
 			break;
 
 		case EJoinRoomWithCodeResult::RoomNotFound:
-			GetParentFrontendWidget()->ShowAlert(TEXT("방을 찾지 못했습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
+			GetParentFrontendWidget()->ShowAlert(TEXT("방을 찾지 못했습니다."))->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { GetParentFrontendWidget()->RemoveElementWidget(this); });
 			break;
 
 		case EJoinRoomWithCodeResult::RoomFull:
-			GetParentFrontendWidget()->ShowAlert(TEXT("방이 꽉 찼습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
+			GetParentFrontendWidget()->ShowAlert(TEXT("방이 꽉 찼습니다."))->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { GetParentFrontendWidget()->RemoveElementWidget(this); });
 			break;
 
 		case EJoinRoomWithCodeResult::ConnectionError:
-			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
+			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 
 		case EJoinRoomWithCodeResult::UnknownError:
 		case EJoinRoomWithCodeResult::InternalError:
 		case EJoinRoomWithCodeResult::DeadlineExceeded: default:
-			GetParentFrontendWidget()->ShowAlert(TEXT("방 참가에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
+			GetParentFrontendWidget()->ShowAlert(TEXT("방 참가에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&](USMPopup*) { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 	}
 

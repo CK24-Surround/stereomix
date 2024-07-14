@@ -3,10 +3,14 @@
 
 #include "SMMainMenuWidget.h"
 
+#include "CommonTextBlock.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "StereoMixLog.h"
+#include "Backend/Client/SMClientAuthSubsystem.h"
 #include "UI/Widget/Frontend/SMFrontendWidget.h"
+#include "UI/Widget/Lobby/SMLobbyWidget.h"
+#include "UI/Widget/Settings/SMSettingsWidget.h"
 
 USMMainMenuWidget::USMMainMenuWidget()
 {
@@ -48,7 +52,7 @@ void USMMainMenuWidget::NativeDestruct()
 
 void USMMainMenuWidget::OnLobbyButtonClicked()
 {
-	GetParentFrontendWidget()->AddElementWidget(LobbyWidgetClass);
+	GetParentFrontendWidget()->AddElementWidget(LobbyWidgetClass.Get());
 }
 
 void USMMainMenuWidget::OnTutorialButtonClicked()
@@ -58,7 +62,7 @@ void USMMainMenuWidget::OnTutorialButtonClicked()
 
 void USMMainMenuWidget::OnSettingsButtonClicked()
 {
-	GetParentFrontendWidget()->AddElementWidget(SettingsWidgetClass);
+	GetParentFrontendWidget()->AddElementWidget(SettingsWidgetClass.Get());
 }
 
 void USMMainMenuWidget::OnQuitButtonClicked()

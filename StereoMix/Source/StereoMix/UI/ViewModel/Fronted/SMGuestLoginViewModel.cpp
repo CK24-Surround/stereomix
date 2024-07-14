@@ -9,7 +9,7 @@
 void USMGuestLoginViewModel::SetInputUserName(const FText& UserName)
 {
 	UE_MVVM_SET_PROPERTY_VALUE(InputUserName, UserName);
-	SetUiState(IsValidUserName(UserName) ? ELoginUiState::ReadyToSubmit : ELoginUiState::Idle);
+	SetUiState(IsValidUserName(UserName) ? ELoginViewModelUiState::ReadyToSubmit : ELoginViewModelUiState::Idle);
 }
 
 void USMGuestLoginViewModel::OnSubmit()
@@ -23,7 +23,7 @@ void USMGuestLoginViewModel::OnSubmit()
 	}
 
 	AuthSubsystem->LoginAsGuest(GetUserName().ToString());
-	SetUiState(ELoginUiState::Requesting);
+	SetUiState(ELoginViewModelUiState::Requesting);
 	// TODO: 로그인 중 알림
 }
 

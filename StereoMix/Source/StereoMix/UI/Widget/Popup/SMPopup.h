@@ -8,6 +8,12 @@
 
 #include "SMPopup.generated.h"
 
+class USMPopup;
+
+DECLARE_DELEGATE_OneParam(FOnPopupSubmit, USMPopup*);
+
+DECLARE_DELEGATE(FOnPopupClose);
+
 /**
  * StereoMix Popup Widget
  */
@@ -17,8 +23,8 @@ class STEREOMIX_API USMPopup : public USMActivatableWidget
 	GENERATED_BODY()
 
 public:
-	FSimpleDelegate OnSubmit;
-	FSimpleDelegate OnClose;
+	FOnPopupSubmit OnSubmit;
+	FOnPopupClose OnClose;
 
 	USMPopup();
 
