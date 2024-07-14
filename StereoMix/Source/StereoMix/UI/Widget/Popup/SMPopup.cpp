@@ -5,11 +5,9 @@
 
 USMPopup::USMPopup()
 {
-	bAutoActivate = false;
+	bAutoActivate = true;
 	bIsBackHandler = true;
-	bSupportsActivationFocus = true;
 	bIsModal = true;
-	SetIsFocusable(true);
 }
 
 void USMPopup::NativeConstruct()
@@ -26,6 +24,20 @@ void USMPopup::NativeConstruct()
 	}
 }
 
+void USMPopup::NativeDestruct()
+{
+	Super::NativeDestruct();
+
+	if (SubmitButton)
+	{
+		SubmitButton->OnClicked().RemoveAll(this);
+	}
+	if (CloseButton)
+	{
+		CloseButton->OnClicked().RemoveAll(this);
+	}
+}
+
 void USMPopup::NativeOnActivated()
 {
 	Super::NativeOnActivated();
@@ -35,7 +47,6 @@ bool USMPopup::NativeOnHandleBackAction()
 {
 	if (Super::NativeOnHandleBackAction())
 	{
-		DeactivateWidget();
 		(void)OnClose.ExecuteIfBound();
 		return true;
 	}
@@ -44,8 +55,8 @@ bool USMPopup::NativeOnHandleBackAction()
 
 void USMPopup::PerformSubmit()
 {
-	DeactivateWidget();
 	(void)OnSubmit.ExecuteIfBound();
+	DeactivateWidget();
 }
 
 void USMPopup::OnSubmitButtonClicked()

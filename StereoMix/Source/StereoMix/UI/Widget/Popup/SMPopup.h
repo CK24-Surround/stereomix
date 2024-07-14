@@ -24,6 +24,8 @@ public:
 
 	virtual void NativeConstruct() override;
 
+	virtual void NativeDestruct() override;
+
 	virtual void NativeOnActivated() override;
 
 	virtual bool NativeOnHandleBackAction() override;

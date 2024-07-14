@@ -7,6 +7,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "SMLobbyProgressSectionWidget.h"
 #include "UI/Widget/Frontend/SMFrontendWidget.h"
+#include "UI/Widget/Popup/SMAlertPopup.h"
 
 USMLobbyProcessWidget::USMLobbyProcessWidget()
 {

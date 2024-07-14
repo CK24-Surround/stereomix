@@ -30,7 +30,7 @@ void USMLobbyCreateRoomWidget::NativeOnActivated()
 
 		FGrpcLobbyRoomConfig RoomConfig;
 		RoomConfig.RoomName = RoomName;
-		RoomConfig.Visibility = EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC;
+		RoomConfig.Visibility = GetParentFrontendWidget()->CreateRoomOptions.RoomVisibility == ECreateRoomVisibilityOption::Public ? EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PUBLIC : EGrpcLobbyRoomVisibility::ROOM_VISIBILITY_PRIVATE;
 		RoomConfig.Map = EGrpcLobbyGameMap::GAME_MAP_DEFAULT;
 		RoomConfig.Mode = EGrpcLobbyGameMode::GAME_MODE_DEFAULT;
 		if (!LobbySubsystem->CreateRoom(RoomName, RoomConfig))
@@ -89,8 +89,7 @@ void USMLobbyCreateRoomWidget::OnCreateRoomResponse(const ECreateRoomResult Resu
 
 		case ECreateRoomResult::UnknownError:
 		case ECreateRoomResult::InternalError:
-		case ECreateRoomResult::DeadlineExceeded:
-		default:
+		case ECreateRoomResult::DeadlineExceeded: default:
 			GetParentFrontendWidget()->ShowAlert(TEXT("방 생성에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
 			break;
 	}

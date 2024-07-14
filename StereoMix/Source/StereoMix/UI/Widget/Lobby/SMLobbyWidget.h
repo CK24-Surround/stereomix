@@ -3,16 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Backend/Client/SMClientLobbySubsystem.h"
-#include "SMLobbyCreateRoomWidget.h"
-#include "SMLobbyJoinRoomWidget.h"
-#include "SMLobbyQuickMatchWidget.h"
-#include "SMLobbyRoomCodePopup.h"
-#include "UI/Widget/Common/SMCommonButton.h"
 #include "UI/Widget/Frontend/SMFrontendElementWidget.h"
-#include "Widgets/CommonActivatableWidgetContainer.h"
 
 #include "SMLobbyWidget.generated.h"
+
+class USMPopup;
+enum class EGrpcServiceState : uint8;
+class USMClientLobbySubsystem;
+class USMLobbyRoomCodePopup;
+class USMLobbyJoinRoomWidget;
+class USMLobbyQuickMatchWidget;
+class USMLobbyCreateRoomWidget;
+class UCommonActivatableWidgetStack;
+class USMCreateRoomPopup;
 
 /**
  * StereoMix Lobby Widget
@@ -44,26 +47,20 @@ protected:
 	void OnJoinRoomButtonClicked();
 
 	UFUNCTION()
+	void OnSubmitCreateRoomOptions();
+
+	UFUNCTION()
 	void OnSubmitRoomCode();
 
 	UFUNCTION()
-	void OnCloseRoomCodePopup();
+	void OnClosePopup();
 
 private:
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
-	TSubclassOf<USMLobbyCreateRoomWidget> CreateRoomWidgetClass;
+	// ==================================================================
+	// Components
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
-	TSubclassOf<USMLobbyQuickMatchWidget> QuickMatchWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
-	TSubclassOf<USMLobbyJoinRoomWidget> JoinRoomWidgetClass;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
-	TSubclassOf<USMLobbyRoomCodePopup> RoomCodePopupClass;
-
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
-	TObjectPtr<UCommonActivatableWidgetStack> LobbyPopupStack;
+	// UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
+	// TObjectPtr<UCommonActivatableWidgetStack> LobbyPopupStack;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
 	TObjectPtr<USMCommonButton> CreateRoomButton;
@@ -74,8 +71,31 @@ private:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
 	TObjectPtr<USMCommonButton> JoinRoomButton;
 
+
+	// ==================================================================
+	// Frontend Elements
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
+	TSubclassOf<USMLobbyCreateRoomWidget> CreateRoomWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
+	TSubclassOf<USMLobbyQuickMatchWidget> QuickMatchWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
+	TSubclassOf<USMLobbyJoinRoomWidget> JoinRoomWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
+	TSubclassOf<USMCreateRoomPopup> CreateRoomPopupClass;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Frontend Elements", meta = (AllowPrivateAccess))
+	TSubclassOf<USMLobbyRoomCodePopup> RoomCodePopupClass;
+
+
+	// ==================================================================
+	// Properties
+
 	UPROPERTY(BlueprintReadOnly, Category = "Widgets", meta = (AllowPrivateAccess))
-	TWeakObjectPtr<USMLobbyRoomCodePopup> RoomCodePopup;
+	TObjectPtr<USMPopup> PopupWidget;
 
 	UPROPERTY()
 	TObjectPtr<USMClientLobbySubsystem> LobbySubsystem;

@@ -34,6 +34,7 @@ enum class EQuickMatchResult : uint8
 	Unauthenticated,
 	InvalidArgument,
 	ConnectionError,
+	RoomNotFound
 };
 
 UENUM(BlueprintType)

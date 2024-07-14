@@ -4,13 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "CommonUserWidget.h"
-#include "Components/Border.h"
-#include "SMFrontendWidgetStack.h"
-#include "UI/Widget/CustomServer/SMCustomServerWidget.h"
-#include "UI/Widget/Popup/SMAlertPopup.h"
-#include "UI/Widget/Popup/SMPopup.h"
+#include "UI/Widget/Lobby/SMCreateRoomPopup.h"
 
 #include "SMFrontendWidget.generated.h"
+
+class UCommonActivatableWidgetQueue;
+class USMCustomServerWidget;
+class USMAlertPopup;
+class UBorder;
+class USMFrontendElementWidget;
+class USMFrontendWidgetStack;
+struct FCreateRoomOptions;
 
 USTRUCT(BlueprintType)
 struct FFrontendBackgroundColorState
@@ -63,6 +67,9 @@ public:
 	USMPopup* AddPopup(TSubclassOf<USMPopup> PopupClass);
 
 	UFUNCTION(BlueprintCallable)
+	void ClearPopups();
+
+	UFUNCTION(BlueprintCallable)
 	USMAlertPopup* ShowAlert(const FString& AlertText);
 
 	UFUNCTION(BlueprintCallable)
@@ -72,6 +79,7 @@ public:
 	void ChangeBackgroundColor(FLinearColor NewColor);
 
 	FString RequestRoomCode;
+	FCreateRoomOptions CreateRoomOptions{};
 
 protected:
 	virtual void NativePreConstruct() override;
@@ -91,7 +99,7 @@ private:
 	TObjectPtr<USMFrontendWidgetStack> MainStack;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
-	TObjectPtr<UCommonActivatableWidgetStack> PopupStack;
+	TObjectPtr<UCommonActivatableWidgetQueue> PopupQueue;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UBorder> Background;

@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "StereoMixLog.h"
 #include "UI/Widget/Frontend/SMFrontendWidget.h"
+#include "UI/Widget/Popup/SMAlertPopup.h"
 
 USMLobbyJoinRoomWidget::USMLobbyJoinRoomWidget()
 {
@@ -29,23 +30,22 @@ void USMLobbyJoinRoomWidget::NativeOnActivated()
 	{
 		LobbySubsystem->OnJoinRoomWithCodeResponse.AddDynamic(this, &USMLobbyJoinRoomWidget::OnJoinRoomWithCodeResponse);
 
-		GetWorld()->GetTimerManager().SetTimerForNextTick(
-			[this] {
-				RoomCode = GetParentFrontendWidget()->RequestRoomCode;
-				UE_LOG(LogStereoMixUI, Log, TEXT("[%s] NativeOnActivated - InputRoomCode: %s"), *GetName(), *RoomCode)
+		GetWorld()->GetTimerManager().SetTimerForNextTick([this] {
+			RoomCode = GetParentFrontendWidget()->RequestRoomCode;
+			UE_LOG(LogStereoMixUI, Log, TEXT("[%s] NativeOnActivated - InputRoomCode: %s"), *GetName(), *RoomCode)
 
-				if (!LobbySubsystem->JoinRoomWithCode(RoomCode))
-				{
-					UiState = ELobbyProcessUiState::Failure;
-					UE_LOG(LogStereoMixUI, Error, TEXT("[SMLobbyJoinRoomWidget] Failed to join room with code"));
-					GetParentFrontendWidget()->ShowAlert(TEXT("방 참가에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
-					return;
-				}
+			if (!LobbySubsystem->JoinRoomWithCode(RoomCode))
+			{
+				UiState = ELobbyProcessUiState::Failure;
+				UE_LOG(LogStereoMixUI, Error, TEXT("[SMLobbyJoinRoomWidget] Failed to join room with code"));
+				GetParentFrontendWidget()->ShowAlert(TEXT("방 참가에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
+				return;
+			}
 
-				UiState = ELobbyProcessUiState::Processing;
-				SetProgressVisibility(ESlateVisibility::Visible);
-				SetProgressText(FText::FromString(TEXT("방을 찾고 있습니다...")));
-			});
+			UiState = ELobbyProcessUiState::Processing;
+			SetProgressVisibility(ESlateVisibility::Visible);
+			SetProgressText(FText::FromString(TEXT("방을 찾고 있습니다...")));
+		});
 	}
 }
 
@@ -95,8 +95,7 @@ void USMLobbyJoinRoomWidget::OnJoinRoomWithCodeResponse(const EJoinRoomWithCodeR
 
 		case EJoinRoomWithCodeResult::UnknownError:
 		case EJoinRoomWithCodeResult::InternalError:
-		case EJoinRoomWithCodeResult::DeadlineExceeded:
-		default:
+		case EJoinRoomWithCodeResult::DeadlineExceeded: default:
 			GetParentFrontendWidget()->ShowAlert(TEXT("방 참가에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 	}

@@ -72,6 +72,7 @@ void USMFrontendElementWidget::NativeOnDeactivated()
 	{
 		UFMODBlueprintStatics::PlayEvent2D(this, TransitionOutSound, true);
 	}
+	GetParentFrontendWidget()->ClearPopups();
 }
 
 void USMFrontendElementWidget::NativeDestruct()

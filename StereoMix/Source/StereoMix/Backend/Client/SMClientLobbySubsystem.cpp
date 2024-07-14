@@ -211,6 +211,10 @@ void USMClientLobbySubsystem::OnGrpcQuickMatchResponse(FGrpcContextHandle Handle
 			Result = EQuickMatchResult::InternalError;
 			break;
 
+		case EGrpcResultCode::NotFound:
+			Result = EQuickMatchResult::RoomNotFound;
+			break;
+
 		case EGrpcResultCode::DeadlineExceeded:
 			Result = EQuickMatchResult::DeadlineExceeded;
 			break;

@@ -3,10 +3,17 @@
 
 #include "SMLobbyWidget.h"
 
+#include "SMCreateRoomPopup.h"
+#include "SMLobbyCreateRoomWidget.h"
+#include "SMLobbyJoinRoomWidget.h"
+#include "SMLobbyQuickMatchWidget.h"
+#include "SMLobbyRoomCodePopup.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Kismet/GameplayStatics.h"
 #include "StereoMixLog.h"
+#include "Backend/Client/SMClientLobbySubsystem.h"
 #include "UI/Widget/Frontend/SMFrontendWidget.h"
+#include "UI/Widget/Popup/SMAlertPopup.h"
 
 USMLobbyWidget::USMLobbyWidget()
 {
@@ -48,12 +55,11 @@ void USMLobbyWidget::NativeOnActivated()
 void USMLobbyWidget::NativeOnDeactivated()
 {
 	Super::NativeOnDeactivated();
+
 	if (LobbySubsystem)
 	{
 		LobbySubsystem->OnServiceStateChanged.RemoveDynamic(this, &USMLobbyWidget::OnLobbyServiceStateChanged);
 	}
-
-	LobbyPopupStack->ClearWidgets();
 }
 
 void USMLobbyWidget::NativeDestruct()
@@ -67,54 +73,58 @@ void USMLobbyWidget::NativeDestruct()
 
 void USMLobbyWidget::OnCreateRoomButtonClicked()
 {
-	GetParentFrontendWidget()->AddElementWidget(CreateRoomWidgetClass);
+	PopupWidget = GetParentFrontendWidget()->AddPopup(CreateRoomPopupClass);
+	PopupWidget->OnSubmit.BindUObject(this, &USMLobbyWidget::OnSubmitCreateRoomOptions);
+	PopupWidget->OnClose.BindUObject(this, &USMLobbyWidget::OnClosePopup);
 }
 
 void USMLobbyWidget::OnQuickMatchButtonClicked()
 {
-	GetParentFrontendWidget()->AddElementWidget(QuickMatchWidgetClass);
+	GetParentFrontendWidget()->AddElementWidget(QuickMatchWidgetClass.Get());
 }
 
 void USMLobbyWidget::OnJoinRoomButtonClicked()
 {
-	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] OnJoinRoomButtonClicked"), *GetName())
-	// if (RoomCodePopup.IsValid())
-	// {
-	// 	return;
-	// }
+	PopupWidget = GetParentFrontendWidget()->AddPopup(RoomCodePopupClass);
+	PopupWidget->OnSubmit.BindUObject(this, &USMLobbyWidget::OnSubmitRoomCode);
+	PopupWidget->OnClose.BindUObject(this, &USMLobbyWidget::OnClosePopup);
+}
 
-	RoomCodePopup = LobbyPopupStack->AddWidget<USMLobbyRoomCodePopup>(RoomCodePopupClass);
-	RoomCodePopup->OnSubmit.BindUObject(this, &USMLobbyWidget::OnSubmitRoomCode);
-	RoomCodePopup->OnClose.BindUObject(this, &USMLobbyWidget::OnCloseRoomCodePopup);
+void USMLobbyWidget::OnSubmitCreateRoomOptions()
+{
+	if (!PopupWidget)
+	{
+		UE_LOG(LogStereoMixUI, Error, TEXT("PopupWidget is nullptr"));
+	}
 
-	SetIsFocusable(false);
+	const USMCreateRoomPopup* CreateRoomPopup = CastChecked<USMCreateRoomPopup>(PopupWidget);
+	GetParentFrontendWidget()->CreateRoomOptions = CreateRoomPopup->GetCreateRoomOptions();
+	OnClosePopup();
+
+	GetParentFrontendWidget()->AddElementWidget(CreateRoomWidgetClass.Get());
 }
 
 void USMLobbyWidget::OnSubmitRoomCode()
 {
-	UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] OnSubmitRoomCode"), *GetName())
-
-	// TODO: 임시로 RoomCode를 RequestRoomCode에 저장하고 JoinRoomWidget을 띄움. 추후 룸 코드를 직접 넘길 수 있도록 변경해야 함.
-	GetParentFrontendWidget()->RequestRoomCode = RoomCodePopup->GetRoomCode().ToString();
-	GetParentFrontendWidget()->AddElementWidget(JoinRoomWidgetClass);
-	SetIsFocusable(true);
-
-	if (RoomCodePopup.IsValid())
+	if (!PopupWidget)
 	{
-		RoomCodePopup->OnSubmit.Unbind();
-		RoomCodePopup->OnClose.Unbind();
+		UE_LOG(LogStereoMixUI, Error, TEXT("PopupWidget is nullptr"));
 	}
+
+	const USMLobbyRoomCodePopup* RoomCodePopup = CastChecked<USMLobbyRoomCodePopup>(PopupWidget);
+	GetParentFrontendWidget()->RequestRoomCode = RoomCodePopup->GetRoomCode().ToString();
+	OnClosePopup();
+
+	GetParentFrontendWidget()->AddElementWidget(JoinRoomWidgetClass.Get());
 }
 
-void USMLobbyWidget::OnCloseRoomCodePopup()
+void USMLobbyWidget::OnClosePopup()
 {
-	SetIsFocusable(true);
-
-	if (RoomCodePopup.IsValid())
+	if (PopupWidget)
 	{
-		RoomCodePopup->OnSubmit.Unbind();
-		RoomCodePopup->OnClose.Unbind();
-		RoomCodePopup = nullptr;
+		PopupWidget->OnSubmit.Unbind();
+		PopupWidget->OnClose.Unbind();
+		PopupWidget = nullptr;
 	}
 }
 
@@ -122,6 +132,7 @@ void USMLobbyWidget::OnLobbyServiceStateChanged(const EGrpcServiceState ServiceS
 {
 	if (ServiceState == EGrpcServiceState::Ready)
 	{
+		GetParentFrontendWidget()->ClearPopups();
 		if (UUMGSequencePlayer* TransitionPlayer = PlayTransitionIn())
 		{
 			TransitionPlayer->OnSequenceFinishedPlaying().AddWeakLambda(this, [this](UUMGSequencePlayer&) { SetVisibility(ESlateVisibility::Visible); });
@@ -135,8 +146,6 @@ void USMLobbyWidget::OnLobbyServiceStateChanged(const EGrpcServiceState ServiceS
 	else if (ServiceState == EGrpcServiceState::TransientFailure)
 	{
 		USMAlertPopup* Alert = GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."));
-		Alert->OnSubmit.BindWeakLambda(this, [&] {
-			UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld());
-			});
+		Alert->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 	}
 }

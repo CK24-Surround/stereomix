@@ -2,13 +2,15 @@
 
 #include "SMFrontendWidget.h"
 
-#include "GameFramework/GameModeBase.h"
 #include "Animation/UMGSequencePlayer.h"
 #include "Backend/Client/SMClientAuthSubsystem.h"
 #include "GameInstance/SMGameInstance.h"
-#include "Kismet/GameplayStatics.h"
 #include "SMFrontendElementWidget.h"
+#include "SMFrontendWidgetStack.h"
 #include "StereoMixLog.h"
+#include "Components/Border.h"
+#include "UI/Widget/CustomServer/SMCustomServerWidget.h"
+#include "UI/Widget/Popup/SMAlertPopup.h"
 
 void FFrontendBackgroundColorState::ChangeBackgroundColor(const FLinearColor NewColor)
 {
@@ -49,12 +51,12 @@ void USMFrontendWidget::InitWidget(const FString& LevelOptions)
 	{
 		if (WidgetOverride == TEXT("login"))
 		{
-			InitWidgetClass = LoginWidgetClass;
+			InitWidgetClass = LoginWidgetClass.Get();
 			return;
 		}
 		if (WidgetOverride == TEXT("mainmenu"))
 		{
-			InitWidgetClass = MainMenuWidgetClass;
+			InitWidgetClass = MainMenuWidgetClass.Get();
 			return;
 		}
 
@@ -69,24 +71,24 @@ void USMFrontendWidget::InitWidget(const FString& LevelOptions)
 		{
 			AuthSubsystem->ResetAccount();
 		}
-		InitWidgetClass = LoginWidgetClass;
+		InitWidgetClass = LoginWidgetClass.Get();
 	}
 	else if (GameInstance.IsCustomGame())
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] InitWidget - CustomServer Mode"), *GetName())
-		InitWidgetClass = CustomServerWidgetClass;
+		InitWidgetClass = CustomServerWidgetClass.Get();
 	}
 	else
 	{
 		if (GetGameInstance()->GetSubsystem<USMClientAuthSubsystem>()->IsAuthenticated())
 		{
 			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] InitWidget - MainMenu"), *GetName())
-			InitWidgetClass = MainMenuWidgetClass;
+			InitWidgetClass = MainMenuWidgetClass.Get();
 		}
 		else
 		{
 			UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] InitWidget - Login (Not Authenticated)"), *GetName())
-			InitWidgetClass = LoginWidgetClass;
+			InitWidgetClass = LoginWidgetClass.Get();
 		}
 	}
 }
@@ -237,11 +239,10 @@ void USMFrontendWidget::RemoveElementWidget(USMFrontendElementWidget* Widget)
 
 USMPopup* USMFrontendWidget::AddPopup(const TSubclassOf<USMPopup> PopupClass)
 {
-	if (PopupClass->IsChildOf<USMActivatableWidget>())
+	if (ensure(PopupClass->IsChildOf<USMActivatableWidget>()))
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] AddPopup: %s"), *GetName(), *PopupClass->GetName())
-		USMPopup* Popup = Cast<USMPopup>(PopupStack->AddWidget(PopupClass));
-		Popup->ActivateWidget();
+		USMPopup* Popup = Cast<USMPopup>(PopupQueue->AddWidget(PopupClass.Get()));
 		Popup->OnSubmit.Unbind();
 		Popup->OnClose.Unbind();
 		Popup->OnDeactivated().RemoveAll(this);
@@ -253,9 +254,15 @@ USMPopup* USMFrontendWidget::AddPopup(const TSubclassOf<USMPopup> PopupClass)
 	return nullptr;
 }
 
+void USMFrontendWidget::ClearPopups()
+{
+	PopupQueue->ClearWidgets();
+	SetIsFocusable(true);
+}
+
 USMAlertPopup* USMFrontendWidget::ShowAlert(const FString& AlertText)
 {
-	if (USMPopup* Popup = AddPopup(AlertPopupClass))
+	if (USMPopup* Popup = AddPopup(AlertPopupClass.Get()))
 	{
 		UE_LOG(LogStereoMixUI, Verbose, TEXT("[%s] ShowAlert: %s"), *GetName(), *AlertText)
 		USMAlertPopup* AlertPopup = Cast<USMAlertPopup>(Popup);

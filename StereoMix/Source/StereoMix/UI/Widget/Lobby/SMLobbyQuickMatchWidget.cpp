@@ -6,6 +6,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "StereoMixLog.h"
 #include "UI/Widget/Frontend/SMFrontendWidget.h"
+#include "UI/Widget/Popup/SMAlertPopup.h"
 
 USMLobbyQuickMatchWidget::USMLobbyQuickMatchWidget()
 {
@@ -52,7 +53,7 @@ void USMLobbyQuickMatchWidget::OnQuickMatchResponse(const EQuickMatchResult Resu
 {
 	if (Result == EQuickMatchResult::Success)
 	{
-		UiState = ELobbyProcessUiState::Success;
+		// UiState = ELobbyProcessUiState::Success;
 		ConnectToGameServer(ServerUrl);
 		return;
 	}
@@ -70,11 +71,14 @@ void USMLobbyQuickMatchWidget::OnQuickMatchResponse(const EQuickMatchResult Resu
 			GetParentFrontendWidget()->ShowAlert(TEXT("서버와의 연결에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { UGameplayStatics::OpenLevelBySoftObjectPtr(this, GetWorld()); });
 			break;
 
+		case EQuickMatchResult::RoomNotFound:
+			GetParentFrontendWidget()->ShowAlert(TEXT("열려있는 방을 찾지 못했습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
+			break;
+
 		case EQuickMatchResult::InvalidArgument:
 		case EQuickMatchResult::UnknownError:
 		case EQuickMatchResult::InternalError:
-		case EQuickMatchResult::DeadlineExceeded:
-		default:
+		case EQuickMatchResult::DeadlineExceeded: default:
 			GetParentFrontendWidget()->ShowAlert(TEXT("매칭에 실패했습니다."))->OnSubmit.BindWeakLambda(this, [&] { GetParentFrontendWidget()->RemoveElementWidget(this); });
 			break;
 	}
