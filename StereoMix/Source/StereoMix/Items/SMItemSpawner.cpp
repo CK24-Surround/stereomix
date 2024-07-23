@@ -5,6 +5,9 @@
 
 #include "Games/SMGameMode.h"
 #include "SMItem.h"
+#include "Components/WidgetComponent.h"
+#include "Net/UnrealNetwork.h"
+#include "UI/Widget/Item/SMItemSpawnTimerWidget.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
@@ -12,6 +15,7 @@
 ASMItemSpawner::ASMItemSpawner()
 {
 	bReplicates = true;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
@@ -22,8 +26,11 @@ ASMItemSpawner::ASMItemSpawner()
 
 	ItemSocketComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ItemSocketComponent"));
 	ItemSocketComponent->SetupAttachment(MeshComponent);
-}
 
+	ItemSpawnTimerWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("ItemSpawnTimerWidgetComponent"));
+	ItemSpawnTimerWidgetComponent->SetupAttachment(SceneComponent);
+}
+ 
 void ASMItemSpawner::BeginPlay()
 {
 	Super::BeginPlay();
@@ -43,11 +50,35 @@ void ASMItemSpawner::BeginPlay()
 			}
 		}
 	}
+
+	USMItemSpawnTimerWidget* ItemSpawnTimerWidget = Cast<USMItemSpawnTimerWidget>(ItemSpawnTimerWidgetComponent->GetWidget());
+	if (ItemSpawnTimerWidget)
+	{
+		ItemSpawnTimerWidget->SetItemSpawner(this);
+		float RemainingCooldownPercent = FMath::Clamp(RemainingCooldownSeconds <= 0.0f ? 1.0f : 1.0f - RemainingCooldownSeconds / SpawnCooldown, 0.0f, 1.0f);
+		OnRemainingCooldownChanged.Broadcast(RemainingCooldownSeconds, RemainingCooldownPercent);
+	}
+}
+
+void ASMItemSpawner::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	UpdateCooldown(DeltaTime);
+}
+
+void ASMItemSpawner::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASMItemSpawner, RemainingCooldownSeconds);
 }
 
 void ASMItemSpawner::SpawnTimerStart()
 {
 	ResetSpawnerState();
+
+	RemainingCooldownSeconds = SpawnCooldown;
 
 	FTimerHandle TimerHandle;
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ThisClass::SpawnTimerCallback, SpawnCooldown, false);
@@ -88,4 +119,15 @@ void ASMItemSpawner::ResetSpawnerState()
 	}
 
 	Item = nullptr;
+}
+
+void ASMItemSpawner::UpdateCooldown(float DeltaTime)
+{
+	if (RemainingCooldownSeconds > 0.0f)
+	{
+		RemainingCooldownSeconds = FMath::Max(RemainingCooldownSeconds - DeltaTime, 0.0f);
+		float RemainingCooldownPercent = FMath::Clamp(RemainingCooldownSeconds <= 0.0f ? 1.0f : 1.0f - RemainingCooldownSeconds / SpawnCooldown, 0.0f, 1.0f);
+		
+		OnRemainingCooldownChanged.Broadcast(RemainingCooldownSeconds, RemainingCooldownPercent);
+	}
 }

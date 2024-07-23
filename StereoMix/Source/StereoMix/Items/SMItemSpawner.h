@@ -7,7 +7,10 @@
 
 #include "SMItemSpawner.generated.h"
 
+class UWidgetComponent;
 class ASMItem;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRemainingCooldownChangedSignature, float, RemainingCooldownSeconds, float, RemainingCooldownPercent);
 
 UCLASS()
 class STEREOMIX_API ASMItemSpawner : public AActor
@@ -16,9 +19,15 @@ class STEREOMIX_API ASMItemSpawner : public AActor
 
 public:
 	ASMItemSpawner();
+	
+	FRemainingCooldownChangedSignature OnRemainingCooldownChanged;
 
 protected:
 	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(VisibleAnywhere, Category = "SceneComponent")
 	TObjectPtr<USceneComponent> SceneComponent;
@@ -28,6 +37,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "ItemSocketComponent")
 	TObjectPtr<USceneComponent> ItemSocketComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "ItemSpawnTimerWidgetComponent")
+	TObjectPtr<UWidgetComponent> ItemSpawnTimerWidgetComponent;
 
 	/** 스폰 타이머를 시작합니다. */
 	UFUNCTION()
@@ -47,6 +59,8 @@ protected:
 
 	/** 스포너의 상태를 초기화합니다. Item 포인터를 null로, 델리게이트를 해제합니다. */
 	void ResetSpawnerState();
+	
+	void UpdateCooldown(float DeltaTime);
 
 	/** 스폰 시킬 아이템 클래스입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
@@ -62,4 +76,7 @@ protected:
 	/** 게임 시작 즉시 스폰할지 여부입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "즉시 스폰")
 	uint32 bUseImmediatelySpawn:1 = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Replicated, Category = "Design")
+	float RemainingCooldownSeconds = 0.0f;
 };
