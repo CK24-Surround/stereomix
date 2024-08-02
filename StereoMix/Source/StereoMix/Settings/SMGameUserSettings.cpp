@@ -38,6 +38,7 @@ void USMGameUserSettings::ApplyNonResolutionSettings()
 	UFMODBlueprintStatics::BusSetVolume(FMODBgmBus, BgmVolume);
 	UFMODBlueprintStatics::BusSetVolume(FMODSfxBus, SfxVolume);
 	UFMODBlueprintStatics::BusSetVolume(FMODUiBus, SfxVolume);
+	FInternationalization::Get().SetCurrentCulture(Culture);
 }
 
 void USMGameUserSettings::ResetToCurrentSettings()
@@ -51,6 +52,7 @@ void USMGameUserSettings::SetToDefaults()
 	SetMasterVolume(1.f, false);
 	SetSfxVolume(1.f, false);
 	SetBgmVolume(1.f, false);
+	SetCulture(FString(TEXT("ko")), false);
 }
 
 void USMGameUserSettings::SetMasterVolume(const float InMasterVolume, const bool bUpdateImmediately)
@@ -78,5 +80,14 @@ void USMGameUserSettings::SetSfxVolume(const float InSfxVolume, const bool bUpda
 	{
 		UFMODBlueprintStatics::BusSetVolume(FMODSfxBus, SfxVolume);
 		UFMODBlueprintStatics::BusSetVolume(FMODUiBus, SfxVolume);
+	}
+}
+
+void USMGameUserSettings::SetCulture(const FString InCulture, const bool bUpdateImmediately)
+{
+	Culture = InCulture;
+	if (bUpdateImmediately)
+	{
+		FInternationalization::Get().SetCurrentCulture(Culture);
 	}
 }

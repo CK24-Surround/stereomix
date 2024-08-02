@@ -40,6 +40,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetSfxVolume() const { return SfxVolume; }
+	
+	UFUNCTION(BlueprintPure)
+	FString GetCulture() const { return Culture; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetMasterVolume(float InMasterVolume, bool bUpdateImmediately);
@@ -49,6 +52,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetSfxVolume(float InSfxVolume, bool bUpdateImmediately);
+
+	UFUNCTION(BlueprintCallable)
+	void SetCulture(FString InCulture, bool bUpdateImmediately);
 
 protected:
 	UPROPERTY(Config)
@@ -60,6 +66,9 @@ protected:
 	UPROPERTY(Config)
 	float SfxVolume = 1.f;
 
+	UPROPERTY(Config)
+	FString Culture = TEXT("ko");
+	
 private:
 	UPROPERTY()
 	TObjectPtr<UFMODVCA> FMODMasterVCA;
