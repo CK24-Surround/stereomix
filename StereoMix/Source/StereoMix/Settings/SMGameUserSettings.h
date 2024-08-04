@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameUserSettings.h"
+#include "Internationalization/Culture.h"
 
 #include "SMGameUserSettings.generated.h"
 
@@ -66,8 +67,10 @@ protected:
 	UPROPERTY(Config)
 	float SfxVolume = 1.f;
 
+	FCultureRef DefaultCulture = FInternationalization::Get().GetCurrentCulture();
+	
 	UPROPERTY(Config)
-	FString Culture = TEXT("ko");
+	FString Culture = DefaultCulture->GetTwoLetterISOLanguageName();
 	
 private:
 	UPROPERTY()

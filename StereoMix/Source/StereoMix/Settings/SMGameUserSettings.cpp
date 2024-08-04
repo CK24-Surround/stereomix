@@ -3,6 +3,7 @@
 
 #include "SMGameUserSettings.h"
 
+#include "Kismet/KismetInternationalizationLibrary.h"
 #include "FMODBlueprintStatics.h"
 #include "FMODBus.h"
 #include "FMODVCA.h"
@@ -38,7 +39,7 @@ void USMGameUserSettings::ApplyNonResolutionSettings()
 	UFMODBlueprintStatics::BusSetVolume(FMODBgmBus, BgmVolume);
 	UFMODBlueprintStatics::BusSetVolume(FMODSfxBus, SfxVolume);
 	UFMODBlueprintStatics::BusSetVolume(FMODUiBus, SfxVolume);
-	FInternationalization::Get().SetCurrentCulture(Culture);
+	UKismetInternationalizationLibrary::SetCurrentCulture(Culture);
 }
 
 void USMGameUserSettings::ResetToCurrentSettings()
@@ -52,7 +53,7 @@ void USMGameUserSettings::SetToDefaults()
 	SetMasterVolume(1.f, false);
 	SetSfxVolume(1.f, false);
 	SetBgmVolume(1.f, false);
-	SetCulture(FString(TEXT("ko")), false);
+	SetCulture(DefaultCulture->GetTwoLetterISOLanguageName(), true);
 }
 
 void USMGameUserSettings::SetMasterVolume(const float InMasterVolume, const bool bUpdateImmediately)
@@ -88,6 +89,6 @@ void USMGameUserSettings::SetCulture(const FString InCulture, const bool bUpdate
 	Culture = InCulture;
 	if (bUpdateImmediately)
 	{
-		FInternationalization::Get().SetCurrentCulture(Culture);
+		UKismetInternationalizationLibrary::SetCurrentCulture(Culture);
 	}
 }
