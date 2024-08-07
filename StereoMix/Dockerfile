@@ -16,23 +16,30 @@ COPY --chown=ue4:ue4 . /tmp/project
 
 WORKDIR /tmp/project
 
+# RUN /home/ue4/UnrealEngine/Engine/Binaries/Linux/UnrealEditor \
+# 	/tmp/project/StereoMix.uproject \
+# 	-run=cook \
+# 	-targetplatform=LinuxServer \
+# 	-CookAll \
+# 	-Compressed
+
 # You may want to review the arguments listed below and change them as required by running `RunUAT BuildCookRun -Help`
 # where applicable (the RunUAT executable is found in Unreal Editor's installation directory, under Engine/Build/BatchFiles/)
 RUN /home/ue4/UnrealEngine/Engine/Build/BatchFiles/RunUAT.sh BuildCookRun \
-	-serverplatform=Linux \
 	-project=/tmp/project/StereoMix.uproject \
-	-serverconfig=Shipping \
-	-noP4 \
-	-cook \
-	-allmaps \
-	-build \
-	-stage \
-	-prereqs \
-	-pak \
-	-archive \
-	-archivedirectory=/tmp/project/dist \
-	-server \
-	-noclient
+	-target=StereoMixServer \
+	-server -serverplatform=Linux -serverconfig=Shipping -noclient \
+	-build -clean -cook \
+	-stage -pak -prereqs -archive -archivedirectory=/tmp/project/dist \
+	-noP4 
+#	-allmaps \
+#    -makebinaryconfig \
+#    -signpack=C:\Encryp.keys \
+#    -nodebuginfo \
+#    -package \
+#    -applocaldir \ - location of prerequisites for applocal deployment
+
+# -unrealexe=ExecutableName               Name of the Unreal Editor executable, i.e. -unrealexe=UnrealEditor.exe
 
 # 2. Create a Runtime image from the packaged server.
 FROM ghcr.io/epicgames/unreal-engine:runtime
