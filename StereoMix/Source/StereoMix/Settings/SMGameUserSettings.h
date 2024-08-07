@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameUserSettings.h"
-#include "Internationalization/Culture.h"
 
 #include "SMGameUserSettings.generated.h"
 
@@ -41,9 +40,9 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	float GetSfxVolume() const { return SfxVolume; }
-	
+
 	UFUNCTION(BlueprintPure)
-	FString GetCulture() const { return Culture; }
+	FString GetCulture() const;
 
 	UFUNCTION(BlueprintCallable)
 	void SetMasterVolume(float InMasterVolume, bool bUpdateImmediately);
@@ -67,11 +66,6 @@ protected:
 	UPROPERTY(Config)
 	float SfxVolume = 1.f;
 
-	FCultureRef DefaultCulture = FInternationalization::Get().GetCurrentCulture();
-	
-	UPROPERTY(Config)
-	FString Culture = DefaultCulture->GetTwoLetterISOLanguageName();
-	
 private:
 	UPROPERTY()
 	TObjectPtr<UFMODVCA> FMODMasterVCA;
