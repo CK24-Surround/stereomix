@@ -41,11 +41,14 @@
 *.VC.db
 *.VC.opendb
 
+# Crypto config
+Config/DefaultCrypto.ini
+
 # Precompiled Assets
 Content/**/*.png
 Content/**/*.tga
 
-# Slash images
+# Splash images
 !Content/Splash/*.png
 
 # Binary Files
@@ -106,33 +109,17 @@ Plugins/FMODStudio/Docs
 Plugins/FMODStudio/Binaries/*
 !Plugins/FMODStudio/Binaries/Win64
 !Plugins/FMODStudio/Binaries/Linux
-
 Plugins/FMODStudio/Binaries/**/*.pdb
-!Plugins/FMODStudio/Binaries/**/fmod.dll
-!Plugins/FMODStudio/Binaries/**/fmod_vc.lib
-!Plugins/FMODStudio/Binaries/**/fmodL.dll
-!Plugins/FMODStudio/Binaries/**/fmodL_vc.lib
-!Plugins/FMODStudio/Binaries/**/fmodstudio.dll
-!Plugins/FMODStudio/Binaries/**/fmodstudio_vc.lib
-!Plugins/FMODStudio/Binaries/**/fmodstudioL.dll
-!Plugins/FMODStudio/Binaries/**/fmodstudioL_vc.lib
-!Plugins/FMODStudio/Binaries/**/resonanceaudio.dll
 !Plugins/FMODStudio/Binaries/**/UnrealEditor.modules
 !Plugins/FMODStudio/Binaries/**/UnrealEditor-FMODStudio.dll
 !Plugins/FMODStudio/Binaries/**/UnrealEditor-FMODStudioEditor.dll
-
-!Plugins/FMODStudio/Binaries/**/libfmod.so
-!Plugins/FMODStudio/Binaries/**/libfmodL.so
-!Plugins/FMODStudio/Binaries/**/libfmodstudio.so
-!Plugins/FMODStudio/Binaries/**/libfmodstudioL.so
-!Plugins/FMODStudio/Binaries/**/libresonanceaudio.so
 
 Plugins/FMODStudioNiagara/Binaries/*
 !Plugins/FMODStudioNiagara/Binaries/Win64
 Plugins/FMODStudioNiagara/Binaries/**/*.pdb
 !Plugins/FMODStudioNiagara/Binaries/**/UnrealEditor.modules
 !Plugins/FMODStudioNiagara/Binaries/**/UnrealEditor-FMODStudioNiagara.dll
-# FMODStudio
+# ~FMODStudio
 
 # KawaiiPhysics
 Plugins/KawaiiPhysics/Binaries/*
@@ -141,20 +128,19 @@ Plugins/KawaiiPhysics/Binaries/**/*.pdb
 !Plugins/KawaiiPhysics/Binaries/**/UnrealEditor.modules
 !Plugins/KawaiiPhysics/Binaries/**/UnrealEditor-KawaiiPhysics.dll
 !Plugins/KawaiiPhysics/Binaries/**/UnrealEditor-KawaiiPhysicsEd.dll
-# KawaiiPhysics
+# ~KawaiiPhysics
 
-# TurboLink ThirdParty
+# TurboLink
 Plugins/TurboLink/Source/ThirdParty
-
-# TurboLink Tools
 !Plugins/TurboLink/Tools/**
 
-# TurboLink Binaries
+Plugins/TurboLink/Binaries/*
 !Plugins/TurboLink/Binaries/Win64
-Plugins/TurboLink/Binaries/Win64/*
+Plugins/TurboLink/Binaries/**/*.pdb
 !Plugins/TurboLink/Binaries/Win64/UnrealEditor.modules
 !Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkEditor.dll
 !Plugins/TurboLink/Binaries/Win64/UnrealEditor-TurboLinkGrpc.dll
+# ~TurboLink
 
 # RefreshAllNodes
 Plugins/RefreshAllNodes/Binaries/*
@@ -162,4 +148,4 @@ Plugins/RefreshAllNodes/Binaries/*
 Plugins/RefreshAllNodes/Binaries/**/*.pdb
 !Plugins/RefreshAllNodes/Binaries/**/UnrealEditor.modules
 !Plugins/RefreshAllNodes/Binaries/**/UnrealEditor-RefreshAllNodes.dll
-# RefreshAllNodes
+# ~RefreshAllNodes
