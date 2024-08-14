@@ -1,1 +1,9 @@
-turbolink-lib.zip
+# setup temp file / directories
+.TurboLink_Temp
+.TurboLink_Temp.zip
+
+.FMOD_Win_Temp
+.FMOD_Win_Temp.zip
+
+.FMOD_Linux_Temp
+.FMOD_Linux_Temp.zip
