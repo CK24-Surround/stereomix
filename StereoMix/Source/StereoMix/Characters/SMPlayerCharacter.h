@@ -9,7 +9,7 @@
 #include "Interfaces/SMCatchInteractionInterface.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMTeamInterface.h"
-#include "SMCharacter.h"
+#include "SMCharacter_Legacy.h"
 
 #include "SMPlayerCharacter.generated.h"
 
