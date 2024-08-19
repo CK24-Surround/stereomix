@@ -302,7 +302,7 @@ void ASMPlayerCharacterBase::InitASC()
 	{
 		ASC->ClearAllAbilities();
 		ASC->InitAbilityActorInfo(StereoMixPlayerState, this);
-		// GiveDefaultAbilities();
+		GiveDefaultAbilities();
 	}
 
 	TeamComponent->SetTeam(StereoMixPlayerState->GetTeam());
