@@ -13,6 +13,7 @@
 class USMUserWidget_HUD;
 class USMUserWidget_StartCountdown;
 class ASMPlayerCharacter;
+class ASMPlayerCharacterBase;
 class USMUserWidget_ScreenIndicator;
 class USMUserWidget_VictoryDefeat;
 class USMUserWidget_GameHUD;
@@ -24,12 +25,10 @@ struct FCharacterSpawnData
 {
 	GENERATED_BODY()
 
-	FCharacterSpawnData()
-	{
-	}
+	FCharacterSpawnData() {}
 
 	UPROPERTY(EditAnywhere)
-	TMap<ESMTeam, TSubclassOf<ASMPlayerCharacter>> CharacterClass;
+	TMap<ESMTeam, TSubclassOf<ASMPlayerCharacterBase>> CharacterClass;
 };
 
 /**

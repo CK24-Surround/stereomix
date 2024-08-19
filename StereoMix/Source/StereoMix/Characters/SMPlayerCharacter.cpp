@@ -328,9 +328,9 @@ void ASMPlayerCharacter::SetupGASInputComponent()
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	const ASMGamePlayerController* PlayerController = CastChecked<ASMGamePlayerController>(Controller);
 	const USMControlData* ControlData = PlayerController->GetControlData();
-	EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility::Launch);
-	EnhancedInputComponent->BindAction(ControlData->CatchAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility::Catch);
-	EnhancedInputComponent->BindAction(ControlData->SmashAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility::Smash);
+	EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Launch);
+	EnhancedInputComponent->BindAction(ControlData->CatchAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Catch);
+	EnhancedInputComponent->BindAction(ControlData->SmashAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Smash);
 }
 
 void ASMPlayerCharacter::InitASC()
@@ -408,7 +408,7 @@ void ASMPlayerCharacter::GiveDefaultAbilities()
 	}
 }
 
-void ASMPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
+void ASMPlayerCharacter::GAInputPressed(EActiveAbility_Legacy InInputID)
 {
 	if (!ASC.Get())
 	{
@@ -430,7 +430,7 @@ void ASMPlayerCharacter::GAInputPressed(EActiveAbility InInputID)
 	}
 }
 
-void ASMPlayerCharacter::GAInputReleased(EActiveAbility InInputID)
+void ASMPlayerCharacter::GAInputReleased(EActiveAbility_Legacy InInputID)
 {
 	if (!ASC.Get())
 	{
@@ -709,7 +709,7 @@ void ASMPlayerCharacter::OnCatch()
 {
 	if (HasAuthority())
 	{
-		SetCharacterMoveTrailState(EMoveTrailState::Catch);
+		SetCharacterMoveTrailState(EMoveTrailState_Legacy::Catch);
 	}
 }
 
@@ -717,7 +717,7 @@ void ASMPlayerCharacter::OnCatchRelease()
 {
 	if (HasAuthority())
 	{
-		SetCharacterMoveTrailState(EMoveTrailState::Default);
+		SetCharacterMoveTrailState(EMoveTrailState_Legacy::Default);
 	}
 }
 
@@ -730,7 +730,7 @@ bool ASMPlayerCharacter::bAmICatching()
 	return CatchInteractionComponent->GetActorIAmCatching() != nullptr;
 }
 
-void ASMPlayerCharacter::SetCharacterMoveTrailState(EMoveTrailState NewCharacterMoveTrailState)
+void ASMPlayerCharacter::SetCharacterMoveTrailState(EMoveTrailState_Legacy NewCharacterMoveTrailState)
 {
 	if (!HasAuthority())
 	{
@@ -752,21 +752,21 @@ void ASMPlayerCharacter::OnRep_CharacterMoveTrailState()
 
 	switch (CharacterMoveTrailState)
 	{
-		case EMoveTrailState::None:
+		case EMoveTrailState_Legacy::None:
 		{
 			break;
 		}
-		case EMoveTrailState::Default:
+		case EMoveTrailState_Legacy::Default:
 		{
 			ActivateDefaultMoveTrail();
 			break;
 		}
-		case EMoveTrailState::Catch:
+		case EMoveTrailState_Legacy::Catch:
 		{
 			ActivateCatchMoveTrail();
 			break;
 		}
-		case EMoveTrailState::Immune:
+		case EMoveTrailState_Legacy::Immune:
 		{
 			ActivateImmuneMoveTrail();
 			break;

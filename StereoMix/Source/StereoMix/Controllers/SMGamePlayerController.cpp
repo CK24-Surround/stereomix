@@ -10,6 +10,7 @@
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Games/SMGameMode.h"
 #include "StereoMixLog.h"
+#include "Characters/SMPlayerCharacterBase.h"
 #include "Games/SMGamePlayerState.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"
@@ -207,7 +208,8 @@ void ASMGamePlayerController::SpawnCharacter(const FVector* InLocation, const FR
 		return;
 	}
 
-	TSubclassOf<ASMPlayerCharacter> CharacterSpawnClass = CharacterSpawnData->CharacterClass.FindOrAdd(Team, nullptr);
+	// TSubclassOf<ASMPlayerCharacter> CharacterSpawnClass = CharacterSpawnData->CharacterClassLegacy.FindOrAdd(Team, nullptr);
+	TSubclassOf<ASMPlayerCharacterBase> CharacterSpawnClass = CharacterSpawnData->CharacterClass.FindOrAdd(Team, nullptr);
 	if (!ensureAlways(CharacterSpawnClass))
 	{
 		return;
@@ -215,14 +217,16 @@ void ASMGamePlayerController::SpawnCharacter(const FVector* InLocation, const FR
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	ASMPlayerCharacter* PlayerCharacter = World->SpawnActor<ASMPlayerCharacter>(CharacterSpawnClass, NewLocation, NewRotation, SpawnParams);
+	// ASMPlayerCharacter* PlayerCharacter = World->SpawnActor<ASMPlayerCharacter>(CharacterSpawnClass, NewLocation, NewRotation, SpawnParams);
+	ASMPlayerCharacterBase* PlayerCharacter = World->SpawnActor<ASMPlayerCharacterBase>(CharacterSpawnClass, NewLocation, NewRotation, SpawnParams);
 	if (!ensureAlways(PlayerCharacter))
 	{
 		return;
 	}
 
 	// 기존 캐릭터를 제거합니다.
-	ASMPlayerCharacter* PreviousCharacter = GetPawn<ASMPlayerCharacter>();
+	// ASMPlayerCharacter* PreviousCharacter = GetPawn<ASMPlayerCharacter>();
+	ASMPlayerCharacterBase* PreviousCharacter = GetPawn<ASMPlayerCharacterBase>();
 	if (PreviousCharacter)
 	{
 		PreviousCharacter->Destroy();

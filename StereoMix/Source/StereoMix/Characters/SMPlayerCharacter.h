@@ -32,7 +32,7 @@ class USMDesignData;
 class USMWidgetComponent;
 
 UENUM(BlueprintType)
-enum class EActiveAbility : uint8
+enum class EActiveAbility_Legacy : uint8
 {
 	None,
 	Launch,
@@ -41,7 +41,7 @@ enum class EActiveAbility : uint8
 };
 
 UENUM(BlueprintType)
-enum class EMoveTrailState : uint8
+enum class EMoveTrailState_Legacy : uint8
 {
 	None,
 	Default,
@@ -174,16 +174,16 @@ protected:
 	void GiveDefaultAbilities();
 
 	// 액티브 GA와 바인드 된 함수입니다. 입력할때 트리거됩니다.
-	void GAInputPressed(EActiveAbility InInputID);
+	void GAInputPressed(EActiveAbility_Legacy InInputID);
 
 	// 액티브 GA와 바인드 된 함수입니다. 놓을때 트리거됩니다.
-	void GAInputReleased(EActiveAbility InInputID);
+	void GAInputReleased(EActiveAbility_Legacy InInputID);
 
 	UPROPERTY()
 	TWeakObjectPtr<USMAbilitySystemComponent> ASC;
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
-	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
+	TMap<EActiveAbility_Legacy, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
@@ -315,9 +315,9 @@ public:
 	// ~Catch Section
 
 	// ~Trail Section
-	EMoveTrailState GetCharacterMoveTrailState() { return CharacterMoveTrailState; }
+	EMoveTrailState_Legacy GetCharacterMoveTrailState() { return CharacterMoveTrailState; }
 
-	void SetCharacterMoveTrailState(EMoveTrailState NewCharacterMoveTrailState);
+	void SetCharacterMoveTrailState(EMoveTrailState_Legacy NewCharacterMoveTrailState);
 
 	UFUNCTION()
 	void OnRep_CharacterMoveTrailState();
@@ -332,7 +332,7 @@ protected:
 	void ActivateImmuneMoveTrail();
 
 	UPROPERTY(ReplicatedUsing = "OnRep_CharacterMoveTrailState")
-	EMoveTrailState CharacterMoveTrailState;
+	EMoveTrailState_Legacy CharacterMoveTrailState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design|Socket")
 	FName TrailSocket = TEXT("Trail-Point");

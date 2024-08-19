@@ -31,7 +31,7 @@ protected:
 	void OnRep_Team();
 
 	/** 자신이 속한 팀을 나타냅니다.*/
-	UPROPERTY(EditAnywhere, Category = "Team", ReplicatedUsing = "OnRep_Team")
+	UPROPERTY(EditAnywhere, Category = "StereoMix|Team", ReplicatedUsing = "OnRep_Team")
 	ESMTeam Team;
 
 public:

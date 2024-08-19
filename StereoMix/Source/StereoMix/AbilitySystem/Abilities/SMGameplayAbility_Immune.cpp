@@ -76,7 +76,7 @@ void USMGameplayAbility_Immune::ActivateAbility(const FGameplayAbilitySpecHandle
 	// 면역 이펙트, 머티리얼을 적용합니다.
 	if (ActorInfo->IsNetAuthority())
 	{
-		SourceCharacter->SetCharacterMoveTrailState(EMoveTrailState::Immune);
+		SourceCharacter->SetCharacterMoveTrailState(EMoveTrailState_Legacy::Immune);
 	}
 
 	SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialApply_ElectricGuitar);
@@ -136,7 +136,7 @@ void USMGameplayAbility_Immune::OnFinishDelay()
 	// 면역 종료 이펙트, 머티리얼을 적용합니다.
 	if (CurrentActorInfo->IsNetAuthority())
 	{
-		SourceCharacter->SetCharacterMoveTrailState(EMoveTrailState::Default);
+		SourceCharacter->SetCharacterMoveTrailState(EMoveTrailState_Legacy::Default);
 	}
 
 	FGameplayCueParameters GCParams;
