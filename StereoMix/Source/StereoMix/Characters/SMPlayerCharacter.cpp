@@ -709,7 +709,7 @@ void ASMPlayerCharacter::OnCatch()
 {
 	if (HasAuthority())
 	{
-		SetCharacterMoveTrailState(ECharacterMoveTrailState::Catch);
+		SetCharacterMoveTrailState(EMoveTrailState::Catch);
 	}
 }
 
@@ -717,7 +717,7 @@ void ASMPlayerCharacter::OnCatchRelease()
 {
 	if (HasAuthority())
 	{
-		SetCharacterMoveTrailState(ECharacterMoveTrailState::Default);
+		SetCharacterMoveTrailState(EMoveTrailState::Default);
 	}
 }
 
@@ -730,7 +730,7 @@ bool ASMPlayerCharacter::bAmICatching()
 	return CatchInteractionComponent->GetActorIAmCatching() != nullptr;
 }
 
-void ASMPlayerCharacter::SetCharacterMoveTrailState(ECharacterMoveTrailState NewCharacterMoveTrailState)
+void ASMPlayerCharacter::SetCharacterMoveTrailState(EMoveTrailState NewCharacterMoveTrailState)
 {
 	if (!HasAuthority())
 	{
@@ -752,21 +752,21 @@ void ASMPlayerCharacter::OnRep_CharacterMoveTrailState()
 
 	switch (CharacterMoveTrailState)
 	{
-		case ECharacterMoveTrailState::None:
+		case EMoveTrailState::None:
 		{
 			break;
 		}
-		case ECharacterMoveTrailState::Default:
+		case EMoveTrailState::Default:
 		{
 			ActivateDefaultMoveTrail();
 			break;
 		}
-		case ECharacterMoveTrailState::Catch:
+		case EMoveTrailState::Catch:
 		{
 			ActivateCatchMoveTrail();
 			break;
 		}
-		case ECharacterMoveTrailState::Immune:
+		case EMoveTrailState::Immune:
 		{
 			ActivateImmuneMoveTrail();
 			break;

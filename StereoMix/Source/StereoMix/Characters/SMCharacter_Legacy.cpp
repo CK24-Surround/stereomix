@@ -1,13 +1,13 @@
 // Copyright Surround, Inc. All Rights Reserved.
 
 
-#include "SMCharacter.h"
+#include "SMCharacter_Legacy.h"
 
 #include "Data/SMCharacterAssetData.h"
 #include "Utilities/SMAssetPath.h"
 
 
-ASMCharacter::ASMCharacter()
+ASMCharacter_Legacy::ASMCharacter_Legacy()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -22,17 +22,17 @@ ASMCharacter::ASMCharacter()
 	}
 }
 
-void ASMCharacter::BeginPlay()
+void ASMCharacter_Legacy::BeginPlay()
 {
 	Super::BeginPlay();
 }
 
-void ASMCharacter::Tick(float DeltaTime)
+void ASMCharacter_Legacy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-void ASMCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ASMCharacter_Legacy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 }

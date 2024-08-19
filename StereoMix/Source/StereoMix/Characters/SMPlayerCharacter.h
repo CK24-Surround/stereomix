@@ -41,7 +41,7 @@ enum class EActiveAbility : uint8
 };
 
 UENUM(BlueprintType)
-enum class ECharacterMoveTrailState : uint8
+enum class EMoveTrailState : uint8
 {
 	None,
 	Default,
@@ -52,7 +52,7 @@ enum class ECharacterMoveTrailState : uint8
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnLandedSignature, ASMPlayerCharacter* /*LandedCharacter*/);
 
 UCLASS()
-class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter, public IAbilitySystemInterface, public ISMTeamInterface, public ISMCatchInteractionInterface, public ISMDamageInterface
+class STEREOMIX_API ASMPlayerCharacter : public ASMCharacter_Legacy, public IAbilitySystemInterface, public ISMTeamInterface, public ISMCatchInteractionInterface, public ISMDamageInterface
 {
 	GENERATED_BODY()
 
@@ -315,9 +315,9 @@ public:
 	// ~Catch Section
 
 	// ~Trail Section
-	ECharacterMoveTrailState GetCharacterMoveTrailState() { return CharacterMoveTrailState; }
+	EMoveTrailState GetCharacterMoveTrailState() { return CharacterMoveTrailState; }
 
-	void SetCharacterMoveTrailState(ECharacterMoveTrailState NewCharacterMoveTrailState);
+	void SetCharacterMoveTrailState(EMoveTrailState NewCharacterMoveTrailState);
 
 	UFUNCTION()
 	void OnRep_CharacterMoveTrailState();
@@ -332,7 +332,7 @@ protected:
 	void ActivateImmuneMoveTrail();
 
 	UPROPERTY(ReplicatedUsing = "OnRep_CharacterMoveTrailState")
-	ECharacterMoveTrailState CharacterMoveTrailState;
+	EMoveTrailState CharacterMoveTrailState;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design|Socket")
 	FName TrailSocket = TEXT("Trail-Point");

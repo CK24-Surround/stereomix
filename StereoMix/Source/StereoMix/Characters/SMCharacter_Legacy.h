@@ -5,17 +5,17 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 
-#include "SMCharacter.generated.h"
+#include "SMCharacter_Legacy.generated.h"
 
 class USMCharacterAssetData;
 
 UCLASS()
-class STEREOMIX_API ASMCharacter : public ACharacter
+class STEREOMIX_API ASMCharacter_Legacy : public ACharacter
 {
 	GENERATED_BODY()
 
 public:
-	ASMCharacter();
+	ASMCharacter_Legacy();
 
 protected:
 	virtual void BeginPlay() override;
