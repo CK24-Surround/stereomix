@@ -138,9 +138,9 @@ void ASMPlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	if (ControlData)
 	{
 		EnhancedInputComponent->BindAction(ControlData->MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
-		EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Attack);
-		EnhancedInputComponent->BindAction(ControlData->CatchAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Hold);
-		EnhancedInputComponent->BindAction(ControlData->SmashAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::NoiseBreak);
+		EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Attack);
+		EnhancedInputComponent->BindAction(ControlData->HoldAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Hold);
+		EnhancedInputComponent->BindAction(ControlData->NoiseBreakAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::NoiseBreak);
 	}
 }
 

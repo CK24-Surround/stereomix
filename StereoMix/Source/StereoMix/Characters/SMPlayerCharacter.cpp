@@ -328,9 +328,9 @@ void ASMPlayerCharacter::SetupGASInputComponent()
 	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
 	const ASMGamePlayerController* PlayerController = CastChecked<ASMGamePlayerController>(Controller);
 	const USMControlData* ControlData = PlayerController->GetControlData();
-	EnhancedInputComponent->BindAction(ControlData->ShootAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Launch);
-	EnhancedInputComponent->BindAction(ControlData->CatchAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Catch);
-	EnhancedInputComponent->BindAction(ControlData->SmashAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Smash);
+	EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Launch);
+	EnhancedInputComponent->BindAction(ControlData->HoldAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Catch);
+	EnhancedInputComponent->BindAction(ControlData->NoiseBreakAction, ETriggerEvent::Triggered, this, &ASMPlayerCharacter::GAInputPressed, EActiveAbility_Legacy::Smash);
 }
 
 void ASMPlayerCharacter::InitASC()

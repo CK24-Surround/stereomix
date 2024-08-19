@@ -28,11 +28,11 @@ public:
 	TObjectPtr<const UInputAction> MoveAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<const UInputAction> ShootAction;
+	TObjectPtr<const UInputAction> AttackAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<const UInputAction> CatchAction;
+	TObjectPtr<const UInputAction> HoldAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<const UInputAction> SmashAction;
+	TObjectPtr<const UInputAction> NoiseBreakAction;
 };
