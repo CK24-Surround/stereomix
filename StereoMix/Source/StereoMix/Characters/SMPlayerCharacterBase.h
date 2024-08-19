@@ -8,6 +8,7 @@
 #include "InputActionValue.h"
 #include "SMCharacterBase.h"
 #include "Interfaces/SMTeamInterface.h"
+#include "Data/SMActiveAbility.h"
 #include "SMPlayerCharacterBase.generated.h"
 
 class ASMGamePlayerController;
@@ -18,15 +19,6 @@ class UCameraComponent;
 class UWidgetComponent;
 class UNiagaraComponent;
 class USMUserWidget_CharacterState;
-
-UENUM(BlueprintType)
-enum class EActiveAbility : uint8
-{
-	None,
-	Attack,
-	Hold,
-	NoiseBreak
-};
 
 UENUM(BlueprintType)
 enum class EMoveTrailState : uint8
@@ -76,6 +68,8 @@ protected:
 	void Move(const FInputActionValue& InputActionValue);
 
 	void InitASC();
+
+	void GiveDefaultAbilities();
 
 	void GAInputPressed(EActiveAbility InInputID);
 

@@ -308,6 +308,49 @@ void ASMPlayerCharacterBase::InitASC()
 	TeamComponent->SetTeam(StereoMixPlayerState->GetTeam());
 }
 
+void ASMPlayerCharacterBase::GiveDefaultAbilities()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	if (!ensureAlways(DataAsset))
+	{
+		return;
+	}
+
+	if (!ensureAlways(ASC.Get()))
+	{
+		return;
+	}
+
+	const FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
+	if (GEContextHandle.IsValid())
+	{
+		const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->ForInitGE, 0, GEContextHandle);
+		if (GESpecHandle.IsValid())
+		{
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MoveSpeed, DataAsset->MoveSpeed);
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MaxHP, DataAsset->MaxHP);
+			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::CurrentHP, DataAsset->MaxHP);
+			ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+		}
+	}
+
+	for (const auto& DefaultActiveAbility : DataAsset->DefaultActiveAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec(DefaultActiveAbility.Value, 1, static_cast<int32>(DefaultActiveAbility.Key));
+		ASC->GiveAbility(AbilitySpec);
+	}
+
+	for (const auto& DefaultAbility : DataAsset->DefaultAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec(DefaultAbility);
+		ASC->GiveAbility(AbilitySpec);
+	}
+}
+
 void ASMPlayerCharacterBase::GAInputPressed(EActiveAbility InInputID)
 {
 	if (!ASC.Get())

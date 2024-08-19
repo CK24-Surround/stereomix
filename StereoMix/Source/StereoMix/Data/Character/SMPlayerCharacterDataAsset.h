@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "Data/SMTeam.h"
+#include "Data/SMActiveAbility.h"
 #include "SMPlayerCharacterDataAsset.generated.h"
 
 class USMUserWidget_CharacterState;
 class UNiagaraSystem;
+class UGameplayAbility;
+class UGameplayEffect;
 
 /**
  * 
@@ -19,6 +22,15 @@ class STEREOMIX_API USMPlayerCharacterDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> ForInitGE;
+
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
+	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
+
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
+	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
+	
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TMap<ESMTeam, TSubclassOf<USMUserWidget_CharacterState>> CharacterStateWidget;
 
@@ -31,5 +43,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
 
+	UPROPERTY(EditAnywhere, Category = "Data")
 	float MoveSpeed = 600.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Data")
+	float MaxHP = 100.0f;
 };
