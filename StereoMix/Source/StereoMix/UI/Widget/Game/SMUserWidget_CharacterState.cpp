@@ -18,8 +18,6 @@ void USMUserWidget_CharacterState::SetASC(UAbilitySystemComponent* InASC)
 		return;
 	}
 
-	BindToPlayerState();
-
 	InASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetPostureGaugeAttribute()).AddUObject(this, &USMUserWidget_CharacterState::OnChangeCurrentHealth);
 
 	InASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetMaxPostureGaugeAttribute()).AddUObject(this, &USMUserWidget_CharacterState::OnChangeMaxHealth);
@@ -29,25 +27,11 @@ void USMUserWidget_CharacterState::SetASC(UAbilitySystemComponent* InASC)
 	{
 		CurrentHealth = SourceAttributeSet->GetPostureGauge();
 		MaxHealth = SourceAttributeSet->GetMaxPostureGauge();
-		UpdateHealth();
+		UpdateHPBar();
 	}
 }
 
-void USMUserWidget_CharacterState::BindToPlayerState()
-{
-	APlayerState* PlayerState = Cast<APlayerState>(ASC->GetOwnerActor());
-	if (PlayerState)
-	{
-		UpdateNickname(PlayerState->GetPlayerName());
-	}
-	else
-	{
-		// 만약 플레이어 스테이트가 유효하지 않다면 다음 틱으로 바인드를 미룹니다.
-		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &USMUserWidget_CharacterState::BindToPlayerState);
-	}
-}
-
-void USMUserWidget_CharacterState::UpdateNickname(const FString& InNickname)
+void USMUserWidget_CharacterState::SetNickname(const FString& InNickname)
 {
 	TB_Nickname->SetText(FText::FromString(InNickname));
 }
@@ -55,7 +39,7 @@ void USMUserWidget_CharacterState::UpdateNickname(const FString& InNickname)
 void USMUserWidget_CharacterState::OnChangeCurrentHealth(const FOnAttributeChangeData& OnAttributeChangeData)
 {
 	CurrentHealth = OnAttributeChangeData.NewValue;
-	UpdateHealth();
+	UpdateHPBar();
 
 	PlayAnimation(HitAnimation);
 }
@@ -63,10 +47,10 @@ void USMUserWidget_CharacterState::OnChangeCurrentHealth(const FOnAttributeChang
 void USMUserWidget_CharacterState::OnChangeMaxHealth(const FOnAttributeChangeData& OnAttributeChangeData)
 {
 	MaxHealth = OnAttributeChangeData.NewValue;
-	UpdateHealth();
+	UpdateHPBar();
 }
 
-void USMUserWidget_CharacterState::UpdateHealth()
+void USMUserWidget_CharacterState::UpdateHPBar()
 {
 	PB_Health->SetPercent(CurrentHealth / MaxHealth);
 }

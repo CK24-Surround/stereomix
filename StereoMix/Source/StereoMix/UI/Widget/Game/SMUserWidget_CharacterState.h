@@ -22,16 +22,19 @@ class STEREOMIX_API USMUserWidget_CharacterState : public USMUserWidget
 public:
 	virtual void SetASC(UAbilitySystemComponent* InASC) override;
 
-protected:
-	void BindToPlayerState();
-
-	void UpdateNickname(const FString& InNickname);
+	void SetNickname(const FString& InNickname);
 
 	void OnChangeCurrentHealth(const FOnAttributeChangeData& OnAttributeChangeData);
+
 	void OnChangeMaxHealth(const FOnAttributeChangeData& OnAttributeChangeData);
 
-	void UpdateHealth();
+	void UpdateHPBar();
 
+	float CurrentHealth = 0.0f;
+
+	float MaxHealth = 0.0f;
+
+protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UTextBlock> TB_Nickname;
 
@@ -40,7 +43,4 @@ protected:
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> HitAnimation;
-
-	float CurrentHealth = 0.0f;
-	float MaxHealth = 0.0f;
 };

@@ -15,8 +15,9 @@ class USMAbilitySystemComponent;
 class USMPlayerCharacterDataAsset;
 class USpringArmComponent;
 class UCameraComponent;
-class USMWidgetComponent;
+class UWidgetComponent;
 class UNiagaraComponent;
+class USMUserWidget_CharacterState;
 
 UENUM(BlueprintType)
 enum class EActiveAbility : uint8
@@ -84,6 +85,8 @@ protected:
 
 	void FocusToCursor();
 
+	void BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget);
+
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;
 
@@ -105,7 +108,7 @@ protected:
 	TObjectPtr<USMTeamComponent> TeamComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Widget")
-	TObjectPtr<USMWidgetComponent> CharacterStateWidgetComponent;
+	TObjectPtr<UWidgetComponent> CharacterStateWidgetComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "FX")
 	TObjectPtr<UNiagaraComponent> DefaultMoveTrailFXComponent;

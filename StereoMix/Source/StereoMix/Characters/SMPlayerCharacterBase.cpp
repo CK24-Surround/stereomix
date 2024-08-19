@@ -9,14 +9,15 @@
 #include "NiagaraComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGamePlayerState.h"
-#include "UI/SMWidgetComponent.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -62,7 +63,7 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
-	CharacterStateWidgetComponent = CreateDefaultSubobject<USMWidgetComponent>(TEXT("CharacterStateWidgetComponent"));
+	CharacterStateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("CharacterStateWidgetComponent"));
 	CharacterStateWidgetComponent->SetupAttachment(CachedMeshComponent);
 	CharacterStateWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 300.0));
@@ -203,7 +204,11 @@ void ASMPlayerCharacterBase::OnRep_PlayerState()
 	ESMTeam SourceTeam = GetTeam();
 
 	USMUserWidget_CharacterState* CharacterStateWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), DataAsset->CharacterStateWidget[SourceTeam]);
-	CharacterStateWidgetComponent->SetWidget(CharacterStateWidget);
+	if (CharacterStateWidget)
+	{
+		CharacterStateWidgetComponent->SetWidget(CharacterStateWidget);
+		BindCharacterStateWidget(CharacterStateWidget);
+	}
 
 	DefaultMoveTrailFXComponent->SetAsset(DataAsset->DefaultMoveTrailFX[SourceTeam]);
 	DefaultMoveTrailFXComponent->Activate();
@@ -410,4 +415,31 @@ void ASMPlayerCharacterBase::FocusToCursor()
 	const FVector Direction = (GetCursorTargetingPoint() - GetActorLocation()).GetSafeNormal();
 	const FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	Controller->SetControlRotation(NewRotation);
+}
+
+void ASMPlayerCharacterBase::BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget)
+{
+	if (!CharacterStateWidget)
+	{
+		return;
+	}
+
+	if (!ASC.Get())
+	{
+		return;
+	}
+
+	APlayerState* CachedPlayerState = GetPlayerState();
+	if (CachedPlayerState)
+	{
+		CharacterStateWidget->SetNickname(CachedPlayerState->GetPlayerName());
+
+		ASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetPostureGaugeAttribute()).AddUObject(CharacterStateWidget, &USMUserWidget_CharacterState::OnChangeCurrentHealth);
+		ASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetMaxPostureGaugeAttribute()).AddUObject(CharacterStateWidget, &USMUserWidget_CharacterState::OnChangeMaxHealth);
+
+		const USMCharacterAttributeSet* SourceAttributeSet = ASC->GetSet<USMCharacterAttributeSet>(); {}
+		CharacterStateWidget->MaxHealth = SourceAttributeSet->GetPostureGauge();
+		CharacterStateWidget->CurrentHealth = SourceAttributeSet->GetMaxPostureGauge();
+		CharacterStateWidget->UpdateHPBar();
+	}
 }
