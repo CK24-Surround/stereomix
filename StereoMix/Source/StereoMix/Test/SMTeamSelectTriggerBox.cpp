@@ -3,7 +3,7 @@
 
 #include "SMTeamSelectTriggerBox.h"
 
-#include "Characters/SMPlayerCharacter.h"
+#include "Characters/SMPlayerCharacterBase.h"
 #include "Components/BoxComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Controllers/SMGamePlayerController.h"
@@ -55,7 +55,7 @@ void ASMTeamSelectTriggerBox::NotifyActorBeginOverlap(AActor* OtherActor)
 
 void ASMTeamSelectTriggerBox::RespawnCharacter(AActor* TargetActor)
 {
-	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
 	if (!ensureAlways(TargetCharacter))
 	{
 		return;
