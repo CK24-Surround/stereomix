@@ -43,6 +43,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> AttackMontage;
+
 	UPROPERTY(EditAnywhere, Category = "Data")
 	float MoveSpeed = 600.0f;
 

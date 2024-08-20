@@ -60,6 +60,8 @@ public:
 
 	virtual ESMTeam GetTeam() const override;
 
+	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
+
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
 	 * 기본값은 플레이어 캐릭터의 중심을 기준으로 하는 평면으로 계산됩니다. 만약 bIsZeroBasis가 true라면 캐릭터가 서있는 바닥을 기준으로 하는 평면으로 계산됩니다. */
 	FVector GetCursorTargetingPoint(bool bIsZeroBasis = false);
