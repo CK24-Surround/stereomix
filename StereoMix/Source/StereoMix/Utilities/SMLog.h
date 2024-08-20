@@ -4,6 +4,7 @@ DECLARE_LOG_CATEGORY_CLASS(LogStereoMixNetwork, Log, All);
 
 #if UE_BUILD_SHIPPING
 #define NET_LOG(NetOwner, Verbosity, Format, ...)
+#define NET_VLOG(NetOwner, Key, Duration, Format, ...)
 #else
 #define NET_LOG(NetOwner, Verbosity, Format, ...) \
 	{ \
@@ -54,4 +55,24 @@ DECLARE_LOG_CATEGORY_CLASS(LogStereoMixNetwork, Log, All);
 			UE_LOG(LogStereoMixNetwork, Verbosity, TEXT("%s"), *Macro_Log); \
 		} \
 	}
+
+#define NET_VLOG(NetOwner, Key, Duration, Format, ...)\
+{\
+	AActor* Macro_NetOwner = NetOwner;\
+	int32 Macro_Key = Key;\
+	float Macro_Duration = Duration;\
+	const FString Macro_PrefixLog = FString::Printf(TEXT("[%s]"), *FString(__FUNCTION__));\
+	const FString Macro_Log = FString::Printf(TEXT("%s: %s"), *Macro_PrefixLog, *FString::Printf(Format, ##__VA_ARGS__));\
+\
+	FColor Macro_LogColor = FColor::Black;\
+	if (Macro_NetOwner)\
+	{\
+		Macro_LogColor = Macro_NetOwner->HasAuthority() ? FColor::Yellow : FColor::White;\
+	}\
+\
+	if (GEngine)\
+	{\
+		GEngine->AddOnScreenDebugMessage(Macro_Key, Macro_Duration, Macro_LogColor, Macro_Log);\
+	}\
+}
 #endif
