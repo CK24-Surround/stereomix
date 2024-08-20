@@ -462,27 +462,30 @@ void ASMPlayerCharacterBase::FocusToCursor()
 
 void ASMPlayerCharacterBase::BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget)
 {
-	if (!CharacterStateWidget)
+	if (!ensureAlways(CharacterStateWidget))
 	{
 		return;
 	}
 
-	if (!ASC.Get())
+	if (!ensureAlways(ASC.Get()))
 	{
 		return;
 	}
 
 	APlayerState* CachedPlayerState = GetPlayerState();
-	if (CachedPlayerState)
+	if (ensureAlways(CachedPlayerState))
 	{
 		CharacterStateWidget->SetNickname(CachedPlayerState->GetPlayerName());
 
 		ASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetPostureGaugeAttribute()).AddUObject(CharacterStateWidget, &USMUserWidget_CharacterState::OnChangeCurrentHealth);
 		ASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetMaxPostureGaugeAttribute()).AddUObject(CharacterStateWidget, &USMUserWidget_CharacterState::OnChangeMaxHealth);
 
-		const USMCharacterAttributeSet* SourceAttributeSet = ASC->GetSet<USMCharacterAttributeSet>(); {}
-		CharacterStateWidget->MaxHealth = SourceAttributeSet->GetPostureGauge();
-		CharacterStateWidget->CurrentHealth = SourceAttributeSet->GetMaxPostureGauge();
-		CharacterStateWidget->UpdateHPBar();
+		const USMCharacterAttributeSet* SourceAttributeSet = ASC->GetSet<USMCharacterAttributeSet>();
+		if (ensureAlways(SourceAttributeSet))
+		{
+			CharacterStateWidget->MaxHealth = SourceAttributeSet->GetPostureGauge();
+			CharacterStateWidget->CurrentHealth = SourceAttributeSet->GetMaxPostureGauge();
+			CharacterStateWidget->UpdateHPBar();
+		}
 	}
 }
