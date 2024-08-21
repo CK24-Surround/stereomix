@@ -53,7 +53,7 @@ void ASMBassCharacter::Slash(float Distance, float Angle, float SlashTime)
 	SlashColliderComponent->SetCapsuleHalfHeight(Distance / 2.0f);
 	SlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	const double Yaw = SlashData.bIsForward ? -SlashData.HalfAngle : SlashData.HalfAngle;
+	const double Yaw = SlashData.bIsForward ? SlashData.HalfAngle : -SlashData.HalfAngle;
 	SlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, Yaw, 0.0));
 	SlashData.bIsSlashing = true;
 }
@@ -61,7 +61,7 @@ void ASMBassCharacter::Slash(float Distance, float Angle, float SlashTime)
 void ASMBassCharacter::UpdateSlash()
 {
 	const FRotator SourceRotation = SlashColliderRootComponent->GetRelativeRotation();
-	const double TargetYaw = SlashData.bIsForward ? SlashData.HalfAngle : -SlashData.HalfAngle;
+	const double TargetYaw = SlashData.bIsForward ? -SlashData.HalfAngle : SlashData.HalfAngle;
 	const double NewYaw = FMath::FInterpConstantTo(SourceRotation.Yaw, TargetYaw, GetWorld()->GetDeltaSeconds(), SlashData.SlashSpeed);
 	SlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, NewYaw, 0.0));
 
