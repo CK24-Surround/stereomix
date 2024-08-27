@@ -4,6 +4,7 @@
 #include "SMBassCharacter.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
 
@@ -21,6 +22,15 @@ ASMBassCharacter::ASMBassCharacter()
 	SlashColliderComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnSlashOverlap);
 }
 
+void ASMBassCharacter::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, bIsLeftSlash);
+	DOREPLIFETIME(ThisClass, bCanInput);
+	DOREPLIFETIME(ThisClass, bCanNextAction);
+}
+
 void ASMBassCharacter::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
@@ -34,26 +44,22 @@ void ASMBassCharacter::Tick(float DeltaSeconds)
 	{
 		UpdateSlash();
 	}
+
+	if (bIsInput && bCanNextAction)
+	{
+		bIsInput = false;
+		(void)OnSlash.ExecuteIfBound();
+	}
 }
 
 void ASMBassCharacter::Slash(float Distance, float Angle, float SlashTime)
 {
-	if (SlashData.bIsForward)
-	{
-		SlashData.bIsForward = false;
-	}
-	else
-	{
-		SlashData.bIsForward = true;
-	}
-
-
 	SlashData.HalfAngle = Angle / 2.0f;
 	SlashData.SlashSpeed = Angle * (1.0f / SlashTime);
 	SlashColliderComponent->SetCapsuleHalfHeight(Distance / 2.0f);
 	SlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	const double Yaw = SlashData.bIsForward ? SlashData.HalfAngle : -SlashData.HalfAngle;
+	const double Yaw = bIsLeftSlash ? SlashData.HalfAngle : -SlashData.HalfAngle;
 	SlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, Yaw, 0.0));
 	SlashData.bIsSlashing = true;
 }
@@ -61,7 +67,7 @@ void ASMBassCharacter::Slash(float Distance, float Angle, float SlashTime)
 void ASMBassCharacter::UpdateSlash()
 {
 	const FRotator SourceRotation = SlashColliderRootComponent->GetRelativeRotation();
-	const double TargetYaw = SlashData.bIsForward ? -SlashData.HalfAngle : SlashData.HalfAngle;
+	const double TargetYaw = bIsLeftSlash ? -SlashData.HalfAngle : SlashData.HalfAngle;
 	const double NewYaw = FMath::FInterpConstantTo(SourceRotation.Yaw, TargetYaw, GetWorld()->GetDeltaSeconds(), SlashData.SlashSpeed);
 	SlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, NewYaw, 0.0));
 
@@ -69,17 +75,10 @@ void ASMBassCharacter::UpdateSlash()
 
 	if (FMath::IsNearlyEqual(SourceRotation.Yaw, NewYaw))
 	{
-		SlashEnd();
+		SlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		SlashData.DetectedActors.Reset();
+		SlashData.bIsSlashing = false;
 	}
-}
-
-void ASMBassCharacter::SlashEnd()
-{
-	SlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	SlashData.DetectedActors.Reset();
-	SlashData.bIsSlashing = false;
-
-	(void)OnSlashEndSignature.ExecuteIfBound();
 }
 
 void ASMBassCharacter::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

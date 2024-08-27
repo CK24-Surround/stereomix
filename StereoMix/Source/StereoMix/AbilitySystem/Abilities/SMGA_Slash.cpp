@@ -3,9 +3,9 @@
 
 #include "SMGA_Slash.h"
 
+#include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "AbilitySystem/SMTags.h"
 #include "Characters/SMBassCharacter.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
@@ -22,20 +22,23 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	K2_CommitAbility();
 
 	Slash();
+	NET_VLOG(GetAvatarActorFromActorInfo(), -1, 3.0f, TEXT("슬래시!"));
 }
 
-void USMGA_Slash::ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const
+void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	const UGameplayEffect* CooldownGE = GetCooldownGameplayEffect();
-	if (CooldownGE)
+	Super::InputPressed(Handle, ActorInfo, ActivationInfo);
+
+	ASMBassCharacter* SourceCharacter = Cast<ASMBassCharacter>(GetAvatarActorFromActorInfo());
+	if (!ensureAlways(SourceCharacter))
 	{
-		const FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(CooldownGE->GetClass());
-		if (ensureAlways(GESpecHandle.IsValid()))
-		{
-			FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
-			GESpec->SetSetByCallerMagnitude(SMTags::Data::Cooldown, Cooldown);
-			(void)ApplyGameplayEffectSpecToOwner(Handle, ActorInfo, ActivationInfo, GESpecHandle);
-		}
+		return;
+	}
+
+	if (SourceCharacter->GetCanInput())
+	{
+		NET_VLOG(GetAvatarActorFromActorInfo(), -1, 3.0f, TEXT("입력!"));
+		SourceCharacter->SetIsInput(true);
 	}
 }
 
@@ -44,7 +47,7 @@ void USMGA_Slash::Slash()
 	ASMBassCharacter* SourceCharacter = Cast<ASMBassCharacter>(GetAvatarActorFromActorInfo());
 	if (!ensureAlways(SourceCharacter))
 	{
-		K2_EndAbility();
+		EndAbilityByCancel();
 		return;
 	}
 
@@ -59,16 +62,34 @@ void USMGA_Slash::Slash()
 	const USMPlayerCharacterDataAsset* CharacterDataAsset = SourceCharacter->GetDataAsset();
 	if (CharacterDataAsset)
 	{
-		SourceASC->PlayMontage(this, CurrentActivationInfo, CharacterDataAsset->AttackMontage[SourceTeam], 1.0f);
+		NET_LOG(SourceCharacter, Warning, TEXT("베기 애니메이션 시작"));
+
+		const bool bIsLeftSlash = SourceCharacter->GetIsLeftSlash();
+		const FName SlashDirectionName = bIsLeftSlash ? TEXT("Left") : TEXT("Right");
+		UAnimMontage* SlashMontage = CharacterDataAsset->AttackMontage[SourceTeam];
+		UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("Slash"), SlashMontage, 1.0f, SlashDirectionName);
+
+		MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::InterruptedTest);
+		MontageTask->OnCompleted.AddDynamic(this, &ThisClass::CompletedTest);
+
+		if (K2_HasAuthority())
+		{
+			MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::SlashAnimationEnded);
+			MontageTask->OnCompleted.AddDynamic(this, &ThisClass::SlashAnimationEnded);
+			SourceCharacter->SetIsLeftSlash(!bIsLeftSlash);
+		}
+
+		MontageTask->ReadyForActivation();
 	}
 
 	if (K2_HasAuthority())
 	{
 		SourceCharacter->Slash(Distance, Angle, SlashTime);
-		SourceCharacter->OnSlashEndSignature.BindUObject(this, &ThisClass::SlashEnded);
 	}
-
-	K2_EndAbility();
+	else
+	{
+		SourceCharacter->OnSlash.BindUObject(this, &ThisClass::SlashRequest);
+	}
 }
 
 void USMGA_Slash::SlashEnded()
@@ -79,7 +100,42 @@ void USMGA_Slash::SlashEnded()
 		K2_EndAbility();
 		return;
 	}
+}
 
-	NET_LOG(SourceCharacter, Warning, TEXT("Slash Ended"));
-	SourceCharacter->OnSlashEndSignature.Unbind();
+void USMGA_Slash::SlashRequest()
+{
+	ServerRPCSlashRequest();
+	Slash();
+}
+
+void USMGA_Slash::ServerRPCSlashRequest_Implementation()
+{
+	Slash();
+}
+
+void USMGA_Slash::SlashAnimationEnded()
+{
+	ASMBassCharacter* SourceCharacter = Cast<ASMBassCharacter>(GetAvatarActorFromActorInfo());
+	if (SourceCharacter)
+	{
+		SourceCharacter->OnSlash.Unbind();
+		SourceCharacter->SetIsLeftSlash(true);
+	}
+
+	K2_EndAbility();
+}
+
+void USMGA_Slash::CancelledTest()
+{
+	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("CancelledTest"));
+}
+
+void USMGA_Slash::InterruptedTest()
+{
+	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("InterruptedTest"));
+}
+
+void USMGA_Slash::CompletedTest()
+{
+	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("CompletedTest"));
 }

@@ -6,7 +6,7 @@
 #include "SMPlayerCharacterBase.h"
 #include "SMBassCharacter.generated.h"
 
-DECLARE_DELEGATE(FOnSlashEndSignature);
+DECLARE_DELEGATE(FOnSlashSignature);
 
 UCLASS(Abstract)
 class STEREOMIX_API ASMBassCharacter : public ASMPlayerCharacterBase
@@ -19,11 +19,12 @@ class STEREOMIX_API ASMBassCharacter : public ASMPlayerCharacterBase
 		float SlashSpeed = 0.0f;
 		float HalfAngle = 0.0f;
 		uint32 bIsSlashing:1 = false;
-		uint32 bIsForward:1 = false;
 	};
 
 public:
 	ASMBassCharacter();
+
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PostInitializeComponents() override;
 
@@ -31,12 +32,26 @@ public:
 
 	void Slash(float Distance, float Angle, float SlashTime);
 
-	FOnSlashEndSignature OnSlashEndSignature;
+	bool GetIsLeftSlash() { return bIsLeftSlash; }
+
+	void SetIsLeftSlash(bool bNewIsLeftSlash) { bIsLeftSlash = bNewIsLeftSlash; }
+
+	bool GetCanInput() { return bCanInput; }
+
+	void SetCanInput(bool bNewCanInput) { bCanInput = bNewCanInput; }
+
+	bool GetCanNextAction() { return bCanNextAction; }
+
+	void SetCanNextAction(bool bNewCanNextAction) { bCanNextAction = bNewCanNextAction; }
+
+	bool GetIsInput() { return bIsInput; }
+
+	void SetIsInput(bool bNewIsInput) { bIsInput = bNewIsInput; }
+
+	FOnSlashSignature OnSlash;
 
 protected:
 	void UpdateSlash();
-
-	void SlashEnd();
 
 	UFUNCTION()
 	void OnSlashOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
@@ -48,6 +63,17 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<UCapsuleComponent> SlashColliderComponent;
+
+	UPROPERTY(Replicated)
+	uint32 bIsLeftSlash:1 = true;
+
+	UPROPERTY(Replicated)
+	uint32 bCanInput:1 = false;
+
+	UPROPERTY(Replicated)
+	uint32 bCanNextAction:1 = false;
+
+	uint32 bIsInput:1 = false;
 
 	FSlashData SlashData;
 };

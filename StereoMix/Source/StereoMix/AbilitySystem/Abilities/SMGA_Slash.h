@@ -20,14 +20,19 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	virtual void ApplyCooldown(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) const override;
+	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
 	void Slash();
 
 	void SlashEnded();
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Cooldown = 1.0f;
+	void SlashRequest();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCSlashRequest();
+
+	UFUNCTION()
+	void SlashAnimationEnded();
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Distance = 500.0f;
@@ -37,4 +42,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float SlashTime = 0.1875f;
+
+// 임시
+protected:
+	UFUNCTION()
+	void CancelledTest();
+
+	UFUNCTION()
+	void InterruptedTest();
+
+	UFUNCTION()
+	void CompletedTest();
 };
