@@ -38,10 +38,12 @@ void USMUserWidget_CharacterState::SetNickname(const FString& InNickname)
 
 void USMUserWidget_CharacterState::OnChangeCurrentHealth(const FOnAttributeChangeData& OnAttributeChangeData)
 {
-	CurrentHealth = OnAttributeChangeData.NewValue;
-	UpdateHPBar();
-
-	PlayAnimation(HitAnimation);
+	if (CurrentHealth != OnAttributeChangeData.NewValue)
+	{
+		CurrentHealth = OnAttributeChangeData.NewValue;
+		PlayAnimation(HitAnimation);
+		UpdateHPBar();
+	}
 }
 
 void USMUserWidget_CharacterState::OnChangeMaxHealth(const FOnAttributeChangeData& OnAttributeChangeData)

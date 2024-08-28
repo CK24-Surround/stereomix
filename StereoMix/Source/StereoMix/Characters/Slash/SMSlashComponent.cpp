@@ -3,7 +3,9 @@
 
 #include "SMSlashComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "Characters/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Utilities/SMLog.h"
@@ -88,7 +90,7 @@ void USMSlashComponent::ColliderOrientaionBySlash()
 		return;
 	}
 
-	if (SourceASC->HasAnyMatchingGameplayTags(DeActivateGameplayTags))
+	if (SourceASC->HasAnyMatchingGameplayTags(DeactivateGameplayTags))
 	{
 		return;
 	}
@@ -133,6 +135,8 @@ void USMSlashComponent::SlashStart()
 	{
 		MontageEnded->BindUObject(this, &ThisClass::SlashEnded);
 	}
+
+	ServerRPCPlaySlashStartAnimation();
 }
 
 void USMSlashComponent::ReSlash()
@@ -157,6 +161,8 @@ void USMSlashComponent::ReSlash()
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
 	NET_LOG(SourceCharacter.Get(), Warning, TEXT("%s로 점프시도"), *SectionName.ToString());
 	SourceAnimInstance->Montage_JumpToSection(SectionName, SlashMontage);
+
+	ServerRPCPlayReSlashAnimation(bIsLeftSlashNext);
 }
 
 void USMSlashComponent::UpdateSlash()
@@ -196,12 +202,113 @@ void USMSlashComponent::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (DetectedActors.Find(TargetCharacter) == INDEX_NONE)
 		{
 			DetectedActors.Push(TargetCharacter);
-			ApplyDamage(TargetCharacter);
+			PredictApplyDamage(TargetCharacter);
 		}
 	}
 }
 
-void USMSlashComponent::ApplyDamage(AActor* TargetActor)
+void USMSlashComponent::PredictApplyDamage(AActor* TargetActor)
 {
 	NET_VLOG(SourceCharacter.Get(), -1, 3.0f, TEXT("%s 피격"), *TargetActor->GetName());
+
+	ASMPlayerCharacterBase* TagetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	TagetCharacter->PredictHPChange(Damage);
+
+	ServerRPCRequestDamage(TargetActor, Damage);
+}
+
+void USMSlashComponent::ServerRPCPlaySlashStartAnimation_Implementation()
+{
+	MulticastRPCPlaySlashStartAnimation();
+}
+
+void USMSlashComponent::MulticastRPCPlaySlashStartAnimation_Implementation()
+{
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	if (SourceCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	class USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
+	if (!ensureAlways(SourceMesh))
+	{
+		return;
+	}
+
+	class UAnimInstance* SourceAnimInstance = SourceMesh->GetAnimInstance();
+	if (!ensureAlways(SourceAnimInstance))
+	{
+		return;
+	}
+
+	SourceAnimInstance->Montage_Play(SlashMontage);
+}
+
+
+void USMSlashComponent::ServerRPCPlayReSlashAnimation_Implementation(bool bIsLeftSlash)
+{
+	MulticastRPCPlaySlashAnimation(bIsLeftSlash);
+}
+
+void USMSlashComponent::MulticastRPCPlaySlashAnimation_Implementation(bool bIsLeftSlash)
+{
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	if (SourceCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	class USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
+	if (!ensureAlways(SourceMesh))
+	{
+		return;
+	}
+
+	class UAnimInstance* SourceAnimInstance = SourceMesh->GetAnimInstance();
+	if (!ensureAlways(SourceAnimInstance))
+	{
+		return;
+	}
+
+	const FName SectionName = bIsLeftSlash ? TEXT("Left") : TEXT("Right");
+	SourceAnimInstance->Montage_JumpToSection(SectionName, SlashMontage);
+}
+
+void USMSlashComponent::ServerRPCRequestDamage_Implementation(AActor* TargetActor, float Amount)
+{
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (!TargetASC)
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* SourceASC = SourceCharacter->GetAbilitySystemComponent();
+	if (!ensureAlways(SourceASC))
+	{
+		return;
+	}
+
+	FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(SlashDamageGE, 1.0f, SourceASC->MakeEffectContext());
+	if (!GESpecHandle.IsValid())
+	{
+		return;
+	}
+
+	FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
+	GESpec->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 }

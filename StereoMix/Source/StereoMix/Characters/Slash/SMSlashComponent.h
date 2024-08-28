@@ -8,6 +8,7 @@
 #include "SMSlashComponent.generated.h"
 
 
+class UGameplayEffect;
 class UCapsuleComponent;
 class ASMBassCharacter;
 
@@ -36,7 +37,7 @@ public:
 
 protected:
 	void SlashStart();
-	
+
 	void ReSlash();
 
 	void UpdateSlash();
@@ -46,10 +47,31 @@ protected:
 	UFUNCTION()
 	void OnSlashOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	void ApplyDamage(AActor* TargetActor);
+	void PredictApplyDamage(AActor* TargetActor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCRequestDamage(AActor* TargetActor, float Amount);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCPlaySlashStartAnimation();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCPlaySlashStartAnimation();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCPlayReSlashAnimation(bool bIsLeftSlash);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCPlaySlashAnimation(bool bIsLeftSlash);
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TSubclassOf<UGameplayEffect> SlashDamageGE;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UAnimMontage> SlashMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Damage = 25.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Distance = 500.0f;
@@ -61,7 +83,7 @@ protected:
 	float SlashTime = 0.1875f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	FGameplayTagContainer DeActivateGameplayTags;
+	FGameplayTagContainer DeactivateGameplayTags;
 
 	TSoftObjectPtr<ASMBassCharacter> SourceCharacter;
 	TSoftObjectPtr<USceneComponent> SourceSlashColliderRootComponent;

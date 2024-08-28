@@ -230,6 +230,23 @@ ESMTeam ASMPlayerCharacterBase::GetTeam() const
 	return TeamComponent->GetTeam();
 }
 
+void ASMPlayerCharacterBase::PredictHPChange(float Amount)
+{
+	USMUserWidget_CharacterState* StateWidget = Cast<USMUserWidget_CharacterState>(CharacterStateWidgetComponent->GetWidget());
+	if (!ensureAlways(StateWidget))
+	{
+		return;
+	}
+
+	FOnAttributeChangeData HPAttributeChangeData;
+	HPAttributeChangeData.NewValue = StateWidget->CurrentHealth - Amount;
+
+	if (StateWidget->CurrentHealth > 0.0f)
+	{
+		StateWidget->OnChangeCurrentHealth(HPAttributeChangeData);
+	}
+}
+
 FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bIsZeroBasis)
 {
 	const FVector SourceLocation = GetActorLocation();
