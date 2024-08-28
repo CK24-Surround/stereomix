@@ -8,6 +8,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Characters/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
 
@@ -77,7 +78,7 @@ void USMSlashComponent::TrySlash()
 	}
 }
 
-void USMSlashComponent::ColliderOrientaionBySlash()
+void USMSlashComponent::ColliderOrientaionForSlash()
 {
 	if (!SourceCharacter)
 	{
@@ -117,13 +118,7 @@ void USMSlashComponent::ColliderOrientaionBySlash()
 
 void USMSlashComponent::SlashStart()
 {
-	class USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
-	if (!ensureAlways(SourceMesh))
-	{
-		return;
-	}
-
-	class UAnimInstance* SourceAnimInstance = SourceMesh->GetAnimInstance();
+	UAnimInstance* SourceAnimInstance = GetSourceAnimInstance();
 	if (!ensureAlways(SourceAnimInstance))
 	{
 		return;
@@ -141,18 +136,7 @@ void USMSlashComponent::SlashStart()
 
 void USMSlashComponent::ReSlash()
 {
-	if (!SourceCharacter)
-	{
-		return;
-	}
-
-	USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
-	if (!ensureAlways(SourceMesh))
-	{
-		return;
-	}
-
-	UAnimInstance* SourceAnimInstance = SourceMesh->GetAnimInstance();
+	UAnimInstance* SourceAnimInstance = GetSourceAnimInstance();
 	if (!ensureAlways(SourceAnimInstance))
 	{
 		return;
@@ -172,7 +156,10 @@ void USMSlashComponent::UpdateSlash()
 	const double NewYaw = FMath::FInterpConstantTo(SourceRotation.Yaw, TargetYaw, GetWorld()->GetDeltaSeconds(), SlashSpeed);
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, NewYaw, 0.0));
 
-	DrawDebugCapsule(GetWorld(), SourceSlashColliderComponent->GetComponentLocation(), SourceSlashColliderComponent->GetScaledCapsuleHalfHeight(), SourceSlashColliderComponent->GetScaledCapsuleRadius(), SourceSlashColliderComponent->GetComponentRotation().Quaternion(), FColor::Red, false, 0.5f);
+	if (bShowDebug)
+	{
+		DrawDebugCapsule(GetWorld(), SourceSlashColliderComponent->GetComponentLocation(), SourceSlashColliderComponent->GetScaledCapsuleHalfHeight(), SourceSlashColliderComponent->GetScaledCapsuleRadius(), SourceSlashColliderComponent->GetComponentRotation().Quaternion(), FColor::Red, false, 0.5f);
+	}
 
 	if (FMath::IsNearlyEqual(SourceRotation.Yaw, NewYaw))
 	{
@@ -196,6 +183,11 @@ void USMSlashComponent::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent,
 		return;
 	}
 
+	if (!IsValidTarget(OtherActor))
+	{
+		return;
+	}
+
 	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(OtherActor);
 	if (TargetCharacter)
 	{
@@ -203,6 +195,7 @@ void USMSlashComponent::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent,
 		{
 			DetectedActors.Push(TargetCharacter);
 			PredictApplyDamage(TargetCharacter);
+			ServerRPCRequestDamage(TargetCharacter, Damage);
 		}
 	}
 }
@@ -213,8 +206,40 @@ void USMSlashComponent::PredictApplyDamage(AActor* TargetActor)
 
 	ASMPlayerCharacterBase* TagetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
 	TagetCharacter->PredictHPChange(Damage);
+}
 
-	ServerRPCRequestDamage(TargetActor, Damage);
+UAnimInstance* USMSlashComponent::GetSourceAnimInstance()
+{
+	if (!SourceCharacter.Get())
+	{
+		return nullptr;
+	}
+
+	USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
+	if (!SourceMesh)
+	{
+		return nullptr;
+	}
+
+	UAnimInstance* SourceAnimInstance = SourceMesh->GetAnimInstance();
+	if (!SourceAnimInstance)
+	{
+		return nullptr;
+	}
+
+	return SourceAnimInstance;
+}
+
+bool USMSlashComponent::IsValidTarget(AActor* TargetActor)
+{
+	ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(GetOwner());
+	ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(TargetActor);
+	if (SourceTeam == TargetTeam)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void USMSlashComponent::ServerRPCPlaySlashStartAnimation_Implementation()
@@ -234,13 +259,7 @@ void USMSlashComponent::MulticastRPCPlaySlashStartAnimation_Implementation()
 		return;
 	}
 
-	class USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
-	if (!ensureAlways(SourceMesh))
-	{
-		return;
-	}
-
-	class UAnimInstance* SourceAnimInstance = SourceMesh->GetAnimInstance();
+	UAnimInstance* SourceAnimInstance = GetSourceAnimInstance();
 	if (!ensureAlways(SourceAnimInstance))
 	{
 		return;
@@ -267,13 +286,7 @@ void USMSlashComponent::MulticastRPCPlaySlashAnimation_Implementation(bool bIsLe
 		return;
 	}
 
-	class USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
-	if (!ensureAlways(SourceMesh))
-	{
-		return;
-	}
-
-	class UAnimInstance* SourceAnimInstance = SourceMesh->GetAnimInstance();
+	UAnimInstance* SourceAnimInstance = GetSourceAnimInstance();
 	if (!ensureAlways(SourceAnimInstance))
 	{
 		return;

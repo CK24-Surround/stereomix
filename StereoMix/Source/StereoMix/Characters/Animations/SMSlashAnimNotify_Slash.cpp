@@ -33,7 +33,7 @@ void USMSlashAnimNotify_Slash::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 		if (ensureAlways(SlashComponent))
 		{
 			NET_LOG(SourceCharacter, Warning, TEXT("휘두르기 시작"));
-			SlashComponent->ColliderOrientaionBySlash();
+			SlashComponent->ColliderOrientaionForSlash();
 		}
 	}
 }

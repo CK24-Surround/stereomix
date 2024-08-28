@@ -8,6 +8,7 @@
 #include "SMSlashComponent.generated.h"
 
 
+class UAnimInstance;
 class UGameplayEffect;
 class UCapsuleComponent;
 class ASMBassCharacter;
@@ -28,7 +29,7 @@ public:
 
 	void TrySlash();
 
-	void ColliderOrientaionBySlash();
+	void ColliderOrientaionForSlash();
 
 	uint32 bIsLeftSlashNext:1 = true;
 	uint32 bCanInput:1 = false;
@@ -64,6 +65,10 @@ protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCPlaySlashAnimation(bool bIsLeftSlash);
 
+	UAnimInstance* GetSourceAnimInstance();
+
+	bool IsValidTarget(AActor* TargetActor);
+
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<UGameplayEffect> SlashDamageGE;
 
@@ -81,6 +86,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float SlashTime = 0.1875f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 bShowDebug:1 = false;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	FGameplayTagContainer DeactivateGameplayTags;
