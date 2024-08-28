@@ -4,6 +4,7 @@
 #include "SMSlashAnimNotify_Slash.h"
 
 #include "Characters/SMBassCharacter.h"
+#include "Characters/Slash/SMSlashComponent.h"
 #include "Utilities/SMLog.h"
 
 FString USMSlashAnimNotify_Slash::GetNotifyName_Implementation() const
@@ -19,10 +20,20 @@ void USMSlashAnimNotify_Slash::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 	{
 		return;
 	}
-	
-	ASMBassCharacter* SourceCharacter = Cast<ASMBassCharacter>(MeshComp->GetOwner());
+
+	ASMBassCharacter* SourceCharacter = MeshComp->GetOwner<ASMBassCharacter>();
 	if (SourceCharacter)
 	{
-		NET_LOG(SourceCharacter, Warning, TEXT("휘두르기 시작"));
+		if (!SourceCharacter->IsLocallyControlled())
+		{
+			return;
+		}
+
+		USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
+		if (ensureAlways(SlashComponent))
+		{
+			NET_LOG(SourceCharacter, Warning, TEXT("휘두르기 시작"));
+			SlashComponent->ColliderOrientaionBySlash();
+		}
 	}
 }

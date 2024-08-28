@@ -6,6 +6,7 @@
 #include "SMPlayerCharacterBase.h"
 #include "SMBassCharacter.generated.h"
 
+class USMSlashComponent;
 DECLARE_DELEGATE(FOnSlashSignature);
 
 UCLASS(Abstract)
@@ -13,67 +14,32 @@ class STEREOMIX_API ASMBassCharacter : public ASMPlayerCharacterBase
 {
 	GENERATED_BODY()
 
-	struct FSlashData
-	{
-		TArray<AActor*> DetectedActors;
-		float SlashSpeed = 0.0f;
-		float HalfAngle = 0.0f;
-		uint32 bIsSlashing:1 = false;
-	};
-
 public:
 	ASMBassCharacter();
 
-	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
-
 	virtual void PostInitializeComponents() override;
+
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	void Slash(float Distance, float Angle, float SlashTime);
+	USMSlashComponent* GetSlashComponent() const { return SlashComponent; }
 
-	bool GetIsLeftSlash() { return bIsLeftSlash; }
+	USceneComponent* GetSlashColliderRootComponent() const { return SlashColliderRootComponent; }
 
-	void SetIsLeftSlash(bool bNewIsLeftSlash) { bIsLeftSlash = bNewIsLeftSlash; }
-
-	bool GetCanInput() { return bCanInput; }
-
-	void SetCanInput(bool bNewCanInput) { bCanInput = bNewCanInput; }
-
-	bool GetCanNextAction() { return bCanNextAction; }
-
-	void SetCanNextAction(bool bNewCanNextAction) { bCanNextAction = bNewCanNextAction; }
-
-	bool GetIsInput() { return bIsInput; }
-
-	void SetIsInput(bool bNewIsInput) { bIsInput = bNewIsInput; }
-
+	UCapsuleComponent* GetSlashColliderComponent() const { return SlashColliderComponent; }
+	
 	FOnSlashSignature OnSlash;
 
 protected:
-	void UpdateSlash();
+	void Slash();
 
-	UFUNCTION()
-	void OnSlashOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
-
-	void ApplyDamage(AActor* TargetActor);
+	UPROPERTY(VisibleAnywhere, Category = "Slash")
+	TObjectPtr<USMSlashComponent> SlashComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<USceneComponent> SlashColliderRootComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<UCapsuleComponent> SlashColliderComponent;
-
-	UPROPERTY(Replicated)
-	uint32 bIsLeftSlash:1 = true;
-
-	UPROPERTY(Replicated)
-	uint32 bCanInput:1 = false;
-
-	UPROPERTY(Replicated)
-	uint32 bCanNextAction:1 = false;
-
-	uint32 bIsInput:1 = false;
-
-	FSlashData SlashData;
 };

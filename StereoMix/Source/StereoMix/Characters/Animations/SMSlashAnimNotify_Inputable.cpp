@@ -4,6 +4,7 @@
 #include "SMSlashAnimNotify_Inputable.h"
 
 #include "Characters/SMBassCharacter.h"
+#include "Characters/Slash/SMSlashComponent.h"
 #include "Utilities/SMLog.h"
 
 FString USMSlashAnimNotify_Inputable::GetNotifyName_Implementation() const
@@ -20,24 +21,56 @@ void USMSlashAnimNotify_Inputable::Notify(USkeletalMeshComponent* MeshComp, UAni
 		return;
 	}
 
-	ASMBassCharacter* SourceCharacter = Cast<ASMBassCharacter>(MeshComp->GetOwner());
-	if (SourceCharacter)
+	ASMBassCharacter* SourceCharacter = MeshComp->GetOwner<ASMBassCharacter>();
+	if (!SourceCharacter)
 	{
-		if (!SourceCharacter->HasAuthority())
-		{
-			return;
-		}
-
-		if (bIsStart)
-		{
-			NET_LOG(SourceCharacter, Warning, TEXT("입력 가능 존 시작"))
-			SourceCharacter->SetCanInput(true);
-		}
-		else
-		{
-			NET_LOG(SourceCharacter, Warning, TEXT("입력 가능 존 끝"))
-			SourceCharacter->SetCanInput(false);
-			SourceCharacter->SetCanNextAction(false);
-		}
+		return;
 	}
+
+	USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
+	if (!ensureAlways(SlashComponent))
+	{
+		return;
+	}
+
+
+	if (!SourceCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	if (bIsStart)
+	{
+		InputableZoneEntry(SourceCharacter);
+	}
+	else
+	{
+		InputableZoneEscape(SourceCharacter);
+	}
+}
+
+void USMSlashAnimNotify_Inputable::InputableZoneEntry(ASMBassCharacter* SourceCharacter)
+{
+	USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
+	if (!ensureAlways(SlashComponent))
+	{
+		return;
+	}
+
+	NET_LOG(SourceCharacter, Warning, TEXT("입력 가능 존 진입"))
+	SlashComponent->bCanInput = true;
+	SlashComponent->bIsLeftSlashNext = bIsLeftSlashNext;
+}
+
+void USMSlashAnimNotify_Inputable::InputableZoneEscape(ASMBassCharacter* SourceCharacter)
+{
+	USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
+	if (!ensureAlways(SlashComponent))
+	{
+		return;
+	}
+
+	NET_LOG(SourceCharacter, Warning, TEXT("입력 가능 존 탈출"))
+	SlashComponent->bCanInput = false;
+	SlashComponent->bCanNextAction = false;
 }

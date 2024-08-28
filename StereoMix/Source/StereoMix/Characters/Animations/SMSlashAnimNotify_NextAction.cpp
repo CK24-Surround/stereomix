@@ -4,6 +4,7 @@
 #include "SMSlashAnimNotify_NextAction.h"
 
 #include "Characters/SMBassCharacter.h"
+#include "Characters/Slash/SMSlashComponent.h"
 #include "Utilities/SMLog.h"
 
 FString USMSlashAnimNotify_NextAction::GetNotifyName_Implementation() const
@@ -20,15 +21,19 @@ void USMSlashAnimNotify_NextAction::Notify(USkeletalMeshComponent* MeshComp, UAn
 		return;
 	}
 
-	ASMBassCharacter* SourceCharacter = Cast<ASMBassCharacter>(MeshComp->GetOwner());
+	ASMBassCharacter* SourceCharacter = MeshComp->GetOwner<ASMBassCharacter>();
 	if (SourceCharacter)
 	{
-		if (!SourceCharacter->HasAuthority())
+		if (!SourceCharacter->IsLocallyControlled())
 		{
 			return;
 		}
 
-		NET_LOG(SourceCharacter, Warning, TEXT("다음 콤보로 넘어가는 포인트"));
-		SourceCharacter->SetCanNextAction(true);
+		USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
+		if (ensureAlways(SlashComponent))
+		{
+			NET_LOG(SourceCharacter, Warning, TEXT("다음 콤보로 넘어가는 포인트"));
+			SlashComponent->bCanNextAction = true;
+		}
 	}
 }
