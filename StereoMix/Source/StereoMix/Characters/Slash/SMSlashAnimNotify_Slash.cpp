@@ -9,7 +9,7 @@
 
 FString USMSlashAnimNotify_Slash::GetNotifyName_Implementation() const
 {
-	return TEXT("SMSlashAnimNotifySlash");
+	return TEXT("SlashNotify_Slash");
 }
 
 void USMSlashAnimNotify_Slash::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -22,18 +22,21 @@ void USMSlashAnimNotify_Slash::Notify(USkeletalMeshComponent* MeshComp, UAnimSeq
 	}
 
 	ASMBassCharacter* SourceCharacter = MeshComp->GetOwner<ASMBassCharacter>();
-	if (SourceCharacter)
+	if (!SourceCharacter)
 	{
-		if (!SourceCharacter->IsLocallyControlled())
-		{
-			return;
-		}
-
-		USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
-		if (ensureAlways(SlashComponent))
-		{
-			NET_LOG(SourceCharacter, Warning, TEXT("휘두르기 시작"));
-			SlashComponent->ColliderOrientaionForSlash();
-		}
+		return;
 	}
+
+	if (!SourceCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
+	if (!ensureAlways(SlashComponent))
+	{
+		return;
+	}
+
+	SlashComponent->ColliderOrientaionForSlash();
 }

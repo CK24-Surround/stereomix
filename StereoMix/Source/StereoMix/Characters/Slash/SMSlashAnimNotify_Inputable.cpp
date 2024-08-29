@@ -9,7 +9,7 @@
 
 FString USMSlashAnimNotify_Inputable::GetNotifyName_Implementation() const
 {
-	return TEXT("SlashInputableNotify");
+	return TEXT("SlashNotify_Inputable");
 }
 
 void USMSlashAnimNotify_Inputable::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -27,50 +27,16 @@ void USMSlashAnimNotify_Inputable::Notify(USkeletalMeshComponent* MeshComp, UAni
 		return;
 	}
 
-	USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
-	if (!ensureAlways(SlashComponent))
-	{
-		return;
-	}
-
-
 	if (!SourceCharacter->IsLocallyControlled())
 	{
 		return;
 	}
 
-	if (bIsStart)
-	{
-		InputableZoneEntry(SourceCharacter);
-	}
-	else
-	{
-		InputableZoneEscape(SourceCharacter);
-	}
-}
-
-void USMSlashAnimNotify_Inputable::InputableZoneEntry(ASMBassCharacter* SourceCharacter)
-{
 	USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
 	if (!ensureAlways(SlashComponent))
 	{
 		return;
 	}
 
-	NET_LOG(SourceCharacter, Warning, TEXT("입력 가능 존 진입"))
 	SlashComponent->bCanInput = true;
-	SlashComponent->bIsLeftSlashNext = bIsLeftSlashNext;
-}
-
-void USMSlashAnimNotify_Inputable::InputableZoneEscape(ASMBassCharacter* SourceCharacter)
-{
-	USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
-	if (!ensureAlways(SlashComponent))
-	{
-		return;
-	}
-
-	NET_LOG(SourceCharacter, Warning, TEXT("입력 가능 존 탈출"))
-	SlashComponent->bCanInput = false;
-	SlashComponent->bCanNextAction = false;
 }

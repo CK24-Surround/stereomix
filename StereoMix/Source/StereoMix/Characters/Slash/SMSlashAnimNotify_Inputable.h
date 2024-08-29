@@ -19,15 +19,4 @@ public:
 	virtual FString GetNotifyName_Implementation() const override;
 
 	virtual void Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference) override;
-
-protected:
-	void InputableZoneEntry(ASMBassCharacter* SourceCharacter);
-
-	void InputableZoneEscape(ASMBassCharacter* SourceCharacter);
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	uint32 bIsStart:1 = true;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	uint32 bIsLeftSlashNext:1 = true;
 };

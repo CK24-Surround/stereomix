@@ -9,7 +9,7 @@
 
 FString USMSlashAnimNotify_NextAction::GetNotifyName_Implementation() const
 {
-	return TEXT("SlashNextActionNotify");
+	return TEXT("SlashNotify_NextAction");
 }
 
 void USMSlashAnimNotify_NextAction::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation, const FAnimNotifyEventReference& EventReference)
@@ -22,18 +22,21 @@ void USMSlashAnimNotify_NextAction::Notify(USkeletalMeshComponent* MeshComp, UAn
 	}
 
 	ASMBassCharacter* SourceCharacter = MeshComp->GetOwner<ASMBassCharacter>();
-	if (SourceCharacter)
+	if (!SourceCharacter)
 	{
-		if (!SourceCharacter->IsLocallyControlled())
-		{
-			return;
-		}
-
-		USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
-		if (ensureAlways(SlashComponent))
-		{
-			NET_LOG(SourceCharacter, Warning, TEXT("다음 콤보로 넘어가는 포인트"));
-			SlashComponent->bCanNextAction = true;
-		}
+		return;
 	}
+
+	if (!SourceCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	USMSlashComponent* SlashComponent = SourceCharacter->GetSlashComponent();
+	if (!ensureAlways(SlashComponent))
+	{
+		return;
+	}
+
+	SlashComponent->bCanNextAction = true;
 }
