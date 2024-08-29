@@ -69,7 +69,7 @@ void USMSlashComponent::TrySlash()
 	}
 	else
 	{
-		if (bCanInput)
+		if (bCanInput) // 베기가 시작된 이후 유효한 입력이 가능한 상태인지 체크합니다. 
 		{
 			NET_LOG(SourceCharacter.Get(), Warning, TEXT("입력"));
 			bCanInput = false;
@@ -106,12 +106,12 @@ void USMSlashComponent::ColliderOrientaionForSlash()
 		return;
 	}
 
-	HalfAngle = Angle / 2.0f;
+	StartAngle = Angle / 2.0f;
 	SlashSpeed = Angle * (1.0f / SlashTime);
 	SourceSlashColliderComponent->SetCapsuleHalfHeight(Distance / 2.0f);
 	SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	const double Yaw = bIsLeftSlashNext ? HalfAngle : -HalfAngle;
+	const double Yaw = bIsLeftSlashNext ? StartAngle : -StartAngle;
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, Yaw, 0.0));
 	bNeedUpdateSlashing = true;
 }
@@ -124,6 +124,7 @@ void USMSlashComponent::SlashStart()
 		return;
 	}
 
+	// 애니메이션을 재생하고 엔드 델리게이트에 바인드합니다. 이 델리게이트는 몽타주 종료시 알아서 언바인드 됩니다.
 	SourceAnimInstance->Montage_Play(SlashMontage);
 	FOnMontageEnded* MontageEnded = SourceAnimInstance->Montage_GetEndedDelegate(SlashMontage);
 	if (MontageEnded)
@@ -131,6 +132,7 @@ void USMSlashComponent::SlashStart()
 		MontageEnded->BindUObject(this, &ThisClass::SlashEnded);
 	}
 
+	// 애니메이션을 리플리케이트합니다.
 	ServerRPCPlaySlashStartAnimation();
 }
 
@@ -142,17 +144,20 @@ void USMSlashComponent::ReSlash()
 		return;
 	}
 
+	// 현재 사용되야할 베기 방향을 가져와 해당 애니메이션으로 점프합니다.
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
 	NET_LOG(SourceCharacter.Get(), Warning, TEXT("%s로 점프시도"), *SectionName.ToString());
 	SourceAnimInstance->Montage_JumpToSection(SectionName, SlashMontage);
 
+	// 애니메이션을 리플리케이트합니다.
 	ServerRPCPlayReSlashAnimation(bIsLeftSlashNext);
 }
 
 void USMSlashComponent::UpdateSlash()
 {
+	// 타겟 Yaw를 향해 상수속도로 보간합니다.
 	const FRotator SourceRotation = SourceSlashColliderRootComponent->GetRelativeRotation();
-	const double TargetYaw = bIsLeftSlashNext ? -HalfAngle : HalfAngle;
+	const double TargetYaw = bIsLeftSlashNext ? -StartAngle : StartAngle;
 	const double NewYaw = FMath::FInterpConstantTo(SourceRotation.Yaw, TargetYaw, GetWorld()->GetDeltaSeconds(), SlashSpeed);
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, NewYaw, 0.0));
 
@@ -161,6 +166,7 @@ void USMSlashComponent::UpdateSlash()
 		DrawDebugCapsule(GetWorld(), SourceSlashColliderComponent->GetComponentLocation(), SourceSlashColliderComponent->GetScaledCapsuleHalfHeight(), SourceSlashColliderComponent->GetScaledCapsuleRadius(), SourceSlashColliderComponent->GetComponentRotation().Quaternion(), FColor::Red, false, 0.5f);
 	}
 
+	// 타겟 Yaw에 도달했다면 끝냅니다.
 	if (FMath::IsNearlyEqual(SourceRotation.Yaw, NewYaw))
 	{
 		SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
@@ -191,11 +197,12 @@ void USMSlashComponent::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent,
 	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(OtherActor);
 	if (TargetCharacter)
 	{
+		// 이미 이번 베기에 감지된 타겟은 다시 처리되면 안 됩니다. 이를 방지하고자 작성된 코드입니다. 
 		if (DetectedActors.Find(TargetCharacter) == INDEX_NONE)
 		{
 			DetectedActors.Push(TargetCharacter);
-			PredictApplyDamage(TargetCharacter);
-			ServerRPCRequestDamage(TargetCharacter, Damage);
+			PredictApplyDamage(TargetCharacter);             // 일단 클라이언트의 UI에 선 반영합니다.
+			ServerRPCRequestDamage(TargetCharacter, Damage); // 서버로 실제 데미지 처리를 요청합니다.
 		}
 	}
 }
@@ -205,7 +212,7 @@ void USMSlashComponent::PredictApplyDamage(AActor* TargetActor)
 	NET_VLOG(SourceCharacter.Get(), -1, 3.0f, TEXT("%s 피격"), *TargetActor->GetName());
 
 	ASMPlayerCharacterBase* TagetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	TagetCharacter->PredictHPChange(Damage);
+	TagetCharacter->PredictHPChange(-Damage);
 }
 
 UAnimInstance* USMSlashComponent::GetSourceAnimInstance()
