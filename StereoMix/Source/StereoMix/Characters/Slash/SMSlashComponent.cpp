@@ -71,7 +71,6 @@ void USMSlashComponent::TrySlash()
 	{
 		if (bCanInput) // 베기가 시작된 이후 유효한 입력이 가능한 상태인지 체크합니다. 
 		{
-			NET_LOG(SourceCharacter.Get(), Warning, TEXT("입력"));
 			bCanInput = false;
 			bIsInput = true;
 		}
@@ -147,7 +146,6 @@ void USMSlashComponent::ReSlash()
 
 	// 현재 사용되야할 베기 방향을 가져와 해당 애니메이션으로 점프합니다.
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
-	NET_LOG(SourceCharacter.Get(), Warning, TEXT("%s로 점프시도"), *SectionName.ToString());
 	SourceAnimInstance->Montage_JumpToSection(SectionName, SlashMontage);
 
 	// 애니메이션을 리플리케이트합니다.
