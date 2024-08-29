@@ -239,7 +239,7 @@ void ASMPlayerCharacterBase::PredictHPChange(float Amount)
 	}
 
 	FOnAttributeChangeData HPAttributeChangeData;
-	HPAttributeChangeData.NewValue = StateWidget->CurrentHealth - Amount;
+	HPAttributeChangeData.NewValue = StateWidget->CurrentHealth + Amount;
 
 	if (StateWidget->CurrentHealth > 0.0f)
 	{

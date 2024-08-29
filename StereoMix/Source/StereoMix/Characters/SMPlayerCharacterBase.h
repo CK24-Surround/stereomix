@@ -62,6 +62,7 @@ public:
 
 	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
 
+	/** 예측적으로 데미지를 먼저 UI에 반영해야할 때 사용합니다.*/
 	void PredictHPChange(float Amount);
 
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
