@@ -158,11 +158,8 @@ void USMSlashComponent::UpdateSlash()
 {
 	// 타겟 Yaw를 향해 상수속도로 보간합니다.
 	const FRotator SourceRotation = SourceSlashColliderRootComponent->GetRelativeRotation();
-	// const double TargetYaw = bIsLeftSlashNext ? -StartYaw : StartYaw;
 	const double NewYaw = FMath::FInterpConstantTo(SourceRotation.Yaw, TargetYaw, GetWorld()->GetDeltaSeconds(), SlashSpeed);
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, NewYaw, 0.0));
-	NET_LOG(SourceCharacter.Get(), Warning, TEXT("%f"), TargetYaw);
-	// NET_LOG(SourceCharacter.Get(), Warning, TEXT("%s"), *SourceSlashColliderRootComponent->GetRelativeRotation().ToString());
 
 	if (bShowDebug)
 	{
@@ -183,6 +180,9 @@ void USMSlashComponent::SlashEnded(UAnimMontage* AnimMontage, bool bArg)
 	NET_LOG(SourceCharacter.Get(), Warning, TEXT("애니메이션 종료"));
 	bIsSlashing = false;
 	bIsLeftSlashNext = true;
+	bCanNextAction = false;
+	bCanInput = false;
+	bIsInput = false;
 }
 
 void USMSlashComponent::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
