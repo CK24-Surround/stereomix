@@ -106,12 +106,13 @@ void USMSlashComponent::ColliderOrientaionForSlash()
 		return;
 	}
 
-	StartAngle = Angle / 2.0f;
+	StartYaw = Angle / 2.0f;
 	SlashSpeed = Angle * (1.0f / SlashTime);
 	SourceSlashColliderComponent->SetCapsuleHalfHeight(Distance / 2.0f);
 	SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 
-	const double Yaw = bIsLeftSlashNext ? StartAngle : -StartAngle;
+	const double Yaw = bIsLeftSlashNext ? StartYaw : -StartYaw;
+	TargetYaw = -Yaw;
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, Yaw, 0.0));
 	bNeedUpdateSlashing = true;
 }
@@ -157,9 +158,11 @@ void USMSlashComponent::UpdateSlash()
 {
 	// 타겟 Yaw를 향해 상수속도로 보간합니다.
 	const FRotator SourceRotation = SourceSlashColliderRootComponent->GetRelativeRotation();
-	const double TargetYaw = bIsLeftSlashNext ? -StartAngle : StartAngle;
+	// const double TargetYaw = bIsLeftSlashNext ? -StartYaw : StartYaw;
 	const double NewYaw = FMath::FInterpConstantTo(SourceRotation.Yaw, TargetYaw, GetWorld()->GetDeltaSeconds(), SlashSpeed);
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, NewYaw, 0.0));
+	NET_LOG(SourceCharacter.Get(), Warning, TEXT("%f"), TargetYaw);
+	// NET_LOG(SourceCharacter.Get(), Warning, TEXT("%s"), *SourceSlashColliderRootComponent->GetRelativeRotation().ToString());
 
 	if (bShowDebug)
 	{

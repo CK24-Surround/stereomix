@@ -139,7 +139,10 @@ protected:
 	float SlashSpeed = 0.0f;
 
 	/** 콜라이더 회전에서 사용할 데이터입니다. 시작 각도를 저장합니다. */
-	float StartAngle = 0.0f;
+	float StartYaw = 0.0f;
+	
+	/** 콜라이더 회전에서 사용할 데이터입니다. 목표 각도를 저장합니다. */
+	float TargetYaw = 0.0f;
 
 	/** 현재 베기를 수행중인지 여부를 나타냅니다. */
 	uint32 bIsSlashing:1 = false;
