@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "Utilities/SMLog.h"
 
 #include "SMGameplayAbility.generated.h"
 
@@ -24,6 +25,42 @@ public:
 	USMAbilitySystemComponent* GetSMAbilitySystemComponentFromActorInfo() const;
 
 	ASMPlayerCharacter* GetSMPlayerCharacterFromActorInfo() const;
+
+	template<typename T>
+	T* GetASC()
+	{
+		if (!ensureAlways(CurrentActorInfo))
+		{
+			return nullptr;
+		}
+
+		T* SourceASC = Cast<T>(CurrentActorInfo->AbilitySystemComponent.Get());
+		if (!SourceASC)
+		{
+			NET_LOG(nullptr, Error, TEXT("소스 ASC가 유효하지 않습니다."));
+			return nullptr;
+		}
+
+		return SourceASC;
+	}
+
+	template<typename T>
+	T* GetAvatarActor()
+	{
+		if (!ensureAlways(CurrentActorInfo))
+		{
+			return nullptr;
+		}
+
+		T* SourceCharacter = Cast<T>(CurrentActorInfo->AvatarActor.Get());
+		if (!SourceCharacter)
+		{
+			NET_LOG(nullptr, Error, TEXT("소스 캐릭터가 유효하지 않습니다."));
+			return nullptr;
+		}
+
+		return SourceCharacter;
+	}
 
 	/** 리플리케이션을 활성화 한 경우에만 호출됩니다.*/
 	UFUNCTION(Client, Reliable)
