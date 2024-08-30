@@ -5,10 +5,10 @@
 
 #include "EnhancedInputComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "Characters/Slash/SMSlashComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
-#include "Slash/SMSlashComponent.h"
 
 
 ASMBassCharacter::ASMBassCharacter()

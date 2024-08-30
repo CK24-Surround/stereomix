@@ -6,6 +6,8 @@
 #include "UObject/Interface.h"
 #include "SMHoldInteractionInterface.generated.h"
 
+class USMHoldInteractionComponent;
+
 // This class does not need to be modified.
 UINTERFACE()
 class USMHoldInteractionInterface : public UInterface
@@ -20,6 +22,6 @@ class STEREOMIX_API ISMHoldInteractionInterface
 {
 	GENERATED_BODY()
 
-	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() = 0;
 };

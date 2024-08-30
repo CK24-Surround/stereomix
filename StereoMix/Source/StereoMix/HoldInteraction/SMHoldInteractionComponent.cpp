@@ -3,33 +3,40 @@
 
 #include "SMHoldInteractionComponent.h"
 
+#include "Net/UnrealNetwork.h"
+#include "Utilities/SMLog.h"
 
-// Sets default values for this component's properties
+
 USMHoldInteractionComponent::USMHoldInteractionComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
-	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
+	SetIsReplicatedByDefault(true);
 }
 
+void USMHoldInteractionComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-// Called when the game starts
+	DOREPLIFETIME(ThisClass, HoldingMeActor);
+}
+
 void USMHoldInteractionComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// ...
-	
+	SourceActor = GetOwner();
+	ensureAlways(SourceActor);
 }
 
-
-// Called every frame
-void USMHoldInteractionComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void USMHoldInteractionComponent::SetActorHoldingMe(AActor* NewActorCatchingMe)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	if (GetOwnerRole() != ROLE_Authority)
+	{
+		NET_LOG(SourceActor, Warning, TEXT("서버에서만 호출되야합니다."));
+		return;
+	}
 
-	// ...
+	if (HoldingMeActor != NewActorCatchingMe)
+	{
+		HoldingMeActor = NewActorCatchingMe;
+	}
 }
-

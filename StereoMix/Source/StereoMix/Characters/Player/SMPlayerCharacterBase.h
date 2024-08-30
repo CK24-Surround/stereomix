@@ -6,7 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "InputActionValue.h"
-#include "SMCharacterBase.h"
+#include "Characters/SMCharacterBase.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Data/SMActiveAbility.h"
 #include "Interfaces/SMHoldInteractionInterface.h"
