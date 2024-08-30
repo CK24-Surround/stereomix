@@ -55,3 +55,13 @@ void ASMBassCharacter::Slash()
 {
 	SlashComponent->TrySlash();
 }
+
+void ASMBassCharacter::FocusToCursor()
+{
+	if (bNeedLockAimBySlash)
+	{
+		return;
+	}
+
+	Super::FocusToCursor();
+}

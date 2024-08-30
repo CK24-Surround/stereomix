@@ -91,6 +91,8 @@ protected:
 	/** 대미지를 적용할 수 있는 대상인지 체크합니다. */
 	bool IsValidTarget(AActor* TargetActor);
 
+	void FocusToCursor();
+
 	/** 베기 대미지 적용을 위한 GE입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<UGameplayEffect> SlashDamageGE;

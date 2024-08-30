@@ -28,11 +28,15 @@ public:
 	USceneComponent* GetSlashColliderRootComponent() const { return SlashColliderRootComponent; }
 
 	UCapsuleComponent* GetSlashColliderComponent() const { return SlashColliderComponent; }
-	
+
 	FOnSlashSignature OnSlash;
+
+	uint32 bNeedLockAimBySlash:1 = false;
 
 protected:
 	void Slash();
+
+	virtual void FocusToCursor() override;
 
 	UPROPERTY(VisibleAnywhere, Category = "Slash")
 	TObjectPtr<USMSlashComponent> SlashComponent;

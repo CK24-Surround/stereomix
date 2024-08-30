@@ -9,6 +9,7 @@
 #include "SMCharacterBase.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Data/SMActiveAbility.h"
+#include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
 
 class ASMGamePlayerController;
@@ -82,7 +83,7 @@ protected:
 
 	void UpdateCameraLocation();
 
-	void FocusToCursor();
+	virtual void FocusToCursor();
 
 	void BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget);
 

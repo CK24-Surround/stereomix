@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
@@ -124,6 +125,15 @@ void USMSlashComponent::SlashStart()
 		return;
 	}
 
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	SourceCharacter->bNeedLockAimBySlash = true;
+
+	FocusToCursor();
+
 	// 애니메이션을 재생하고 엔드 델리게이트에 바인드합니다. 이 델리게이트는 몽타주 종료시 알아서 언바인드 됩니다.
 	SourceAnimInstance->Montage_Play(SlashMontage);
 	FOnMontageEnded* MontageEnded = SourceAnimInstance->Montage_GetEndedDelegate(SlashMontage);
@@ -143,6 +153,8 @@ void USMSlashComponent::ReSlash()
 	{
 		return;
 	}
+
+	FocusToCursor();
 
 	// 현재 사용되야할 베기 방향을 가져와 해당 애니메이션으로 점프합니다.
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
@@ -181,6 +193,13 @@ void USMSlashComponent::SlashEnded(UAnimMontage* AnimMontage, bool bArg)
 	bCanNextAction = false;
 	bCanInput = false;
 	bIsInput = false;
+
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	SourceCharacter->bNeedLockAimBySlash = false;
 }
 
 void USMSlashComponent::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -248,6 +267,26 @@ bool USMSlashComponent::IsValidTarget(AActor* TargetActor)
 	}
 
 	return true;
+}
+
+void USMSlashComponent::FocusToCursor()
+{
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	APlayerController* SourceController = SourceCharacter->GetController<APlayerController>();
+	if (!SourceController)
+	{
+		return;
+	}
+
+	const FVector CursorTargetingPoint = SourceCharacter->GetCursorTargetingPoint();
+	const FVector SourceLocation = SourceCharacter->GetActorLocation();
+	const FVector Direction = (CursorTargetingPoint - SourceLocation).GetSafeNormal();
+	const FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	SourceController->SetControlRotation(NewRotation);
 }
 
 void USMSlashComponent::ServerRPCPlaySlashStartAnimation_Implementation()
