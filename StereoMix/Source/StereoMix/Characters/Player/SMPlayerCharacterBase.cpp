@@ -18,6 +18,7 @@
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGamePlayerState.h"
+#include "HoldInteraction/SMHoldInteractionComponent.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -86,6 +87,8 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 	ImmuneMoveTrailFXComponent->SetAbsolute(false, true, true);
 	ImmuneMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	ImmuneMoveTrailFXComponent->SetAutoActivate(false);
+
+	HIC = CreateDefaultSubobject<USMHoldInteractionComponent>(TEXT("HIC"));
 
 	LockAimTags.AddTag(SMTags::Character::State::Caught);
 	LockAimTags.AddTag(SMTags::Character::State::Smashed);

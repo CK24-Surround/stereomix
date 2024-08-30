@@ -30,7 +30,7 @@ enum class EMoveTrailState : uint8
 };
 
 UCLASS(Abstract)
-class STEREOMIX_API ASMPlayerCharacterBase : public ASMCharacterBase, public IAbilitySystemInterface, public ISMTeamInterface
+class STEREOMIX_API ASMPlayerCharacterBase : public ASMCharacterBase, public IAbilitySystemInterface, public ISMTeamInterface, public ISMHoldInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -62,6 +62,8 @@ public:
 	virtual ESMTeam GetTeam() const override;
 
 	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
+
+	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() override { return HIC; }
 
 	/** 예측적으로 데미지를 먼저 UI에 반영해야할 때 사용합니다.*/
 	void PredictHPChange(float Amount);
@@ -120,6 +122,9 @@ protected:
 	TObjectPtr<UNiagaraComponent> ImmuneMoveTrailFXComponent;
 
 	TWeakObjectPtr<ASMGamePlayerController> SMPlayerController;
+
+	UPROPERTY()
+	TObjectPtr<USMHoldInteractionComponent> HIC;
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tag")
 	FGameplayTagContainer LockAimTags;
