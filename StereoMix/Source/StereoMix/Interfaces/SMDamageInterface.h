@@ -24,7 +24,7 @@ class STEREOMIX_API ISMDamageInterface
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
 	/** 마지막으로 공격한 가해자를 가져옵니다. */
-	virtual AActor* GetLastAttackInstigator() = 0;
+	virtual AActor* GetLastAttackInstigator() const = 0;
 
 	/** 마지막으로 공격한 가해자를 저장할때 사용합니다. */
 	virtual void SetLastAttackInstigator(AActor* NewStunInstigator) = 0;

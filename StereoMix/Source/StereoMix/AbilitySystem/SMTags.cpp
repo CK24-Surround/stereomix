@@ -34,7 +34,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attack, "Character.Cooldown.Attack", "기본 공격 쿨타임을 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Character.Cooldown.Hold", "잡기 쿨타임을 나타냅니다.");
 		}
-		
+
 		namespace State
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Character.State.Catch", "캐릭터를 잡고 있는 상태를 나타냅니다.");
@@ -96,7 +96,8 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileWallHit, "GameplayCue.ProjectileWallHit", "투사체가 벽에 적중시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "GameplayCue.Catch", "잡기 시전시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CatchHit, "GameplayCue.CatchHit", "잡기 적중시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "GameplayCue.Stun", "스턴시 재생되는 게임플레이 큐의 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "GameplayCue.Stun", "스턴시 재생되는 게임플레이 큐의 태그입니다."); // TODO: Deprecated
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "GameplayCue.Neutralize", "무력화 시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ApplyHeal, "GameplayCue.ApplyHeal", "힐 적용시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneEnd, "GameplayCue.ImmuneEnd", "면역 종료시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialApply_ElectricGuitar, "GameplayCue.ImmuneMaterialApply_ElectricGuitar", "일렉기타의 면역 머티리얼 적용시 재생되는 게임플레이 큐의 태그입니다.");

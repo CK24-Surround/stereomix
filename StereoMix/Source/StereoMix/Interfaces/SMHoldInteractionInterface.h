@@ -23,5 +23,5 @@ class STEREOMIX_API ISMHoldInteractionInterface
 	GENERATED_BODY()
 
 public:
-	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() = 0;
+	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const = 0;
 };

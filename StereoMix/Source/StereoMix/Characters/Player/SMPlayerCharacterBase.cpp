@@ -20,6 +20,7 @@
 #include "Games/SMGamePlayerState.h"
 #include "HoldInteraction/SMHIC_Character.h"
 #include "HoldInteraction/SMHoldInteractionComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -106,6 +107,12 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, bIsHiddenCharacter);
+	DOREPLIFETIME(ThisClass, bActivateCollision);
+	DOREPLIFETIME(ThisClass, bEnableMovement);
+	DOREPLIFETIME(ThisClass, bUseControllerRotation);
+	DOREPLIFETIME(ThisClass, LastAttackInstigator);
 }
 
 void ASMPlayerCharacterBase::PostInitializeComponents()
@@ -234,7 +241,7 @@ ESMTeam ASMPlayerCharacterBase::GetTeam() const
 	return TeamComponent->GetTeam();
 }
 
-USMHoldInteractionComponent* ASMPlayerCharacterBase::GetHoldInteractionComponent()
+USMHoldInteractionComponent* ASMPlayerCharacterBase::GetHoldInteractionComponent() const
 {
 	return HIC;
 }
@@ -317,6 +324,75 @@ void ASMPlayerCharacterBase::SetMovementEnable(bool bIsEnable)
 
 	bEnableMovement = bIsEnable;
 	OnRep_bEnableMovement();
+}
+
+void ASMPlayerCharacterBase::SetUseControllerRotation(bool bNewUseControllerRotation)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bUseControllerRotation = true;
+	OnRep_bUseControllerRotation();
+}
+
+void ASMPlayerCharacterBase::MulticastRPCAddScreenIndicatorToSelf_Implementation(AActor* TargetActor)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	// 자기 자신은 제외합니다.
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (TargetCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 추가해줍니다.
+	ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController());
+	if (ensureAlways(LocalPlayerController))
+	{
+		LocalPlayerController->AddScreendIndicator(TargetActor);
+	}
+}
+
+void ASMPlayerCharacterBase::MulticastRPCRemoveScreenIndicatorToSelf_Implementation(AActor* TargetActor)
+{
+	if (HasAuthority())
+	{
+		return;
+	}
+
+	// 자기 자신은 제외합니다.
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (TargetCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 제거합니다.
+	ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController());
+	if (ensureAlways(LocalPlayerController))
+	{
+		LocalPlayerController->RemoveScreenIndicator(TargetActor);
+	}
+}
+
+void ASMPlayerCharacterBase::ClientRPCRemoveScreendIndicatorToSelf_Implementation(AActor* TargetActor)
+{
+	// ClientRPC로 무조건 오너십을 갖고 있어 CachedSMPlayerController가 유효하겠지만 만약을 위한 예외처리입니다.
+	if (ensureAlways(SMPlayerController.Get()))
+	{
+		SMPlayerController->RemoveScreenIndicator(TargetActor);
+	}
+}
+
+void ASMPlayerCharacterBase::SetCharacterStateVisibility_Implementation(bool bNewVisibility)
+{
+	CharacterStateWidgetComponent->SetVisibility(bNewVisibility);
 }
 
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)
@@ -575,4 +651,11 @@ void ASMPlayerCharacterBase::OnRep_bEnableMovement()
 	{
 		SourceMovementComponent->SetMovementMode(MOVE_None);
 	}
+}
+
+void ASMPlayerCharacterBase::OnRep_bUseControllerRotation()
+{
+	bUseControllerRotationPitch = bUseControllerRotation;
+	bUseControllerRotationYaw = bUseControllerRotation;
+	bUseControllerRotationRoll = bUseControllerRotation;
 }

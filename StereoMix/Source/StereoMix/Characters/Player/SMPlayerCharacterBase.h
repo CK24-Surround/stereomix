@@ -9,6 +9,7 @@
 #include "Characters/SMCharacterBase.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Data/SMActiveAbility.h"
+#include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
 
@@ -31,7 +32,7 @@ enum class EMoveTrailState : uint8
 };
 
 UCLASS(Abstract)
-class STEREOMIX_API ASMPlayerCharacterBase : public ASMCharacterBase, public IAbilitySystemInterface, public ISMTeamInterface, public ISMHoldInteractionInterface
+class STEREOMIX_API ASMPlayerCharacterBase : public ASMCharacterBase, public IAbilitySystemInterface, public ISMTeamInterface, public ISMHoldInteractionInterface, public ISMDamageInterface
 {
 	GENERATED_BODY()
 
@@ -64,7 +65,10 @@ public:
 
 	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
 
-	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() override;
+	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
+
+	template<typename T>
+	T* GetHoldInteractionComponent() { return Cast<T>(HIC); }
 
 	/** 예측적으로 데미지를 먼저 UI에 반영해야할 때 사용합니다.*/
 	void PredictHPChange(float Amount);
@@ -81,6 +85,29 @@ public:
 
 	/** 움직임을 잠급니다. 서버에서 호출되어야합니다. */
 	void SetMovementEnable(bool bIsEnable);
+
+	/** 컨트롤 로테이션을 기준으로 캐릭터를 회전시킬지 여부를 나타냅니다. */
+	void SetUseControllerRotation(bool bNewUseControllerRotation);
+
+	/** 캐릭터 상태 위젯의 가시성을 조절합니다. */
+	UFUNCTION(NetMulticast, Reliable)
+	void SetCharacterStateVisibility(bool bNewVisibility);
+
+	/** 다른 클라이언트들에게 인디케이터를 추가합니다. */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCAddScreenIndicatorToSelf(AActor* TargetActor);
+
+	/** 다른 클라이언트들에게서 인디케이터를 제거합니다. */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCRemoveScreenIndicatorToSelf(AActor* TargetActor);
+
+	/** 해당 클라이언트에서만 인디케이터를 제거합니다. */
+	UFUNCTION(Client, Reliable)
+	void ClientRPCRemoveScreendIndicatorToSelf(AActor* TargetActor);
+
+	virtual AActor* GetLastAttackInstigator() const override { return LastAttackInstigator.Get(); }
+
+	virtual void SetLastAttackInstigator(AActor* NewStunInstigator) override { LastAttackInstigator = NewStunInstigator; }
 
 protected:
 	void Move(const FInputActionValue& InputActionValue);
@@ -107,6 +134,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_bEnableMovement();
+
+	UFUNCTION()
+	void OnRep_bUseControllerRotation();
 
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;
@@ -175,7 +205,13 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = "OnRep_bActivateCollision")
 	uint32 bActivateCollision:1 = true;
-	
+
 	UPROPERTY(ReplicatedUsing = "OnRep_bEnableMovement")
 	uint32 bEnableMovement:1 = true;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_bUseControllerRotation")
+	uint32 bUseControllerRotation:1 = true;
+
+	UPROPERTY(Replicated)
+	TWeakObjectPtr<AActor> LastAttackInstigator;
 };

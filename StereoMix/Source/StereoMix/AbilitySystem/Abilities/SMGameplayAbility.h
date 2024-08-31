@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
+#include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
 #include "SMGameplayAbility.generated.h"
@@ -60,6 +61,23 @@ public:
 		}
 
 		return SourceCharacter;
+	}
+
+	template<typename T>
+	T* GetHIC()
+	{
+		if (!ensureAlways(CurrentActorInfo))
+		{
+			return nullptr;
+		}
+
+		T* SourceHIC = Cast<T>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(CurrentActorInfo->AvatarActor.Get()));
+		if (!SourceHIC)
+		{
+			return nullptr;
+		}
+
+		return SourceHIC;
 	}
 
 	/** 리플리케이션을 활성화 한 경우에만 호출됩니다.*/

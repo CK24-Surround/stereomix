@@ -10,6 +10,7 @@
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "Interfaces/SMDamageInterface.h"
 #include "Utilities/SMLog.h"
 
 
@@ -120,7 +121,7 @@ void USMSlashComponent::ColliderOrientaionForSlash()
 void USMSlashComponent::SlashStart()
 {
 	UAnimInstance* SourceAnimInstance = GetSourceAnimInstance();
-	if (!ensureAlways(SourceAnimInstance))
+	if (!SourceAnimInstance)
 	{
 		return;
 	}
@@ -371,4 +372,11 @@ void USMSlashComponent::ServerRPCRequestDamage_Implementation(AActor* TargetActo
 	FGameplayEffectSpec* GESpec = GESpecHandle.Data.Get();
 	GESpec->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
 	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
+
+	// 공격자 정보도 저장합니다.
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetASC->GetAvatarActor());
+	if (ensureAlways(TargetDamageInterface))
+	{
+		TargetDamageInterface->SetLastAttackInstigator(SourceASC->GetAvatarActor());
+	}
 }
