@@ -9,10 +9,13 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Ability.Activation.Catch", "Catch의 어빌리티 활성화 여부를 나타냅니다.");
 		}
 
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Caught, "Ability.Caught", "Caugh의 어빌리티 태그를 나타냅니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Caught, "Ability.Caught", "Caugh의 어빌리티 태그를 나타냅니다."); // TODO: Deprecated
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Holded, "Ability.Holded", "Holded의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Ability.Smashed", "Smashed의 어빌리티 태그를 나타냅니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExit, "Ability.CaughtExit", "CaughtExit의 어빌리티 태그를 나타냅니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExit, "Ability.CaughtExit", "CaughtExit의 어빌리티 태그를 나타냅니다."); // TODO: Deprecated
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldedExit, "Ability.HoldedExit", "HoldedExit의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExitOnStunEnd, "Ability.CaughtExitOnStunEnd", "CaughtExitOnStunEnd의 어빌리티 태그를 나타냅니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldedExitOnStunEnd, "Ability.HoldedExitOnStunEnd", "HoldedExitOnStunEnd의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "Ability.Immune", "Immune의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CatchBuff, "Ability.CatchBuff", "CatchBuff의 어빌리티 태그를 나타냅니다.");
 	}
@@ -36,10 +39,14 @@ namespace SMTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Character.State.Catch", "캐릭터를 잡고 있는 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Caught, "Character.State.Caught", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Character.State.Stun", "기절 상태를 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Holded, "Character.State.Holded", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Character.State.Stun", "기절 상태를 나타냅니다."); // TODO: Deprecated
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "Character.State.Neutralize", "무력화 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashing, "Character.State.Smashing", "매치기 중인 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Character.State.Smashed", "상대 캐릭터에게 매치기 당하는 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncatchable, "Character.State.Uncatchable", "잡힐 수 없는 상태임을 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Character.State.Smashed", "상대 캐릭터에게 매치기 당하는 상태를 나타냅니다."); // TODO: Deprecated
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(BassNoiseBreaked, "Character.State.BassNoiseBreaked", "베이스 노이즈브레이크에 당하는 상태를 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncatchable, "Character.State.Uncatchable", "잡힐 수 없는 상태임을 나타냅니다."); // TODO: Deprecated
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Unholdable, "Character.State.Unholdable", "잡힐 수 없는 상태임을 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "Character.State.Immune", "모든 피격 판정이 발생하지 않는 면역 상태임을 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Character.State.Jump", "점프 상태임을 나타냅니다.");
 		}
@@ -71,7 +78,8 @@ namespace SMTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(BuzzerBeaterSmashEnd, "Event.Character.BuzzerBeaterSmashEnd", "매치기가 종료되어 버저 비터가 끝났음을 알리는데 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExitEnd, "Event.Character.CaughtExitEnd", "잡힌 상태 탈출이 종료되었음을 알리는데 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Event.Character.Stun", "체력이 모두 소모되어 기절상태에 들어가야함을 알리는데 사용됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Event.Character.Stun", "체력이 모두 소모되어 기절상태에 들어가야함을 알리는데 사용됩니다."); // TODO: Deprecated
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "Event.Character.Neutralize", "체력이 모두 소모되어 무력화상태에 들어가야함을 알리는데 사용됩니다.");
 		}
 
 		namespace Tile

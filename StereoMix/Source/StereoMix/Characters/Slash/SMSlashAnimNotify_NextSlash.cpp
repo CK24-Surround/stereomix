@@ -4,7 +4,7 @@
 #include "SMSlashAnimNotify_NextSlash.h"
 
 #include "SMSlashComponent.h"
-#include "Characters/SMBassCharacter.h"
+#include "Characters/Player/SMBassCharacter.h"
 
 FString USMSlashAnimNotify_NextSlash::GetNotifyName_Implementation() const
 {

@@ -12,6 +12,7 @@
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
 
+class USMHIC_Character;
 class ASMGamePlayerController;
 class USMAbilitySystemComponent;
 class USMPlayerCharacterDataAsset;
@@ -63,7 +64,7 @@ public:
 
 	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
 
-	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() override { return HIC; }
+	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() override;
 
 	/** 예측적으로 데미지를 먼저 UI에 반영해야할 때 사용합니다.*/
 	void PredictHPChange(float Amount);
@@ -71,6 +72,15 @@ public:
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
 	 * 기본값은 플레이어 캐릭터의 중심을 기준으로 하는 평면으로 계산됩니다. 만약 bIsZeroBasis가 true라면 캐릭터가 서있는 바닥을 기준으로 하는 평면으로 계산됩니다. */
 	FVector GetCursorTargetingPoint(bool bIsZeroBasis = false);
+
+	/** 액터를 숨깁니다. 서버에서 호출되어야합니다. */
+	void SetCharacterHidden(bool bIsEnable);
+
+	/** 액터의 콜리전을 설정합니다. 서버에서 호출되어야합니다.*/
+	void SetCollisionEnable(bool bIsEnable);
+
+	/** 움직임을 잠급니다. 서버에서 호출되어야합니다. */
+	void SetMovementEnable(bool bIsEnable);
 
 protected:
 	void Move(const FInputActionValue& InputActionValue);
@@ -88,6 +98,15 @@ protected:
 	virtual void FocusToCursor();
 
 	void BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget);
+
+	UFUNCTION()
+	void OnRep_bIsHiddenCharacter();
+
+	UFUNCTION()
+	void OnRep_bActivateCollision();
+
+	UFUNCTION()
+	void OnRep_bEnableMovement();
 
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;
@@ -124,7 +143,7 @@ protected:
 	TWeakObjectPtr<ASMGamePlayerController> SMPlayerController;
 
 	UPROPERTY()
-	TObjectPtr<USMHoldInteractionComponent> HIC;
+	TObjectPtr<USMHIC_Character> HIC;
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tag")
 	FGameplayTagContainer LockAimTags;
@@ -150,4 +169,13 @@ protected:
 	/** 카메라의 최대 이동 거리입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
 	float CameraMoveMaxDistance = 250.0f;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_bIsHiddenCharacter")
+	uint32 bIsHiddenCharacter:1 = false;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_bActivateCollision")
+	uint32 bActivateCollision:1 = true;
+	
+	UPROPERTY(ReplicatedUsing = "OnRep_bEnableMovement")
+	uint32 bEnableMovement:1 = true;
 };

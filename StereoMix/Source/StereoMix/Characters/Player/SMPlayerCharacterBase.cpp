@@ -18,6 +18,7 @@
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGamePlayerState.h"
+#include "HoldInteraction/SMHIC_Character.h"
 #include "HoldInteraction/SMHoldInteractionComponent.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMCollision.h"
@@ -88,7 +89,7 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 	ImmuneMoveTrailFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	ImmuneMoveTrailFXComponent->SetAutoActivate(false);
 
-	HIC = CreateDefaultSubobject<USMHoldInteractionComponent>(TEXT("HIC"));
+	HIC = CreateDefaultSubobject<USMHIC_Character>(TEXT("HIC"));
 
 	LockAimTags.AddTag(SMTags::Character::State::Caught);
 	LockAimTags.AddTag(SMTags::Character::State::Smashed);
@@ -233,6 +234,11 @@ ESMTeam ASMPlayerCharacterBase::GetTeam() const
 	return TeamComponent->GetTeam();
 }
 
+USMHoldInteractionComponent* ASMPlayerCharacterBase::GetHoldInteractionComponent()
+{
+	return HIC;
+}
+
 void ASMPlayerCharacterBase::PredictHPChange(float Amount)
 {
 	USMUserWidget_CharacterState* StateWidget = Cast<USMUserWidget_CharacterState>(CharacterStateWidgetComponent->GetWidget());
@@ -280,6 +286,39 @@ FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bIsZeroBasis)
 	return Result;
 }
 
+void ASMPlayerCharacterBase::SetCharacterHidden(bool bIsEnable)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bIsHiddenCharacter = bIsEnable;
+	OnRep_bIsHiddenCharacter();
+}
+
+void ASMPlayerCharacterBase::SetCollisionEnable(bool bIsEnable)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bActivateCollision = bIsEnable;
+	OnRep_bActivateCollision();
+}
+
+void ASMPlayerCharacterBase::SetMovementEnable(bool bIsEnable)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	bEnableMovement = bIsEnable;
+	OnRep_bEnableMovement();
+}
+
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)
 {
 	if (!ASC.Get())
@@ -316,7 +355,7 @@ void ASMPlayerCharacterBase::InitASC()
 		return;
 	}
 
-	// CatchInteractionComponent->InitASC(ASC.Get());
+	HIC->InitASC(ASC.Get());
 
 	if (HasAuthority())
 	{
@@ -507,5 +546,33 @@ void ASMPlayerCharacterBase::BindCharacterStateWidget(USMUserWidget_CharacterSta
 			CharacterStateWidget->CurrentHealth = SourceAttributeSet->GetMaxPostureGauge();
 			CharacterStateWidget->UpdateHPBar();
 		}
+	}
+}
+
+void ASMPlayerCharacterBase::OnRep_bIsHiddenCharacter()
+{
+	SetActorHiddenInGame(bIsHiddenCharacter);
+}
+
+void ASMPlayerCharacterBase::OnRep_bActivateCollision()
+{
+	SetActorEnableCollision(bActivateCollision);
+}
+
+void ASMPlayerCharacterBase::OnRep_bEnableMovement()
+{
+	UCharacterMovementComponent* SourceMovementComponent = GetCharacterMovement();
+	if (!SourceMovementComponent)
+	{
+		return;
+	}
+
+	if (bEnableMovement)
+	{
+		SourceMovementComponent->SetMovementMode(MOVE_Walking);
+	}
+	else
+	{
+		SourceMovementComponent->SetMovementMode(MOVE_None);
 	}
 }

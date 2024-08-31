@@ -20,7 +20,8 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 	MoveSpeed = 0.0f;
 
 	FGameplayTagContainer InitInvincibleStateTags;
-	InitInvincibleStateTags.AddTag(SMTags::Character::State::Stun);
+	InitInvincibleStateTags.AddTag(SMTags::Character::State::Stun); // TODO: Deprecated
+	InitInvincibleStateTags.AddTag(SMTags::Character::State::Neutralize);
 	InitInvincibleStateTags.AddTag(SMTags::Character::State::Smashing);
 	InvincibleStateTags = InitInvincibleStateTags;
 }
@@ -60,7 +61,8 @@ void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Att
 			const UAbilitySystemComponent* SourceASC = GetOwningAbilitySystemComponent();
 			if (ensure(SourceASC))
 			{
-				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), SMTags::Event::Character::Stun, FGameplayEventData());
+				// UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), SMTags::Event::Character::Stun, FGameplayEventData()); // TODO: Deprecated
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), SMTags::Event::Character::Neutralize, FGameplayEventData());
 			}
 		}
 	}

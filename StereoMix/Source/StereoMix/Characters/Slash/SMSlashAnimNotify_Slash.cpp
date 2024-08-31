@@ -3,7 +3,7 @@
 
 #include "SMSlashAnimNotify_Slash.h"
 
-#include "Characters/SMBassCharacter.h"
+#include "Characters/Player/SMBassCharacter.h"
 #include "Characters/Slash/SMSlashComponent.h"
 #include "Utilities/SMLog.h"
 

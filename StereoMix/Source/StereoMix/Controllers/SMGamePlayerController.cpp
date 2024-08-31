@@ -10,7 +10,7 @@
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Games/SMGameMode.h"
 #include "StereoMixLog.h"
-#include "Characters/SMPlayerCharacterBase.h"
+#include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Games/SMGamePlayerState.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"

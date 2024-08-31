@@ -9,7 +9,10 @@
 
 class ASMElectricGuitarCharacter;
 class ASMPianoCharacter;
+class ASMBassCharacter;
 class UGameplayEffect;
+
+DECLARE_MULTICAST_DELEGATE(FOnCatchSignature);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMHoldInteractionComponent : public UActorComponent
@@ -30,7 +33,7 @@ public:
 	virtual void SetActorHoldingMe(AActor* NewActorCatchingMe);
 
 	/** 잡을 수 있는지 여부를 반환하도록 구현해야합니다. 서버에서만 유효합니다. */
-	virtual bool IsHoldable(AActor* TargetActor) const PURE_VIRTUAL(USMCatchInteractionComponent::IsHoldable, return false;)
+	virtual bool CanHolded(AActor* TargetActor) const PURE_VIRTUAL(USMCatchInteractionComponent::IsHoldable, return false;)
 
 	/** 타겟에게 잡힐때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
 	virtual void OnHolded(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnHolded)

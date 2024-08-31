@@ -3,7 +3,7 @@
 
 #include "SMTeamSelectTriggerBox.h"
 
-#include "Characters/SMPlayerCharacterBase.h"
+#include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Components/BoxComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Controllers/SMGamePlayerController.h"
