@@ -7,6 +7,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
 
@@ -110,13 +111,25 @@ void USMHIC_Character::OnHoldedReleased(AActor* TargetActor, bool bIsStunTimeOut
 		return;
 	}
 
+	AActor* TargetCharacter = GetActorHoldingMe();
+	USMHIC_Character* TargetHIC = Cast<USMHIC_Character>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetCharacter));
+
+	// 잡기 상태에서 벗어납니다.
+	HoldedReleased(TargetCharacter);
+
+	if (TargetHIC)
+	{
+		TargetHIC->SetActorIAmHolding(nullptr);
+	}
+
+	// TODO: 더 이상 무력화 탈출을 GA로 처리하지 않을 예정입니다.
 	if (!bIsStunTimeOut)
 	{
-		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::HoldedExit));
+		// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::HoldedExit));
 	}
 	else
 	{
-		SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::HoldedExitOnStunEnd));
+		// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::HoldedExitOnStunEnd));
 	}
 }
 
@@ -131,7 +144,7 @@ void USMHIC_Character::OnNoiseBreakActionStarted(ASMBassCharacter* Instigator)
 		return;
 	}
 
-	SourceASC->AddTag(SMTags::Character::State::BassNoiseBreaked);
+	SourceASC->AddTag(SMTags::Character::State::NoiseBreaked);
 }
 
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
@@ -169,6 +182,11 @@ void USMHIC_Character::SetActorIAmHolding(AActor* NewIAmHoldingActor)
 	}
 }
 
+void USMHIC_Character::EmptyHoldedMeCharacterList()
+{
+	HoldedMeCharcters.Empty();
+}
+
 void USMHIC_Character::HoldedReleased(AActor* TargetActor)
 {
 	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
@@ -184,18 +202,18 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor)
 	SourceCharacter->SetMovementEnable(true);
 
 	// 회전을 재지정합니다.
-	// float NewYaw;
-	// if (TargetActor)
-	// {
-	// 	NewYaw = TargetActor->GetActorRotation().Yaw;
-	// }
-	// else
-	// {
-	// 	NET_LOG(SourceCharacter, Warning, TEXT("타겟이 유효하지 않아 자신의 Yaw를 사용합니다."));
-	// 	NewYaw = SourceCharacter->GetActorRotation().Yaw;
-	// }
-	// SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
-	//
+	float NewYaw;
+	if (TargetActor)
+	{
+		NewYaw = TargetActor->GetActorRotation().Yaw;
+	}
+	else
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("타겟이 유효하지 않아 자신의 Yaw를 사용합니다."));
+		NewYaw = SourceCharacter->GetActorRotation().Yaw;
+	}
+	SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
+
 	// SourceCharacter->ServerRPCPreventGroundEmbedding();
 
 	// 카메라 뷰를 원래대로 복구합니다.

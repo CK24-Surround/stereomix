@@ -95,12 +95,12 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 	LockAimTags.AddTag(SMTags::Character::State::Caught);
 	LockAimTags.AddTag(SMTags::Character::State::Smashed);
 	LockAimTags.AddTag(SMTags::Character::State::Smashing);
-	LockAimTags.AddTag(SMTags::Character::State::Stun);
+	LockAimTags.AddTag(SMTags::Character::State::Neutralize);
 
 	LockMovementTags.AddTag(SMTags::Character::State::Caught);
 	LockMovementTags.AddTag(SMTags::Character::State::Smashed);
 	LockMovementTags.AddTag(SMTags::Character::State::Smashing);
-	LockMovementTags.AddTag(SMTags::Character::State::Stun);
+	LockMovementTags.AddTag(SMTags::Character::State::Neutralize);
 	LockMovementTags.AddTag(SMTags::Character::State::Jump);
 }
 
@@ -393,6 +393,11 @@ void ASMPlayerCharacterBase::ClientRPCRemoveScreendIndicatorToSelf_Implementatio
 void ASMPlayerCharacterBase::SetCharacterStateVisibility_Implementation(bool bNewVisibility)
 {
 	CharacterStateWidgetComponent->SetVisibility(bNewVisibility);
+}
+
+void ASMPlayerCharacterBase::MulticastRPCSetYawRotation_Implementation(float InYaw)
+{
+	SetActorRotation(FRotator(0.0, InYaw, 0.0));
 }
 
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)

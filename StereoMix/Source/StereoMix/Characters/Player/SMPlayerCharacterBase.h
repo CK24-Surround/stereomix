@@ -109,6 +109,9 @@ public:
 
 	virtual void SetLastAttackInstigator(AActor* NewStunInstigator) override { LastAttackInstigator = NewStunInstigator; }
 
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCSetYawRotation(float InYaw);
+
 protected:
 	void Move(const FInputActionValue& InputActionValue);
 

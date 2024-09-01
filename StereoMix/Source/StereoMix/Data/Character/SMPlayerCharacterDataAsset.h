@@ -47,7 +47,10 @@ public:
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> AttackMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NeutralizedMontage;
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NeutralizeMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NoiseBreakedMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Data")
 	float MoveSpeed = 600.0f;

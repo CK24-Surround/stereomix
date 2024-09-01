@@ -19,6 +19,12 @@ USMSlashComponent::USMSlashComponent()
 	PrimaryComponentTick.bCanEverTick = true;
 	bWantsInitializeComponent = true;
 	SetIsReplicatedByDefault(true);
+
+	DeactivateGameplayTags.AddTag(SMTags::Character::State::Neutralize);
+	DeactivateGameplayTags.AddTag(SMTags::Character::State::Hold);
+	DeactivateGameplayTags.AddTag(SMTags::Character::State::Holded);
+	DeactivateGameplayTags.AddTag(SMTags::Character::State::NoiseBreaked);
+	DeactivateGameplayTags.AddTag(SMTags::Character::State::Jump);
 }
 
 void USMSlashComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -64,6 +70,17 @@ void USMSlashComponent::BeginPlay()
 
 void USMSlashComponent::TrySlash()
 {
+	UAbilitySystemComponent* SourceASC = SourceCharacter->GetAbilitySystemComponent();
+	if (!SourceASC)
+	{
+		return;
+	}
+
+	if (SourceASC->HasAnyMatchingGameplayTags(DeactivateGameplayTags))
+	{
+		return;
+	}
+
 	if (!bIsSlashing) // 베기가 시작되지 않은상태라면 즉시 시작합니다.
 	{
 		bIsSlashing = true;
@@ -88,11 +105,6 @@ void USMSlashComponent::ColliderOrientaionForSlash()
 
 	UAbilitySystemComponent* SourceASC = SourceCharacter->GetAbilitySystemComponent();
 	if (!SourceASC)
-	{
-		return;
-	}
-
-	if (SourceASC->HasAnyMatchingGameplayTags(DeactivateGameplayTags))
 	{
 		return;
 	}
