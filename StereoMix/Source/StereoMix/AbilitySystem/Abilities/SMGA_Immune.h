@@ -5,19 +5,19 @@
 #include "CoreMinimal.h"
 #include "SMGameplayAbility.h"
 
-#include "SMGameplayAbility_Immune.generated.h"
+#include "SMGA_Immune.generated.h"
 
 class UFMODEvent;
 /**
  *
  */
 UCLASS()
-class STEREOMIX_API USMGameplayAbility_Immune : public USMGameplayAbility
+class STEREOMIX_API USMGA_Immune : public USMGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	USMGameplayAbility_Immune();
+	USMGA_Immune();
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
