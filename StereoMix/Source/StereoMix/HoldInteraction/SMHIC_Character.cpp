@@ -98,7 +98,7 @@ void USMHIC_Character::OnHolded(AActor* TargetActor)
 	HoldedMeCharcters.Add(TargetCharacter);
 
 	APlayerController* SourcePlayerCharacter = SourceCharacter->GetController<APlayerController>();
-	if (!ensureAlways(SourcePlayerCharacter))
+	if (ensureAlways(SourcePlayerCharacter))
 	{
 		SourcePlayerCharacter->SetViewTargetWithBlend(TargetCharacter, 1.0f, VTBlend_Cubic);
 	}
@@ -201,18 +201,22 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor)
 	SourceCharacter->SetCollisionEnable(true);
 	SourceCharacter->SetMovementEnable(true);
 
-	// 회전을 재지정합니다.
+	// 회전및 위치를 재지정합니다.
+	FVector NewLocation;
 	float NewYaw;
 	if (TargetActor)
 	{
 		NewYaw = TargetActor->GetActorRotation().Yaw;
+		NewLocation = TargetActor->GetActorLocation();
 	}
 	else
 	{
 		NET_LOG(SourceCharacter, Warning, TEXT("타겟이 유효하지 않아 자신의 Yaw를 사용합니다."));
 		NewYaw = SourceCharacter->GetActorRotation().Yaw;
+		NewLocation = SourceCharacter->GetActorLocation();
 	}
 	SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
+	SourceCharacter->SetActorLocation(NewLocation);
 
 	// SourceCharacter->ServerRPCPreventGroundEmbedding();
 
@@ -224,7 +228,7 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor)
 	}
 }
 
-void USMHIC_Character::OnDestroyedIAmCatchingActor(AActor* DestroyedActor)
+void USMHIC_Character::OnDestroyedIAmHoldingActor(AActor* DestroyedActor)
 {
 	SetActorIAmHolding(nullptr);
 }
@@ -236,7 +240,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 	{
 		if (GetOwnerRole() == ROLE_Authority)
 		{
-			SourceASC->AddTag(SMTags::Character::State::Catch);
+			SourceASC->AddTag(SMTags::Character::State::Hold);
 		}
 
 		OnCatch.Broadcast();
@@ -245,7 +249,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 	{
 		if (GetOwnerRole() == ROLE_Authority)
 		{
-			SourceASC->RemoveTag(SMTags::Character::State::Catch);
+			SourceASC->RemoveTag(SMTags::Character::State::Hold);
 		}
 
 		/** 잡은 대상을 제거하면 잡기 풀기 델리게이트가 호출됩니다.*/

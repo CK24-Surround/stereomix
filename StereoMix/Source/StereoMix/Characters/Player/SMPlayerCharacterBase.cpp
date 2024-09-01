@@ -29,6 +29,7 @@
 ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bAlwaysRelevant = true;
 
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 	CachedMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
@@ -398,6 +399,11 @@ void ASMPlayerCharacterBase::SetCharacterStateVisibility_Implementation(bool bNe
 void ASMPlayerCharacterBase::MulticastRPCSetYawRotation_Implementation(float InYaw)
 {
 	SetActorRotation(FRotator(0.0, InYaw, 0.0));
+}
+
+void ASMPlayerCharacterBase::MulitcastRPCSetLocation_Implementation(const FVector_NetQuantize10& NewLocation)
+{
+	SetActorLocation(NewLocation);
 }
 
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)

@@ -3,33 +3,10 @@
 
 #include "SMUserWidget_CharacterState.h"
 
-#include "GameFramework/PlayerState.h"
-#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "AbilitySystemComponent.h"
 #include "Components/ProgressBar.h"
 #include "Components/TextBlock.h"
-
-void USMUserWidget_CharacterState::SetASC(UAbilitySystemComponent* InASC)
-{
-	Super::SetASC(InASC);
-
-	if (!ensure(InASC))
-	{
-		return;
-	}
-
-	InASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetPostureGaugeAttribute()).AddUObject(this, &USMUserWidget_CharacterState::OnChangeCurrentHealth);
-
-	InASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetMaxPostureGaugeAttribute()).AddUObject(this, &USMUserWidget_CharacterState::OnChangeMaxHealth);
-
-	const USMCharacterAttributeSet* SourceAttributeSet = InASC->GetSet<USMCharacterAttributeSet>();
-	if (ensure(SourceAttributeSet))
-	{
-		CurrentHealth = SourceAttributeSet->GetPostureGauge();
-		MaxHealth = SourceAttributeSet->GetMaxPostureGauge();
-		UpdateHPBar();
-	}
-}
+#include "Utilities/SMLog.h"
 
 void USMUserWidget_CharacterState::SetNickname(const FString& InNickname)
 {

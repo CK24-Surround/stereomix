@@ -53,7 +53,7 @@ public:
 
 	/** 잡고 있는 대상이 파괴되는 경우 예외처리를 담는 함수입니다. */
 	UFUNCTION()
-	void OnDestroyedIAmCatchingActor(AActor* DestroyedActor);
+	void OnDestroyedIAmHoldingActor(AActor* DestroyedActor);
 
 	/** 잡을때 브로드캐스트합니다. */
 	FOnCatchSignature OnCatch;

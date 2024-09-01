@@ -9,8 +9,11 @@
 
 #include "SMGameplayAbility.generated.h"
 
-class USMAbilitySystemComponent;
 class ASMPlayerCharacter;
+class ASMPlayerCharacterBase;
+class USMHoldInteractionComponent;
+class USMAbilitySystemComponent;
+class USMPlayerCharacterDataAsset;
 
 /**
  *
@@ -27,57 +30,27 @@ public:
 
 	ASMPlayerCharacter* GetSMPlayerCharacterFromActorInfo() const;
 
-	template<typename T>
-	T* GetASC()
-	{
-		if (!ensureAlways(CurrentActorInfo))
-		{
-			return nullptr;
-		}
-
-		T* SourceASC = Cast<T>(CurrentActorInfo->AbilitySystemComponent.Get());
-		if (!SourceASC)
-		{
-			NET_LOG(nullptr, Error, TEXT("소스 ASC가 유효하지 않습니다."));
-			return nullptr;
-		}
-
-		return SourceASC;
-	}
+	UAbilitySystemComponent* GetASC();
 
 	template<typename T>
-	T* GetAvatarActor()
-	{
-		if (!ensureAlways(CurrentActorInfo))
-		{
-			return nullptr;
-		}
+	T* GetASC() { return Cast<T>(GetASC()); }
 
-		T* SourceCharacter = Cast<T>(CurrentActorInfo->AvatarActor.Get());
-		if (!SourceCharacter)
-		{
-			NET_LOG(nullptr, Error, TEXT("소스 캐릭터가 유효하지 않습니다."));
-			return nullptr;
-		}
-
-		return SourceCharacter;
-	}
+	AActor* GetAvatarActor();
 
 	template<typename T>
-	T* GetHIC()
+	T* GetAvatarActor() { return Cast<T>(GetAvatarActor()); }
+
+	USMHoldInteractionComponent* GetHIC();
+
+	template<typename T>
+	T* GetHIC() { return Cast<T>(GetHIC()); }
+
+	const USMPlayerCharacterDataAsset* GetDataAsset();
+
+	template<typename T>
+	const T* GetDataAsset()
 	{
-		if (!ensureAlways(CurrentActorInfo))
-		{
-			return nullptr;
-		}
-
-		T* SourceHIC = Cast<T>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(CurrentActorInfo->AvatarActor.Get()));
-		if (!SourceHIC)
-		{
-			return nullptr;
-		}
-
-		return SourceHIC;
+		return Cast<T>(GetDataAsset());
 	}
 
 	/** 리플리케이션을 활성화 한 경우에만 호출됩니다.*/

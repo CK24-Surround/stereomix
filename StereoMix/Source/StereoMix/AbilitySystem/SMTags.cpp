@@ -6,7 +6,8 @@ namespace SMTags
 	{
 		namespace Activation
 		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Ability.Activation.Catch", "Catch의 어빌리티 활성화 여부를 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Ability.Activation.Catch", "Catch의 어빌리티 활성화 여부를 나타냅니다."); // TODO: Deprecated
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Ability.Activation.Hold", "Catch의 어빌리티 활성화 여부를 나타냅니다.");
 		}
 
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Caught, "Ability.Caught", "Caugh의 어빌리티 태그를 나타냅니다."); // TODO: Deprecated
@@ -43,7 +44,8 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Holded, "Character.State.Holded", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Character.State.Stun", "기절 상태를 나타냅니다."); // TODO: Deprecated
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "Character.State.Neutralize", "무력화 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashing, "Character.State.Smashing", "매치기 중인 상태를 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashing, "Character.State.Smashing", "매치기 중인 상태를 나타냅니다."); // TODO: Deprecated
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreaking, "Character.State.NoiseBreaking", "매치기 중인 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Character.State.Smashed", "상대 캐릭터에게 매치기 당하는 상태를 나타냅니다."); // TODO: Deprecated
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreaked, "Character.State.NoiseBreaked", "노이즈브레이크에 당하는 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncatchable, "Character.State.Uncatchable", "잡힐 수 없는 상태임을 나타냅니다."); // TODO: Deprecated
@@ -71,6 +73,7 @@ namespace SMTags
 		namespace AnimNotify
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Event.AnimNotify.Catch", "잡기 애님 노티파이의 이벤트로 사용됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Event.AnimNotify.Hold", "잡기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "Event.AnimNotify.Smash", "매치기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashEnd, "Event.AnimNotify.SmashEnd", "매치기 종료 애님 노티파이의 이벤트로 사용됩니다.");
 		}
@@ -96,7 +99,8 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileLaunch, "GameplayCue.ProjectileLaunch", "투사체 발사시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileHit, "GameplayCue.ProjectileHit", "투사체 적중시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileWallHit, "GameplayCue.ProjectileWallHit", "투사체가 벽에 적중시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "GameplayCue.Catch", "잡기 시전시 재생되는 게임플레이 큐의 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "GameplayCue.Catch", "잡기 시전시 재생되는 게임플레이 큐의 태그입니다."); // TODO: Deprecated
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "GameplayCue.Hold", "잡기 시전시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CatchHit, "GameplayCue.CatchHit", "잡기 적중시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "GameplayCue.Stun", "스턴시 재생되는 게임플레이 큐의 태그입니다."); // TODO: Deprecated
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "GameplayCue.Neutralize", "무력화 시 재생되는 게임플레이 큐의 태그입니다.");

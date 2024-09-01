@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Utilities/SMLog.h"
 
 USMGameplayAbility::USMGameplayAbility()
@@ -47,6 +48,52 @@ ASMPlayerCharacter* USMGameplayAbility::GetSMPlayerCharacterFromActorInfo() cons
 	}
 
 	return SourceCharacter;
+}
+
+UAbilitySystemComponent* USMGameplayAbility::GetASC()
+{
+	if (!ensureAlways(CurrentActorInfo))
+	{
+		return nullptr;
+	}
+
+	return CurrentActorInfo->AbilitySystemComponent.Get();
+}
+
+AActor* USMGameplayAbility::GetAvatarActor()
+{
+	if (!ensureAlways(CurrentActorInfo))
+	{
+		return nullptr;
+	}
+
+	return CurrentActorInfo->AvatarActor.Get();
+}
+
+USMHoldInteractionComponent* USMGameplayAbility::GetHIC()
+{
+	if (!ensureAlways(CurrentActorInfo))
+	{
+		return nullptr;
+	}
+
+	return USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(CurrentActorInfo->AvatarActor.Get());
+}
+
+const USMPlayerCharacterDataAsset* USMGameplayAbility::GetDataAsset()
+{
+	if (!ensureAlways(CurrentActorInfo))
+	{
+		return nullptr;
+	}
+
+	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(CurrentActorInfo->AvatarActor.Get());
+	if (!SourceCharacter)
+	{
+		return nullptr;
+	}
+
+	return SourceCharacter->GetDataAsset();
 }
 
 void USMGameplayAbility::EndAbilityByCancel()

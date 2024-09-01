@@ -20,8 +20,6 @@ class STEREOMIX_API USMUserWidget_CharacterState : public USMUserWidget
 	GENERATED_BODY()
 
 public:
-	virtual void SetASC(UAbilitySystemComponent* InASC) override;
-
 	void SetNickname(const FString& InNickname);
 
 	void OnChangeCurrentHealth(const FOnAttributeChangeData& OnAttributeChangeData);

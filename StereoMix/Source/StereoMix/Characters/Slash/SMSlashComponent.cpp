@@ -24,6 +24,7 @@ USMSlashComponent::USMSlashComponent()
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::Hold);
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::Holded);
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::NoiseBreaked);
+	DeactivateGameplayTags.AddTag(SMTags::Character::State::Immune);
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::Jump);
 }
 
@@ -70,6 +71,11 @@ void USMSlashComponent::BeginPlay()
 
 void USMSlashComponent::TrySlash()
 {
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
 	UAbilitySystemComponent* SourceASC = SourceCharacter->GetAbilitySystemComponent();
 	if (!SourceASC)
 	{
@@ -234,7 +240,7 @@ void USMSlashComponent::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent,
 		if (DetectedActors.Find(TargetCharacter) == INDEX_NONE)
 		{
 			DetectedActors.Push(TargetCharacter);
-			PredictApplyDamage(TargetCharacter);             // 일단 클라이언트의 UI에 선 반영합니다.
+			// PredictApplyDamage(TargetCharacter);             // 일단 클라이언트의 UI에 선 반영합니다.
 			ServerRPCRequestDamage(TargetCharacter, Damage); // 서버로 실제 데미지 처리를 요청합니다.
 		}
 	}
