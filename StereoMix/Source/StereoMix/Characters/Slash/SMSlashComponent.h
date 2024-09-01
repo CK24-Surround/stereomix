@@ -151,4 +151,6 @@ protected:
 
 	/** 베기 콜라이더 회전을 해야하는지 여부를 나타냅니다. */
 	uint32 bNeedUpdateSlashing:1 = false;
+	
+	FGameplayTagContainer ValidTargetTag;
 };

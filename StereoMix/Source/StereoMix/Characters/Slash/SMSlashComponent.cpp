@@ -26,6 +26,9 @@ USMSlashComponent::USMSlashComponent()
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::Immune);
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::Jump);
+
+	ValidTargetTag.AddTag(SMTags::Character::State::Immune);
+	ValidTargetTag.AddTag(SMTags::Character::State::Neutralize);
 }
 
 void USMSlashComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -231,6 +234,16 @@ void USMSlashComponent::OnSlashOverlap(UPrimitiveComponent* OverlappedComponent,
 	if (!IsValidTarget(OtherActor))
 	{
 		return;
+	}
+
+	// 대상이 면역상태라면 무시합니다.
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	if (TargetASC)
+	{
+		if (TargetASC->HasAnyMatchingGameplayTags(ValidTargetTag))
+		{
+			return;
+		}
 	}
 
 	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(OtherActor);
