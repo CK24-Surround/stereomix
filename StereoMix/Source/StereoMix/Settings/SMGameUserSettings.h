@@ -13,7 +13,7 @@ class UFMODBus;
 /**
  *
  */
-UCLASS(Config = StereoMixGameUserSettings, ConfigDoNotCheckDefaults, MinimalAPI)
+UCLASS()
 class USMGameUserSettings : public UGameUserSettings
 {
 	GENERATED_BODY()
