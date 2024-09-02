@@ -23,6 +23,8 @@ class UWidgetComponent;
 class UNiagaraComponent;
 class USMUserWidget_CharacterState;
 
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnCharacterLandedSignature, ASMPlayerCharacterBase* /*LandedCharacter*/);
+
 UENUM(BlueprintType)
 enum class EMoveTrailState : uint8
 {
@@ -114,6 +116,10 @@ public:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulitcastRPCSetLocation(const FVector_NetQuantize10& NewLocation);
+
+	virtual void Landed(const FHitResult& Hit) override;
+
+	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:
 	void Move(const FInputActionValue& InputActionValue);

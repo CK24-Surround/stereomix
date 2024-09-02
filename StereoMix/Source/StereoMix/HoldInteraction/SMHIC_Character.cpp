@@ -6,6 +6,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMBassCharacter.h"
+#include "Characters/Player/SMElectricGuitarCharacter.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
@@ -147,7 +148,18 @@ void USMHIC_Character::OnNoiseBreakActionStarted(ASMBassCharacter* Instigator)
 	SourceASC->AddTag(SMTags::Character::State::NoiseBreaked);
 }
 
-void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
+void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
+{
+	if (!SourceCharacter->HasAuthority())
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버에서만 호출되야합니다."));
+		return;
+	}
+
+	HoldedReleased(Instigator);
+	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+	// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
+}
 
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
 
@@ -157,8 +169,8 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator,
 
 	HoldedReleased(Instigator);
 
-	SourceASC->RemoveTag(SMTags::Character::State::Smashed);
-	SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
+	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+	// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
 }
 
 void USMHIC_Character::SetActorIAmHolding(AActor* NewIAmHoldingActor)
@@ -215,8 +227,9 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor)
 		NewYaw = SourceCharacter->GetActorRotation().Yaw;
 		NewLocation = SourceCharacter->GetActorLocation();
 	}
+	const FVector Offset = FRotator(0.0, NewYaw, 0.0).Vector() * 100.0f;
 	SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
-	SourceCharacter->SetActorLocation(NewLocation);
+	SourceCharacter->MulitcastRPCSetLocation(NewLocation + Offset);
 
 	// SourceCharacter->ServerRPCPreventGroundEmbedding();
 

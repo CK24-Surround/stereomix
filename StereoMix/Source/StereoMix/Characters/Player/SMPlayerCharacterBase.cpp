@@ -406,6 +406,13 @@ void ASMPlayerCharacterBase::MulitcastRPCSetLocation_Implementation(const FVecto
 	SetActorLocation(NewLocation);
 }
 
+void ASMPlayerCharacterBase::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	OnCharacterLanded.Broadcast(this);
+}
+
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)
 {
 	if (!ASC.Get())

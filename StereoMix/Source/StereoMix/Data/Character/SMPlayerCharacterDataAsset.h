@@ -50,6 +50,9 @@ public:
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NeutralizeMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NoiseBreakMontage;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NoiseBreakedMontage;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
