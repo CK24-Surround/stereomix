@@ -11,7 +11,11 @@
 #include "Characters/Player/SMBassCharacter.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
+#include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
+#include "Tiles/SMTile.h"
+#include "Tiles/SMTileManagerComponent.h"
+#include "Utilities/SMCollision.h"
 
 USMGA_BassNoiseBreak::USMGA_BassNoiseBreak()
 {
@@ -218,12 +222,11 @@ void USMGA_BassNoiseBreak::OnNoiseBreak(ASMPlayerCharacterBase* LandedCharacter)
 	{
 		if (TargetActor)
 		{
-			// TargetHIC->OnSpecialActionEnded(SourceCharacter, ESpecialAction::Smash, MaxTriggerCount, DamageGE, SmashDamage);
-
 			TSharedPtr<FSMNoiseBreakData> TempData = MakeShared<FSMNoiseBreakData>();
 			TargetHIC->OnNoiseBreakActionPerformed(SourceCharacter, TempData);
 		}
 
+		TileCapture();
 		SourceHIC->SetActorIAmHolding(nullptr);
 	}
 
@@ -288,4 +291,39 @@ void USMGA_BassNoiseBreak::LaunchCharacterToTargetWithApex(const FVector& InStar
 
 	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, InStartLocation, InTargetLocation, SmashApexHeight, InGravityZ);
 	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
+}
+
+void USMGA_BassNoiseBreak::TileCapture()
+{
+	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
+	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
+	if (!GameState)
+	{
+		return;
+	}
+
+	USMTileManagerComponent* TileManager = GameState->GetTileManager();
+	if (!TileManager)
+	{
+		return;
+	}
+
+	FHitResult HitResult;
+	const FVector StartLocation = SourceCharacter->GetActorLocation();
+	const FVector EndLocation = StartLocation + FVector::DownVector * 1000.0;
+	const bool bSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction);
+
+	if (bSuccess)
+	{
+		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
+		if (Tile)
+		{
+			TileManager->TileCaptureDelayedSqaure(Tile, SourceCharacter->GetTeam(), MaxTriggerCount, TotalTriggerTime);
+		}
+	}
 }

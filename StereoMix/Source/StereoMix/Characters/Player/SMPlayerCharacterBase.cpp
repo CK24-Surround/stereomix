@@ -94,13 +94,13 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 	HIC = CreateDefaultSubobject<USMHIC_Character>(TEXT("HIC"));
 
 	LockAimTags.AddTag(SMTags::Character::State::Caught);
-	LockAimTags.AddTag(SMTags::Character::State::Smashed);
-	LockAimTags.AddTag(SMTags::Character::State::Smashing);
+	LockAimTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	LockAimTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	LockAimTags.AddTag(SMTags::Character::State::Neutralize);
 
 	LockMovementTags.AddTag(SMTags::Character::State::Caught);
-	LockMovementTags.AddTag(SMTags::Character::State::Smashed);
-	LockMovementTags.AddTag(SMTags::Character::State::Smashing);
+	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	LockMovementTags.AddTag(SMTags::Character::State::Neutralize);
 	LockMovementTags.AddTag(SMTags::Character::State::Jump);
 }

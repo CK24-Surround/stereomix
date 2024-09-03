@@ -44,6 +44,9 @@ protected:
 	/** 정점 높이를 기준으로 타겟을 향하는 벨로시티를 통해 캐릭터를 도약 시킵니다. */
 	void LaunchCharacterToTargetWithApex(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ);
 
+	/** 타일을 점령합니다. */
+	void TileCapture();
+
 	UPROPERTY(EditAnywhere, Category = "Design|Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SmashMontage;
 
@@ -69,4 +72,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "매치기 1회에 타일이 트리거 되는 횟수")
 	int32 MaxTriggerCount = 3;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float TotalTriggerTime = 0.267f;
 };

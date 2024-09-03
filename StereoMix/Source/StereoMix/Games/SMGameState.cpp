@@ -9,10 +9,13 @@
 #include "Net/UnrealNetwork.h"
 #include "StereoMixLog.h"
 #include "Tiles/SMTile.h"
+#include "Tiles/SMTileManagerComponent.h"
 #include "Utilities/SMLog.h"
 
 ASMGameState::ASMGameState()
 {
+	TileManager = CreateDefaultSubobject<USMTileManagerComponent>(TEXT("TileManager"));
+
 	TeamScores.Add(ESMTeam::EDM, 0);
 	TeamScores.Add(ESMTeam::FutureBass, 0);
 

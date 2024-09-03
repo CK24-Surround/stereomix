@@ -9,6 +9,7 @@
 
 #include "SMGameState.generated.h"
 
+class USMTileManagerComponent;
 class UFMODEvent;
 class USMWidget_RoomId;
 
@@ -216,4 +217,11 @@ private:
 	UFUNCTION()
 	void OnRep_ReplicatedCurrentMusicPlayer();
 	// ~Sound Section
+
+public:
+	USMTileManagerComponent* GetTileManager() { return TileManager; }
+
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Design")
+	TObjectPtr<USMTileManagerComponent> TileManager;
 };
