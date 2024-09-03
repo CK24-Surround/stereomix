@@ -23,14 +23,12 @@ void USMTileManagerComponent::TileCaptureImmediateSqaure(ASMTile* StartTile, ESM
 
 void USMTileManagerComponent::TileCaptureDelayedSqaure(ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime)
 {
-	NET_LOG(GetOwner(), Warning, TEXT("타일 트리거!"));
-
 	float OffSet = 1.0f;
 	const float DeltaTime = TotalTime / (CaptureSizeByTile - 1);
 
 	TWeakObjectPtr<USMTileManagerComponent> WeakThis(this);
 	for (int32 i = 0; i < CaptureSizeByTile; ++i)
-	{ 
+	{
 		float HalfSize = OffSet + TileHorizenSize * i;
 		auto Lambda = [WeakThis, StartTile, InstigatorTeam, HalfSize]() {
 			if (WeakThis.Get())
