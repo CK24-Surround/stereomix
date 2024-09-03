@@ -243,7 +243,7 @@ void ASMGamePlayerController::AddScreendIndicator(AActor* TargetActor)
 	}
 
 	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 추가합니다.
-	if (!Cast<ASMPlayerCharacter>(GetPawn()))
+	if (!Cast<ASMPlayerCharacterBase>(GetPawn()))
 	{
 		return;
 	}
@@ -272,7 +272,7 @@ void ASMGamePlayerController::RemoveScreenIndicator(AActor* TargetActor)
 	}
 
 	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 제거합니다.
-	if (!Cast<ASMPlayerCharacter>(GetPawn()))
+	if (!Cast<ASMPlayerCharacterBase>(GetPawn()))
 	{
 		return;
 	}
