@@ -10,6 +10,7 @@ namespace SMCollisionProfileName
 	static FName HealPack = TEXT("HealPack");
 	static FName Gimmick = TEXT("Gimmick");
 	static FName CatchableItem = TEXT("CatchableItem");
+	static FName Ghost = TEXT("Ghost");
 }
 
 namespace SMCollisionObjectChannel

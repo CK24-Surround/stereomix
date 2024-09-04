@@ -8,5 +8,6 @@ enum class EActiveAbility : uint8
 	None,
 	Attack,
 	Hold,
+	Skill,
 	NoiseBreak
 };

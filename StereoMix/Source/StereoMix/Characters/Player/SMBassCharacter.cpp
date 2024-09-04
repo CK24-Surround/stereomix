@@ -5,6 +5,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "Characters/Slash/SMSlashComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Controllers/SMGamePlayerController.h"
@@ -24,6 +25,10 @@ ASMBassCharacter::ASMBassCharacter()
 	const double HalfDistance = 250.0;
 	SlashColliderComponent->SetRelativeLocationAndRotation(FVector(HalfDistance, 0.0, 0.0), FRotator(-90.0, 0.0, 0.0));
 	SlashColliderComponent->InitCapsuleSize(50.0f, HalfDistance);
+
+	LockAimTags.AddTag(SMTags::Character::State::Charge);
+
+	LockMovementTags.AddTag(SMTags::Character::State::Charge);
 }
 
 void ASMBassCharacter::PostInitializeComponents()

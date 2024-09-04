@@ -152,6 +152,7 @@ void ASMPlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerIn
 		EnhancedInputComponent->BindAction(ControlData->MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
 		EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Attack);
 		EnhancedInputComponent->BindAction(ControlData->HoldAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Hold);
+		EnhancedInputComponent->BindAction(ControlData->SkillAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Skill);
 		EnhancedInputComponent->BindAction(ControlData->NoiseBreakAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::NoiseBreak);
 	}
 }

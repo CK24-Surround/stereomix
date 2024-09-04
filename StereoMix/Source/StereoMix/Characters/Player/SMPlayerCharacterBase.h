@@ -67,6 +67,9 @@ public:
 
 	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
 
+	template<typename T>
+	const T* GetDataAsset() { return Cast<T>(DataAsset); }
+
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
 
 	template<typename T>

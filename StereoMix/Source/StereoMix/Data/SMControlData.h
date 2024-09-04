@@ -34,5 +34,8 @@ public:
 	TObjectPtr<const UInputAction> HoldAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
+	TObjectPtr<const UInputAction> SkillAction;
+
+	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<const UInputAction> NoiseBreakAction;
 };

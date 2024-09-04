@@ -22,7 +22,8 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 	FGameplayTagContainer InitInvincibleStateTags;
 	InitInvincibleStateTags.AddTag(SMTags::Character::State::Stun); // TODO: Deprecated
 	InitInvincibleStateTags.AddTag(SMTags::Character::State::Neutralize);
-	InitInvincibleStateTags.AddTag(SMTags::Character::State::Smashing);
+	InitInvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	InitInvincibleStateTags.AddTag(SMTags::Character::State::Charge);
 	InvincibleStateTags = InitInvincibleStateTags;
 }
 
