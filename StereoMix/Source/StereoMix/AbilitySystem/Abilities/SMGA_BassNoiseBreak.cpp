@@ -200,7 +200,8 @@ void USMGA_BassNoiseBreak::OnNoiseBreak(ASMPlayerCharacterBase* LandedCharacter)
 	}
 
 	// 스매시 종료 애니메이션을 재생합니다. 이 애니메이션이 종료되면 스매시가 종료됩니다. 종료는 서버에서 수행하게 됩니다.
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("NoiseBreakEnd"), CachedNoiseBreakMontage, 1.0f, TEXT("End"), false);
+	const FName SectionName = TEXT("End");
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("NoiseBreakEnd"), CachedNoiseBreakMontage, 1.0f, SectionName, false);
 	if (!ensureAlways(PlayMontageAndWaitTask))
 	{
 		EndAbilityByCancel();

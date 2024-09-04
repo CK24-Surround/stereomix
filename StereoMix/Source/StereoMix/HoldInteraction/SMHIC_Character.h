@@ -67,6 +67,11 @@ protected:
 
 	void InternalHolded(AActor* TargetActor);
 
+	void NoiseBreaked();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCPlayNoiseBreakedSFX();
+
 	/** 자신이 잡고 있는 액터입니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_IAmHoldingActor")
 	TWeakObjectPtr<AActor> IAmHoldingActor;

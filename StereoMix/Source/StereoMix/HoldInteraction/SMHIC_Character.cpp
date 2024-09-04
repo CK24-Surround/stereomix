@@ -3,11 +3,13 @@
 
 #include "SMHIC_Character.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Characters/Player/SMElectricGuitarCharacter.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
@@ -165,11 +167,13 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator
 
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
-	// TODO: 타일 점령 및 데미지 구현 필요
+	// TODO: 타일 점령 데미지 구현 필요
 
 	HoldedReleased(Instigator);
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+	NoiseBreaked();
+
 	// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
 }
 
@@ -273,4 +277,47 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 void USMHIC_Character::InternalHolded(AActor* TargetActor)
 {
 	// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Holded));
+}
+
+void USMHIC_Character::NoiseBreaked()
+{
+	if (!SourceCharacter.Get() || !SourceASC.Get())
+	{
+		return;
+	}
+
+	// 버저 비터 종료 이벤트를 타겟에게 보냅니다. 이 이벤트는 만약 스턴 종료시간에 임박했을때 스매시를 시전하는 경우 스매시가 끊기는 것을 막고자 스턴 종료를 보류하게됩니다. 이 상황에서 스턴 종료 로직을 재개 시킬때 호출되어야합니다.
+	NET_LOG(SourceCharacter, Warning, TEXT("버저비터 종료 전송"));
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceCharacter, SMTags::Event::Character::BuzzerBeaterEnd, FGameplayEventData());
+
+	// TODO: 나중에 이펙트를 재생해야한다면 활용하면 됩니다.
+	// MulticastRPCPlayNoiseBreakedSFX();
+}
+
+void USMHIC_Character::MulticastRPCPlayNoiseBreakedSFX_Implementation()
+{
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	USkeletalMeshComponent* SourceMesh = SourceCharacter->GetMesh();
+	if (!ensureAlways(SourceMesh))
+	{
+		return;
+	}
+
+	UAnimInstance* AnimInstance = SourceMesh->GetAnimInstance();
+	if (!ensureAlways(AnimInstance))
+	{
+		return;
+	}
+
+	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset();
+	if (!SourceDataAsset)
+	{
+		return;
+	}
+
+	// TODO: 이펙트가 필요하다면 재생해줘야합니다.
 }
