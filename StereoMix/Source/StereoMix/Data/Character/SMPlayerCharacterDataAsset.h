@@ -58,6 +58,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> HoldMontage;
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SkillMontage;
+
 	UPROPERTY(EditAnywhere, Category = "Data")
 	float MoveSpeed = 600.0f;
 

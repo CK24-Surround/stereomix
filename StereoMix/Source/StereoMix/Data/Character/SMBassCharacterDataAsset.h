@@ -13,8 +13,4 @@ UCLASS()
 class STEREOMIX_API USMBassCharacterDataAsset : public USMPlayerCharacterDataAsset
 {
 	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere, Category = "Design")
-	TMap<ESMTeam, TObjectPtr<UAnimMontage>> ChargeMontage; 
 };

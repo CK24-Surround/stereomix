@@ -19,6 +19,9 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 
 	MoveSpeed = 0.0f;
 
+	InitStamina(100.0f);
+	InitSkillGauge(100.0f);
+
 	FGameplayTagContainer InitInvincibleStateTags;
 	InitInvincibleStateTags.AddTag(SMTags::Character::State::Stun); // TODO: Deprecated
 	InitInvincibleStateTags.AddTag(SMTags::Character::State::Neutralize);
@@ -34,6 +37,8 @@ void USMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(USMCharacterAttributeSet, PostureGauge);
 	DOREPLIFETIME(USMCharacterAttributeSet, MaxPostureGauge);
 	DOREPLIFETIME(USMCharacterAttributeSet, MoveSpeed);
+	DOREPLIFETIME(USMCharacterAttributeSet, Stamina);
+	DOREPLIFETIME(USMCharacterAttributeSet, SkillGauge);
 }
 
 void USMCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -157,4 +162,14 @@ void USMCharacterAttributeSet::OnRep_MaxPostureGauge(const FGameplayAttributeDat
 void USMCharacterAttributeSet::OnRep_MoveSpeed(const FGameplayAttributeData& OldValue)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, MoveSpeed, OldValue);
+}
+
+void USMCharacterAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, Stamina, OldValue);
+}
+
+void USMCharacterAttributeSet::OnRep_SkillGauge(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, SkillGauge, OldValue);
 }
