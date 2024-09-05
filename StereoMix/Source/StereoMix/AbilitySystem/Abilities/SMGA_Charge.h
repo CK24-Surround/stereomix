@@ -11,7 +11,7 @@ class UAbilityTask_ApplyRootMotionConstantForce;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_Charge : public USMGameplayAbility
 {
 	GENERATED_BODY()

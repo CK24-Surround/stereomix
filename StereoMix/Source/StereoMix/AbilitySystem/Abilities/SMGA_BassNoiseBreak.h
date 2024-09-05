@@ -13,7 +13,7 @@ class UGameplayEffect;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_BassNoiseBreak : public USMGameplayAbility
 {
 	GENERATED_BODY()

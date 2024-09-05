@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_Neutralize : public USMGameplayAbility
 {
 	GENERATED_BODY()

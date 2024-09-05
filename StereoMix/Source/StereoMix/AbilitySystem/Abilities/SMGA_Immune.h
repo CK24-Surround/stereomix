@@ -11,7 +11,7 @@ class UFMODEvent;
 /**
  *
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_Immune : public USMGameplayAbility
 {
 	GENERATED_BODY()
