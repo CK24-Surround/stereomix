@@ -57,7 +57,7 @@ void ASMBoostZone::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OtherActor);
-	if (!ensureAlways(TargetCharacter))
+	if (!TargetCharacter)
 	{
 		return;
 	}
@@ -77,7 +77,7 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 	Super::NotifyActorEndOverlap(OtherActor);
 
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OtherActor);
-	if (!ensureAlways(TargetCharacter))
+	if (!TargetCharacter)
 	{
 		return;
 	}
@@ -99,7 +99,7 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 
 void ASMBoostZone::PerformBoostZone(ASMPlayerCharacter* TargetCharacter)
 {
-	if (!ensure(TargetCharacter))
+	if (!TargetCharacter)
 	{
 		return;
 	}
@@ -138,7 +138,7 @@ void ASMBoostZone::PerformBoostZone(ASMPlayerCharacter* TargetCharacter)
 
 void ASMBoostZone::ApplyBoostZone(ASMPlayerCharacter* TargetCharacter)
 {
-	if (!ensureAlways(TargetCharacter))
+	if (!TargetCharacter)
 	{
 		return;
 	}
@@ -162,7 +162,7 @@ void ASMBoostZone::ApplyBoostZone(ASMPlayerCharacter* TargetCharacter)
 
 void ASMBoostZone::RemoveBoostZone(ASMPlayerCharacter* TargetCharacter)
 {
-	if (!ensureAlways(TargetCharacter))
+	if (!TargetCharacter)
 	{
 		return;
 	}
@@ -186,7 +186,7 @@ void ASMBoostZone::RemoveBoostZone(ASMPlayerCharacter* TargetCharacter)
 
 void ASMBoostZone::AddMoveSpeed(ASMPlayerCharacter* TargetCharacter, float MoveSpeedToAdd)
 {
-	if (!ensureAlways(TargetCharacter))
+	if (!TargetCharacter)
 	{
 		return;
 	}
