@@ -26,6 +26,7 @@ USMSlashComponent::USMSlashComponent()
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::Immune);
 	DeactivateGameplayTags.AddTag(SMTags::Character::State::Jump);
+	DeactivateGameplayTags.AddTag(SMTags::Character::State::Charge);
 
 	ValidTargetTag.AddTag(SMTags::Character::State::Immune);
 	ValidTargetTag.AddTag(SMTags::Character::State::Neutralize);
