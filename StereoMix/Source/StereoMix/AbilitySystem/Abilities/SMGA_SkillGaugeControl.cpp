@@ -34,6 +34,13 @@ void USMGA_SkillGaugeControl::ActivateAbility(const FGameplayAbilitySpecHandle H
 	CheckTeamTileTask->ReadyForActivation();
 }
 
+void USMGA_SkillGaugeControl::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	BP_RemoveGameplayEffectFromOwnerWithHandle(SkillGaugeGEHandle);
+
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
 void USMGA_SkillGaugeControl::OnTeamTileEntry()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();

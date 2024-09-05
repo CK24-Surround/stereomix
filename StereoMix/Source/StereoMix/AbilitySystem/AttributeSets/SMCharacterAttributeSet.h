@@ -38,6 +38,7 @@ public:
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Damage);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Heal);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, HealSkillGauge);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, HealStamina);
 
 	float GetBaseMoveSpeed() const { return MoveSpeed.GetBaseValue(); }
 
@@ -89,9 +90,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "Heal")
 	FGameplayAttributeData Heal;
-	
+
 	UPROPERTY(BlueprintReadOnly, Category = "Heal")
 	FGameplayAttributeData HealSkillGauge;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Heal")
+	FGameplayAttributeData HealStamina;
 
 	FGameplayTagContainer InvincibleStateTags;
 };

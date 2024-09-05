@@ -28,6 +28,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
 	TSubclassOf<UGameplayEffect> SkillGaugeGE;
 
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
+	TSubclassOf<UGameplayEffect> StaminaGE;
+
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
 	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
 

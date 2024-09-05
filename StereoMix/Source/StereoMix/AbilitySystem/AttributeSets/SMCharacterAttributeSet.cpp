@@ -64,6 +64,11 @@ void USMCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr
 	{
 		NewValue = NewValue > 0.0f ? NewValue : 0.0f;
 	}
+
+	if (Attribute == GetHealStaminaAttribute())
+	{
+		NewValue = NewValue > 0.0f ? NewValue : 0.0f;
+	}
 }
 
 void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Attribute, float OldValue, float NewValue)
@@ -163,6 +168,13 @@ void USMCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 		const float NewSkillGauge = FMath::Clamp(GetSkillGauge() + GetHealSkillGauge(), 0.0f, GetMaxSkillGauge());
 		SetSkillGauge(NewSkillGauge);
 		SetHealSkillGauge(0.0f);
+	}
+
+	if (Data.EvaluatedData.Attribute == GetHealStaminaAttribute())
+	{
+		const float NewStamina = FMath::Clamp(GetStamina() + GetHealStamina(), 0.0f, GetMaxStamina());
+		SetStamina(NewStamina);
+		SetHealStamina(0.0f);
 	}
 }
 
