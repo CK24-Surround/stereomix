@@ -22,15 +22,21 @@ class STEREOMIX_API USMPlayerCharacterDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
 	TSubclassOf<UGameplayEffect> ForInitGE;
+
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
+	TSubclassOf<UGameplayEffect> SkillGaugeGE;
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
 	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
-	
+
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
+	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
+
 	UPROPERTY(EditAnywhere, Category = "Widget")
 	TMap<ESMTeam, TSubclassOf<USMUserWidget_CharacterState>> CharacterStateWidget;
 

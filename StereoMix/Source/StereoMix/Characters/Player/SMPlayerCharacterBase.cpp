@@ -503,6 +503,13 @@ void ASMPlayerCharacterBase::GiveDefaultAbilities()
 		FGameplayAbilitySpec AbilitySpec(DefaultAbility);
 		ASC->GiveAbility(AbilitySpec);
 	}
+
+	for (const auto& PassiveAbility : DataAsset->PassiveAbilities)
+	{
+		FGameplayAbilitySpec AbilitySpec(PassiveAbility);
+		ASC->GiveAbility(AbilitySpec);
+		ASC->TryActivateAbility(AbilitySpec.Handle);
+	}
 }
 
 void ASMPlayerCharacterBase::GAInputPressed(EActiveAbility InInputID)

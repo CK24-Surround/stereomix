@@ -23,8 +23,6 @@ void USMAT_WaitChargeBlocked::Activate()
 		SourceCapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnChargeOverlappedCallback);
 		SourceCapsuleComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnChargeBlockedCallback);
 	}
-
-	Super::Activate();
 }
 
 void USMAT_WaitChargeBlocked::OnDestroy(bool bInOwnerFinished)

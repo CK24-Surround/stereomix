@@ -19,8 +19,11 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 
 	MoveSpeed = 0.0f;
 
-	InitStamina(100.0f);
-	InitSkillGauge(100.0f);
+	InitMaxStamina(100.0f);
+	InitStamina(GetMaxStamina());
+
+	InitMaxSkillGauge(100.0f);
+	InitSkillGauge(GetMaxSkillGauge());
 
 	FGameplayTagContainer InitInvincibleStateTags;
 	InitInvincibleStateTags.AddTag(SMTags::Character::State::Stun); // TODO: Deprecated
@@ -38,7 +41,9 @@ void USMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProper
 	DOREPLIFETIME(USMCharacterAttributeSet, MaxPostureGauge);
 	DOREPLIFETIME(USMCharacterAttributeSet, MoveSpeed);
 	DOREPLIFETIME(USMCharacterAttributeSet, Stamina);
+	DOREPLIFETIME(USMCharacterAttributeSet, MaxStamina);
 	DOREPLIFETIME(USMCharacterAttributeSet, SkillGauge);
+	DOREPLIFETIME(USMCharacterAttributeSet, MaxSkillGauge);
 }
 
 void USMCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue)
@@ -51,6 +56,11 @@ void USMCharacterAttributeSet::PreAttributeChange(const FGameplayAttribute& Attr
 	}
 
 	if (Attribute == GetHealAttribute())
+	{
+		NewValue = NewValue > 0.0f ? NewValue : 0.0f;
+	}
+
+	if (Attribute == GetHealSkillGaugeAttribute())
 	{
 		NewValue = NewValue > 0.0f ? NewValue : 0.0f;
 	}
@@ -147,6 +157,13 @@ void USMCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 		SetPostureGauge(NewPostureGauge);
 		SetHeal(0.0f);
 	}
+
+	if (Data.EvaluatedData.Attribute == GetHealSkillGaugeAttribute())
+	{
+		const float NewSkillGauge = FMath::Clamp(GetSkillGauge() + GetHealSkillGauge(), 0.0f, GetMaxSkillGauge());
+		SetSkillGauge(NewSkillGauge);
+		SetHealSkillGauge(0.0f);
+	}
 }
 
 void USMCharacterAttributeSet::OnRep_PostureGauge(const FGameplayAttributeData& OldValue)
@@ -169,7 +186,17 @@ void USMCharacterAttributeSet::OnRep_Stamina(const FGameplayAttributeData& OldVa
 	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, Stamina, OldValue);
 }
 
+void USMCharacterAttributeSet::OnRep_MaxStamina(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, MaxStamina, OldValue);
+}
+
 void USMCharacterAttributeSet::OnRep_SkillGauge(const FGameplayAttributeData& OldValue)
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, SkillGauge, OldValue);
+}
+
+void USMCharacterAttributeSet::OnRep_MaxSkillGauge(const FGameplayAttributeData& OldValue)
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(USMCharacterAttributeSet, MaxSkillGauge, OldValue);
 }

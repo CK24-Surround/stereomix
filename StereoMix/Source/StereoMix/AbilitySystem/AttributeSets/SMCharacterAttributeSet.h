@@ -31,10 +31,13 @@ public:
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MaxPostureGauge);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MoveSpeed);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Stamina);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MaxStamina);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, SkillGauge);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, MaxSkillGauge);
 
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Damage);
 	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, Heal);
+	ATTRIBUTE_ACCESSORS(USMCharacterAttributeSet, HealSkillGauge);
 
 	float GetBaseMoveSpeed() const { return MoveSpeed.GetBaseValue(); }
 
@@ -52,7 +55,13 @@ protected:
 	void OnRep_Stamina(const FGameplayAttributeData& OldValue);
 
 	UFUNCTION()
+	void OnRep_MaxStamina(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
 	void OnRep_SkillGauge(const FGameplayAttributeData& OldValue);
+
+	UFUNCTION()
+	void OnRep_MaxSkillGauge(const FGameplayAttributeData& OldValue);
 
 	UPROPERTY(BlueprintReadOnly, Category = "Posture", ReplicatedUsing = "OnRep_PostureGauge")
 	FGameplayAttributeData PostureGauge;
@@ -66,14 +75,23 @@ protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Stamina", ReplicatedUsing = "OnRep_Stamina")
 	FGameplayAttributeData Stamina;
 
+	UPROPERTY(BlueprintReadOnly, Category = "Stamina", ReplicatedUsing = "OnRep_MaxStamina")
+	FGameplayAttributeData MaxStamina;
+
 	UPROPERTY(BlueprintReadOnly, Category = "SkillGauge", ReplicatedUsing = "OnRep_SkillGauge")
 	FGameplayAttributeData SkillGauge;
+
+	UPROPERTY(BlueprintReadOnly, Category = "SkillGauge", ReplicatedUsing = "OnRep_MaxSkillGauge")
+	FGameplayAttributeData MaxSkillGauge;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Damage")
 	FGameplayAttributeData Damage;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Heal")
 	FGameplayAttributeData Heal;
+	
+	UPROPERTY(BlueprintReadOnly, Category = "Heal")
+	FGameplayAttributeData HealSkillGauge;
 
 	FGameplayTagContainer InvincibleStateTags;
 };
