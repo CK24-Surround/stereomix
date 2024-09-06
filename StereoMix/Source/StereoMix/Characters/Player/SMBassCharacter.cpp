@@ -27,8 +27,10 @@ ASMBassCharacter::ASMBassCharacter()
 	SlashColliderComponent->InitCapsuleSize(50.0f, HalfDistance);
 
 	LockAimTags.AddTag(SMTags::Character::State::Charge);
+	LockAimTags.AddTag(SMTags::Character::State::SlashActivation);
 
 	LockMovementTags.AddTag(SMTags::Character::State::Charge);
+	LockMovementTags.AddTag(SMTags::Character::State::SlashActivation);
 }
 
 void ASMBassCharacter::PostInitializeComponents()
@@ -46,7 +48,7 @@ void ASMBassCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCom
 		const USMControlData* ControlData = SMPlayerController->GetControlData();
 		if (ControlData)
 		{
-			EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Triggered, this, &ThisClass::Slash);
+			// EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Triggered, this, &ThisClass::Slash);
 		}
 	}
 }
