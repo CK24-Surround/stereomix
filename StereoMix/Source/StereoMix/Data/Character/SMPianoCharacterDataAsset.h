@@ -1,0 +1,16 @@
+// Copyright Surround, Inc. All Rights Reserved.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "SMPlayerCharacterDataAsset.h"
+#include "SMPianoCharacterDataAsset.generated.h"
+
+/**
+ * 
+ */
+UCLASS()
+class STEREOMIX_API USMPianoCharacterDataAsset : public USMPlayerCharacterDataAsset
+{
+	GENERATED_BODY()
+};
