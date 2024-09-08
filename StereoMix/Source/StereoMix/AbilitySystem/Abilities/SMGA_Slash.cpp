@@ -3,6 +3,8 @@
 
 #include "SMGA_Slash.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMTags.h"
@@ -162,12 +164,42 @@ void USMGA_Slash::OnNextActionProcced()
 	ServerRPCApplyCost();
 }
 
-void USMGA_Slash::OnSlashHit(AActor* Actor)
+void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 {
-	NET_LOG(GetAvatarActor(), Warning, TEXT("%s 적중"), *GetNameSafe(Actor));
+	NET_LOG(GetAvatarActor(), Warning, TEXT("%s 적중"), *GetNameSafe(TargetActor));
+	ServerRPCSlashHit(TargetActor);
 }
 
 void USMGA_Slash::ServerRPCApplyCost_Implementation()
 {
 	K2_CommitAbilityCost();
+}
+
+void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
+{
+	UAbilitySystemComponent* SourceASC = GetASC();
+	if (!SourceASC)
+	{
+		return;
+	}
+
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (!TargetASC)
+	{
+		return;
+	}
+
+	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+	if (!SourceDataAsset)
+	{
+		return;
+	}
+
+	FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
+	if (GESpecHandle.IsValid())
+	{
+		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+	}
+
+	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 }

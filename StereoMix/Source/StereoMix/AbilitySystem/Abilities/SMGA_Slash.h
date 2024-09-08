@@ -49,10 +49,13 @@ protected:
 
 	void OnNextActionProcced();
 
-	void OnSlashHit(AActor* Actor);
+	void OnSlashHit(AActor* TargetActor);
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPCApplyCost();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCSlashHit(AActor* TargetActor);
 
 	/** 베기의 데미지량입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
