@@ -3,14 +3,14 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
+#include "SMGA_Attack.h"
 #include "SMGA_Slash.generated.h"
 
 /**
  * 
  */
-UCLASS()
-class STEREOMIX_API USMGA_Slash : public USMGameplayAbility
+UCLASS(Abstract)
+class STEREOMIX_API USMGA_Slash : public USMGA_Attack
 {
 	GENERATED_BODY()
 
