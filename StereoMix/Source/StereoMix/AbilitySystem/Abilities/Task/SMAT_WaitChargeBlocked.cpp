@@ -27,6 +27,8 @@ void USMAT_WaitChargeBlocked::Activate()
 
 void USMAT_WaitChargeBlocked::OnDestroy(bool bInOwnerFinished)
 {
+	OnChargeBlocked.Unbind();
+
 	Super::OnDestroy(bInOwnerFinished);
 }
 

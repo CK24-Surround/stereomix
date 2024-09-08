@@ -3,19 +3,12 @@
 
 #include "SMBassCharacter.h"
 
-#include "EnhancedInputComponent.h"
-#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "Characters/Slash/SMSlashComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "Controllers/SMGamePlayerController.h"
-#include "Data/SMControlData.h"
 
 
 ASMBassCharacter::ASMBassCharacter()
 {
-	SlashComponent = CreateDefaultSubobject<USMSlashComponent>(TEXT("SlashComponent"));
-
 	SlashColliderRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SlashColliderRootComponent"));
 	SlashColliderRootComponent->SetupAttachment(RootComponent);
 
@@ -30,44 +23,4 @@ ASMBassCharacter::ASMBassCharacter()
 	LockAimTags.AddTag(SMTags::Character::State::SlashActivation);
 
 	LockMovementTags.AddTag(SMTags::Character::State::Charge);
-}
-
-void ASMBassCharacter::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-}
-
-void ASMBassCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	if (EnhancedInputComponent)
-	{
-		const USMControlData* ControlData = SMPlayerController->GetControlData();
-		if (ControlData)
-		{
-			// EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Triggered, this, &ThisClass::Slash);
-		}
-	}
-}
-
-void ASMBassCharacter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-}
-
-void ASMBassCharacter::Slash()
-{
-	SlashComponent->TrySlash();
-}
-
-void ASMBassCharacter::FocusToCursor()
-{
-	if (bNeedLockAimBySlash)
-	{
-		return;
-	}
-
-	Super::FocusToCursor();
 }

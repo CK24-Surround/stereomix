@@ -25,6 +25,8 @@ public:
 	static USMAT_NextActionProccedCheck* NextActionProccedCheck(UGameplayAbility* OwningAbility);
 
 	virtual void TickTask(float DeltaTime) override;
+	
+	virtual void OnDestroy(bool bInOwnerFinished) override;
 
 	FOnNextActionProccedDelegate OnNextActionProcced;
 

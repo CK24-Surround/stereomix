@@ -31,6 +31,8 @@ public:
 protected:
 	virtual void TickTask(float DeltaTime) override;
 
+	virtual void OnDestroy(bool bInOwnerFinished) override;
+
 	void SetIsEntry(bool bNewIsEntry);
 
 	UFUNCTION()

@@ -48,4 +48,29 @@ protected:
 	void RightSlashNextCallback(FGameplayEventData Payload) { bIsLeftSlashNext = false; }
 
 	void OnNextActionProcced();
+
+	void OnSlashHit(AActor* Actor);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCApplyCost();
+
+	/** 베기의 데미지량입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Damage = 25.0f;
+
+	/** 베기의 사정거리입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Range = 500.0f;
+
+	/** 베기의 전방기준 각도입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Angle = 240.0f;
+
+	/** 베기를 수행하는 동안 소요될 시간입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float TotalSlashTime = 0.1875f;
+
+	/** 콜라이더의 회전을 보여줄지 여부입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 bShowDebug:1 = false;
 };

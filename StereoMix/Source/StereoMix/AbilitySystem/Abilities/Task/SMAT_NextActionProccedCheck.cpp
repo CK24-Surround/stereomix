@@ -29,6 +29,16 @@ void USMAT_NextActionProccedCheck::TickTask(float DeltaTime)
 		SourceAbility->bCanProceedNextAction = false;
 		SourceAbility->bIsInput = false;
 
-		(void)OnNextActionProcced.ExecuteIfBound();
+		if (ShouldBroadcastAbilityTaskDelegates())
+		{
+			(void)OnNextActionProcced.ExecuteIfBound();
+		}
 	}
+}
+
+void USMAT_NextActionProccedCheck::OnDestroy(bool bInOwnerFinished)
+{
+	OnNextActionProcced.Unbind();
+
+	Super::OnDestroy(bInOwnerFinished);
 }

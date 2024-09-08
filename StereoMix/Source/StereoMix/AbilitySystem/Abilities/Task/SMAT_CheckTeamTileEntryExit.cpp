@@ -52,6 +52,14 @@ void USMAT_CheckTeamTileEntryExit::TickTask(float DeltaTime)
 	}
 }
 
+void USMAT_CheckTeamTileEntryExit::OnDestroy(bool bInOwnerFinished)
+{
+	OnTeamTileEntry.Unbind();
+	OnTeamTileExit.Unbind();
+
+	Super::OnDestroy(bInOwnerFinished);
+}
+
 void USMAT_CheckTeamTileEntryExit::SetIsEntry(bool bNewIsEntry)
 {
 	if (bIsEntry != bNewIsEntry)
@@ -70,10 +78,16 @@ void USMAT_CheckTeamTileEntryExit::SetIsEntry(bool bNewIsEntry)
 
 void USMAT_CheckTeamTileEntryExit::OnTeamTileEntryCallback()
 {
-	(void)OnTeamTileEntry.ExecuteIfBound();
+	if (ShouldBroadcastAbilityTaskDelegates())
+	{
+		(void)OnTeamTileEntry.ExecuteIfBound();
+	}
 }
 
 void USMAT_CheckTeamTileEntryExit::OnTeamTileExitCallback()
 {
-	(void)OnTeamTileExit.ExecuteIfBound();
+	if (ShouldBroadcastAbilityTaskDelegates())
+	{
+		(void)OnTeamTileExit.ExecuteIfBound();
+	}
 }

@@ -7,6 +7,7 @@
 #include "SMBassCharacter.generated.h"
 
 class USMSlashComponent;
+
 DECLARE_DELEGATE(FOnSlashSignature);
 
 UCLASS(Abstract)
@@ -17,30 +18,11 @@ class STEREOMIX_API ASMBassCharacter : public ASMPlayerCharacterBase
 public:
 	ASMBassCharacter();
 
-	virtual void PostInitializeComponents() override;
-
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-
-	virtual void Tick(float DeltaSeconds) override;
-
-	USMSlashComponent* GetSlashComponent() const { return SlashComponent; }
-
 	USceneComponent* GetSlashColliderRootComponent() const { return SlashColliderRootComponent; }
 
 	UCapsuleComponent* GetSlashColliderComponent() const { return SlashColliderComponent; }
 
-	FOnSlashSignature OnSlash;
-
-	uint32 bNeedLockAimBySlash:1 = false;
-
 protected:
-	void Slash();
-
-	virtual void FocusToCursor() override;
-
-	UPROPERTY(VisibleAnywhere, Category = "Slash")
-	TObjectPtr<USMSlashComponent> SlashComponent;
-
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<USceneComponent> SlashColliderRootComponent;
 

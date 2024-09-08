@@ -8,10 +8,12 @@
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Task/SMAT_ColliderOrientationForSlash.h"
 #include "Task/SMAT_NextActionProccedCheck.h"
 
 USMGA_Slash::USMGA_Slash()
 {
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	bReplicateInputDirectly = true;
 
 	ActivationOwnedTags.AddTag(SMTags::Character::State::SlashActivation);
@@ -57,36 +59,45 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::SlashEnded);
 	MontageTask->ReadyForActivation();
 
-	UAbilityTask_WaitGameplayEvent* SlashJudgeStartEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::AttackStart);
-	SlashJudgeStartEventTask->EventReceived.AddDynamic(this, &ThisClass::OnSlashJudgeStartCallback);
-	SlashJudgeStartEventTask->ReadyForActivation();
+	if (IsLocallyControlled())
+	{
+		UAbilityTask_WaitGameplayEvent* SlashJudgeStartEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::AttackStart);
+		SlashJudgeStartEventTask->EventReceived.AddDynamic(this, &ThisClass::OnSlashJudgeStartCallback);
+		SlashJudgeStartEventTask->ReadyForActivation();
 
-	UAbilityTask_WaitGameplayEvent* CanInputEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::CanInput);
-	CanInputEventTask->EventReceived.AddDynamic(this, &ThisClass::CanInputCallback);
-	CanInputEventTask->ReadyForActivation();
+		UAbilityTask_WaitGameplayEvent* CanInputEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::CanInput);
+		CanInputEventTask->EventReceived.AddDynamic(this, &ThisClass::CanInputCallback);
+		CanInputEventTask->ReadyForActivation();
 
-	UAbilityTask_WaitGameplayEvent* CanProceedNextActionEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::CanProceedNextAction);
-	CanProceedNextActionEventTask->EventReceived.AddDynamic(this, &ThisClass::CanProceedNextActionCallback);
-	CanProceedNextActionEventTask->ReadyForActivation();
+		UAbilityTask_WaitGameplayEvent* CanProceedNextActionEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::CanProceedNextAction);
+		CanProceedNextActionEventTask->EventReceived.AddDynamic(this, &ThisClass::CanProceedNextActionCallback);
+		CanProceedNextActionEventTask->ReadyForActivation();
 
-	UAbilityTask_WaitGameplayEvent* LeftSlashEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::LeftSlashNext);
-	LeftSlashEventTask->EventReceived.AddDynamic(this, &ThisClass::LeftSlashNextCallback);
-	LeftSlashEventTask->ReadyForActivation();
+		UAbilityTask_WaitGameplayEvent* LeftSlashEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::LeftSlashNext);
+		LeftSlashEventTask->EventReceived.AddDynamic(this, &ThisClass::LeftSlashNextCallback);
+		LeftSlashEventTask->ReadyForActivation();
 
-	UAbilityTask_WaitGameplayEvent* RightSlashEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::RightSlashNext);
-	RightSlashEventTask->EventReceived.AddDynamic(this, &ThisClass::RightSlashNextCallback);
-	RightSlashEventTask->ReadyForActivation();
+		UAbilityTask_WaitGameplayEvent* RightSlashEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::RightSlashNext);
+		RightSlashEventTask->EventReceived.AddDynamic(this, &ThisClass::RightSlashNextCallback);
+		RightSlashEventTask->ReadyForActivation();
 
-	USMAT_NextActionProccedCheck* NextActionProccedTask = USMAT_NextActionProccedCheck::NextActionProccedCheck(this);
-	NextActionProccedTask->OnNextActionProcced.BindUObject(this, &ThisClass::OnNextActionProcced);
-	NextActionProccedTask->ReadyForActivation();
+		USMAT_NextActionProccedCheck* NextActionProccedTask = USMAT_NextActionProccedCheck::NextActionProccedCheck(this);
+		NextActionProccedTask->OnNextActionProcced.BindUObject(this, &ThisClass::OnNextActionProcced);
+		NextActionProccedTask->ReadyForActivation();
+	}
+
+	K2_CommitAbilityCost();
 }
 
 void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
+	if (!K2_CommitAbility())
+	{
+		return;
+	}
+
 	if (bCanInput)
 	{
-		NET_LOG(GetAvatarActor(), Warning, TEXT("입력!"));
 		bCanInput = false;
 		bIsInput = true;
 	}
@@ -120,7 +131,9 @@ void USMGA_Slash::SlashEnded()
 
 void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 {
-	
+	USMAT_ColliderOrientationForSlash* ColliderOrientationForSlashTask = USMAT_ColliderOrientationForSlash::ColliderOrientationForSlash(this, Range, Angle, TotalSlashTime, bShowDebug);
+	ColliderOrientationForSlashTask->OnSlashHit.BindUObject(this, &ThisClass::OnSlashHit);
+	ColliderOrientationForSlashTask->ReadyForActivation();
 }
 
 void USMGA_Slash::OnNextActionProcced()
@@ -145,6 +158,16 @@ void USMGA_Slash::OnNextActionProcced()
 	}
 
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
-	NET_LOG(GetAvatarActor(), Warning, TEXT("%s"), *SectionName.ToString());
 	MontageJumpToSection(SectionName);
+	ServerRPCApplyCost();
+}
+
+void USMGA_Slash::OnSlashHit(AActor* Actor)
+{
+	NET_LOG(GetAvatarActor(), Warning, TEXT("%s 적중"), *GetNameSafe(Actor));
+}
+
+void USMGA_Slash::ServerRPCApplyCost_Implementation()
+{
+	K2_CommitAbilityCost();
 }
