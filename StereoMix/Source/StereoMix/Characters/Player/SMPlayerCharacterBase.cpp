@@ -507,21 +507,30 @@ void ASMPlayerCharacterBase::GiveDefaultAbilities()
 
 	for (const auto& DefaultActiveAbility : DataAsset->DefaultActiveAbilities)
 	{
-		FGameplayAbilitySpec AbilitySpec(DefaultActiveAbility.Value, 1, static_cast<int32>(DefaultActiveAbility.Key));
-		ASC->GiveAbility(AbilitySpec);
+		if (DefaultActiveAbility.Value)
+		{
+			FGameplayAbilitySpec AbilitySpec(DefaultActiveAbility.Value, 1, static_cast<int32>(DefaultActiveAbility.Key));
+			ASC->GiveAbility(AbilitySpec);
+		}
 	}
 
 	for (const auto& DefaultAbility : DataAsset->DefaultAbilities)
 	{
-		FGameplayAbilitySpec AbilitySpec(DefaultAbility);
-		ASC->GiveAbility(AbilitySpec);
+		if (DefaultAbility)
+		{
+			FGameplayAbilitySpec AbilitySpec(DefaultAbility);
+			ASC->GiveAbility(AbilitySpec);
+		}
 	}
 
 	for (const auto& PassiveAbility : DataAsset->PassiveAbilities)
 	{
-		FGameplayAbilitySpec AbilitySpec(PassiveAbility);
-		ASC->GiveAbility(AbilitySpec);
-		ASC->TryActivateAbility(AbilitySpec.Handle);
+		if (PassiveAbility)
+		{
+			FGameplayAbilitySpec AbilitySpec(PassiveAbility);
+			ASC->GiveAbility(AbilitySpec);
+			ASC->TryActivateAbility(AbilitySpec.Handle);
+		}
 	}
 }
 
