@@ -83,8 +83,6 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	// 타겟 Yaw에 도달했다면 끝냅니다.
 	if (FMath::IsNearlyEqual(SourceRotation.Yaw, NewYaw))
 	{
-		SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		DetectedActors.Reset();
 		EndTask();
 	}
 }
@@ -93,9 +91,11 @@ void USMAT_ColliderOrientationForSlash::OnDestroy(bool bInOwnerFinished)
 {
 	if (SourceSlashColliderComponent.Get())
 	{
+		SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 		SourceSlashColliderComponent->OnComponentBeginOverlap.RemoveAll(this);
 	}
 
+	DetectedActors.Reset();
 	OnSlashHit.Unbind();
 
 	Super::OnDestroy(bInOwnerFinished);

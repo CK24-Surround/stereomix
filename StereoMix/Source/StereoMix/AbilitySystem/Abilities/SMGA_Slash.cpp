@@ -57,8 +57,8 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	const FName TaskName = TEXT("MontageTask");
 	UAnimMontage* Montage = SourceDataAsset->AttackMontage[SourceTeam];
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TaskName, Montage, 1.0f, NAME_None, false);
-	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::SlashEnded);
-	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::SlashEnded);
+	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::K2_EndAbility);
+	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->ReadyForActivation();
 
 	if (IsLocallyControlled())
@@ -89,6 +89,16 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	}
 
 	K2_CommitAbilityCost();
+}
+
+void USMGA_Slash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	bCanInput = false;
+	bIsInput = false;
+	bCanProceedNextAction = false;
+	bIsLeftSlashNext = true;
+
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
@@ -126,11 +136,6 @@ void USMGA_Slash::FocusToCursor()
 	SourceController->SetControlRotation(NewRotation);
 }
 
-void USMGA_Slash::SlashEnded()
-{
-	K2_EndAbility();
-}
-
 void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 {
 	USMAT_ColliderOrientationForSlash* ColliderOrientationForSlashTask = USMAT_ColliderOrientationForSlash::ColliderOrientationForSlash(this, Range, Angle, TotalSlashTime, bShowDebug);
@@ -166,7 +171,15 @@ void USMGA_Slash::OnNextActionProcced()
 
 void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 {
-	NET_LOG(GetAvatarActor(), Warning, TEXT("%s 적중"), *GetNameSafe(TargetActor));
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s 적중"), *GetNameSafe(TargetActor));
+
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (!TargetCharacter)
+	{
+		return;
+	}
+
+	TargetCharacter->PredictHPChange(-Damage);
 	ServerRPCSlashHit(TargetActor);
 }
 
