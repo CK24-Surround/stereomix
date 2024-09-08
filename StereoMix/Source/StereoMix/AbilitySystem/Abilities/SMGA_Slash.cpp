@@ -8,6 +8,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Task/SMAT_NextActionProccedCheck.h"
 
 USMGA_Slash::USMGA_Slash()
 {
@@ -75,6 +76,10 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	UAbilityTask_WaitGameplayEvent* RightSlashEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Attack::RightSlashNext);
 	RightSlashEventTask->EventReceived.AddDynamic(this, &ThisClass::RightSlashNextCallback);
 	RightSlashEventTask->ReadyForActivation();
+
+	USMAT_NextActionProccedCheck* NextActionProccedTask = USMAT_NextActionProccedCheck::NextActionProccedCheck(this);
+	NextActionProccedTask->OnNextActionProcced.BindUObject(this, &ThisClass::OnNextActionProcced);
+	NextActionProccedTask->ReadyForActivation();
 }
 
 void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
@@ -110,13 +115,36 @@ void USMGA_Slash::FocusToCursor()
 
 void USMGA_Slash::SlashEnded()
 {
-	NET_LOG(GetAvatarActor(), Warning, TEXT(""));
-	ApplyCost(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo);
 	K2_EndAbility();
 }
 
 void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 {
-	NET_LOG(GetAvatarActor(), Warning, TEXT(""));
-	bCanProceedNextAction = true;
+	
+}
+
+void USMGA_Slash::OnNextActionProcced()
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset();
+	if (!SourceDataAsset)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	if (IsLocallyControlled())
+	{
+		FocusToCursor();
+	}
+
+	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
+	NET_LOG(GetAvatarActor(), Warning, TEXT("%s"), *SectionName.ToString());
+	MontageJumpToSection(SectionName);
 }

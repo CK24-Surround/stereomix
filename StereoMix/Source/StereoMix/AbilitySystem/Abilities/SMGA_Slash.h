@@ -17,6 +17,11 @@ class STEREOMIX_API USMGA_Slash : public USMGameplayAbility
 public:
 	USMGA_Slash();
 
+	uint32 bCanInput:1 = false;
+	uint32 bIsInput:1 = false;
+	uint32 bCanProceedNextAction:1 = false;
+	uint32 bIsLeftSlashNext:1 = true;
+
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
@@ -31,19 +36,16 @@ protected:
 	void OnSlashJudgeStartCallback(FGameplayEventData Payload);
 
 	UFUNCTION()
-	void CanInputCallback(FGameplayEventData Payload) { NET_LOG(GetAvatarActor(), Warning, TEXT("")); bCanInput = true; }
+	void CanInputCallback(FGameplayEventData Payload) { bCanInput = true; }
 
 	UFUNCTION()
-	void CanProceedNextActionCallback(FGameplayEventData Payload) { NET_LOG(GetAvatarActor(), Warning, TEXT("")); bCanProceedNextAction = true; }
+	void CanProceedNextActionCallback(FGameplayEventData Payload) { bCanProceedNextAction = true; }
 
 	UFUNCTION()
-	void LeftSlashNextCallback(FGameplayEventData Payload) { NET_LOG(GetAvatarActor(), Warning, TEXT("")); bIsLeftSlashNext = true; }
-	
+	void LeftSlashNextCallback(FGameplayEventData Payload) { bIsLeftSlashNext = true; }
+
 	UFUNCTION()
-	void RightSlashNextCallback(FGameplayEventData Payload) { NET_LOG(GetAvatarActor(), Warning, TEXT("")); bIsLeftSlashNext = false; }
-	
-	uint32 bCanInput:1 = false;
-	uint32 bIsInput:1 = false;
-	uint32 bCanProceedNextAction:1 = false;
-	uint32 bIsLeftSlashNext:1 = true;
+	void RightSlashNextCallback(FGameplayEventData Payload) { bIsLeftSlashNext = false; }
+
+	void OnNextActionProcced();
 };
