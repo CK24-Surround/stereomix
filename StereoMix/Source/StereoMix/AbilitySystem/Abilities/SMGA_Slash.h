@@ -29,8 +29,6 @@ protected:
 
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
-	void FocusToCursor();
-
 	UFUNCTION()
 	void OnSlashJudgeStartCallback(FGameplayEventData Payload);
 

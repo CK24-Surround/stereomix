@@ -40,7 +40,7 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 		return;
 	}
 
-	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset();
+	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceDataAsset)
 	{
 		EndAbilityByCancel();
@@ -51,7 +51,7 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 	if (IsLocallyControlled())
 	{
-		FocusToCursor();
+		SourceCharacter->FocusToCursor();
 	}
 
 	const FName TaskName = TEXT("MontageTask");
@@ -115,27 +115,6 @@ void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FG
 	}
 }
 
-void USMGA_Slash::FocusToCursor()
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		return;
-	}
-
-	APlayerController* SourceController = SourceCharacter->GetController<APlayerController>();
-	if (!SourceController)
-	{
-		return;
-	}
-
-	const FVector CursorTargetingPoint = SourceCharacter->GetCursorTargetingPoint();
-	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	const FVector Direction = (CursorTargetingPoint - SourceLocation).GetSafeNormal();
-	const FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-	SourceController->SetControlRotation(NewRotation);
-}
-
 void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 {
 	USMAT_ColliderOrientationForSlash* ColliderOrientationForSlashTask = USMAT_ColliderOrientationForSlash::ColliderOrientationForSlash(this, Range, Angle, TotalSlashTime, bShowDebug);
@@ -152,7 +131,7 @@ void USMGA_Slash::OnNextActionProcced()
 		return;
 	}
 
-	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset();
+	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceDataAsset)
 	{
 		EndAbilityByCancel();
@@ -161,7 +140,7 @@ void USMGA_Slash::OnNextActionProcced()
 
 	if (IsLocallyControlled())
 	{
-		FocusToCursor();
+		SourceCharacter->FocusToCursor();
 	}
 
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
@@ -196,14 +175,14 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 		return;
 	}
 
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (!TargetASC)
+	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+	if (!SourceDataAsset)
 	{
 		return;
 	}
 
-	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceDataAsset)
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (!TargetASC)
 	{
 		return;
 	}

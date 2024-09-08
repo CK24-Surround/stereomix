@@ -122,6 +122,8 @@ public:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
+	virtual void FocusToCursor();
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:
@@ -137,7 +139,7 @@ protected:
 
 	void UpdateCameraLocation();
 
-	virtual void FocusToCursor();
+	void UpdateFocusToCursor();
 
 	void BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget);
 

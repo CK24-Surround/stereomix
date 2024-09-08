@@ -232,7 +232,7 @@ void USMGA_Neutralize::NeutralizeExit()
 	// 노이즈 브레이크를 1회라도 당해 넘어진 상태이거나, 잡혀있는 상태인 경우 무력화 종료 애니메이션이 달라져야하는데 이를 위해 현재 실행중인 애니메이션의 End 섹션으로 점프시키는 코드입니다.
 	// 해당 애니메이션을 무한루프하고 있는 상태이므로 가능합니다.
 	UAnimMontage* EndMontage = SourceAnimInstance->GetCurrentActiveMontage();
-	NET_LOG(GetAvatarActor(), Warning, TEXT("EndMontage: %s"), *EndMontage->GetName());
+	NET_LOG(GetAvatarActor(), Log, TEXT("무력화 상태에 사용되고 있는 몽타주: %s"), *EndMontage->GetName());
 	const FName EndSectionName = TEXT("End");
 	ClientRPCPlayMontage(EndMontage, 1.0f, EndSectionName);
 	UAbilityTask_PlayMontageAndWait* MontageWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("NeutralizeEnd"), EndMontage, 1.0f, EndSectionName);
@@ -249,7 +249,6 @@ void USMGA_Neutralize::NeutralizeExit()
 
 void USMGA_Neutralize::NeutralizeExitMontageEnded()
 {
-	NET_LOG(GetAvatarActor(), Warning, TEXT("무력화 몽타주 종료"));
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	if (!SourceCharacter)
 	{

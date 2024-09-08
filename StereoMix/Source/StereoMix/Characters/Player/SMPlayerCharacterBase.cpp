@@ -169,7 +169,7 @@ void ASMPlayerCharacterBase::Tick(float DeltaSeconds)
 	if (IsLocallyControlled())
 	{
 		UpdateCameraLocation();
-		FocusToCursor();
+		UpdateFocusToCursor();
 	}
 }
 
@@ -414,6 +414,19 @@ void ASMPlayerCharacterBase::Landed(const FHitResult& Hit)
 	OnCharacterLanded.Broadcast(this);
 }
 
+void ASMPlayerCharacterBase::FocusToCursor()
+{
+	if (!SMPlayerController.Get())
+	{
+		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1.0f, FColor::Yellow, TEXT("SMPlayerController가 무효합니다."));
+		return;
+	}
+
+	const FVector Direction = (GetCursorTargetingPoint() - GetActorLocation()).GetSafeNormal();
+	const FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
+	Controller->SetControlRotation(NewRotation);
+}
+
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)
 {
 	if (!ASC.Get())
@@ -599,14 +612,8 @@ void ASMPlayerCharacterBase::UpdateCameraLocation()
 	CameraBoom->SetWorldLocation(TargetLocation);
 }
 
-void ASMPlayerCharacterBase::FocusToCursor()
+void ASMPlayerCharacterBase::UpdateFocusToCursor()
 {
-	if (!SMPlayerController.Get())
-	{
-		GEngine->AddOnScreenDebugMessage(INDEX_NONE, 1.0f, FColor::Yellow, TEXT("SMPlayerController가 무효합니다."));
-		return;
-	}
-
 	const USMAbilitySystemComponent* CachedASC = ASC.Get();
 	if (CachedASC)
 	{
@@ -616,9 +623,7 @@ void ASMPlayerCharacterBase::FocusToCursor()
 		}
 	}
 
-	const FVector Direction = (GetCursorTargetingPoint() - GetActorLocation()).GetSafeNormal();
-	const FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
-	Controller->SetControlRotation(NewRotation);
+	FocusToCursor();
 }
 
 void ASMPlayerCharacterBase::BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget)
