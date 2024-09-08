@@ -30,7 +30,6 @@ ASMBassCharacter::ASMBassCharacter()
 	LockAimTags.AddTag(SMTags::Character::State::SlashActivation);
 
 	LockMovementTags.AddTag(SMTags::Character::State::Charge);
-	LockMovementTags.AddTag(SMTags::Character::State::SlashActivation);
 }
 
 void ASMBassCharacter::PostInitializeComponents()

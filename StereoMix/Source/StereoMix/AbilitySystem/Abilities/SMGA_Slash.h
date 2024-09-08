@@ -27,5 +27,23 @@ protected:
 	UFUNCTION()
 	void SlashEnded();
 
+	UFUNCTION()
+	void OnSlashJudgeStartCallback(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void CanInputCallback(FGameplayEventData Payload) { NET_LOG(GetAvatarActor(), Warning, TEXT("")); bCanInput = true; }
+
+	UFUNCTION()
+	void CanProceedNextActionCallback(FGameplayEventData Payload) { NET_LOG(GetAvatarActor(), Warning, TEXT("")); bCanProceedNextAction = true; }
+
+	UFUNCTION()
+	void LeftSlashNextCallback(FGameplayEventData Payload) { NET_LOG(GetAvatarActor(), Warning, TEXT("")); bIsLeftSlashNext = true; }
+	
+	UFUNCTION()
+	void RightSlashNextCallback(FGameplayEventData Payload) { NET_LOG(GetAvatarActor(), Warning, TEXT("")); bIsLeftSlashNext = false; }
+	
 	uint32 bCanInput:1 = false;
+	uint32 bIsInput:1 = false;
+	uint32 bCanProceedNextAction:1 = false;
+	uint32 bIsLeftSlashNext:1 = true;
 };

@@ -81,6 +81,15 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smash);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SmashEnd);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakEnd);
+
+			namespace Attack
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(AttackStart);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(CanInput);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(CanProceedNextAction);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(LeftSlashNext);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(RightSlashNext);
+			}
 		}
 
 		namespace Character

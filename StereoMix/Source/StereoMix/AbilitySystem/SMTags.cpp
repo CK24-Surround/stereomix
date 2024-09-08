@@ -80,6 +80,15 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "Event.AnimNotify.Smash", "매치기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashEnd, "Event.AnimNotify.SmashEnd", "매치기 종료 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakEnd, "Event.AnimNotify.NoiseBreakEnd", "노이즈브레이크 종료 애님 노티파이의 이벤트로 사용됩니다.");
+
+			namespace Attack
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(AttackStart, "Event.AnimNotify.Attack.AttackStart", "공격 판정 시작 노티파이의 이벤트로 사용됩니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(CanInput, "Event.AnimNotify.Attack.CanInput", "입력 가능 애님 노티파이의 이벤트로 사용됩니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(CanProceedNextAction, "Event.AnimNotify.Attack.CanProceedNextAction", "다음 액션으로 넘어갈 수 있는 지점을 나타내는 애님 노티파이의 이벤트로 사용됩니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(LeftSlashNext, "Event.AnimNotify.Attack.LeftSlashNext", "다음 배기의 방향을 나타내는 애님 노티파이의 이벤트로 사용됩니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(RightSlashNext, "Event.AnimNotify.Attack.RightSlashNext", "다음 배기의 방향을 나타내는 애님 노티파이의 이벤트로 사용됩니다.");
+			}
 		}
 
 		namespace Character
