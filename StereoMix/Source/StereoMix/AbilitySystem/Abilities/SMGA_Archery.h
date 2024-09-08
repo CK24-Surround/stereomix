@@ -21,4 +21,20 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+
+	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
+
+	UFUNCTION()
+	void OnCharged1();
+
+	UFUNCTION()
+	void OnCharged2();
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Charge1Time = 0.25f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Charge2Time = 0.5f;
+
+	int32 ChargeLevel = 0;
 };
