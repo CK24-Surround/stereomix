@@ -7,6 +7,7 @@
 #include "SMPianoCharacterDataAsset.generated.h"
 
 class UInputAction;
+
 /**
  * 
  */
@@ -14,4 +15,8 @@ UCLASS()
 class STEREOMIX_API USMPianoCharacterDataAsset : public USMPlayerCharacterDataAsset
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImpactArrowIndicator;
 };

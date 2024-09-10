@@ -6,6 +6,9 @@
 #include "SMGA_Skill.h"
 #include "SMGA_ImpactArrow.generated.h"
 
+class USMAT_SkillIndicator;
+class UEnhancedInputComponent;
+
 /**
  * 
  */
@@ -24,8 +27,41 @@ protected:
 
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
-	void Shot();
+	void Shoot();
+
+	UFUNCTION()
+	void OnImpact();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCOnImpact(const FVector_NetQuantize10& NewTargetLocation);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCApplyCost();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCRemoveTag();
+
+	UPROPERTY()
+	TObjectPtr<USMAT_SkillIndicator> SkillIndicatorTask;
 
 	UPROPERTY()
 	TObjectPtr<UEnhancedInputComponent> InputComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	int32 MaxDistanceByTile = 12;
+
+	float MaxDistance = 0.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float TravelTime = 1.0f;
+
+	FVector TargetLocation;
+
+	uint32 bCanShoot:1 = true;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Radius = 250.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Magnitude = 300.0f;
 };

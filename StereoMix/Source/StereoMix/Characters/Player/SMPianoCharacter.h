@@ -6,6 +6,8 @@
 #include "SMPlayerCharacterBase.h"
 #include "SMPianoCharacter.generated.h"
 
+class UNiagaraComponent;
+
 UCLASS()
 class STEREOMIX_API ASMPianoCharacter : public ASMPlayerCharacterBase
 {
@@ -14,6 +16,12 @@ class STEREOMIX_API ASMPianoCharacter : public ASMPlayerCharacterBase
 public:
 	ASMPianoCharacter();
 
+	virtual void OnRep_PlayerState() override;
+
+	UNiagaraComponent* GetImpactArrowIndicator() { return ImpactArrowIndicatorNiagaraComponent; }
+
 protected:
 	virtual void BeginPlay() override;
+
+	TObjectPtr<UNiagaraComponent> ImpactArrowIndicatorNiagaraComponent;
 };
