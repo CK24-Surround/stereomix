@@ -36,6 +36,8 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 		return;
 	}
 
+	K2_CommitAbility();
+
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
 	const FName TaskName = TEXT("MontageTask");
@@ -56,8 +58,6 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 		Charge2Task->OnFinish.AddDynamic(this, &ThisClass::OnCharged2);
 		Charge2Task->ReadyForActivation();
 	}
-
-	K2_CommitAbility();
 }
 
 void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
