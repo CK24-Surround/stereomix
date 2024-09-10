@@ -9,6 +9,7 @@
 
 #include "SMGameState.generated.h"
 
+class USMProjectilePoolManagerComponent;
 class USMTileManagerComponent;
 class UFMODEvent;
 class USMWidget_RoomId;
@@ -221,7 +222,12 @@ private:
 public:
 	USMTileManagerComponent* GetTileManager() { return TileManager; }
 
+	USMProjectilePoolManagerComponent* GetProjectilePoolManager() { return ProjectilePoolManager; }
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Design")
 	TObjectPtr<USMTileManagerComponent> TileManager;
+
+	UPROPERTY(VisibleAnywhere, Category = "Design")
+	TObjectPtr<USMProjectilePoolManagerComponent> ProjectilePoolManager;
 };

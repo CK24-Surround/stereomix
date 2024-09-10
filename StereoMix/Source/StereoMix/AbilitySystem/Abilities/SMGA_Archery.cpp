@@ -8,9 +8,13 @@
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Games/SMGameState.h"
+#include "Projectiles/SMProjectile.h"
+#include "Projectiles/SMProjectilePoolManagerComponent.h"
 
 USMGA_Archery::USMGA_Archery()
 {
+	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Archery);
 }
 
@@ -43,6 +47,7 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 
 	if (IsLocallyControlled())
 	{
+		NET_LOG(GetAvatarActor(), Warning, TEXT("차지 시작"));
 		UAbilityTask_WaitDelay* Charge1Task = UAbilityTask_WaitDelay::WaitDelay(this, Charge1Time);
 		Charge1Task->OnFinish.AddDynamic(this, &ThisClass::OnCharged1);
 		Charge1Task->ReadyForActivation();
@@ -69,7 +74,7 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 
 	if (ChargeLevel == 0)
 	{
-		NET_LOG(GetAvatarActor(), Warning, TEXT("헛방"));
+		K2_EndAbility();
 	}
 	else if (ChargeLevel == 1)
 	{
@@ -79,8 +84,6 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 	{
 		Charge2();
 	}
-
-	K2_EndAbility();
 }
 
 void USMGA_Archery::OnCharged1()
@@ -97,11 +100,79 @@ void USMGA_Archery::OnCharged2()
 
 void USMGA_Archery::Charge1()
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
 	K2_CommitAbilityCost();
+
+	const FVector SourceLocation = SourceCharacter->GetActorLocation();
+	const FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint();
+	LaunchProjectile(SourceLocation, TargetLocation, 1);
 }
 
 void USMGA_Archery::Charge2()
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
 	K2_CommitAbilityCost();
 	K2_CommitAbilityCost();
+
+	const FVector SourceLocation = SourceCharacter->GetActorLocation();
+	const FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint();
+	LaunchProjectile(SourceLocation, TargetLocation, 2);
+}
+
+void USMGA_Archery::LaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargeLevel)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
+	if (!GameState)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState->GetProjectilePoolManager();
+	if (!ProjectilePoolManager)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	ASMProjectile* Projectile = ProjectilePoolManager->GetProjectileForPiano(SourceCharacter->GetTeam());
+	if (!Projectile)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	float Damage;
+	if (InChargeLevel == 1)
+	{
+		Damage = FullChargeDamage * Charge1DamageMultiply;
+	}
+	else
+	{
+		Damage = FullChargeDamage * Charge2DamageMultiply;
+	}
+
+	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
+	Projectile->Launch(SourceCharacter, SourceLocation, LaunchDirection, ProjectileSpeed, MaxDistance, Damage);
+
+	K2_EndAbility();
 }

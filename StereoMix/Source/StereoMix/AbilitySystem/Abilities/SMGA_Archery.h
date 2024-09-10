@@ -34,11 +34,29 @@ protected:
 
 	void Charge2();
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Charge1Time = 0.25f;
+	UFUNCTION(Server, Reliable)
+	void LaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargeLevel);
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float Charge2Time = 0.5f;
+	float ProjectileSpeed = 2500.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float MaxDistance = 1250.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float FullChargeDamage = 20.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Charge1DamageMultiply = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Charge2DamageMultiply = 1.0f;
+	
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Charge1Time = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Charge2Time = 1.0f;
 
 	int32 ChargeLevel = 0;
 };

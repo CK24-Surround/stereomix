@@ -296,29 +296,29 @@ ASMProjectile* ASMGameMode::GetProjectileFromProjectilePool(ESMTeam SourceTeam, 
 
 void ASMGameMode::InitProjectilePool()
 {
-	// 투사체 풀을 생성합니다. 각 팀, 캐릭터에 맞는 투사체 풀을 생성하기위한 과정입니다. 이렇게 난해하게 처리하는 이유는 블루프린트에서 투사체 풀을 지정할 수 있도록하기 위함입니다.
-	for (auto& ProjectilePoolCreateDataMapPair : ProjectilePoolCreateDataMap) // 팀을 순회합니다.
-	{
-		ESMTeam& Team = ProjectilePoolCreateDataMapPair.Key;
-		TMap<ESMCharacterType, TSubclassOf<USMProjectilePool>>& ProjectilePoolClassMap = ProjectilePoolCreateDataMapPair.Value.ClassMapByCharacterType;
-
-		for (auto& ProjectilePoolClassMapPair : ProjectilePoolClassMap) // 캐릭터 타입을 순회합니다.
-		{
-			ESMCharacterType& CharacterType = ProjectilePoolClassMapPair.Key;
-			TSubclassOf<USMProjectilePool>& ProjectilePoolClass = ProjectilePoolClassMapPair.Value;
-
-			if (!ProjectilePoolClass)
-			{
-				NET_LOG(this, Warning, TEXT("투사체 풀 클래스가 무효합니다."));
-				continue;
-			}
-
-			// 투사체풀을 생성하고 초기화합니다.
-			USMProjectilePool* ProjectilePool = NewObject<USMProjectilePool>(this, ProjectilePoolClass);
-			ProjectilePool->Init();
-
-			TMap<ESMCharacterType, TObjectPtr<USMProjectilePool>>& ProjectilePoolMap = ProjectilePools.FindOrAdd(Team).ProjectilePoolMap;
-			ProjectilePoolMap.Add(CharacterType, ProjectilePool); // 투사체풀 인스턴스 맵에 팀과 캐릭터에 해당하는 투사체 풀을 저장합니다.
-		}
-	}
+	// // 투사체 풀을 생성합니다. 각 팀, 캐릭터에 맞는 투사체 풀을 생성하기위한 과정입니다. 이렇게 난해하게 처리하는 이유는 블루프린트에서 투사체 풀을 지정할 수 있도록하기 위함입니다.
+	// for (auto& ProjectilePoolCreateDataMapPair : ProjectilePoolCreateDataMap) // 팀을 순회합니다.
+	// {
+	// 	ESMTeam& Team = ProjectilePoolCreateDataMapPair.Key;
+	// 	TMap<ESMCharacterType, TSubclassOf<USMProjectilePool>>& ProjectilePoolClassMap = ProjectilePoolCreateDataMapPair.Value.ClassMapByCharacterType;
+	//
+	// 	for (auto& ProjectilePoolClassMapPair : ProjectilePoolClassMap) // 캐릭터 타입을 순회합니다.
+	// 	{
+	// 		ESMCharacterType& CharacterType = ProjectilePoolClassMapPair.Key;
+	// 		TSubclassOf<USMProjectilePool>& ProjectilePoolClass = ProjectilePoolClassMapPair.Value;
+	//
+	// 		if (!ProjectilePoolClass)
+	// 		{
+	// 			NET_LOG(this, Warning, TEXT("투사체 풀 클래스가 무효합니다."));
+	// 			continue;
+	// 		}
+	//
+	// 		// 투사체풀을 생성하고 초기화합니다.
+	// 		USMProjectilePool* ProjectilePool = NewObject<USMProjectilePool>(this, ProjectilePoolClass);
+	// 		ProjectilePool->Init();
+	//
+	// 		TMap<ESMCharacterType, TObjectPtr<USMProjectilePool>>& ProjectilePoolMap = ProjectilePools.FindOrAdd(Team).ProjectilePoolMap;
+	// 		ProjectilePoolMap.Add(CharacterType, ProjectilePool); // 투사체풀 인스턴스 맵에 팀과 캐릭터에 해당하는 투사체 풀을 저장합니다.
+	// 	}
+	// }
 }
