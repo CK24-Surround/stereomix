@@ -6,6 +6,7 @@
 #include "SMPlayerCharacterDataAsset.h"
 #include "SMPianoCharacterDataAsset.generated.h"
 
+class UInputAction;
 /**
  * 
  */

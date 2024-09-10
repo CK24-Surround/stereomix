@@ -18,6 +18,8 @@ USMGA_Slash::USMGA_Slash()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
 	ActivationOwnedTags.AddTag(SMTags::Character::State::SlashActivation);
+
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Charge);
 }
 
 void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

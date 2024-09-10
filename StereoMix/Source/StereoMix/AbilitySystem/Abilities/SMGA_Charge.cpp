@@ -16,11 +16,6 @@
 USMGA_Charge::USMGA_Charge()
 {
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Charge);
-
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Hold);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Holded);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreaking);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreaked);
 }
 
 void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

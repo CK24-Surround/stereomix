@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
+#include "SMGA_Skill.h"
 #include "SMGA_Charge.generated.h"
 
 class UAbilityTask_ApplyRootMotionConstantForce;
@@ -12,7 +12,7 @@ class UAbilityTask_ApplyRootMotionConstantForce;
  * 
  */
 UCLASS(Abstract)
-class STEREOMIX_API USMGA_Charge : public USMGameplayAbility
+class STEREOMIX_API USMGA_Charge : public USMGA_Skill
 {
 	GENERATED_BODY()
 

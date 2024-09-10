@@ -26,6 +26,8 @@ USMGA_Hold::USMGA_Hold()
 	BlockedTags.AddTag(SMTags::Character::State::NoiseBreaking);
 	BlockedTags.AddTag(SMTags::Character::State::Neutralize);
 	BlockedTags.AddTag(SMTags::Character::State::Immune);
+	BlockedTags.AddTag(SMTags::Character::State::Charge);
+	BlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
 	ActivationBlockedTags = BlockedTags;
 }
 

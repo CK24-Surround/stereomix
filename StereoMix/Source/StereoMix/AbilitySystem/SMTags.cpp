@@ -56,6 +56,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "Character.State.Immune", "모든 피격 판정이 발생하지 않는 면역 상태임을 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Character.State.Jump", "점프 상태임을 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Charge, "Character.State.Charge", "돌격 상태임을 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrow, "Character.State.ImpactArrow", "충격 화살 시전 상태임을 나타냅니다.");
 		}
 	}
 

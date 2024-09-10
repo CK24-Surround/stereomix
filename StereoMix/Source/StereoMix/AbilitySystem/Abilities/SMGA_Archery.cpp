@@ -16,6 +16,8 @@ USMGA_Archery::USMGA_Archery()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Archery);
+	
+	ActivationBlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
 }
 
 void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

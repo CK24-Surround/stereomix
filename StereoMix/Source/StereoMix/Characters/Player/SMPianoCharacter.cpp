@@ -12,16 +12,4 @@ ASMPianoCharacter::ASMPianoCharacter()
 void ASMPianoCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
-
-void ASMPianoCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void ASMPianoCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-
