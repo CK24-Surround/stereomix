@@ -50,7 +50,7 @@ void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
 	Super::NotifyActorBeginOverlap(OtherActor);
 
 	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OtherActor);
-	if (!ensureAlways(TargetCharacter))
+	if (!TargetCharacter)
 	{
 		return;
 	}
