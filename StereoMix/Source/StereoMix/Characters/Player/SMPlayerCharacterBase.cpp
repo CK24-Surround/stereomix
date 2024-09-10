@@ -93,16 +93,23 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 
 	HIC = CreateDefaultSubobject<USMHIC_Character>(TEXT("HIC"));
 
-	LockAimTags.AddTag(SMTags::Character::State::Caught);
+	LockAimTags.AddTag(SMTags::Character::State::Holded);
 	LockAimTags.AddTag(SMTags::Character::State::NoiseBreaking);
 	LockAimTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	LockAimTags.AddTag(SMTags::Character::State::Neutralize);
 
-	LockMovementTags.AddTag(SMTags::Character::State::Caught);
+	LockMovementTags.AddTag(SMTags::Character::State::Holded);
 	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreaking);
 	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	LockMovementTags.AddTag(SMTags::Character::State::Neutralize);
 	LockMovementTags.AddTag(SMTags::Character::State::Jump);
+
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Holded);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::NoiseBreaked);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Neutralize);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Immune);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Jump);
 }
 
 void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -426,6 +433,27 @@ void ASMPlayerCharacterBase::FocusToCursor()
 	const FVector Direction = (GetCursorTargetingPoint() - GetActorLocation()).GetSafeNormal();
 	const FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	Controller->SetControlRotation(NewRotation);
+}
+
+void ASMPlayerCharacterBase::ServerRPCCharacterPushBack_Implementation(FVector_NetQuantize10 Velocity)
+{
+	LaunchCharacter(Velocity, false, false);
+}
+
+void ASMPlayerCharacterBase::ClientRPCCharacterPushBack_Implementation(FVector_NetQuantize10 Velocity)
+{
+	if (!ASC.Get())
+	{
+		return;
+	}
+
+	if (ASC->HasAnyMatchingGameplayTags(PushBackImmuneTags))
+	{
+		return;
+	}
+
+	LaunchCharacter(Velocity, false, false);
+	ServerRPCCharacterPushBack(Velocity);
 }
 
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)

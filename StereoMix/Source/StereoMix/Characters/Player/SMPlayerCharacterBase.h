@@ -123,6 +123,12 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 
 	virtual void FocusToCursor();
+	
+	UFUNCTION(Client, Reliable)
+	void ClientRPCCharacterPushBack(FVector_NetQuantize10 Velocity);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCCharacterPushBack(FVector_NetQuantize10 Velocity);
 
 	FOnCharacterLandedSignature OnCharacterLanded;
 
@@ -197,6 +203,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tag")
 	FGameplayTagContainer LockMovementTags;
+
+	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tag")
+	FGameplayTagContainer PushBackImmuneTags;
 
 	/** 캐릭터의 원본 머티리얼입니다. */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Design|Material")

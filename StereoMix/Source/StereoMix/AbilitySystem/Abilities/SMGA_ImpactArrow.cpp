@@ -15,6 +15,7 @@
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Task/SMAT_SkillIndicator.h"
 #include "Utilities/SMCollision.h"
 
@@ -182,6 +183,12 @@ void USMGA_ImpactArrow::ServerRPCRemoveTag_Implementation()
 
 void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuantize10& NewTargetLocation)
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
 	NET_LOG(GetAvatarActor(), Warning, TEXT("적중"));
 	DrawDebugSphere(GetWorld(), NewTargetLocation, 250.0f, 16, FColor::Red, false, 1.0f);
 
@@ -193,17 +200,37 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 			AActor* TargetActor = OverlapResult.GetActor();
 			if (TargetActor)
 			{
-				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-				if (TargetASC)
+				ESMTeam SourceTeam = SourceCharacter->GetTeam();
+				ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(TargetActor);
+
+				if (SourceTeam == TargetTeam)
 				{
-					NET_LOG(GetAvatarActor(), Warning, TEXT("%s"), *GetNameSafe(TargetActor));
+					continue;
 				}
 
 				ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
 				if (TargetCharacter)
 				{
-					const FVector Impluse = (TargetCharacter->GetActorLocation() - NewTargetLocation).GetSafeNormal() * Magnitude;
-					// TargetCharacter->GetCapsuleComponent()->AddImpulse(Impluse);
+					const FVector Direction = (TargetCharacter->GetActorLocation() - NewTargetLocation).GetSafeNormal2D();
+					const FRotator Rotation = Direction.Rotation() + FRotator(15.0, 0.0, 0.0);
+					const FVector Velocity = Rotation.Vector() * Magnitude;
+					TargetCharacter->ClientRPCCharacterPushBack(Velocity);
+				}
+				
+				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+				if (TargetASC)
+				{
+					const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+					if (SourceDataAsset)
+					{
+						FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
+						if (GESpecHandle.IsValid())
+						{
+							GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+						}
+
+						TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+					}
 				}
 			}
 		}

@@ -60,8 +60,11 @@ protected:
 	uint32 bCanShoot:1 = true;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
+	float Damage = 10.0f;
+	
+	UPROPERTY(EditAnywhere, Category = "Design")
 	float Radius = 250.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float Magnitude = 300.0f;
+	float Magnitude = 700.0f;
 };
