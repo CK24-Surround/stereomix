@@ -52,6 +52,12 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		return;
 	}
 
+	if (!K2_CheckAbilityCost())
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
 	bCanShoot = true;
 
 	if (K2_HasAuthority())
@@ -83,8 +89,6 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TaskName, Montage, 1.0f, NAME_None, false);
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::ServerRPCRemoveTag);
 	MontageTask->ReadyForActivation();
-
-	K2_CommitAbility();
 }
 
 void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -216,7 +220,7 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 					const FVector Velocity = Rotation.Vector() * Magnitude;
 					TargetCharacter->ClientRPCCharacterPushBack(Velocity);
 				}
-				
+
 				UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 				if (TargetASC)
 				{
