@@ -8,10 +8,10 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/Task/SMAT_ColliderOrientationForSlash.h"
+#include "AbilitySystem/Task/SMAT_NextActionProccedCheck.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
-#include "Task/SMAT_ColliderOrientationForSlash.h"
-#include "Task/SMAT_NextActionProccedCheck.h"
 
 USMGA_Slash::USMGA_Slash()
 {
