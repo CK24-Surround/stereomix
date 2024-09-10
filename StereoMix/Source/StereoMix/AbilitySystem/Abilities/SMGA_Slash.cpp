@@ -185,4 +185,10 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	}
 
 	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
+
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
+	if (TargetDamageInterface)
+	{
+		TargetDamageInterface->SetLastAttackInstigator(GetAvatarActor());
+	}
 }
