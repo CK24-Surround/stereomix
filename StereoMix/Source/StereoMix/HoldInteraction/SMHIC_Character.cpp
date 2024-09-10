@@ -11,12 +11,15 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
+#include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
 
 void USMHIC_Character::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, IAmHoldingActor);
 }
 
 void USMHIC_Character::BeginPlay()
@@ -287,7 +290,6 @@ void USMHIC_Character::NoiseBreaked()
 	}
 
 	// 버저 비터 종료 이벤트를 타겟에게 보냅니다. 이 이벤트는 만약 스턴 종료시간에 임박했을때 스매시를 시전하는 경우 스매시가 끊기는 것을 막고자 스턴 종료를 보류하게됩니다. 이 상황에서 스턴 종료 로직을 재개 시킬때 호출되어야합니다.
-	NET_LOG(SourceCharacter, Warning, TEXT("버저비터 종료 전송"));
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceCharacter, SMTags::Event::Character::BuzzerBeaterEnd, FGameplayEventData());
 
 	// TODO: 나중에 이펙트를 재생해야한다면 활용하면 됩니다.
