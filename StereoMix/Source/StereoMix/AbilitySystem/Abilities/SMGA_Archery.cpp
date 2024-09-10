@@ -73,12 +73,11 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 	}
 	else if (ChargeLevel == 1)
 	{
-		K2_CommitAbilityCost();
+		Charge1();
 	}
 	else
 	{
-		K2_CommitAbilityCost();
-		K2_CommitAbilityCost();
+		Charge2();
 	}
 
 	K2_EndAbility();
@@ -94,4 +93,15 @@ void USMGA_Archery::OnCharged2()
 {
 	ChargeLevel = 2;
 	NET_LOG(GetAvatarActor(), Warning, TEXT("2단 차지"));
+}
+
+void USMGA_Archery::Charge1()
+{
+	K2_CommitAbilityCost();
+}
+
+void USMGA_Archery::Charge2()
+{
+	K2_CommitAbilityCost();
+	K2_CommitAbilityCost();
 }

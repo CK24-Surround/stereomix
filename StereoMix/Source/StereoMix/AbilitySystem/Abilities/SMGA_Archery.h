@@ -30,6 +30,10 @@ protected:
 	UFUNCTION()
 	void OnCharged2();
 
+	void Charge1();
+
+	void Charge2();
+
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Charge1Time = 0.25f;
 
