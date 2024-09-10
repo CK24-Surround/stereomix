@@ -63,7 +63,7 @@ protected:
 	float Damage = 10.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float Radius = 250.0f;
+	float Radius = 375.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Magnitude = 1000.0f;
