@@ -3,9 +3,9 @@
 
 #include "SMAbilitySystemComponent.h"
 
-#include "Abilities/GameplayEffect/SMGameplayEffect_DynamicTag.h"
 #include "AttributeSets/SMCharacterAttributeSet.h"
 #include "Characters/SMPlayerCharacter.h"
+#include "GameplayEffect/SMGameplayEffect_DynamicTag.h"
 #include "Utilities/SMLog.h"
 
 void USMAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
