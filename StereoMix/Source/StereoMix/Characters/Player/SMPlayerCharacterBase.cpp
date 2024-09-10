@@ -134,6 +134,7 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 
 	UCharacterMovementComponent* CachedMovementComponent = GetCharacterMovement();
 	CachedMovementComponent->MaxWalkSpeed = DataAsset->MoveSpeed;
+	CachedMovementComponent->GravityScale = 2.0f;
 
 	// 트레일 위치를 교정하기 위해 재어태치합니다. 재어태치하는 이유는 생성자에서는 메시가 null이므로 소켓을 찾을 수 없기 때문입니다.
 	DefaultMoveTrailFXComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
@@ -437,7 +438,7 @@ void ASMPlayerCharacterBase::FocusToCursor()
 
 void ASMPlayerCharacterBase::ServerRPCCharacterPushBack_Implementation(FVector_NetQuantize10 Velocity)
 {
-	LaunchCharacter(Velocity, false, false);
+	LaunchCharacter(Velocity, true, true);
 }
 
 void ASMPlayerCharacterBase::ClientRPCCharacterPushBack_Implementation(FVector_NetQuantize10 Velocity)
@@ -452,7 +453,7 @@ void ASMPlayerCharacterBase::ClientRPCCharacterPushBack_Implementation(FVector_N
 		return;
 	}
 
-	LaunchCharacter(Velocity, false, false);
+	LaunchCharacter(Velocity, true, true);
 	ServerRPCCharacterPushBack(Velocity);
 }
 

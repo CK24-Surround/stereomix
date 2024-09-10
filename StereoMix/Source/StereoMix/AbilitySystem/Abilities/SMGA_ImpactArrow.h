@@ -66,5 +66,5 @@ protected:
 	float Radius = 250.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float Magnitude = 700.0f;
+	float Magnitude = 1000.0f;
 };
