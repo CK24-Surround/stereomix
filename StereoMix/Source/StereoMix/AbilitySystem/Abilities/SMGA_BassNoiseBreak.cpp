@@ -17,12 +17,6 @@
 #include "Tiles/SMTileManagerComponent.h"
 #include "Utilities/SMCollision.h"
 
-USMGA_BassNoiseBreak::USMGA_BassNoiseBreak()
-{
-	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::NoiseBreaking);
-	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Hold);
-}
-
 void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);

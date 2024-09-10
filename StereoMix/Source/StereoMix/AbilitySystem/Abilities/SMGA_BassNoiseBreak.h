@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
+#include "SMGA_NoiseBreak.h"
 #include "Data/SMTeam.h"
 #include "SMGA_BassNoiseBreak.generated.h"
 
@@ -14,12 +14,9 @@ class UGameplayEffect;
  * 
  */
 UCLASS(Abstract)
-class STEREOMIX_API USMGA_BassNoiseBreak : public USMGameplayAbility
+class STEREOMIX_API USMGA_BassNoiseBreak : public USMGA_NoiseBreak
 {
 	GENERATED_BODY()
-
-public:
-	USMGA_BassNoiseBreak();
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
