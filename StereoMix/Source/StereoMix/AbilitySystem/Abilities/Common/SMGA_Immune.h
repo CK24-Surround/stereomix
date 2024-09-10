@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
+#include "AbilitySystem/Abilities/SMGameplayAbility.h"
 
 #include "SMGA_Immune.generated.h"
 

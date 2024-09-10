@@ -3,7 +3,8 @@
 
 #include "SMAT_NextActionProccedCheck.h"
 
-#include "AbilitySystem/Abilities/SMGA_Slash.h"
+#include "AbilitySystem/Abilities/Attack/SMGA_Slash.h"
+
 
 USMAT_NextActionProccedCheck::USMAT_NextActionProccedCheck()
 {

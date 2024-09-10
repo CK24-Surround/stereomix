@@ -6,7 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "AbilitySystem/Abilities/SMGA_Slash.h"
+#include "AbilitySystem/Abilities/Attack/SMGA_Slash.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"

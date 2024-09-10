@@ -3,28 +3,24 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMGameplayAbility.h"
-#include "SMGA_SkillGaugeControl.generated.h"
+#include "AbilitySystem/Abilities/SMGameplayAbility.h"
+#include "SMGA_StaminaControl.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class STEREOMIX_API USMGA_SkillGaugeControl : public USMGameplayAbility
+class STEREOMIX_API USMGA_StaminaControl : public USMGameplayAbility
 {
 	GENERATED_BODY()
 
 public:
-	USMGA_SkillGaugeControl();
+	USMGA_StaminaControl();
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-
+	
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	void OnTeamTileEntry();
-
-	void OnTeamTileExit();
-
-	FActiveGameplayEffectHandle SkillGaugeGEHandle;
+	FActiveGameplayEffectHandle StaminaGEHandle;
 };
