@@ -17,18 +17,16 @@ USMGA_Hold::USMGA_Hold()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	ActivationOwnedTags = FGameplayTagContainer(SMTags::Ability::Activation::Hold);
+	ActivationOwnedTags.AddTag(SMTags::Ability::Activation::Hold);
 
-	FGameplayTagContainer BlockedTags;
-	BlockedTags.AddTag(SMTags::Character::State::Hold);
-	BlockedTags.AddTag(SMTags::Character::State::Holded);
-	BlockedTags.AddTag(SMTags::Character::State::NoiseBreaked);
-	BlockedTags.AddTag(SMTags::Character::State::NoiseBreaking);
-	BlockedTags.AddTag(SMTags::Character::State::Neutralize);
-	BlockedTags.AddTag(SMTags::Character::State::Immune);
-	BlockedTags.AddTag(SMTags::Character::State::Charge);
-	BlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
-	ActivationBlockedTags = BlockedTags;
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Hold);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Holded);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreaked);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Neutralize);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Immune);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Charge);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
 }
 
 void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -59,13 +57,8 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	CachedCatchMontage = SourceDataAsset->HoldMontage[SourceTeam];
 
 	// 언제든 다른 상태로 인해 끊길 수 있는 애니메이션이기에 bAllowInterruptAfterBlendOut을 활성화 해 언제 끊기던 OnInterrupted가 브로드 캐스트 되도록합니다.
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CachedCatchMontage);
-	if (!ensureAlways(PlayMontageAndWaitTask))
-	{
-		EndAbilityByCancel();
-		return;
-	}
 	// 클라이언트와 서버 각각 애니메이션이 종료되면 스스로 종료하도록 합니다.
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), CachedCatchMontage);
 	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbilityLocally);
 	PlayMontageAndWaitTask->OnInterrupted.AddDynamic(this, &ThisClass::K2_EndAbilityLocally);
 	PlayMontageAndWaitTask->OnBlendOut.AddDynamic(this, &ThisClass::K2_EndAbilityLocally);
@@ -89,7 +82,7 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 
 	// 마우스 커서 정보는 클라이언트에만 존재합니다.
 	// 따라서 클라이언트의 커서정보를 기반으로 서버에 잡기 요청을 합니다. 해당 로직은 클라이언트에서만 실행되어야합니다.
-	if (!K2_HasAuthority())
+	if (IsLocallyControlled())
 	{
 		// 커서위치는 즉시 저장합니다. 시작 위치는 ServerRPC를 호출할때 저장합니다.
 		TargetLocation = SourceCharacter->GetCursorTargetingPoint();
@@ -195,13 +188,15 @@ void USMGA_Hold::ServerRPCRequestCatch_Implementation(const FVector_NetQuantize1
 	// 잡기 성공 여부에 따라 애니메이션을 재생합니다.
 	if (bSuccess)
 	{
-		ClientRPCPlayMontage(CachedCatchMontage, 1.0F, TEXT("Success"));
-		MontageJumpToSection(TEXT("Success"));
+		const FName SectionName = TEXT("Success");
+		ClientRPCPlayMontage(CachedCatchMontage, 1.0f, SectionName);
+		MontageJumpToSection(SectionName);
 	}
 	else
 	{
-		ClientRPCPlayMontage(CachedCatchMontage, 1.0F, TEXT("Fail"));
-		MontageJumpToSection(TEXT("Fail"));
+		const FName SectionName = TEXT("Fail");
+		ClientRPCPlayMontage(CachedCatchMontage, 1.0f, SectionName);
+		MontageJumpToSection(SectionName);
 	}
 
 #if UE_ENABLE_DEBUG_DRAWING
