@@ -13,4 +13,5 @@ USMGA_Skill::USMGA_Skill()
 	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Neutralize);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Immune);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
 }
