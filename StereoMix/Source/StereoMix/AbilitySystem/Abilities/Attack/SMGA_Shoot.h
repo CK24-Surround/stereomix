@@ -39,5 +39,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float ProjectileSpeed = 3000.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	int32 ShootAngle = 35;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	int32 AccuracyShootRate = 75;
+
 	FTimerHandle ShootTimerHandle;
 };

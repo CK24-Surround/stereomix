@@ -92,9 +92,20 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 		return;
 	}
 
+	const int RandomValue = FMath::Rand() % 100;
+	float RandomYaw;
+	if (RandomValue < AccuracyShootRate)
+	{
+		RandomYaw = (FMath::Rand() % 10) - 5.0f; // 10도 범위
+	}
+	else
+	{
+		RandomYaw = (FMath::Rand() % ShootAngle) - (ShootAngle / 2.0f);
+	}
+
+	const FRotator LaunchRotation = (TargetLocation - SourceLocation).Rotation() + FRotator(0.0, RandomYaw, 0.0);
 	const float MaxDistance = MaxDistanceByTile * 150.0f;
-	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
-	Projectile->Launch(SourceCharacter, SourceLocation, LaunchDirection, ProjectileSpeed, MaxDistance, Damage);
+	Projectile->Launch(SourceCharacter, SourceLocation, LaunchRotation.Vector(), ProjectileSpeed, MaxDistance, Damage);
 }
 
 void USMGA_Shoot::Shoot()
