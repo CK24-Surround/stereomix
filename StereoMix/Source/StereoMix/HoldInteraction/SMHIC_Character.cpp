@@ -8,6 +8,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Characters/Player/SMElectricGuitarCharacter.h"
+#include "Characters/Player/SMPianoCharacter.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
@@ -121,7 +122,7 @@ void USMHIC_Character::OnHoldedReleased(AActor* TargetActor, bool bIsStunTimeOut
 	USMHIC_Character* TargetHIC = Cast<USMHIC_Character>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetCharacter));
 
 	// 잡기 상태에서 벗어납니다.
-	HoldedReleased(TargetCharacter);
+	HoldedReleased(TargetCharacter, true);
 
 	if (TargetHIC)
 	{
@@ -141,7 +142,15 @@ void USMHIC_Character::OnHoldedReleased(AActor* TargetActor, bool bIsStunTimeOut
 
 void USMHIC_Character::OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) {}
 
-void USMHIC_Character::OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator) {}
+void USMHIC_Character::OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator)
+{
+	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
+	{
+		return;
+	}
+
+	SourceASC->AddTag(SMTags::Character::State::NoiseBreaked);
+}
 
 void USMHIC_Character::OnNoiseBreakActionStarted(ASMBassCharacter* Instigator)
 {
@@ -161,18 +170,24 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* I
 		return;
 	}
 
-	HoldedReleased(Instigator);
+	HoldedReleased(Instigator, true);
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
 	// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
 }
 
-void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
+void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
+{
+	HoldedReleased(Instigator, false);
+
+	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+	NoiseBreaked();
+}
 
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
 	// TODO: 타일 점령 데미지 구현 필요
 
-	HoldedReleased(Instigator);
+	HoldedReleased(Instigator, true);
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
 	NoiseBreaked();
@@ -206,7 +221,7 @@ void USMHIC_Character::EmptyHoldedMeCharacterList()
 	HoldedMeCharcters.Empty();
 }
 
-void USMHIC_Character::HoldedReleased(AActor* TargetActor)
+void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdjust)
 {
 	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
 	{
@@ -220,7 +235,7 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor)
 	SourceCharacter->SetCollisionEnable(true);
 	SourceCharacter->SetMovementEnable(true);
 
-	// 회전및 위치를 재지정합니다.
+	// 회전 및 위치를 재지정합니다.
 	FVector NewLocation;
 	float NewYaw;
 	if (TargetActor)
@@ -236,7 +251,11 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor)
 	}
 	const FVector Offset = FRotator(0.0, NewYaw, 0.0).Vector() * 100.0f;
 	SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
-	SourceCharacter->MulitcastRPCSetLocation(NewLocation + Offset);
+
+	if (bNeedLocationAdjust)
+	{
+		SourceCharacter->MulitcastRPCSetLocation(NewLocation + Offset);
+	}
 
 	// SourceCharacter->ServerRPCPreventGroundEmbedding();
 

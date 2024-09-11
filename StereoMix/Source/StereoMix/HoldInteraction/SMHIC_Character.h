@@ -49,7 +49,7 @@ public:
 	* 타겟으로부터 잡기상태를 탈출합니다. 타겟이 null이면 타겟과 관련된 처리만 제외하고 모두 처리됩니다.
 	* 외부에서도 사용할 수 있습니다. 따로 추가적인 애니메이션 같은 비주얼적인 효과 없이 그저 디태치만 수행합니다.
 	*/
-	void HoldedReleased(AActor* TargetActor);
+	void HoldedReleased(AActor* TargetActor, bool bNeedLocationAdjust);
 
 	/** 잡고 있는 대상이 파괴되는 경우 예외처리를 담는 함수입니다. */
 	UFUNCTION()

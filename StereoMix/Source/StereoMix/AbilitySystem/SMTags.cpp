@@ -81,6 +81,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Event.AnimNotify.Hold", "잡기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "Event.AnimNotify.Smash", "매치기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashEnd, "Event.AnimNotify.SmashEnd", "매치기 종료 애님 노티파이의 이벤트로 사용됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(PianoNoiseBreakShoot, "Event.AnimNotify.PianoNoiseBreakShoot", "피아노의 노이즈 브레이크 발사 시점을 알리는 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakEnd, "Event.AnimNotify.NoiseBreakEnd", "노이즈브레이크 종료 애님 노티파이의 이벤트로 사용됩니다.");
 
 			namespace Attack

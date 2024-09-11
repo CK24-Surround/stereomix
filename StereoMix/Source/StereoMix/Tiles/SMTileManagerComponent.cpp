@@ -17,7 +17,8 @@ USMTileManagerComponent::USMTileManagerComponent()
 
 void USMTileManagerComponent::TileCaptureImmediateSqaure(ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile)
 {
-	const float HalfSize = (CaptureSizeByTile * TileHorizenSize) / 2.0f;
+	const float Offset = 1.0f;
+	const float HalfSize = Offset + (TileHorizenSize * (CaptureSizeByTile - 1));
 	TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize);
 }
 

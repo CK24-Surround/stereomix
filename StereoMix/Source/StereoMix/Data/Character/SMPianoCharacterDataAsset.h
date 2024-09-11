@@ -19,4 +19,7 @@ class STEREOMIX_API USMPianoCharacterDataAsset : public USMPlayerCharacterDataAs
 public:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImpactArrowIndicator;
+
+	UPROPERTY(EditAnywhere, Category = "Dummy")
+	TObjectPtr<UCurveFloat> NoiseBreakCurve;
 };
