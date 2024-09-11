@@ -50,7 +50,7 @@ ASMPlayerCharacter* USMGameplayAbility::GetSMPlayerCharacterFromActorInfo() cons
 	return SourceCharacter;
 }
 
-UAbilitySystemComponent* USMGameplayAbility::GetASC()
+UAbilitySystemComponent* USMGameplayAbility::GetASC() const
 {
 	if (!ensureAlways(CurrentActorInfo))
 	{
@@ -60,7 +60,7 @@ UAbilitySystemComponent* USMGameplayAbility::GetASC()
 	return CurrentActorInfo->AbilitySystemComponent.Get();
 }
 
-AActor* USMGameplayAbility::GetAvatarActor()
+AActor* USMGameplayAbility::GetAvatarActor() const
 {
 	if (!ensureAlways(CurrentActorInfo))
 	{
@@ -70,7 +70,7 @@ AActor* USMGameplayAbility::GetAvatarActor()
 	return CurrentActorInfo->AvatarActor.Get();
 }
 
-USMHoldInteractionComponent* USMGameplayAbility::GetHIC()
+USMHoldInteractionComponent* USMGameplayAbility::GetHIC() const
 {
 	if (!ensureAlways(CurrentActorInfo))
 	{
@@ -80,7 +80,7 @@ USMHoldInteractionComponent* USMGameplayAbility::GetHIC()
 	return USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(CurrentActorInfo->AvatarActor.Get());
 }
 
-const USMPlayerCharacterDataAsset* USMGameplayAbility::GetDataAsset()
+const USMPlayerCharacterDataAsset* USMGameplayAbility::GetDataAsset() const
 {
 	if (!ensureAlways(CurrentActorInfo))
 	{

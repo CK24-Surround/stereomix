@@ -35,7 +35,7 @@ protected:
 	void Charge2();
 
 	UFUNCTION(Server, Reliable)
-	void LaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargeLevel);
+	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargeLevel);
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float ProjectileSpeed = 2500.0f;

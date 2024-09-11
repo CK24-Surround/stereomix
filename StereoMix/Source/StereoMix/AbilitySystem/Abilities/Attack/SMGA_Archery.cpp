@@ -115,7 +115,7 @@ void USMGA_Archery::Charge1()
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint();
-	LaunchProjectile(SourceLocation, TargetLocation, 1);
+	ServerRPCLaunchProjectile(SourceLocation, TargetLocation, 1);
 }
 
 void USMGA_Archery::Charge2()
@@ -132,10 +132,10 @@ void USMGA_Archery::Charge2()
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint();
-	LaunchProjectile(SourceLocation, TargetLocation, 2);
+	ServerRPCLaunchProjectile(SourceLocation, TargetLocation, 2);
 }
 
-void USMGA_Archery::LaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargeLevel)
+void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargeLevel)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	if (!SourceCharacter)

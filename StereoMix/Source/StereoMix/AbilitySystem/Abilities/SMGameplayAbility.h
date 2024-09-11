@@ -30,22 +30,22 @@ public:
 
 	ASMPlayerCharacter* GetSMPlayerCharacterFromActorInfo() const;
 
-	UAbilitySystemComponent* GetASC();
+	UAbilitySystemComponent* GetASC() const;
 
 	template<typename T>
 	T* GetASC() { return Cast<T>(GetASC()); }
 
-	AActor* GetAvatarActor();
+	AActor* GetAvatarActor() const;
 
 	template<typename T>
 	T* GetAvatarActor() { return Cast<T>(GetAvatarActor()); }
 
-	USMHoldInteractionComponent* GetHIC();
+	USMHoldInteractionComponent* GetHIC() const;
 
 	template<typename T>
 	T* GetHIC() { return Cast<T>(GetHIC()); }
 
-	const USMPlayerCharacterDataAsset* GetDataAsset();
+	const USMPlayerCharacterDataAsset* GetDataAsset() const;
 
 	template<typename T>
 	const T* GetDataAsset()
