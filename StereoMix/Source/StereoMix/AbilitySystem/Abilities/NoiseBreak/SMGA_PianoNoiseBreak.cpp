@@ -78,7 +78,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		if (SourceToCursorVector.SizeSquared() >= FMath::Square(MaxDistance))
 		{
 			const FVector TargetDirection = SourceToCursorVector.GetSafeNormal2D();
-			TargetLocation = TargetDirection * MaxDistance;
+			TargetLocation = SourceLocation + (TargetDirection * MaxDistance);
 		}
 
 		ServerRPCSendTargetLocation(TargetLocation);
@@ -89,13 +89,13 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::PianoNoiseBreakShoot, nullptr, true);
 		EventTask->EventReceived.AddDynamic(this, &ThisClass::OnShoot);
 		EventTask->ReadyForActivation();
-	}
 
-	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-	if (TargetHIC)
-	{
-		TargetHIC->OnNoiseBreakActionStarted(SourceCharacter);
+		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
+		if (TargetHIC)
+		{
+			TargetHIC->OnNoiseBreakActionStarted(SourceCharacter);
+		}
 	}
 }
 

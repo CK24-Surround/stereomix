@@ -11,6 +11,7 @@ namespace SMCollisionProfileName
 	static FName Gimmick = TEXT("Gimmick");
 	static FName CatchableItem = TEXT("CatchableItem");
 	static FName Ghost = TEXT("Ghost");
+	static FName NoiseBreak = TEXT("NoiseBreak");
 }
 
 namespace SMCollisionObjectChannel

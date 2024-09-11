@@ -140,7 +140,15 @@ void USMHIC_Character::OnHoldedReleased(AActor* TargetActor, bool bIsStunTimeOut
 	}
 }
 
-void USMHIC_Character::OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) {}
+void USMHIC_Character::OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator)
+{
+	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
+	{
+		return;
+	}
+
+	SourceASC->AddTag(SMTags::Character::State::NoiseBreaked);
+}
 
 void USMHIC_Character::OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator)
 {
@@ -170,8 +178,11 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* I
 		return;
 	}
 
-	HoldedReleased(Instigator, true);
+	HoldedReleased(Instigator, false);
+
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+	NoiseBreaked();
+
 	// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
 }
 
