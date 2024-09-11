@@ -54,7 +54,7 @@ void USMAT_WaitChargeBlocked::OnChargeOverlappedCallback(UPrimitiveComponent* Ov
 
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
-		(void)OnChargeBlocked.ExecuteIfBound();
+		(void)OnChargeBlocked.ExecuteIfBound(OtherActor);
 	}
 
 	EndTask();
@@ -64,7 +64,7 @@ void USMAT_WaitChargeBlocked::OnChargeBlockedCallback(UPrimitiveComponent* HitCo
 {
 	if (ShouldBroadcastAbilityTaskDelegates())
 	{
-		(void)OnChargeBlocked.ExecuteIfBound();
+		(void)OnChargeBlocked.ExecuteIfBound(OtherActor);
 	}
 
 	EndTask();

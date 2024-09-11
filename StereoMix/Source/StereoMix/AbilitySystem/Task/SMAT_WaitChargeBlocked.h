@@ -6,7 +6,7 @@
 #include "Abilities/Tasks/AbilityTask.h"
 #include "SMAT_WaitChargeBlocked.generated.h"
 
-DECLARE_DELEGATE(FOnChargeBlockingDelegate);
+DECLARE_DELEGATE_OneParam(FOnChargeBlockingDelegate, AActor* /*TargetActor*/);
 
 class ASMPlayerCharacterBase;
 /**

@@ -15,6 +15,8 @@ USMGA_Sampling::USMGA_Sampling()
 	DeactivateTags.AddTag(SMTags::Character::State::Neutralize);
 	DeactivateTags.AddTag(SMTags::Character::State::Immune);
 	DeactivateTags.AddTag(SMTags::Character::State::NoiseBreaking);
+
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
 }
 
 void USMGA_Sampling::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

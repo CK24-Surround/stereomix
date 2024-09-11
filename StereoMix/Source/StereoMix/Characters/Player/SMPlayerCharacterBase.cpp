@@ -103,6 +103,7 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	LockMovementTags.AddTag(SMTags::Character::State::Neutralize);
 	LockMovementTags.AddTag(SMTags::Character::State::Jump);
+	LockMovementTags.AddTag(SMTags::Character::State::Stun);
 
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Holded);
 	PushBackImmuneTags.AddTag(SMTags::Character::State::NoiseBreaking);
@@ -110,6 +111,7 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase()
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Neutralize);
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Immune);
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Jump);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Stun);
 }
 
 void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

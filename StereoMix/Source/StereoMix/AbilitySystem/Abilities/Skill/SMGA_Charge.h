@@ -22,10 +22,15 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	void OnChargeBlocked();
+	void OnChargeBlocked(AActor* TargetActor);
 
 	UFUNCTION()
 	void OnChargeEnded();
+
+	UFUNCTION(Server,Reliable)
+	void ServerRPCSendEvent(AActor* TargetActor);
+
+	float StunTime = 0.5f;
 
 	FName OriginalCollisionProfileName;
 };
