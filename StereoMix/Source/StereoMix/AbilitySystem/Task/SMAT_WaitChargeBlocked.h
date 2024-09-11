@@ -8,7 +8,7 @@
 
 DECLARE_DELEGATE_OneParam(FOnChargeBlockingDelegate, AActor* /*TargetActor*/);
 
-class ASMPlayerCharacterBase;
+class ASMBassCharacter;
 /**
  * 
  */
@@ -19,7 +19,7 @@ class STEREOMIX_API USMAT_WaitChargeBlocked : public UAbilityTask
 
 public:
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static USMAT_WaitChargeBlocked* WaitChargeBlocked(UGameplayAbility* OwningAbility, ASMPlayerCharacterBase* NewSourceCharacter);
+	static USMAT_WaitChargeBlocked* WaitChargeBlocked(UGameplayAbility* OwningAbility, ASMBassCharacter* NewSourceCharacter);
 
 	FOnChargeBlockingDelegate OnChargeBlocked;
 
@@ -34,5 +34,5 @@ protected:
 	UFUNCTION()
 	void OnChargeBlockedCallback(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 
-	TWeakObjectPtr<ASMPlayerCharacterBase> SourceCharacter;
+	TWeakObjectPtr<ASMBassCharacter> SourceCharacter;
 };

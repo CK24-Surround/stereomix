@@ -3,12 +3,13 @@
 
 #include "SMAT_WaitChargeBlocked.h"
 
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Characters/Player/SMBassCharacter.h"
+#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
-USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility, ASMPlayerCharacterBase* NewSourceCharacter)
+USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility, ASMBassCharacter* NewSourceCharacter)
 {
 	USMAT_WaitChargeBlocked* MyObj = NewAbilityTask<USMAT_WaitChargeBlocked>(OwningAbility);
 	MyObj->SourceCharacter = NewSourceCharacter;
@@ -20,7 +21,18 @@ void USMAT_WaitChargeBlocked::Activate()
 	if (SourceCharacter.Get())
 	{
 		UCapsuleComponent* SourceCapsuleComponent = SourceCharacter->GetCapsuleComponent();
-		SourceCapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnChargeOverlappedCallback);
+		if (!SourceCapsuleComponent)
+		{
+			return;
+		}
+
+		UBoxComponent* SourceChargeCollider = SourceCharacter->GetChargeColliderComponent();
+		if (!SourceChargeCollider)
+		{
+			return;
+		}
+
+		SourceChargeCollider->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnChargeOverlappedCallback);
 		SourceCapsuleComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnChargeBlockedCallback);
 	}
 }

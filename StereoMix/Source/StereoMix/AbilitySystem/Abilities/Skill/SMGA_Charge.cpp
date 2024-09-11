@@ -5,11 +5,11 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_WaitChargeBlocked.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Characters/Player/SMBassCharacter.h"
+#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMBassCharacterDataAsset.h"
 #include "Utilities/SMCollision.h"
@@ -25,7 +25,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
 	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
@@ -34,6 +34,13 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
 	if (!SourceCapsule)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	UBoxComponent* SourceChargeCollider = SourceCharacter->GetChargeColliderComponent();
+	if (!SourceChargeCollider)
 	{
 		EndAbilityByCancel();
 		return;
@@ -58,8 +65,11 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	ChargeBlockedTask->OnChargeBlocked.BindUObject(this, &ThisClass::OnChargeBlocked);
 	ChargeBlockedTask->ReadyForActivation();
 
-	OriginalCollisionProfileName = SourceCapsule->GetCollisionProfileName();
+	OriginalCapsuleCollisionProfileName = SourceCapsule->GetCollisionProfileName();
 	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::Ghost);
+
+	OriginalChargeCollisionProfileName = SourceChargeCollider->GetCollisionProfileName();
+	SourceChargeCollider->SetCollisionProfileName(SMCollisionProfileName::Charge);
 }
 
 void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
@@ -80,7 +90,7 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 
 void USMGA_Charge::OnChargeEnded()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
 	if (!ensureAlways(SourceCharacter))
 	{
 		EndAbilityByCancel();
@@ -94,7 +104,15 @@ void USMGA_Charge::OnChargeEnded()
 		return;
 	}
 
-	SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
+	UBoxComponent* SourceChargeCollider = SourceCharacter->GetChargeColliderComponent();
+	if (!SourceChargeCollider)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	SourceCapsule->SetCollisionProfileName(OriginalCapsuleCollisionProfileName);
+	SourceChargeCollider->SetCollisionProfileName(OriginalChargeCollisionProfileName);
 
 	K2_EndAbilityLocally();
 }

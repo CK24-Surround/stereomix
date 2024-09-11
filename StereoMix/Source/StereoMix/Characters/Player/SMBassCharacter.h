@@ -6,6 +6,7 @@
 #include "SMPlayerCharacterBase.h"
 #include "SMBassCharacter.generated.h"
 
+class UBoxComponent;
 class USMSlashComponent;
 
 DECLARE_DELEGATE(FOnSlashSignature);
@@ -22,10 +23,15 @@ public:
 
 	UCapsuleComponent* GetSlashColliderComponent() const { return SlashColliderComponent; }
 
+	UBoxComponent* GetChargeColliderComponent() const { return ChargeColliderComponent; }
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<USceneComponent> SlashColliderRootComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<UCapsuleComponent> SlashColliderComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Collider")
+	TObjectPtr<UBoxComponent> ChargeColliderComponent;
 };

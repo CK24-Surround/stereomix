@@ -32,5 +32,7 @@ protected:
 
 	float StunTime = 0.5f;
 
-	FName OriginalCollisionProfileName;
+	FName OriginalCapsuleCollisionProfileName;
+
+	FName OriginalChargeCollisionProfileName;
 };

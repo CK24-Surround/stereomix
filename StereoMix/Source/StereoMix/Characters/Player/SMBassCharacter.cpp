@@ -4,7 +4,9 @@
 #include "SMBassCharacter.h"
 
 #include "AbilitySystem/SMTags.h"
+#include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "Utilities/SMCollision.h"
 
 
 ASMBassCharacter::ASMBassCharacter()
@@ -18,6 +20,11 @@ ASMBassCharacter::ASMBassCharacter()
 	const double HalfDistance = 250.0;
 	SlashColliderComponent->SetRelativeLocationAndRotation(FVector(HalfDistance, 0.0, 0.0), FRotator(-90.0, 0.0, 0.0));
 	SlashColliderComponent->InitCapsuleSize(50.0f, HalfDistance);
+
+	ChargeColliderComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("ChargeColliderComponent"));
+	ChargeColliderComponent->SetupAttachment(RootComponent);
+	ChargeColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Charge);
+	ChargeColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	LockAimTags.AddTag(SMTags::Character::State::Charge);
 	LockAimTags.AddTag(SMTags::Character::State::SlashActivation);
