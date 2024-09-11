@@ -15,3 +15,13 @@ USMGA_Attack::USMGA_Attack()
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Neutralize);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Immune);
 }
+
+void USMGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	if (bUseOneHitKill)
+	{
+		Damage = 999999.0f;
+	}
+}

@@ -54,10 +54,6 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCSlashHit(AActor* TargetActor);
 
-	/** 베기의 데미지량입니다. */
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Damage = 25.0f;
-
 	/** 베기의 사정거리입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Range = 500.0f;

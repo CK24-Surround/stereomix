@@ -44,9 +44,6 @@ protected:
 	float MaxDistance = 1250.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float FullChargeDamage = 20.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
 	float Charge1DamageMultiply = 0.5f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")

@@ -18,6 +18,8 @@ USMGA_Archery::USMGA_Archery()
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Archery);
 	
 	ActivationBlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
+
+	Damage = 20.0f;
 }
 
 void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -163,18 +165,18 @@ void USMGA_Archery::LaunchProjectile_Implementation(const FVector_NetQuantize10&
 		return;
 	}
 
-	float Damage;
+	float NewDamage;
 	if (InChargeLevel == 1)
 	{
-		Damage = FullChargeDamage * Charge1DamageMultiply;
+		NewDamage = Damage * Charge1DamageMultiply;
 	}
 	else
 	{
-		Damage = FullChargeDamage * Charge2DamageMultiply;
+		NewDamage = Damage * Charge2DamageMultiply;
 	}
 
 	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
-	Projectile->Launch(SourceCharacter, SourceLocation, LaunchDirection, ProjectileSpeed, MaxDistance, Damage);
+	Projectile->Launch(SourceCharacter, SourceLocation, LaunchDirection, ProjectileSpeed, MaxDistance, NewDamage);
 
 	K2_EndAbility();
 }
