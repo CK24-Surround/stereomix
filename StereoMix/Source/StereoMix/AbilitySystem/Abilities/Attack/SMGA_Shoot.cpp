@@ -3,9 +3,7 @@
 
 #include "SMGA_Shoot.h"
 
-#include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
-#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -18,7 +16,7 @@ USMGA_Shoot::USMGA_Shoot()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Shoot);
 
-	ActivationBlockedTags.AddTag(SMTags::Character::State::StunBullet);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::SlowBullet);
 	Damage = 4.0f;
 }
 

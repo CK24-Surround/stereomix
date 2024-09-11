@@ -33,25 +33,22 @@ public:
 	UAbilitySystemComponent* GetASC() const;
 
 	template<typename T>
-	T* GetASC() { return Cast<T>(GetASC()); }
+	T* GetASC() const { return Cast<T>(GetASC()); }
 
 	AActor* GetAvatarActor() const;
 
 	template<typename T>
-	T* GetAvatarActor() { return Cast<T>(GetAvatarActor()); }
+	T* GetAvatarActor() const { return Cast<T>(GetAvatarActor()); }
 
 	USMHoldInteractionComponent* GetHIC() const;
 
 	template<typename T>
-	T* GetHIC() { return Cast<T>(GetHIC()); }
+	T* GetHIC() const { return Cast<T>(GetHIC()); }
 
 	const USMPlayerCharacterDataAsset* GetDataAsset() const;
 
 	template<typename T>
-	const T* GetDataAsset()
-	{
-		return Cast<T>(GetDataAsset());
-	}
+	const T* GetDataAsset() const { return Cast<T>(GetDataAsset()); }
 
 	/** 리플리케이션을 활성화 한 경우에만 호출됩니다.*/
 	UFUNCTION(Client, Reliable)

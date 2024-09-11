@@ -26,6 +26,7 @@ void USMProjectilePoolManagerComponent::InitializeComponent()
 	{
 		InitPool(PianoProjectilePoolClass, PianoProjectilePool);
 		InitPool(ElectricGuitarProjectilePoolClass, ElectricGuitarProjectilePool);
+		InitPool(SlowBulletPoolClass, SlowBulletPool);
 	}
 }
 

@@ -58,7 +58,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Character.State.Jump", "점프 상태임을 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Charge, "Character.State.Charge", "돌격 상태임을 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrow, "Character.State.ImpactArrow", "충격 화살 시전 상태임을 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(StunBullet, "Character.State.StunBullet", "마비탄 시전 상태임을 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBullet, "Character.State.SlowBullet", "마비탄 시전 상태임을 나타냅니다.");
 		}
 	}
 

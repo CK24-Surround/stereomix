@@ -30,6 +30,8 @@ public:
 	/** 서버에서만 수행 가능합니다. */
 	ASMProjectile* GetProjectileForElectricGuitar(ESMTeam SourceTeam) const { return GetProjectile(SourceTeam, ElectricGuitarProjectilePool); }
 
+	ASMProjectile* GetSlowBullet(ESMTeam SourceTeam) const { return GetProjectile(SourceTeam, SlowBulletPool); }
+
 protected:
 	void InitPool(const TMap<ESMTeam, TSubclassOf<USMProjectilePool>>& ProjectilePoolClass, TMap<ESMTeam, TObjectPtr<USMProjectilePool>>& ProjectilePool);
 
@@ -46,4 +48,10 @@ protected:
 
 	UPROPERTY()
 	TMap<ESMTeam, TObjectPtr<USMProjectilePool>> ElectricGuitarProjectilePool;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TMap<ESMTeam, TSubclassOf<USMProjectilePool>> SlowBulletPoolClass;
+	
+	UPROPERTY()
+	TMap<ESMTeam, TObjectPtr<USMProjectilePool>> SlowBulletPool;
 };
