@@ -127,7 +127,7 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	if (!ensureAlways(DataAsset))
+	if (!DataAsset)
 	{
 		return;
 	}
