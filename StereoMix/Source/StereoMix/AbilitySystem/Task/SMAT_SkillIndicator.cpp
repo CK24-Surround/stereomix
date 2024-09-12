@@ -30,10 +30,13 @@ void USMAT_SkillIndicator::Activate()
 	}
 
 	UCapsuleComponent* CapsuleComponent = SourceCharacter->GetCapsuleComponent();
-	if (CapsuleComponent)
+	if (!ensureAlways(CapsuleComponent))
 	{
-		CapsuleZOffset = CapsuleComponent->GetScaledCapsuleHalfHeight();
+		return;
 	}
+
+	const float CapsuleZOffset = CapsuleComponent->GetScaledCapsuleHalfHeight();
+	CapsuleOffset = FVector(0.0, 0.0, -CapsuleZOffset);
 
 	bHasMaxDistance = MaxDistance > 0.0f;
 	Indicator->Activate(true);
@@ -46,20 +49,12 @@ void USMAT_SkillIndicator::TickTask(float DeltaTime)
 		return;
 	}
 
-	const FVector CursorLocation = SourceCharacter->GetLocationFromCursor(true);
-	FVector TargetLocation = CursorLocation;
-	if (bHasMaxDistance)
-	{
-		const FVector SourceLocation = SourceCharacter->GetActorLocation() - FVector(0.0, 0.0, CapsuleZOffset);
-		if ((TargetLocation - SourceLocation).SizeSquared() >= FMath::Square(MaxDistance))
-		{
-			const FVector TargetDirection = (CursorLocation - SourceLocation).GetSafeNormal2D();
-			TargetLocation = SourceLocation + (TargetDirection * MaxDistance);
-		}
-	}
+	const float NewMaxDistance = bHasMaxDistance ? MaxDistance : -1.0f;
+	FVector TargetLocation = TargetLocation = SourceCharacter->GetLocationFromCursor(true, NewMaxDistance);
 
-	const FVector Offset(0.0, 0.0, 15.0f);
-	TargetLocation += Offset;
+	// TODO: 이펙트가 잘 보이지 않아 넣은 오프셋입니다. 나중에 이펙트 수정 시 제거해야합니다.
+	const FVector NiagaraOffset(0.0, 0.0, 15.0f);
+	TargetLocation += NiagaraOffset;
 	Indicator->SetWorldLocation(TargetLocation);
 }
 

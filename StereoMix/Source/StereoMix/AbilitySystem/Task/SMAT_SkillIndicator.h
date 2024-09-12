@@ -38,5 +38,5 @@ protected:
 
 	uint32 bHasMaxDistance:1 = false;
 
-	float CapsuleZOffset;
+	FVector CapsuleOffset;
 };
