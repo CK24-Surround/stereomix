@@ -121,7 +121,7 @@ void USMGA_Shoot::Shoot()
 
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	const FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint();
+	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
 	ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
 	ServerRPCApplyCost();
 

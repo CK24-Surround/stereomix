@@ -113,7 +113,7 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	{
 		// 시작점과 목표 지점의 위치를 구합니다.
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		const FVector TargetLocation = CalculateMaxDistanceLocation(SourceLocation, SourceCharacter->GetCursorTargetingPoint(true));
+		const FVector TargetLocation = CalculateMaxDistanceLocation(SourceLocation, SourceCharacter->GetLocationFromCursor(true));
 
 		// 서버로 타겟 위치를전송합니다.
 		SendToServerLocationData(SourceLocation, TargetLocation);

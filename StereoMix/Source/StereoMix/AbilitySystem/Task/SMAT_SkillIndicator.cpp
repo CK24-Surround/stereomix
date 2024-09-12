@@ -46,7 +46,7 @@ void USMAT_SkillIndicator::TickTask(float DeltaTime)
 		return;
 	}
 
-	const FVector CursorLocation = SourceCharacter->GetCursorTargetingPoint(true);
+	const FVector CursorLocation = SourceCharacter->GetLocationFromCursor(true);
 	FVector TargetLocation = CursorLocation;
 	if (bHasMaxDistance)
 	{

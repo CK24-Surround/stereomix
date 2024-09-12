@@ -144,7 +144,7 @@ void USMGA_ImpactArrow::Shoot()
 
 	ServerRPCApplyCost();
 
-	const FVector CursorLocation = SourceCharacter->GetCursorTargetingPoint(true);
+	const FVector CursorLocation = SourceCharacter->GetLocationFromCursor(true);
 	TargetLocation = CursorLocation;
 
 	const float CapsuleZOffset = SourceCapsule->GetScaledCapsuleHalfHeight();

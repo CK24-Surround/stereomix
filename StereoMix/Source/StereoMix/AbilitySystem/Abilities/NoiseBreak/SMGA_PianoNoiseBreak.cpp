@@ -68,7 +68,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 
 	if (IsLocallyControlled())
 	{
-		const FVector CursorLocation = SourceCharacter->GetCursorTargetingPoint(true);
+		const FVector CursorLocation = SourceCharacter->GetLocationFromCursor(true);
 		FVector SourceLocation = SourceCharacter->GetActorLocation();
 		SourceLocation.Z = CursorLocation.Z;
 

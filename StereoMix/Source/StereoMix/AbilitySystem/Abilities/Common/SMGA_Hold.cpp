@@ -85,7 +85,7 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	if (IsLocallyControlled())
 	{
 		// 커서위치는 즉시 저장합니다. 시작 위치는 ServerRPC를 호출할때 저장합니다.
-		TargetLocation = SourceCharacter->GetCursorTargetingPoint();
+		TargetLocation = SourceCharacter->GetLocationFromCursor();
 
 		// 애님 노티파이를 기다리고 노티파이가 호출되면 잡기를 요청합니다.
 		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Hold);

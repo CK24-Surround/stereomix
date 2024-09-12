@@ -78,11 +78,12 @@ public:
 	/** 예측적으로 데미지를 먼저 UI에 반영해야할 때 사용합니다.*/
 	void PredictHPChange(float Amount);
 
-	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
-	 * 기본값은 플레이어 캐릭터의 중심을 기준으로 하는 평면으로 계산됩니다. 만약 bIsZeroBasis가 true라면 캐릭터가 서있는 바닥을 기준으로 하는 평면으로 계산됩니다. */
-	FVector GetCursorTargetingPoint(bool bIsZeroBasis = false);
+	/** 현재 커서가 위치한 곳의 좌표를 반환합니다. 양수 값의 사거리를 매개변수로 넘겨주면 사거리 내의 좌표를 반환합니다.
+	 * bIsZeroBasis가 true면 캐릭터의 바닥을 기준으로, false면 캐릭터의 중심을 기준으로 계산합니다.
+	 */
+	FVector GetLocationFromCursor(bool bUseZeroBasis = false, float MaxDistance = -1.0f);
 
-	/** 현재 커서가 위치해있는 타일의 위치를 가져옵니다. 양수 값의 사거리를 매개변수로 넘겨주면 사거리 내의 타일의 위치를 가져옵니다. 실패시 false를 반환합니다. */
+	/** 현재 커서가 위치한 곳의 타일좌표를 가져옵니다. 양수 값의 사거리를 매개변수로 넘겨주면 사거리 내의 타일의 좌표를 가져옵니다. 실패시 false를 반환합니다. */
 	bool GetTileLocationFromCursor(FVector& OutTileLocation, float MaxDistance = -1.0f);
 
 	/** 액터를 숨깁니다. 서버에서 호출되어야합니다. */
@@ -150,6 +151,10 @@ protected:
 	void GAInputPressed(EActiveAbility InInputID);
 
 	void GAInputReleased(EActiveAbility InInputID);
+
+	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
+	 * bIsZeroBasis가 true면 캐릭터의 바닥을 기준으로, false면 캐릭터의 중심을 기준으로 계산합니다. */
+	FVector GetCursorTargetingPoint(bool bUseZeroBasis = false);
 
 	void UpdateCameraLocation();
 

@@ -114,7 +114,7 @@ void USMGA_Archery::Charge1()
 	K2_CommitAbilityCost();
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	const FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint();
+	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
 	ServerRPCLaunchProjectile(SourceLocation, TargetLocation, 1);
 }
 
@@ -131,7 +131,7 @@ void USMGA_Archery::Charge2()
 	K2_CommitAbilityCost();
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	const FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint();
+	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
 	ServerRPCLaunchProjectile(SourceLocation, TargetLocation, 2);
 }
 

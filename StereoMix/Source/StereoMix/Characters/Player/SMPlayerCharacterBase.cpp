@@ -278,55 +278,31 @@ void ASMPlayerCharacterBase::PredictHPChange(float Amount)
 	}
 }
 
-FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bIsZeroBasis)
+FVector ASMPlayerCharacterBase::GetLocationFromCursor(bool bUseZeroBasis, float MaxDistance)
 {
-	const FVector SourceLocation = GetActorLocation();
-	FVector BasisLocation = bIsZeroBasis ? SourceLocation - GetCapsuleComponent()->GetScaledCapsuleHalfHeight() : SourceLocation;
-
-	FVector Result(0.0, 0.0, BasisLocation.Z);
-
-	if (SMPlayerController.Get())
+	FVector TargetLocation = GetCursorTargetingPoint(bUseZeroBasis);
+	if (MaxDistance > 0.0f)
 	{
-		FVector WorldLocation;
-		FVector WorldDirection;
-		SMPlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+		const FVector SourceLocation = GetActorLocation();
+		const FVector SourceLocationWithTargetZ(SourceLocation.X, SourceLocation.Y, TargetLocation.Z);
+		const FVector SourceToTarget = TargetLocation - SourceLocationWithTargetZ;
 
-		const FPlane Plane(BasisLocation, FVector::UpVector);
-		const FVector IntersectionPoint = FMath::RayPlaneIntersection(WorldLocation, WorldDirection, Plane);
-		if (!IntersectionPoint.ContainsNaN())
+		if (SourceToTarget.SizeSquared() >= FMath::Square(MaxDistance))
 		{
-			Result = IntersectionPoint;
+			const FVector TargetDirection = SourceToTarget.GetSafeNormal2D();
+			TargetLocation = SourceLocationWithTargetZ + (TargetDirection * MaxDistance);
 		}
 	}
 
-	// 만약 커서위치와 평면의 위치가 평면상에 놓이지 않았다면 경고를 표시합니다. 일반적으로 이런상황이 존재하지는 않을 것으로 예상됩니다.
-	if (!FMath::IsNearlyEqual(BasisLocation.Z, Result.Z, KINDA_SMALL_NUMBER))
-	{
-		NET_LOG(this, Warning, TEXT("캐릭터의 위치와 커서의 위치가 평면상에 놓이지 않았습니다. 캐릭터 Z값: %f 커서 Z값: %f"), BasisLocation.Z, Result.Z);
-	}
-
-	return Result;
+	return TargetLocation;
 }
 
 bool ASMPlayerCharacterBase::GetTileLocationFromCursor(FVector& OutTileLocation, float MaxDistance)
 {
 	OutTileLocation = FVector::ZeroVector;
 
-	FVector Start = GetCursorTargetingPoint(true);
-	if (MaxDistance >= 0.0f)
-	{
-		const FVector SourceLocation = GetActorLocation();
-		const FVector SourceLocationWithCursorZ(SourceLocation.X, SourceLocation.Y, Start.Z);
-		const FVector SourceToCursor = Start - SourceLocationWithCursorZ;
-
-		if (SourceToCursor.SizeSquared() >= FMath::Square(MaxDistance))
-		{
-			const FVector TargetDirection = SourceToCursor.GetSafeNormal2D();
-			Start = SourceLocationWithCursorZ + (TargetDirection * MaxDistance);
-		}
-	}
-
 	FHitResult HitResult;
+	const FVector Start = GetLocationFromCursor(true, MaxDistance);
 	const FVector End = Start + FVector::DownVector * 100.0f;
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, SMCollisionTraceChannel::TileAction))
 	{
@@ -468,7 +444,7 @@ void ASMPlayerCharacterBase::FocusToCursor()
 		return;
 	}
 
-	const FVector Direction = (GetCursorTargetingPoint() - GetActorLocation()).GetSafeNormal();
+	const FVector Direction = (GetLocationFromCursor() - GetActorLocation()).GetSafeNormal();
 	const FRotator NewRotation = FRotationMatrix::MakeFromX(Direction).Rotator();
 	Controller->SetControlRotation(NewRotation);
 }
@@ -658,6 +634,30 @@ void ASMPlayerCharacterBase::GAInputReleased(EActiveAbility InInputID)
 	}
 }
 
+FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bUseZeroBasis)
+{
+	const FVector SourceLocation = GetActorLocation();
+	const float CapsuleHalfHeigh = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	const FVector Offset(0.0, 0.0, -CapsuleHalfHeigh);
+	const FVector BasisLocation = bUseZeroBasis ? SourceLocation + Offset : SourceLocation;
+
+	if (SMPlayerController.Get())
+	{
+		FVector WorldLocation;
+		FVector WorldDirection;
+		SMPlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+
+		const FPlane Plane(BasisLocation, FVector::UpVector);
+		const FVector IntersectionPoint = FMath::RayPlaneIntersection(WorldLocation, WorldDirection, Plane);
+		if (!IntersectionPoint.ContainsNaN())
+		{
+			return IntersectionPoint;
+		}
+	}
+
+	return BasisLocation;
+}
+
 void ASMPlayerCharacterBase::UpdateCameraLocation()
 {
 	if (!GEngine)
@@ -684,7 +684,7 @@ void ASMPlayerCharacterBase::UpdateCameraLocation()
 	}
 
 	const FVector SourceLocation = GetActorLocation();
-	const FVector MouseLocation = GetCursorTargetingPoint();
+	const FVector MouseLocation = GetLocationFromCursor();
 	FVector TargetLocation = (SourceLocation + MouseLocation) * 0.5;
 
 	const FVector SourceToTargetVector = TargetLocation - SourceLocation;

@@ -49,7 +49,7 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	if (IsLocallyControlled())
 	{
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		const FVector TargetLocation = SourceCharacter->GetCursorTargetingPoint();
+		const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
 		ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
 	}
 }
