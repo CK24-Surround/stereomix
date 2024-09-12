@@ -8,7 +8,8 @@
 #include "Utilities/SMLog.h"
 
 
-ASMPianoCharacter::ASMPianoCharacter()
+ASMPianoCharacter::ASMPianoCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 

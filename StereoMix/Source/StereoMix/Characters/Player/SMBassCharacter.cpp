@@ -9,7 +9,8 @@
 #include "Utilities/SMCollision.h"
 
 
-ASMBassCharacter::ASMBassCharacter()
+ASMBassCharacter::ASMBassCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	SlashColliderRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SlashColliderRootComponent"));
 	SlashColliderRootComponent->SetupAttachment(RootComponent);

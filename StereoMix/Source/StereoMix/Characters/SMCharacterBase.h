@@ -12,5 +12,5 @@ class STEREOMIX_API ASMCharacterBase : public ACharacter
 	GENERATED_BODY()
 
 public:
-	ASMCharacterBase();
+	ASMCharacterBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 };

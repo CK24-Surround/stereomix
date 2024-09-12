@@ -6,7 +6,8 @@
 #include "AbilitySystem/SMTags.h"
 
 
-ASMElectricGuitarCharacter::ASMElectricGuitarCharacter()
+ASMElectricGuitarCharacter::ASMElectricGuitarCharacter(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer)
 {
 	// PrimaryActorTick.bCanEverTick = true;
 

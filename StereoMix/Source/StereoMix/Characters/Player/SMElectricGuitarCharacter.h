@@ -12,6 +12,6 @@ class STEREOMIX_API ASMElectricGuitarCharacter : public ASMPlayerCharacterBase
 	GENERATED_BODY()
 
 public:
-	ASMElectricGuitarCharacter();
+	ASMElectricGuitarCharacter(const FObjectInitializer& ObjectInitializer);
 
 };

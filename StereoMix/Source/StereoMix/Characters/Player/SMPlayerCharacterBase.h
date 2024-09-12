@@ -39,7 +39,7 @@ class STEREOMIX_API ASMPlayerCharacterBase : public ASMCharacterBase, public IAb
 	GENERATED_BODY()
 
 public:
-	ASMPlayerCharacterBase();
+	ASMPlayerCharacterBase(const FObjectInitializer& ObjectInitializer);
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -123,7 +123,7 @@ public:
 	virtual void Landed(const FHitResult& Hit) override;
 
 	virtual void FocusToCursor();
-	
+
 	UFUNCTION(Client, Reliable)
 	void ClientRPCCharacterPushBack(FVector_NetQuantize10 Velocity);
 

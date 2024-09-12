@@ -4,7 +4,7 @@
 #include "SMCharacterBase.h"
 
 
-ASMCharacterBase::ASMCharacterBase()
+ASMCharacterBase::ASMCharacterBase(const FObjectInitializer& ObjectInitializer)
 {
 	PrimaryActorTick.bCanEverTick = true;
 }

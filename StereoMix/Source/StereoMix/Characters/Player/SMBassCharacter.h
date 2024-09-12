@@ -17,7 +17,7 @@ class STEREOMIX_API ASMBassCharacter : public ASMPlayerCharacterBase
 	GENERATED_BODY()
 
 public:
-	ASMBassCharacter();
+	ASMBassCharacter(const FObjectInitializer& ObjectInitializer);
 
 	USceneComponent* GetSlashColliderRootComponent() const { return SlashColliderRootComponent; }
 

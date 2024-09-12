@@ -14,7 +14,7 @@ class STEREOMIX_API ASMPianoCharacter : public ASMPlayerCharacterBase
 	GENERATED_BODY()
 
 public:
-	ASMPianoCharacter();
+	ASMPianoCharacter(const FObjectInitializer& ObjectInitializer);
 
 	virtual void OnRep_PlayerState() override;
 

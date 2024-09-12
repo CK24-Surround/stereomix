@@ -11,6 +11,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Camera/CameraComponent.h"
+#include "Characters/Movement/SMCharacterMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/WidgetComponent.h"
@@ -25,8 +26,8 @@
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
-
-ASMPlayerCharacterBase::ASMPlayerCharacterBase()
+ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<USMCharacterMovementComponent>(ACharacter::CharacterMovementComponentName))
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bAlwaysRelevant = true;

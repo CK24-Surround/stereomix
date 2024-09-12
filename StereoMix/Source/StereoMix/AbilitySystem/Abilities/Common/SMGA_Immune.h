@@ -29,7 +29,7 @@ protected:
 	TObjectPtr<UFMODEvent> ImmuneSound;
 
 	UPROPERTY(EditAnywhere, Category = "Design|Immune")
-	float MoveSpeedMultiply = 1.5f;
+	float MoveSpeedMultiplier = 1.5f;
 
 	UPROPERTY(EditAnywhere, Category = "Design|Immune")
 	float ImmuneTime = 3.0f;
