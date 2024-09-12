@@ -63,6 +63,7 @@ void ASMTile::TileTrigger(ESMTeam InTeam)
 		{
 			TeamComponent->SetTeam(InTeam);
 			OnChangeTileWithTeamInformation.Broadcast(CurrentTeam, InTeam);
+			ForceNetUpdate();
 		}
 	}
 }
