@@ -13,6 +13,9 @@
 
 ASMDamageProjectile::ASMDamageProjectile()
 {
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Neutralize);
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::NoiseBreaking);
 }
 
 void ASMDamageProjectile::BeginPlay()

@@ -11,7 +11,12 @@
 #include "Utilities/SMLog.h"
 
 
-ASMSlowBulletProjectile::ASMSlowBulletProjectile() {}
+ASMSlowBulletProjectile::ASMSlowBulletProjectile()
+{
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Neutralize);
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::NoiseBreaking);
+}
 
 void ASMSlowBulletProjectile::Init(float NewSlowDebuffMultiplier, float NewSlowDebuffDuration)
 {
