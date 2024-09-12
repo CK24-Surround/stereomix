@@ -8,6 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreakIndicator.h"
 #include "AbilitySystem/Task/SMAT_WaitHoldResult.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -74,6 +75,18 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 
 void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (IsLocallyControlled())
+	{
+		if (bSuccessHold)
+		{
+			auto SourceASC = GetASC();
+			if (SourceASC)
+			{
+				SourceASC->TryActivateAbilityByClass(USMGA_NoiseBreakIndicator::StaticClass());
+			}
+		}
+	}
+
 	bSuccessHold = false;
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

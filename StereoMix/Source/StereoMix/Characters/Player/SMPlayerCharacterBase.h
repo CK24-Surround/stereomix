@@ -139,6 +139,8 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRPCAddMoveSpeed(float MoveSpeedMultiplier, float Duration);
 
+	UNiagaraComponent* GetNoiseBreakIndicator() const { return NoiseBreakIndicatorComponent; }
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:
@@ -199,6 +201,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Widget")
 	TObjectPtr<UWidgetComponent> CharacterStateWidgetComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "FX")
+	TObjectPtr<UNiagaraComponent> NoiseBreakIndicatorComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "FX")
 	TObjectPtr<UNiagaraComponent> DefaultMoveTrailFXComponent;

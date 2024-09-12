@@ -75,6 +75,10 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 300.0));
 	CharacterStateWidgetComponent->SetDrawAtDesiredSize(true);
 
+	NoiseBreakIndicatorComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NoiseBreakIndicatorComponent"));
+	NoiseBreakIndicatorComponent->SetAbsolute(true, true, true);
+	NoiseBreakIndicatorComponent->SetAutoActivate(false);
+
 	DefaultMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("DefaultMoveTrailFXComponent"));
 	DefaultMoveTrailFXComponent->SetupAttachment(CachedMeshComponent);
 	DefaultMoveTrailFXComponent->SetAbsolute(false, true, true);
@@ -244,6 +248,8 @@ void ASMPlayerCharacterBase::OnRep_PlayerState()
 
 	ImmuneMoveTrailFXComponent->SetAsset(DataAsset->ImmuneMoveTrailFX[SourceTeam]);
 	ImmuneMoveTrailFXComponent->Deactivate();
+
+	NoiseBreakIndicatorComponent->SetAsset(DataAsset->NoiseBreakIndicatorFX[SourceTeam]);
 }
 
 UAbilitySystemComponent* ASMPlayerCharacterBase::GetAbilitySystemComponent() const

@@ -13,12 +13,13 @@ USMAT_SkillIndicator::USMAT_SkillIndicator()
 	bTickingTask = true;
 }
 
-USMAT_SkillIndicator* USMAT_SkillIndicator::SkillIndicator(UGameplayAbility* OwningAbility, ASMPlayerCharacterBase* NewSourceCharacter, UNiagaraComponent* NewIndicator, float NewMaxDistance)
+USMAT_SkillIndicator* USMAT_SkillIndicator::SkillIndicator(UGameplayAbility* OwningAbility, UNiagaraComponent* NewIndicator, float NewMaxDistance, bool bNewUseTileLocation)
 {
 	USMAT_SkillIndicator* NewObj = NewAbilityTask<USMAT_SkillIndicator>(OwningAbility);
-	NewObj->SourceCharacter = NewSourceCharacter;
+	NewObj->SourceCharacter = Cast<ASMPlayerCharacterBase>(OwningAbility->GetAvatarActorFromActorInfo());
 	NewObj->Indicator = NewIndicator;
 	NewObj->MaxDistance = NewMaxDistance;
+	NewObj->bUseTileLocation = bNewUseTileLocation;
 	return NewObj;
 }
 
@@ -49,8 +50,24 @@ void USMAT_SkillIndicator::TickTask(float DeltaTime)
 		return;
 	}
 
+	if (!Indicator->IsActive())
+	{
+		Indicator->Activate(true);
+	}
+
+	FVector TargetLocation;
 	const float NewMaxDistance = bHasMaxDistance ? MaxDistance : -1.0f;
-	FVector TargetLocation = TargetLocation = SourceCharacter->GetLocationFromCursor(true, NewMaxDistance);
+	if (bUseTileLocation)
+	{
+		if (!SourceCharacter->GetTileLocationFromCursor(TargetLocation, NewMaxDistance))
+		{
+			Indicator->DeactivateImmediate();
+		}
+	}
+	else
+	{
+		TargetLocation = SourceCharacter->GetLocationFromCursor(true, NewMaxDistance);
+	}
 
 	// TODO: 이펙트가 잘 보이지 않아 넣은 오프셋입니다. 나중에 이펙트 수정 시 제거해야합니다.
 	const FVector NiagaraOffset(0.0, 0.0, 15.0f);

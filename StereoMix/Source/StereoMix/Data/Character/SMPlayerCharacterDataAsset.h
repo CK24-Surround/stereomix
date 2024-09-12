@@ -47,6 +47,9 @@ public:
 	TMap<ESMTeam, TSubclassOf<USMUserWidget_CharacterState>> CharacterStateWidget;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> NoiseBreakIndicatorFX;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> DefaultMoveTrailFX;
 
 	UPROPERTY(EditAnywhere, Category = "FX")

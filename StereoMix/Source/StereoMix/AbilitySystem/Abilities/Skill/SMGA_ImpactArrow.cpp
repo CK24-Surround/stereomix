@@ -79,7 +79,7 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		}
 
 		MaxDistance = static_cast<float>(MaxDistanceByTile * 150);
-		SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, SourceCharacter, SourceCharacter->GetImpactArrowIndicator(), MaxDistance);
+		SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, SourceCharacter->GetImpactArrowIndicator(), MaxDistance);
 		SkillIndicatorTask->ReadyForActivation();
 	}
 

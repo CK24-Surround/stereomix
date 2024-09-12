@@ -6,6 +6,7 @@
 #include "Engine/OverlapResult.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "SMGA_NoiseBreakIndicator.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -46,6 +47,24 @@ bool USMGA_NoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handl
 	}
 
 	return true;
+}
+
+void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
+{
+	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+
+	if (IsLocallyControlled())
+	{
+		UAbilitySystemComponent* SourceASC = GetASC();
+		if (SourceASC)
+		{
+			FGameplayAbilitySpec* NoiseBreakIndicatorGA = SourceASC->FindAbilitySpecFromClass(USMGA_NoiseBreakIndicator::StaticClass());
+			if (NoiseBreakIndicatorGA)
+			{
+				SourceASC->CancelAbilityHandle(NoiseBreakIndicatorGA->Handle);
+			}
+		}
+	}
 }
 
 void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation)

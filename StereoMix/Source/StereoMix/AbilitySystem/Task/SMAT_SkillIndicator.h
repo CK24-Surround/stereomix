@@ -21,7 +21,7 @@ public:
 	USMAT_SkillIndicator();
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static USMAT_SkillIndicator* SkillIndicator(UGameplayAbility* OwningAbility, ASMPlayerCharacterBase* NewSourceCharacter, UNiagaraComponent* NewIndicator, float NewMaxDistance);
+	static USMAT_SkillIndicator* SkillIndicator(UGameplayAbility* OwningAbility, UNiagaraComponent* NewIndicator, float NewMaxDistance, bool bNewUseTileLocation = false);
 
 protected:
 	virtual void Activate() override;
@@ -39,4 +39,6 @@ protected:
 	uint32 bHasMaxDistance:1 = false;
 
 	FVector CapsuleOffset;
+
+	uint32 bUseTileLocation:1 = false;
 };

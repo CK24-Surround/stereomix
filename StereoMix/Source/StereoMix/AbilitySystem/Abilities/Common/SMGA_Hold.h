@@ -7,6 +7,7 @@
 #include "Data/SMTeam.h"
 #include "SMGA_Hold.generated.h"
 
+class USMAT_SkillIndicator;
 /**
  * 
  */
@@ -59,4 +60,6 @@ protected:
 	uint32 bShowDebug:1 = false;
 
 	uint32 bSuccessHold:1 = false;
+
+	TWeakObjectPtr<USMAT_SkillIndicator> SkillIndicatorTask;
 };
