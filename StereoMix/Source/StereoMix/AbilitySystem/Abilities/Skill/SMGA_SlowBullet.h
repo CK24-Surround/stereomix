@@ -34,4 +34,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float ProjectileSpeed = 3500.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float SlowDebuffMultiplier = 0.3f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float SlowDebuffDuration = 1.5f;
 };

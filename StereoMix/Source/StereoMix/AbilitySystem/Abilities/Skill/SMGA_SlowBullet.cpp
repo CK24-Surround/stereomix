@@ -11,6 +11,7 @@
 #include "Games/SMGameState.h"
 #include "Projectiles/SMProjectile.h"
 #include "Projectiles/SMProjectilePoolManagerComponent.h"
+#include "Projectiles/SMSlowBulletProjectile.h"
 
 USMGA_SlowBullet::USMGA_SlowBullet()
 {
@@ -83,7 +84,7 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 		return;
 	}
 
-	ASMProjectile* Projectile = ProjectilePoolManager->GetSlowBullet(SourceCharacter->GetTeam());
+	ASMSlowBulletProjectile* Projectile = Cast<ASMSlowBulletProjectile>(ProjectilePoolManager->GetSlowBullet(SourceCharacter->GetTeam()));
 	if (!Projectile)
 	{
 		EndAbilityByCancel();
@@ -92,5 +93,6 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 
 	const FVector LaunchRotation = (TargetLocation - SourceLocation).GetSafeNormal();
 	const float MaxDistance = MaxDistanceByTile * 150.0f;
+	Projectile->Init(SlowDebuffMultiplier, SlowDebuffDuration);
 	Projectile->Launch(SourceCharacter, SourceLocation, LaunchRotation, ProjectileSpeed, MaxDistance, Damage);
 }

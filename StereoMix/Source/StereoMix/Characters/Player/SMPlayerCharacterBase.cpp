@@ -439,6 +439,17 @@ void ASMPlayerCharacterBase::FocusToCursor()
 	Controller->SetControlRotation(NewRotation);
 }
 
+void ASMPlayerCharacterBase::AddMoveSpeed(float MoveSpeedMultiplier, float Duration)
+{
+	USMCharacterMovementComponent* SourceMovement = GetCharacterMovement<USMCharacterMovementComponent>();
+	if (!SourceMovement)
+	{
+		return;
+	}
+
+	SourceMovement->AddMoveSpeedBuff(MoveSpeedMultiplier, Duration);
+}
+
 void ASMPlayerCharacterBase::ServerRPCCharacterPushBack_Implementation(FVector_NetQuantize10 Velocity)
 {
 	LaunchCharacter(Velocity, true, true);
@@ -458,6 +469,12 @@ void ASMPlayerCharacterBase::ClientRPCCharacterPushBack_Implementation(FVector_N
 
 	LaunchCharacter(Velocity, true, true);
 	ServerRPCCharacterPushBack(Velocity);
+}
+
+void ASMPlayerCharacterBase::ClientRPCAddMoveSpeed_Implementation(float MoveSpeedMultiplier, float Duration)
+{
+	AddMoveSpeed(MoveSpeedMultiplier, Duration);
+	ServerRPCAddMoveSpeed(MoveSpeedMultiplier, Duration);
 }
 
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)
@@ -731,4 +748,9 @@ void ASMPlayerCharacterBase::OnRep_bUseControllerRotation()
 	bUseControllerRotationPitch = bUseControllerRotation;
 	bUseControllerRotationYaw = bUseControllerRotation;
 	bUseControllerRotationRoll = bUseControllerRotation;
+}
+
+void ASMPlayerCharacterBase::ServerRPCAddMoveSpeed_Implementation(float MoveSpeedMultiplier, float Duration)
+{
+	AddMoveSpeed(MoveSpeedMultiplier, Duration);
 }

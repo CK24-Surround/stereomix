@@ -130,6 +130,11 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCCharacterPushBack(FVector_NetQuantize10 Velocity);
 
+	void AddMoveSpeed(float MoveSpeedMultiplier, float Duration);
+
+	UFUNCTION(Client, Reliable)
+	void ClientRPCAddMoveSpeed(float MoveSpeedMultiplier, float Duration);
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:
@@ -160,6 +165,9 @@ protected:
 
 	UFUNCTION()
 	void OnRep_bUseControllerRotation();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCAddMoveSpeed(float MoveSpeedMultiplier, float Duration);
 
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;

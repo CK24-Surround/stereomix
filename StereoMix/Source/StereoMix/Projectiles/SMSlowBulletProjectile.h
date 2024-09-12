@@ -14,6 +14,9 @@ class STEREOMIX_API ASMSlowBulletProjectile : public ASMProjectile
 public:
 	ASMSlowBulletProjectile();
 
+	/* 디버프 정보를 담습니다. 발사 전에 호출해야합니다. */
+	void Init(float NewSlowDebuffMultiplier, float NewSlowDebuffDuration);
+
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 
@@ -22,4 +25,8 @@ protected:
 	bool IsValidateTarget(AActor* InTarget);
 
 	void ApplyEffect(AActor* TargetActor);
+
+	float SlowDebuffMultiplier = 0.0f;
+
+	float SlowDebuffDuration = 0.0f;
 };

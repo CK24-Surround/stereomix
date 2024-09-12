@@ -13,6 +13,17 @@
 
 ASMSlowBulletProjectile::ASMSlowBulletProjectile() {}
 
+void ASMSlowBulletProjectile::Init(float NewSlowDebuffMultiplier, float NewSlowDebuffDuration)
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	SlowDebuffMultiplier = NewSlowDebuffMultiplier;
+	SlowDebuffDuration = NewSlowDebuffDuration;
+}
+
 void ASMSlowBulletProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
@@ -88,14 +99,14 @@ bool ASMSlowBulletProjectile::IsValidateTarget(AActor* InTarget)
 
 void ASMSlowBulletProjectile::ApplyEffect(AActor* TargetActor)
 {
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (!ensureAlways(TargetASC))
+	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
+	if (!ensureAlways(SourceASC))
 	{
 		return;
 	}
 
-	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
-	if (!ensureAlways(SourceASC))
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (!ensureAlways(TargetASC))
 	{
 		return;
 	}
@@ -109,6 +120,13 @@ void ASMSlowBulletProjectile::ApplyEffect(AActor* TargetActor)
 	// SetByCaller를 통해 매개변수로 전달받은 Damage로 GE를 적용합니다.
 	GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Magnitude);
 	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
+
+	// 대상이 캐릭터면 디버프를 적용합니다.
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (TargetCharacter)
+	{
+		TargetCharacter->ClientRPCAddMoveSpeed(SlowDebuffMultiplier, SlowDebuffDuration);
+	}
 
 	// 공격자 정보도 저장합니다.
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetASC->GetAvatarActor());
