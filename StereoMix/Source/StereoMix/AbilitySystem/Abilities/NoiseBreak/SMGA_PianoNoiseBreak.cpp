@@ -166,6 +166,8 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 	}
 
 	TileCapture();
+	ApplySplash(NoiseBreakTargetLocation);
+
 	SourceHIC->SetActorIAmHolding(nullptr);
 
 	NET_LOG(GetAvatarActor(), Warning, TEXT("발사"));

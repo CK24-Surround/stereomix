@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_ModifyGravityUntilLanded.h"
 #include "Characters/Player/SMElectricGuitarCharacter.h"
 #include "Components/CapsuleComponent.h"
@@ -132,6 +133,7 @@ void USMGA_ElectricGuitarNoiseBreak::ServerRPCOnNoiseBreak_Implementation(const 
 
 	SourceHIC->SetActorIAmHolding(nullptr);
 	TileCapture(TargetLocation);
+	ApplySplash(TargetLocation);
 }
 
 void USMGA_ElectricGuitarNoiseBreak::TileCapture(const FVector& TargetLocation)

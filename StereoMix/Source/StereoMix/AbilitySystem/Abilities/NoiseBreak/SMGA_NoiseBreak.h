@@ -18,6 +18,8 @@ public:
 	USMGA_NoiseBreak();
 
 protected:
+	virtual void ApplySplash(const FVector& TargetLocation);
+
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Damage = 20.0f;
 

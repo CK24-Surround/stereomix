@@ -246,6 +246,7 @@ void USMGA_BassNoiseBreak::OnNoiseBreak(ASMPlayerCharacterBase* LandedCharacter)
 		}
 
 		TileCapture();
+		ApplySplash(SourceCharacter->GetActorLocation());
 		SourceHIC->SetActorIAmHolding(nullptr);
 	}
 
