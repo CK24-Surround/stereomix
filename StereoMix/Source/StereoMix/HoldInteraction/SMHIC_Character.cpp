@@ -37,18 +37,13 @@ void USMHIC_Character::InitASC(USMAbilitySystemComponent* NewASC)
 
 bool USMHIC_Character::CanHolded(AActor* TargetActor) const
 {
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority())
-	{
-		return false;
-	}
-
-	if (!SourceASC.Get())
+	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
 	{
 		return false;
 	}
 
 	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	if (!ensureAlways(TargetCharacter))
+	if (!TargetCharacter)
 	{
 		return false;
 	}
@@ -59,7 +54,8 @@ bool USMHIC_Character::CanHolded(AActor* TargetActor) const
 		return false;
 	}
 
-	if (SourceTeam == TargetCharacter->GetTeam())
+	const ESMTeam TargetTeam = TargetCharacter->GetTeam();
+	if (SourceTeam == TargetTeam)
 	{
 		return false;
 	}

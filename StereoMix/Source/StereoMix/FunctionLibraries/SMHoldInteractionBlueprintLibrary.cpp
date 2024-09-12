@@ -7,10 +7,10 @@
 
 USMHoldInteractionComponent* USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(AActor* InActor)
 {
-	ISMHoldInteractionInterface* HIInterface = Cast<ISMHoldInteractionInterface>(InActor);
-	if (ensureAlways(HIInterface))
+	ISMHoldInteractionInterface* HII = Cast<ISMHoldInteractionInterface>(InActor);
+	if (HII)
 	{
-		USMHoldInteractionComponent* HIC = HIInterface->GetHoldInteractionComponent();
+		USMHoldInteractionComponent* HIC = HII->GetHoldInteractionComponent();
 		if (ensureAlways(HIC))
 		{
 			return HIC;
