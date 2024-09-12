@@ -638,21 +638,23 @@ FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bUseZeroBasis)
 {
 	const FVector SourceLocation = GetActorLocation();
 	const float CapsuleHalfHeigh = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-	const FVector Offset(0.0, 0.0, -CapsuleHalfHeigh);
-	const FVector BasisLocation = bUseZeroBasis ? SourceLocation + Offset : SourceLocation;
+	const FVector CapsuleOffset(0.0, 0.0, -CapsuleHalfHeigh);
+	const FVector BasisLocation = bUseZeroBasis ? SourceLocation + CapsuleOffset : SourceLocation;
 
-	if (SMPlayerController.Get())
+	if (!SMPlayerController.Get())
 	{
-		FVector WorldLocation;
-		FVector WorldDirection;
-		SMPlayerController->DeprojectMousePositionToWorld(WorldLocation, WorldDirection);
+		return BasisLocation;
+	}
 
-		const FPlane Plane(BasisLocation, FVector::UpVector);
-		const FVector IntersectionPoint = FMath::RayPlaneIntersection(WorldLocation, WorldDirection, Plane);
-		if (!IntersectionPoint.ContainsNaN())
-		{
-			return IntersectionPoint;
-		}
+	FVector CursorWorldLocation;
+	FVector CursorWorldDirection;
+	SMPlayerController->DeprojectMousePositionToWorld(CursorWorldLocation, CursorWorldDirection);
+
+	const FPlane Plane(BasisLocation, FVector::UpVector);
+	const FVector IntersectionPoint = FMath::RayPlaneIntersection(CursorWorldLocation, CursorWorldDirection, Plane);
+	if (!IntersectionPoint.ContainsNaN())
+	{
+		return IntersectionPoint;
 	}
 
 	return BasisLocation;
