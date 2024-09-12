@@ -51,6 +51,16 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		return;
 	}
 
+	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
+	if (!SourceCapsule)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	OriginalCollisionProfileName = SourceCapsule->GetCollisionProfileName();
+	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::NoiseBreak);
+
 	K2_CommitAbility();
 
 	const FName RootMotionTaskName = TEXT("RootMotionTask");
@@ -101,8 +111,18 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 
 void USMGA_PianoNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
+	if (SourceCharacter)
+	{
+		UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
+		if (SourceCapsule)
+		{
+			SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
+		}
+	}
+
 	bHasTargetLocation = false;
-	NET_LOG(GetAvatarActor(), Warning, TEXT("노브 종료"));
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

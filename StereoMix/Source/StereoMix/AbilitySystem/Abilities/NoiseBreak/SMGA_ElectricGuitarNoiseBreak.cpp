@@ -63,7 +63,6 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	K2_CommitAbility();
 
 	OriginalCollisionProfileName = SourceCapsule->GetCollisionProfileName();
-	NET_LOG(SourceCharacter, Warning, TEXT("%s"), *OriginalCollisionProfileName.ToString());
 	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::NoiseBreak);
 
 	SourceCharacter->OnCharacterLanded.AddUObject(this, &ThisClass::OnLanded);

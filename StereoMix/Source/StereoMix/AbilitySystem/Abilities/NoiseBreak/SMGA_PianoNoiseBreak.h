@@ -45,4 +45,6 @@ protected:
 	FVector NoiseBreakTargetLocation;
 
 	uint32 bHasTargetLocation = false;
+
+	FName OriginalCollisionProfileName;
 };

@@ -72,4 +72,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float TotalTriggerTime = 0.267f;
+
+	FName OriginalCollisionProfileName;
 };

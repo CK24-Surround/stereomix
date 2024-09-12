@@ -9,6 +9,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMBassCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "Games/SMGameState.h"
@@ -49,6 +50,13 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		return;
 	}
 
+	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
+	if (!SourceCapsule)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
 	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
 	USMHoldInteractionComponent* TargetHIC = nullptr;
 	if (TargetActor)
@@ -63,6 +71,9 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 	ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	CachedNoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceTeam];
+
+	OriginalCollisionProfileName = SourceCapsule->GetCollisionProfileName();
+	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::NoiseBreak);
 
 	// 스매시는 착지 시 판정이 발생하고 이에 대한 처리가 수행되어야합니다. 착지 델리게이트를 기다립니다.
 	SourceCharacter->OnCharacterLanded.AddUObject(this, &ThisClass::OnNoiseBreak);
@@ -192,6 +203,12 @@ void USMGA_BassNoiseBreak::OnNoiseBreak(ASMPlayerCharacterBase* LandedCharacter)
 	{
 		SourceMovement->GravityScale = OriginalGravityScale;
 		SourceMovement->StopMovementImmediately();
+	}
+
+	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
+	if (SourceCapsule)
+	{
+		SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
 	}
 
 	// 스매시 종료 애니메이션을 재생합니다. 이 애니메이션이 종료되면 스매시가 종료됩니다. 종료는 서버에서 수행하게 됩니다.
