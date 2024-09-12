@@ -44,18 +44,6 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		return;
 	}
 
-	// 커서의 위치가 타일이 아닌 경우 시전되면 안됩니다.
-	FVector TargetLocation;
-	if (IsLocallyControlled())
-	{
-		const float MaxDistance = MaxDistanceByTile * 150.0f;
-		if (!SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance))
-		{
-			EndAbilityByCancel();
-			return;
-		}
-	}
-
 	K2_CommitAbility();
 
 	// 노이즈 브레이크 콜라이더로 변경합니다.
@@ -77,6 +65,10 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	// 현재 위치의 타일을 점령하고 타겟위치로 도약합니다.
 	if (IsLocallyControlled())
 	{
+		FVector TargetLocation;
+		const float MaxDistance = MaxDistanceByTile * 150.0f;
+		SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance);
+
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
 		const FVector SourceLocationWithTargetZ(SourceLocation.X, SourceLocation.Y, TargetLocation.Z);
 		const FVector TargetLocationWithSourceZ(TargetLocation.X, TargetLocation.Y, SourceLocation.Z);

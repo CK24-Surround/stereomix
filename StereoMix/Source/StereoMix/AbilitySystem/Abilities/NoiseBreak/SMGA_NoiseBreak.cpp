@@ -22,6 +22,32 @@ USMGA_NoiseBreak::USMGA_NoiseBreak()
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
 }
 
+bool USMGA_NoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		return false;
+	}
+
+	FVector TargetLocation;
+	if (IsLocallyControlled())
+	{
+		const float MaxDistance = MaxDistanceByTile * 150.0f;
+		if (!SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance))
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();

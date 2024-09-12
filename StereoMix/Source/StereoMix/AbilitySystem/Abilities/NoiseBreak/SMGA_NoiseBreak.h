@@ -18,6 +18,8 @@ public:
 	USMGA_NoiseBreak();
 
 protected:
+	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
+
 	virtual void ApplySplash(const FVector& TargetLocation);
 
 	UPROPERTY(EditAnywhere, Category = "Design")

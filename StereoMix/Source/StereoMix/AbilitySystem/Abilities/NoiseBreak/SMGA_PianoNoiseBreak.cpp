@@ -34,16 +34,10 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	const USMPianoCharacterDataAsset* SourceDataAsset = GetDataAsset<USMPianoCharacterDataAsset>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-	if (!SourceDataAsset || !SourceHIC || !SourceCapsule)
+	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	if (!SourceCharacter || !SourceDataAsset || !SourceHIC || !SourceCapsule)
 	{
 		EndAbilityByCancel();
 		return;
@@ -68,19 +62,9 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 
 	if (IsLocallyControlled())
 	{
-		const FVector CursorLocation = SourceCharacter->GetLocationFromCursor(true);
-		FVector SourceLocation = SourceCharacter->GetActorLocation();
-		SourceLocation.Z = CursorLocation.Z;
-
-		const FVector SourceToCursorVector = CursorLocation - SourceLocation;
+		FVector TargetLocation;
 		const float MaxDistance = MaxDistanceByTile * 150.0f;
-
-		FVector TargetLocation = CursorLocation;
-		if (SourceToCursorVector.SizeSquared() >= FMath::Square(MaxDistance))
-		{
-			const FVector TargetDirection = SourceToCursorVector.GetSafeNormal2D();
-			TargetLocation = SourceLocation + (TargetDirection * MaxDistance);
-		}
+		SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance);
 
 		ServerRPCSendTargetLocation(TargetLocation);
 	}
