@@ -46,7 +46,6 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 
 	// 언제든 다른 상태로 인해 끊길 수 있는 애니메이션이기에 bAllowInterruptAfterBlendOut을 활성화 해 언제 끊기던 OnInterrupted가 브로드 캐스트 되도록합니다.
 	// 클라이언트와 서버 각각 애니메이션이 종료되면 스스로 종료하도록 합니다.
-	NET_LOG(SourceCharacter, Warning, TEXT("잡기 시작"));
 	UAnimMontage* HoldMontage = SourceDataAsset->HoldMontage[SourceCharacter->GetTeam()];
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TEXT("PlayMontageAndWait"), HoldMontage);
 	PlayMontageAndWaitTask->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbility);
@@ -75,7 +74,6 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 
 void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	NET_LOG(GetAvatarActor(), Warning, TEXT("잡기 종료"));
 	bSuccessHold = false;
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
@@ -147,7 +145,6 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 		SourceCharacter->ClientRPCRemoveScreendIndicatorToSelf(TargetActor);
 	}
 
-	NET_LOG(SourceCharacter, Warning, TEXT("잡기 완료"));
 	bSuccessHold = bSuccess;
 	ClientRPCSendHoldResult(bSuccessHold);
 	SyncPointHoldResult();

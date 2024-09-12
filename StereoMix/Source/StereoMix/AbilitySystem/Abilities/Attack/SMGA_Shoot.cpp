@@ -14,7 +14,6 @@
 USMGA_Shoot::USMGA_Shoot()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
-	ActivationOwnedTags.AddTag(SMTags::Character::State::Shoot);
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::SlowBullet);
 	Damage = 4.0f;
@@ -43,6 +42,8 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, ShootMontage, 1.0f, NAME_None, false);
+	MontageTask->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbility);
+	MontageTask->OnBlendOut.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->ReadyForActivation();

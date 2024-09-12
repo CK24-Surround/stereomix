@@ -40,8 +40,6 @@ namespace SMTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlashActivation, "Character.State.SlashActivation", "베기 콤보 활성화 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Slash, "Character.State.SlashActivation", "베기 로직에서 휘두르고 있는 상태를 나타냅니다. ");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Archery, "Character.State.Archery", "활을 쏘고 있는 상태를 나타냅니다. ");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Shoot, "Character.State.Shoot", "총을 쏘고 있는 상태를 나타냅니다. ");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Character.State.Catch", "캐릭터를 잡고 있는 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Character.State.Hold", "캐릭터를 잡고 있는 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Caught, "Character.State.Caught", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");

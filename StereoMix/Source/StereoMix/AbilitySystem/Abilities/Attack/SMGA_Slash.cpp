@@ -52,6 +52,8 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	const FName TaskName = TEXT("MontageTask");
 	UAnimMontage* Montage = SourceDataAsset->AttackMontage[SourceTeam];
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TaskName, Montage, 1.0f, NAME_None, false);
+	MontageTask->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbility);
+	MontageTask->OnBlendOut.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->ReadyForActivation();
