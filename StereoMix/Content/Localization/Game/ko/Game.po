@@ -1,0 +1,930 @@
+# Copyright Studio Surround. All Rights Reserved.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Game\n"
+"POT-Creation-Date: 2024-09-03 18:56\n"
+"PO-Revision-Date: 2024-09-04 03:56+0900\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 3.5\n"
+
+#. Key:	02E77A6145C878D7D975239D9542F169
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS4/CommonInput_Gamepad_PS4.Default__CommonInput_Gamepad_PS4_C.GamepadCategory
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS4/CommonInput_Gamepad_PS4.Default__CommonInput_Gamepad_PS4_C.GamepadCategory
+msgctxt ",02E77A6145C878D7D975239D9542F169"
+msgid "Controller"
+msgstr "Controller"
+
+#. Key:	845C671A47C204E52EC0169312E07BFF
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS4/CommonInput_Gamepad_PS4.Default__CommonInput_Gamepad_PS4_C.GamepadDisplayName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS4/CommonInput_Gamepad_PS4.Default__CommonInput_Gamepad_PS4_C.GamepadDisplayName
+msgctxt ",845C671A47C204E52EC0169312E07BFF"
+msgid "Dual Shock 4"
+msgstr "Dual Shock 4"
+
+#. Key:	327F041B48C2F270B56721BA7FF59448
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS4/CommonInput_Gamepad_PS4.Default__CommonInput_Gamepad_PS4_C.GamepadPlatformName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS4/CommonInput_Gamepad_PS4.Default__CommonInput_Gamepad_PS4_C.GamepadPlatformName
+msgctxt ",327F041B48C2F270B56721BA7FF59448"
+msgid "Playstation®4"
+msgstr "Playstation®4"
+
+#. Key:	9E97BA75491D6F5AC0E034BB1FB2A057
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS5/CommonInput_Gamepad_PS5.Default__CommonInput_Gamepad_PS5_C.GamepadCategory
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS5/CommonInput_Gamepad_PS5.Default__CommonInput_Gamepad_PS5_C.GamepadCategory
+msgctxt ",9E97BA75491D6F5AC0E034BB1FB2A057"
+msgid "Controller"
+msgstr "Controller"
+
+#. Key:	56B94F8C41C6D7C26C888B800AF8BD9F
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS5/CommonInput_Gamepad_PS5.Default__CommonInput_Gamepad_PS5_C.GamepadDisplayName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS5/CommonInput_Gamepad_PS5.Default__CommonInput_Gamepad_PS5_C.GamepadDisplayName
+msgctxt ",56B94F8C41C6D7C26C888B800AF8BD9F"
+msgid "Dual Sense"
+msgstr "Dual Sense"
+
+#. Key:	3C439BB8461C9A566FE740B3E9989B8F
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS5/CommonInput_Gamepad_PS5.Default__CommonInput_Gamepad_PS5_C.GamepadPlatformName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadPS5/CommonInput_Gamepad_PS5.Default__CommonInput_Gamepad_PS5_C.GamepadPlatformName
+msgctxt ",3C439BB8461C9A566FE740B3E9989B8F"
+msgid "Playstation®5"
+msgstr "Playstation®5"
+
+#. Key:	596BD2C94671CA046BFC62BE7CC20188
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadSwitch/CommonInput_Gamepad_Switch.Default__CommonInput_Gamepad_Switch_C.GamepadCategory
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadSwitch/CommonInput_Gamepad_Switch.Default__CommonInput_Gamepad_Switch_C.GamepadCategory
+msgctxt ",596BD2C94671CA046BFC62BE7CC20188"
+msgid "Controller"
+msgstr "Controller"
+
+#. Key:	663EDAE54CE37DCDF45443AAF5DB448A
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadSwitch/CommonInput_Gamepad_Switch.Default__CommonInput_Gamepad_Switch_C.GamepadDisplayName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadSwitch/CommonInput_Gamepad_Switch.Default__CommonInput_Gamepad_Switch_C.GamepadDisplayName
+msgctxt ",663EDAE54CE37DCDF45443AAF5DB448A"
+msgid "Joycons"
+msgstr "Joycons"
+
+#. Key:	2E4E25CB47829BC54412B794999A6623
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadSwitch/CommonInput_Gamepad_Switch.Default__CommonInput_Gamepad_Switch_C.GamepadPlatformName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadSwitch/CommonInput_Gamepad_Switch.Default__CommonInput_Gamepad_Switch_C.GamepadPlatformName
+msgctxt ",2E4E25CB47829BC54412B794999A6623"
+msgid "Nintendo Switch"
+msgstr "Nintendo Switch"
+
+#. Key:	D086A5324B000302144FA2A57D925E87
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxOne/CommonInput_Gamepad_XboxOne.Default__CommonInput_Gamepad_XboxOne_C.GamepadCategory
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxOne/CommonInput_Gamepad_XboxOne.Default__CommonInput_Gamepad_XboxOne_C.GamepadCategory
+msgctxt ",D086A5324B000302144FA2A57D925E87"
+msgid "Wireless Controller"
+msgstr "Wireless Controller"
+
+#. Key:	39ACE3D74B1E7F69CCB56CBE3F6F290C
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxOne/CommonInput_Gamepad_XboxOne.Default__CommonInput_Gamepad_XboxOne_C.GamepadDisplayName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxOne/CommonInput_Gamepad_XboxOne.Default__CommonInput_Gamepad_XboxOne_C.GamepadDisplayName
+msgctxt ",39ACE3D74B1E7F69CCB56CBE3F6F290C"
+msgid "Xbox Controller"
+msgstr "Xbox Controller"
+
+#. Key:	A622ACF8477B043394C3E3B869899D2E
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxOne/CommonInput_Gamepad_XboxOne.Default__CommonInput_Gamepad_XboxOne_C.GamepadPlatformName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxOne/CommonInput_Gamepad_XboxOne.Default__CommonInput_Gamepad_XboxOne_C.GamepadPlatformName
+msgctxt ",A622ACF8477B043394C3E3B869899D2E"
+msgid "Xbox One"
+msgstr "Xbox One"
+
+#. Key:	5DDD0C9145ED691F998EF2ABA1056ADA
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxSeriesX/CommonInput_Gamepad_XSX.Default__CommonInput_Gamepad_XSX_C.GamepadCategory
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxSeriesX/CommonInput_Gamepad_XSX.Default__CommonInput_Gamepad_XSX_C.GamepadCategory
+msgctxt ",5DDD0C9145ED691F998EF2ABA1056ADA"
+msgid "Wireless Controller"
+msgstr "Wireless Controller"
+
+#. Key:	90C04A53441DAB7CC7D259838013F16D
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxSeriesX/CommonInput_Gamepad_XSX.Default__CommonInput_Gamepad_XSX_C.GamepadDisplayName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxSeriesX/CommonInput_Gamepad_XSX.Default__CommonInput_Gamepad_XSX_C.GamepadDisplayName
+msgctxt ",90C04A53441DAB7CC7D259838013F16D"
+msgid "Xbox Controller"
+msgstr "Xbox Controller"
+
+#. Key:	58060FA24F1BA9C51A410286083C65EA
+#. SourceLocation:	/Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxSeriesX/CommonInput_Gamepad_XSX.Default__CommonInput_Gamepad_XSX_C.GamepadPlatformName
+#: /Game/StereoMix/UI/Foundation/Platform/Input/GamepadXboxSeriesX/CommonInput_Gamepad_XSX.Default__CommonInput_Gamepad_XSX_C.GamepadPlatformName
+msgctxt ",58060FA24F1BA9C51A410286083C65EA"
+msgid "Xbox Series X"
+msgstr "Xbox Series X"
+
+#. Key:	2BEB6E5F47E5BA59CCAA8A890082D4F7
+#. SourceLocation:	/Game/StereoMix/UI/Parts/WBP_Scoreboard.WBP_Scoreboard_C:WidgetTree.EDMScore.Text
+#: /Game/StereoMix/UI/Parts/WBP_Scoreboard.WBP_Scoreboard_C:WidgetTree.EDMScore.Text
+msgctxt ",2BEB6E5F47E5BA59CCAA8A890082D4F7"
+msgid "000"
+msgstr "000"
+
+#. Key:	2581391148688A33B8F818BE6C43D09F
+#. SourceLocation:	/Game/StereoMix/UI/Parts/WBP_Scoreboard.WBP_Scoreboard_C:WidgetTree.FutureBassScore.Text
+#: /Game/StereoMix/UI/Parts/WBP_Scoreboard.WBP_Scoreboard_C:WidgetTree.FutureBassScore.Text
+msgctxt ",2581391148688A33B8F818BE6C43D09F"
+msgid "000"
+msgstr "000"
+
+#. Key:	EFB57CE74492DCA71BBB48A146983F85
+#. SourceLocation:	/Game/StereoMix/UI/Parts/WBP_Scoreboard.WBP_Scoreboard_C:WidgetTree.PhaseNumber.Text
+#: /Game/StereoMix/UI/Parts/WBP_Scoreboard.WBP_Scoreboard_C:WidgetTree.PhaseNumber.Text
+msgctxt ",EFB57CE74492DCA71BBB48A146983F85"
+msgid "Phase0"
+msgstr "Phase0"
+
+#. Key:	B0E682924596DEC1D98B3DB0CC502115
+#. SourceLocation:	/Game/StereoMix/UI/Parts/WBP_Scoreboard.WBP_Scoreboard_C:WidgetTree.RoundTimer.Text
+#: /Game/StereoMix/UI/Parts/WBP_Scoreboard.WBP_Scoreboard_C:WidgetTree.RoundTimer.Text
+msgctxt ",B0E682924596DEC1D98B3DB0CC502115"
+msgid "00:00"
+msgstr "00:00"
+
+#. Key:	665942434A444EF6460CB88CAB121006
+#. SourceLocation:	/Game/StereoMix/UI/Parts/WBP_SoundSliderBar.WBP_SoundSliderBar_C:WidgetTree.PercentValueText.Text
+#: /Game/StereoMix/UI/Parts/WBP_SoundSliderBar.WBP_SoundSliderBar_C:WidgetTree.PercentValueText.Text
+msgctxt ",665942434A444EF6460CB88CAB121006"
+msgid "100"
+msgstr "100"
+
+#. Key:	AF6FE0AC48EE113B9B9F7B8A4A25921D
+#. SourceLocation:	/Game/StereoMix/UI/Parts/WBP_TeamSelect.WBP_TeamSelect_C:WidgetTree.TextBlock_165.Text
+#: /Game/StereoMix/UI/Parts/WBP_TeamSelect.WBP_TeamSelect_C:WidgetTree.TextBlock_165.Text
+msgctxt ",AF6FE0AC48EE113B9B9F7B8A4A25921D"
+msgid "OO팀 선택"
+msgstr "OO팀 선택"
+
+#. Key:	1C2DF828460BACD8F16139B88FD9CEB4
+#. SourceLocation:	/Game/StereoMix/UI/WBP_CharacterState_FutureBass.WBP_CharacterState_FutureBass_C:WidgetTree.TB_Nickname.Text
+#: /Game/StereoMix/UI/WBP_CharacterState_FutureBass.WBP_CharacterState_FutureBass_C:WidgetTree.TB_Nickname.Text
+msgctxt ",1C2DF828460BACD8F16139B88FD9CEB4"
+msgid "아 집가고 싶은데"
+msgstr "아 집가고 싶은데"
+
+#. Key:	370ED2624FBADF93DBAB6A887E8BBFD7
+#. SourceLocation:	/Game/StereoMix/UI/WBP_Timer.WBP_Timer_C:WidgetTree.TextBlock_0.Text
+#: /Game/StereoMix/UI/WBP_Timer.WBP_Timer_C:WidgetTree.TextBlock_0.Text
+msgctxt ",370ED2624FBADF93DBAB6A887E8BBFD7"
+msgid "4.65"
+msgstr "4.65"
+
+#. Key:	8CD3E4574ACC39A5AF3B3C9163DE1C97
+#. SourceLocation:	/Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.ETB_Nickname.HintText
+#: /Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.ETB_Nickname.HintText
+msgctxt ",8CD3E4574ACC39A5AF3B3C9163DE1C97"
+msgid "닉네임을 입력해주세요."
+msgstr "닉네임을 입력해주세요."
+
+#. Key:	BEC6A93244B6FAF0394BC4B9F026C4AB
+#. SourceLocation:	/Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.ETB_SearchIPAdress.HintText
+#: /Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.ETB_SearchIPAdress.HintText
+msgctxt ",BEC6A93244B6FAF0394BC4B9F026C4AB"
+msgid "IP 주소를 입력해주세요."
+msgstr "IP 주소를 입력해주세요."
+
+#. Key:	40C680CD415B2AF053DE9DB40621997D
+#. SourceLocation:	/Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.TB_Enter.Text
+#: /Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.TB_Enter.Text
+msgctxt ",40C680CD415B2AF053DE9DB40621997D"
+msgid "서버 입장"
+msgstr "서버 입장"
+
+#. Key:	53591DFD45C60B0E8E0516ADCF801FD9
+#. SourceLocation:	/Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.TB_EnterForLoopback.Text
+#: /Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.TB_EnterForLoopback.Text
+msgctxt ",53591DFD45C60B0E8E0516ADCF801FD9"
+msgid "서버 입장(루프백)"
+msgstr "서버 입장(루프백)"
+
+#. Key:	287C3FB54B65554AB1C00E870A055D9A
+#. SourceLocation:	/Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.TB_QuitGame.Text
+#: /Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.TB_QuitGame.Text
+msgctxt ",287C3FB54B65554AB1C00E870A055D9A"
+msgid "게임 종료"
+msgstr "게임 종료"
+
+#. Key:	C4D67A194AA32C712A3118A08DA2EF04
+#. SourceLocation:	/Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.TB_SearchIPAdress.Text
+#: /Game/StereoMix/UI/WBP_Title_ForTest.WBP_Title_ForTest_C:WidgetTree.TB_SearchIPAdress.Text
+msgctxt ",C4D67A194AA32C712A3118A08DA2EF04"
+msgid "직접 찾기"
+msgstr "직접 찾기"
+
+#. Key:	D565DEAF45198EEBC3A2C3AA1C96E806
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect.WBP_CharacterSelect_C:WidgetTree.CommonTextBlock_122.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect.WBP_CharacterSelect_C:WidgetTree.CommonTextBlock_122.Text
+msgctxt ",D565DEAF45198EEBC3A2C3AA1C96E806"
+msgid "포지션:"
+msgstr "포지션:"
+
+#. Key:	D7E3F55C4E8EBE521ECE329CB2A21701
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect.WBP_CharacterSelect_C:WidgetTree.CommonTextBlock_130.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect.WBP_CharacterSelect_C:WidgetTree.CommonTextBlock_130.Text
+msgctxt ",D7E3F55C4E8EBE521ECE329CB2A21701"
+msgid "캐릭터를 선택해주세요."
+msgstr "캐릭터를 선택해주세요."
+
+#. Key:	6681454143DD7FA9C0F7E99BE3A5CE07
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect.WBP_CharacterSelect_C:WidgetTree.CountdownTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect.WBP_CharacterSelect_C:WidgetTree.CountdownTextBlock.Text
+msgctxt ",6681454143DD7FA9C0F7E99BE3A5CE07"
+msgid "30"
+msgstr "30"
+
+#. Key:	9BD07B5A4D50FF337AA386BA4B42966C
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect.WBP_CharacterSelect_C:WidgetTree.Desc_CharacterNameTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect.WBP_CharacterSelect_C:WidgetTree.Desc_CharacterNameTextBlock.Text
+msgctxt ",9BD07B5A4D50FF337AA386BA4B42966C"
+msgid "일렉기타"
+msgstr "일렉기타"
+
+#. Key:	6F81EB924FB99E8FE19AAB89ACBE1518
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:SetCharacterNameText [Script Bytecode]
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:SetCharacterNameText
+#: [Script Bytecode]
+msgctxt ",6F81EB924FB99E8FE19AAB89ACBE1518"
+msgid "선택 중"
+msgstr "선택 중"
+
+#. Key:	92FB138840D9F5D1A5DDF88F599E692F
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:SetCharacterNameText [Script Bytecode]
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:SetCharacterNameText
+#: [Script Bytecode]
+msgctxt ",92FB138840D9F5D1A5DDF88F599E692F"
+msgid "베이스"
+msgstr "베이스"
+
+#. Key:	A2AAF5AA438AAC81D4BAD1A9FC02955F
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:SetCharacterNameText [Script Bytecode]
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:SetCharacterNameText
+#: [Script Bytecode]
+msgctxt ",A2AAF5AA438AAC81D4BAD1A9FC02955F"
+msgid "피아노"
+msgstr "피아노"
+
+#. Key:	D5D971034509908EA44E188F8F7DF3AA
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:SetCharacterNameText [Script Bytecode]
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:SetCharacterNameText
+#: [Script Bytecode]
+msgctxt ",D5D971034509908EA44E188F8F7DF3AA"
+msgid "일렉기타"
+msgstr "일렉기타"
+
+#. Key:	TextBlockDefaultValue
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:WidgetTree.CharacterNameTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:WidgetTree.CharacterNameTextBlock.Text
+msgctxt "UMG,TextBlockDefaultValue"
+msgid "Text Block"
+msgstr "Text Block"
+
+#. Key:	E2DFE7754108FE81D745EC8A5D692F9F
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:WidgetTree.PlayerNameTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/CharacterSelect/WBP_CharacterSelect_Player.WBP_CharacterSelect_Player_C:WidgetTree.PlayerNameTextBlock.Text
+msgctxt ",E2DFE7754108FE81D745EC8A5D692F9F"
+msgid "플레이어 이름"
+msgstr "플레이어 이름"
+
+#. Key:	9080BF944DDDD0BBAEB053845405E13D
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Chat/WBP_ChatEntryWidget.WBP_ChatEntryWidget_C:WidgetTree.MessageTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Chat/WBP_ChatEntryWidget.WBP_ChatEntryWidget_C:WidgetTree.MessageTextBlock.Text
+msgctxt ",9080BF944DDDD0BBAEB053845405E13D"
+msgid "채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지"
+msgstr "채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지채팅메시지"
+
+#. Key:	08FB0C3649E099D04F1768A60C094A64
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Chat/WBP_ChatEntryWidget.WBP_ChatEntryWidget_C:WidgetTree.NameTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Chat/WBP_ChatEntryWidget.WBP_ChatEntryWidget_C:WidgetTree.NameTextBlock.Text
+msgctxt ",08FB0C3649E099D04F1768A60C094A64"
+msgid "[이름]"
+msgstr "[이름]"
+
+#. Key:	E449864B42612AF8CBAF25A7B3FD4741
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Chat/WBP_ChatTypeButton.WBP_ChatTypeButton_C:WidgetTree.ChatTypeTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Chat/WBP_ChatTypeButton.WBP_ChatTypeButton_C:WidgetTree.ChatTypeTextBlock.Text
+msgctxt ",E449864B42612AF8CBAF25A7B3FD4741"
+msgid "[Type]"
+msgstr "[Type]"
+
+#. Key:	D6175BF446AC47956A9ACB9F59B46FD4
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Chat/WBP_ChatWidget.WBP_ChatWidget_C:WidgetTree.MessageInputBox.HintText
+#: /Game/StereoMix/UI/Widgets/Legacy/Chat/WBP_ChatWidget.WBP_ChatWidget_C:WidgetTree.MessageInputBox.HintText
+msgctxt ",D6175BF446AC47956A9ACB9F59B46FD4"
+msgid "[Tab] 키로 채팅 대상 변경, [Enter] 키로 채팅 입력"
+msgstr "[Tab] 키로 채팅 대상 변경, [Enter] 키로 채팅 입력"
+
+#. Key:	DiscordBannerDescription
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Etc/WBP_DiscordBanner.WBP_DiscordBanner_C:WidgetTree.Description.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Etc/WBP_DiscordBanner.WBP_DiscordBanner_C:WidgetTree.Description.Text
+msgctxt "UI,DiscordBannerDescription"
+msgid ""
+"디스코드 채널에 참여하고\r\n"
+"파티를 구해보세요!"
+msgstr ""
+"디스코드 채널에 참여하고\r\n"
+"파티를 구해보세요!"
+
+#. Key:	6D000D6941A88F157911E79B0728D662
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServer.WBP_CustomServer_C:WidgetTree.CommonTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServer.WBP_CustomServer_C:WidgetTree.CommonTextBlock.Text
+msgctxt ",6D000D6941A88F157911E79B0728D662"
+msgid "서버 주소"
+msgstr "서버 주소"
+
+#. Key:	534A5E8147A1CE6044E8138C764578D8
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServer.WBP_CustomServer_C:WidgetTree.CommonTextBlock_52.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServer.WBP_CustomServer_C:WidgetTree.CommonTextBlock_52.Text
+msgctxt ",534A5E8147A1CE6044E8138C764578D8"
+msgid "이름"
+msgstr "이름"
+
+#. Key:	561EE6B2435F821B27A39E903F609A8B
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServer.WBP_CustomServer_C:WidgetTree.ServerUrlTextBox.HintText
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServer.WBP_CustomServer_C:WidgetTree.ServerUrlTextBox.HintText
+msgctxt ",561EE6B2435F821B27A39E903F609A8B"
+msgid "서버 주소"
+msgstr "서버 주소"
+
+#. Key:	E6B0D9BC4DE25789979C159F826033D8
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServer.WBP_CustomServer_C:WidgetTree.UserNameTextBox.HintText
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServer.WBP_CustomServer_C:WidgetTree.UserNameTextBox.HintText
+msgctxt ",E6B0D9BC4DE25789979C159F826033D8"
+msgid "이름"
+msgstr "이름"
+
+#. Key:	74119FE440E6559AC904B8B70CB208C6
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServerButton.WBP_CustomServerButton_C:WidgetTree.CommonTextBlock_133.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/CustomServer/WBP_CustomServerButton.WBP_CustomServerButton_C:WidgetTree.CommonTextBlock_133.Text
+msgctxt ",74119FE440E6559AC904B8B70CB208C6"
+msgid "서버 접속"
+msgstr "서버 접속"
+
+#. Key:	9A55FED84EC714F496001785399B5368
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.CommonTextBlock_350.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.CommonTextBlock_350.Text
+msgctxt ",9A55FED84EC714F496001785399B5368"
+msgid "공개 여부"
+msgstr "공개 여부"
+
+#. Key:	172B728743B44B2FAE3510A3D878C3FB
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.CommonTextBlock_421.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.CommonTextBlock_421.Text
+msgctxt ",172B728743B44B2FAE3510A3D878C3FB"
+msgid "빠른시작을 통해 들어올 수 있는 지 여부를 정합니다. 비공개로 생성 시 코드를 입력하여 입장할 수 있습니다."
+msgstr "빠른시작을 통해 들어올 수 있는 지 여부를 정합니다. 비공개로 생성 시 코드를 입력하여 입장할 수 있습니다."
+
+#. Key:	91145C5D4553F5AD8CC9F0AF2E3DD724
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.TitleTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.TitleTextBlock.Text
+msgctxt ",91145C5D4553F5AD8CC9F0AF2E3DD724"
+msgid "게임 생성 옵션"
+msgstr "게임 생성 옵션"
+
+#. Key:	B7DC2C394E8D28D463C0E7848AC05CC4
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.WBP_OptionButton.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.WBP_OptionButton.ToggleText
+msgctxt ",B7DC2C394E8D28D463C0E7848AC05CC4"
+msgid "공개"
+msgstr "공개"
+
+#. Key:	85B6F54144408EEF5FC8D9A933FC3F62
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.WBP_OptionButton_108.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_CreateRoomPopup.WBP_CreateRoomPopup_C:WidgetTree.WBP_OptionButton_108.ToggleText
+msgctxt ",85B6F54144408EEF5FC8D9A933FC3F62"
+msgid "비공개"
+msgstr "비공개"
+
+#. Key:	AF483E2A458F10A386F41290A456F917
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_RoomCodePopup.WBP_RoomCodePopup_C:WidgetTree.RoomCodeInputBox.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Lobby/WBP_RoomCodePopup.WBP_RoomCodePopup_C:WidgetTree.RoomCodeInputBox.Text
+msgctxt ",AF483E2A458F10A386F41290A456F917"
+msgid "DMNI1N"
+msgstr "DMNI1N"
+
+#. Key:	AE0ED84443FE705F5326CC8D5B478768
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Login/WBP_GuestLoginPopup.WBP_GuestLoginPopup_C:WidgetTree.NameLengthText.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Login/WBP_GuestLoginPopup.WBP_GuestLoginPopup_C:WidgetTree.NameLengthText.Text
+msgctxt ",AE0ED84443FE705F5326CC8D5B478768"
+msgid "(0/20)"
+msgstr "(0/20)"
+
+#. Key:	A6A13506467BC29C3715FEB778BF87A1
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Login/WBP_GuestLoginPopup.WBP_GuestLoginPopup_C:WidgetTree.TextBlock_46.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Login/WBP_GuestLoginPopup.WBP_GuestLoginPopup_C:WidgetTree.TextBlock_46.Text
+msgctxt ",A6A13506467BC29C3715FEB778BF87A1"
+msgid "한글, 영어, 숫자 외 다른 문자는  작성불가합니다."
+msgstr "한글, 영어, 숫자 외 다른 문자는  작성불가합니다."
+
+#. Key:	207BD8014D5296A57D9D2F9AB07D624B
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Login/WBP_GuestLoginPopup.WBP_GuestLoginPopup_C:WidgetTree.UserNameInputBox.HintText
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Login/WBP_GuestLoginPopup.WBP_GuestLoginPopup_C:WidgetTree.UserNameInputBox.HintText
+msgctxt ",207BD8014D5296A57D9D2F9AB07D624B"
+msgid "닉네임을 입력해주세요..."
+msgstr "닉네임을 입력해주세요..."
+
+#. Key:	3DF1F227453B0F1C412BB4871CF19794
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/Login/WBP_Login.WBP_Login_C:WidgetTree.ProgressTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/Login/WBP_Login.WBP_Login_C:WidgetTree.ProgressTextBlock.Text
+msgctxt ",3DF1F227453B0F1C412BB4871CF19794"
+msgid "진행도 텍스트"
+msgstr "진행도 텍스트"
+
+#. Key:	7A27A1BA45B686BEF5A6378B230ED853
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.GameVersionTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.GameVersionTextBlock.Text
+msgctxt ",7A27A1BA45B686BEF5A6378B230ED853"
+msgid "0.0.0"
+msgstr "0.0.0"
+
+#. Key:	3D0A9E274120E78816FFE6BE82BF64B2
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.GameVersionTitle.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.GameVersionTitle.Text
+msgctxt ",3D0A9E274120E78816FFE6BE82BF64B2"
+msgid "게임 버전"
+msgstr "게임 버전"
+
+#. Key:	5996E55E488F2A9AA4135490E7DF9ADB
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.LobbyButton.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.LobbyButton.Text
+msgctxt ",5996E55E488F2A9AA4135490E7DF9ADB"
+msgid "게임시작"
+msgstr "게임시작"
+
+#. Key:	9C9600B94EE1169E56A54BAE87997B5F
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.QuitButton.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.QuitButton.Text
+msgctxt ",9C9600B94EE1169E56A54BAE87997B5F"
+msgid "게임종료"
+msgstr "게임종료"
+
+#. Key:	30E505B541A5B1ED153554A5E7141C77
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.SettingsButton.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.SettingsButton.Text
+msgctxt ",30E505B541A5B1ED153554A5E7141C77"
+msgid "설정"
+msgstr "설정"
+
+#. Key:	812025954ACF059ED60A179A8B1AFD48
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.TutorialButton.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.TutorialButton.Text
+msgctxt ",812025954ACF059ED60A179A8B1AFD48"
+msgid "튜토리얼"
+msgstr "튜토리얼"
+
+#. Key:	A8E8D310490DED589BCC969AE08B7C17
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.UserIdTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.UserIdTextBlock.Text
+msgctxt ",A8E8D310490DED589BCC969AE08B7C17"
+msgid "asdfasdfasdfasdfasdfasdfasdfasdfasdf"
+msgstr "asdfasdfasdfasdfasdfasdfasdfasdfasdf"
+
+#. Key:	C10E75F544E6F794679A17AAD5945BE5
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.UserIdTitle.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.UserIdTitle.Text
+msgctxt ",C10E75F544E6F794679A17AAD5945BE5"
+msgid "유저 아이디"
+msgstr "유저 아이디"
+
+#. Key:	EC87B3AA4BBBC73FDD56ACA044C72EF8
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.UserNameTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.UserNameTextBlock.Text
+msgctxt ",EC87B3AA4BBBC73FDD56ACA044C72EF8"
+msgid "닉네임"
+msgstr "닉네임"
+
+#. Key:	4C1A74ED41FF63ADC629669F77858416
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.UserNameTitle.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenu.WBP_MainMenu_C:WidgetTree.UserNameTitle.Text
+msgctxt ",4C1A74ED41FF63ADC629669F77858416"
+msgid "유저 이름"
+msgstr "유저 이름"
+
+#. Key:	3FF7C55F440EC4E8808115A68C4318DF
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenuButton.Default__WBP_MainMenuButton_C.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Frontend/MainMenu/WBP_MainMenuButton.Default__WBP_MainMenuButton_C.Text
+msgctxt ",3FF7C55F440EC4E8808115A68C4318DF"
+msgid "ButtonText"
+msgstr "ButtonText"
+
+#. Key:	1EA4AB5440E86FFEA51956B5F5D9DA91
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Game/WBP_GameStatistics.WBP_GameStatistics_C:WidgetTree.CommonTextBlock_68.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Game/WBP_GameStatistics.WBP_GameStatistics_C:WidgetTree.CommonTextBlock_68.Text
+msgctxt ",1EA4AB5440E86FFEA51956B5F5D9DA91"
+msgid "ping:"
+msgstr "ping:"
+
+#. Key:	BE5636104B303957071455A0F6E7A903
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Game/WBP_GameStatistics.WBP_GameStatistics_C:WidgetTree.PingTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Game/WBP_GameStatistics.WBP_GameStatistics_C:WidgetTree.PingTextBlock.Text
+msgctxt ",BE5636104B303957071455A0F6E7A903"
+msgid "100ms"
+msgstr "100ms"
+
+#. Key:	9D50F9E744B5D77043D85E8789633E14
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/General/WBP_LoadingScreen.WBP_LoadingScreen_C:WidgetTree.LoadingTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/General/WBP_LoadingScreen.WBP_LoadingScreen_C:WidgetTree.LoadingTextBlock.Text
+msgctxt ",9D50F9E744B5D77043D85E8789633E14"
+msgid "로딩 중 입니다..."
+msgstr "로딩 중 입니다..."
+
+#. Key:	18F203D14D83C9EA51188FB634B9A2FB
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/General/WBP_OptionButton.Default__WBP_OptionButton_C.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/General/WBP_OptionButton.Default__WBP_OptionButton_C.ToggleText
+msgctxt ",18F203D14D83C9EA51188FB634B9A2FB"
+msgid "텍스트"
+msgstr "텍스트"
+
+#. Key:	E22C2C7B47406BED80937D81E83F408D
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/General/WBP_OptionButton.WBP_OptionButton_C:WidgetTree.ButtonText.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/General/WBP_OptionButton.WBP_OptionButton_C:WidgetTree.ButtonText.Text
+msgctxt ",E22C2C7B47406BED80937D81E83F408D"
+msgid "상"
+msgstr "상"
+
+#. Key:	CF1C938E46F6CF8EC5676A8695B12582
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CBT_Continue.ButtonText
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CBT_Continue.ButtonText
+msgctxt ",CF1C938E46F6CF8EC5676A8695B12582"
+msgid "계속하기"
+msgstr "계속하기"
+
+#. Key:	4EB7B8DB4489784E486B02842AC9D249
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CBT_Quit.ButtonText
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CBT_Quit.ButtonText
+msgctxt ",4EB7B8DB4489784E486B02842AC9D249"
+msgid "매치 나가기"
+msgstr "매치 나가기"
+
+#. Key:	123F6C54438DFF2F97F051BEBECAD903
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CBT_Setting.ButtonText
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CBT_Setting.ButtonText
+msgctxt ",123F6C54438DFF2F97F051BEBECAD903"
+msgid "설정"
+msgstr "설정"
+
+#. Key:	9ADF3EAB42A1D7ADF82C48BCB2878052
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock.Text
+msgctxt ",9ADF3EAB42A1D7ADF82C48BCB2878052"
+msgid "공격 - [마우스 좌클릭]"
+msgstr "공격 - [마우스 좌클릭]"
+
+#. Key:	EF8F32C44F6AE2F26FFC629CDAE87BD5
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_1.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_1.Text
+msgctxt ",EF8F32C44F6AE2F26FFC629CDAE87BD5"
+msgid "잡기 및 아이템 사용 - [마우스 우클릭]"
+msgstr "잡기 및 아이템 사용 - [마우스 우클릭]"
+
+#. Key:	747E75574054BC347C8D859F840D48C8
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_3.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_3.Text
+msgctxt ",747E75574054BC347C8D859F840D48C8"
+msgid "[팁]"
+msgstr "[팁]"
+
+#. Key:	A5B0DFD54F2E8C22CADF18BABAB0F360
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_4.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_4.Text
+msgctxt ",A5B0DFD54F2E8C22CADF18BABAB0F360"
+msgid "< 키 설명 >"
+msgstr "< 키 설명 >"
+
+#. Key:	7B3D70CB4227D90BAFA645A2FCED7D60
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_5.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_5.Text
+msgctxt ",7B3D70CB4227D90BAFA645A2FCED7D60"
+msgid "< 게임 방법 >"
+msgstr "< 게임 방법 >"
+
+#. Key:	BC885B9943CFD78E8D1A838BA18BE8AF
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_6.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_6.Text
+msgctxt ",BC885B9943CFD78E8D1A838BA18BE8AF"
+msgid "※ 상대를 공격하여 쓰러트릴 수 있습니다."
+msgstr "※ 상대를 공격하여 쓰러트릴 수 있습니다."
+
+#. Key:	450A38B04BDD444A1553E48E7A824692
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_7.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_7.Text
+msgctxt ",450A38B04BDD444A1553E48E7A824692"
+msgid "※ 쓰러트린 상대방에게 가까이 다가가 잡을 수 있습니다."
+msgstr "※ 쓰러트린 상대방에게 가까이 다가가 잡을 수 있습니다."
+
+#. Key:	44559D174B09FA393BC67CBFBAF6339A
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_75.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_75.Text
+msgctxt ",44559D174B09FA393BC67CBFBAF6339A"
+msgid "이동 - [W, A, S, D]"
+msgstr "이동 - [W, A, S, D]"
+
+#. Key:	2ACE34A44699EB3F36235FB558006BCF
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_8.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_8.Text
+msgctxt ",2ACE34A44699EB3F36235FB558006BCF"
+msgid "※ 잡은 상대방을 메칠 수 있습니다."
+msgstr "※ 잡은 상대방을 메칠 수 있습니다."
+
+#. Key:	8017175A4A50F4C5BBFA799018355815
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_9.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_Pause.WBP_Pause_C:WidgetTree.CommonTextBlock_9.Text
+msgctxt ",8017175A4A50F4C5BBFA799018355815"
+msgid "※ 상대방을 메치면 스코어를 획득할 수 있습니다."
+msgstr "※ 상대방을 메치면 스코어를 획득할 수 있습니다."
+
+#. Key:	A40A19DB4C7808013E5E4C84AFCE232C
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_PauseButton.Default__WBP_PauseButton_C.ButtonText
+#: /Game/StereoMix/UI/Widgets/Legacy/Pause/WBP_PauseButton.Default__WBP_PauseButton_C.ButtonText
+msgctxt ",A40A19DB4C7808013E5E4C84AFCE232C"
+msgid "Button Text"
+msgstr "Button Text"
+
+#. Key:	D348CDD4464DA6DF14E343A463136003
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Popup/WBP_AlertPopup.WBP_AlertPopup_C:WidgetTree.TitleTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Popup/WBP_AlertPopup.WBP_AlertPopup_C:WidgetTree.TitleTextBlock.Text
+msgctxt ",D348CDD4464DA6DF14E343A463136003"
+msgid "알림"
+msgstr "알림"
+
+#. Key:	0ABC54344F582A4BC149ED89F3977289
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room.WBP_Room_C:WidgetTree.CommonTextBlock_92.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room.WBP_Room_C:WidgetTree.CommonTextBlock_92.Text
+msgctxt ",0ABC54344F582A4BC149ED89F3977289"
+msgid ""
+"모든 인원이 팀에 소속되어 있고\r\n"
+"팀의 인원 비율이 맞아야 게임이 시작됩니다."
+msgstr ""
+"모든 인원이 팀에 소속되어 있고\r\n"
+"팀의 인원 비율이 맞아야 게임이 시작됩니다."
+
+#. Key:	CFF868ED49664286E28C84ADA8422A38
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room.WBP_Room_C:WidgetTree.NotifyTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room.WBP_Room_C:WidgetTree.NotifyTextBlock.Text
+msgctxt ",CFF868ED49664286E28C84ADA8422A38"
+msgid "팀을 선택해주세요."
+msgstr "팀을 선택해주세요."
+
+#. Key:	9B13019541B54C3B078D3F91431D98AA
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room.WBP_Room_C:WidgetTree.PlayerCountTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room.WBP_Room_C:WidgetTree.PlayerCountTextBlock.Text
+msgctxt ",9B13019541B54C3B078D3F91431D98AA"
+msgid "1 / 6"
+msgstr "1 / 6"
+
+#. Key:	DE93535B41F81DA3BF7C63A36D7A786D
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room_CodeCopyButton.WBP_Room_CodeCopyButton_C:WidgetTree.RoomCodeTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room_CodeCopyButton.WBP_Room_CodeCopyButton_C:WidgetTree.RoomCodeTextBlock.Text
+msgctxt ",DE93535B41F81DA3BF7C63A36D7A786D"
+msgid "TEXT"
+msgstr "TEXT"
+
+#. Key:	72C19686404685DC31F19B81ABBEB8BC
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room_GameStartButton.WBP_Room_GameStartButton_C:WidgetTree.CommonTextBlock_17.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room_GameStartButton.WBP_Room_GameStartButton_C:WidgetTree.CommonTextBlock_17.Text
+msgctxt ",72C19686404685DC31F19B81ABBEB8BC"
+msgid "게임 시작 (F5)"
+msgstr "게임 시작 (F5)"
+
+#. Key:	8D1B33EB47C159F2EE4844A2DFD735CE
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room_PlayerItem.WBP_Room_PlayerItem_C:WidgetTree.PlayerNameTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Room/WBP_Room_PlayerItem.WBP_Room_PlayerItem_C:WidgetTree.PlayerNameTextBlock.Text
+msgctxt ",8D1B33EB47C159F2EE4844A2DFD735CE"
+msgid "일이삼사오일이삼사오"
+msgstr "일이삼사오일이삼사오"
+
+#. Key:	D4692C6D4D882F4D52C5508838C4C1F4
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_GraphicOptionButton.Default__WBP_GraphicOptionButton_C.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_GraphicOptionButton.Default__WBP_GraphicOptionButton_C.Text
+msgctxt ",D4692C6D4D882F4D52C5508838C4C1F4"
+msgid "Medium"
+msgstr "Medium"
+
+#. Key:	BCDC106E4ADD73B08432AAA46D29872B
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_GraphicOptionButton.WBP_GraphicOptionButton_C:WidgetTree.OptionText.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_GraphicOptionButton.WBP_GraphicOptionButton_C:WidgetTree.OptionText.Text
+msgctxt ",BCDC106E4ADD73B08432AAA46D29872B"
+msgid "옵션"
+msgstr "옵션"
+
+#. Key:	4828965F4C33433914A613A2A2DC8460
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CommonTextBlock_86.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CommonTextBlock_86.Text
+msgctxt ",4828965F4C33433914A613A2A2DC8460"
+msgid "그래픽"
+msgstr "그래픽"
+
+#. Key:	E12C187F461A8B1DFE5894B4179B1B08
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_BGMVolume.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_BGMVolume.Text
+msgctxt ",E12C187F461A8B1DFE5894B4179B1B08"
+msgid "BGM"
+msgstr "BGM"
+
+#. Key:	6011EA134313FA44A28DE5ACACC3154E
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_Graphic.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_Graphic.Text
+msgctxt ",6011EA134313FA44A28DE5ACACC3154E"
+msgid "품질"
+msgstr "품질"
+
+#. Key:	F4ED0A8D478B3737650D18A8F24BE3AD
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_MasterVolume.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_MasterVolume.Text
+msgctxt ",F4ED0A8D478B3737650D18A8F24BE3AD"
+msgid "Master"
+msgstr "Master"
+
+#. Key:	74E41A444B575F19674825B06509E249
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_SEVolume.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_SEVolume.Text
+msgctxt ",74E41A444B575F19674825B06509E249"
+msgid "SE"
+msgstr "SE"
+
+#. Key:	5CFDC5794B2FD9956B10CDBF2E7D3C27
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_Sound.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.CTB_Sound.Text
+msgctxt ",5CFDC5794B2FD9956B10CDBF2E7D3C27"
+msgid "사운드"
+msgstr "사운드"
+
+#. Key:	AF795C7D4F2388399DB7E4859E2DB789
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.GraphicHighButton.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.GraphicHighButton.Text
+msgctxt ",AF795C7D4F2388399DB7E4859E2DB789"
+msgid "High"
+msgstr "High"
+
+#. Key:	4677CBC04B90ED89309EBFBDB717FF36
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.GraphicLowButton.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingPanelLegacy.WBP_SettingPanelLegacy_C:WidgetTree.GraphicLowButton.Text
+msgctxt ",4677CBC04B90ED89309EBFBDB717FF36"
+msgid "Low"
+msgstr "Low"
+
+#. Key:	114D22DC48C7B6D2107198A95B08935B
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock.Text
+msgctxt ",114D22DC48C7B6D2107198A95B08935B"
+msgid "사운드"
+msgstr "사운드"
+
+#. Key:	525C8117448D55A3CA0D95B52A9F6599
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_1.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_1.Text
+msgctxt ",525C8117448D55A3CA0D95B52A9F6599"
+msgid "배경음악"
+msgstr "배경음악"
+
+#. Key:	7C552D9E4F61A834EC425089A5EE7354
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_2.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_2.Text
+msgctxt ",7C552D9E4F61A834EC425089A5EE7354"
+msgid "효과음"
+msgstr "효과음"
+
+#. Key:	6231B1C94374B2F3509BA59478157530
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_3.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_3.Text
+msgctxt ",6231B1C94374B2F3509BA59478157530"
+msgid "수직동기화"
+msgstr "수직동기화"
+
+#. Key:	A36885DB4A41C79D875F5982538CBD9C
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_4.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_4.Text
+msgctxt ",A36885DB4A41C79D875F5982538CBD9C"
+msgid "프레임률 제한"
+msgstr "프레임률 제한"
+
+#. Key:	91863EBA49BE64E9BCB8E9BFBFD2AA99
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_5.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_5.Text
+msgctxt ",91863EBA49BE64E9BCB8E9BFBFD2AA99"
+msgid "창 모드"
+msgstr "창 모드"
+
+#. Key:	12273E374B7145980A0E4792977DCDC9
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_57.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_57.Text
+msgctxt ",12273E374B7145980A0E4792977DCDC9"
+msgid "그래픽 품질"
+msgstr "그래픽 품질"
+
+#. Key:	C458612341B324ED7B9C269C68DDD1CF
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_6.Text
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.CommonTextBlock_6.Text
+msgctxt ",C458612341B324ED7B9C269C68DDD1CF"
+msgid "언어"
+msgstr "언어"
+
+#. Key:	BDA23A1A488F2061693957B4060D2A2F
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.English.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.English.ToggleText
+msgctxt ",BDA23A1A488F2061693957B4060D2A2F"
+msgid "English"
+msgstr "English"
+
+#. Key:	105A1E3D43298B769408F7B8237614E4
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Frame_144.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Frame_144.ToggleText
+msgctxt ",105A1E3D43298B769408F7B8237614E4"
+msgid "144"
+msgstr "144"
+
+#. Key:	AF1B60334802AD55F313FFAC0E7EC596
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Frame_30.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Frame_30.ToggleText
+msgctxt ",AF1B60334802AD55F313FFAC0E7EC596"
+msgid "30"
+msgstr "30"
+
+#. Key:	022ED55B4C08D26B2A6412AFA23EABC8
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Frame_60.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Frame_60.ToggleText
+msgctxt ",022ED55B4C08D26B2A6412AFA23EABC8"
+msgid "60"
+msgstr "60"
+
+#. Key:	F9A0D9424F71C0F9C401C899476482BA
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Frame_Infinite.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Frame_Infinite.ToggleText
+msgctxt ",F9A0D9424F71C0F9C401C899476482BA"
+msgid "무제한"
+msgstr "무제한"
+
+#. Key:	FFDCA2D54E9E5A8D6762888A901BD679
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.FullscreenMode_FullScreen.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.FullscreenMode_FullScreen.ToggleText
+msgctxt ",FFDCA2D54E9E5A8D6762888A901BD679"
+msgid "전체 화면"
+msgstr "전체 화면"
+
+#. Key:	5CC715B54320ADE562C1FB8C595C0C20
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.FullscreenMode_FullWindowed.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.FullscreenMode_FullWindowed.ToggleText
+msgctxt ",5CC715B54320ADE562C1FB8C595C0C20"
+msgid "전체 창 모드"
+msgstr "전체 창 모드"
+
+#. Key:	CBC688D940BABE4533D0008BC9D4F6BA
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.FullscreenMode_Windowed.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.FullscreenMode_Windowed.ToggleText
+msgctxt ",CBC688D940BABE4533D0008BC9D4F6BA"
+msgid "창 모드"
+msgstr "창 모드"
+
+#. Key:	F293411C4FF53B73C874C3986A8AF46E
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.GraphicQuality_Epic.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.GraphicQuality_Epic.ToggleText
+msgctxt ",F293411C4FF53B73C874C3986A8AF46E"
+msgid "매우 높음"
+msgstr "매우 높음"
+
+#. Key:	D08301A24DCCF2111227AD8A6D1FB1F8
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.GraphicQuality_High.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.GraphicQuality_High.ToggleText
+msgctxt ",D08301A24DCCF2111227AD8A6D1FB1F8"
+msgid "높음"
+msgstr "높음"
+
+#. Key:	1D34A44E45236B6A91D36BB49766BFA3
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.GraphicQuality_Low.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.GraphicQuality_Low.ToggleText
+msgctxt ",1D34A44E45236B6A91D36BB49766BFA3"
+msgid "낮음"
+msgstr "낮음"
+
+#. Key:	E953549D49E0641BDA66CB805668275D
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.GraphicQuality_Middle.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.GraphicQuality_Middle.ToggleText
+msgctxt ",E953549D49E0641BDA66CB805668275D"
+msgid "보통"
+msgstr "보통"
+
+#. Key:	B0C144D24C433AD1E00FA094F5A32B62
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Korean.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Korean.ToggleText
+msgctxt ",B0C144D24C433AD1E00FA094F5A32B62"
+msgid " 한국어"
+msgstr " 한국어"
+
+#. Key:	379543DA4D9D3C817805AD9345A1A0AE
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Vsync_Off.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Vsync_Off.ToggleText
+msgctxt ",379543DA4D9D3C817805AD9345A1A0AE"
+msgid "켜기"
+msgstr "켜기"
+
+#. Key:	AD61E15544DBF73BCB3E169DAD77DDCF
+#. SourceLocation:	/Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Vsync_On.ToggleText
+#: /Game/StereoMix/UI/Widgets/Legacy/Settings/WBP_SettingsPanel.WBP_SettingsPanel_C:WidgetTree.Vsync_On.ToggleText
+msgctxt ",AD61E15544DBF73BCB3E169DAD77DDCF"
+msgid "끄기"
+msgstr "끄기"

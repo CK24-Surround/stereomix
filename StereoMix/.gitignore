@@ -96,6 +96,14 @@ Platforms/*
 # Packaged builds
 Packaged/*
 
+# Exclude compiled localization files.
+*.locmeta
+*.locres
+
+# Correctly handle generated localization file encoding.
+*.archive diff working-tree-encoding=UTF-16LE-BOM eol=CRLF
+*.manifest diff working-tree-encoding=UTF-16LE-BOM eol=CRLF
+
 # Rider
 .idea/
 *.uproject.DotSettings.user
