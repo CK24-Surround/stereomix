@@ -42,7 +42,7 @@ void USMProjectilePoolManagerComponent::InitPool(const TMap<ESMTeam, TSubclassOf
 		USMProjectilePool* NewObj = NewObject<USMProjectilePool>(this, PoolClass);
 		NewObj->Init();
 		ProjectilePool.FindOrAdd(Team) = NewObj;
-		NET_LOG(GetOwner(), Warning, TEXT("생성된 투사체풀: %p"), *GetNameSafe(NewObj));
+		NET_LOG(GetOwner(), Log, TEXT("생성된 투사체풀: %s"), *GetNameSafe(NewObj));
 	}
 }
 
