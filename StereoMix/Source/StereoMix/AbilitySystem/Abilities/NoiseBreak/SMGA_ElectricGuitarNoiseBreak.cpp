@@ -232,6 +232,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnLanded(ASMPlayerCharacterBase* LandedChar
 	if (SourceMovement)
 	{
 		SourceMovement->GravityScale = OriginalGravityScale;
+		SourceMovement->StopMovementImmediately();
 	}
 
 	SourceCharacter->OnCharacterLanded.RemoveAll(this);

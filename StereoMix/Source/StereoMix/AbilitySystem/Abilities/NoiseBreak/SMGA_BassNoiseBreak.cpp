@@ -191,6 +191,7 @@ void USMGA_BassNoiseBreak::OnNoiseBreak(ASMPlayerCharacterBase* LandedCharacter)
 	if (ensureAlways(SourceMovement))
 	{
 		SourceMovement->GravityScale = OriginalGravityScale;
+		SourceMovement->StopMovementImmediately();
 	}
 
 	// 스매시 종료 애니메이션을 재생합니다. 이 애니메이션이 종료되면 스매시가 종료됩니다. 종료는 서버에서 수행하게 됩니다.
