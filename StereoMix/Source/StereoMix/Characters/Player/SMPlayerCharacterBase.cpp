@@ -22,6 +22,7 @@
 #include "HoldInteraction/SMHIC_Character.h"
 #include "HoldInteraction/SMHoldInteractionComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "Tiles/SMTile.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -305,6 +306,39 @@ FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bIsZeroBasis)
 	}
 
 	return Result;
+}
+
+bool ASMPlayerCharacterBase::GetTileLocationFromCursor(FVector& OutTileLocation, float MaxDistance)
+{
+	OutTileLocation = FVector::ZeroVector;
+
+	FVector Start = GetCursorTargetingPoint(true);
+	if (MaxDistance >= 0.0f)
+	{
+		const FVector SourceLocation = GetActorLocation();
+		const FVector SourceLocationWithCursorZ(SourceLocation.X, SourceLocation.Y, Start.Z);
+		const FVector SourceToCursor = Start - SourceLocationWithCursorZ;
+
+		if (SourceToCursor.SizeSquared() >= FMath::Square(MaxDistance))
+		{
+			const FVector TargetDirection = SourceToCursor.GetSafeNormal2D();
+			Start = SourceLocationWithCursorZ + (TargetDirection * MaxDistance);
+		}
+	}
+
+	FHitResult HitResult;
+	const FVector End = Start + FVector::DownVector * 100.0f;
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, SMCollisionTraceChannel::TileAction))
+	{
+		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
+		if (Tile)
+		{
+			OutTileLocation = Tile->GetTileLocation();
+			return true;
+		}
+	}
+
+	return false;
 }
 
 void ASMPlayerCharacterBase::SetCharacterHidden(bool bIsEnable)

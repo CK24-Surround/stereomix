@@ -16,4 +16,14 @@ class STEREOMIX_API USMGA_NoiseBreak : public USMGameplayAbility
 
 public:
 	USMGA_NoiseBreak();
+
+protected:
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float Damage = 20.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	int32 CaptureSize = 3;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	int32 MaxDistanceByTile = 5;
 };

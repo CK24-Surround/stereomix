@@ -18,6 +18,12 @@
 #include "Tiles/SMTileManagerComponent.h"
 #include "Utilities/SMCollision.h"
 
+USMGA_BassNoiseBreak::USMGA_BassNoiseBreak()
+{
+	Damage = 40.0f;
+	MaxDistanceByTile = 6;
+}
+
 void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -260,7 +266,7 @@ FVector USMGA_BassNoiseBreak::CalculateMaxDistanceLocation(const FVector& InStar
 	// 사거리를 제한 합니다.
 	// TODO: 임시로 150으로 타일 사이즈를 하드코딩 해두었습니다.
 	constexpr float TileSize = 150.0f;
-	const float Range = TileSize * SmashRangeByTile;
+	const float Range = TileSize * MaxDistanceByTile;
 	if (FVector::DistSquared(AlignedSourceZ, InTargetLocation) > FMath::Square(Range))
 	{
 		const FVector SourceToTargetDirection = (InTargetLocation - AlignedSourceZ).GetSafeNormal();
@@ -336,7 +342,7 @@ void USMGA_BassNoiseBreak::TileCapture()
 		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
 		if (Tile)
 		{
-			TileManager->TileCaptureDelayedSqaure(Tile, SourceCharacter->GetTeam(), MaxTriggerCount, TotalTriggerTime);
+			TileManager->TileCaptureDelayedSqaure(Tile, SourceCharacter->GetTeam(), CaptureSize, TotalTriggerTime);
 		}
 	}
 }

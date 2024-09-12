@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "AbilitySystem/Task/SMAT_ModifyGravityUntilLanded.h"
 #include "Characters/Player/SMElectricGuitarCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -32,75 +33,61 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		return;
 	}
 
-	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-	if (!SourceCapsule)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceDataAsset)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceHIC)
+	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
+	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
+	if (!SourceHIC || !SourceDataAsset || !SourceCapsule || !SourceMovement)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
-	if (!SourceMovement)
+	// 커서의 위치가 타일이 아닌 경우 시전되면 안됩니다.
+	FVector TargetLocation;
+	if (IsLocallyControlled())
 	{
-		EndAbilityByCancel();
-		return;
+		const float MaxDistance = MaxDistanceByTile * 150.0f;
+		if (!SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance))
+		{
+			EndAbilityByCancel();
+			return;
+		}
 	}
 
 	K2_CommitAbility();
 
+	// 노이즈 브레이크 콜라이더로 변경합니다.
 	OriginalCollisionProfileName = SourceCapsule->GetCollisionProfileName();
 	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::NoiseBreak);
 
-	SourceCharacter->OnCharacterLanded.AddUObject(this, &ThisClass::OnLanded);
+	// 노이즈 브레이크에 사용할 중력으로 변경하고 착지 시 호출할 함수를 지정합니다.
+	USMAT_ModifyGravityUntilLanded* LandedTask = USMAT_ModifyGravityUntilLanded::ModifyGravityUntilLanded(this, true, NoiseBreakGravityScale);
+	LandedTask->OnLanded.BindUObject(this, &ThisClass::OnLanded);
+	LandedTask->ReadyForActivation();
 
-	OriginalGravityScale = SourceMovement->GravityScale;
-	SourceMovement->GravityScale = NoiseBreakGravityScale;
-
+	// 노이즈 브레이크 몽타주를 재생합니다. 노이즈 브레이크 몽타주가 종료되면 노이즈 브레이크도 종료됩니다.
 	UAnimMontage* NoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceCharacter->GetTeam()];
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NoiseBreakMontage);
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->ReadyForActivation();
 
+	// 현재 위치의 타일을 점령하고 타겟위치로 도약합니다.
 	if (IsLocallyControlled())
 	{
-		const FVector CursorLocation = SourceCharacter->GetCursorTargetingPoint(true);
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		const FVector SourceLocationWithZeroBasis = FVector(SourceLocation.X, SourceLocation.Y, CursorLocation.Z);
+		const FVector SourceLocationWithTargetZ(SourceLocation.X, SourceLocation.Y, TargetLocation.Z);
+		const FVector TargetLocationWithSourceZ(TargetLocation.X, TargetLocation.Y, SourceLocation.Z);
 
-		const FVector SourceToCursorVector = CursorLocation - SourceLocationWithZeroBasis;
-		const float MaxDistance = MaxDistanceByTile * 150.0f;
-
-		FVector TargetLocation = CursorLocation;
 		DrawDebugSphere(GetWorld(), TargetLocation, 100.0f, 16, FColor::Red, false, 5.0f);
-		if (SourceToCursorVector.SizeSquared() >= FMath::Square(MaxDistance))
-		{
-			const FVector TargetDirection = SourceToCursorVector.GetSafeNormal2D();
-			TargetLocation = SourceLocationWithZeroBasis + (TargetDirection * MaxDistance);
-			DrawDebugSphere(GetWorld(), TargetLocation, 100.0f, 16, FColor::Blue, false, 5.0f);
-		}
+		ServerRPCOnNoiseBreak(SourceLocationWithTargetZ);
 
-		const FVector TargetLocationWithCapsuleHeight = FVector(TargetLocation.X, TargetLocation.Y, SourceLocation.Z);
-		ServerRPCSendTargetLocation(SourceLocationWithZeroBasis);
-		ServerRPCLaunchCharacter(SourceLocation, TargetLocationWithCapsuleHeight);
-
-		LaunchCharacter(SourceLocation, TargetLocationWithCapsuleHeight, SourceMovement->GetGravityZ());
+		ServerRPCLeapCharacter(SourceLocation, TargetLocationWithSourceZ);
+		LeapCharacter(SourceLocation, TargetLocationWithSourceZ, SourceMovement->GetGravityZ());
 	}
 
+	// 노이즈 브레이크 시작을 타겟에게 알립니다.
 	if (K2_HasAuthority())
 	{
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
@@ -118,26 +105,22 @@ void USMGA_ElectricGuitarNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void USMGA_ElectricGuitarNoiseBreak::ServerRPCSendTargetLocation_Implementation(const FVector_NetQuantize10& TargetLocation)
+void USMGA_ElectricGuitarNoiseBreak::ServerRPCOnNoiseBreak_Implementation(const FVector_NetQuantize10& TargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		K2_EndAbility();
-		return;
-	}
-
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceHIC)
+	if (!SourceCharacter || !ensureAlways(SourceHIC))
 	{
 		K2_EndAbility();
 		return;
 	}
 
+	// 잡고 있는 캐릭터를 자신의 위치로 이동시킵니다.
 	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding());
 	if (TargetCharacter)
 	{
 		FVector Offset;
+
 		UCapsuleComponent* TargetCapsule = TargetCharacter->GetCapsuleComponent();
 		if (TargetCapsule)
 		{
@@ -147,26 +130,16 @@ void USMGA_ElectricGuitarNoiseBreak::ServerRPCSendTargetLocation_Implementation(
 		TargetCharacter->MulitcastRPCSetLocation(TargetLocation + Offset);
 	}
 
-	TileCapture(TargetLocation);
 	SourceHIC->SetActorIAmHolding(nullptr);
+	TileCapture(TargetLocation);
 }
 
 void USMGA_ElectricGuitarNoiseBreak::TileCapture(const FVector& TargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		return;
-	}
-
 	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
-	if (!GameState)
-	{
-		return;
-	}
-
-	USMTileManagerComponent* TileManager = GameState->GetTileManager();
-	if (!TileManager)
+	USMTileManagerComponent* TileManager = GameState ? GameState->GetTileManager() : nullptr;
+	if (!SourceCharacter || !ensureAlways(TileManager))
 	{
 		return;
 	}
@@ -174,19 +147,17 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture(const FVector& TargetLocation)
 	FHitResult HitResult;
 	const FVector StartLocation = TargetLocation;
 	const FVector EndLocation = StartLocation + FVector::DownVector * 1000.0;
-	const bool bSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction);
-
-	if (bSuccess)
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction))
 	{
 		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
 		if (Tile)
 		{
-			TileManager->TileCaptureImmediateSqaure(Tile, SourceCharacter->GetTeam(), CaptureCount);
+			TileManager->TileCaptureImmediateSqaure(Tile, SourceCharacter->GetTeam(), CaptureSize);
 		}
 	}
 }
 
-void USMGA_ElectricGuitarNoiseBreak::LaunchCharacter(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ)
+void USMGA_ElectricGuitarNoiseBreak::LeapCharacter(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	if (!SourceCharacter)
@@ -199,48 +170,30 @@ void USMGA_ElectricGuitarNoiseBreak::LaunchCharacter(const FVector& InStartLocat
 	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }
 
-void USMGA_ElectricGuitarNoiseBreak::ServerRPCLaunchCharacter_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
+void USMGA_ElectricGuitarNoiseBreak::ServerRPCLeapCharacter_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
 {
 	ASMElectricGuitarCharacter* SourceCharacter = GetAvatarActor<ASMElectricGuitarCharacter>();
-	if (!SourceCharacter)
+	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
+	if (!SourceCharacter || !ensureAlways(SourceMovement))
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
-	if (!SourceMovement)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	LaunchCharacter(SourceLocation, TargetLocation, SourceMovement->GetGravityZ());
+	LeapCharacter(SourceLocation, TargetLocation, SourceMovement->GetGravityZ());
 }
 
-void USMGA_ElectricGuitarNoiseBreak::OnLanded(ASMPlayerCharacterBase* LandedCharacter)
+void USMGA_ElectricGuitarNoiseBreak::OnLanded()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
+	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	if (!SourceCharacter || !ensureAlways(SourceCapsule))
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
-	if (SourceMovement)
-	{
-		SourceMovement->GravityScale = OriginalGravityScale;
-		SourceMovement->StopMovementImmediately();
-	}
-
-	SourceCharacter->OnCharacterLanded.RemoveAll(this);
-
-	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-	if (SourceCapsule)
-	{
-		SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
-	}
+	SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
 
 	UAbilityTask_NetworkSyncPoint* NetworkSyncPoint = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
 	NetworkSyncPoint->OnSync.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);

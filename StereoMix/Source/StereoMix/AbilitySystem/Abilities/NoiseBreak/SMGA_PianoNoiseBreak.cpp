@@ -24,6 +24,9 @@
 USMGA_PianoNoiseBreak::USMGA_PianoNoiseBreak()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
+
+	Damage = 20.0f;
+	MaxDistanceByTile = 10;
 }
 
 void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -38,30 +41,18 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	}
 
 	const USMPianoCharacterDataAsset* SourceDataAsset = GetDataAsset<USMPianoCharacterDataAsset>();
-	if (!SourceDataAsset)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceHIC)
+	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
+	if (!SourceDataAsset || !SourceHIC || !SourceCapsule)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-	if (!SourceCapsule)
-	{
-		EndAbilityByCancel();
-		return;
-	}
+	K2_CommitAbility();
 
 	OriginalCollisionProfileName = SourceCapsule->GetCollisionProfileName();
 	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::NoiseBreak);
-
-	K2_CommitAbility();
 
 	const FName RootMotionTaskName = TEXT("RootMotionTask");
 	const FVector Direction = FVector::UpVector;
@@ -178,7 +169,7 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 	SourceHIC->SetActorIAmHolding(nullptr);
 
 	NET_LOG(GetAvatarActor(), Warning, TEXT("발사"));
-	DrawDebugSphere(GetWorld(), NoiseBreakTargetLocation, CaptureCount * 75.0f, 16, FColor::Red, false, 1.0f);
+	DrawDebugSphere(GetWorld(), NoiseBreakTargetLocation, CaptureSize * 75.0f, 16, FColor::Red, false, 1.0f);
 }
 
 void USMGA_PianoNoiseBreak::OnJumpEnded()
@@ -218,7 +209,7 @@ void USMGA_PianoNoiseBreak::TileCapture()
 		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
 		if (Tile)
 		{
-			TileManager->TileCaptureImmediateSqaure(Tile, SourceCharacter->GetTeam(), CaptureCount);
+			TileManager->TileCaptureImmediateSqaure(Tile, SourceCharacter->GetTeam(), CaptureSize);
 		}
 	}
 }

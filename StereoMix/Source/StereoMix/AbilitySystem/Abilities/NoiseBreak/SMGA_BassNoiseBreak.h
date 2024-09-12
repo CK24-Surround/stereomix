@@ -18,6 +18,9 @@ class STEREOMIX_API USMGA_BassNoiseBreak : public USMGA_NoiseBreak
 {
 	GENERATED_BODY()
 
+public:
+	USMGA_BassNoiseBreak();
+
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
@@ -53,12 +56,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
 	TSubclassOf<UGameplayEffect> DamageGE;
 
-	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "매치기 대미지")
-	float SmashDamage = 40.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design|Jump", DisplayName = "매치기 도약 거리(타일 기준)")
-	int32 SmashRangeByTile = 6;
-
 	UPROPERTY(EditAnywhere, Category = "Design|Jump", DisplayName = "매치기 정점 높이")
 	float SmashApexHeight = 500.0f;
 
@@ -66,9 +63,6 @@ protected:
 	float NoiseBreakGravityScale = 3.0f;
 
 	float OriginalGravityScale = 0.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design", DisplayName = "매치기 1회에 타일이 트리거 되는 횟수")
-	int32 MaxTriggerCount = 3;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float TotalTriggerTime = 0.267f;

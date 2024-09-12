@@ -33,15 +33,6 @@ protected:
 
 	void TileCapture();
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Damage = 20.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 CaptureCount = 3;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 MaxDistanceByTile = 10;
-
 	FVector NoiseBreakTargetLocation;
 
 	uint32 bHasTargetLocation = false;

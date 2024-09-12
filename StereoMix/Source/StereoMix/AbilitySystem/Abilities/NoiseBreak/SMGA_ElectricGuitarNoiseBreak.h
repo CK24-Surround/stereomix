@@ -23,36 +23,25 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCSendTargetLocation(const FVector_NetQuantize10& TargetLocation);
+	void ServerRPCOnNoiseBreak(const FVector_NetQuantize10& TargetLocation);
 
 	void TileCapture(const FVector& TargetLocation);
 
-	void LaunchCharacter(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ);
+	void LeapCharacter(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCLaunchCharacter(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation);
+	void ServerRPCLeapCharacter(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation);
 
-	void OnLanded(ASMPlayerCharacterBase* LandedCharacter);
+	void OnLanded();
 
 	UFUNCTION()
 	void OnNoiseBreakEnded();
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Damage = 20.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 CaptureCount = 3;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 MaxDistanceByTile = 5;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float ApexHegith = 300.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float NoiseBreakGravityScale = 5.0f;
-
-	float OriginalGravityScale = 0.0f;
 
 	FName OriginalCollisionProfileName;
 };
