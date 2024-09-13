@@ -3,11 +3,23 @@
 
 #include "SMAT_WaitChargeBlocked.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
+
+USMAT_WaitChargeBlocked::USMAT_WaitChargeBlocked()
+{
+	InvalidTags.AddTag(SMTags::Character::State::Charge);
+	InvalidTags.AddTag(SMTags::Character::State::Neutralize);
+	InvalidTags.AddTag(SMTags::Character::State::Immune);
+	InvalidTags.AddTag(SMTags::Character::State::NoiseBreak);
+	InvalidTags.AddTag(SMTags::Character::State::NoiseBreaked);
+}
 
 USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility, ASMBassCharacter* NewSourceCharacter)
 {
@@ -62,6 +74,15 @@ void USMAT_WaitChargeBlocked::OnChargeOverlappedCallback(UPrimitiveComponent* Ov
 	if (SourceTeam == TargetTeam)
 	{
 		return;
+	}
+
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	if (TargetASC)
+	{
+		if (TargetASC->HasAnyMatchingGameplayTags(InvalidTags))
+		{
+			return;
+		}
 	}
 
 	if (ShouldBroadcastAbilityTaskDelegates())
