@@ -5,14 +5,14 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "KismetAnimationLibrary.h"
-#include "Characters/SMPlayerCharacter.h"
+#include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Utilities/SMLog.h"
 
 void USMAnimInstance::NativeInitializeAnimation()
 {
 	Super::NativeInitializeAnimation();
 
-	SourceCharacter = Cast<ASMPlayerCharacter>(TryGetPawnOwner());
+	SourceCharacter = Cast<ASMPlayerCharacterBase>(TryGetPawnOwner());
 	if (SourceCharacter.Get())
 	{
 		SourceMovement = SourceCharacter->GetCharacterMovement();
@@ -57,7 +57,9 @@ void USMAnimInstance::UpdateMovementInfo()
 			LocalVelocityDirectionAngle = UKismetAnimationLibrary::CalculateDirection(Velocity2D, SourceCharacter->GetActorRotation());
 			UpdateDirection();
 
-			bAmICatching = SourceCharacter->bAmICatching();
+			// bAmICatching = SourceCharacter->bAmICatching();
+			// NET_VLOG(SourceCharacter, 1, 1.0f, TEXT("LocalVelocityDirectionAngle: %f"), LocalVelocityDirectionAngle);
+			// NET_VLOG(SourceCharacter, 2, 1.0f, TEXT("Velocity2D: %s"), *Velocity2D.ToString());
 		}
 	}
 }

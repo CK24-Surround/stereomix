@@ -172,8 +172,8 @@ void USMGA_Hold::SyncPointHoldResult()
 
 void USMGA_Hold::PlayResultMontage()
 {
-	const FName SectionName = bSuccessHold ? TEXT("Success") : TEXT("Fail");
-	MontageJumpToSection(SectionName);
+	// const FName SectionName = bSuccessHold ? TEXT("Success") : TEXT("Fail");
+	// MontageJumpToSection(SectionName);
 
 	// 로컬의 경우 노이즈 브레이크 인디케이터를 활성화 해줍니다.
 	if (IsLocallyControlled())

@@ -18,7 +18,7 @@ enum class EDirection : uint8
 	Left
 };
 
-class ASMPlayerCharacter;
+class ASMPlayerCharacterBase;
 /**
  *
  */
@@ -56,7 +56,7 @@ protected:
 	TObjectPtr<UAnimSequence> LeftMove;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Reference")
-	TObjectPtr<ASMPlayerCharacter> SourceCharacter;
+	TObjectPtr<ASMPlayerCharacterBase> SourceCharacter;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Reference")
 	TObjectPtr<UCharacterMovementComponent> SourceMovement;
