@@ -42,7 +42,9 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAnimMontage* SlowBulletMontage = SourceDataAsset->SkillMontage[SourceCharacter->GetTeam()];
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWait = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, SlowBulletMontage);
+	PlayMontageAndWait->OnCancelled.AddDynamic(this, &ThisClass::OnMontageEnded);
 	PlayMontageAndWait->OnInterrupted.AddDynamic(this, &ThisClass::OnMontageEnded);
+	PlayMontageAndWait->OnBlendOut.AddDynamic(this, &ThisClass::OnMontageEnded);
 	PlayMontageAndWait->OnCompleted.AddDynamic(this, &ThisClass::OnMontageEnded);
 	PlayMontageAndWait->ReadyForActivation();
 
