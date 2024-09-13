@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
+#include "Tiles/SMTile.h"
 #include "SMGA_NoiseBreak.generated.h"
 
 /**
@@ -24,8 +25,13 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	bool IsValidTarget() const;
+
 	/** 스플래시 데미지를 적용할때 호출합니다. */
 	virtual void ApplySplash(const FVector& TargetLocation);
+
+	/** 해당 위치의 타일을 가져옵니다. */
+	ASMTile* GetTileFromLocation(const FVector& Location);
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Damage = 20.0f;

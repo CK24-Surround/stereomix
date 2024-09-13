@@ -30,18 +30,10 @@ bool USMGA_NoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handl
 		return false;
 	}
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		return false;
-	}
-
-	// 타일이 아니면 노이즈 브레이크를 할 수 없습니다.
-	FVector TargetLocation;
 	if (IsLocallyControlled())
 	{
-		const float MaxDistance = MaxDistanceByTile * 150.0f;
-		if (!SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance))
+		// 타일이 아니면 노이즈 브레이크를 할 수 없습니다.
+		if (!IsValidTarget())
 		{
 			return false;
 		}
@@ -62,11 +54,28 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 			FGameplayAbilitySpec* NoiseBreakIndicatorGASpec = SourceASC->FindAbilitySpecFromClass(USMGA_NoiseBreakIndicator::StaticClass());
 			if (NoiseBreakIndicatorGASpec)
 			{
-				NET_LOG(GetAvatarActor(), Warning, TEXT("인디케이터 종료 요청"));
 				SourceASC->CancelAbilityHandle(NoiseBreakIndicatorGASpec->Handle);
 			}
 		}
 	}
+}
+
+bool USMGA_NoiseBreak::IsValidTarget() const
+{
+	FVector TargetLocation;
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		return false;
+	}
+
+	const float MaxDistance = MaxDistanceByTile * 150.0f;
+	if (!SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation)
@@ -129,4 +138,23 @@ void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation)
 			TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
 	}
+}
+
+ASMTile* USMGA_NoiseBreak::GetTileFromLocation(const FVector& Location)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		return nullptr;
+	}
+
+	FHitResult HitResult;
+	const FVector StartLocation = Location;
+	const FVector EndLocation = StartLocation + FVector::DownVector * 1000.0;
+	if (!GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction))
+	{
+		return nullptr;
+	}
+
+	return Cast<ASMTile>(HitResult.GetActor());
 }

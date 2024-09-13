@@ -10,6 +10,7 @@
 #include "Characters/Player/SMElectricGuitarCharacter.h"
 #include "Characters/Player/SMPianoCharacter.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -168,11 +169,14 @@ void USMHIC_Character::OnNoiseBreakActionStarted(ASMBassCharacter* Instigator)
 
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
-	if (!SourceCharacter->HasAuthority())
+	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !NoiseBreakData || !SourceCapsule)
 	{
-		NET_LOG(SourceCharacter, Warning, TEXT("서버에서만 호출되야합니다."));
 		return;
 	}
+
+	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
+	SourceCharacter->MulitcastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
 
 	HoldedReleased(Instigator, false);
 
@@ -184,6 +188,15 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* I
 
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
+	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !NoiseBreakData || !SourceCapsule)
+	{
+		return;
+	}
+
+	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
+	SourceCharacter->MulitcastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
+
 	HoldedReleased(Instigator, false);
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
@@ -192,7 +205,10 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator
 
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
-	// TODO: 타일 점령 데미지 구현 필요
+	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority())
+	{
+		return;
+	}
 
 	HoldedReleased(Instigator, true);
 
@@ -230,7 +246,8 @@ void USMHIC_Character::EmptyHoldedMeCharacterList()
 
 void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdjust)
 {
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
+	APlayerController* SourcePlayerController = SourceCharacter ? Cast<APlayerController>(SourceCharacter->Controller) : nullptr;
+	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get() || !ensureAlways(SourcePlayerController))
 	{
 		return;
 	}
@@ -267,11 +284,7 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdj
 	// SourceCharacter->ServerRPCPreventGroundEmbedding();
 
 	// 카메라 뷰를 원래대로 복구합니다.
-	APlayerController* SourcePlayerController = Cast<APlayerController>(SourceCharacter->Controller);
-	if (ensureAlways(SourcePlayerController))
-	{
-		SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
-	}
+	SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
 }
 
 void USMHIC_Character::OnDestroyedIAmHoldingActor(AActor* DestroyedActor)

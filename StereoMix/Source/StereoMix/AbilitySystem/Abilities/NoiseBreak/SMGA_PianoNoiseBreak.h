@@ -23,19 +23,17 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCSendTargetLocation(const FVector_NetQuantize10& TargetLocation);
+	void ServerSendLocationData(const FVector_NetQuantize10& TargetLocation);
 
 	UFUNCTION()
 	void OnShoot(FGameplayEventData Payload);
 
 	UFUNCTION()
-	void OnJumpEnded();
+	void OnNoiseBreakEnded();
 
 	void TileCapture();
 
 	FVector NoiseBreakTargetLocation;
-
-	uint32 bHasTargetLocation = false;
 
 	FName OriginalCollisionProfileName;
 };

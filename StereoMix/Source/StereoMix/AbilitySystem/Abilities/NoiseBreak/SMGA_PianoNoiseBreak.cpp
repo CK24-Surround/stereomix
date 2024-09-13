@@ -45,36 +45,40 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 
 	K2_CommitAbility();
 
+	// 노이즈 브레이크 콜라이더로 변경합니다.
 	OriginalCollisionProfileName = SourceCapsule->GetCollisionProfileName();
 	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::NoiseBreak);
 
+	// 위 아래로 움직입니다.
 	const FName RootMotionTaskName = TEXT("RootMotionTask");
 	const FVector Direction = FVector::UpVector;
 	UAbilityTask_ApplyRootMotionConstantForce* RootMotionTask = UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(this, RootMotionTaskName, Direction, 300.0f, 2.0f, false, SourceDataAsset->NoiseBreakCurve, ERootMotionFinishVelocityMode::SetVelocity, FVector::ZeroVector, 0.0f, false);
-	RootMotionTask->OnFinish.AddDynamic(this, &ThisClass::OnJumpEnded);
+	RootMotionTask->OnFinish.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);
 	RootMotionTask->ReadyForActivation();
-	NET_LOG(GetAvatarActor(), Warning, TEXT("루트 이동 시작"));
 
+	// 발사 노티파이를 기다립니다.
+	UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::PianoNoiseBreakShoot, nullptr, true);
+	EventTask->EventReceived.AddDynamic(this, &ThisClass::OnShoot);
+	EventTask->ReadyForActivation();
+
+	// 몽타주를 재생합니다.
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAnimMontage* NoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceCharacter->GetTeam()];
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NoiseBreakMontage, 1.0f, NAME_None, false);
 	MontageTask->ReadyForActivation();
 
+	// 타겟 위치를 조준합니다.
 	if (IsLocallyControlled())
 	{
-		FVector TargetLocation;
 		const float MaxDistance = MaxDistanceByTile * 150.0f;
-		SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance);
+		SourceCharacter->GetTileLocationFromCursor(NoiseBreakTargetLocation, MaxDistance);
 
-		ServerRPCSendTargetLocation(TargetLocation);
+		ServerSendLocationData(NoiseBreakTargetLocation);
 	}
 
+	// 노이즈 브레이크 시작을 타겟에게 알립니다.
 	if (K2_HasAuthority())
 	{
-		UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::PianoNoiseBreakShoot, nullptr, true);
-		EventTask->EventReceived.AddDynamic(this, &ThisClass::OnShoot);
-		EventTask->ReadyForActivation();
-
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
 		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
 		if (TargetHIC)
@@ -87,78 +91,52 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 void USMGA_PianoNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
-	if (SourceCharacter)
+	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	if (SourceCapsule)
 	{
-		UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-		if (SourceCapsule)
-		{
-			SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
-		}
+		SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
 	}
-
-	bHasTargetLocation = false;
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void USMGA_PianoNoiseBreak::ServerRPCSendTargetLocation_Implementation(const FVector_NetQuantize10& TargetLocation)
+void USMGA_PianoNoiseBreak::ServerSendLocationData_Implementation(const FVector_NetQuantize10& TargetLocation)
 {
-	bHasTargetLocation = true;
 	NoiseBreakTargetLocation = TargetLocation;
 }
 
 void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 {
-	if (!bHasTargetLocation)
-	{
-		K2_EndAbility();
-		return;
-	}
-
 	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
-	if (!SourceCharacter)
-	{
-		K2_EndAbility();
-		return;
-	}
-
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceHIC)
+	if (!SourceCharacter || !SourceHIC)
 	{
 		K2_EndAbility();
 		return;
 	}
 
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding());
-	if (TargetCharacter)
+	if (K2_HasAuthority())
 	{
-		FVector Offset;
-		UCapsuleComponent* TargetCapsule = TargetCharacter->GetCapsuleComponent();
-		if (TargetCapsule)
+		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
+		if (TargetHIC)
 		{
-			Offset.Z = TargetCapsule->GetScaledCapsuleHalfHeight();
+			TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
+			NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation;
+			TargetHIC->OnNoiseBreakActionPerformed(SourceCharacter, NoiseBreakData);
 		}
 
-		TargetCharacter->MulitcastRPCSetLocation(NoiseBreakTargetLocation + Offset);
+		TileCapture();
+		ApplySplash(NoiseBreakTargetLocation);
+
+		SourceHIC->SetActorIAmHolding(nullptr);
 	}
-
-	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetCharacter);
-	if (TargetHIC)
-	{
-		TSharedRef<FSMNoiseBreakData> TempData = MakeShared<FSMNoiseBreakData>();
-		TargetHIC->OnNoiseBreakActionPerformed(SourceCharacter, TempData);
-	}
-
-	TileCapture();
-	ApplySplash(NoiseBreakTargetLocation);
-
-	SourceHIC->SetActorIAmHolding(nullptr);
 
 	NET_LOG(GetAvatarActor(), Warning, TEXT("발사"));
 	DrawDebugSphere(GetWorld(), NoiseBreakTargetLocation, CaptureSize * 75.0f, 16, FColor::Red, false, 1.0f);
 }
 
-void USMGA_PianoNoiseBreak::OnJumpEnded()
+void USMGA_PianoNoiseBreak::OnNoiseBreakEnded()
 {
 	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
 	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
@@ -167,35 +145,18 @@ void USMGA_PianoNoiseBreak::OnJumpEnded()
 
 void USMGA_PianoNoiseBreak::TileCapture()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		return;
-	}
-
+	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
 	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
-	if (!GameState)
+	USMTileManagerComponent* TileManager = GameState ? GameState->GetTileManager() : nullptr;
+	if (!SourceCharacter || !ensureAlways(TileManager))
 	{
 		return;
 	}
 
-	USMTileManagerComponent* TileManager = GameState->GetTileManager();
-	if (!TileManager)
+	ASMTile* Tile = GetTileFromLocation(NoiseBreakTargetLocation);
+	if (Tile)
 	{
-		return;
-	}
-
-	FHitResult HitResult;
-	const FVector StartLocation = NoiseBreakTargetLocation;
-	const FVector EndLocation = StartLocation + FVector::DownVector * 1000.0;
-	const bool bSuccess = GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction);
-
-	if (bSuccess)
-	{
-		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
-		if (Tile)
-		{
-			TileManager->TileCaptureImmediateSqaure(Tile, SourceCharacter->GetTeam(), CaptureSize);
-		}
+		const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+		TileManager->TileCaptureImmediateSqaure(Tile, SourceTeam, CaptureSize);
 	}
 }

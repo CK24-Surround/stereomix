@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMHoldInteractionComponent.h"
+#include "Data/SMNoiseBreakData.h"
 #include "SMHIC_Character.generated.h"
 
 class ASMPlayerCharacterBase;

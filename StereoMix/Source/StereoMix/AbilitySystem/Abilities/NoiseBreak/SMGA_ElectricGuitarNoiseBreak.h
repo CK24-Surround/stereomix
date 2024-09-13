@@ -23,19 +23,18 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCOnNoiseBreak(const FVector_NetQuantize10& TargetLocation);
-
-	void TileCapture(const FVector& TargetLocation);
+	void ServerSendLocationData(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation);
 
 	void LeapCharacter(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ);
 
-	UFUNCTION(Server, Reliable)
-	void ServerRPCLeapCharacter(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation);
+	void OnBurst(const FVector& TargetLocation);
 
 	void OnLanded();
 
 	UFUNCTION()
 	void OnNoiseBreakEnded();
+
+	void TileCapture(const FVector& TargetLocation);
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float ApexHegith = 300.0f;
