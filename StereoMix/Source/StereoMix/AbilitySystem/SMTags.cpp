@@ -48,7 +48,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Character.State.Stun", "기절 상태를 나타냅니다."); // TODO: Deprecated
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "Character.State.Neutralize", "무력화 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashing, "Character.State.Smashing", "매치기 중인 상태를 나타냅니다."); // TODO: Deprecated
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreaking, "Character.State.NoiseBreaking", "매치기 중인 상태를 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreak, "Character.State.NoiseBreak", "매치기 중인 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Character.State.Smashed", "상대 캐릭터에게 매치기 당하는 상태를 나타냅니다."); // TODO: Deprecated
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreaked, "Character.State.NoiseBreaked", "노이즈브레이크에 당하는 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncatchable, "Character.State.Uncatchable", "잡힐 수 없는 상태임을 나타냅니다."); // TODO: Deprecated

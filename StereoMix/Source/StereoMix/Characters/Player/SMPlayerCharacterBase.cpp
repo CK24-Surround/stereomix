@@ -100,19 +100,19 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	HIC = CreateDefaultSubobject<USMHIC_Character>(TEXT("HIC"));
 
 	LockAimTags.AddTag(SMTags::Character::State::Holded);
-	LockAimTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	LockAimTags.AddTag(SMTags::Character::State::NoiseBreak);
 	LockAimTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	LockAimTags.AddTag(SMTags::Character::State::Neutralize);
 
 	LockMovementTags.AddTag(SMTags::Character::State::Holded);
-	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreak);
 	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	LockMovementTags.AddTag(SMTags::Character::State::Neutralize);
 	LockMovementTags.AddTag(SMTags::Character::State::Jump);
 	LockMovementTags.AddTag(SMTags::Character::State::Stun);
 
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Holded);
-	PushBackImmuneTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::NoiseBreak);
 	PushBackImmuneTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Neutralize);
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Immune);

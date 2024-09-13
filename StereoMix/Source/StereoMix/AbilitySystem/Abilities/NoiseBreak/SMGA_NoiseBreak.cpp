@@ -17,7 +17,7 @@
 
 USMGA_NoiseBreak::USMGA_NoiseBreak()
 {
-	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::NoiseBreaking);
+	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::NoiseBreak);
 	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Hold);
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);

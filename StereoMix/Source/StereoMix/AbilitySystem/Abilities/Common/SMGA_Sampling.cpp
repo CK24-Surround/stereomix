@@ -14,7 +14,7 @@ USMGA_Sampling::USMGA_Sampling()
 
 	DeactivateTags.AddTag(SMTags::Character::State::Neutralize);
 	DeactivateTags.AddTag(SMTags::Character::State::Immune);
-	DeactivateTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	DeactivateTags.AddTag(SMTags::Character::State::NoiseBreak);
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
 }

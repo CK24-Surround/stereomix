@@ -15,7 +15,7 @@ ASMSlowBulletProjectile::ASMSlowBulletProjectile()
 {
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Neutralize);
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::NoiseBreaking);
+	IgnoreTargetStateTags.AddTag(SMTags::Character::State::NoiseBreak);
 }
 
 void ASMSlowBulletProjectile::Init(float NewSlowDebuffMultiplier, float NewSlowDebuffDuration)
