@@ -40,6 +40,9 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	const FName TaskName = TEXT("ChargeMontage");
 	UAnimMontage* ChargeMontage = SourceDataAsset->SkillMontage[SourceCharacter->GetTeam()];
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TaskName, ChargeMontage);
+	MontageTask->OnCancelled.AddDynamic(this, &ThisClass::OnChargeEnded);
+	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::OnChargeEnded);
+	MontageTask->OnBlendOut.AddDynamic(this, &ThisClass::OnChargeEnded);
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnChargeEnded);
 	MontageTask->ReadyForActivation();
 
