@@ -6,11 +6,11 @@
 #include "Engine/OverlapResult.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "SMGA_NoiseBreakIndicator.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "Indicator/SMGA_NoiseBreakIndicator.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
 

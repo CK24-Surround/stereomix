@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_SlowBullet : public USMGA_Skill
 {
 	GENERATED_BODY()

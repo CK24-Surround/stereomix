@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_SkillGaugeControl : public USMGameplayAbility
 {
 	GENERATED_BODY()

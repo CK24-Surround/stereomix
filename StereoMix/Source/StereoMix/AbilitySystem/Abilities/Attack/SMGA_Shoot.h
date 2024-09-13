@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_Shoot : public USMGA_Attack
 {
 	GENERATED_BODY()

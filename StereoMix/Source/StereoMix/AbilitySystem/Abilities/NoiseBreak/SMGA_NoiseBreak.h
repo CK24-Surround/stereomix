@@ -10,7 +10,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_NoiseBreak : public USMGameplayAbility
 {
 	GENERATED_BODY()

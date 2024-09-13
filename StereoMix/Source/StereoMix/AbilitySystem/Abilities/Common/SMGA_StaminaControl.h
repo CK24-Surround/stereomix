@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_StaminaControl : public USMGameplayAbility
 {
 	GENERATED_BODY()

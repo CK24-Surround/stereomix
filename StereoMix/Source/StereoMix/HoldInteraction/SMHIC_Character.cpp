@@ -182,8 +182,6 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* I
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
 	NoiseBreaked();
-
-	// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
 }
 
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
@@ -214,8 +212,6 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator,
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
 	NoiseBreaked();
-
-	// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Smashed));
 }
 
 void USMHIC_Character::SetActorIAmHolding(AActor* NewIAmHoldingActor)

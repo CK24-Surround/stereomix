@@ -8,7 +8,6 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreakIndicator.h"
 #include "AbilitySystem/Task/SMAT_WaitHoldResult.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"

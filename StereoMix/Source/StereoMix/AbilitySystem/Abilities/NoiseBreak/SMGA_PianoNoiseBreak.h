@@ -9,7 +9,7 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGA_PianoNoiseBreak : public USMGA_NoiseBreak
 {
 	GENERATED_BODY()

@@ -108,6 +108,7 @@ void USMGA_ElectricGuitarNoiseBreak::ServerSendLocationData_Implementation(const
 
 	LeapCharacter(SourceLocation, TargetLocation, SourceMovement->GetGravityZ());
 
+	// 바닥에 맞게 높이를 보정합니다.
 	const FVector SourceLocationWithTargetZ(SourceLocation.X, SourceLocation.Y, TargetLocation.Z);
 	OnBurst(SourceLocationWithTargetZ);
 }

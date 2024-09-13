@@ -3,8 +3,8 @@
 
 #include "SMGA_NoiseBreakIndicator.h"
 
-#include "SMGA_NoiseBreak.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
