@@ -8,6 +8,7 @@
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "HoldInteraction/SMHIC_Character.h"
 
 
 USMGA_NoiseBreakIndicator::USMGA_NoiseBreakIndicator()
@@ -22,8 +23,9 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !SourceDataAsset)
+	if (!SourceCharacter || !SourceHIC || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -41,4 +43,17 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 	const float NoiseBreakMaxDistance = NoiseBreakDefaultObject->GetMaxDistance();
 	USMAT_SkillIndicator* SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, NoiseBreakIndicator, NoiseBreakMaxDistance, true);
 	SkillIndicatorTask->ReadyForActivation();
+
+	SourceHIC->OnHoldStateExit.AddUObject(this, &ThisClass::K2_EndAbility);
+}
+
+void USMGA_NoiseBreakIndicator::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	if (SourceHIC)
+	{
+		SourceHIC->OnHoldStateExit.RemoveAll(this);
+	}
+
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
