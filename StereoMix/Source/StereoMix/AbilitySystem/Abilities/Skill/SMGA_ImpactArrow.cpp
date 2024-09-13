@@ -194,7 +194,7 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 	}
 
 	NET_LOG(GetAvatarActor(), Warning, TEXT("적중"));
-	DrawDebugSphere(GetWorld(), NewTargetLocation, 250.0f, 16, FColor::Red, false, 1.0f);
+	DrawDebugSphere(GetWorld(), NewTargetLocation, Radius, 16, FColor::Red, false, 1.0f);
 
 	TArray<FOverlapResult> OverlapResults;
 	if (GetWorld()->OverlapMultiByChannel(OverlapResults, NewTargetLocation, FQuat::Identity, SMCollisionTraceChannel::Action, FCollisionShape::MakeSphere(Radius)))

@@ -53,7 +53,7 @@ protected:
 	float MaxDistance = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float TravelTime = 1.0f;
+	float TravelTime = 0.25f;
 
 	FVector TargetLocation;
 
@@ -63,7 +63,7 @@ protected:
 	float Damage = 10.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float Radius = 375.0f;
+	float Radius = 500.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Magnitude = 1000.0f;
