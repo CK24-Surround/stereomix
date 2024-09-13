@@ -26,28 +26,10 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-	if (!SourceCapsule)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	UBoxComponent* SourceChargeCollider = SourceCharacter->GetChargeColliderComponent();
-	if (!SourceChargeCollider)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	const USMBassCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset<USMBassCharacterDataAsset>();
-	if (!ensureAlways(SourceDataAsset))
+	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	UBoxComponent* SourceChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr;
+	const USMBassCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset<USMBassCharacterDataAsset>() : nullptr;
+	if (!SourceCharacter || !SourceCapsule || !SourceChargeCollider || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -70,6 +52,27 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	OriginalChargeCollisionProfileName = SourceChargeCollider->GetCollisionProfileName();
 	SourceChargeCollider->SetCollisionProfileName(SMCollisionProfileName::Charge);
+
+	if (IsLocallyControlled())
+	{
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
+		const FVector TargetDirection = (TargetLocation - SourceLocation).GetSafeNormal();
+		SourceCharacter->SetActorRotation(TargetDirection.Rotation());
+		ServerSendLocationData(SourceLocation, TargetDirection);
+	}
+}
+
+void USMGA_Charge::ServerSendLocationData_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantizeNormal& Normal)
+{
+	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
+	SourceCharacter->SetActorLocation(SourceLocation);
+	SourceCharacter->SetActorRotation(Normal.Rotation());
 }
 
 void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
