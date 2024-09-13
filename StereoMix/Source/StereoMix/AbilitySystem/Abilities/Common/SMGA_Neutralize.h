@@ -22,7 +22,8 @@ public:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 protected:
-	void OnNeutralizeTimeEnd();
+	UFUNCTION()
+	void OnNeutralizeTimeEnded();
 
 	void WaitUntilBuzzerBeaterEnd();
 
@@ -31,16 +32,13 @@ protected:
 
 	void HoldedStateExit();
 
-	void NeutralizeExit();
+	void NeutralizeExitSyncPoint();
 
 	UFUNCTION()
-	void NeutralizeExitMontageEnded();
+	void NeutralizeExit();
 
 	/** 잡고 있던 대상이 있다면 놓아줍니다. */
 	void Release();
-
-	/** 무력화 종료 이펙트를 실행합니다. */
-	void NewtralizeEndEffect();
 
 	UPROPERTY()
 	TObjectPtr<UAnimMontage> CachedNeutralizeMontage;

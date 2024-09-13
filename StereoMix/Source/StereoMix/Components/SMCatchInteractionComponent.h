@@ -9,7 +9,7 @@
 
 #include "SMCatchInteractionComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnCatchSignature);
+DECLARE_MULTICAST_DELEGATE(FOnHoldStateChangedDelegate);
 
 UCLASS(Abstract, ClassGroup = (CatchInteraction), meta = (BlueprintSpawnableComponent))
 class STEREOMIX_API USMCatchInteractionComponent : public UActorComponent
@@ -46,7 +46,7 @@ public:
 	/** 특수 액션 종료 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
 	virtual void OnSpecialActionEnded(AActor* Instigator, ESpecialAction InSpecialAction, float InMagnitude, TSubclassOf<UGameplayEffect> DamageGE, float DamageAmount) PURE_VIRTUAL(USMCatchInteractionComponent::OnSpecialActionEnded)
 
-	FOnCatchSignature OnStartCaught;
+	FOnHoldStateChangedDelegate OnStartCaught;
 
 protected:
 	UFUNCTION()

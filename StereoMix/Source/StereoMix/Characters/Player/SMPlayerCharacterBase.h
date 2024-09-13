@@ -95,12 +95,12 @@ public:
 	/** 움직임을 잠급니다. 서버에서 호출되어야합니다. */
 	void SetMovementEnable(bool bIsEnable);
 
-	/** 컨트롤 로테이션을 기준으로 캐릭터를 회전시킬지 여부를 나타냅니다. */
+	/** 컨트롤 로테이션을 기준으로 캐릭터를 회전시킬지 여부를 나타냅니다. 서버에서 호출되어야합니다. */
 	void SetUseControllerRotation(bool bNewUseControllerRotation);
 
 	/** 캐릭터 상태 위젯의 가시성을 조절합니다. */
 	UFUNCTION(NetMulticast, Reliable)
-	void SetCharacterStateVisibility(bool bNewVisibility);
+	void MulticastSetCharacterStateVisibility(bool bNewVisibility);
 
 	/** 다른 클라이언트들에게 인디케이터를 추가합니다. */
 	UFUNCTION(NetMulticast, Reliable)

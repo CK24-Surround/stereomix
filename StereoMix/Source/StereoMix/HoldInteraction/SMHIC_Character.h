@@ -26,7 +26,7 @@ public:
 
 	virtual void OnHolded(AActor* TargetActor) override;
 
-	virtual void OnHoldedReleased(AActor* TargetActor, bool bIsStunTimeOut) override;
+	virtual void OnHoldedReleased(AActor* TargetActor) override;
 
 	virtual void OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) override;
 
@@ -56,11 +56,11 @@ public:
 	UFUNCTION()
 	void OnDestroyedIAmHoldingActor(AActor* DestroyedActor);
 
-	/** 잡을때 브로드캐스트합니다. */
-	FOnCatchSignature OnCatch;
+	/** 잡을때 이벤트입니다. */
+	FOnHoldStateChangedDelegate OnHoldStateEnrty;
 
-	/** 잡기를 놓을때 브로드캐스트합니다.*/
-	FOnCatchSignature OnCatchRelease;
+	/** 잡기를 놓을때 이벤트입니다.*/
+	FOnHoldStateChangedDelegate OnHoldStateExit;
 
 protected:
 	UFUNCTION()

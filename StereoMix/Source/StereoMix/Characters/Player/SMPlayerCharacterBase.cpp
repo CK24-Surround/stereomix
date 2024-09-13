@@ -376,14 +376,17 @@ void ASMPlayerCharacterBase::MulticastRPCAddScreenIndicatorToSelf_Implementation
 
 	// 자기 자신은 제외합니다.
 	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	if (TargetCharacter->IsLocallyControlled())
+	if (TargetCharacter)
 	{
-		return;
+		if (TargetCharacter->IsLocallyControlled())
+		{
+			return;
+		}
 	}
 
 	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 추가해줍니다.
 	ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController());
-	if (ensureAlways(LocalPlayerController))
+	if (LocalPlayerController)
 	{
 		LocalPlayerController->AddScreendIndicator(TargetActor);
 	}
@@ -420,8 +423,13 @@ void ASMPlayerCharacterBase::ClientRPCRemoveScreendIndicatorToSelf_Implementatio
 	}
 }
 
-void ASMPlayerCharacterBase::SetCharacterStateVisibility_Implementation(bool bNewVisibility)
+void ASMPlayerCharacterBase::MulticastSetCharacterStateVisibility_Implementation(bool bNewVisibility)
 {
+	if (HasAuthority())
+	{
+		return;
+	}
+
 	CharacterStateWidgetComponent->SetVisibility(bNewVisibility);
 }
 

@@ -3,6 +3,9 @@
 
 #include "SMHoldInteractionComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
@@ -38,5 +41,31 @@ void USMHoldInteractionComponent::SetActorHoldingMe(AActor* NewActorCatchingMe)
 	if (HoldingMeActor != NewActorCatchingMe)
 	{
 		HoldingMeActor = NewActorCatchingMe;
+		OnRep_HoldingMeActor();
+		SourceActor->ForceNetUpdate();
+	}
+}
+
+void USMHoldInteractionComponent::OnRep_HoldingMeActor()
+{
+	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
+
+	if (HoldingMeActor.Get())
+	{
+		if (SourceASC && GetOwnerRole() == ROLE_Authority)
+		{
+			SourceASC->AddTag(SMTags::Character::State::Holded);
+		}
+
+		OnHoldedStateEntry.Broadcast();
+	}
+	else
+	{
+		if (SourceASC && GetOwnerRole() == ROLE_Authority)
+		{
+			SourceASC->RemoveTag(SMTags::Character::State::Holded);
+		}
+
+		OnHoldedStateExit.Broadcast();
 	}
 }

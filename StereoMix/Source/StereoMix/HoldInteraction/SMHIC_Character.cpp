@@ -97,7 +97,6 @@ void USMHIC_Character::OnHolded(AActor* TargetActor)
 	SourceCharacter->SetMovementEnable(false);
 
 	SetActorHoldingMe(TargetActor);
-	SourceASC->AddTag(SMTags::Character::State::Holded);
 
 	HoldedMeCharcters.Add(TargetCharacter);
 
@@ -108,7 +107,7 @@ void USMHIC_Character::OnHolded(AActor* TargetActor)
 	}
 }
 
-void USMHIC_Character::OnHoldedReleased(AActor* TargetActor, bool bIsStunTimeOut)
+void USMHIC_Character::OnHoldedReleased(AActor* TargetActor)
 {
 	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
 	{
@@ -124,16 +123,6 @@ void USMHIC_Character::OnHoldedReleased(AActor* TargetActor, bool bIsStunTimeOut
 	if (TargetHIC)
 	{
 		TargetHIC->SetActorIAmHolding(nullptr);
-	}
-
-	// TODO: 더 이상 무력화 탈출을 GA로 처리하지 않을 예정입니다.
-	if (!bIsStunTimeOut)
-	{
-		// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::HoldedExit));
-	}
-	else
-	{
-		// SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::HoldedExitOnStunEnd));
 	}
 }
 
@@ -232,6 +221,7 @@ void USMHIC_Character::SetActorIAmHolding(AActor* NewIAmHoldingActor)
 
 		IAmHoldingActor = NewIAmHoldingActor;
 		OnRep_IAmHoldingActor();
+		SourceCharacter->ForceNetUpdate();
 	}
 }
 
@@ -249,7 +239,6 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdj
 	}
 
 	SetActorHoldingMe(nullptr);
-	SourceASC->RemoveTag(SMTags::Character::State::Holded);
 
 	SourceCharacter->SetCharacterHidden(false);
 	SourceCharacter->SetCollisionEnable(true);
@@ -298,7 +287,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 			SourceASC->AddTag(SMTags::Character::State::Hold);
 		}
 
-		OnCatch.Broadcast();
+		OnHoldStateEnrty.Broadcast();
 	}
 	else
 	{
@@ -308,7 +297,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 		}
 
 		/** 잡은 대상을 제거하면 잡기 풀기 델리게이트가 호출됩니다.*/
-		OnCatchRelease.Broadcast();
+		OnHoldStateExit.Broadcast();
 	}
 }
 

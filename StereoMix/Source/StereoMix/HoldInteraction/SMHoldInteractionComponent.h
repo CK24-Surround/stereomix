@@ -12,7 +12,7 @@ class ASMPianoCharacter;
 class ASMBassCharacter;
 class UGameplayEffect;
 
-DECLARE_MULTICAST_DELEGATE(FOnCatchSignature);
+DECLARE_MULTICAST_DELEGATE(FOnHoldStateChangedDelegate);
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMHoldInteractionComponent : public UActorComponent
@@ -39,7 +39,7 @@ public:
 	virtual void OnHolded(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnHolded)
 
 	/** 타겟으로부터 잡히기가 풀릴때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
-	virtual void OnHoldedReleased(AActor* TargetActor, bool bIsStunTimeOut) PURE_VIRTUAL(USMCatchInteractionComponent::OnHoldedReleased)
+	virtual void OnHoldedReleased(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnHoldedReleased)
 
 	/** 일렉기타의 노이즈브레이크 시작 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
 	virtual void OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) PURE_VIRTUAL(USMCatchInteractionComponent::OnNoiseBreakActionStarted)
@@ -59,9 +59,18 @@ public:
 	/** 베이스의 노이즈브레이크의 타일 상호작용 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
 	virtual void OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) PURE_VIRTUAL(USMCatchInteractionComponent::OnNoiseBreakActionEnded)
 
+	/** 잡힐때 이벤트입니다. */
+	FOnHoldStateChangedDelegate OnHoldedStateEntry;
+
+	/** 풀릴때 이벤트입니다. */
+	FOnHoldStateChangedDelegate OnHoldedStateExit;
+
 protected:
+	UFUNCTION()
+	void OnRep_HoldingMeActor();
+	
 	/** 자신을 잡고 있는 액터입니다. */
-	UPROPERTY(Replicated)
+	UPROPERTY(ReplicatedUsing = "OnRep_HoldingMeActor")
 	TWeakObjectPtr<AActor> HoldingMeActor;
 
 	UPROPERTY()

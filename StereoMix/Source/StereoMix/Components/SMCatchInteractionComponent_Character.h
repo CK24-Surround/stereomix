@@ -77,10 +77,10 @@ protected:
 
 public:
 	/** 잡을때 브로드캐스트합니다. */
-	FOnCatchSignature OnCatch;
+	FOnHoldStateChangedDelegate OnCatch;
 
 	/** 잡기를 놓을때 브로드캐스트합니다.*/
-	FOnCatchSignature OnCatchRelease;
+	FOnHoldStateChangedDelegate OnCatchRelease;
 
 protected:
 	UFUNCTION()
