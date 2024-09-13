@@ -52,12 +52,6 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, CachedNeutralizeMontage);
 	MontageTask->ReadyForActivation();
 
-	// 무언가를 잡고 있다면 잡은 대상을 놓습니다.
-	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Hold))
-	{
-		Release();
-	}
-
 	// 노이즈 브레이크 인디케이터가 활성화 되어있다면 제거합니다.
 	FGameplayAbilitySpec* GASpec = SourceASC->FindAbilitySpecFromClass(USMGA_NoiseBreakIndicator::StaticClass());
 	if (GASpec)
@@ -71,6 +65,12 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, NeutralizedTime);
 		WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnNeutralizeTimeEnded);
 		WaitTask->ReadyForActivation();
+
+		// 무언가를 잡고 있다면 잡은 대상을 놓습니다.
+		if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Hold))
+		{
+			Release();
+		}
 
 		// 무력화 후 어떤 액션을 당해도 커서를 바라보지 않도록 합니다.
 		// 만약 잠그지 않는다면 노이즈브레이크를 당해도 마지막으로 입력된 커서의 방향을 바라보게 됩니다.
