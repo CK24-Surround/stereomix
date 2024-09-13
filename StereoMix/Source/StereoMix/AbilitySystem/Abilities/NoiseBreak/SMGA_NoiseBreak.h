@@ -24,6 +24,7 @@ protected:
 
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	/** 스플래시 데미지를 적용할때 호출합니다. */
 	virtual void ApplySplash(const FVector& TargetLocation);
 
 	UPROPERTY(EditAnywhere, Category = "Design")

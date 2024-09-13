@@ -36,6 +36,7 @@ bool USMGA_NoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handl
 		return false;
 	}
 
+	// 타일이 아니면 노이즈 브레이크를 할 수 없습니다.
 	FVector TargetLocation;
 	if (IsLocallyControlled())
 	{
@@ -58,10 +59,11 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		UAbilitySystemComponent* SourceASC = GetASC();
 		if (SourceASC)
 		{
-			FGameplayAbilitySpec* NoiseBreakIndicatorGA = SourceASC->FindAbilitySpecFromClass(USMGA_NoiseBreakIndicator::StaticClass());
-			if (NoiseBreakIndicatorGA)
+			FGameplayAbilitySpec* NoiseBreakIndicatorGASpec = SourceASC->FindAbilitySpecFromClass(USMGA_NoiseBreakIndicator::StaticClass());
+			if (NoiseBreakIndicatorGASpec)
 			{
-				SourceASC->CancelAbilityHandle(NoiseBreakIndicatorGA->Handle);
+				NET_LOG(GetAvatarActor(), Warning, TEXT("인디케이터 종료 요청"));
+				SourceASC->CancelAbilityHandle(NoiseBreakIndicatorGASpec->Handle);
 			}
 		}
 	}

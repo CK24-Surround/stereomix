@@ -4,6 +4,7 @@
 #include "SMGA_NoiseBreakIndicator.h"
 
 #include "SMGA_NoiseBreak.h"
+#include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -13,10 +14,7 @@ USMGA_NoiseBreakIndicator::USMGA_NoiseBreakIndicator()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::LocalOnly;
 
-	// FAbilityTriggerData TriggerData;
-	// TriggerData.TriggerTag = SMTags::Event::Character::NoiseBreakIndicator;
-	// TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
-	// AbilityTriggers.Add(TriggerData);
+	AbilityTags.AddTag(SMTags::Ability::NoiseBreakIndicator);
 }
 
 void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -31,6 +29,7 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 		return;
 	}
 
+	// 노이즈 브레이크 데이터를 통해 사거리를 가져옵니다.
 	const USMGA_NoiseBreak* NoiseBreakDefaultObject = SourceDataAsset->DefaultActiveAbilities[EActiveAbility::NoiseBreak]->GetDefaultObject<USMGA_NoiseBreak>();
 	if (!NoiseBreakDefaultObject)
 	{
@@ -38,6 +37,8 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 		return;
 	}
 
-	SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, SourceCharacter->GetNoiseBreakIndicator(), NoiseBreakDefaultObject->GetMaxDistance(), true);
+	UNiagaraComponent* NoiseBreakIndicator = SourceCharacter->GetNoiseBreakIndicator();
+	const float NoiseBreakMaxDistance = NoiseBreakDefaultObject->GetMaxDistance();
+	USMAT_SkillIndicator* SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, NoiseBreakIndicator, NoiseBreakMaxDistance, true);
 	SkillIndicatorTask->ReadyForActivation();
 }

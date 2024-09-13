@@ -19,6 +19,7 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldedExitOnStunEnd, "Ability.HoldedExitOnStunEnd", "HoldedExitOnStunEnd의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "Ability.Immune", "Immune의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CatchBuff, "Ability.CatchBuff", "CatchBuff의 어빌리티 태그를 나타냅니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakIndicator, "Ability.NoiseBreakIndicator", "노이즈 브레이크 인디케이터의 어빌리티 태그를 나타냅니다.");
 	}
 
 	namespace AttributeSet::Character::Init

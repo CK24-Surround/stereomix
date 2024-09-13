@@ -75,18 +75,6 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 
 void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	if (IsLocallyControlled())
-	{
-		if (bSuccessHold)
-		{
-			auto SourceASC = GetASC();
-			if (SourceASC)
-			{
-				SourceASC->TryActivateAbilityByClass(USMGA_NoiseBreakIndicator::StaticClass());
-			}
-		}
-	}
-
 	bSuccessHold = false;
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
@@ -187,4 +175,17 @@ void USMGA_Hold::PlayResultMontage()
 {
 	const FName SectionName = bSuccessHold ? TEXT("Success") : TEXT("Fail");
 	MontageJumpToSection(SectionName);
+
+	// 로컬의 경우 노이즈 브레이크 인디케이터를 활성화 해줍니다.
+	if (IsLocallyControlled())
+	{
+		if (bSuccessHold)
+		{
+			UAbilitySystemComponent* SourceASC = GetASC();
+			if (SourceASC)
+			{
+				SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::NoiseBreakIndicator));
+			}
+		}
+	}
 }

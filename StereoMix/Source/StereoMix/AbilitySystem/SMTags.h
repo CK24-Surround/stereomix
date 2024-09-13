@@ -20,6 +20,7 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldedExitOnStunEnd);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CatchBuff);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakIndicator);
 	}
 
 	namespace AttributeSet::Character::Init
