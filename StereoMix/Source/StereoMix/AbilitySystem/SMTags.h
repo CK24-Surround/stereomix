@@ -131,6 +131,7 @@ namespace SMTags
 		namespace Bass
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Slash);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlashHit);
 		}
 
 		namespace SpecialAction

@@ -126,11 +126,29 @@ void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 
 	UAbilitySystemComponent* SourceASC = GetASC();
 	FScopedPredictionWindow ScopedPredictionWindow(SourceASC, GetASC()->ScopedPredictionKey);
-	ServerSendPredictionKey(SourceASC->ScopedPredictionKey);
+	ServerSendPredictionKeyForSlashEffect(SourceASC->ScopedPredictionKey);
 
 	if (!K2_HasAuthority()) // 리슨 서버인 경우 예외처리입니다.
 	{
-		PlayEffect();
+		PlaySlashEffect();
+	}
+}
+
+void USMGA_Slash::ServerSendPredictionKeyForSlashEffect_Implementation(FPredictionKey PredictionKey)
+{
+	FScopedPredictionWindow ScopedPredictionWindow(GetASC(), PredictionKey);
+	PlaySlashEffect();
+}
+
+void USMGA_Slash::PlaySlashEffect()
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (SourceCharacter)
+	{
+		FGameplayCueParameters CueParams;
+		CueParams.Normal = SourceCharacter->GetActorRotation().Vector();
+		CueParams.RawMagnitude = bIsLeftSlashNext ? 0.0f : 1.0f;
+		K2_ExecuteGameplayCueWithParams(SMTags::GameplayCue::Bass::Slash, CueParams);
 	}
 }
 
@@ -165,63 +183,44 @@ void USMGA_Slash::OnNextActionProcced()
 	ServerRPCApplyCost();
 }
 
-void USMGA_Slash::OnSlashHit(AActor* TargetActor)
-{
-	NET_LOG(GetAvatarActor(), Log, TEXT("%s 적중"), *GetNameSafe(TargetActor));
-
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	if (!TargetCharacter)
-	{
-		return;
-	}
-
-	TargetCharacter->PredictHPChange(-Damage);
-	ServerRPCSlashHit(TargetActor);
-}
-
-void USMGA_Slash::ServerSendPredictionKey_Implementation(FPredictionKey PredictionKey)
-{
-	FScopedPredictionWindow ScopedPredictionWindow(GetASC(), PredictionKey);
-	PlayEffect();
-}
-
-void USMGA_Slash::PlayEffect()
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (SourceCharacter)
-	{
-		FGameplayCueParameters CueParams;
-		CueParams.Normal = SourceCharacter->GetActorRotation().Vector();
-		CueParams.TargetAttachComponent = SourceCharacter->GetMesh();
-		CueParams.RawMagnitude = bIsLeftSlashNext ? 0.0f : 1.0f;
-		K2_ExecuteGameplayCueWithParams(SMTags::GameplayCue::Bass::Slash, CueParams);
-	}
-}
-
 void USMGA_Slash::ServerRPCApplyCost_Implementation()
 {
 	K2_CommitAbilityCost();
 }
 
-void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
+void USMGA_Slash::OnSlashHit(AActor* TargetActor)
+{
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s 적중"), *GetNameSafe(TargetActor));
+
+	UAbilitySystemComponent* SourceASC = GetASC();
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (!SourceASC || !TargetCharacter)
+	{
+		return;
+	}
+
+	FScopedPredictionWindow ScopedPredictionWindow(SourceASC, IsPredictingClient());
+	NET_LOG(GetAvatarActor(), Warning, TEXT("키: %s"), *GetASC()->ScopedPredictionKey.ToString());
+	ServerRPCSlashHit(TargetActor, GetASC()->ScopedPredictionKey);
+
+	if (!K2_HasAuthority())
+	{
+		TargetCharacter->PredictHPChange(-Damage);
+		PlaySlashHitEffect(TargetActor);
+	}
+}
+
+void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor, FPredictionKey PredictionKey)
 {
 	UAbilitySystemComponent* SourceASC = GetASC();
-	if (!SourceASC)
-	{
-		return;
-	}
-
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceDataAsset)
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (!SourceASC || !SourceDataAsset || !TargetASC)
 	{
 		return;
 	}
 
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (!TargetASC)
-	{
-		return;
-	}
+	FScopedPredictionWindow ScopedPredictionWindow(SourceASC, PredictionKey);
 
 	FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
 	if (GESpecHandle.IsValid())
@@ -235,5 +234,19 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	if (TargetDamageInterface)
 	{
 		TargetDamageInterface->SetLastAttackInstigator(GetAvatarActor());
+	}
+
+	PlaySlashHitEffect(TargetActor);
+}
+
+void USMGA_Slash::PlaySlashHitEffect(AActor* TargetActor)
+{
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (TargetASC)
+	{
+		NET_LOG(GetAvatarActor(), Warning, TEXT("히트 이펙트 요청"));
+		FGameplayCueParameters CueParams;
+		CueParams.Instigator = TargetActor;
+		K2_ExecuteGameplayCueWithParams(SMTags::GameplayCue::Bass::SlashHit, CueParams);
 	}
 }
