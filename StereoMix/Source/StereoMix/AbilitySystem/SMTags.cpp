@@ -126,6 +126,11 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialApply_ElectricGuitar, "GameplayCue.ImmuneMaterialApply_ElectricGuitar", "일렉기타의 면역 머티리얼 적용시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialReset, "GameplayCue.ImmuneMaterialReset", "면역 머티리얼 리셋시 재생되는 게임플레이 큐의 태그입니다.");
 
+		namespace Bass
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Slash, "GameplayCue.Bass.Slash", "좌베기 게임플레이 큐의 태그입니다.");
+		}
+
 		namespace SpecialAction
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "GameplayCue.SpecialAction.Smash", "매치기에 사용됩니다.");

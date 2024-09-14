@@ -39,10 +39,21 @@ protected:
 	void CanProceedNextActionCallback(FGameplayEventData Payload) { bCanProceedNextAction = true; }
 
 	UFUNCTION()
-	void LeftSlashNextCallback(FGameplayEventData Payload) { bIsLeftSlashNext = true; }
+	void LeftSlashNextCallback(FGameplayEventData Payload)
+	{
+		bIsLeftSlashNext = true;
+		ServerSendSlashDirection(true);
+	}
 
 	UFUNCTION()
-	void RightSlashNextCallback(FGameplayEventData Payload) { bIsLeftSlashNext = false; }
+	void RightSlashNextCallback(FGameplayEventData Payload)
+	{
+		bIsLeftSlashNext = false;
+		ServerSendSlashDirection(false);
+	}
+
+	UFUNCTION(Server, Reliable)
+	void ServerSendSlashDirection(bool bNewIsLeftSlashNext);
 
 	void OnNextActionProcced();
 
@@ -54,6 +65,11 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCSlashHit(AActor* TargetActor);
 
+	UFUNCTION(Server, Reliable)
+	void ServerSendPredictionKey(FPredictionKey PredictionKey);
+
+	void PlayEffect();
+
 	/** 베기의 사정거리입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Range = 500.0f;
@@ -64,7 +80,7 @@ protected:
 
 	/** 베기를 수행하는 동안 소요될 시간입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float TotalSlashTime = 0.1875f;
+	float TotalSlashTime = 0.3f;
 
 	/** 콜라이더의 회전을 보여줄지 여부입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")

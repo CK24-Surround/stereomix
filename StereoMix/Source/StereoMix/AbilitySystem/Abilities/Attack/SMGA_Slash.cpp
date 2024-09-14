@@ -114,9 +114,29 @@ void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FG
 
 void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
 	USMAT_ColliderOrientationForSlash* ColliderOrientationForSlashTask = USMAT_ColliderOrientationForSlash::ColliderOrientationForSlash(this, Range, Angle, TotalSlashTime, bShowDebug);
 	ColliderOrientationForSlashTask->OnSlashHit.BindUObject(this, &ThisClass::OnSlashHit);
 	ColliderOrientationForSlashTask->ReadyForActivation();
+
+	UAbilitySystemComponent* SourceASC = GetASC();
+	FScopedPredictionWindow ScopedPredictionWindow(SourceASC, GetASC()->ScopedPredictionKey);
+	ServerSendPredictionKey(SourceASC->ScopedPredictionKey);
+
+	if (!K2_HasAuthority()) // 리슨 서버인 경우 예외처리입니다.
+	{
+		PlayEffect();
+	}
+}
+
+void USMGA_Slash::ServerSendSlashDirection_Implementation(bool bNewIsLeftSlashNext)
+{
+	bIsLeftSlashNext = bNewIsLeftSlashNext;
 }
 
 void USMGA_Slash::OnNextActionProcced()
@@ -157,6 +177,25 @@ void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 
 	TargetCharacter->PredictHPChange(-Damage);
 	ServerRPCSlashHit(TargetActor);
+}
+
+void USMGA_Slash::ServerSendPredictionKey_Implementation(FPredictionKey PredictionKey)
+{
+	FScopedPredictionWindow ScopedPredictionWindow(GetASC(), PredictionKey);
+	PlayEffect();
+}
+
+void USMGA_Slash::PlayEffect()
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	if (SourceCharacter)
+	{
+		FGameplayCueParameters CueParams;
+		CueParams.Normal = SourceCharacter->GetActorRotation().Vector();
+		CueParams.TargetAttachComponent = SourceCharacter->GetMesh();
+		CueParams.RawMagnitude = bIsLeftSlashNext ? 0.0f : 1.0f;
+		K2_ExecuteGameplayCueWithParams(SMTags::GameplayCue::Bass::Slash, CueParams);
+	}
 }
 
 void USMGA_Slash::ServerRPCApplyCost_Implementation()

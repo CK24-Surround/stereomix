@@ -34,7 +34,7 @@ USMAT_ColliderOrientationForSlash* USMAT_ColliderOrientationForSlash::ColliderOr
 
 	NewObj->Range = Range;
 	NewObj->Angle = Angle;
-	NewObj->SlashTime = 0.1875f;
+	NewObj->SlashTime = TotalSlashTime;
 	NewObj->bShowDebug = bShowDebug;
 
 	return NewObj;
