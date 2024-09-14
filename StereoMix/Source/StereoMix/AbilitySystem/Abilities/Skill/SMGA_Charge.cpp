@@ -58,24 +58,8 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	if (IsLocallyControlled())
 	{
-		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
-		const FVector TargetDirection = (TargetLocation - SourceLocation).GetSafeNormal();
-		SourceCharacter->SetActorRotation(TargetDirection.Rotation());
-		ServerSendLocationData(SourceLocation, TargetDirection);
+		SourceCharacter->FocusToCursor();
 	}
-}
-
-void USMGA_Charge::ServerSendLocationData_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantizeNormal& Normal)
-{
-	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	if (!SourceCharacter)
-	{
-		return;
-	}
-
-	SourceCharacter->SetActorLocation(SourceLocation);
-	SourceCharacter->SetActorRotation(Normal.Rotation());
 }
 
 void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
