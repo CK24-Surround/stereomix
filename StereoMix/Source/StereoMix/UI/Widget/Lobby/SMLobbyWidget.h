@@ -63,13 +63,13 @@ private:
 	// TObjectPtr<UCommonActivatableWidgetStack> LobbyPopupStack;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
-	TObjectPtr<USMCommonButton> CreateRoomButton;
+	TObjectPtr<USMButtonBase> CreateRoomButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
-	TObjectPtr<USMCommonButton> QuickMatchButton;
+	TObjectPtr<USMButtonBase> QuickMatchButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
-	TObjectPtr<USMCommonButton> JoinRoomButton;
+	TObjectPtr<USMButtonBase> JoinRoomButton;
 
 
 	// ==================================================================

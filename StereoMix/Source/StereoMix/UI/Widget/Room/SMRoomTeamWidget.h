@@ -8,7 +8,7 @@
 #include "Data/SMTeam.h"
 #include "SMRoomPlayerEntry.h"
 #include "UI/Animation/UmgAnimationDuration.h"
-#include "UI/Widget/Common/SMCommonButton.h"
+#include "UI/Widget/Common/SMButtonBase.h"
 
 #include "SMRoomTeamWidget.generated.h"
 
@@ -27,7 +27,7 @@ enum class ERoomTeamSelectButtonState : uint8
  *
  */
 UCLASS(Abstract)
-class STEREOMIX_API USMRoomTeamWidget : public USMCommonButton
+class STEREOMIX_API USMRoomTeamWidget : public USMButtonBase
 {
 	GENERATED_BODY()
 

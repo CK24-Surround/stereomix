@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonTextBlock.h"
-#include "UI/Widget/Common/SMCommonButton.h"
+#include "UI/Widget/Common/SMButtonBase.h"
 
 #include "SMRoomCodeCopyButton.generated.h"
 
@@ -12,7 +12,7 @@
  *
  */
 UCLASS()
-class STEREOMIX_API USMRoomCodeCopyButton : public USMCommonButton
+class STEREOMIX_API USMRoomCodeCopyButton : public USMButtonBase
 {
 	GENERATED_BODY()
 

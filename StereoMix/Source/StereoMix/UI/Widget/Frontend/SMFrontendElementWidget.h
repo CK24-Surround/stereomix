@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "FMODEvent.h"
-#include "UI/Widget/Common/SMCommonButton.h"
+#include "UI/Widget/Common/SMButtonBase.h"
 #include "UI/Widget/SMActivatableWidget.h"
 
 #include "SMFrontendElementWidget.generated.h"
@@ -59,7 +59,7 @@ protected:
 
 private:
 	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidgetOptional, AllowPrivateAccess))
-	TObjectPtr<USMCommonButton> BackButton;
+	TObjectPtr<USMButtonBase> BackButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, meta = (BindWidgetAnimOptional, AllowPrivateAccess))
 	TObjectPtr<UWidgetAnimation> TransitionAnim;

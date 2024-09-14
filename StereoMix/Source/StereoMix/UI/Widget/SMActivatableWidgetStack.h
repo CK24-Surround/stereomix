@@ -23,4 +23,6 @@ public:
 	{
 		return GeneratedWidgetsPool.GetOrCreateInstance(WidgetClass);
 	}
+
+	virtual void OnWidgetAddedToList(UCommonActivatableWidget& AddedWidget) override;
 };

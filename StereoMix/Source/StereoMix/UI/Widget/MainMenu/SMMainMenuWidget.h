@@ -49,16 +49,16 @@ private:
 	TSoftObjectPtr<UWorld> TutorialLevel;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
-	TObjectPtr<USMCommonButton> LobbyButton;
+	TObjectPtr<USMButtonBase> LobbyButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
-	TObjectPtr<USMCommonButton> TutorialButton;
+	TObjectPtr<USMButtonBase> TutorialButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
-	TObjectPtr<USMCommonButton> SettingsButton;
+	TObjectPtr<USMButtonBase> SettingsButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
-	TObjectPtr<USMCommonButton> QuitButton;
+	TObjectPtr<USMButtonBase> QuitButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (AllowPrivateAccess, BindWidget))
 	TObjectPtr<UCommonTextBlock> UserIdTextBlock;

@@ -6,7 +6,7 @@
 #include "Components/Image.h"
 #include "Data/SMCharacterType.h"
 #include "Data/SMTeam.h"
-#include "UI/Widget/Common/SMCommonButton.h"
+#include "UI/Widget/Common/SMButtonBase.h"
 
 #include "SMCharacterSelectButton.generated.h"
 
@@ -40,7 +40,7 @@ struct FSMCharacterSelectButtonData
  *
  */
 UCLASS(Abstract)
-class STEREOMIX_API USMCharacterSelectButton : public USMCommonButton
+class STEREOMIX_API USMCharacterSelectButton : public USMButtonBase
 {
 	GENERATED_BODY()
 

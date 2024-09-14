@@ -72,10 +72,10 @@ private:
 	// Bindings
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
-	TObjectPtr<USMCommonButton> GameStartButton;
+	TObjectPtr<USMButtonBase> GameStartButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
-	TObjectPtr<USMCommonButton> QuitButton;
+	TObjectPtr<USMButtonBase> QuitButton;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonTextBlock> PlayerCountTextBlock;

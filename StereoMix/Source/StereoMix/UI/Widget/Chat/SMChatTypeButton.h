@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "SMChatWidget.h"
-#include "UI/Widget/Common/SMCommonButton.h"
+#include "UI/Widget/Common/SMButtonBase.h"
 #include "SMChatTypeButton.generated.h"
 
 class UCommonTextBlock;
@@ -12,7 +12,7 @@ class UCommonTextBlock;
  * 
  */
 UCLASS()
-class STEREOMIX_API USMChatTypeButton : public USMCommonButton
+class STEREOMIX_API USMChatTypeButton : public USMButtonBase
 {
 	GENERATED_BODY()
 

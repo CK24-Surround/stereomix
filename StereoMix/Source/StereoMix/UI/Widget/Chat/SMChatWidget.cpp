@@ -109,9 +109,9 @@ UWidget* USMChatWidget::NativeGetDesiredFocusTarget() const
 
 TOptional<FUIInputConfig> USMChatWidget::GetDesiredInputConfig() const
 {
-	FUIInputConfig InputConfig(ECommonInputMode::Menu, EMouseCaptureMode::NoCapture, EMouseLockMode::DoNotLock);
-	InputConfig.bIgnoreLookInput = true;
-	return InputConfig;
+	FUIInputConfig ChatInputConfig(ECommonInputMode::Menu, EMouseCaptureMode::NoCapture, EMouseLockMode::DoNotLock);
+	ChatInputConfig.bIgnoreLookInput = true;
+	return ChatInputConfig;
 }
 
 FReply USMChatWidget::NativeOnKeyChar(const FGeometry& InGeometry, const FCharacterEvent& InCharEvent)

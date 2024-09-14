@@ -20,9 +20,12 @@ public:
 	// =============================================================================
 	// Variables
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (AllowPrivateAccess), DisplayName = "Hover Sound (FMOD)")
-	TObjectPtr<UFMODEvent> HoverSound;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Properties", meta = (AllowPrivateAccess), DisplayName = "Hovered Sound (FMOD)")
+	TObjectPtr<UFMODEvent> HoveredFMODSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sound", meta = (AllowPrivateAccess), DisplayName = "Click Sound (FMOD)")
-	TObjectPtr<UFMODEvent> ClickSound;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Properties", meta = (AllowPrivateAccess), DisplayName = "Selected Sound (FMOD)")
+	TObjectPtr<UFMODEvent> SelectedFMODSound;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Properties", meta = (AllowPrivateAccess), DisplayName = "Pressed Sound (FMOD)")
+	TObjectPtr<UFMODEvent> PressedFMODSound;
 };
