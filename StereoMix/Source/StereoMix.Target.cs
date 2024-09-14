@@ -10,7 +10,7 @@ public class StereoMixTarget : TargetRules
 
 	public StereoMixTarget(TargetInfo target) : base(target)
 	{
-		Type = TargetType.Client;
+		Type = TargetType.Game;
 		ExtraModuleNames.Add("StereoMix");
 
 		ApplySharedStereoMixTargetSettings(this);
