@@ -23,8 +23,17 @@ public:
 	/** 태그를 제거하고 리플리케이트 합니다. 서버에서만 실행되어야합니다. */
 	void RemoveTag(const FGameplayTag& InGameplayTag);
 
+	/** 게임플레이 큐를 재생하고 전파합니다. */
+	void ExecuteGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters);
+
 	FOnChangedTagSignature OnChangedTag;
 
 protected:
 	virtual void OnTagUpdated(const FGameplayTag& Tag, bool TagExists) override;
+
+	UFUNCTION(Server, Reliable)
+	void ServerExecuteGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters, bool bExcludeSelf = true);
+
+	UFUNCTION(Client, Reliable)
+	void ClientExecuteGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters);
 };

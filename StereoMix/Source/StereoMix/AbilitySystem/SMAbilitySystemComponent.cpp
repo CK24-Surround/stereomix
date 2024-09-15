@@ -3,6 +3,9 @@
 
 #include "SMAbilitySystemComponent.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "EngineUtils.h"
+#include "GameplayCueManager.h"
 #include "AttributeSets/SMCharacterAttributeSet.h"
 #include "Characters/SMPlayerCharacter.h"
 #include "GameplayEffect/SMGameplayEffect_DynamicTag.h"
@@ -44,4 +47,58 @@ void USMAbilitySystemComponent::RemoveTag(const FGameplayTag& InGameplayTag)
 	GEQuery.EffectDefinition = DynamicTagGE;
 
 	RemoveActiveEffects(GEQuery);
+}
+
+void USMAbilitySystemComponent::ExecuteGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
+{
+	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
+	if (GetNetMode() == NM_DedicatedServer)
+	{
+		ServerExecuteGC(TargetActor, GameplayCueTag, Parameters, false);
+	}
+	else if (SourceCharacter->IsLocallyControlled())
+	{
+		ServerExecuteGC(TargetActor, GameplayCueTag, Parameters);
+		UGameplayCueManager::ExecuteGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
+	}
+	else
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버나 로컬 컨트롤인 경우 실행되어야합니다. "));
+	}
+}
+
+void USMAbilitySystemComponent::ServerExecuteGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters, bool bExcludeSelf)
+{
+	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
+	for (const APlayerController* const PC : TActorRange<APlayerController>(GetWorld()))
+	{
+		if (!bExcludeSelf || (PC == SourceCharacter->GetController()))
+		{
+			continue;
+		}
+
+		ACharacter* PendingCharacter = PC->GetCharacter();
+		USMAbilitySystemComponent* PendingASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(PendingCharacter));
+		if (!PendingASC)
+		{
+			continue;
+		}
+
+		PendingASC->ClientExecuteGC(TargetActor, GameplayCueTag, Parameters);
+	}
+}
+
+void USMAbilitySystemComponent::ClientExecuteGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
+{
+	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
 }
