@@ -10,6 +10,8 @@ ASMWeaponBase::ASMWeaponBase(const FObjectInitializer& ObjectInitializer)
 {
 	bReplicates = true;
 
+	SetActorEnableCollision(false);
+	
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 

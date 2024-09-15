@@ -17,6 +17,6 @@ class STEREOMIX_API USMBassCharacterDataAsset : public USMPlayerCharacterDataAss
 public:
 	USMBassCharacterDataAsset()
 	{
-		WeaponSocketName = TEXT("ik_hand_weapon_r");
+		WeaponSocketName = TEXT("WeaponPointR");
 	}
 };
