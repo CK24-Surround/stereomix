@@ -6,9 +6,9 @@
 #include "GameFramework/PlayerState.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
-#include "Projectiles/SMProjectilePool.h"
 #include "SMGameState.h"
 #include "Controllers/SMPlayerController.h"
+#include "Projectiles/Pool/SMProjectilePool.h"
 #include "Session/SMGameSession.h"
 #include "Utilities/SMLog.h"
 

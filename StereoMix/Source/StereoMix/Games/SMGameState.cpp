@@ -8,7 +8,7 @@
 #include "FMODBlueprintStatics.h"
 #include "Net/UnrealNetwork.h"
 #include "StereoMixLog.h"
-#include "Projectiles/SMProjectilePoolManagerComponent.h"
+#include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Tiles/SMTile.h"
 #include "Tiles/SMTileManagerComponent.h"
 #include "Utilities/SMLog.h"

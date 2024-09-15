@@ -1,9 +1,9 @@
 // Copyright Surround, Inc. All Rights Reserved.
 
 
-#include "Projectiles/SMProjectilePool.h"
+#include "SMProjectilePool.h"
 
-#include "SMProjectile.h"
+#include "Projectiles/SMProjectile.h"
 
 void USMProjectilePool::Init()
 {

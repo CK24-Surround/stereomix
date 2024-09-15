@@ -8,7 +8,6 @@
 #include "Characters/SMPlayerCharacter.h"
 #include "Games/SMGameMode.h"
 #include "Projectiles/SMProjectile.h"
-#include "Projectiles/SMProjectilePool.h"
 #include "Utilities/SMLog.h"
 
 void USMGameplayAbility_Launch_Piano::LaunchProjectile(const FVector& InStartLocation, const FVector& InNormal)

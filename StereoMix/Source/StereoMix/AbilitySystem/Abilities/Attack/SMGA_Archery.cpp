@@ -11,9 +11,8 @@
 #include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGameState.h"
-#include "Projectiles/SMDamageProjectile_Piano.h"
-#include "Projectiles/SMProjectile.h"
-#include "Projectiles/SMProjectilePoolManagerComponent.h"
+#include "Projectiles/Damage/SMDamageProjectile_Piano.h"
+#include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 
 USMGA_Archery::USMGA_Archery()
 {

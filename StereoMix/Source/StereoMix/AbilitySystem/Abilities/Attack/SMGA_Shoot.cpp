@@ -9,7 +9,7 @@
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGameState.h"
 #include "Projectiles/SMProjectile.h"
-#include "Projectiles/SMProjectilePoolManagerComponent.h"
+#include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 
 USMGA_Shoot::USMGA_Shoot()
 {

@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMProjectile.h"
+#include "Projectiles/SMProjectile.h"
 #include "SMSlowBulletProjectile.generated.h"
 
 UCLASS()
