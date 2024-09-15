@@ -94,13 +94,12 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 		return;
 	}
 
-	const FName SectionName = TEXT("End");
-	MontageJumpToSection(SectionName);
-
 	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, FGameplayCueParameters());
 
 	if (ChargingLevel == 0)
 	{
+		const FName CancelSectionName = TEXT("Cancel");
+		MontageJumpToSection(CancelSectionName);
 		K2_EndAbility();
 	}
 	else if (ChargingLevel == 1)
@@ -111,6 +110,9 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 	{
 		Charge2();
 	}
+
+	const FName EndSectionName = TEXT("End");
+	MontageJumpToSection(EndSectionName);
 }
 
 void USMGA_Archery::OnCharged1()
