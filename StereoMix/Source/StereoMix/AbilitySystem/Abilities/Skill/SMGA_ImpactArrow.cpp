@@ -83,7 +83,9 @@ void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 void USMGA_ImpactArrow::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	K2_CancelAbility();
+	const FName SectionName = TEXT("Cancel");
+	MontageJumpToSection(SectionName);
+	K2_EndAbility();
 }
 
 void USMGA_ImpactArrow::Shoot()
