@@ -21,7 +21,7 @@ USMGA_Archery::USMGA_Archery()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
 
-	Damage = 33.0f;
+	Damage = 34.0f;
 }
 
 void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

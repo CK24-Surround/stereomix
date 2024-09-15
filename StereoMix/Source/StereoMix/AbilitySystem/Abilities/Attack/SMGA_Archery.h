@@ -41,7 +41,7 @@ protected:
 	float ProjectileSpeed = 5000.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float MaxDistance = 1250.0f;
+	float MaxDistance = 1500.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Charge1DamageMultiply = 0.5f;
