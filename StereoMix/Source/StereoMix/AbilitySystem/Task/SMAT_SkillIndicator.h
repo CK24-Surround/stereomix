@@ -40,5 +40,6 @@ protected:
 
 	FVector CapsuleOffset;
 
+	/** 타일 로케이션을 사용할지 여부 */
 	uint32 bUseTileLocation:1 = false;
 };
