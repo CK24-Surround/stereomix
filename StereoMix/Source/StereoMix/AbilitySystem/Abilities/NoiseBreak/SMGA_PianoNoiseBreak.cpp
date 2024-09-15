@@ -135,9 +135,6 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 
 		SourceHIC->SetActorIAmHolding(nullptr);
 	}
-
-	NET_LOG(GetAvatarActor(), Warning, TEXT("발사"));
-	DrawDebugSphere(GetWorld(), NoiseBreakTargetLocation, CaptureSize * 75.0f, 16, FColor::Red, false, 1.0f);
 }
 
 void USMGA_PianoNoiseBreak::OnNoiseBreakEnded()

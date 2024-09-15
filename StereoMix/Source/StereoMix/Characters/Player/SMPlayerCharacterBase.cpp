@@ -525,12 +525,7 @@ void ASMPlayerCharacterBase::OnTeamChanged()
 			{
 				Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, DataAsset->WeaponSocketName);
 				Weapon->SetOwner(this);
-				NET_LOG(this, Warning, TEXT("무기 주인: %s"), *GetNameSafe(Weapon->GetOwner()));
 			}
-		}
-		else
-		{
-			NET_LOG(this, Warning, TEXT("팀 없음"));
 		}
 	}
 }
