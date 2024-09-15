@@ -3,9 +3,8 @@
 
 #include "SMGA_PianoNoiseBreak.h"
 
-#include "GameFramework/RootMotionSource.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "AbilitySystemComponent.h"
-#include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
@@ -37,7 +36,8 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	const USMPianoCharacterDataAsset* SourceDataAsset = GetDataAsset<USMPianoCharacterDataAsset>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
-	if (!SourceCharacter || !SourceDataAsset || !SourceHIC || !SourceCapsule)
+	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
+	if (!SourceCharacter || !SourceDataAsset || !SourceHIC || !SourceCapsule || !SourceMovement)
 	{
 		EndAbilityByCancel();
 		return;
@@ -49,12 +49,8 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	OriginalCollisionProfileName = SourceCapsule->GetCollisionProfileName();
 	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::NoiseBreak);
 
-	// 위 아래로 움직입니다.
-	const FName RootMotionTaskName = TEXT("RootMotionTask");
-	const FVector Direction = FVector::UpVector;
-	UAbilityTask_ApplyRootMotionConstantForce* RootMotionTask = UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(this, RootMotionTaskName, Direction, 300.0f, 2.0f, false, SourceDataAsset->NoiseBreakCurve, ERootMotionFinishVelocityMode::SetVelocity, FVector::ZeroVector, 0.0f, false);
-	RootMotionTask->OnFinish.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);
-	RootMotionTask->ReadyForActivation();
+	// Z축 노이즈 브레이크를 적용하기위해 잠시 Fly로 바꿉니다.
+	SourceMovement->SetMovementMode(MOVE_Flying);
 
 	// 발사 노티파이를 기다립니다.
 	UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::PianoNoiseBreakShoot, nullptr, true);
@@ -65,6 +61,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAnimMontage* NoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceCharacter->GetTeam()];
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NoiseBreakMontage, 1.0f, NAME_None, false);
+	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);
 	MontageTask->ReadyForActivation();
 
 	// 타겟 위치를 조준합니다.
@@ -92,9 +89,16 @@ void USMGA_PianoNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, 
 {
 	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
 	if (SourceCapsule)
 	{
 		SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
+	}
+
+	if (SourceMovement)
+	{
+		// 무브먼트 모드를 복구합니다.
+		SourceMovement->SetMovementMode(EMovementMode::MOVE_Walking);
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
