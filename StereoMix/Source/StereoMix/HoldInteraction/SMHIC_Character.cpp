@@ -105,6 +105,9 @@ void USMHIC_Character::OnHolded(AActor* TargetActor)
 	{
 		SourcePlayerCharacter->SetViewTargetWithBlend(TargetCharacter, 1.0f, VTBlend_Cubic);
 	}
+
+	// 잡혔으므로 잠시 잡기 인디케이터를 비활성화합니다.
+	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
 }
 
 void USMHIC_Character::OnHoldedReleased(AActor* TargetActor)
@@ -114,7 +117,7 @@ void USMHIC_Character::OnHoldedReleased(AActor* TargetActor)
 		return;
 	}
 
-	AActor* TargetCharacter = GetActorHoldingMe();
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(GetActorHoldingMe());
 	USMHIC_Character* TargetHIC = Cast<USMHIC_Character>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetCharacter));
 
 	// 잡기 상태에서 벗어납니다.
@@ -270,6 +273,13 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdj
 
 	// 카메라 뷰를 원래대로 복구합니다.
 	SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
+
+	// 자신을 잡았던 대상을 제외하고 다시 잡기 인디케이터를 활성화합니다.
+	SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
+	for (const auto& HoldedMeCharcter : HoldedMeCharcters)
+	{
+		HoldedMeCharcter->ClientRPCRemoveScreendIndicatorToSelf(SourceCharacter);
+	}
 }
 
 void USMHIC_Character::OnDestroyedIAmHoldingActor(AActor* DestroyedActor)

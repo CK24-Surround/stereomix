@@ -207,8 +207,9 @@ void USMGA_Neutralize::OnBuzzerBeaterEnded(FGameplayEventData Payload)
 
 void USMGA_Neutralize::HoldedStateExit()
 {
+	auto SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceHIC)
+	if (!SourceCharacter || !SourceHIC)
 	{
 		EndAbilityByCancel();
 		return;
@@ -216,6 +217,10 @@ void USMGA_Neutralize::HoldedStateExit()
 
 	// 잡히기 상태에서 탈출합니다.
 	SourceHIC->OnHoldedReleased(SourceHIC->GetActorHoldingMe());
+
+	// OnHoldedReleased의 HoldedReleased에서 자신을 잡지 못했던 대상으로 다시 인디케이터가 활성화됩니다. 현재는 모든 인디케이터를 제거해야하기 때문에 다시 인디케이터를 제거해줍니다.
+	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
+
 	NeutralizeExitSyncPoint();
 }
 
