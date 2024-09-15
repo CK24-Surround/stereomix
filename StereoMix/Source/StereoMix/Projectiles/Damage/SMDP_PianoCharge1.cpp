@@ -15,7 +15,6 @@ void ASMDP_PianoCharge1::AddProjectileFX()
 	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
 	if (SourceASC)
 	{
-		NET_LOG(SourceActor, Warning, TEXT("1차지 이펙트 요청"));
 		FGameplayCueParameters GCParams;
 		GCParams.TargetAttachComponent = GetRootComponent();
 		SourceASC->AddGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryProjectileCharge1, GCParams);
