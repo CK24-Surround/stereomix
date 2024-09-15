@@ -11,9 +11,8 @@
 #include "Components/SphereComponent.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "NiagaraComponent.h"
-#include "NiagaraSystem.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"
-#include "Utilities/SMLog.h"
 
 ASMProjectile::ASMProjectile()
 {
@@ -37,32 +36,11 @@ ASMProjectile::ASMProjectile()
 	ProjectileMovementComponent->SetAutoActivate(false);
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
-
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Stun);
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
-}
-
-void ASMProjectile::BeginPlay()
-{
-	Super::BeginPlay();
-
-	// 투사체 풀을 통해 사용해야하기 때문에 비활성화 상태로 초기화합니다.
-	SetActorTickEnabled(false);
-	SetActorEnableCollision(false);
-	SetActorHiddenInGame(true);
-}
-
-void ASMProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-	// 매번 투사체가 사거리를 벗어났는지 체크합니다.
-	ReturnToPoolIfOutOfMaxDistance();
 }
 
 void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InMagnitude)
 {
-	if (!HasAuthority())
+	if (!HasAuthority() || !NewOwner)
 	{
 		return;
 	}
@@ -70,20 +48,8 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 	// 오너와 팀을 지정해줍니다.
 	SetOwner(NewOwner);
 
-	ISMTeamInterface* OwnerTeamInterface = Cast<ISMTeamInterface>(NewOwner);
-	if (!ensureAlways(OwnerTeamInterface))
-	{
-		return;
-	}
-
-	USMTeamComponent* OwnerTeamComponent = OwnerTeamInterface->GetTeamComponent();
-	if (!ensureAlways(OwnerTeamComponent))
-	{
-		return;
-	}
-
-	const ESMTeam OwnerTeam = OwnerTeamInterface->GetTeam();
-	TeamComponent->SetTeam(OwnerTeam);
+	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(NewOwner);
+	TeamComponent->SetTeam(SourceTeam);
 
 	// 투사체의 데미지는 서버에만 저장해줍니다. 클라이언트에선 쓰이지 않기 때문입니다.
 	Magnitude = InMagnitude;
@@ -113,6 +79,29 @@ void ASMProjectile::EndLifeTime()
 	}
 
 	MulticastEndLifeTimeInternal();
+}
+
+ESMTeam ASMProjectile::GetTeam() const
+{
+	return TeamComponent->GetTeam();
+}
+
+void ASMProjectile::BeginPlay()
+{
+	Super::BeginPlay();
+
+	// 투사체 풀을 통해 사용해야하기 때문에 비활성화 상태로 초기화합니다.
+	SetActorTickEnabled(false);
+	SetActorEnableCollision(false);
+	SetActorHiddenInGame(true);
+}
+
+void ASMProjectile::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	// 매번 투사체가 사거리를 벗어났는지 체크합니다.
+	ReturnToPoolIfOutOfMaxDistance();
 }
 
 void ASMProjectile::MulticastLaunchInternal_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance)
@@ -176,28 +165,20 @@ void ASMProjectile::ReturnToPoolIfOutOfMaxDistance()
 
 bool ASMProjectile::IsValidateTarget(AActor* InTarget)
 {
-	// 자신이 발사한 투사체에 적중되지 않도록 합니다. (자살 방지)
 	if (InTarget == GetOwner())
 	{
 		return false;
 	}
 
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
-	if (!ensureAlways(TargetASC))
+	if (TargetASC)
 	{
-		return false;
-	}
-
-	// 타겟이 되지 않아야하는 상태라면 무시합니다.
-	if (TargetASC->HasAnyMatchingGameplayTags(IgnoreTargetStateTags))
-	{
-		return false;
+		// 타겟이 되지 않아야하는 상태라면 무시합니다.
+		if (TargetASC->HasAnyMatchingGameplayTags(IgnoreTargetStateTags))
+		{
+			return false;
+		}
 	}
 
 	return true;
-}
-
-ESMTeam ASMProjectile::GetTeam() const
-{
-	return TeamComponent->GetTeam();
 }

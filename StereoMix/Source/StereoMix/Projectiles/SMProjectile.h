@@ -29,12 +29,6 @@ class STEREOMIX_API ASMProjectile : public AActor, public ISMTeamInterface
 public:
 	ASMProjectile();
 
-protected:
-	virtual void BeginPlay() override;
-
-public:
-	virtual void Tick(float DeltaTime) override;
-
 	/** 투사체를 발사합니다. 서버에서 호출되어야합니다. */
 	void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InMagnitude = 0.0f);
 
@@ -47,7 +41,18 @@ public:
 	 */
 	void EndLifeTime();
 
+	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
+
+	virtual ESMTeam GetTeam() const override;
+
+	/** 생명 주기가 끝나 회수되야할때 투사체 풀에 알리기 위한 델리게이트입니다. */
+	FOnProjectileLifeTimeSignature OnEndLifeTime;
+
 protected:
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaTime) override;
+
 	/** 실제로 투사체를 발사합니다. Launch를 통해 호출됩니다.*/
 	UFUNCTION(NetMulticast, Reliable)
 	virtual void MulticastLaunchInternal(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance);
@@ -66,12 +71,6 @@ protected:
 	/** 타겟이 유효한지 확인합니다. 타겟의 유효성을 검증해야할때 사용합니다. 서버에서만 사용되어야합니다. */
 	virtual bool IsValidateTarget(AActor* InTarget);
 
-public:
-	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
-
-	virtual ESMTeam GetTeam() const override;
-
-protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereComponent;
 
@@ -83,26 +82,16 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
-	// ~Component Section
 
-public:
-	/** 생명 주기가 끝나 회수되야할때 브로드캐스트합니다. */
-	FOnProjectileLifeTimeSignature OnEndLifeTime;
-
-// ~Date Section
-protected:
 	FVector StartLocation;
 
 	float MaxDistance;
 
 	float Magnitude;
-// ~Date Section
 
-// ~GAS Section
 	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
 	FGameplayTagContainer IgnoreTargetStateTags;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> DamageGE;
-// ~GAS Section
 };
