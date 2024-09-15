@@ -7,6 +7,7 @@
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGameState.h"
 #include "Utilities/SMLog.h"
 
@@ -104,19 +105,16 @@ bool ASMSlowBulletProjectile::IsValidateTarget(AActor* InTarget)
 
 void ASMSlowBulletProjectile::ApplyEffect(AActor* TargetActor)
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
 	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
-	if (!ensureAlways(SourceASC))
-	{
-		return;
-	}
-
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (!ensureAlways(TargetASC))
+	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
+	if (!SourceCharacter || !SourceASC || !TargetASC || !SourceDataAsset)
 	{
 		return;
 	}
 
-	FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DamageGE, 1.0f, SourceASC->MakeEffectContext());
+	FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(SourceDataAsset->DamageGE, 1.0f, SourceASC->MakeEffectContext());
 	if (!ensureAlways(GESpecHandle.IsValid()))
 	{
 		return;

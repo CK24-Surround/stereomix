@@ -6,6 +6,8 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Utilities/SMLog.h"
@@ -76,14 +78,16 @@ void ASMDamageProjectileBase::HandleHit(AActor* InTarget)
 
 void ASMDamageProjectileBase::ApplyDamage(AActor* InTarget)
 {
-	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
+	ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
+	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceCharacter);
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
-	if (!SourceASC || !TargetASC)
+	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
+	if (!SourceCharacter || !SourceASC || !TargetASC || !SourceDataAsset)
 	{
 		return;
 	}
 
-	FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DamageGE, 1.0f, SourceASC->MakeEffectContext());
+	FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(SourceDataAsset->DamageGE, 1.0f, SourceASC->MakeEffectContext());
 	if (GESpecHandle.IsValid())
 	{
 		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Magnitude);

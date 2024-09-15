@@ -97,7 +97,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
 	FGameplayTagContainer IgnoreTargetStateTags;
-
-	UPROPERTY(EditAnywhere, Category = "GAS|GE")
-	TSubclassOf<UGameplayEffect> DamageGE;
 };
