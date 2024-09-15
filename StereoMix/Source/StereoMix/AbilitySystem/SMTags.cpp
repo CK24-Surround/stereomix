@@ -82,6 +82,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Event.AnimNotify.Hold", "잡기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "Event.AnimNotify.Smash", "매치기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashEnd, "Event.AnimNotify.SmashEnd", "매치기 종료 애님 노티파이의 이벤트로 사용됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ChargeEndEntry, "Event.AnimNotify.ChargeEndEntry", "돌격 종료 애니메이션 진입 시 알리는 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(PianoNoiseBreakShoot, "Event.AnimNotify.PianoNoiseBreakShoot", "피아노의 노이즈 브레이크 발사 시점을 알리는 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakEnd, "Event.AnimNotify.NoiseBreakEnd", "노이즈브레이크 종료 애님 노티파이의 이벤트로 사용됩니다.");
 
@@ -130,6 +131,8 @@ namespace SMTags
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Slash, "GameplayCue.Bass.Slash", "베기 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlashHit, "GameplayCue.Bass.SlashHit", "베기 적중 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Charge, "GameplayCue.Bass.Charge", "돌진 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ChargeHit, "GameplayCue.Bass.ChargeHit", "돌진 적중 게임플레이 큐의 태그입니다.");
 		}
 
 		namespace SpecialAction

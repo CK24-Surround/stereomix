@@ -6,6 +6,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_WaitChargeBlocked.h"
 #include "Characters/Player/SMBassCharacter.h"
@@ -26,10 +28,11 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
+	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	UBoxComponent* SourceChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr;
 	const USMBassCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset<USMBassCharacterDataAsset>() : nullptr;
-	if (!SourceCharacter || !SourceCapsule || !SourceChargeCollider || !SourceDataAsset)
+	if (!SourceCharacter || !SourceASC || !SourceCapsule || !SourceChargeCollider || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -46,10 +49,6 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnChargeEnded);
 	MontageTask->ReadyForActivation();
 
-	USMAT_WaitChargeBlocked* ChargeBlockedTask = USMAT_WaitChargeBlocked::WaitChargeBlocked(this, SourceCharacter);
-	ChargeBlockedTask->OnChargeBlocked.BindUObject(this, &ThisClass::OnChargeBlocked);
-	ChargeBlockedTask->ReadyForActivation();
-
 	OriginalCapsuleCollisionProfileName = SourceCapsule->GetCollisionProfileName();
 	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::Ghost);
 
@@ -58,44 +57,66 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	if (IsLocallyControlled())
 	{
+		USMAT_WaitChargeBlocked* ChargeBlockedTask = USMAT_WaitChargeBlocked::WaitChargeBlocked(this, SourceCharacter);
+		ChargeBlockedTask->OnChargeBlocked.BindUObject(this, &ThisClass::OnChargeBlocked);
+		ChargeBlockedTask->ReadyForActivation();
+
+		// 박지 않고 끝나더라도 이펙트를 종료할 수 있도록 이벤트를 받습니다.
+		UAbilityTask_WaitGameplayEvent* ChargeEndEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::ChargeEndEntry);
+		ChargeEndEventTask->EventReceived.AddDynamic(this, &ThisClass::OnChargeEndEntry);
+		ChargeEndEventTask->ReadyForActivation();
+
+		FGameplayCueParameters GCParams;
+		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, GCParams);
 		SourceCharacter->FocusToCursor();
 	}
 }
 
 void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 {
-	if (IsLocallyControlled())
+	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	if (!SourceASC)
 	{
-		const FName SectionName = TEXT("End");
-		MontageJumpToSection(SectionName);
-
-		NET_LOG(GetAvatarActor(), Warning, TEXT("%s"), *GetNameSafe(TargetActor));
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-		if (TargetASC)
-		{
-			ServerRPCSendEvent(TargetActor);
-		}
+		return;
 	}
+
+	const FName SectionName = TEXT("End");
+	MontageJumpToSection(SectionName);
+
+	NET_LOG(GetAvatarActor(), Warning, TEXT("%s"), *GetNameSafe(TargetActor));
+	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (TargetASC)
+	{
+		ServerRPCSendEvent(TargetActor);
+	}
+
+	NET_LOG(GetAvatarActor(), Warning, TEXT("이펙트 제거 요청"));
+	FGameplayCueParameters ChargeGCParams;
+	SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Bass::Charge, ChargeGCParams);
+
+	FGameplayCueParameters ChargeHitGCParams;
+	ChargeHitGCParams.Instigator = GetAvatarActor();
+	SourceASC->ExecuteGC(TargetActor, SMTags::GameplayCue::Bass::ChargeHit, ChargeHitGCParams);
+}
+
+void USMGA_Charge::OnChargeEndEntry(FGameplayEventData Payload)
+{
+	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	if (!SourceASC)
+	{
+		return;
+	}
+
+	FGameplayCueParameters GCParams;
+	SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Bass::Charge, GCParams);
 }
 
 void USMGA_Charge::OnChargeEnded()
 {
 	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	if (!ensureAlways(SourceCharacter))
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-	if (!SourceCapsule)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	UBoxComponent* SourceChargeCollider = SourceCharacter->GetChargeColliderComponent();
-	if (!SourceChargeCollider)
+	if (!SourceCharacter || !SourceCapsule || !SourceChargeCollider)
 	{
 		EndAbilityByCancel();
 		return;

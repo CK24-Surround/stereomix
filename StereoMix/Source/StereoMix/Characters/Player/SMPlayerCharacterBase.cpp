@@ -269,6 +269,12 @@ USMHoldInteractionComponent* ASMPlayerCharacterBase::GetHoldInteractionComponent
 
 void ASMPlayerCharacterBase::PredictHPChange(float Amount)
 {
+	UAbilitySystemComponent* SourceASC = GetAbilitySystemComponent();
+	if (!SourceASC)
+	{
+		return;
+	}
+
 	USMUserWidget_CharacterState* StateWidget = Cast<USMUserWidget_CharacterState>(CharacterStateWidgetComponent->GetWidget());
 	if (!ensureAlways(StateWidget))
 	{

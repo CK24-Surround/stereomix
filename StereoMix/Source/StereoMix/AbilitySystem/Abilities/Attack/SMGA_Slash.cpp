@@ -188,7 +188,7 @@ void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 
 	if (!K2_HasAuthority())
 	{
-		TargetCharacter->PredictHPChange(-Damage);
+		// TargetCharacter->PredictHPChange(-Damage);
 	}
 }
 

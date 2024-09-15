@@ -25,9 +25,12 @@ protected:
 	void OnChargeBlocked(AActor* TargetActor);
 
 	UFUNCTION()
+	void OnChargeEndEntry(FGameplayEventData Payload);
+
+	UFUNCTION()
 	void OnChargeEnded();
 
-	UFUNCTION(Server,Reliable)
+	UFUNCTION(Server, Reliable)
 	void ServerRPCSendEvent(AActor* TargetActor);
 
 	float StunTime = 0.5f;

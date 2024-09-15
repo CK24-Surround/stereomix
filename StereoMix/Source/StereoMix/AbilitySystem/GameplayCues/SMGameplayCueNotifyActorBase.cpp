@@ -6,6 +6,8 @@
 ASMGameplayCueNotifyActorBase::ASMGameplayCueNotifyActorBase()
 {
 	PrimaryActorTick.bCanEverTick = false;
+
+	bAutoDestroyOnRemove = true;
 }
 
 void ASMGameplayCueNotifyActorBase::GetLocationAndRotation(const FGameplayCueParameters& Parameters, FVector& OutLocation, FRotator& OutRotation) const
