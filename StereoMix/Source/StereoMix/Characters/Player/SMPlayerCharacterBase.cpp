@@ -802,6 +802,10 @@ void ASMPlayerCharacterBase::BindCharacterStateWidget(USMUserWidget_CharacterSta
 void ASMPlayerCharacterBase::OnRep_bIsHiddenCharacter()
 {
 	SetActorHiddenInGame(bIsHiddenCharacter);
+	if (Weapon)
+	{
+		Weapon->SetActorHiddenInGame(bIsHiddenCharacter);
+	}
 }
 
 void ASMPlayerCharacterBase::OnRep_bActivateCollision()

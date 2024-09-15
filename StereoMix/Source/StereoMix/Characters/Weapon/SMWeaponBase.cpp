@@ -9,6 +9,7 @@ const FName ASMWeaponBase::WeaponMeshComponentName = TEXT("WeaponMeshComponent")
 ASMWeaponBase::ASMWeaponBase(const FObjectInitializer& ObjectInitializer)
 {
 	bReplicates = true;
+	bAlwaysRelevant = true;
 
 	SetActorEnableCollision(false);
 	
