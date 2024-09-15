@@ -49,6 +49,52 @@ void USMAbilitySystemComponent::RemoveTag(const FGameplayTag& InGameplayTag)
 	RemoveActiveEffects(GEQuery);
 }
 
+void USMAbilitySystemComponent::AddGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
+{
+	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
+	if (GetNetMode() == NM_DedicatedServer)
+	{
+		ServerRequestGC(TargetActor, GameplayCueTag, EGameplayCueEvent::OnActive, Parameters, false);
+	}
+	else if (SourceCharacter->IsLocallyControlled())
+	{
+		ServerRequestGC(TargetActor, GameplayCueTag, EGameplayCueEvent::OnActive, Parameters);
+		UGameplayCueManager::AddGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
+	}
+	else
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버나 로컬 컨트롤인 경우 실행되어야합니다. "));
+	}
+}
+
+void USMAbilitySystemComponent::RemoveGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
+{
+	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
+	if (GetNetMode() == NM_DedicatedServer)
+	{
+		ServerRequestGC(TargetActor, GameplayCueTag, EGameplayCueEvent::Removed, Parameters, false);
+	}
+	else if (SourceCharacter->IsLocallyControlled())
+	{
+		ServerRequestGC(TargetActor, GameplayCueTag, EGameplayCueEvent::Removed, Parameters);
+		UGameplayCueManager::RemoveGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
+	}
+	else
+	{
+		NET_LOG(SourceCharacter, Warning, TEXT("서버나 로컬 컨트롤인 경우 실행되어야합니다. "));
+	}
+}
+
 void USMAbilitySystemComponent::ExecuteGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
 {
 	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
@@ -59,11 +105,11 @@ void USMAbilitySystemComponent::ExecuteGC(AActor* TargetActor, const FGameplayTa
 
 	if (GetNetMode() == NM_DedicatedServer)
 	{
-		ServerExecuteGC(TargetActor, GameplayCueTag, Parameters, false);
+		ServerRequestGC(TargetActor, GameplayCueTag, EGameplayCueEvent::Executed, Parameters, false);
 	}
 	else if (SourceCharacter->IsLocallyControlled())
 	{
-		ServerExecuteGC(TargetActor, GameplayCueTag, Parameters);
+		ServerRequestGC(TargetActor, GameplayCueTag, EGameplayCueEvent::Executed, Parameters);
 		UGameplayCueManager::ExecuteGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
 	}
 	else
@@ -72,7 +118,7 @@ void USMAbilitySystemComponent::ExecuteGC(AActor* TargetActor, const FGameplayTa
 	}
 }
 
-void USMAbilitySystemComponent::ServerExecuteGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters, bool bExcludeSelf)
+void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, EGameplayCueEvent::Type CueEvent, const FGameplayCueParameters& Parameters, bool bExcludeSelf)
 {
 	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
 	if (!SourceCharacter)
@@ -94,11 +140,32 @@ void USMAbilitySystemComponent::ServerExecuteGC_Implementation(AActor* TargetAct
 			continue;
 		}
 
-		PendingASC->ClientExecuteGC(TargetActor, GameplayCueTag, Parameters);
+		PendingASC->ClientExecuteGC(TargetActor, GameplayCueTag, CueEvent, Parameters);
 	}
 }
 
-void USMAbilitySystemComponent::ClientExecuteGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
+void USMAbilitySystemComponent::ClientExecuteGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, EGameplayCueEvent::Type CueEvent, const FGameplayCueParameters& Parameters)
 {
-	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
+	switch (CueEvent)
+	{
+		case EGameplayCueEvent::OnActive:
+		{
+			UGameplayCueManager::AddGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
+			break;
+		}
+		case EGameplayCueEvent::WhileActive:
+		{
+			break;
+		}
+		case EGameplayCueEvent::Executed:
+		{
+			UGameplayCueManager::ExecuteGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
+			break;
+		}
+		case EGameplayCueEvent::Removed:
+		{
+			UGameplayCueManager::RemoveGameplayCue_NonReplicated(TargetActor, GameplayCueTag, Parameters);
+			break;
+		}
+	}
 }
