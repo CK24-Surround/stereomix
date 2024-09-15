@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMDamageProjectile.h"
+#include "SMDamageProjectileBase.h"
 
 #include "SMDamageProjectile_Bass.generated.h"
 
 UCLASS()
-class STEREOMIX_API ASMDamageProjectile_Bass : public ASMDamageProjectile
+class STEREOMIX_API ASMDamageProjectile_Bass : public ASMDamageProjectileBase
 {
 	GENERATED_BODY()
 

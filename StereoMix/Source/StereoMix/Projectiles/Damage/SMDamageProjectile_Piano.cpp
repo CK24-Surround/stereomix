@@ -49,7 +49,7 @@ void ASMDamageProjectile_Piano::MulticastEndLifeTimeInternal_Implementation()
 	Super::MulticastEndLifeTimeInternal_Implementation();
 }
 
-void ASMDamageProjectile_Piano::ExecuteHitFX(AActor* InTarget)
+void ASMDamageProjectile_Piano::PlayHitFX(AActor* InTarget)
 {
 	AActor* SourceActor = GetOwner();
 	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()));

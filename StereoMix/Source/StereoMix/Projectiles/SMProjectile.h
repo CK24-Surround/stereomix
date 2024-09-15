@@ -21,7 +21,7 @@ class USMDesignData;
 class USphereComponent;
 class UProjectileMovementComponent;
 
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API ASMProjectile : public AActor, public ISMTeamInterface
 {
 	GENERATED_BODY()

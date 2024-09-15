@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMDamageProjectile.h"
+#include "SMDamageProjectileBase.h"
 
 #include "SMDamageProjectile_Piano.generated.h"
 
 UCLASS()
-class STEREOMIX_API ASMDamageProjectile_Piano : public ASMDamageProjectile
+class STEREOMIX_API ASMDamageProjectile_Piano : public ASMDamageProjectileBase
 {
 	GENERATED_BODY()
 
@@ -20,5 +20,5 @@ protected:
 
 	virtual void MulticastEndLifeTimeInternal_Implementation() override;
 
-	virtual void ExecuteHitFX(AActor* InTarget) override;
+	virtual void PlayHitFX(AActor* InTarget) override;
 };

@@ -6,7 +6,7 @@
 #include "Projectiles/SMProjectile.h"
 #include "SMSlowBulletProjectile.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API ASMSlowBulletProjectile : public ASMProjectile
 {
 	GENERATED_BODY()
