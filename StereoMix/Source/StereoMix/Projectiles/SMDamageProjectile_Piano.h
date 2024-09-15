@@ -19,4 +19,6 @@ protected:
 	virtual void MulticastStartLifeTimeInternal_Implementation() override;
 
 	virtual void MulticastEndLifeTimeInternal_Implementation() override;
+
+	virtual void ExecuteHitFX(AActor* InTarget) override;
 };

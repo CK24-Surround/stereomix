@@ -177,6 +177,10 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 
 				TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
+
+			FGameplayCueParameters GCParams;
+			GCParams.Location = TargetActor->GetActorLocation();
+			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowHit, GCParams);
 		}
 	}
 

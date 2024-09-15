@@ -73,6 +73,14 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 
 void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
+	{
+		if (IsLocallyControlled())
+		{
+			SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Piano::Archery, FGameplayCueParameters());
+		}
+	}
+
 	ChargingLevel = 0;
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

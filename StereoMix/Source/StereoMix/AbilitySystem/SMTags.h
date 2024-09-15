@@ -134,8 +134,11 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Archery);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ArcheryProjectileCharge1);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ArcheryProjectileCharge2);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ArcheryHitCharge1);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ArcheryHitCharge2);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrow);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrowExplosion);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrowHit);
 		}
 
 		namespace Bass

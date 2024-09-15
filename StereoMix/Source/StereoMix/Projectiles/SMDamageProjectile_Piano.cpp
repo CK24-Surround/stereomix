@@ -48,3 +48,17 @@ void ASMDamageProjectile_Piano::MulticastEndLifeTimeInternal_Implementation()
 
 	Super::MulticastEndLifeTimeInternal_Implementation();
 }
+
+void ASMDamageProjectile_Piano::ExecuteHitFX(AActor* InTarget)
+{
+	AActor* SourceActor = GetOwner();
+	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner()));
+	if (!InTarget || !SourceASC)
+	{
+		return;
+	}
+
+	FGameplayCueParameters GCParams;
+	GCParams.Location = InTarget->GetActorLocation();
+	SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryHitCharge1, GCParams);
+}
