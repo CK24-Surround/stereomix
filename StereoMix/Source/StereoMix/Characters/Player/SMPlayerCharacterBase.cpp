@@ -758,8 +758,8 @@ void ASMPlayerCharacterBase::BindCharacterStateWidget(USMUserWidget_CharacterSta
 		const USMCharacterAttributeSet* SourceAttributeSet = ASC->GetSet<USMCharacterAttributeSet>();
 		if (ensureAlways(SourceAttributeSet))
 		{
-			CharacterStateWidget->MaxHealth = SourceAttributeSet->GetPostureGauge();
-			CharacterStateWidget->CurrentHealth = SourceAttributeSet->GetMaxPostureGauge();
+			CharacterStateWidget->MaxHealth = SourceAttributeSet->GetMaxPostureGauge();
+			CharacterStateWidget->CurrentHealth = SourceAttributeSet->GetPostureGauge();
 			CharacterStateWidget->UpdateHPBar();
 		}
 	}
