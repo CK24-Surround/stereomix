@@ -14,4 +14,9 @@ class STEREOMIX_API ASMDamageProjectile_Piano : public ASMDamageProjectile
 
 public:
 	ASMDamageProjectile_Piano();
+
+protected:
+	virtual void MulticastStartLifeTimeInternal_Implementation() override;
+
+	virtual void MulticastEndLifeTimeInternal_Implementation() override;
 };

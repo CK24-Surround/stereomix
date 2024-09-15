@@ -25,7 +25,10 @@ public:
 	virtual void InitializeComponent() override;
 
 	/** 서버에서만 수행 가능합니다. */
-	ASMProjectile* GetProjectileForPiano(ESMTeam SourceTeam) const { return GetProjectile(SourceTeam, PianoProjectilePool); }
+	ASMProjectile* GetProjectileForPiano1(ESMTeam SourceTeam) const { return GetProjectile(SourceTeam, PianoProjectile1Pool); }
+
+	/** 서버에서만 수행 가능합니다. */
+	ASMProjectile* GetProjectileForPiano2(ESMTeam SourceTeam) const { return GetProjectile(SourceTeam, PianoProjectile2Pool); }
 
 	/** 서버에서만 수행 가능합니다. */
 	ASMProjectile* GetProjectileForElectricGuitar(ESMTeam SourceTeam) const { return GetProjectile(SourceTeam, ElectricGuitarProjectilePool); }
@@ -38,10 +41,16 @@ protected:
 	ASMProjectile* GetProjectile(ESMTeam SourceTeam, const TMap<ESMTeam, TObjectPtr<USMProjectilePool>>& ProjectilePool) const;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TMap<ESMTeam, TSubclassOf<USMProjectilePool>> PianoProjectilePoolClass;
+	TMap<ESMTeam, TSubclassOf<USMProjectilePool>> PianoProjectile1PoolClass;
 
 	UPROPERTY()
-	TMap<ESMTeam, TObjectPtr<USMProjectilePool>> PianoProjectilePool;
+	TMap<ESMTeam, TObjectPtr<USMProjectilePool>> PianoProjectile1Pool;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TMap<ESMTeam, TSubclassOf<USMProjectilePool>> PianoProjectile2PoolClass;
+
+	UPROPERTY()
+	TMap<ESMTeam, TObjectPtr<USMProjectilePool>> PianoProjectile2Pool;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TMap<ESMTeam, TSubclassOf<USMProjectilePool>> ElectricGuitarProjectilePoolClass;

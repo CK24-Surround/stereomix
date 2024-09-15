@@ -132,6 +132,8 @@ namespace SMTags
 		namespace Piano
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Archery);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ArcheryProjectileCharge1);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ArcheryProjectileCharge2);
 		}
 
 		namespace Bass

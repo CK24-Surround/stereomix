@@ -89,7 +89,7 @@ void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStar
 	Magnitude = InMagnitude;
 
 	// 클라이언트의 투사체도 발사합니다.
-	MulticastRPCLaunchInternal(InStartLocation, InNormal, InSpeed, InMaxDistance);
+	MulticastLaunchInternal(InStartLocation, InNormal, InSpeed, InMaxDistance);
 
 	// 투사체를 활성화합니다.
 	StartLifeTime();
@@ -102,7 +102,7 @@ void ASMProjectile::StartLifeTime()
 		return;
 	}
 
-	MulticastRPCStartLifeTimeInternal();
+	MulticastStartLifeTimeInternal();
 }
 
 void ASMProjectile::EndLifeTime()
@@ -112,10 +112,10 @@ void ASMProjectile::EndLifeTime()
 		return;
 	}
 
-	MulticastRPCEndLifeTimeInternal();
+	MulticastEndLifeTimeInternal();
 }
 
-void ASMProjectile::MulticastRPCLaunchInternal_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance)
+void ASMProjectile::MulticastLaunchInternal_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance)
 {
 	// 투사체에 필요한 데이터들을 저장하고 위치를 초기화해줍니다. 이 시점은 막 투사체 풀에서 투사체를 꺼내온 상황입니다.
 	MaxDistance = InMaxDistance;
@@ -129,7 +129,7 @@ void ASMProjectile::MulticastRPCLaunchInternal_Implementation(const FVector_NetQ
 	ProjectileMovementComponent->Velocity = InNormal * InSpeed;
 }
 
-void ASMProjectile::MulticastRPCStartLifeTimeInternal_Implementation()
+void ASMProjectile::MulticastStartLifeTimeInternal_Implementation()
 {
 	if (!HasAuthority())
 	{
@@ -141,7 +141,7 @@ void ASMProjectile::MulticastRPCStartLifeTimeInternal_Implementation()
 	SetActorEnableCollision(true);
 }
 
-void ASMProjectile::MulticastRPCEndLifeTimeInternal_Implementation()
+void ASMProjectile::MulticastEndLifeTimeInternal_Implementation()
 {
 	if (!HasAuthority())
 	{

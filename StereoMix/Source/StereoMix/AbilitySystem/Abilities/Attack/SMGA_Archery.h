@@ -35,7 +35,7 @@ protected:
 	void Charge2();
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargeLevel);
+	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargingLevel);
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float ProjectileSpeed = 5000.0f;
@@ -50,10 +50,10 @@ protected:
 	float Charge2DamageMultiply = 1.0f;
 	
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float Charge1Time = 0.5f;
+	float Charge1Time = 0.4f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float Charge2Time = 1.0f;
+	float Charge2Time = 0.9f;
 
-	int32 ChargeLevel = 0;
+	int32 ChargingLevel = 0;
 };

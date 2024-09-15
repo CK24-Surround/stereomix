@@ -50,15 +50,15 @@ public:
 protected:
 	/** 실제로 투사체를 발사합니다. Launch를 통해 호출됩니다.*/
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastRPCLaunchInternal(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance);
+	virtual void MulticastLaunchInternal(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance);
 
 	/** 활성화하는데 필요한 처리를 합니다. StartLifeTime을 통해 호출됩니다. */
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastRPCStartLifeTimeInternal();
+	virtual void MulticastStartLifeTimeInternal();
 
 	/** 비활성화하는데 필요한 처리를 합니다. EndLifeTime을 통해 호출됩니다. */
 	UFUNCTION(NetMulticast, Reliable)
-	virtual void MulticastRPCEndLifeTimeInternal();
+	virtual void MulticastEndLifeTimeInternal();
 
 	/** 투사체가 최대 사정거리를 벗어나는 경우 투사체를 풀로 반환합니다. 사정거리 구현을 위해 사용됩니다. */
 	void ReturnToPoolIfOutOfMaxDistance();

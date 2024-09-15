@@ -24,7 +24,8 @@ void USMProjectilePoolManagerComponent::InitializeComponent()
 
 	if (GetOwnerRole() == ROLE_Authority)
 	{
-		InitPool(PianoProjectilePoolClass, PianoProjectilePool);
+		InitPool(PianoProjectile1PoolClass, PianoProjectile1Pool);
+		InitPool(PianoProjectile2PoolClass, PianoProjectile2Pool);
 		InitPool(ElectricGuitarProjectilePoolClass, ElectricGuitarProjectilePool);
 		InitPool(SlowBulletPoolClass, SlowBulletPool);
 	}

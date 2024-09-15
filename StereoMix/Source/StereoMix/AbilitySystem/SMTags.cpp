@@ -130,6 +130,8 @@ namespace SMTags
 		namespace Piano
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Archery, "GameplayCue.Piano.Archery", "활 쏘기 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ArcheryProjectileCharge1, "GameplayCue.Piano.ArcheryProjectileCharge1", "1단계 충전 화살 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ArcheryProjectileCharge2, "GameplayCue.Piano.ArcheryProjectileCharge2", "2단계 충전 화살 게임플레이 큐의 태그입니다.");
 		}
 
 		namespace Bass

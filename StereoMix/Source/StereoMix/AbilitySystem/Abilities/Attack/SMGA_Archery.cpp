@@ -11,6 +11,7 @@
 #include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGameState.h"
+#include "Projectiles/SMDamageProjectile_Piano.h"
 #include "Projectiles/SMProjectile.h"
 #include "Projectiles/SMProjectilePoolManagerComponent.h"
 
@@ -72,7 +73,7 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 
 void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	ChargeLevel = 0;
+	ChargingLevel = 0;
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
@@ -91,11 +92,11 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 
 	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, FGameplayCueParameters());
 
-	if (ChargeLevel == 0)
+	if (ChargingLevel == 0)
 	{
 		K2_EndAbility();
 	}
-	else if (ChargeLevel == 1)
+	else if (ChargingLevel == 1)
 	{
 		Charge1();
 	}
@@ -107,13 +108,13 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 
 void USMGA_Archery::OnCharged1()
 {
-	ChargeLevel = 1;
+	ChargingLevel = 1;
 	NET_LOG(GetAvatarActor(), Warning, TEXT("1단 차지"));
 }
 
 void USMGA_Archery::OnCharged2()
 {
-	ChargeLevel = 2;
+	ChargingLevel = 2;
 	NET_LOG(GetAvatarActor(), Warning, TEXT("2단 차지"));
 }
 
@@ -150,46 +151,38 @@ void USMGA_Archery::Charge2()
 	ServerRPCLaunchProjectile(SourceLocation, TargetLocation, 2);
 }
 
-void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargeLevel)
+void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargingLevel)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
-	if (!GameState)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState->GetProjectilePoolManager();
-	if (!ProjectilePoolManager)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	ASMProjectile* Projectile = ProjectilePoolManager->GetProjectileForPiano(SourceCharacter->GetTeam());
-	if (!Projectile)
+	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
+	if (!SourceCharacter || !ProjectilePoolManager)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
 	float NewDamage;
-	if (InChargeLevel == 1)
+	ASMDamageProjectile_Piano* Projectile;
+	if (InChargingLevel == 1)
 	{
 		NewDamage = Damage * Charge1DamageMultiply;
+		Projectile = Cast<ASMDamageProjectile_Piano>(ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam()));
 	}
 	else
 	{
 		NewDamage = Damage * Charge2DamageMultiply;
+		Projectile = Cast<ASMDamageProjectile_Piano>(ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam()));
+		// Projectile = Cast<ASMDamageProjectile_Piano>(ProjectilePoolManager->GetProjectileForPiano2(SourceCharacter->GetTeam()));
 	}
 
+	if (!Projectile)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	NET_LOG(GetAvatarActor(), Warning, TEXT("화살 발사"));
 	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
 	Projectile->Launch(SourceCharacter, SourceLocation, LaunchDirection, ProjectileSpeed, MaxDistance, NewDamage);
 

@@ -128,7 +128,7 @@ void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetAct
 
 	for (const APlayerController* const PC : TActorRange<APlayerController>(GetWorld()))
 	{
-		if (!bExcludeSelf || (PC == SourceCharacter->GetController()))
+		if (bExcludeSelf && (PC == SourceCharacter->GetController()))
 		{
 			continue;
 		}
@@ -140,6 +140,7 @@ void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetAct
 			continue;
 		}
 
+		NET_LOG(GetAvatarActor(), Warning, TEXT("전파할 클라이언트: %s"), *GetNameSafe(PendingCharacter));
 		PendingASC->ClientExecuteGC(TargetActor, GameplayCueTag, CueEvent, Parameters);
 	}
 }
