@@ -130,6 +130,7 @@ void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 	DOREPLIFETIME(ThisClass, bEnableMovement);
 	DOREPLIFETIME(ThisClass, bUseControllerRotation);
 	DOREPLIFETIME(ThisClass, LastAttackInstigator);
+	DOREPLIFETIME(ThisClass, Weapon);
 }
 
 void ASMPlayerCharacterBase::PostInitializeComponents()
@@ -151,11 +152,10 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 	ImmuneMoveTrailFXComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
 
 	// 원본 머티리얼을 저장해둡니다. 플레이 도중 시시각각 머티리얼이 변하게 되는데 이때 기존 머티리얼로 돌아오기 위해 사용됩니다.
-	if (!HasAuthority())
-	{
-		OriginalMaterials = GetMesh()->GetMaterials();
-		OriginalOverlayMaterial = GetMesh()->GetOverlayMaterial();
-	}
+	OriginalMaterials = GetMesh()->GetMaterials();
+	OriginalOverlayMaterial = GetMesh()->GetOverlayMaterial();
+
+	TeamComponent->OnChangeTeam.AddDynamic(this, &ThisClass::OnTeamChanged);
 }
 
 void ASMPlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -238,12 +238,6 @@ void ASMPlayerCharacterBase::OnRep_PlayerState()
 	InitASC();
 
 	const ESMTeam SourceTeam = GetTeam();
-
-	Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(DataAsset->WeaponClass[SourceTeam]);
-	if (Weapon)
-	{
-		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, DataAsset->WeaponSocketName);
-	}
 
 	USMUserWidget_CharacterState* CharacterStateWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), DataAsset->CharacterStateWidget[SourceTeam]);
 	if (CharacterStateWidget)
@@ -517,6 +511,28 @@ void ASMPlayerCharacterBase::ClientRPCAddMoveSpeed_Implementation(float MoveSpee
 {
 	AddMoveSpeed(MoveSpeedMultiplier, Duration);
 	ServerRPCAddMoveSpeed(MoveSpeedMultiplier, Duration);
+}
+
+void ASMPlayerCharacterBase::OnTeamChanged()
+{
+	if (HasAuthority())
+	{
+		const ESMTeam SourceTeam = GetTeam();
+		if (SourceTeam != ESMTeam::None)
+		{
+			Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(DataAsset->WeaponClass[GetTeam()]);
+			if (Weapon)
+			{
+				Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, DataAsset->WeaponSocketName);
+				Weapon->SetOwner(this);
+				NET_LOG(this, Warning, TEXT("무기 주인: %s"), *GetNameSafe(Weapon->GetOwner()));
+			}
+		}
+		else
+		{
+			NET_LOG(this, Warning, TEXT("팀 없음"));
+		}
+	}
 }
 
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)

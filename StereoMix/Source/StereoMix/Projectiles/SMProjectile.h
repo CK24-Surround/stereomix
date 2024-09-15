@@ -71,6 +71,12 @@ protected:
 	/** 타겟이 유효한지 확인합니다. 타겟의 유효성을 검증해야할때 사용합니다. 서버에서만 사용되어야합니다. */
 	virtual bool IsValidateTarget(AActor* InTarget);
 
+	/** 투사체에 이펙트를 적용하려면 이 함수를 오버라이딩해 구현하면됩니다. 서버에서 호출됩니다. */
+	virtual void AddProjectileFX() {}
+
+	/** 투사체가 풀에 돌아가기 전에 이펙트를 제거하려면 이 함수를 오버라이딩해 구현하면됩니다. 서버에서 호출됩니다. */
+	virtual void RemoveProjectileFX() {}
+
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<USphereComponent> SphereComponent;
 

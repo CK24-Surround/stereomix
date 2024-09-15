@@ -145,6 +145,9 @@ public:
 
 	ASMWeaponBase* GetWeapon() const { return Weapon; }
 
+	UFUNCTION()
+	void OnTeamChanged();
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:
@@ -203,7 +206,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	TObjectPtr<ASMWeaponBase> Weapon;
 
 	UPROPERTY(VisibleAnywhere, Category = "Widget")

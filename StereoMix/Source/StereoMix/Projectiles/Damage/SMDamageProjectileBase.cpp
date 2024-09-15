@@ -99,15 +99,13 @@ void ASMDamageProjectileBase::ApplyDamage(AActor* InTarget)
 	}
 }
 
-void ASMDamageProjectileBase::PlayHitFX(AActor* InTarget) {}
-
 void ASMDamageProjectileBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
 {
 	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
 
 	if (HasAuthority())
 	{
-		HandleWallHit();
+		HandleWallHit(HitLocation);
 
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
 		EndLifeTime();
@@ -118,9 +116,7 @@ void ASMDamageProjectileBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Oth
 	}
 }
 
-void ASMDamageProjectileBase::HandleWallHit()
+void ASMDamageProjectileBase::HandleWallHit(const FVector& HitLocation)
 {
-	PlayWallHitFX();
+	PlayWallHitFX(HitLocation);
 }
-
-void ASMDamageProjectileBase::PlayWallHitFX() {}

@@ -68,6 +68,7 @@ void ASMProjectile::StartLifeTime()
 		return;
 	}
 
+	AddProjectileFX();
 	MulticastStartLifeTimeInternal();
 }
 
@@ -78,6 +79,7 @@ void ASMProjectile::EndLifeTime()
 		return;
 	}
 
+	RemoveProjectileFX();
 	MulticastEndLifeTimeInternal();
 }
 
@@ -120,11 +122,8 @@ void ASMProjectile::MulticastLaunchInternal_Implementation(const FVector_NetQuan
 
 void ASMProjectile::MulticastStartLifeTimeInternal_Implementation()
 {
-	if (!HasAuthority())
-	{
-		SetActorHiddenInGame(false);
-		ProjectileBodyFXComponent->Activate(true);
-	}
+	SetActorHiddenInGame(false);
+	ProjectileBodyFXComponent->Activate(true);
 
 	SetActorTickEnabled(true);
 	SetActorEnableCollision(true);
@@ -132,11 +131,8 @@ void ASMProjectile::MulticastStartLifeTimeInternal_Implementation()
 
 void ASMProjectile::MulticastEndLifeTimeInternal_Implementation()
 {
-	if (!HasAuthority())
-	{
-		SetActorHiddenInGame(true);
-		ProjectileBodyFXComponent->DeactivateImmediate();
-	}
+	SetActorHiddenInGame(true);
+	ProjectileBodyFXComponent->DeactivateImmediate();
 
 	ProjectileMovementComponent->Deactivate();
 	SetActorTickEnabled(false);

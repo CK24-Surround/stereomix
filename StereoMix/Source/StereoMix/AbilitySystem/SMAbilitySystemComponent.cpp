@@ -140,7 +140,6 @@ void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetAct
 			continue;
 		}
 
-		NET_LOG(GetAvatarActor(), Warning, TEXT("전파할 클라이언트: %s"), *GetNameSafe(PendingCharacter));
 		PendingASC->ClientExecuteGC(TargetActor, GameplayCueTag, CueEvent, Parameters);
 	}
 }

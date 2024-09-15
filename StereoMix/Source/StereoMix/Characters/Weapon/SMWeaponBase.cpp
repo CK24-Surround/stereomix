@@ -8,6 +8,8 @@ const FName ASMWeaponBase::WeaponMeshComponentName = TEXT("WeaponMeshComponent")
 
 ASMWeaponBase::ASMWeaponBase(const FObjectInitializer& ObjectInitializer)
 {
+	bReplicates = true;
+
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 

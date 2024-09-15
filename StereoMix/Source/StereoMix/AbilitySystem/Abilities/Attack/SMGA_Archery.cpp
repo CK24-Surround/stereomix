@@ -11,7 +11,8 @@
 #include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGameState.h"
-#include "Projectiles/Damage/SMDamageProjectile_Piano.h"
+#include "Projectiles/Damage/SMDP_PianoCharge1.h"
+#include "Projectiles/Damage/SMDP_PianoCharge2.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 
 USMGA_Archery::USMGA_Archery()
@@ -51,7 +52,6 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 
 	if (IsLocallyControlled())
 	{
-		NET_LOG(GetAvatarActor(), Warning, TEXT("차지 시작"));
 		UAbilityTask_WaitDelay* Charge1Task = UAbilityTask_WaitDelay::WaitDelay(this, Charge1Time);
 		Charge1Task->OnFinish.AddDynamic(this, &ThisClass::OnCharged1);
 		Charge1Task->ReadyForActivation();
@@ -116,13 +116,11 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 void USMGA_Archery::OnCharged1()
 {
 	ChargingLevel = 1;
-	NET_LOG(GetAvatarActor(), Warning, TEXT("1단 차지"));
 }
 
 void USMGA_Archery::OnCharged2()
 {
 	ChargingLevel = 2;
-	NET_LOG(GetAvatarActor(), Warning, TEXT("2단 차지"));
 }
 
 void USMGA_Archery::Charge1()
@@ -170,17 +168,16 @@ void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQu
 	}
 
 	float NewDamage;
-	ASMDamageProjectile_Piano* Projectile;
+	ASMDP_PianoBase* Projectile;
 	if (InChargingLevel == 1)
 	{
 		NewDamage = Damage * Charge1DamageMultiply;
-		Projectile = Cast<ASMDamageProjectile_Piano>(ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam()));
+		Projectile = Cast<ASMDP_PianoCharge1>(ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam()));
 	}
 	else
 	{
 		NewDamage = Damage * Charge2DamageMultiply;
-		Projectile = Cast<ASMDamageProjectile_Piano>(ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam()));
-		// Projectile = Cast<ASMDamageProjectile_Piano>(ProjectilePoolManager->GetProjectileForPiano2(SourceCharacter->GetTeam()));
+		Projectile = Cast<ASMDP_PianoCharge2>(ProjectilePoolManager->GetProjectileForPiano2(SourceCharacter->GetTeam()));
 	}
 
 	if (!Projectile)
@@ -189,7 +186,6 @@ void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQu
 		return;
 	}
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("화살 발사"));
 	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
 	Projectile->Launch(SourceCharacter, SourceLocation, LaunchDirection, ProjectileSpeed, MaxDistance, NewDamage);
 
