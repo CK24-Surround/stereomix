@@ -17,6 +17,11 @@ class STEREOMIX_API USMPianoCharacterDataAsset : public USMPlayerCharacterDataAs
 	GENERATED_BODY()
 
 public:
+	USMPianoCharacterDataAsset()
+	{
+		WeaponSocketName = TEXT("ik_hand_weapon_l");
+	}
+
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImpactArrowIndicator;
 

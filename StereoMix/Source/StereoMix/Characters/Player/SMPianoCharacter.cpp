@@ -41,3 +41,10 @@ void ASMPianoCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 }
+
+void ASMPianoCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	DrawDebugSphere(GetWorld(), GetMesh()->GetSocketLocation(TEXT("ik_hand_weapon_l")), 30.0f, 16, FColor::Emerald, false, 0.1f);
+}

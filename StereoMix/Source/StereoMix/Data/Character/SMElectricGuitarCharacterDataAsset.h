@@ -13,4 +13,10 @@ UCLASS()
 class STEREOMIX_API USMElectricGuitarCharacterDataAsset : public USMPlayerCharacterDataAsset
 {
 	GENERATED_BODY()
+
+public:
+	USMElectricGuitarCharacterDataAsset()
+	{
+		WeaponSocketName = TEXT("ik_hand_weapon_r");
+	}
 };

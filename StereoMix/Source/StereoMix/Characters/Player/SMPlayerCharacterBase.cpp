@@ -12,6 +12,7 @@
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Camera/CameraComponent.h"
 #include "Characters/Movement/SMCharacterMovementComponent.h"
+#include "Characters/Weapon/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/WidgetComponent.h"
@@ -197,6 +198,11 @@ void ASMPlayerCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 		ASC->OnChangedTag.RemoveAll(this);
 	}
 
+	if (Weapon)
+	{
+		Weapon->Destroy();
+	}
+
 	Super::EndPlay(EndPlayReason);
 }
 
@@ -231,7 +237,13 @@ void ASMPlayerCharacterBase::OnRep_PlayerState()
 
 	InitASC();
 
-	ESMTeam SourceTeam = GetTeam();
+	const ESMTeam SourceTeam = GetTeam();
+
+	Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(DataAsset->WeaponClass[SourceTeam]);
+	if (Weapon)
+	{
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, DataAsset->WeaponSocketName);
+	}
 
 	USMUserWidget_CharacterState* CharacterStateWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), DataAsset->CharacterStateWidget[SourceTeam]);
 	if (CharacterStateWidget)

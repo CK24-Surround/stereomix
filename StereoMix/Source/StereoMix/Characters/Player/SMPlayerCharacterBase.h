@@ -13,6 +13,7 @@
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
 
+class ASMWeaponBase;
 class USMHIC_Character;
 class ASMGamePlayerController;
 class USMAbilitySystemComponent;
@@ -198,6 +199,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
+
+	UPROPERTY()
+	TObjectPtr<ASMWeaponBase> Weapon;
 
 	UPROPERTY(VisibleAnywhere, Category = "Widget")
 	TObjectPtr<UWidgetComponent> CharacterStateWidgetComponent;

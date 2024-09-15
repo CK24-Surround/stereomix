@@ -22,25 +22,25 @@ class STEREOMIX_API USMPlayerCharacterDataAsset : public UPrimaryDataAsset
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> ForInitGE;
 
-	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> SkillGaugeGE;
 
-	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> StaminaGE;
 
-	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> DamageGE;
 
-	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
+	UPROPERTY(EditAnywhere, Category = "GAS|GA")
 	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
 
-	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
+	UPROPERTY(EditAnywhere, Category = "GAS|GA")
 	TArray<TSubclassOf<UGameplayAbility>> DefaultAbilities;
 
-	UPROPERTY(EditAnywhere, Category = "Design|GAS|GA")
+	UPROPERTY(EditAnywhere, Category = "GAS|GA")
 	TArray<TSubclassOf<UGameplayAbility>> PassiveAbilities;
 
 	UPROPERTY(EditAnywhere, Category = "Widget")
@@ -58,30 +58,36 @@ public:
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImmuneMoveTrailFX;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> AttackMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NeutralizeMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NoiseBreakMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> NoiseBreakedMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> HoldMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SkillMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> StunMontage;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Data")
 	float MoveSpeed = 600.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Data")
 	float MaxHP = 100.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	TMap<ESMTeam, TSubclassOf<ASMWeaponBase>> WeaponClass;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	FName WeaponSocketName;
 };
