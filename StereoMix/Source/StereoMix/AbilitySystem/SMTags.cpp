@@ -133,6 +133,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlashHit, "GameplayCue.Bass.SlashHit", "베기 적중 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Charge, "GameplayCue.Bass.Charge", "돌진 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ChargeHit, "GameplayCue.Bass.ChargeHit", "돌진 적중 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreak, "GameplayCue.Bass.NoiseBreak", "노이즈 브레이크 게임플레이 큐의 태그입니다.");
 		}
 
 		namespace SpecialAction

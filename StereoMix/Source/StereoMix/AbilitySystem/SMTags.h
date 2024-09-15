@@ -135,6 +135,7 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlashHit);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Charge);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ChargeHit);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreak);
 		}
 
 		namespace SpecialAction

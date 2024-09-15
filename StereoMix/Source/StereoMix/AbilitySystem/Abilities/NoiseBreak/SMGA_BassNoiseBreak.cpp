@@ -160,6 +160,18 @@ void USMGA_BassNoiseBreak::OnLanded()
 		ApplySplash(SourceCharacter->GetActorLocation());
 	}
 
+	if (IsLocallyControlled())
+	{
+		FGameplayCueParameters GCParams;
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		ASMTile* Tile = (GetTileFromLocation(SourceLocation));
+		if (Tile)
+		{
+			GCParams.Location = Tile->GetTileLocation();
+		}
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreak, GCParams);
+	}
+
 	// SourceASC->RemoveGameplayCue(SMTags::GameplayCue::SpecialAction::Smash);
 }
 
