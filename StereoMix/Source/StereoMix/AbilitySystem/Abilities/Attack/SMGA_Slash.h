@@ -32,11 +32,6 @@ protected:
 	UFUNCTION()
 	void OnSlashJudgeStartCallback(FGameplayEventData Payload);
 
-	UFUNCTION(Server, Reliable)
-	void ServerSendPredictionKeyForSlashEffect(FPredictionKey PredictionKey);
-
-	void PlaySlashEffect();
-
 	UFUNCTION()
 	void CanInputCallback(FGameplayEventData Payload) { bCanInput = true; }
 
@@ -68,9 +63,7 @@ protected:
 	void OnSlashHit(AActor* TargetActor);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCSlashHit(AActor* TargetActor, FPredictionKey PredictionKey);
-
-	void PlaySlashHitEffect(AActor* TargetActor);
+	void ServerRPCSlashHit(AActor* TargetActor);
 
 	/** 베기의 사정거리입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
