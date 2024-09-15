@@ -5,8 +5,10 @@
 
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGameState.h"
 #include "Projectiles/SMProjectile.h"
@@ -26,14 +28,9 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
+	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceDataAsset)
+	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -62,6 +59,14 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 		UAbilityTask_WaitDelay* Charge2Task = UAbilityTask_WaitDelay::WaitDelay(this, Charge2Time);
 		Charge2Task->OnFinish.AddDynamic(this, &ThisClass::OnCharged2);
 		Charge2Task->ReadyForActivation();
+
+		FGameplayCueParameters GCParams;
+		ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
+		if (SourceWeapon)
+		{
+			GCParams.TargetAttachComponent = SourceWeapon->GetWeaponMeshComponent();
+		}
+		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, GCParams);
 	}
 }
 
@@ -74,8 +79,17 @@ void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FG
 
 void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	if (!SourceCharacter || !SourceASC)
+	{
+		return;
+	}
+
 	const FName SectionName = TEXT("End");
 	MontageJumpToSection(SectionName);
+
+	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, FGameplayCueParameters());
 
 	if (ChargeLevel == 0)
 	{

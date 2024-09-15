@@ -66,6 +66,7 @@ public:
 
 	virtual ESMTeam GetTeam() const override;
 
+	UFUNCTION(BlueprintCallable)
 	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
 
 	template<typename T>
@@ -141,6 +142,8 @@ public:
 	void ClientRPCAddMoveSpeed(float MoveSpeedMultiplier, float Duration);
 
 	UNiagaraComponent* GetNoiseBreakIndicator() const { return NoiseBreakIndicatorComponent; }
+
+	ASMWeaponBase* GetWeapon() const { return Weapon; }
 
 	FOnCharacterLandedSignature OnCharacterLanded;
 

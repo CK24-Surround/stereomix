@@ -12,9 +12,5 @@ class STEREOMIX_API ASMBow : public ASMWeaponBase
 	GENERATED_BODY()
 
 public:
-	ASMBow();
-
-protected:
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<USkeletalMeshComponent> WeaponMesh;
+	ASMBow(const FObjectInitializer& ObjectInitializer);
 };

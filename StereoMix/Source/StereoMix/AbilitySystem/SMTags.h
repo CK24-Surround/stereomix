@@ -129,6 +129,11 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneMaterialApply_ElectricGuitar);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImmuneMaterialReset);
 
+		namespace Piano
+		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Archery);
+		}
+
 		namespace Bass
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Slash);

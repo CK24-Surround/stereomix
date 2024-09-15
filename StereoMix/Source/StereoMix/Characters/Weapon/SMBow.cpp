@@ -3,9 +3,5 @@
 
 #include "SMBow.h"
 
-
-ASMBow::ASMBow()
-{
-	WeaponMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("WeaponMesh"));
-	WeaponMesh->SetupAttachment(RootComponent);
-}
+ASMBow::ASMBow(const FObjectInitializer& ObjectInitializer)
+	: Super(ObjectInitializer.SetDefaultSubobjectClass<USkeletalMeshComponent>(ASMWeaponBase::WeaponMeshComponentName)) {}

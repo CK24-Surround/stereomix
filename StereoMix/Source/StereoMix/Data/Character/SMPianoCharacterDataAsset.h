@@ -19,7 +19,7 @@ class STEREOMIX_API USMPianoCharacterDataAsset : public USMPlayerCharacterDataAs
 public:
 	USMPianoCharacterDataAsset()
 	{
-		WeaponSocketName = TEXT("ik_hand_weapon_l");
+		WeaponSocketName = TEXT("WeaponPointL");
 	}
 
 	UPROPERTY(EditAnywhere, Category = "FX")
