@@ -83,14 +83,13 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 	const FName SectionName = TEXT("End");
 	MontageJumpToSection(SectionName);
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("%s"), *GetNameSafe(TargetActor));
+	NET_LOG(GetAvatarActor(), Log, TEXT("돌진에 적중된 대상: %s"), *GetNameSafe(TargetActor));
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if (TargetASC)
 	{
 		ServerRPCSendEvent(TargetActor);
 	}
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("이펙트 제거 요청"));
 	FGameplayCueParameters ChargeGCParams;
 	SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Bass::Charge, ChargeGCParams);
 
