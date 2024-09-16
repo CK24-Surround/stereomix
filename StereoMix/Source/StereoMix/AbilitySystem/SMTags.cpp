@@ -139,6 +139,11 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrowHit, "GameplayCue.Piano.ImpactArrowHit", "충격 화살 적중 게임플레이 큐의 태그입니다.");
 		}
 
+		namespace ElectricGuitar
+		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletHit, "GameplayCue.ElectricGuitar.SlowBulletHit", "마비탄 적중 게임플레이 큐의 태그입니다.");
+		}
+
 		namespace Bass
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Slash, "GameplayCue.Bass.Slash", "베기 게임플레이 큐의 태그입니다.");

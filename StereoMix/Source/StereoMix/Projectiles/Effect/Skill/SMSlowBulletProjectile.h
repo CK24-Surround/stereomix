@@ -3,28 +3,26 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Projectiles/SMProjectile.h"
+#include "Projectiles/Effect/SMEffectProjectileBase.h"
 #include "SMSlowBulletProjectile.generated.h"
 
 UCLASS(Abstract)
-class STEREOMIX_API ASMSlowBulletProjectile : public ASMProjectile
+class STEREOMIX_API ASMSlowBulletProjectile : public ASMEffectProjectileBase
 {
 	GENERATED_BODY()
 
 public:
-	ASMSlowBulletProjectile();
-
 	/* 디버프 정보를 담습니다. 발사 전에 호출해야합니다. */
 	void Init(float NewSlowDebuffMultiplier, float NewSlowDebuffDuration);
 
 protected:
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	virtual void HandleHitEffect(AActor* InTarget) override;
+	
+	void ApplySlowEffect(AActor* TargetActor);
 
-	virtual void NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit) override;
+	virtual void PlayHitFX(AActor* InTarget) override;
 
-	bool IsValidateTarget(AActor* InTarget);
-
-	void ApplyEffect(AActor* TargetActor);
+	virtual void PlayWallHitFX(const FVector& HitLocation) override;
 
 	float SlowDebuffMultiplier = 0.0f;
 

@@ -50,7 +50,7 @@ bool ASMEffectProjectileBase::IsValidateTarget(AActor* InTarget)
 void ASMEffectProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-	
+
 	if (HasAuthority())
 	{
 		// 유효한 타겟인지 검증합니다.
@@ -107,8 +107,8 @@ void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 	FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(SourceDataAsset->DamageGE, 1.0f, SourceASC->MakeEffectContext());
 	if (GESpecHandle.IsValid())
 	{
-		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Magnitude);
 		// SetByCaller를 통해 매개변수로 전달받은 Damage로 GE를 적용합니다.
+		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Magnitude);
 		SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 	}
 
@@ -116,6 +116,6 @@ void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
 	if (TargetDamageInterface)
 	{
-		TargetDamageInterface->SetLastAttackInstigator(SourceASC->GetAvatarActor());
+		TargetDamageInterface->SetLastAttackInstigator(SourceCharacter);
 	}
 }

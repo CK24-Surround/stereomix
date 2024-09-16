@@ -5,19 +5,11 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
-#include "Games/SMGameState.h"
 #include "Utilities/SMLog.h"
 
-
-ASMSlowBulletProjectile::ASMSlowBulletProjectile()
-{
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Neutralize);
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::NoiseBreak);
-}
 
 void ASMSlowBulletProjectile::Init(float NewSlowDebuffMultiplier, float NewSlowDebuffDuration)
 {
@@ -30,112 +22,51 @@ void ASMSlowBulletProjectile::Init(float NewSlowDebuffMultiplier, float NewSlowD
 	SlowDebuffDuration = NewSlowDebuffDuration;
 }
 
-void ASMSlowBulletProjectile::NotifyActorBeginOverlap(AActor* OtherActor)
+void ASMSlowBulletProjectile::HandleHitEffect(AActor* InTarget)
 {
-	Super::NotifyActorBeginOverlap(OtherActor);
+	Super::HandleHitEffect(InTarget);
 
-	if (HasAuthority())
+	ApplyDamage(InTarget);
+	ApplySlowEffect(InTarget);
+}
+
+void ASMSlowBulletProjectile::PlayHitFX(AActor* InTarget)
+{
+	AActor* SourceActor = GetOwner();
+	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
+	if (InTarget && SourceASC)
 	{
-		// 유효한 타겟인지 검증합니다.
-		if (!IsValidateTarget(OtherActor))
-		{
-			return;
-		}
-
-		ApplyEffect(OtherActor);
-		// ExecuteHitFX(OtherActor);
-
-		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		EndLifeTime();
+		FGameplayCueParameters GCParams;
+		GCParams.Location = InTarget->GetActorLocation();
+		SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::SlowBulletHit, GCParams);
 	}
 }
 
-void ASMSlowBulletProjectile::NotifyHit(class UPrimitiveComponent* MyComp, AActor* Other, class UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+void ASMSlowBulletProjectile::PlayWallHitFX(const FVector& HitLocation)
 {
-	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-
-	if (HasAuthority())
+	AActor* SourceActor = GetOwner();
+	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
+	if (SourceASC)
 	{
-		// ExecuteWallHitFX();
-
-		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		EndLifeTime();
-	}
-	else
-	{
-		SetActorHiddenInGame(true);
+		FGameplayCueParameters GCParams;
+		GCParams.Location = HitLocation;
+		SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::SlowBulletHit, GCParams);
 	}
 }
 
-bool ASMSlowBulletProjectile::IsValidateTarget(AActor* InTarget)
+void ASMSlowBulletProjectile::ApplySlowEffect(AActor* TargetActor)
 {
-	if (!Super::IsValidateTarget(InTarget))
-	{
-		return false;
-	}
-
-	// 투사체가 무소속인 경우 무시합니다.
-	const ESMTeam SourceTeam = GetTeam();
-	if (SourceTeam == ESMTeam::None)
-	{
-		return false;
-	}
-
-	ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(InTarget);
-	if (!TargetTeamInterface)
-	{
-		return false;
-	}
-
-	// 타겟이 무소속인 경우 무시합니다.
-	const ESMTeam TargetTeam = TargetTeamInterface->GetTeam();
-	if (TargetTeam == ESMTeam::None)
-	{
-		return false;
-	}
-
-	// 투사체와 타겟이 같은 팀이라면 무시합니다. (팀킬 방지)
-	if (SourceTeam == TargetTeam)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-void ASMSlowBulletProjectile::ApplyEffect(AActor* TargetActor)
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
-	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetOwner());
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
-	if (!SourceCharacter || !SourceASC || !TargetASC || !SourceDataAsset)
+	if (!TargetASC)
 	{
 		return;
 	}
-
-	FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(SourceDataAsset->DamageGE, 1.0f, SourceASC->MakeEffectContext());
-	if (!ensureAlways(GESpecHandle.IsValid()))
-	{
-		return;
-	}
-
-	// SetByCaller를 통해 매개변수로 전달받은 Damage로 GE를 적용합니다.
-	GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Magnitude);
-	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 
 	// 대상이 캐릭터면 디버프를 적용합니다.
 	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
 	if (TargetCharacter)
 	{
 		TargetCharacter->ClientRPCAddMoveSpeed(SlowDebuffMultiplier, SlowDebuffDuration);
-	}
-
-	// 공격자 정보도 저장합니다.
-	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetASC->GetAvatarActor());
-	if (ensureAlways(TargetDamageInterface))
-	{
-		TargetDamageInterface->SetLastAttackInstigator(SourceASC->GetAvatarActor());
 	}
 
 	NET_LOG(this, Warning, TEXT("%s에게 마비탄 적중"), *GetNameSafe(TargetActor));

@@ -10,4 +10,7 @@ UCLASS(Abstract)
 class STEREOMIX_API ASMEP_PianoBase : public ASMEffectProjectileBase
 {
 	GENERATED_BODY()
+
+protected:
+	virtual void HandleHitEffect(AActor* InTarget) override;
 };

@@ -141,6 +141,11 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrowHit);
 		}
 
+		namespace ElectricGuitar
+		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletHit);
+		}
+
 		namespace Bass
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Slash);
