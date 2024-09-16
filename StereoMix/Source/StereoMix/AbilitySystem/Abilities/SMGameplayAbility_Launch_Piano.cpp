@@ -89,7 +89,7 @@ void USMGameplayAbility_Launch_Piano::LaunchProjectileCallback()
 	}
 
 	const FVector LaunchLocation = bIsAttach ? SourceCharacter->GetActorLocation() : LaunchData.SourceLocation;
-	NewProjectile->Launch(SourceCharacter, LaunchLocation, LaunchData.SpawnRotationOffset[LaunchData.Count++].Vector(), ProjectileSpeed, MaxDistance, Damage); // 투사체를 발사합니다.
+	// NewProjectile->Launch(SourceCharacter, LaunchLocation, LaunchData.SpawnRotationOffset[LaunchData.Count++].Vector(), ProjectileSpeed, MaxDistance, Damage); // 투사체를 발사합니다.
 
 	// FX를 실행합니다.
 	FGameplayCueParameters GCParams;

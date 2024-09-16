@@ -92,8 +92,17 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 		return;
 	}
 
-	const FVector LaunchRotation = (TargetLocation - SourceLocation).GetSafeNormal();
+	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
 	const float MaxDistance = MaxDistanceByTile * 150.0f;
-	Projectile->Init(SlowDebuffMultiplier, SlowDebuffDuration);
-	Projectile->Launch(SourceCharacter, SourceLocation, LaunchRotation, ProjectileSpeed, MaxDistance, Damage);
+
+	FSMProjectileParameters ProjectileParams;
+	ProjectileParams.Owner = SourceCharacter;
+	ProjectileParams.StartLocation = SourceLocation;
+	ProjectileParams.Normal = LaunchDirection;
+	ProjectileParams.Damage = Damage;
+	ProjectileParams.Speed = ProjectileSpeed;
+	ProjectileParams.MaxDistance = MaxDistance;
+	ProjectileParams.Magnitude = SlowDebuffMultiplier;
+	ProjectileParams.Duration = SlowDebuffDuration;
+	Projectile->Launch(ProjectileParams);
 }

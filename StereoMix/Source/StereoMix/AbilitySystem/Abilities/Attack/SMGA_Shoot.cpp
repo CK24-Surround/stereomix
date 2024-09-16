@@ -102,9 +102,17 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 		RandomYaw = (FMath::Rand() % ShootAngle) - (ShootAngle / 2.0f);
 	}
 
-	const FRotator LaunchRotation = (TargetLocation - SourceLocation).Rotation() + FRotator(0.0, RandomYaw, 0.0);
+	const FVector LaunchDirection = ((TargetLocation - SourceLocation).Rotation() + FRotator(0.0, RandomYaw, 0.0)).Vector();
 	const float MaxDistance = MaxDistanceByTile * 150.0f;
-	Projectile->Launch(SourceCharacter, SourceLocation, LaunchRotation.Vector(), ProjectileSpeed, MaxDistance, Damage);
+
+	FSMProjectileParameters ProjectileParams;
+	ProjectileParams.Owner = SourceCharacter;
+	ProjectileParams.StartLocation = SourceLocation;
+	ProjectileParams.Normal = LaunchDirection;
+	ProjectileParams.Damage = Damage;
+	ProjectileParams.Speed = ProjectileSpeed;
+	ProjectileParams.MaxDistance = MaxDistance;
+	Projectile->Launch(ProjectileParams);
 }
 
 void USMGA_Shoot::Shoot()

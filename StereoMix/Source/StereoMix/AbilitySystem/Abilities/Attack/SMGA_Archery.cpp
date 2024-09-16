@@ -188,7 +188,15 @@ void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQu
 	}
 
 	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
-	Projectile->Launch(SourceCharacter, SourceLocation, LaunchDirection, ProjectileSpeed, MaxDistance, NewDamage);
+
+	FSMProjectileParameters ProjectileParams;
+	ProjectileParams.Owner = SourceCharacter;
+	ProjectileParams.StartLocation = SourceLocation;
+	ProjectileParams.Normal = LaunchDirection;
+	ProjectileParams.Damage = NewDamage;
+	ProjectileParams.Speed = ProjectileSpeed;
+	ProjectileParams.MaxDistance = MaxDistance;
+	Projectile->Launch(ProjectileParams);
 
 	K2_EndAbility();
 }

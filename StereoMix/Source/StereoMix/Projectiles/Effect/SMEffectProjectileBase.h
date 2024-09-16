@@ -15,6 +15,8 @@ public:
 	ASMEffectProjectileBase();
 
 protected:
+	virtual void PreLaunch(const FSMProjectileParameters& InParameters) override;
+
 	virtual bool IsValidateTarget(AActor* InTarget) override;
 
 	/** 오버렙 판정 발생 시 호출됩니다. 보통 플레이어와 충돌할때 호출됩니다.*/
@@ -37,4 +39,6 @@ protected:
 
 	/** GE를 통해 데미지를 적용합니다. 데미지를 주는 기능이 필요하다면 사용하면 됩니다. */
 	void ApplyDamage(AActor* InTarget);
+
+	float Damage = 0.0f;
 };

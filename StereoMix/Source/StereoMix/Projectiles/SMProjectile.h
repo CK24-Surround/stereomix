@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Data/SMTeam.h"
 #include "GameplayTagContainer.h"
+#include "Data/SMProjectileParameters.h"
 #include "Interfaces/SMTeamInterface.h"
 
 #include "SMProjectile.generated.h"
@@ -30,16 +31,7 @@ public:
 	ASMProjectile();
 
 	/** 투사체를 발사합니다. 서버에서 호출되어야합니다. */
-	void Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InMagnitude = 0.0f);
-
-	/** 투사체가 활동을 시작할때 꼭 호출해줘야합니다. 투사체 활성화와 관련된 처리를 담당합니다. 서버에서 호출되어야합니다.*/
-	void StartLifeTime();
-
-	/**
-	 * 투사체가 풀로 반환되야할때 꼭 호출해줘야합니다. 투사체 비활성화와 관련된 처리를 수행하고 델리게이트를 브로드캐스트해 자동으로 풀로 돌아갑니다. 서버에서 호출되어야합니다.
-	 * 사실상 Destroy를 대체합니다.
-	 */
-	void EndLifeTime();
+	void Launch(const FSMProjectileParameters& InParameters);
 
 	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
@@ -52,6 +44,18 @@ protected:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	/** 투사체가 발사되기 전에 추가로 설정해야할 값이 있다면 이 함수를 오버라이딩해 구현하면됩니다. */
+	virtual void PreLaunch(const FSMProjectileParameters& InParameters) {}
+
+	/** 투사체가 활동을 시작할때 꼭 호출해줘야합니다. 투사체 활성화와 관련된 처리를 담당합니다. 서버에서 호출되어야합니다.*/
+	void StartLifeTime();
+
+	/**
+	 * 투사체가 풀로 반환되야할때 꼭 호출해줘야합니다. 투사체 비활성화와 관련된 처리를 수행하고 델리게이트를 브로드캐스트해 자동으로 풀로 돌아갑니다. 서버에서 호출되어야합니다.
+	 * 사실상 Destroy를 대체합니다.
+	 */
+	void EndLifeTime();
 
 	/** 실제로 투사체를 발사합니다. Launch를 통해 호출됩니다.*/
 	UFUNCTION(NetMulticast, Reliable)
@@ -92,8 +96,6 @@ protected:
 	FVector StartLocation;
 
 	float MaxDistance;
-
-	float Magnitude;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|Tags")
 	FGameplayTagContainer IgnoreTargetStateTags;

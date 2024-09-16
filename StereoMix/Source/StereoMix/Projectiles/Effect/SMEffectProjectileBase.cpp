@@ -17,6 +17,11 @@ ASMEffectProjectileBase::ASMEffectProjectileBase()
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::NoiseBreak);
 }
 
+void ASMEffectProjectileBase::PreLaunch(const FSMProjectileParameters& InParameters)
+{
+	Damage = InParameters.Damage;
+}
+
 bool ASMEffectProjectileBase::IsValidateTarget(AActor* InTarget)
 {
 	if (!Super::IsValidateTarget(InTarget))
@@ -108,7 +113,7 @@ void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 	if (GESpecHandle.IsValid())
 	{
 		// SetByCaller를 통해 매개변수로 전달받은 Damage로 GE를 적용합니다.
-		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Magnitude);
+		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
 		SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 	}
 

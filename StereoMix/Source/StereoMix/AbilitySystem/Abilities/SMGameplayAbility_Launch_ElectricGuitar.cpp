@@ -175,7 +175,7 @@ void USMGameplayAbility_Launch_ElectricGuitar::ServerRPCLaunchProjectile_Impleme
 		return;
 	}
 
-	NewProjectile->Launch(SourceCharacter, SourceLocation, Normal, ProjectileSpeed, MaxDistance, Damage); // 투사체를 발사합니다.
+	// NewProjectile->Launch(SourceCharacter, SourceLocation, Normal, ProjectileSpeed, MaxDistance, Damage); // 투사체를 발사합니다.
 
 	// FX를 실행합니다.
 	FGameplayCueParameters GCParams;

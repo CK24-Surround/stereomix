@@ -11,13 +11,11 @@ class STEREOMIX_API ASMSlowBulletProjectile : public ASMEffectProjectileBase
 {
 	GENERATED_BODY()
 
-public:
-	/* 디버프 정보를 담습니다. 발사 전에 호출해야합니다. */
-	void Init(float NewSlowDebuffMultiplier, float NewSlowDebuffDuration);
-
 protected:
+	virtual void PreLaunch(const FSMProjectileParameters& InParameters) override;
+
 	virtual void HandleHitEffect(AActor* InTarget) override;
-	
+
 	void ApplySlowEffect(AActor* TargetActor);
 
 	virtual void PlayHitFX(AActor* InTarget) override;

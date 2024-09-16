@@ -45,7 +45,7 @@ void USMGameplayAbility_Launch_Bass::LaunchProjectile(const FVector& InStartLoca
 		return;
 	}
 
-	NewProjectile->Launch(SourceCharacter, InStartLocation, InNormal, ProjectileSpeed, MaxDistance, Damage); // 투사체를 발사합니다.
+	// NewProjectile->Launch(SourceCharacter, InStartLocation, InNormal, ProjectileSpeed, MaxDistance, Damage); // 투사체를 발사합니다.
 
 	// FX를 실행합니다.
 	FGameplayCueParameters GCParams;

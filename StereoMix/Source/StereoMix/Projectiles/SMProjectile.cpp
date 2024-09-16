@@ -4,12 +4,10 @@
 #include "SMProjectile.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
-#include "Interfaces/SMTeamInterface.h"
 #include "NiagaraComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"
@@ -38,49 +36,29 @@ ASMProjectile::ASMProjectile()
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 }
 
-void ASMProjectile::Launch(AActor* NewOwner, const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance, float InMagnitude)
+void ASMProjectile::Launch(const FSMProjectileParameters& InParameters)
 {
-	if (!HasAuthority() || !NewOwner)
+	if (!HasAuthority())
 	{
 		return;
 	}
 
 	// 오너와 팀을 지정해줍니다.
-	SetOwner(NewOwner);
+	SetOwner(InParameters.Owner.Get());
 
-	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(NewOwner);
+	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(InParameters.Owner.Get());
 	TeamComponent->SetTeam(SourceTeam);
 
 	// 투사체의 데미지는 서버에만 저장해줍니다. 클라이언트에선 쓰이지 않기 때문입니다.
-	Magnitude = InMagnitude;
+	// Magnitude = InMagnitude;
+
+	PreLaunch(InParameters);
 
 	// 클라이언트의 투사체도 발사합니다.
-	MulticastLaunchInternal(InStartLocation, InNormal, InSpeed, InMaxDistance);
+	MulticastLaunchInternal(InParameters.StartLocation, InParameters.Normal, InParameters.Speed, InParameters.MaxDistance);
 
 	// 투사체를 활성화합니다.
 	StartLifeTime();
-}
-
-void ASMProjectile::StartLifeTime()
-{
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	AddProjectileFX();
-	MulticastStartLifeTimeInternal();
-}
-
-void ASMProjectile::EndLifeTime()
-{
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	RemoveProjectileFX();
-	MulticastEndLifeTimeInternal();
 }
 
 ESMTeam ASMProjectile::GetTeam() const
@@ -104,6 +82,28 @@ void ASMProjectile::Tick(float DeltaTime)
 
 	// 매번 투사체가 사거리를 벗어났는지 체크합니다.
 	ReturnToPoolIfOutOfMaxDistance();
+}
+
+void ASMProjectile::StartLifeTime()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	AddProjectileFX();
+	MulticastStartLifeTimeInternal();
+}
+
+void ASMProjectile::EndLifeTime()
+{
+	if (!HasAuthority())
+	{
+		return;
+	}
+
+	RemoveProjectileFX();
+	MulticastEndLifeTimeInternal();
 }
 
 void ASMProjectile::MulticastLaunchInternal_Implementation(const FVector_NetQuantize10& InStartLocation, const FVector_NetQuantizeNormal& InNormal, float InSpeed, float InMaxDistance)

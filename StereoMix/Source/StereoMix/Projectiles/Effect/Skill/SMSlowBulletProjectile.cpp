@@ -11,15 +11,12 @@
 #include "Utilities/SMLog.h"
 
 
-void ASMSlowBulletProjectile::Init(float NewSlowDebuffMultiplier, float NewSlowDebuffDuration)
+void ASMSlowBulletProjectile::PreLaunch(const FSMProjectileParameters& InParameters)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
+	Super::PreLaunch(InParameters);
 
-	SlowDebuffMultiplier = NewSlowDebuffMultiplier;
-	SlowDebuffDuration = NewSlowDebuffDuration;
+	SlowDebuffMultiplier = InParameters.Magnitude;
+	SlowDebuffDuration = InParameters.Duration;
 }
 
 void ASMSlowBulletProjectile::HandleHitEffect(AActor* InTarget)
@@ -69,5 +66,5 @@ void ASMSlowBulletProjectile::ApplySlowEffect(AActor* TargetActor)
 		TargetCharacter->ClientRPCAddMoveSpeed(SlowDebuffMultiplier, SlowDebuffDuration);
 	}
 
-	NET_LOG(this, Warning, TEXT("%s에게 마비탄 적중"), *GetNameSafe(TargetActor));
+	NET_LOG(this, Log, TEXT("%s에게 마비탄 적중"), *GetNameSafe(TargetActor));
 }
