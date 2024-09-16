@@ -1,27 +1,23 @@
-// Copyright Surround, Inc. All Rights Reserved.
+// Copyright Studio Surround. All Rights Reserved.
 
 
-#include "SMDamageProjectileBase.h"
+#include "SMEffectProjectileBase.h"
 
-#include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "Interfaces/SMDamageInterface.h"
-#include "Utilities/SMLog.h"
 
-
-ASMDamageProjectileBase::ASMDamageProjectileBase()
+ASMEffectProjectileBase::ASMEffectProjectileBase()
 {
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Neutralize);
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
 	IgnoreTargetStateTags.AddTag(SMTags::Character::State::NoiseBreak);
 }
 
-
-bool ASMDamageProjectileBase::IsValidateTarget(AActor* InTarget)
+bool ASMEffectProjectileBase::IsValidateTarget(AActor* InTarget)
 {
 	if (!Super::IsValidateTarget(InTarget))
 	{
@@ -51,10 +47,10 @@ bool ASMDamageProjectileBase::IsValidateTarget(AActor* InTarget)
 	return true;
 }
 
-void ASMDamageProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
+void ASMEffectProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
-
+	
 	if (HasAuthority())
 	{
 		// 유효한 타겟인지 검증합니다.
@@ -63,20 +59,41 @@ void ASMDamageProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
 			return;
 		}
 
-		HandleHit(OtherActor);
+		HandleHitEffect(OtherActor);
 
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
 		EndLifeTime();
 	}
 }
 
-void ASMDamageProjectileBase::HandleHit(AActor* InTarget)
+void ASMEffectProjectileBase::HandleHitEffect(AActor* InTarget)
 {
-	ApplyDamage(InTarget);
 	PlayHitFX(InTarget);
 }
 
-void ASMDamageProjectileBase::ApplyDamage(AActor* InTarget)
+void ASMEffectProjectileBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
+{
+	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
+
+	if (HasAuthority())
+	{
+		HandleWallHitEffect(HitLocation);
+
+		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
+		EndLifeTime();
+	}
+	else
+	{
+		SetActorHiddenInGame(true);
+	}
+}
+
+void ASMEffectProjectileBase::HandleWallHitEffect(const FVector& HitLocation)
+{
+	PlayWallHitFX(HitLocation);
+}
+
+void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
 	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceCharacter);
@@ -101,26 +118,4 @@ void ASMDamageProjectileBase::ApplyDamage(AActor* InTarget)
 	{
 		TargetDamageInterface->SetLastAttackInstigator(SourceASC->GetAvatarActor());
 	}
-}
-
-void ASMDamageProjectileBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)
-{
-	Super::NotifyHit(MyComp, Other, OtherComp, bSelfMoved, HitLocation, HitNormal, NormalImpulse, Hit);
-
-	if (HasAuthority())
-	{
-		HandleWallHit(HitLocation);
-
-		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
-		EndLifeTime();
-	}
-	else
-	{
-		SetActorHiddenInGame(true);
-	}
-}
-
-void ASMDamageProjectileBase::HandleWallHit(const FVector& HitLocation)
-{
-	PlayWallHitFX(HitLocation);
 }
