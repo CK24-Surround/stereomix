@@ -9,8 +9,8 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGameState.h"
+#include "Projectiles/Effect/Skill/SMSlowBulletProjectile.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
-#include "Projectiles/Skill/SMSlowBulletProjectile.h"
 
 USMGA_SlowBullet::USMGA_SlowBullet()
 {

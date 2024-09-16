@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMDP_PianoBase.h"
-#include "SMDP_PianoCharge1.generated.h"
+#include "SMEP_PianoBase.h"
+#include "SMEP_PianoCharge1.generated.h"
 
-UCLASS()
-class STEREOMIX_API ASMDP_PianoCharge1 : public ASMDP_PianoBase
+UCLASS(Abstract)
+class STEREOMIX_API ASMEP_PianoCharge1 : public ASMEP_PianoBase
 {
 	GENERATED_BODY()
 

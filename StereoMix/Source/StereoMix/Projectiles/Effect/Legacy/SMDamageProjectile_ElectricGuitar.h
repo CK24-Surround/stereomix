@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Projectiles/Effect/Damage/SMDamageProjectileBase.h"
+#include "SMDamageProjectileBase.h"
 
 #include "SMDamageProjectile_ElectricGuitar.generated.h"
 

@@ -11,8 +11,7 @@
 #include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Games/SMGameState.h"
-#include "Projectiles/Effect/Damage/SMDP_PianoCharge1.h"
-#include "Projectiles/Effect/Damage/SMDP_PianoCharge2.h"
+#include "Projectiles/SMProjectile.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 
 USMGA_Archery::USMGA_Archery()
@@ -170,16 +169,16 @@ void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQu
 	}
 
 	float NewDamage;
-	ASMDP_PianoBase* Projectile;
+	ASMProjectile* Projectile;
 	if (InChargingLevel == 1)
 	{
 		NewDamage = Damage * Charge1DamageMultiply;
-		Projectile = Cast<ASMDP_PianoCharge1>(ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam()));
+		Projectile = ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam());
 	}
 	else
 	{
 		NewDamage = Damage * Charge2DamageMultiply;
-		Projectile = Cast<ASMDP_PianoCharge2>(ProjectilePoolManager->GetProjectileForPiano2(SourceCharacter->GetTeam()));
+		Projectile = ProjectilePoolManager->GetProjectileForPiano2(SourceCharacter->GetTeam());
 	}
 
 	if (!Projectile)
