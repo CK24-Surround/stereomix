@@ -21,8 +21,6 @@ void USMAnimInstance::NativeInitializeAnimation()
 
 void USMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
-	Super::NativeUpdateAnimation(DeltaSeconds);
-
 	UpdateMovementInfo();
 }
 
