@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interfaces/IHttpRequest.h"
 
 #include "SMGameInstance.generated.h"
+
+class FHttpModule;
 
 /**
  *
@@ -34,6 +37,13 @@ public:
 
 	UFUNCTION(BlueprintPure, Category = "Game")
 	bool IsViewedSplashScreen() const { return bViewedSplashScreen; }
+
+	void RequestDataTableToServer();
+
+protected:
+	void ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
+
+	FHttpModule* Http;
 
 private:
 	bool bDemoGame = false;

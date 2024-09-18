@@ -3,8 +3,11 @@
 
 #include "SMGameInstance.h"
 
+#include "HttpModule.h"
 #include "StereoMixLog.h"
+#include "Interfaces/IHttpResponse.h"
 #include "Settings/SMGameUserSettings.h"
+#include "Utilities/SMLog.h"
 
 void USMGameInstance::Init()
 {
@@ -59,4 +62,36 @@ bool USMGameInstance::IsCustomGame() const
 bool USMGameInstance::IsDemoGame() const
 {
 	return bDemoGame;
+}
+
+void USMGameInstance::RequestDataTableToServer()
+{
+	Http = &FHttpModule::Get();
+
+	TSharedRef<IHttpRequest, ESPMode::ThreadSafe> Request = Http->CreateRequest();
+	Request->OnProcessRequestComplete().BindUObject(this, &ThisClass::ReceivedDataTableFromServer);
+
+	const FString RequestURL;
+	if (!RequestURL.IsEmpty())
+	{
+		Request->SetURL(RequestURL);
+
+		Request->ProcessRequest();
+		UE_LOG(LogStereoMix, Warning, TEXT("HTTP Call URL: %s"), *Request->GetURL());
+	}
+}
+
+void USMGameInstance::ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
+{
+	TSharedPtr<FJsonObject> JsonObject;
+	TSharedRef<TJsonReader<TCHAR>> Reader = TJsonReaderFactory<>::Create(Response->GetContentAsString());
+
+	if (FJsonSerializer::Deserialize(Reader, JsonObject))
+	{
+		FString Field = TEXT("Character");
+		TSharedPtr<FJsonObject> JsonData = JsonObject->GetArrayField(Field)[0]->AsObject();
+		Field = TEXT("CharacterName");
+		const FString JsonName = JsonData->GetStringField(Field);
+		UE_LOG(LogStereoMix, Warning, TEXT("%s"), *JsonName);
+	}
 }
