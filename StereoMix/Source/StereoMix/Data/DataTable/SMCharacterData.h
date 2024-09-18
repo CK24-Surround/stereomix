@@ -56,7 +56,7 @@ struct FSMCharacterNoiseBreakData : public FTableRowBase
 	GENERATED_BODY()
 
 	FSMCharacterNoiseBreakData()
-		: Damage(-1.0f), CaptureSize(-1.0f), DistanceByTile(-1.0f), ApexHeigth(-1.0f), GravityScale(-1.0f), ApexHeight(-1.0f), TotalTriggerTime(-1.0f) {}
+		: Damage(-1.0f), CaptureSize(-1.0f), DistanceByTile(-1.0f), ApexHeigth(-1.0f), GravityScale(-1.0f), TotalTriggerTime(-1.0f) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	float Damage;
@@ -72,9 +72,6 @@ struct FSMCharacterNoiseBreakData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	float GravityScale;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float ApexHeight;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	float TotalTriggerTime;

@@ -89,12 +89,12 @@ FSMCharacterStatData* USMGameInstance::GetCharacterStatData(ESMCharacterType Cha
 
 FSMCharacterSkillData* USMGameInstance::GetCharacterSkillData(ESMCharacterType CharacterType)
 {
-	return CharacterStat->FindRow<FSMCharacterSkillData>(CharacterTypeToName(CharacterType), TEXT(""));
+	return CharacterSkill->FindRow<FSMCharacterSkillData>(CharacterTypeToName(CharacterType), TEXT(""));
 }
 
 FSMCharacterNoiseBreakData* USMGameInstance::GetCharacterNoiseBreakData(ESMCharacterType CharacterType)
 {
-	return CharacterStat->FindRow<FSMCharacterNoiseBreakData>(CharacterTypeToName(CharacterType), TEXT(""));
+	return CharacterNoiseBreak->FindRow<FSMCharacterNoiseBreakData>(CharacterTypeToName(CharacterType), TEXT(""));
 }
 
 void USMGameInstance::ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
