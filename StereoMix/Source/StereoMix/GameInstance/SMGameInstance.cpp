@@ -5,6 +5,7 @@
 
 #include "HttpModule.h"
 #include "StereoMixLog.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "Interfaces/IHttpResponse.h"
 #include "Settings/SMGameUserSettings.h"
 #include "Utilities/SMLog.h"
@@ -81,6 +82,21 @@ void USMGameInstance::RequestDataTableToServer()
 	}
 }
 
+FSMCharacterStatData* USMGameInstance::GetCharacterStatData(ESMCharacterType CharacterType)
+{
+	return CharacterStat->FindRow<FSMCharacterStatData>(CharacterTypeToName(CharacterType), TEXT(""));
+}
+
+FSMCharacterSkillData* USMGameInstance::GetCharacterSkillData(ESMCharacterType CharacterType)
+{
+	return CharacterStat->FindRow<FSMCharacterSkillData>(CharacterTypeToName(CharacterType), TEXT(""));
+}
+
+FSMCharacterNoiseBreakData* USMGameInstance::GetCharacterNoiseBreakData(ESMCharacterType CharacterType)
+{
+	return CharacterStat->FindRow<FSMCharacterNoiseBreakData>(CharacterTypeToName(CharacterType), TEXT(""));
+}
+
 void USMGameInstance::ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)
 {
 	TSharedPtr<FJsonObject> JsonObject;
@@ -94,4 +110,33 @@ void USMGameInstance::ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttp
 		const FString JsonName = JsonData->GetStringField(Field);
 		UE_LOG(LogStereoMix, Warning, TEXT("%s"), *JsonName);
 	}
+}
+
+FName USMGameInstance::CharacterTypeToName(ESMCharacterType CharacterType)
+{
+	FName RowName;
+	switch (CharacterType)
+	{
+		case ESMCharacterType::ElectricGuitar:
+		{
+			RowName = TEXT("ElectricGuitar");
+			break;
+		}
+		case ESMCharacterType::Piano:
+		{
+			RowName = TEXT("Piano");
+			break;
+		}
+		case ESMCharacterType::Bass:
+		{
+			RowName = TEXT("Bass");
+			break;
+		}
+		default:
+		{
+			break;
+		}
+	}
+
+	return RowName;
 }

@@ -3,6 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Data/SMCharacterType.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "Interfaces/IHttpRequest.h"
 
 #include "SMGameInstance.generated.h"
@@ -12,7 +14,7 @@ class FHttpModule;
 /**
  *
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMGameInstance : public UGameInstance
 {
 	GENERATED_BODY()
@@ -40,10 +42,27 @@ public:
 
 	void RequestDataTableToServer();
 
+	FSMCharacterStatData* GetCharacterStatData(ESMCharacterType CharacterType);
+
+	FSMCharacterSkillData* GetCharacterSkillData(ESMCharacterType CharacterType);
+
+	FSMCharacterNoiseBreakData* GetCharacterNoiseBreakData(ESMCharacterType CharacterType);
+
 protected:
 	void ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 
+	FName CharacterTypeToName(ESMCharacterType CharacterType);
+
 	FHttpModule* Http;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UDataTable> CharacterStat;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UDataTable> CharacterSkill;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UDataTable> CharacterNoiseBreak;
 
 private:
 	bool bDemoGame = false;
