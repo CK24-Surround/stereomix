@@ -4,7 +4,7 @@
 #include "SMWidgetComponent.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Widget/Game/SMUserWidget.h"
+#include "Widget/SMUserWidget.h"
 
 void USMWidgetComponent::SetWidget(UUserWidget* InWidget)
 {

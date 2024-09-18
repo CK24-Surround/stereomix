@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "SMGamePanel.h"
-#include "SMUserWidget.h"
 
 #include "SMUserWidget_GameHUD.generated.h"
 

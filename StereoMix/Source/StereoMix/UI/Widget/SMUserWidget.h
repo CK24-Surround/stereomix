@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystemInterface.h"
-#include "Blueprint/UserWidget.h"
 #include "CommonUserWidget.h"
 
 #include "SMUserWidget.generated.h"

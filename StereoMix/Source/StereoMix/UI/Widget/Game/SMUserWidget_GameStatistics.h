@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonTextBlock.h"
-#include "SMUserWidget.h"
+#include "UI/Widget/SMUserWidget.h"
 
 #include "SMUserWidget_GameStatistics.generated.h"
 

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Components/Image.h"
 #include "Data/SMTeam.h"
-#include "SMUserWidget.h"
+#include "UI/Widget/SMUserWidget.h"
 
 #include "SMUserWidget_Scoreboard.generated.h"
 

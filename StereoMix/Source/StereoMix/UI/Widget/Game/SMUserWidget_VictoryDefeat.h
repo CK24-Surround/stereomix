@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Data/SMTeam.h"
-#include "SMUserWidget.h"
+#include "UI/Widget/SMUserWidget.h"
 
 #include "SMUserWidget_VictoryDefeat.generated.h"
 

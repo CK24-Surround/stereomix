@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "SMUserWidget.h"
 #include "SMUserWidget_GameHUD.h"
+#include "UI/Widget/SMUserWidget.h"
 #include "Widgets/CommonActivatableWidgetContainer.h"
 
 #include "SMUserWidget_HUD.generated.h"

@@ -5,7 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "GameplayEffectTypes.h"
-#include "SMUserWidget.h"
+#include "UI/Widget/SMUserWidget.h"
 
 #include "SMUserWidget_CharacterState.generated.h"
 
