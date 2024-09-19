@@ -13,6 +13,7 @@
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
@@ -24,8 +25,14 @@ USMGA_BassNoiseBreak::USMGA_BassNoiseBreak()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	Damage = 40.0f;
-	MaxDistanceByTile = 6;
+	if (FSMCharacterNoiseBreakData* NoiseBreakData = GetNoiseBreakData(ESMCharacterType::Bass))
+	{
+		Damage = NoiseBreakData->Damage;
+		MaxDistanceByTile = NoiseBreakData->DistanceByTile;
+		CaptureSize = NoiseBreakData->CaptureSize;
+		NoiseBreakGravityScale = NoiseBreakData->GravityScale;
+		ApexHeight = NoiseBreakData->ApexHeight;
+	}
 }
 
 void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -116,7 +123,7 @@ void USMGA_BassNoiseBreak::LeapCharacter(const FVector& InStartLocation, const F
 		return;
 	}
 
-	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, InStartLocation, InTargetLocation, SmashApexHeight, InGravityZ);
+	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, InStartLocation, InTargetLocation, ApexHeight, InGravityZ);
 	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }
 

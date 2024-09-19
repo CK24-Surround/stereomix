@@ -36,11 +36,11 @@ protected:
 
 	void TileCapture(const FVector& TargetLocation);
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float ApexHegith = 300.0f;
+	/** 도약하는 동안 적용할 중력 스케일입니다. */
+	float NoiseBreakGravityScale = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float NoiseBreakGravityScale = 5.0f;
+	/** 도약 정점의 높이입니다. */
+	float ApexHeight = 0.0f;
 
 	FName OriginalCollisionProfileName;
 };

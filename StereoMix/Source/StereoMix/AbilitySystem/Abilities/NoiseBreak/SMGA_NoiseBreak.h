@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
 #include "Tiles/SMTile.h"
+#include "Data/SMCharacterType.h"
 #include "SMGA_NoiseBreak.generated.h"
 
+struct FSMCharacterNoiseBreakData;
 /**
  * 
  */
@@ -17,6 +19,8 @@ class STEREOMIX_API USMGA_NoiseBreak : public USMGameplayAbility
 
 public:
 	USMGA_NoiseBreak();
+
+	FSMCharacterNoiseBreakData* GetNoiseBreakData(ESMCharacterType CharacterType);
 
 	float GetMaxDistance() const { return MaxDistanceByTile * 150.0f; }
 
@@ -33,12 +37,12 @@ protected:
 	/** 해당 위치의 타일을 가져옵니다. */
 	ASMTile* GetTileFromLocation(const FVector& Location);
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Damage = 20.0f;
+	/** 노이즈 브레이크의 데미지량 입니다.*/
+	float Damage = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 CaptureSize = 3;
+	/** 중심 기준 점령되는 타일 사이즈입니다. */
+	int32 CaptureSize = 0;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 MaxDistanceByTile = 5;
+	/** 타일기준 최대 사거리를 나타냅니다. */
+	float MaxDistanceByTile = 0.0f;
 };

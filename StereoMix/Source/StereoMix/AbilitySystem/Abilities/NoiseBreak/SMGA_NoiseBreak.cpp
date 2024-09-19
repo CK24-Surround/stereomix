@@ -10,6 +10,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "GameInstance/SMGameInstance.h"
 #include "Indicator/SMGA_NoiseBreakIndicator.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
@@ -21,6 +22,18 @@ USMGA_NoiseBreak::USMGA_NoiseBreak()
 	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Hold);
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
+}
+
+FSMCharacterNoiseBreakData* USMGA_NoiseBreak::GetNoiseBreakData(ESMCharacterType CharacterType)
+{
+	UWorld* World = Super::GetWorld();
+	USMGameInstance* GameInstance = World ? World->GetGameInstance<USMGameInstance>() : nullptr;
+	if (!GameInstance)
+	{
+		return nullptr;
+	}
+
+	return GameInstance->GetCharacterNoiseBreakData(CharacterType);
 }
 
 bool USMGA_NoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const

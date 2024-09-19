@@ -14,6 +14,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPianoCharacterDataAsset.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
 #include "Tiles/SMTile.h"
@@ -24,8 +25,12 @@ USMGA_PianoNoiseBreak::USMGA_PianoNoiseBreak()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	Damage = 20.0f;
-	MaxDistanceByTile = 10;
+	if (FSMCharacterNoiseBreakData* NoiseBreakData = GetNoiseBreakData(ESMCharacterType::Piano))
+	{
+		Damage = NoiseBreakData->Damage;
+		MaxDistanceByTile = NoiseBreakData->DistanceByTile;
+		CaptureSize = NoiseBreakData->CaptureSize;
+	}
 }
 
 void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

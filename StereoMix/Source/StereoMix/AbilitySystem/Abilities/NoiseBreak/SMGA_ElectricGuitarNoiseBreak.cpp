@@ -11,6 +11,7 @@
 #include "Characters/Player/SMElectricGuitarCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
@@ -21,6 +22,15 @@
 USMGA_ElectricGuitarNoiseBreak::USMGA_ElectricGuitarNoiseBreak()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
+
+	if (FSMCharacterNoiseBreakData* NoiseBreakData = GetNoiseBreakData(ESMCharacterType::ElectricGuitar))
+	{
+		Damage = NoiseBreakData->Damage;
+		MaxDistanceByTile = NoiseBreakData->DistanceByTile;
+		CaptureSize = NoiseBreakData->CaptureSize;
+		NoiseBreakGravityScale = NoiseBreakData->GravityScale;
+		ApexHeight = NoiseBreakData->ApexHeight;
+	}
 }
 
 void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -124,7 +134,7 @@ void USMGA_ElectricGuitarNoiseBreak::LeapCharacter(const FVector& InStartLocatio
 
 	// 시작위치와 동일한 높이로 보정합니다.
 	const FVector TargetLocationWithSourceZ(InTargetLocation.X, InTargetLocation.Y, InStartLocation.Z);
-	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, InStartLocation, TargetLocationWithSourceZ, ApexHegith, InGravityZ);
+	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(SourceCharacter, InStartLocation, TargetLocationWithSourceZ, ApexHeight, InGravityZ);
 	SourceCharacter->LaunchCharacter(LaunchVelocity, true, true);
 }
 

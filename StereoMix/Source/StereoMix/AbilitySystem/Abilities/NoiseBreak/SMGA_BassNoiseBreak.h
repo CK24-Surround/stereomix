@@ -43,21 +43,16 @@ protected:
 	/** 타일을 점령합니다. */
 	void TileCapture();
 
-	UPROPERTY(EditAnywhere, Category = "Design|Montage")
-	TMap<ESMTeam, TObjectPtr<UAnimMontage>> SmashMontage;
-
 	UPROPERTY()
 	TObjectPtr<UAnimMontage> CachedNoiseBreakMontage;
 
-	UPROPERTY(EditAnywhere, Category = "Design|GAS|GE")
-	TSubclassOf<UGameplayEffect> DamageGE;
-
-	UPROPERTY(EditAnywhere, Category = "Design|Jump", DisplayName = "매치기 정점 높이")
-	float SmashApexHeight = 500.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design|Jump", DisplayName = "매치기 시 적용되는 중력 스케일")
+	/** 도약하는 동안 적용할 중력 스케일입니다. */
 	float NoiseBreakGravityScale = 3.0f;
 
+	/** 도약 정점의 높이입니다. */
+	float ApexHeight = 500.0f;
+
+	/** 중심으로부터 전파되듯이 타일이 점령되는데, 이때 소요시간을 의미합니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float TotalTriggerTime = 0.267f;
 

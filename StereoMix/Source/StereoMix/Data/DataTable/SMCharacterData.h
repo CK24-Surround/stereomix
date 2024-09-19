@@ -7,20 +7,19 @@ struct FSMCharacterStatsData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FSMCharacterStatsData()
-		: HP(-1.0f), MoveSpeed(-1.0f), Stamina(-1.0f), SkillGauge(-1.0f) {}
+	FSMCharacterStatsData() {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float HP;
+	float HP = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float MoveSpeed;
+	float MoveSpeed = -1.0f;;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Stamina;
+	float Stamina = -1.0f;;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float SkillGauge;
+	float SkillGauge = -1.0f;;
 };
 
 USTRUCT(BlueprintType)
@@ -64,10 +63,10 @@ struct FSMCharacterSkillData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	float ProjectileSpeed = -1.0f;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	float StartUpTime = -1.0f;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
 	float Range = -1.0f;
 
@@ -83,24 +82,20 @@ struct FSMCharacterNoiseBreakData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FSMCharacterNoiseBreakData()
-		: Damage(-1.0f), CaptureSize(-1.0f), DistanceByTile(-1.0f), ApexHeigth(-1.0f), GravityScale(-1.0f), TotalTriggerTime(-1.0f) {}
+	FSMCharacterNoiseBreakData() {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Damage;
+	float Damage = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float CaptureSize;
+	float DistanceByTile = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float DistanceByTile;
+	int32 CaptureSize = -1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float ApexHeigth;
+	float GravityScale = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float GravityScale;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float TotalTriggerTime;
+	float ApexHeight = -1.0f;
 };
