@@ -173,3 +173,11 @@ Plugins/RefreshAllNodes/Binaries/**/*.pdb
 !Plugins/RefreshAllNodes/Binaries/**/UnrealEditor.modules
 !Plugins/RefreshAllNodes/Binaries/**/UnrealEditor-RefreshAllNodes.dll
 # ~RefreshAllNodes
+
+# RefreshAllNodes
+Plugins/AsyncLoadingScreen/Binaries/*
+!Plugins/AsyncLoadingScreen/Binaries/Win64
+Plugins/AsyncLoadingScreen/Binaries/**/*.pdb
+!Plugins/AsyncLoadingScreen/Binaries/**/UnrealEditor.modules
+!Plugins/AsyncLoadingScreen/Binaries/**/UnrealEditor-AsyncLoadingScreen.dll
+# ~RefreshAllNodes

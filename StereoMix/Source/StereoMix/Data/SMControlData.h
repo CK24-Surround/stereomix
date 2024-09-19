@@ -22,9 +22,6 @@ public:
 	TObjectPtr<const UInputMappingContext> DefaultMappingContext;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<const UInputMappingContext> UIMappingContext;
-
-	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<const UInputAction> MoveAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")

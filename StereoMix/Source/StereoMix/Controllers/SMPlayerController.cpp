@@ -59,7 +59,6 @@ void ASMPlayerController::InitControl()
 	{
 		Subsystem->ClearAllMappings();
 		Subsystem->AddMappingContext(GetControlData()->DefaultMappingContext, 0);
-		Subsystem->AddMappingContext(GetControlData()->UIMappingContext, 0);
 	}
 }
 
