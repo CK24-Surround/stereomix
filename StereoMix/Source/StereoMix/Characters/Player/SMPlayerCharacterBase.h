@@ -9,6 +9,7 @@
 #include "Characters/SMCharacterBase.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Data/SMActiveAbility.h"
+#include "Data/SMCharacterType.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
@@ -157,6 +158,8 @@ protected:
 
 	void GiveDefaultAbilities();
 
+	void InitStat();
+
 	void GAInputPressed(EActiveAbility InInputID);
 
 	void GAInputReleased(EActiveAbility InInputID);
@@ -271,4 +274,6 @@ protected:
 
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<AActor> LastAttackInstigator;
+
+	ESMCharacterType CharacterType = ESMCharacterType::None;
 };

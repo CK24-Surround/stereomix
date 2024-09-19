@@ -7,8 +7,6 @@
 #include "EngineUtils.h"
 #include "FMODBlueprintStatics.h"
 #include "Net/UnrealNetwork.h"
-#include "StereoMixLog.h"
-#include "GameInstance/SMGameInstance.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Tiles/SMTile.h"
 #include "Tiles/SMTileManagerComponent.h"
@@ -30,11 +28,6 @@ ASMGameState::ASMGameState()
 void ASMGameState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
-
-	if (USMGameInstance* GameInstance = GetGameInstance<USMGameInstance>())
-	{
-		GameInstance->RequestDataTableToServer();
-	}
 
 	if (HasAuthority())
 	{

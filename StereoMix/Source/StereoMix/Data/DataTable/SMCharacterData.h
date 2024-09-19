@@ -3,11 +3,11 @@
 #include "SMCharacterData.generated.h"
 
 USTRUCT(BlueprintType)
-struct FSMCharacterStatData : public FTableRowBase
+struct FSMCharacterStatsData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FSMCharacterStatData()
+	FSMCharacterStatsData()
 		: HP(-1.0f), MoveSpeed(-1.0f), Stamina(-1.0f), SkillGauge(-1.0f) {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")

@@ -22,11 +22,15 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakIndicator, "Ability.NoiseBreakIndicator", "노이즈 브레이크 인디케이터의 어빌리티 태그를 나타냅니다.");
 	}
 
-	namespace AttributeSet::Character::Init
+	namespace AttributeSet
 	{
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CurrentHP, "AttributeSet.Character.Init.CurrentHP", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MaxHP, "AttributeSet.Character.Init.MaxHP", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MoveSpeed, "AttributeSet.Character.Init.MoveSpeed", "캐릭터의 스탯을 초기화할때 SetByCaller를 사용하기 위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MaxHP, "AttributeSet.MaxHP", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(HP, "AttributeSet.HP", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MoveSpeed, "AttributeSet.MoveSpeed", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MaxStamina, "AttributeSet.MaxStamina", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stamina, "AttributeSet.Stamina", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MaxSkillGauge, "AttributeSet.MaxSkillGauge", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(SkillGauge, "AttributeSet.SkillGauge", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
 	}
 
 	namespace Character

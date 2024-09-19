@@ -9,7 +9,7 @@
 ASMElectricGuitarCharacter::ASMElectricGuitarCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
-	// PrimaryActorTick.bCanEverTick = true;
+	CharacterType = ESMCharacterType::ElectricGuitar;
 
 	LockAimTags.AddTag(SMTags::Character::State::SlowBullet);
 

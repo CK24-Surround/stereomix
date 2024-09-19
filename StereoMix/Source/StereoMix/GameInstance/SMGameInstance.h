@@ -42,7 +42,7 @@ public:
 
 	void RequestDataTableToServer();
 
-	FSMCharacterStatData* GetCharacterStatData(ESMCharacterType CharacterType);
+	FSMCharacterStatsData* GetCharacterStatsData(ESMCharacterType CharacterType);
 
 	FSMCharacterSkillData* GetCharacterSkillData(ESMCharacterType CharacterType);
 
@@ -56,7 +56,7 @@ protected:
 	FHttpModule* Http;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TObjectPtr<UDataTable> CharacterStat;
+	TObjectPtr<UDataTable> CharacterStats;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UDataTable> CharacterSkill;

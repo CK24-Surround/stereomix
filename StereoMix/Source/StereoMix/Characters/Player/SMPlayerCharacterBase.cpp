@@ -19,6 +19,7 @@
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "GameInstance/SMGameInstance.h"
 #include "Games/SMGamePlayerState.h"
 #include "HoldInteraction/SMHIC_Character.h"
 #include "HoldInteraction/SMHoldInteractionComponent.h"
@@ -580,33 +581,12 @@ void ASMPlayerCharacterBase::InitASC()
 
 void ASMPlayerCharacterBase::GiveDefaultAbilities()
 {
-	if (!HasAuthority())
+	if (!HasAuthority() || !DataAsset || !ASC.Get())
 	{
 		return;
 	}
 
-	if (!ensureAlways(DataAsset))
-	{
-		return;
-	}
-
-	if (!ensureAlways(ASC.Get()))
-	{
-		return;
-	}
-
-	const FGameplayEffectContextHandle GEContextHandle = ASC->MakeEffectContext();
-	if (GEContextHandle.IsValid())
-	{
-		const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->ForInitGE, 0, GEContextHandle);
-		if (GESpecHandle.IsValid())
-		{
-			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MoveSpeed, DataAsset->MoveSpeed);
-			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::MaxHP, DataAsset->MaxHP);
-			GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Character::Init::CurrentHP, DataAsset->MaxHP);
-			ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
-		}
-	}
+	InitStat();
 
 	for (const auto& DefaultActiveAbility : DataAsset->DefaultActiveAbilities)
 	{
@@ -634,6 +614,29 @@ void ASMPlayerCharacterBase::GiveDefaultAbilities()
 			ASC->GiveAbility(AbilitySpec);
 			ASC->TryActivateAbility(AbilitySpec.Handle);
 		}
+	}
+}
+
+void ASMPlayerCharacterBase::InitStat()
+{
+	UWorld* World = GetWorld();
+	USMGameInstance* GameInstance = World ? World->GetGameInstance<USMGameInstance>() : nullptr;
+	const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->ForInitGE, 0, ASC->MakeEffectContext());
+	if (!GameInstance || !GESpecHandle.IsValid())
+	{
+		return;
+	}
+
+	if (FSMCharacterStatsData* CharacterStat = GameInstance->GetCharacterStatsData(CharacterType))
+	{
+		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::MaxHP, CharacterStat->HP);
+		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::HP, CharacterStat->HP);
+		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::MoveSpeed, CharacterStat->MoveSpeed);
+		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::MaxStamina, CharacterStat->Stamina);
+		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::Stamina, CharacterStat->Stamina);
+		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::MaxSkillGauge, CharacterStat->SkillGauge);
+		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::SkillGauge, CharacterStat->SkillGauge);
+		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 	}
 }
 

@@ -12,6 +12,8 @@
 ASMBassCharacter::ASMBassCharacter(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)
 {
+	CharacterType = ESMCharacterType::Bass;
+
 	SlashColliderRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SlashColliderRootComponent"));
 	SlashColliderRootComponent->SetupAttachment(RootComponent);
 

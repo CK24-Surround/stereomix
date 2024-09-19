@@ -78,13 +78,13 @@ void USMGameInstance::RequestDataTableToServer()
 		Request->SetURL(RequestURL);
 
 		Request->ProcessRequest();
-		UE_LOG(LogStereoMix, Warning, TEXT("HTTP Call URL: %s"), *Request->GetURL());
+		NET_LOG(GetPrimaryPlayerController(), Warning, TEXT("Call HTTP URL: %s"), *Request->GetURL());
 	}
 }
 
-FSMCharacterStatData* USMGameInstance::GetCharacterStatData(ESMCharacterType CharacterType)
+FSMCharacterStatsData* USMGameInstance::GetCharacterStatsData(ESMCharacterType CharacterType)
 {
-	return CharacterStat->FindRow<FSMCharacterStatData>(CharacterTypeToName(CharacterType), TEXT(""));
+	return CharacterStats->FindRow<FSMCharacterStatsData>(CharacterTypeToName(CharacterType), TEXT(""));
 }
 
 FSMCharacterSkillData* USMGameInstance::GetCharacterSkillData(ESMCharacterType CharacterType)
@@ -108,7 +108,7 @@ void USMGameInstance::ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttp
 		TSharedPtr<FJsonObject> JsonData = JsonObject->GetArrayField(Field)[0]->AsObject();
 		Field = TEXT("CharacterName");
 		const FString JsonName = JsonData->GetStringField(Field);
-		UE_LOG(LogStereoMix, Warning, TEXT("%s"), *JsonName);
+		NET_LOG(GetPrimaryPlayerController(), Warning, TEXT("데이터 테이블 리시브"));
 	}
 }
 

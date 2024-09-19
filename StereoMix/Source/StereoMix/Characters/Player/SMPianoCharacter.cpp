@@ -13,6 +13,8 @@ ASMPianoCharacter::ASMPianoCharacter(const FObjectInitializer& ObjectInitializer
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	CharacterType = ESMCharacterType::Piano;
+
 	ImpactArrowIndicatorNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ImpactArrowIndicatorNiagaraComponent"));
 	ImpactArrowIndicatorNiagaraComponent->SetAbsolute(true, true, true);
 	ImpactArrowIndicatorNiagaraComponent->SetAutoActivate(false);
