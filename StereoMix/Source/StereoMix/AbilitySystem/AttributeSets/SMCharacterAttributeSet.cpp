@@ -25,12 +25,10 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 	InitMaxSkillGauge(100.0f);
 	InitSkillGauge(GetMaxSkillGauge());
 
-	FGameplayTagContainer InitInvincibleStateTags;
-	InitInvincibleStateTags.AddTag(SMTags::Character::State::Stun); // TODO: Deprecated
-	InitInvincibleStateTags.AddTag(SMTags::Character::State::Neutralize);
-	// InitInvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreaking);
-	InitInvincibleStateTags.AddTag(SMTags::Character::State::Charge);
-	InvincibleStateTags = InitInvincibleStateTags;
+	InvincibleStateTags.AddTag(SMTags::Character::State::Neutralize);
+	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreak);
+	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreaked);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Charge);
 }
 
 void USMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -82,7 +80,6 @@ void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Att
 			const UAbilitySystemComponent* SourceASC = GetOwningAbilitySystemComponent();
 			if (ensure(SourceASC))
 			{
-				// UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), SMTags::Event::Character::Stun, FGameplayEventData()); // TODO: Deprecated
 				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), SMTags::Event::Character::Neutralize, FGameplayEventData());
 			}
 		}
@@ -102,20 +99,6 @@ bool USMCharacterAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallba
 		{
 			Data.EvaluatedData.Magnitude = 0.0f;
 			return false;
-		}
-	}
-
-	// 스턴인 경우 대미지, 힐을 무효화합니다.
-	if (Data.Target.HasMatchingGameplayTag(SMTags::Character::State::Stun))
-	{
-		if (Data.EvaluatedData.Attribute == GetDamageAttribute())
-		{
-			Data.EvaluatedData.Magnitude = 0.0f;
-		}
-
-		if (Data.EvaluatedData.Attribute == GetHealAttribute())
-		{
-			Data.EvaluatedData.Magnitude = 0.0f;
 		}
 	}
 
