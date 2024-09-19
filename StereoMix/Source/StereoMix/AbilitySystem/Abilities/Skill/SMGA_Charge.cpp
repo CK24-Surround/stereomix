@@ -14,6 +14,7 @@
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMBassCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "Utilities/SMCollision.h"
 
 USMGA_Charge::USMGA_Charge()
@@ -21,6 +22,12 @@ USMGA_Charge::USMGA_Charge()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Charge);
+
+	if (FSMCharacterSkillData* SkillData = GetSkillData(ESMCharacterType::Bass))
+	{
+		Damage = SkillData->Damage;
+		StunTime = SkillData->Duration;
+	}
 }
 
 void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -87,7 +94,7 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if (TargetASC)
 	{
-		ServerRPCSendEvent(TargetActor);
+		ServerRequestEffect(TargetActor);
 	}
 
 	FGameplayCueParameters ChargeGCParams;
@@ -127,13 +134,23 @@ void USMGA_Charge::OnChargeEnded()
 	K2_EndAbilityLocally();
 }
 
-void USMGA_Charge::ServerRPCSendEvent_Implementation(AActor* TargetActor)
+void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
 {
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (TargetASC)
+	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+	if (!TargetASC || !SourceDataAsset)
 	{
-		FGameplayEventData EventData;
-		EventData.EventMagnitude = StunTime;
-		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, SMTags::Event::Character::Stun, EventData);
+		return;
+	}
+
+	FGameplayEventData EventData;
+	EventData.EventMagnitude = StunTime;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, SMTags::Event::Character::Stun, EventData);
+
+	FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
+	if (GESpecHandle.IsValid())
+	{
+		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+		TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 	}
 }

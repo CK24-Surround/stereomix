@@ -22,22 +22,15 @@ protected:
 
 	UFUNCTION()
 	void OnMontageEnded();
-	
+
 	UFUNCTION(Server, Reliable)
 	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation);
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Damage = 5.0f;
-	
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 MaxDistanceByTile = 8;
+	float ProjectileSpeed = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float ProjectileSpeed = 3500.0f;
+	/** 대상에게 적용할 이동속도 디버프 배율입니다. 0.3이면 0.3의 이동속도 즉, 70%의 이동속도가 감소합니다. */
+	float SlowDebuffMultiplier = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float SlowDebuffMultiplier = 0.3f;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float SlowDebuffDuration = 1.5f;
+	/** 디버프의 지속 시간입니다. */
+	float SlowDebuffDuration = 0.0f;
 };

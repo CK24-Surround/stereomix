@@ -54,26 +54,28 @@ struct FSMCharacterSkillData : public FTableRowBase
 {
 	GENERATED_BODY()
 
-	FSMCharacterSkillData()
-		: Damage(-1.0f), DistanceByTile(-1.0f), Speed(-1.0f), Size(-1.0f), Magnitude(-1.0f), Duration(-1.0f) {}
+	FSMCharacterSkillData() {}
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Damage;
+	float Damage = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float DistanceByTile;
+	float DistanceByTile = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Speed;
+	float ProjectileSpeed = -1.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float StartUpTime = -1.0f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float Range = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Size;
+	float Magnitude = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Magnitude;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Duration;
+	float Duration = -1.0f;
 };
 
 USTRUCT(BlueprintType)

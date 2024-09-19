@@ -8,6 +8,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "Games/SMGameState.h"
 #include "Projectiles/Effect/Skill/SMSlowBulletProjectile.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
@@ -16,6 +17,15 @@ USMGA_SlowBullet::USMGA_SlowBullet()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::SlowBullet);
+
+	if (FSMCharacterSkillData* SkillData = GetSkillData(ESMCharacterType::ElectricGuitar))
+	{
+		Damage = SkillData->Damage;
+		MaxDistanceByTile = SkillData->DistanceByTile;
+		ProjectileSpeed = SkillData->ProjectileSpeed;
+		SlowDebuffMultiplier = SkillData->Magnitude;
+		SlowDebuffDuration = SkillData->Duration;
+	}
 }
 
 void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

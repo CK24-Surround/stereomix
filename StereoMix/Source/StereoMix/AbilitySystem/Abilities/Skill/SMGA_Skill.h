@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
+#include "Data/SMCharacterType.h"
 #include "SMGA_Skill.generated.h"
+
+struct FSMCharacterSkillData;
 
 /**
  * 
@@ -16,4 +19,11 @@ class STEREOMIX_API USMGA_Skill : public USMGameplayAbility
 
 public:
 	USMGA_Skill();
+
+	FSMCharacterSkillData* GetSkillData(ESMCharacterType CharacterType);
+
+protected:
+	float Damage = 0.0f;
+
+	float MaxDistanceByTile = 0.0f;
 };

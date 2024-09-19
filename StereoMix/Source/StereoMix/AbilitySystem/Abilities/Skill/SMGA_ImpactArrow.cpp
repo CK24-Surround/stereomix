@@ -13,11 +13,11 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Player/SMPianoCharacter.h"
-#include "Characters/Weapon/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"
 
@@ -27,6 +27,15 @@ USMGA_ImpactArrow::USMGA_ImpactArrow()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::ImpactArrow);
+
+	if (FSMCharacterSkillData* SkillData = GetSkillData(ESMCharacterType::Piano))
+	{
+		Damage = SkillData->Damage;
+		MaxDistanceByTile = SkillData->DistanceByTile;
+		StartUpTime = SkillData->StartUpTime;
+		Radius = SkillData->Range;
+		KnockbackMagnitude = SkillData->Magnitude;
+	}
 }
 
 void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -111,7 +120,7 @@ void USMGA_ImpactArrow::Shoot()
 		SkillIndicatorTask->EndTask();
 	}
 
-	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, TravelTime);
+	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, StartUpTime);
 	WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnImpact);
 	WaitTask->ReadyForActivation();
 
@@ -164,7 +173,7 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 			{
 				const FVector Direction = (TargetCharacter->GetActorLocation() - NewTargetLocation).GetSafeNormal2D();
 				const FRotator Rotation = Direction.Rotation() + FRotator(15.0, 0.0, 0.0);
-				const FVector Velocity = Rotation.Vector() * Magnitude;
+				const FVector Velocity = Rotation.Vector() * KnockbackMagnitude;
 				TargetCharacter->ClientRPCCharacterPushBack(Velocity);
 			}
 

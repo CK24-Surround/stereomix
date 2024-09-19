@@ -31,9 +31,10 @@ protected:
 	void OnChargeEnded();
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCSendEvent(AActor* TargetActor);
+	void ServerRequestEffect(AActor* TargetActor);
 
-	float StunTime = 0.5f;
+	/** 스턴 지속시간입니다. */
+	float StunTime = 0.0f;
 
 	FName OriginalCapsuleCollisionProfileName;
 

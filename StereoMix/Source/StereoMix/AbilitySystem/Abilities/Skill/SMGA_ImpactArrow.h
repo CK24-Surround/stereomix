@@ -28,7 +28,7 @@ protected:
 	virtual void InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
 	void Shoot();
-	
+
 	UFUNCTION(Server, Reliable)
 	void ServerRPCApplyCost();
 
@@ -46,22 +46,16 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UEnhancedInputComponent> InputComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 MaxDistanceByTile = 12;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float TravelTime = 0.25f;
+	/** 충격화살이 떨어지기까지 선 딜레이입니다. */
+	float StartUpTime = 0.0f;
 
 	FVector TargetLocation;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Damage = 10.0f;
-	
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Radius = 500.0f;
+	/** 충격화살의 효과 범위입니다. */
+	float Radius = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Magnitude = 1000.0f;
+	/** 넉백의 힘입니다. */
+	float KnockbackMagnitude = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	uint32 bUseDebug:1 = false;
