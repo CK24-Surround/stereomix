@@ -109,10 +109,26 @@ Plugins/FMODStudio/Docs
 Plugins/FMODStudio/Binaries/*
 !Plugins/FMODStudio/Binaries/Win64
 !Plugins/FMODStudio/Binaries/Linux
+
 Plugins/FMODStudio/Binaries/**/*.pdb
+!Plugins/FMODStudio/Binaries/**/fmod.dll
+!Plugins/FMODStudio/Binaries/**/fmod_vc.lib
+!Plugins/FMODStudio/Binaries/**/fmodL.dll
+!Plugins/FMODStudio/Binaries/**/fmodL_vc.lib
+!Plugins/FMODStudio/Binaries/**/fmodstudio.dll
+!Plugins/FMODStudio/Binaries/**/fmodstudio_vc.lib
+!Plugins/FMODStudio/Binaries/**/fmodstudioL.dll
+!Plugins/FMODStudio/Binaries/**/fmodstudioL_vc.lib
+!Plugins/FMODStudio/Binaries/**/resonanceaudio.dll
 !Plugins/FMODStudio/Binaries/**/UnrealEditor.modules
 !Plugins/FMODStudio/Binaries/**/UnrealEditor-FMODStudio.dll
 !Plugins/FMODStudio/Binaries/**/UnrealEditor-FMODStudioEditor.dll
+
+!Plugins/FMODStudio/Binaries/**/libfmod.so
+!Plugins/FMODStudio/Binaries/**/libfmodL.so
+!Plugins/FMODStudio/Binaries/**/libfmodstudio.so
+!Plugins/FMODStudio/Binaries/**/libfmodstudioL.so
+!Plugins/FMODStudio/Binaries/**/libresonanceaudio.so
 
 Plugins/FMODStudioNiagara/Binaries/*
 !Plugins/FMODStudioNiagara/Binaries/Win64
