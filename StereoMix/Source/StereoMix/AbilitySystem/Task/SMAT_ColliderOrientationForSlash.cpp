@@ -54,8 +54,10 @@ void USMAT_ColliderOrientationForSlash::Activate()
 
 	StartYaw = Angle / 2.0f;
 	SlashSpeed = Angle * (1.0f / SlashTime);
-	SourceSlashColliderComponent->SetCapsuleHalfHeight(Range / 2.0f);
+	const float HalfRange = Range / 2.0f;
+	SourceSlashColliderComponent->SetCapsuleHalfHeight(HalfRange);
 	SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SourceSlashColliderComponent->SetRelativeLocation(FVector(HalfRange, 0.0, 0.0));
 	SourceSlashColliderComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::BeginOnOverlaped);
 
 	const double Yaw = SourceAbility->bIsLeftSlashNext ? StartYaw : -StartYaw;
