@@ -7,6 +7,7 @@
 
 #include "SMPlayerController.generated.h"
 
+class UInputMappingContext;
 class USMControlData;
 class ASMPlayerState;
 class USMChatWidget;
@@ -14,6 +15,24 @@ class USMChatWidget;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnChatReceived, const FString&, Name, const FString&, ChatMessage);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTeamChatReceived, const FString&, Name, const FString&, ChatMessage);
+
+USTRUCT(BlueprintType)
+struct FSMPlayerInputMappingContextInfo
+{
+	GENERATED_BODY()
+
+	/** Target IMC */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	TObjectPtr<const UInputMappingContext> Context;
+
+	/** IMC의 우선순위를 정합니다. 값이 높을 수록 우선순위가 높습니다. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	int32 Priority = 0;
+
+	/** true인 경우 IMC를 Enhanced Input User Settings에 등록하거나 등록취소할 수 있습니다. */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Input")
+	uint8 bNotifyUserSettings:1;
+};
 
 /**
  * StereoMix Basic Player Controller
@@ -68,4 +87,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<const USMControlData> ControlData;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Input", meta = (AllowPrivateAccess))
+	TArray<FSMPlayerInputMappingContextInfo> InputMappingContexts;
 };

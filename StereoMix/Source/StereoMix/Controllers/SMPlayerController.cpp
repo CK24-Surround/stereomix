@@ -58,7 +58,12 @@ void ASMPlayerController::InitControl()
 	if (Subsystem)
 	{
 		Subsystem->ClearAllMappings();
-		Subsystem->AddMappingContext(GetControlData()->DefaultMappingContext, 0);
+		for (auto [Context, Priority, bNotifyUserSettings] : InputMappingContexts)
+		{
+			FModifyContextOptions ModifyContextOptions;
+			ModifyContextOptions.bNotifyUserSettings = bNotifyUserSettings;
+			Subsystem->AddMappingContext(Context, Priority, ModifyContextOptions);
+		}
 	}
 }
 

@@ -19,9 +19,6 @@ class STEREOMIX_API USMControlData : public UDataAsset
 
 public:
 	UPROPERTY(EditAnywhere, Category = "Input")
-	TObjectPtr<const UInputMappingContext> DefaultMappingContext;
-
-	UPROPERTY(EditAnywhere, Category = "Input")
 	TObjectPtr<const UInputAction> MoveAction;
 
 	UPROPERTY(EditAnywhere, Category = "Input")
