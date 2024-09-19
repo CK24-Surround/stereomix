@@ -28,20 +28,8 @@ void USMGA_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceDataAsset)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	if (!TriggerEventData)
+	if (!SourceCharacter || !SourceDataAsset || !TriggerEventData)
 	{
 		EndAbilityByCancel();
 		return;
@@ -56,6 +44,8 @@ void USMGA_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, StunTime);
 	WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnStunEnded);
 	WaitTask->ReadyForActivation();
+
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s: %f초 스턴에 빠집니다."), *GetNameSafe(SourceCharacter), StunTime);
 }
 
 void USMGA_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
