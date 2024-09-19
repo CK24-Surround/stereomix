@@ -38,7 +38,8 @@ void ASMEP_PianoCharge1::PlayHitFX(AActor* InTarget)
 	if (InTarget && SourceASC)
 	{
 		FGameplayCueParameters GCParams;
-		GCParams.Location = InTarget->GetActorLocation();
+		GCParams.Normal = GetActorRotation().Vector();
+		GCParams.TargetAttachComponent = InTarget->GetRootComponent();
 		SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryHitCharge1, GCParams);
 	}
 }
@@ -51,6 +52,7 @@ void ASMEP_PianoCharge1::PlayWallHitFX(const FVector& HitLocation)
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.Location = HitLocation;
+		GCParams.Normal = GetActorRotation().Vector();
 		SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryHitCharge1, GCParams);
 	}
 }

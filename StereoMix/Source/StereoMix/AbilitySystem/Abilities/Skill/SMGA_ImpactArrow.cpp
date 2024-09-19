@@ -175,6 +175,12 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 				const FRotator Rotation = Direction.Rotation() + FRotator(15.0, 0.0, 0.0);
 				const FVector Velocity = Rotation.Vector() * KnockbackMagnitude;
 				TargetCharacter->ClientRPCCharacterPushBack(Velocity);
+
+				// 방향에 맞게 이펙트를 재생합니다.
+				FGameplayCueParameters GCParams;
+				GCParams.TargetAttachComponent = TargetActor->GetRootComponent();
+				GCParams.Normal = Direction;
+				SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowHit, GCParams);
 			}
 
 			UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
@@ -188,10 +194,6 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 
 				TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
-
-			FGameplayCueParameters GCParams;
-			GCParams.Location = TargetActor->GetActorLocation();
-			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowHit, GCParams);
 		}
 	}
 
