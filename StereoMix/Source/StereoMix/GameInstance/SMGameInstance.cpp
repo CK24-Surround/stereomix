@@ -84,17 +84,22 @@ void USMGameInstance::RequestDataTableToServer()
 
 FSMCharacterStatsData* USMGameInstance::GetCharacterStatsData(ESMCharacterType CharacterType)
 {
-	return CharacterStats->FindRow<FSMCharacterStatsData>(CharacterTypeToName(CharacterType), TEXT(""));
+	return CharacterStatsDataTable->FindRow<FSMCharacterStatsData>(CharacterTypeToName(CharacterType), TEXT(""));
+}
+
+FSMCharacterAttackData* USMGameInstance::GetCharacterAttackData(ESMCharacterType CharacterType)
+{
+	return CharacterAttackDataTable->FindRow<FSMCharacterAttackData>(CharacterTypeToName(CharacterType), TEXT(""));
 }
 
 FSMCharacterSkillData* USMGameInstance::GetCharacterSkillData(ESMCharacterType CharacterType)
 {
-	return CharacterSkill->FindRow<FSMCharacterSkillData>(CharacterTypeToName(CharacterType), TEXT(""));
+	return CharacterSkillDataTable->FindRow<FSMCharacterSkillData>(CharacterTypeToName(CharacterType), TEXT(""));
 }
 
 FSMCharacterNoiseBreakData* USMGameInstance::GetCharacterNoiseBreakData(ESMCharacterType CharacterType)
 {
-	return CharacterNoiseBreak->FindRow<FSMCharacterNoiseBreakData>(CharacterTypeToName(CharacterType), TEXT(""));
+	return CharacterNoiseBreakDataTable->FindRow<FSMCharacterNoiseBreakData>(CharacterTypeToName(CharacterType), TEXT(""));
 }
 
 void USMGameInstance::ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully)

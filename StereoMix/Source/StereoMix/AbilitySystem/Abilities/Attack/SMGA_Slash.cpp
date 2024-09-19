@@ -13,6 +13,7 @@
 #include "AbilitySystem/Task/SMAT_NextActionProccedCheck.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 
 USMGA_Slash::USMGA_Slash()
 {
@@ -22,7 +23,12 @@ USMGA_Slash::USMGA_Slash()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Charge);
 
-	Damage = 25.0f;
+	if (FSMCharacterAttackData* AttackData = GetAttackData(ESMCharacterType::Bass))
+	{
+		Damage = AttackData->Damage;
+		MaxDistanceByTile = AttackData->DistanceByTile;
+		Angle = AttackData->SpreadAngle;
+	}
 }
 
 void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -122,7 +128,8 @@ void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 		return;
 	}
 
-	USMAT_ColliderOrientationForSlash* ColliderOrientationForSlashTask = USMAT_ColliderOrientationForSlash::ColliderOrientationForSlash(this, Range, Angle, TotalSlashTime, bShowDebug);
+	const float MaxDistance = MaxDistanceByTile * 150.0f;
+	USMAT_ColliderOrientationForSlash* ColliderOrientationForSlashTask = USMAT_ColliderOrientationForSlash::ColliderOrientationForSlash(this, MaxDistance, Angle, TotalSlashTime, bShowDebug);
 	ColliderOrientationForSlashTask->OnSlashHit.BindUObject(this, &ThisClass::OnSlashHit);
 	ColliderOrientationForSlashTask->ReadyForActivation();
 

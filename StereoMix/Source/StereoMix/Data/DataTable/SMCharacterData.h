@@ -24,6 +24,32 @@ struct FSMCharacterStatsData : public FTableRowBase
 };
 
 USTRUCT(BlueprintType)
+struct FSMCharacterAttackData : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	FSMCharacterAttackData() {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float Damage = -1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float DistanceByTile = -1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float ProjectileSpeed = -1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float AttackPerSecond = -1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
+	float SpreadAngle = -1.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data|ElectricGuitar")
+	int32 AccuracyAttackRate = -1;
+};
+
+USTRUCT(BlueprintType)
 struct FSMCharacterSkillData : public FTableRowBase
 {
 	GENERATED_BODY()

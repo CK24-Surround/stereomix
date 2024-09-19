@@ -30,20 +30,13 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCApplyCost();
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 MaxDistanceByTile = 5;
+	float AttackPerSecond = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float ShootRate = 6.0f;
+	float ProjectileSpeed = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float ProjectileSpeed = 3000.0f;
+	float SpreadAngle = 0.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 ShootAngle = 35;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 AccuracyShootRate = 75;
+	int32 AccuracyShootRate = 0;
 
 	FTimerHandle ShootTimerHandle;
 };

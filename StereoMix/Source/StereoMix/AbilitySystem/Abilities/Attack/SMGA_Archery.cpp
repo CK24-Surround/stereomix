@@ -10,6 +10,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "Games/SMGameState.h"
 #include "Projectiles/SMProjectile.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
@@ -21,6 +22,13 @@ USMGA_Archery::USMGA_Archery()
 	ActivationBlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
 
 	Damage = 34.0f;
+
+	if (FSMCharacterAttackData* AttackData = GetAttackData(ESMCharacterType::Piano))
+	{
+		Damage = AttackData->Damage;
+		MaxDistanceByTile = AttackData->DistanceByTile;
+		ProjectileSpeed = AttackData->ProjectileSpeed;
+	}
 }
 
 void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -195,7 +203,7 @@ void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQu
 	ProjectileParams.Normal = LaunchDirection;
 	ProjectileParams.Damage = NewDamage;
 	ProjectileParams.Speed = ProjectileSpeed;
-	ProjectileParams.MaxDistance = MaxDistance;
+	ProjectileParams.MaxDistance = MaxDistanceByTile * 150.0f;
 	Projectile->Launch(ProjectileParams);
 
 	K2_EndAbility();

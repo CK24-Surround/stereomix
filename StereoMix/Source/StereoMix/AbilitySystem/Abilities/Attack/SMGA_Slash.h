@@ -65,13 +65,8 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCSlashHit(AActor* TargetActor);
 
-	/** 베기의 사정거리입니다. */
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Range = 500.0f;
-
 	/** 베기의 전방기준 각도입니다. */
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Angle = 240.0f;
+	float Angle = 0.0f;
 
 	/** 베기를 수행하는 동안 소요될 시간입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")

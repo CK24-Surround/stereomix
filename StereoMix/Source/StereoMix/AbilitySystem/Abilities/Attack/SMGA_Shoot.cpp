@@ -7,6 +7,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "Games/SMGameState.h"
 #include "Projectiles/SMProjectile.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
@@ -16,7 +17,16 @@ USMGA_Shoot::USMGA_Shoot()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::SlowBullet);
-	Damage = 4.0f;
+
+	if (FSMCharacterAttackData* AttackData = GetAttackData(ESMCharacterType::ElectricGuitar))
+	{
+		Damage = AttackData->Damage;
+		MaxDistanceByTile = AttackData->DistanceByTile;
+		AttackPerSecond = AttackData->AttackPerSecond;
+		ProjectileSpeed = AttackData->ProjectileSpeed;
+		SpreadAngle = AttackData->SpreadAngle;
+		AccuracyShootRate = AttackData->AccuracyAttackRate;
+	}
 }
 
 void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -51,7 +61,7 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	if (IsLocallyControlled())
 	{
 		Shoot();
-		GetWorld()->GetTimerManager().SetTimer(ShootTimerHandle, this, &USMGA_Shoot::Shoot, 1.0f / ShootRate, true);
+		GetWorld()->GetTimerManager().SetTimer(ShootTimerHandle, this, &USMGA_Shoot::Shoot, 1.0f / AttackPerSecond, true);
 	}
 }
 
@@ -99,7 +109,7 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 	}
 	else
 	{
-		RandomYaw = (FMath::Rand() % ShootAngle) - (ShootAngle / 2.0f);
+		RandomYaw = (FMath::Rand() % static_cast<int32>(SpreadAngle)) - (SpreadAngle / 2.0f);
 	}
 
 	const FVector LaunchDirection = ((TargetLocation - SourceLocation).Rotation() + FRotator(0.0, RandomYaw, 0.0)).Vector();

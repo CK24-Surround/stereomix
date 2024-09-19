@@ -4,7 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
+#include "Data/SMCharacterType.h"
 #include "SMGA_Attack.generated.h"
+
+struct FSMCharacterAttackData;
 
 /**
  * 
@@ -17,11 +20,14 @@ class STEREOMIX_API USMGA_Attack : public USMGameplayAbility
 public:
 	USMGA_Attack();
 
+	FSMCharacterAttackData* GetAttackData(ESMCharacterType CharacterType);
+
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Damage = 20.0f;
+	float Damage = 0.0f;
+
+	float MaxDistanceByTile = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	uint32 bUseOneHitKill:1 = false;

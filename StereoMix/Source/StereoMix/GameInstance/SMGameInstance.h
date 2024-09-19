@@ -44,6 +44,8 @@ public:
 
 	FSMCharacterStatsData* GetCharacterStatsData(ESMCharacterType CharacterType);
 
+	FSMCharacterAttackData* GetCharacterAttackData(ESMCharacterType CharacterType);
+
 	FSMCharacterSkillData* GetCharacterSkillData(ESMCharacterType CharacterType);
 
 	FSMCharacterNoiseBreakData* GetCharacterNoiseBreakData(ESMCharacterType CharacterType);
@@ -56,13 +58,16 @@ protected:
 	FHttpModule* Http;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TObjectPtr<UDataTable> CharacterStats;
+	TObjectPtr<UDataTable> CharacterStatsDataTable;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TObjectPtr<UDataTable> CharacterSkill;
+	TObjectPtr<UDataTable> CharacterAttackDataTable;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TObjectPtr<UDataTable> CharacterNoiseBreak;
+	TObjectPtr<UDataTable> CharacterSkillDataTable;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UDataTable> CharacterNoiseBreakDataTable;
 
 private:
 	bool bDemoGame = false;

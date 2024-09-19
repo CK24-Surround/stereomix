@@ -37,11 +37,7 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargingLevel);
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float ProjectileSpeed = 5000.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float MaxDistance = 1500.0f;
+	float ProjectileSpeed = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Charge1DamageMultiply = 0.5f;
