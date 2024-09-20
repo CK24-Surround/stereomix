@@ -4,15 +4,19 @@
 
 #include "CoreMinimal.h"
 #include "Projectiles/Effect/SMEffectProjectileBase.h"
-#include "SMSlowBulletProjectile.generated.h"
+#include "SMEP_SlowBullet.generated.h"
 
 UCLASS(Abstract)
-class STEREOMIX_API ASMSlowBulletProjectile : public ASMEffectProjectileBase
+class STEREOMIX_API ASMEP_SlowBullet : public ASMEffectProjectileBase
 {
 	GENERATED_BODY()
 
 protected:
 	virtual void PreLaunch(const FSMProjectileParameters& InParameters) override;
+
+	virtual void AddProjectileFX() override;
+
+	virtual void RemoveProjectileFX() override;
 
 	virtual void HandleHitEffect(AActor* InTarget) override;
 

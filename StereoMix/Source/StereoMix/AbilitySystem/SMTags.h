@@ -146,7 +146,10 @@ namespace SMTags
 
 		namespace ElectricGuitar
 		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBullet);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletProjectile);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletHit);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletDebuff);
 		}
 
 		namespace Bass

@@ -5,12 +5,13 @@
 
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "Games/SMGameState.h"
-#include "Projectiles/Effect/Skill/SMSlowBulletProjectile.h"
+#include "Projectiles/Effect/Skill/SMEP_SlowBullet.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 
 USMGA_SlowBullet::USMGA_SlowBullet()
@@ -33,14 +34,8 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceDataAsset)
+	if (!SourceCharacter || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -75,27 +70,15 @@ void USMGA_SlowBullet::OnMontageEnded()
 void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
-	if (!GameState)
+	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
+	if (!SourceCharacter || !ProjectilePoolManager)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState->GetProjectilePoolManager();
-	if (!ProjectilePoolManager)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	ASMSlowBulletProjectile* Projectile = Cast<ASMSlowBulletProjectile>(ProjectilePoolManager->GetSlowBullet(SourceCharacter->GetTeam()));
+	ASMProjectile* Projectile = ProjectilePoolManager->GetSlowBullet(SourceCharacter->GetTeam());
 	if (!Projectile)
 	{
 		EndAbilityByCancel();
@@ -115,4 +98,12 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 	ProjectileParams.Magnitude = SlowDebuffMultiplier;
 	ProjectileParams.Duration = SlowDebuffDuration;
 	Projectile->Launch(ProjectileParams);
+
+	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
+	{
+		FGameplayCueParameters GCParams;
+		GCParams.Location = SourceLocation + (LaunchDirection * 100.0f);
+		GCParams.Normal = LaunchDirection;
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::SlowBullet, GCParams);
+	}
 }
