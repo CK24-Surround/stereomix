@@ -15,6 +15,7 @@ void ASMEP_PianoCharge2::AddProjectileFX()
 	if (SourceASC)
 	{
 		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = this;
 		GCParams.TargetAttachComponent = GetRootComponent();
 		SourceASC->AddGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryProjectileCharge2, GCParams);
 	}
@@ -26,7 +27,9 @@ void ASMEP_PianoCharge2::RemoveProjectileFX()
 	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
 	if (SourceASC)
 	{
-		SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryProjectileCharge2, FGameplayCueParameters());
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = this;
+		SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryProjectileCharge2, GCParams);
 	}
 }
 
