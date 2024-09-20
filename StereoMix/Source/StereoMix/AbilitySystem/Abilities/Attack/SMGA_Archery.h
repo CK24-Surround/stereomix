@@ -37,6 +37,9 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargingLevel);
 
+	UFUNCTION(Server, Reliable)
+	void ServerApplyCost();
+
 	float ProjectileSpeed = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")

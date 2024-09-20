@@ -44,7 +44,10 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 		return;
 	}
 
-	K2_CommitAbility();
+	if (K2_CheckAbilityCost())
+	{
+		return;
+	}
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
@@ -141,7 +144,7 @@ void USMGA_Archery::Charge1()
 		return;
 	}
 
-	K2_CommitAbilityCost();
+	ServerApplyCost();
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
@@ -157,8 +160,8 @@ void USMGA_Archery::Charge2()
 		return;
 	}
 
-	K2_CommitAbilityCost();
-	K2_CommitAbilityCost();
+	ServerApplyCost();
+	ServerApplyCost();
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
@@ -207,4 +210,9 @@ void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQu
 	Projectile->Launch(ProjectileParams);
 
 	K2_EndAbility();
+}
+
+void USMGA_Archery::ServerApplyCost_Implementation()
+{
+	K2_CommitAbilityCost();
 }
