@@ -23,6 +23,11 @@ public:
 	FSMCharacterSkillData* GetSkillData(ESMCharacterType CharacterType);
 
 protected:
+	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+	UFUNCTION()
+	void OnNeutralized(FGameplayEventData Payload);
+
 	float Damage = 0.0f;
 
 	float MaxDistanceByTile = 0.0f;
