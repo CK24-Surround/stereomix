@@ -145,6 +145,9 @@ namespace SMTags
 
 		namespace ElectricGuitar
 		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Shoot, "GameplayCue.ElectricGuitar.Shoot", "기본공격 발사 게임플레이 큐 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ShootProjectile, "GameplayCue.ElectricGuitar.ShootProjectile", "기본공격 투사체 게임플레이 큐 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ShootHit, "GameplayCue.ElectricGuitar.ShootHit", "기본공격 투사체 적중 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBullet, "GameplayCue.ElectricGuitar.SlowBullet", "마비탄 발사 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletProjectile, "GameplayCue.ElectricGuitar.SlowBulletProjectile", "마비탄 투사체 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletHit, "GameplayCue.ElectricGuitar.SlowBulletHit", "마비탄 적중 게임플레이 큐의 태그입니다.");

@@ -4,6 +4,7 @@
 #include "SMGA_Shoot.h"
 
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -34,14 +35,8 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceDataAsset)
+	if (!SourceCharacter || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -74,21 +69,9 @@ void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const F
 void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
 	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
-	if (!GameState)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState->GetProjectilePoolManager();
-	if (!ProjectilePoolManager)
+	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
+	if (!SourceCharacter || !ProjectilePoolManager)
 	{
 		EndAbilityByCancel();
 		return;
@@ -123,6 +106,14 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 	ProjectileParams.Speed = ProjectileSpeed;
 	ProjectileParams.MaxDistance = MaxDistance;
 	Projectile->Launch(ProjectileParams);
+
+	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
+	{
+		FGameplayCueParameters GCParams;
+		GCParams.Location = SourceLocation + (LaunchDirection * 100.0f);
+		GCParams.Normal = LaunchDirection;
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::Shoot, GCParams);
+	}
 }
 
 void USMGA_Shoot::Shoot()

@@ -146,6 +146,9 @@ namespace SMTags
 
 		namespace ElectricGuitar
 		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Shoot);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ShootProjectile);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ShootHit);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBullet);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletProjectile);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletHit);
