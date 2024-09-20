@@ -110,8 +110,7 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
 	{
 		FGameplayCueParameters GCParams;
-		GCParams.Location = SourceLocation + (LaunchDirection * 100.0f);
-		GCParams.Normal = LaunchDirection;
+		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::Shoot, GCParams);
 	}
 }
