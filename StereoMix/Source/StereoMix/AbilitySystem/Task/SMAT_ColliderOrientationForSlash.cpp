@@ -10,6 +10,7 @@
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "Utilities/SMCollision.h"
 
 USMAT_ColliderOrientationForSlash::USMAT_ColliderOrientationForSlash()
 {
@@ -63,6 +64,13 @@ void USMAT_ColliderOrientationForSlash::Activate()
 	const double Yaw = SourceAbility->bIsLeftSlashNext ? StartYaw : -StartYaw;
 	TargetYaw = -Yaw;
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, Yaw, 0.0));
+
+	// 현재 캡슐의 중심과 끝점을 저장합니다.
+	Locations.AddZeroed(2);
+	const FVector RootLocation = SourceSlashColliderRootComponent->GetComponentLocation();
+	const FVector Direction = SourceSlashColliderRootComponent->GetComponentRotation().Vector();
+	Locations[0] = RootLocation + Direction * Range / 2.0f;
+	Locations[1] = RootLocation + Direction * Range;
 }
 
 void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
@@ -77,9 +85,32 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	const double NewYaw = FMath::FInterpConstantTo(SourceRotation.Yaw, TargetYaw, GetWorld()->GetDeltaSeconds(), SlashSpeed);
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, NewYaw, 0.0));
 
+	// 캡슐의 이전 점에서 현재 점으로 라인트레이스를 수행합니다. 빈공간을 매꾸어 더욱 정확하게 판정할 수 있게됩니다.
+	TArray<FVector> PreviousLocations;
+	PreviousLocations = Locations;
+	const FVector RootLocation = SourceSlashColliderRootComponent->GetComponentLocation();
+	const FVector Direction = SourceSlashColliderRootComponent->GetComponentRotation().Vector();
+	Locations[0] = RootLocation + Direction * Range / 2.0f;
+	Locations[1] = RootLocation + Direction * Range;
+
+	FCollisionQueryParams Params(TEXT("SlashTrace"), false, SourceCharacter.Get());
+	for (int32 i = 0; i < Locations.Num(); ++i)
+	{
+		TArray<FHitResult> HitResults;
+		if (GetWorld()->LineTraceMultiByChannel(HitResults, PreviousLocations[i], Locations[i], SMCollisionTraceChannel::Action, Params))
+		{
+			for (const FHitResult& HitResult : HitResults)
+			{
+				HandleHit(HitResult.GetActor());
+			}
+		}
+	}
+
 	if (bShowDebug)
 	{
 		DrawDebugCapsule(GetWorld(), SourceSlashColliderComponent->GetComponentLocation(), SourceSlashColliderComponent->GetScaledCapsuleHalfHeight(), SourceSlashColliderComponent->GetScaledCapsuleRadius(), SourceSlashColliderComponent->GetComponentRotation().Quaternion(), FColor::Red, false, 0.5f);
+		DrawDebugLine(GetWorld(), PreviousLocations[0], Locations[0], FColor::Cyan, false, 0.5f);
+		DrawDebugLine(GetWorld(), PreviousLocations[1], Locations[1], FColor::Cyan, false, 0.5f);
 	}
 
 	// 타겟 Yaw에 도달했다면 끝냅니다.
@@ -106,6 +137,11 @@ void USMAT_ColliderOrientationForSlash::OnDestroy(bool bInOwnerFinished)
 }
 
 void USMAT_ColliderOrientationForSlash::BeginOnOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	HandleHit(OtherActor);
+}
+
+void USMAT_ColliderOrientationForSlash::HandleHit(AActor* OtherActor)
 {
 	if (OtherActor == SourceCharacter)
 	{
@@ -135,6 +171,11 @@ void USMAT_ColliderOrientationForSlash::BeginOnOverlaped(UPrimitiveComponent* Ov
 
 bool USMAT_ColliderOrientationForSlash::IsValidTarget(AActor* OtherActor)
 {
+	if (!OtherActor)
+	{
+		return false;
+	}
+
 	ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(SourceCharacter.Get());
 	ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(OtherActor);
 	if (SourceTeam == TargetTeam)

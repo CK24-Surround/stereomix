@@ -37,6 +37,8 @@ protected:
 	UFUNCTION()
 	void BeginOnOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
+	void HandleHit(AActor* OtherActor);
+
 	bool IsValidTarget(AActor* OtherActor);
 
 	TWeakObjectPtr<USMGA_Slash> SourceAbility;
@@ -64,4 +66,7 @@ protected:
 	float TargetYaw = 0.0f;
 
 	FGameplayTagContainer InvalidTargetTag;
+
+	// 캡슐 컴포넌트의 중심과 끝점을 저장해둡니다. 움직인 캡슐 사이의 빈공간도 라인 트레이스로 체크하기 위해 사용합니다.
+	TArray<FVector> Locations;
 };
