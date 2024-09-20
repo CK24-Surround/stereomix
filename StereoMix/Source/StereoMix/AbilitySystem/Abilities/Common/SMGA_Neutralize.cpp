@@ -86,12 +86,6 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	{
 		NeutralizeExitSyncPoint();
 	}
-
-	// 무력화 이펙트를 재생합니다.
-	// FGameplayCueParameters GCParams;
-	// GCParams.Instigator = SourceCharacter->GetLastAttackInstigator();
-	// GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
-	// SourceASC->AddGameplayCue(SMTags::GameplayCue::Neutralize, GCParams);
 }
 
 void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -154,9 +148,6 @@ void USMGA_Neutralize::OnNeutralizeTimeEnded()
 	// 잡을 수 없는 상태임을 명시하는 태그를 부착합니다. 시간 초과 이후의 잡기를 방지합니다.
 	SourceASC->AddTag(SMTags::Character::State::Unholdable);
 
-	// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 제거하도록 합니다.
-	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
-
 	// 노이즈 브레이크 당하는 중의 처리입니다.
 	if (SourceASC->HasAnyMatchingGameplayTags(NoiseBreakedTags))
 	{
@@ -207,7 +198,7 @@ void USMGA_Neutralize::OnBuzzerBeaterEnded(FGameplayEventData Payload)
 
 void USMGA_Neutralize::HoldedStateExit()
 {
-	auto SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (!SourceCharacter || !SourceHIC)
 	{
@@ -217,9 +208,6 @@ void USMGA_Neutralize::HoldedStateExit()
 
 	// 잡히기 상태에서 탈출합니다.
 	SourceHIC->OnHoldedReleased(SourceHIC->GetActorHoldingMe());
-
-	// OnHoldedReleased의 HoldedReleased에서 자신을 잡지 못했던 대상으로 다시 인디케이터가 활성화됩니다. 현재는 모든 인디케이터를 제거해야하기 때문에 다시 인디케이터를 제거해줍니다.
-	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
 
 	NeutralizeExitSyncPoint();
 }
@@ -243,6 +231,12 @@ void USMGA_Neutralize::NeutralizeExit()
 		return;
 	}
 
+	// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 제거하도록 합니다.
+	if (K2_HasAuthority())
+	{
+		SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
+	}
+
 	// 노이즈 브레이크를 1회라도 당해 넘어진 상태이거나, 잡혀있는 상태인 경우 무력화 종료 애니메이션이 달라져야하는데 이를 위해 현재 실행중인 애니메이션의 End 섹션으로 점프시키는 코드입니다. 해당 애니메이션을 무한루프하고 있는 상태이므로 가능합니다.
 	UAnimMontage* EndMontage = SourceAnimInstance->GetCurrentActiveMontage();
 	NET_LOG(GetAvatarActor(), Log, TEXT("무력화 상태에 사용되고 있는 몽타주: %s"), *EndMontage->GetName());
@@ -251,17 +245,13 @@ void USMGA_Neutralize::NeutralizeExit()
 	UAbilityTask_PlayMontageAndWait* MontageWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, EndMontageTaskName, EndMontage, 1.0f, SectionName);
 	MontageWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageWaitTask->ReadyForActivation();
-
-	// 무력화 종료 이펙트를 재생합니다.
-	// SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Neutralize);
 }
 
 void USMGA_Neutralize::Release()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	UAbilitySystemComponent* SourceASC = GetASC<UAbilitySystemComponent>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceCharacter || !SourceASC || !SourceHIC)
+	if (!SourceCharacter || !SourceHIC)
 	{
 		return;
 	}
