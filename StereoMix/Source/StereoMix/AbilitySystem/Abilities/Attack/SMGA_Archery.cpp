@@ -44,7 +44,7 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 		return;
 	}
 
-	if (K2_CheckAbilityCost())
+	if (!K2_CheckAbilityCost())
 	{
 		return;
 	}
