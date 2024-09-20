@@ -30,15 +30,12 @@ protected:
 	UFUNCTION()
 	void OnBuzzerBeaterEnded(FGameplayEventData Payload);
 
-	void HoldedStateExit();
+	void PrepareNeutralizeEnd();
 
 	void NeutralizeExitSyncPoint();
 
 	UFUNCTION()
-	void NeutralizeExit();
-
-	/** 잡고 있던 대상이 있다면 놓아줍니다. */
-	void Release();
+	void NeutralizeEnd();
 
 	UPROPERTY()
 	TObjectPtr<UAnimMontage> CachedNeutralizeMontage;

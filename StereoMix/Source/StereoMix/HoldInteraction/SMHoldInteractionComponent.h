@@ -30,7 +30,7 @@ public:
 	FORCEINLINE virtual AActor* GetActorHoldingMe() const { return HoldingMeActor.Get(); }
 
 	/** 자신을 잡고 있는 액터를 할당합니다. 서버에서만 유효합니다. */
-	virtual void SetActorHoldingMe(AActor* NewActorCatchingMe);
+	virtual void SetActorHoldingMe(AActor* NewActorHoldingMe);
 
 	/** 잡을 수 있는지 여부를 반환하도록 구현해야합니다. 서버에서만 유효합니다. */
 	virtual bool CanHolded(AActor* TargetActor) const PURE_VIRTUAL(USMCatchInteractionComponent::IsHoldable, return false;)

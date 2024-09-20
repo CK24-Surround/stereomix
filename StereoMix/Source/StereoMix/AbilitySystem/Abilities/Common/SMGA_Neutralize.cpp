@@ -36,8 +36,9 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	UAbilitySystemComponent* SourceASC = GetASC<UAbilitySystemComponent>();
+	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
-	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
+	if (!SourceCharacter || !SourceASC || !SourceHIC || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -69,7 +70,14 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		// 무언가를 잡고 있다면 잡은 대상을 놓습니다.
 		if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Hold))
 		{
-			Release();
+			AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+			USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
+			if (TargetHIC)
+			{
+				TargetHIC->OnHoldedReleased(SourceCharacter);
+			}
+
+			SourceHIC->SetActorIAmHolding(nullptr);
 		}
 
 		// 무력화 후 어떤 액션을 당해도 커서를 바라보지 않도록 합니다.
@@ -82,7 +90,7 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 활성화하도록 합니다.
 		SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
 	}
-	else if (IsLocallyControlled())
+	else if (IsLocallyControlled()) // 데디 서버를 위한 예외처리입니다.
 	{
 		NeutralizeExitSyncPoint();
 	}
@@ -137,9 +145,8 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 
 void USMGA_Neutralize::OnNeutralizeTimeEnded()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	if (!SourceCharacter || !SourceASC)
+	if (!SourceASC)
 	{
 		EndAbilityByCancel();
 		return;
@@ -148,20 +155,13 @@ void USMGA_Neutralize::OnNeutralizeTimeEnded()
 	// 잡을 수 없는 상태임을 명시하는 태그를 부착합니다. 시간 초과 이후의 잡기를 방지합니다.
 	SourceASC->AddTag(SMTags::Character::State::Unholdable);
 
-	// 노이즈 브레이크 당하는 중의 처리입니다.
-	if (SourceASC->HasAnyMatchingGameplayTags(NoiseBreakedTags))
+	if (SourceASC->HasAnyMatchingGameplayTags(NoiseBreakedTags)) // 노이즈 브레이크 당하는 중이라면 버저비터 대기로 진입합니다.
 	{
 		WaitUntilBuzzerBeaterEnd();
 	}
-	// 잡힌 상태인 경우의 처리입니다.
-	else if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Holded))
-	{
-		HoldedStateExit();
-	}
-	// 기절 상태인 경우의 처리입니다.
 	else
 	{
-		NeutralizeExitSyncPoint();
+		PrepareNeutralizeEnd();
 	}
 }
 
@@ -193,21 +193,25 @@ void USMGA_Neutralize::WaitUntilBuzzerBeaterEnd()
 
 void USMGA_Neutralize::OnBuzzerBeaterEnded(FGameplayEventData Payload)
 {
+	// 노이즈 브레이크가 끝나면 잡기 상태도 풀려있어 PrepareNeutralizeEnd를 호출할 필요가 없습니다.
 	NeutralizeExitSyncPoint();
 }
 
-void USMGA_Neutralize::HoldedStateExit()
+void USMGA_Neutralize::PrepareNeutralizeEnd()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	UAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceCharacter || !SourceHIC)
+	if (!SourceASC || !SourceHIC)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	// 잡히기 상태에서 탈출합니다.
-	SourceHIC->OnHoldedReleased(SourceHIC->GetActorHoldingMe());
+	// 만약 잡혀 있다면 잡히기 상태에서 탈출합니다.
+	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Holded))
+	{
+		SourceHIC->OnHoldedReleased(SourceHIC->GetActorHoldingMe());
+	}
 
 	NeutralizeExitSyncPoint();
 }
@@ -215,11 +219,11 @@ void USMGA_Neutralize::HoldedStateExit()
 void USMGA_Neutralize::NeutralizeExitSyncPoint()
 {
 	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
-	SyncTask->OnSync.AddDynamic(this, &ThisClass::NeutralizeExit);
+	SyncTask->OnSync.AddDynamic(this, &ThisClass::NeutralizeEnd);
 	SyncTask->ReadyForActivation();
 }
 
-void USMGA_Neutralize::NeutralizeExit()
+void USMGA_Neutralize::NeutralizeEnd()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
@@ -245,23 +249,4 @@ void USMGA_Neutralize::NeutralizeExit()
 	UAbilityTask_PlayMontageAndWait* MontageWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, EndMontageTaskName, EndMontage, 1.0f, SectionName);
 	MontageWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageWaitTask->ReadyForActivation();
-}
-
-void USMGA_Neutralize::Release()
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceCharacter || !SourceHIC)
-	{
-		return;
-	}
-
-	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-	if (TargetHIC)
-	{
-		TargetHIC->OnHoldedReleased(SourceCharacter);
-	}
-
-	SourceHIC->SetActorIAmHolding(nullptr);
 }

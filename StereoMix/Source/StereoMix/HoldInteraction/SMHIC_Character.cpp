@@ -292,7 +292,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 	// 잡은 대상이 유효하다면 잡기 태그를 붙이고, 유효하지 않거나 nullptr인 경우 잡기 태그를 제거합니다.
 	if (IAmHoldingActor.Get())
 	{
-		if (GetOwnerRole() == ROLE_Authority)
+		if (SourceASC.Get() && GetOwnerRole() == ROLE_Authority)
 		{
 			SourceASC->AddTag(SMTags::Character::State::Hold);
 		}
@@ -301,7 +301,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 	}
 	else
 	{
-		if (GetOwnerRole() == ROLE_Authority)
+		if (SourceASC.Get() && GetOwnerRole() == ROLE_Authority)
 		{
 			SourceASC->RemoveTag(SMTags::Character::State::Hold);
 		}
