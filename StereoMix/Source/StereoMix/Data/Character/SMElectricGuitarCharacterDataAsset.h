@@ -17,6 +17,6 @@ class STEREOMIX_API USMElectricGuitarCharacterDataAsset : public USMPlayerCharac
 public:
 	USMElectricGuitarCharacterDataAsset()
 	{
-		WeaponSocketName = TEXT("ik_hand_weapon_r");
+		WeaponSocketName = TEXT("WeaponPointR");
 	}
 };

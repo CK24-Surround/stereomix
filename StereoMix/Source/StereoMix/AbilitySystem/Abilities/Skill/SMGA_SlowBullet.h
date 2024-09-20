@@ -21,10 +21,13 @@ protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 	UFUNCTION()
-	void OnMontageEnded();
+	void OnEventReceived(FGameplayEventData Payload);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation);
+	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& InSourceLocation, const FVector_NetQuantize10& InTargetLocation);
+
+	UFUNCTION()
+	void SyncPointEndAbility();
 
 	float ProjectileSpeed = 0.0f;
 
@@ -33,4 +36,8 @@ protected:
 
 	/** 디버프의 지속 시간입니다. */
 	float SlowDebuffDuration = 0.0f;
+
+	FVector SourceLocation;
+
+	FVector TargetLocation;
 };

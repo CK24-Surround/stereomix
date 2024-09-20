@@ -5,6 +5,7 @@
 
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
@@ -45,29 +46,28 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAnimMontage* SlowBulletMontage = SourceDataAsset->SkillMontage[SourceCharacter->GetTeam()];
-	UAbilityTask_PlayMontageAndWait* PlayMontageAndWait = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, SlowBulletMontage);
-	PlayMontageAndWait->OnCancelled.AddDynamic(this, &ThisClass::OnMontageEnded);
-	PlayMontageAndWait->OnInterrupted.AddDynamic(this, &ThisClass::OnMontageEnded);
-	PlayMontageAndWait->OnBlendOut.AddDynamic(this, &ThisClass::OnMontageEnded);
-	PlayMontageAndWait->OnCompleted.AddDynamic(this, &ThisClass::OnMontageEnded);
+	UAbilityTask_PlayMontageAndWait* PlayMontageAndWait = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, SlowBulletMontage, 1.0f, NAME_None, false);
 	PlayMontageAndWait->ReadyForActivation();
 
 	if (IsLocallyControlled())
 	{
-		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
-		ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
+		SourceLocation = SourceCharacter->GetActorLocation();
+		TargetLocation = SourceCharacter->GetLocationFromCursor();
+
+		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::SlowBulletShoot);
+		WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnEventReceived);
+		WaitEventTask->ReadyForActivation();
 	}
 }
 
-void USMGA_SlowBullet::OnMontageEnded()
+void USMGA_SlowBullet::OnEventReceived(FGameplayEventData Payload)
 {
-	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
-	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
-	SyncTask->ReadyForActivation();
+	ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
+
+	SyncPointEndAbility();
 }
 
-void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
+void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& InSourceLocation, const FVector_NetQuantize10& InTargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
@@ -85,12 +85,12 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 		return;
 	}
 
-	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
+	const FVector LaunchDirection = (InTargetLocation - InSourceLocation).GetSafeNormal();
 	const float MaxDistance = MaxDistanceByTile * 150.0f;
 
 	FSMProjectileParameters ProjectileParams;
 	ProjectileParams.Owner = SourceCharacter;
-	ProjectileParams.StartLocation = SourceLocation;
+	ProjectileParams.StartLocation = InSourceLocation;
 	ProjectileParams.Normal = LaunchDirection;
 	ProjectileParams.Damage = Damage;
 	ProjectileParams.Speed = ProjectileSpeed;
@@ -102,8 +102,17 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
 	{
 		FGameplayCueParameters GCParams;
-		GCParams.Location = SourceLocation + (LaunchDirection * 100.0f);
+		GCParams.Location = InSourceLocation + (LaunchDirection * 100.0f);
 		GCParams.Normal = LaunchDirection;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::SlowBullet, GCParams);
 	}
+
+	SyncPointEndAbility();
+}
+
+void USMGA_SlowBullet::SyncPointEndAbility()
+{
+	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
+	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
+	SyncTask->ReadyForActivation();
 }

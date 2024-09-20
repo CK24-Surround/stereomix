@@ -90,6 +90,7 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ChargeEndEntry);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(PianoNoiseBreakShoot);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakEnd);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletShoot);
 
 			namespace Attack
 			{
