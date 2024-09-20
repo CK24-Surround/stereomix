@@ -83,8 +83,10 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	}
 
 	// 타겟 Yaw에 도달했다면 끝냅니다.
-	if (FMath::IsNearlyEqual(SourceRotation.Yaw, NewYaw))
+	const bool bHasReachedTargetYaw = TargetYaw >= 0 ? TargetYaw <= NewYaw : TargetYaw >= NewYaw;
+	if (bHasReachedTargetYaw)
 	{
+		NET_LOG(SourceCharacter.Get(), Warning, TEXT("종료"));
 		EndTask();
 	}
 }
