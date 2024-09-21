@@ -13,11 +13,11 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Player/SMPianoCharacter.h"
-#include "Components/CapsuleComponent.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"
 
@@ -27,7 +27,7 @@ USMGA_ImpactArrow::USMGA_ImpactArrow()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::ImpactArrow);
 
-	if (FSMCharacterSkillData* SkillData = GetSkillData(ESMCharacterType::Piano))
+	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Piano))
 	{
 		Damage = SkillData->Damage;
 		MaxDistanceByTile = SkillData->DistanceByTile;

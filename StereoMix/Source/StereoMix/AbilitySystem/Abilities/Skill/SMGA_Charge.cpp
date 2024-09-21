@@ -16,6 +16,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMBassCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Utilities/SMCollision.h"
 
 USMGA_Charge::USMGA_Charge()
@@ -24,7 +25,7 @@ USMGA_Charge::USMGA_Charge()
 
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Charge);
 
-	if (FSMCharacterSkillData* SkillData = GetSkillData(ESMCharacterType::Bass))
+	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Bass))
 	{
 		Damage = SkillData->Damage;
 		StunTime = SkillData->Duration;

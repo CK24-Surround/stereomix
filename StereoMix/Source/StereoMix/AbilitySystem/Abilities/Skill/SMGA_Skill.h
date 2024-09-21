@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
-#include "Data/SMCharacterType.h"
 #include "SMGA_Skill.generated.h"
 
 struct FSMCharacterSkillData;
@@ -19,8 +18,6 @@ class STEREOMIX_API USMGA_Skill : public USMGameplayAbility
 
 public:
 	USMGA_Skill();
-
-	FSMCharacterSkillData* GetSkillData(ESMCharacterType CharacterType);
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

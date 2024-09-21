@@ -11,6 +11,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Games/SMGameState.h"
 #include "Projectiles/Effect/Skill/SMEP_SlowBullet.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
@@ -20,7 +21,7 @@ USMGA_SlowBullet::USMGA_SlowBullet()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::SlowBullet);
 
-	if (FSMCharacterSkillData* SkillData = GetSkillData(ESMCharacterType::ElectricGuitar))
+	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::ElectricGuitar))
 	{
 		Damage = SkillData->Damage;
 		MaxDistanceByTile = SkillData->DistanceByTile;
