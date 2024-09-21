@@ -5,7 +5,7 @@
 
 #include "Engine/OverlapResult.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -76,7 +76,7 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 bool USMGA_NoiseBreak::IsValidTarget() const
 {
 	FVector TargetLocation;
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	if (!SourceCharacter)
 	{
 		return false;
@@ -91,55 +91,23 @@ bool USMGA_NoiseBreak::IsValidTarget() const
 	return true;
 }
 
-void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation)
+void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation, const FGameplayTag& GCTag)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !SourceDataAsset)
+	ASMTile* Tile = GetTileFromLocation(TargetLocation);
+	if (!SourceCharacter || !SourceASC || !SourceDataAsset || !Tile)
 	{
 		return;
 	}
 
-	FHitResult HitResult;
-	const FVector End = TargetLocation + (FVector::DownVector * 1000.0f);
-	if (!GetWorld()->LineTraceSingleByChannel(HitResult, TargetLocation, End, SMCollisionTraceChannel::TileAction))
-	{
-		return;
-	}
-
-	ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
-	if (!Tile)
-	{
-		return;
-	}
-
-	TArray<FOverlapResult> OverlapResults;
 	const FVector TileLocation = Tile->GetTileLocation();
-	FCollisionObjectQueryParams CollisionParams;
-	CollisionParams.AddObjectTypesToQuery(ECC_Pawn);
-	const float Size = (CaptureSize * 150.0f) - 75.0f;
-	const FVector BoxHalfExtend = FVector(Size, Size, 100.0f);
-	const FCollisionShape BoxCollider = FCollisionShape::MakeBox(BoxHalfExtend);
-	const FCollisionQueryParams Params(TEXT("NoiseBreak"), false, SourceCharacter);
-	if (!GetWorld()->OverlapMultiByObjectType(OverlapResults, TileLocation, FQuat::Identity, CollisionParams, BoxCollider))
+	TArray<AActor*> SplashHitActors = GetSplashHitActors(TileLocation);
+	for (AActor* SplashHitActor : SplashHitActors)
 	{
-		return;
-	}
-
-	DrawDebugBox(GetWorld(), TileLocation, BoxHalfExtend, FColor::Red, false, 3.0f);
-
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	for (const auto& OverlapResult : OverlapResults)
-	{
-		AActor* TargetActor = OverlapResult.GetActor();
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SplashHitActor);
 		if (!TargetASC)
-		{
-			continue;
-		}
-
-		const ESMTeam TargetTEam = USMTeamBlueprintLibrary::GetTeam(TargetActor);
-		if (SourceTeam == TargetTEam)
 		{
 			continue;
 		}
@@ -150,6 +118,11 @@ void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation)
 			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
 			TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
+
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.TargetAttachComponent = SplashHitActor->GetRootComponent();
+		SourceASC->ExecuteGC(SourceCharacter, GCTag, GCParams);
 	}
 }
 
@@ -170,4 +143,51 @@ ASMTile* USMGA_NoiseBreak::GetTileFromLocation(const FVector& Location)
 	}
 
 	return Cast<ASMTile>(HitResult.GetActor());
+}
+
+TArray<AActor*> USMGA_NoiseBreak::GetSplashHitActors(const FVector& TargetLocation)
+{
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionObjectQueryParams CollisionParams;
+	CollisionParams.AddObjectTypesToQuery(ECC_Pawn);
+	const float Size = (CaptureSize * 150.0f) - 75.0f;
+	const FVector BoxHalfExtend = FVector(Size, Size, 100.0f);
+	const FCollisionShape BoxCollider = FCollisionShape::MakeBox(BoxHalfExtend);
+	const FCollisionQueryParams Params(TEXT("NoiseBreakSplash"), false, GetCharacter());
+	if (!GetWorld()->OverlapMultiByObjectType(OverlapResults, TargetLocation, FQuat::Identity, CollisionParams, BoxCollider, Params))
+	{
+		return TArray<AActor*>();
+	}
+
+	DrawDebugBox(GetWorld(), TargetLocation, BoxHalfExtend, FColor::Red, false, 3.0f);
+
+	TArray<AActor*> TargetActors;
+	for (const FOverlapResult& OverlapResult : OverlapResults)
+	{
+		AActor* OverlapActor = OverlapResult.GetActor();
+		if (CanApplySplashDamage(OverlapActor))
+		{
+			TargetActors.Add(OverlapActor);
+		}
+	}
+
+	return TargetActors;
+}
+
+bool USMGA_NoiseBreak::CanApplySplashDamage(AActor* TargetActor)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	if (!SourceCharacter)
+	{
+		return false;
+	}
+
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(TargetActor);
+	if (SourceTeam == TargetTeam)
+	{
+		return false;
+	}
+
+	return true;
 }

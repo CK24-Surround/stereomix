@@ -164,7 +164,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 		SourceHIC->SetActorIAmHolding(nullptr);
 
 		TileCapture();
-		ApplySplash(SourceCharacter->GetActorLocation());
+		ApplySplash(SourceCharacter->GetActorLocation(), FGameplayTag());
 	}
 
 	if (IsLocallyControlled())
@@ -176,7 +176,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 		{
 			GCParams.Location = Tile->GetTileLocation();
 		}
-		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreak, GCParams);
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakBurst, GCParams);
 	}
 
 	// SourceASC->RemoveGameplayCue(SMTags::GameplayCue::SpecialAction::Smash);

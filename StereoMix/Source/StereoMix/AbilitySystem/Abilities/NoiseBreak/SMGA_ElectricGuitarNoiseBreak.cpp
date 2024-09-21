@@ -158,7 +158,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnBurst(const FVector& TargetLocation)
 	}
 
 	TileCapture(TargetLocation);
-	ApplySplash(TargetLocation);
+	ApplySplash(TargetLocation, FGameplayTag());
 
 	SourceHIC->SetActorIAmHolding(nullptr);
 }
