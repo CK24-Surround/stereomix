@@ -3,8 +3,16 @@
 
 #include "SMGameplayCueNotifyBase.h"
 
-#include "Interfaces/SMTeamInterface.h"
-#include "Kismet/GameplayStatics.h"
+
+USMGameplayCueNotifyBase::USMGameplayCueNotifyBase()
+{
+	for (int32 i = 1; i < static_cast<int32>(ESMTeam::Max); ++i)
+	{
+		ESMTeam Key = static_cast<ESMTeam>(i);
+		VFX.Add(Key, nullptr);
+		SFX.Add(Key, nullptr);
+	}
+}
 
 void USMGameplayCueNotifyBase::GetLocationAndRotation(const FGameplayCueParameters& Parameters, FVector& OutLocation, FRotator& OutRotation) const
 {
