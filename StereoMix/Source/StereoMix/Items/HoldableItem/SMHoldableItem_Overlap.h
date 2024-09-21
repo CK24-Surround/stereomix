@@ -6,6 +6,8 @@
 #include "SMHoldableItemBase.h"
 #include "SMHoldableItem_Overlap.generated.h"
 
+
+
 UCLASS(Abstract)
 class STEREOMIX_API ASMHoldableItem_Overlap : public ASMHoldableItemBase
 {
@@ -13,4 +15,8 @@ class STEREOMIX_API ASMHoldableItem_Overlap : public ASMHoldableItemBase
 
 public:
 	ASMHoldableItem_Overlap(const FObjectInitializer& ObjectInitializer);
+
+	virtual void ActivateItem(AActor* InActivator) override;
+
+	void OnHoldedStateEntry();
 };

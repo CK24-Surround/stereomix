@@ -22,4 +22,7 @@ public:
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "HoldInteraction")
 	TObjectPtr<USMHoldInteractionComponent> HIC;
+
+	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 };

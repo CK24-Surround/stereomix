@@ -6,7 +6,6 @@
 #include "HoldInteraction/SMHoldInteractionComponent.h"
 #include "SMHIC_ItemBase.generated.h"
 
-
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMHIC_ItemBase : public USMHoldInteractionComponent
 {
@@ -18,6 +17,5 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

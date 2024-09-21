@@ -15,8 +15,10 @@ class STEREOMIX_API USMHIC_OverlapItem : public USMHIC_ItemBase
 public:
 	USMHIC_OverlapItem();
 
+	virtual bool CanHolded(AActor* TargetActor) const override;
+	
+	virtual void OnHolded(AActor* TargetActor) override;
+
 protected:
 	virtual void BeginPlay() override;
-
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };
