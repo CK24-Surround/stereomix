@@ -13,14 +13,3 @@ USMGameplayCueNotifyBase::USMGameplayCueNotifyBase()
 		SFX.Add(Key, nullptr);
 	}
 }
-
-void USMGameplayCueNotifyBase::GetLocationAndRotation(const FGameplayCueParameters& Parameters, FVector& OutLocation, FRotator& OutRotation) const
-{
-	OutLocation = Parameters.Location;
-
-	OutRotation = FRotator::ZeroRotator;
-	if (!Parameters.Normal.IsNearlyZero())
-	{
-		OutRotation = Parameters.Normal.Rotation();
-	}
-}

@@ -22,10 +22,6 @@ public:
 	ASMGameplayCueNotifyActorBase();
 
 protected:
-	/** 큐 파라미터에서 위치와 회전값을 가져옵니다.*/
-	UFUNCTION(BlueprintCallable, Category = "Design|Utilities")
-	void GetLocationAndRotation(const FGameplayCueParameters& Parameters, FVector& OutLocation, FRotator& OutRotation) const;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> VFX;
 

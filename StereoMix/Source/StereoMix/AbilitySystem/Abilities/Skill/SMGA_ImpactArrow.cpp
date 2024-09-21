@@ -21,7 +21,6 @@
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"
 
-class ASMPlayerController;
 
 USMGA_ImpactArrow::USMGA_ImpactArrow()
 {
@@ -42,8 +41,8 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	ASMPianoCharacter* SourceCharacter = GetCharacter<ASMPianoCharacter>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	ASMGamePlayerController* SourcePC = SourceCharacter ? SourceCharacter->GetController<ASMGamePlayerController>() : nullptr;
 	const USMControlData* ControlData = SourcePC ? SourcePC->GetControlData() : nullptr;
@@ -74,7 +73,7 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	ASMGamePlayerController* SourcePC = SourceCharacter ? SourceCharacter->GetController<ASMGamePlayerController>() : nullptr;
 	if (SourcePC && InputComponent)
 	{
@@ -103,8 +102,7 @@ void USMGA_ImpactArrow::Shoot()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
-	if (!SourceCharacter || !SourceASC || !SourceCapsule)
+	if (!SourceCharacter || !SourceASC)
 	{
 		return;
 	}
@@ -133,7 +131,14 @@ void USMGA_ImpactArrow::Shoot()
 	WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnImpact);
 	WaitTask->ReadyForActivation();
 
-	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrow, FGameplayCueParameters());
+	const FVector Direciton = FRotator(60.0, 0.0, 0.0).Vector();
+	const FVector OffsetLocation = Direciton * 300.0;
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = SourceCharacter;
+	GCParams.Location = OffsetLocation;
+	GCParams.Normal = Direciton;
+	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrow, GCParams);
 
 	SyncPointImpactEnd();
 }

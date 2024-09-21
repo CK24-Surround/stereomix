@@ -34,7 +34,7 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !SourceDataAsset)
 	{
@@ -69,8 +69,9 @@ void USMGA_SlowBullet::OnEventReceived(FGameplayEventData Payload)
 
 void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& InSourceLocation, const FVector_NetQuantize10& InTargetLocation)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	UWorld* World = GetWorld();
+	ASMGameState* GameState = World ? GetWorld()->GetGameState<ASMGameState>() : nullptr;
 	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
 	if (!SourceCharacter || !ProjectilePoolManager)
 	{
@@ -102,6 +103,7 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
 	{
 		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = InSourceLocation + (LaunchDirection * 100.0f);
 		GCParams.Normal = LaunchDirection;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::SlowBullet, GCParams);
