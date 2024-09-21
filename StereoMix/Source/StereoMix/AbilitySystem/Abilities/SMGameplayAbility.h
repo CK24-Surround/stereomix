@@ -40,6 +40,11 @@ public:
 	template<typename T>
 	T* GetAvatarActor() const { return Cast<T>(GetAvatarActor()); }
 
+	ASMPlayerCharacterBase* GetCharacter() const;
+
+	template<typename T>
+	T* GetCharacter() const { return Cast<T>(GetCharacter()); }
+
 	USMHoldInteractionComponent* GetHIC() const;
 
 	template<typename T>

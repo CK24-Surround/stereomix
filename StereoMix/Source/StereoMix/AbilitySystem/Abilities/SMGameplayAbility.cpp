@@ -70,6 +70,16 @@ AActor* USMGameplayAbility::GetAvatarActor() const
 	return CurrentActorInfo->AvatarActor.Get();
 }
 
+ASMPlayerCharacterBase* USMGameplayAbility::GetCharacter() const
+{
+	if (!ensureAlways(CurrentActorInfo))
+	{
+		return nullptr;
+	}
+
+	return Cast<ASMPlayerCharacterBase>(CurrentActorInfo->AvatarActor.Get());
+}
+
 USMHoldInteractionComponent* USMGameplayAbility::GetHIC() const
 {
 	if (!ensureAlways(CurrentActorInfo))
