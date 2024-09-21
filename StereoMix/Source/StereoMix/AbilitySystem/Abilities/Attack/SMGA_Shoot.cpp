@@ -34,7 +34,7 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !SourceDataAsset)
 	{
@@ -42,10 +42,9 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 		return;
 	}
 
+	const FName MontageTaskName = TEXT("MontageTask");
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	UAnimMontage* ShootMontage = SourceDataAsset->AttackMontage[SourceTeam];
-
-	const FName MontageTaskName = TEXT("MontageTask");
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, ShootMontage, 1.0f, NAME_None, false);
 	MontageTask->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->OnBlendOut.AddDynamic(this, &ThisClass::K2_EndAbility);
@@ -55,30 +54,32 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 	if (IsLocallyControlled())
 	{
-		Shoot();
-		GetWorld()->GetTimerManager().SetTimer(ShootTimerHandle, this, &USMGA_Shoot::Shoot, 1.0f / AttackPerSecond, true);
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().SetTimer(ShootTimerHandle, this, &USMGA_Shoot::Shoot, 1.0f / AttackPerSecond, true);
+			Shoot();
+		}
 	}
 }
 
 void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	GetWorld()->GetTimerManager().ClearTimer(ShootTimerHandle);
+	if (UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(ShootTimerHandle);
+	}
+
 	K2_EndAbility();
 }
 
 void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	UWorld* World = GetWorld();
+	ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
 	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
-	if (!SourceCharacter || !ProjectilePoolManager)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	ASMProjectile* Projectile = ProjectilePoolManager->GetProjectileForElectricGuitar(SourceCharacter->GetTeam());
-	if (!Projectile)
+	ASMProjectile* Projectile = ProjectilePoolManager ? ProjectilePoolManager->GetProjectileForElectricGuitar(SourceCharacter->GetTeam()) : nullptr;
+	if (!SourceCharacter || !ProjectilePoolManager || !Projectile)
 	{
 		EndAbilityByCancel();
 		return;
@@ -107,7 +108,7 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 	ProjectileParams.MaxDistance = MaxDistance;
 	Projectile->Launch(ProjectileParams);
 
-	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
+	if (USMAbilitySystemComponent* SourceASC = GetASC())
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
@@ -117,17 +118,11 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 
 void USMGA_Shoot::Shoot()
 {
-	if (!K2_CheckAbilityCost())
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	if (!SourceCharacter || !K2_CheckAbilityCost())
 	{
 		return;
 	}
-
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		return;
-	}
-
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
