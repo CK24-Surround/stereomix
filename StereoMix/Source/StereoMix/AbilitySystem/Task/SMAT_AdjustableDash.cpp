@@ -16,6 +16,7 @@ USMAT_AdjustableDash* USMAT_AdjustableDash::AdjustableDash(UGameplayAbility* Own
 {
 	USMAT_AdjustableDash* NewObj = NewAbilityTask<USMAT_AdjustableDash>(OwningAbility);
 	NewObj->SourceCharacter = Cast<ASMPlayerCharacterBase>(OwningAbility->GetAvatarActorFromActorInfo());
+	NewObj->RotationPerSecond = RotationPerSecond;
 
 	return NewObj;
 }

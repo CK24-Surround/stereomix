@@ -33,6 +33,10 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestEffect(AActor* TargetActor);
 
+	/** 돌진 시 초당 회전 각입니다.*/
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float RotationPerSecond = 45.0f;
+
 	/** 스턴 지속시간입니다. */
 	float StunTime = 0.0f;
 

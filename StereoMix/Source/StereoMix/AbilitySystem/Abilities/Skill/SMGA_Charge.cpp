@@ -70,7 +70,6 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		ChargeBlockedTask->ReadyForActivation();
 
 		// 돌진하며 방향 전환을 가능하게 합니다.
-		const float RotationPerSecond = 15.0f;
 		USMAT_AdjustableDash* AdjustableDashTask = USMAT_AdjustableDash::AdjustableDash(this, RotationPerSecond);
 		AdjustableDashTask->ReadyForActivation();
 
