@@ -21,10 +21,10 @@ USMAT_WaitChargeBlocked::USMAT_WaitChargeBlocked()
 	InvalidTags.AddTag(SMTags::Character::State::NoiseBreaked);
 }
 
-USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility, ASMBassCharacter* NewSourceCharacter)
+USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility)
 {
 	USMAT_WaitChargeBlocked* MyObj = NewAbilityTask<USMAT_WaitChargeBlocked>(OwningAbility);
-	MyObj->SourceCharacter = NewSourceCharacter;
+	MyObj->SourceCharacter = Cast<ASMBassCharacter>(OwningAbility->GetAvatarActorFromActorInfo());
 	return MyObj;
 }
 

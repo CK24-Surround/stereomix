@@ -21,7 +21,7 @@ public:
 	USMAT_WaitChargeBlocked();
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static USMAT_WaitChargeBlocked* WaitChargeBlocked(UGameplayAbility* OwningAbility, ASMBassCharacter* NewSourceCharacter);
+	static USMAT_WaitChargeBlocked* WaitChargeBlocked(UGameplayAbility* OwningAbility);
 
 	FOnChargeBlockingDelegate OnChargeBlocked;
 

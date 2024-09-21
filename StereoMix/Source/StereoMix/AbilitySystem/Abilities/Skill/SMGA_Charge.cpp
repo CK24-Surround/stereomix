@@ -9,6 +9,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/Task/SMAT_AdjustableDash.h"
 #include "AbilitySystem/Task/SMAT_WaitChargeBlocked.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/BoxComponent.h"
@@ -64,9 +65,14 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	if (IsLocallyControlled())
 	{
-		USMAT_WaitChargeBlocked* ChargeBlockedTask = USMAT_WaitChargeBlocked::WaitChargeBlocked(this, SourceCharacter);
+		USMAT_WaitChargeBlocked* ChargeBlockedTask = USMAT_WaitChargeBlocked::WaitChargeBlocked(this);
 		ChargeBlockedTask->OnChargeBlocked.BindUObject(this, &ThisClass::OnChargeBlocked);
 		ChargeBlockedTask->ReadyForActivation();
+
+		// 돌진하며 방향 전환을 가능하게 합니다.
+		const float RotationPerSecond = 15.0f;
+		USMAT_AdjustableDash* AdjustableDashTask = USMAT_AdjustableDash::AdjustableDash(this, RotationPerSecond);
+		AdjustableDashTask->ReadyForActivation();
 
 		// 박지 않고 끝나더라도 이펙트를 종료할 수 있도록 이벤트를 받습니다.
 		UAbilityTask_WaitGameplayEvent* ChargeEndEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::ChargeEndEntry);
@@ -75,6 +81,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 		FGameplayCueParameters GCParams;
 		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, GCParams);
+
 		SourceCharacter->FocusToCursor();
 	}
 }
