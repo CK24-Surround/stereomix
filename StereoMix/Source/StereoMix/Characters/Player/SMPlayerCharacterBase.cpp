@@ -19,6 +19,7 @@
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Games/SMGamePlayerState.h"
 #include "HoldInteraction/SMHIC_Character.h"
@@ -618,15 +619,13 @@ void ASMPlayerCharacterBase::GiveDefaultAbilities()
 
 void ASMPlayerCharacterBase::InitStat()
 {
-	UWorld* World = GetWorld();
-	USMGameInstance* GameInstance = World ? World->GetGameInstance<USMGameInstance>() : nullptr;
 	const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->ForInitGE, 0, ASC->MakeEffectContext());
-	if (!GameInstance || !GESpecHandle.IsValid())
+	if (!GESpecHandle.IsValid())
 	{
 		return;
 	}
 
-	if (FSMCharacterStatsData* CharacterStat = GameInstance->GetCharacterStatsData(CharacterType))
+	if (FSMCharacterStatsData* CharacterStat = USMDataTableFunctionLibrary::GetCharacterStatData(CharacterType))
 	{
 		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::MaxHP, CharacterStat->HP);
 		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::HP, CharacterStat->HP);
