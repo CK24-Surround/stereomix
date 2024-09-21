@@ -57,6 +57,8 @@ protected:
 	/** 넉백의 힘입니다. */
 	float KnockbackMagnitude = 0.0f;
 
+	uint32 bHasClicked:1 = false;
+
 	UPROPERTY(EditAnywhere, Category = "Design")
 	uint32 bUseDebug:1 = false;
 };

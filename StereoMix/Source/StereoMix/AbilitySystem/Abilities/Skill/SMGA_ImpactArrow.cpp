@@ -87,6 +87,8 @@ void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 		SkillIndicatorTask->EndTask();
 	}
 
+	bHasClicked = false;
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -106,6 +108,13 @@ void USMGA_ImpactArrow::Shoot()
 	{
 		return;
 	}
+
+	if (bHasClicked)
+	{
+		return;
+	}
+
+	bHasClicked = true;
 
 	ServerRPCApplyCost();
 
