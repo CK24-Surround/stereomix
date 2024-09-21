@@ -14,6 +14,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 
 USMGA_Slash::USMGA_Slash()
 {
@@ -23,7 +24,7 @@ USMGA_Slash::USMGA_Slash()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Charge);
 
-	if (FSMCharacterAttackData* AttackData = GetAttackData(ESMCharacterType::Bass))
+	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Bass))
 	{
 		Damage = AttackData->Damage;
 		MaxDistanceByTile = AttackData->DistanceByTile;

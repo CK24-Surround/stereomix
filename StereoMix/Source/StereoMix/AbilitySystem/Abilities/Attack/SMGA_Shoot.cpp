@@ -9,6 +9,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Games/SMGameState.h"
 #include "Projectiles/SMProjectile.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
@@ -19,7 +20,7 @@ USMGA_Shoot::USMGA_Shoot()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::SlowBullet);
 
-	if (FSMCharacterAttackData* AttackData = GetAttackData(ESMCharacterType::ElectricGuitar))
+	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::ElectricGuitar))
 	{
 		Damage = AttackData->Damage;
 		MaxDistanceByTile = AttackData->DistanceByTile;

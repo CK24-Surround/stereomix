@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
-#include "Data/SMCharacterType.h"
 #include "SMGA_Attack.generated.h"
 
 struct FSMCharacterAttackData;
@@ -19,8 +18,6 @@ class STEREOMIX_API USMGA_Attack : public USMGameplayAbility
 
 public:
 	USMGA_Attack();
-
-	FSMCharacterAttackData* GetAttackData(ESMCharacterType CharacterType);
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

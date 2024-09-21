@@ -11,6 +11,7 @@
 #include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Games/SMGameState.h"
 #include "Projectiles/SMProjectile.h"
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
@@ -21,9 +22,7 @@ USMGA_Archery::USMGA_Archery()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
 
-	Damage = 34.0f;
-
-	if (FSMCharacterAttackData* AttackData = GetAttackData(ESMCharacterType::Piano))
+	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Piano))
 	{
 		Damage = AttackData->Damage;
 		MaxDistanceByTile = AttackData->DistanceByTile;

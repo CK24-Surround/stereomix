@@ -18,18 +18,6 @@ USMGA_Attack::USMGA_Attack()
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
 }
 
-FSMCharacterAttackData* USMGA_Attack::GetAttackData(ESMCharacterType CharacterType)
-{
-	UWorld* World = Super::GetWorld();
-	USMGameInstance* GameInstance = World ? World->GetGameInstance<USMGameInstance>() : nullptr;
-	if (!GameInstance)
-	{
-		return nullptr;
-	}
-
-	return GameInstance->GetCharacterAttackData(CharacterType);
-}
-
 void USMGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
