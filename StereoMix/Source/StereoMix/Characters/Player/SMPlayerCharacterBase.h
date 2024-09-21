@@ -149,6 +149,8 @@ public:
 	UFUNCTION()
 	void OnTeamChanged();
 
+	ESMCharacterType GetCharacterType() { return CharacterType; }
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:
