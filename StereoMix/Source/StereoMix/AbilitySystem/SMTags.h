@@ -143,6 +143,9 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrow);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrowExplosion);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrowHit);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreak);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurst);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurstHit);
 		}
 
 		namespace ElectricGuitar
@@ -162,7 +165,8 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlashHit);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Charge);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ChargeHit);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreak);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurst);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurstHit);
 		}
 
 		namespace SpecialAction

@@ -8,6 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPianoCharacter.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
@@ -38,6 +39,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
+	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
 	const USMPianoCharacterDataAsset* SourceDataAsset = GetDataAsset<USMPianoCharacterDataAsset>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
@@ -76,6 +78,16 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		SourceCharacter->GetTileLocationFromCursor(NoiseBreakTargetLocation, MaxDistance);
 
 		ServerSendLocationData(NoiseBreakTargetLocation);
+
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		const FVector LaunchLocation(SourceLocation.X, SourceLocation.Y, SourceLocation.Z + 325.0);
+		const FVector LaunchPointToTargetDirection = (NoiseBreakTargetLocation - LaunchLocation).GetSafeNormal();
+		const float Offset = 250.0f;
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.Location = LaunchLocation + (LaunchPointToTargetDirection * Offset);
+		GCParams.Normal = LaunchPointToTargetDirection;
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::NoiseBreak, GCParams);
 	}
 
 	// 노이즈 브레이크 시작을 타겟에게 알립니다.
@@ -117,8 +129,9 @@ void USMGA_PianoNoiseBreak::ServerSendLocationData_Implementation(const FVector_
 void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 {
 	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
+	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceCharacter || !SourceHIC)
+	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
 		K2_EndAbility();
 		return;
@@ -136,9 +149,17 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 		}
 
 		TileCapture();
-		ApplySplash(NoiseBreakTargetLocation);
+		ApplySplash(NoiseBreakTargetLocation, SMTags::GameplayCue::Piano::NoiseBreakBurstHit);
 
 		SourceHIC->SetActorIAmHolding(nullptr);
+
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		const FVector TargetToSourceDirection = (SourceLocation - NoiseBreakTargetLocation).GetSafeNormal();
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.Location = NoiseBreakTargetLocation;
+		GCParams.Normal = TargetToSourceDirection;
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::NoiseBreakBurst, GCParams);
 	}
 }
 
