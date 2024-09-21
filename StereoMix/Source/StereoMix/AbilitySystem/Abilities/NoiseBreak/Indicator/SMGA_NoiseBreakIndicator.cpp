@@ -9,6 +9,7 @@
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "GameInstance/SMGameInstance.h"
 #include "HoldInteraction/SMHIC_Character.h"
 
@@ -26,9 +27,7 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	UWorld* World = GetWorld();
-	USMGameInstance* GameInstance = World ? World->GetGameInstance<USMGameInstance>() : nullptr;
-	FSMCharacterNoiseBreakData* NoiseBreakData = GameInstance->GetCharacterNoiseBreakData(SourceCharacter->GetCharacterType());
+	FSMCharacterNoiseBreakData* NoiseBreakData = USMDataTableFunctionLibrary::GetCharacterNoiseBreakData(SourceCharacter->GetCharacterType());
 	if (!SourceCharacter || !SourceHIC || !NoiseBreakData)
 	{
 		EndAbilityByCancel();
