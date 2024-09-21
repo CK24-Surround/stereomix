@@ -20,6 +20,9 @@ public:
 	const static FName HICName;
 
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "Root")
+	TObjectPtr<USceneComponent> SceneComponent;
+	
 	UPROPERTY(VisibleAnywhere, Category = "HoldInteraction")
 	TObjectPtr<USMHoldInteractionComponent> HIC;
 
