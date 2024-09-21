@@ -119,8 +119,11 @@ void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation, const FGamepla
 			TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
 
+		const FVector SplashHitActorLocation = SplashHitActor->GetActorLocation();
+		const FVector NoiseBreakPointToSplashHitActorDirection = (SplashHitActorLocation - TileLocation).GetSafeNormal();
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
+		GCParams.Normal = NoiseBreakPointToSplashHitActorDirection;
 		GCParams.TargetAttachComponent = SplashHitActor->GetRootComponent();
 		SourceASC->ExecuteGC(SourceCharacter, GCTag, GCParams);
 	}
