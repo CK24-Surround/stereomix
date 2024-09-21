@@ -35,22 +35,16 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !SourceDataAsset)
+	if (!SourceCharacter || !SourceDataAsset || !K2_CommitAbility())
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-
-	if (IsLocallyControlled())
-	{
-		SourceCharacter->FocusToCursor();
-	}
-
 	const FName TaskName = TEXT("MontageTask");
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	UAnimMontage* Montage = SourceDataAsset->AttackMontage[SourceTeam];
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TaskName, Montage, 1.0f, NAME_None, false);
 	MontageTask->OnCancelled.AddDynamic(this, &ThisClass::K2_EndAbility);
@@ -84,9 +78,9 @@ void USMGA_Slash::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 		USMAT_NextActionProccedCheck* NextActionProccedTask = USMAT_NextActionProccedCheck::NextActionProccedCheck(this);
 		NextActionProccedTask->OnNextActionProcced.BindUObject(this, &ThisClass::OnNextActionProcced);
 		NextActionProccedTask->ReadyForActivation();
-	}
 
-	K2_CommitAbilityCost();
+		SourceCharacter->FocusToCursor();
+	}
 }
 
 void USMGA_Slash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -115,8 +109,8 @@ void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FG
 
 void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
@@ -140,24 +134,15 @@ void USMGA_Slash::ServerSendSlashDirection_Implementation(bool bNewIsLeftSlashNe
 
 void USMGA_Slash::OnNextActionProcced()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceDataAsset)
+	if (!SourceCharacter || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	if (IsLocallyControlled())
-	{
-		SourceCharacter->FocusToCursor();
-	}
+	SourceCharacter->FocusToCursor();
 
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
 	MontageJumpToSection(SectionName);
@@ -171,10 +156,8 @@ void USMGA_Slash::ServerRPCApplyCost_Implementation()
 
 void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 {
-	NET_LOG(GetAvatarActor(), Log, TEXT("%s 적중"), *GetNameSafe(TargetActor));
-
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
 	if (!SourceCharacter || !SourceASC || !TargetCharacter)
 	{
@@ -186,16 +169,11 @@ void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 	FGameplayCueParameters CueParams;
 	CueParams.Instigator = SourceCharacter;
 	SourceASC->ExecuteGC(TargetCharacter, SMTags::GameplayCue::Bass::SlashHit, CueParams);
-
-	if (!K2_HasAuthority())
-	{
-		// TargetCharacter->PredictHPChange(-Damage);
-	}
 }
 
 void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 {
-	UAbilitySystemComponent* SourceASC = GetASC();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if (!SourceASC || !SourceDataAsset || !TargetASC)
@@ -207,9 +185,8 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	if (GESpecHandle.IsValid())
 	{
 		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+		SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 	}
-
-	SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
 	if (TargetDamageInterface)
