@@ -86,8 +86,7 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, NewYaw, 0.0));
 
 	// 캡슐의 이전 점에서 현재 점으로 라인트레이스를 수행합니다. 빈공간을 매꾸어 더욱 정확하게 판정할 수 있게됩니다.
-	TArray<FVector> PreviousLocations;
-	PreviousLocations = Locations;
+	TArray<FVector> PreviousLocations = Locations;
 	const FVector RootLocation = SourceSlashColliderRootComponent->GetComponentLocation();
 	const FVector Direction = SourceSlashColliderRootComponent->GetComponentRotation().Vector();
 	Locations[0] = RootLocation + Direction * Range / 2.0f;
@@ -117,7 +116,6 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	const bool bHasReachedTargetYaw = TargetYaw >= 0 ? TargetYaw <= NewYaw : TargetYaw >= NewYaw;
 	if (bHasReachedTargetYaw)
 	{
-		NET_LOG(SourceCharacter.Get(), Warning, TEXT("종료"));
 		EndTask();
 	}
 }
