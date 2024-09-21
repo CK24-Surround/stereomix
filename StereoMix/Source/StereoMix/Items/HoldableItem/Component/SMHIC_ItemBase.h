@@ -1,26 +1,23 @@
-﻿// Copyright Studio Surround. All Rights Reserved.
+// Copyright Studio Surround. All Rights Reserved.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "HoldInteraction/SMHoldInteractionComponent.h"
-#include "SMHoldableItemBase.generated.h"
+#include "SMHIC_ItemBase.generated.h"
 
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class STEREOMIX_API USMHoldableItemBase : public USMHoldInteractionComponent
+class STEREOMIX_API USMHIC_ItemBase : public USMHoldInteractionComponent
 {
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this component's properties
-	USMHoldableItemBase();
+	USMHIC_ItemBase();
 
 protected:
-	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:
-	// Called every frame
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 };

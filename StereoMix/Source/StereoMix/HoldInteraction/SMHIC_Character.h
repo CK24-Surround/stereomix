@@ -40,7 +40,7 @@ public:
 
 	virtual void OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
 
-	FORCEINLINE AActor* GetActorIAmHolding() { return IAmHoldingActor.Get(); }
+	FORCEINLINE AActor* GetActorIAmHolding() const { return IAmHoldingActor.Get(); }
 
 	void SetActorIAmHolding(AActor* NewIAmHoldingActor);
 
