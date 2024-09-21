@@ -192,6 +192,7 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 
 				// 방향에 맞게 이펙트를 재생합니다.
 				FGameplayCueParameters GCParams;
+				GCParams.SourceObject = SourceCharacter;
 				GCParams.TargetAttachComponent = TargetActor->GetRootComponent();
 				GCParams.Normal = Direction;
 				SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowHit, GCParams);
