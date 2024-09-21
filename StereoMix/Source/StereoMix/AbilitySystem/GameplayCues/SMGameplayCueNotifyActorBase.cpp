@@ -9,6 +9,9 @@ ASMGameplayCueNotifyActorBase::ASMGameplayCueNotifyActorBase()
 
 	bAutoDestroyOnRemove = true;
 
+	bUniqueInstancePerSourceObject = true;
+	bAllowMultipleOnActiveEvents = false;
+
 	for (int32 i = 1; i < static_cast<int32>(ESMTeam::Max); ++i)
 	{
 		ESMTeam Key = static_cast<ESMTeam>(i);
