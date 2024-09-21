@@ -3,11 +3,13 @@
 
 #include "SMGA_NoiseBreakIndicator.h"
 
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "GameInstance/SMGameInstance.h"
 #include "HoldInteraction/SMHIC_Character.h"
 
 
@@ -22,25 +24,19 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !SourceHIC || !SourceDataAsset)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	// 노이즈 브레이크 데이터를 통해 사거리를 가져옵니다.
-	const USMGA_NoiseBreak* NoiseBreakDefaultObject = SourceDataAsset->DefaultActiveAbilities[EActiveAbility::NoiseBreak]->GetDefaultObject<USMGA_NoiseBreak>();
-	if (!NoiseBreakDefaultObject)
+	UWorld* World = GetWorld();
+	USMGameInstance* GameInstance = World ? World->GetGameInstance<USMGameInstance>() : nullptr;
+	FSMCharacterNoiseBreakData* NoiseBreakData = GameInstance->GetCharacterNoiseBreakData(SourceCharacter->GetCharacterType());
+	if (!SourceCharacter || !SourceHIC || !NoiseBreakData)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
 	UNiagaraComponent* NoiseBreakIndicator = SourceCharacter->GetNoiseBreakIndicator();
-	const float NoiseBreakMaxDistance = NoiseBreakDefaultObject->GetMaxDistance();
+	const float NoiseBreakMaxDistance = NoiseBreakData->DistanceByTile * 150.0f; // 노이즈 브레이크 데이터를 통해 사거리를 가져옵니다.
 	USMAT_SkillIndicator* SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, NoiseBreakIndicator, NoiseBreakMaxDistance, true);
 	SkillIndicatorTask->ReadyForActivation();
 
