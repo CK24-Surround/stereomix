@@ -14,6 +14,7 @@
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
+#include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
 #include "Tiles/SMTile.h"
@@ -24,7 +25,7 @@ USMGA_ElectricGuitarNoiseBreak::USMGA_ElectricGuitarNoiseBreak()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	if (FSMCharacterNoiseBreakData* NoiseBreakData = GetNoiseBreakData(ESMCharacterType::ElectricGuitar))
+	if (FSMCharacterNoiseBreakData* NoiseBreakData = USMDataTableFunctionLibrary::GetCharacterNoiseBreakData(ESMCharacterType::ElectricGuitar))
 	{
 		Damage = NoiseBreakData->Damage;
 		MaxDistanceByTile = NoiseBreakData->DistanceByTile;

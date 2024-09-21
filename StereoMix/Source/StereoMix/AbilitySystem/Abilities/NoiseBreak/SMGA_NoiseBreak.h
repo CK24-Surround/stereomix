@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
 #include "Tiles/SMTile.h"
-#include "Data/SMCharacterType.h"
 #include "SMGA_NoiseBreak.generated.h"
 
 struct FSMCharacterNoiseBreakData;
@@ -19,10 +18,6 @@ class STEREOMIX_API USMGA_NoiseBreak : public USMGameplayAbility
 
 public:
 	USMGA_NoiseBreak();
-
-	FSMCharacterNoiseBreakData* GetNoiseBreakData(ESMCharacterType CharacterType);
-
-	float GetMaxDistance() const { return MaxDistanceByTile * 150.0f; }
 
 protected:
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;
