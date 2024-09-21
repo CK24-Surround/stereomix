@@ -4,7 +4,6 @@
 #include "SMGA_Attack.h"
 
 #include "AbilitySystem/SMTags.h"
-#include "GameInstance/SMGameInstance.h"
 
 USMGA_Attack::USMGA_Attack()
 {
