@@ -6,6 +6,9 @@
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
 #include "SMGA_Neutralize.generated.h"
 
+class UAbilityTask_WaitDelay;
+class UAbilityTask_WaitGameplayEvent;
+
 /**
  * 
  */
@@ -22,6 +25,12 @@ public:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 protected:
+	UFUNCTION()
+	void OnMinimalNeutralizeTimeEnded();
+
+	UFUNCTION()
+	void OnMinimalNeutralizeTimerReset(FGameplayEventData Payload);
+
 	UFUNCTION()
 	void OnNeutralizeTimeEnded();
 
@@ -44,6 +53,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float NeutralizedTime = 6.5f;
+
+	UPROPERTY()
+	TObjectPtr<UAbilityTask_WaitDelay> WaitTask;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float MinimalNeutralizedTime = 3.0f;
+
+	UPROPERTY()
+	TObjectPtr<UAbilityTask_WaitDelay> MinimalWaitTask;
+
+	UPROPERTY()
+	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitNoiseBreakEndWaitTask;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TArray<TSubclassOf<UGameplayEffect>> StunEndedGEs;

@@ -63,9 +63,19 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	if (K2_HasAuthority())
 	{
 		// 무력화 시간동안 기다립니다.
-		UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, NeutralizedTime);
+		WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, NeutralizedTime);
 		WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnNeutralizeTimeEnded);
 		WaitTask->ReadyForActivation();
+
+		// 동시에 최소 무력화 시간 타이머도 추가합니다.
+		MinimalWaitTask = UAbilityTask_WaitDelay::WaitDelay(this, MinimalNeutralizedTime);
+		MinimalWaitTask->OnFinish.AddDynamic(this, &ThisClass::OnMinimalNeutralizeTimeEnded);
+		MinimalWaitTask->ReadyForActivation();
+
+		// 최소 무력화 시간 초기화를 위해 노이즈 브레이크 종료 이벤트를 대기합니다. 
+		WaitNoiseBreakEndWaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterEnd);
+		WaitNoiseBreakEndWaitTask->EventReceived.AddDynamic(this, &ThisClass::OnMinimalNeutralizeTimerReset);
+		WaitNoiseBreakEndWaitTask->ReadyForActivation();
 
 		// 무언가를 잡고 있다면 잡은 대상을 놓습니다.
 		if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Hold))
@@ -141,6 +151,51 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
+void USMGA_Neutralize::OnMinimalNeutralizeTimeEnded()
+{
+	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	if (!SourceASC || !SourceHIC)
+	{
+		EndAbilityByCancel();
+		return;
+	}
+
+	if (SourceASC->HasAnyMatchingGameplayTags(NoiseBreakedTags)) // 노이즈 브레이크 당하는 중이라면 다시 최소 타이머를 돌릴 준비를 합니다.
+	{
+		// 게임 종료 등의 이유로 자신을 잡고 있는 캐릭터가 노이즈 브레이크하다가 사라진 경우 예외처리입니다.
+		if (!SourceHIC->GetActorHoldingMe())
+		{
+			SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+			return;
+		}
+	}
+	else
+	{
+		// 무력화 조기 종료를 위한 상태로 진입합니다.
+		if (WaitTask)
+		{
+			WaitTask->EndTask();
+		}
+
+		OnNeutralizeTimeEnded();
+	}
+}
+
+void USMGA_Neutralize::OnMinimalNeutralizeTimerReset(FGameplayEventData Payload)
+{
+	NET_LOG(GetCharacter(), Log, TEXT("최소 무력화 시간 타이머 초기화"));
+
+	if (MinimalWaitTask)
+	{
+		MinimalWaitTask->EndTask();
+	}
+
+	MinimalWaitTask = UAbilityTask_WaitDelay::WaitDelay(this, MinimalNeutralizedTime);
+	MinimalWaitTask->OnFinish.AddDynamic(this, &ThisClass::OnMinimalNeutralizeTimeEnded);
+	MinimalWaitTask->ReadyForActivation();
 }
 
 void USMGA_Neutralize::OnNeutralizeTimeEnded()
