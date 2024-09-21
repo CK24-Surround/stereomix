@@ -92,8 +92,6 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 			TargetHIC->OnNoiseBreakActionStarted(SourceCharacter);
 		}
 	}
-
-	// SourceASC->AddGameplayCue(SMTags::GameplayCue::SpecialAction::Smash);
 }
 
 void USMGA_BassNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -164,7 +162,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 		SourceHIC->SetActorIAmHolding(nullptr);
 
 		TileCapture();
-		ApplySplash(SourceCharacter->GetActorLocation(), FGameplayTag());
+		ApplySplash(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
 	}
 
 	if (IsLocallyControlled())
