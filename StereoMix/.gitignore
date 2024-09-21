@@ -111,6 +111,9 @@ Packaged/*
 # Misc
 .DS_Store/
 
+# Config
+Config/DefaultEditorPerProjectUserSettings.ini
+
 # FMODStudio
 Plugins/FMODStudio/Docs
 
