@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_ModifyGravityUntilLanded.h"
 #include "Characters/Player/SMElectricGuitarCharacter.h"
@@ -38,11 +39,12 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMElectricGuitarCharacter* SourceCharacter = GetAvatarActor<ASMElectricGuitarCharacter>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
-	if (!SourceCharacter || !SourceHIC || !SourceDataAsset || !SourceCapsule || !SourceMovement)
+	if (!SourceCharacter || !SourceASC || !SourceHIC || !SourceDataAsset || !SourceCapsule || !SourceMovement)
 	{
 		EndAbilityByCancel();
 		return;
@@ -80,6 +82,13 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 
 		ServerSendLocationData(SourceLocation, TargetLocation);
 		LeapCharacter(SourceLocation, TargetLocation, SourceMovement->GetGravityZ());
+
+		ASMTile* Tile = GetTileFromLocation(SourceLocation);
+		const FVector TileLocation = Tile ? Tile->GetTileLocation() : FVector::ZeroVector;
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.Location = TileLocation;
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakBurst, GCParams);
 	}
 
 	// 노이즈 브레이크 시작을 타겟에게 알립니다.
@@ -158,7 +167,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnBurst(const FVector& TargetLocation)
 	}
 
 	TileCapture(TargetLocation);
-	ApplySplash(TargetLocation, FGameplayTag());
+	ApplySplash(TargetLocation, SMTags::GameplayCue::ElectricGuitar::NoiseBreakBurstHit);
 
 	SourceHIC->SetActorIAmHolding(nullptr);
 }

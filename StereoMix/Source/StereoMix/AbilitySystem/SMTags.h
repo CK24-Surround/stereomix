@@ -157,6 +157,8 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletProjectile);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletHit);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletDebuff);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurst);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurstHit);
 		}
 
 		namespace Bass
