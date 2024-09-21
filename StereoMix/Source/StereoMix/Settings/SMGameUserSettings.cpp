@@ -7,7 +7,6 @@
 #include "FMODBlueprintStatics.h"
 #include "FMODBus.h"
 #include "FMODVCA.h"
-#include "Internationalization/Culture.h"
 
 USMGameUserSettings* USMGameUserSettings::GetStereoMixUserSettings()
 {
@@ -40,8 +39,8 @@ void USMGameUserSettings::ApplyNonResolutionSettings()
 	UFMODBlueprintStatics::BusSetVolume(FMODBgmBus, BgmVolume);
 	UFMODBlueprintStatics::BusSetVolume(FMODSfxBus, SfxVolume);
 	UFMODBlueprintStatics::BusSetVolume(FMODUiBus, SfxVolume);
-	UKismetInternationalizationLibrary::SetCurrentCulture(GetCulture(), true);
-	FTextLocalizationManager::Get().RefreshResources();
+
+	UKismetInternationalizationLibrary::SetCurrentCulture(UKismetInternationalizationLibrary::GetCurrentCulture(), true);
 }
 
 void USMGameUserSettings::ResetToCurrentSettings()
@@ -55,22 +54,6 @@ void USMGameUserSettings::SetToDefaults()
 	SetMasterVolume(1.f, false);
 	SetSfxVolume(1.f, false);
 	SetBgmVolume(1.f, false);
-
-	if (GIsEditor)
-	{
-		// 에디터는 에디터의 언어로 설정
-		SetCulture(UKismetInternationalizationLibrary::GetNativeCulture(ELocalizedTextSourceCategory::Editor), false);
-	}
-	else
-	{
-		// 에디터에서 실행한 것이 아니라면 OS의 언어로 설정 
-		SetCulture(FInternationalization::Get().GetDefaultCulture()->GetName(), false);
-	}
-}
-
-FString USMGameUserSettings::GetCulture() const
-{
-	return FInternationalization::Get().GetCurrentCulture()->GetTwoLetterISOLanguageName();
 }
 
 void USMGameUserSettings::SetMasterVolume(const float InMasterVolume, const bool bUpdateImmediately)
@@ -98,14 +81,5 @@ void USMGameUserSettings::SetSfxVolume(const float InSfxVolume, const bool bUpda
 	{
 		UFMODBlueprintStatics::BusSetVolume(FMODSfxBus, SfxVolume);
 		UFMODBlueprintStatics::BusSetVolume(FMODUiBus, SfxVolume);
-	}
-}
-
-void USMGameUserSettings::SetCulture(const FString InCulture, const bool bUpdateImmediately)
-{
-	UKismetInternationalizationLibrary::SetCurrentCulture(InCulture, false);
-	if (bUpdateImmediately)
-	{
-		FTextLocalizationManager::Get().RefreshResources();
 	}
 }

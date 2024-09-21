@@ -13,7 +13,7 @@ class UFMODBus;
 /**
  *
  */
-UCLASS()
+UCLASS(ConfigDoNotCheckDefaults, MinimalAPI)
 class USMGameUserSettings : public UGameUserSettings
 {
 	GENERATED_BODY()
@@ -41,9 +41,6 @@ public:
 	UFUNCTION(BlueprintPure)
 	float GetSfxVolume() const { return SfxVolume; }
 
-	UFUNCTION(BlueprintPure)
-	FString GetCulture() const;
-
 	UFUNCTION(BlueprintCallable)
 	void SetMasterVolume(float InMasterVolume, bool bUpdateImmediately);
 
@@ -52,9 +49,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetSfxVolume(float InSfxVolume, bool bUpdateImmediately);
-
-	UFUNCTION(BlueprintCallable)
-	void SetCulture(FString InCulture, bool bUpdateImmediately);
 
 protected:
 	UPROPERTY(Config)
