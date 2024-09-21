@@ -33,31 +33,31 @@ public:
 	virtual void SetActorHoldingMe(AActor* NewActorHoldingMe);
 
 	/** 잡을 수 있는지 여부를 반환하도록 구현해야합니다. 서버에서만 유효합니다. */
-	virtual bool CanHolded(AActor* TargetActor) const PURE_VIRTUAL(USMCatchInteractionComponent::IsHoldable, return false;)
+	virtual bool CanHolded(AActor* TargetActor) const { return false; }
 
 	/** 타겟에게 잡힐때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
-	virtual void OnHolded(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnHolded)
+	virtual void OnHolded(AActor* TargetActor) {}
 
 	/** 타겟으로부터 잡히기가 풀릴때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
-	virtual void OnHoldedReleased(AActor* TargetActor) PURE_VIRTUAL(USMCatchInteractionComponent::OnHoldedReleased)
+	virtual void OnHoldedReleased(AActor* TargetActor) {}
 
 	/** 일렉기타의 노이즈브레이크 시작 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) PURE_VIRTUAL(USMCatchInteractionComponent::OnNoiseBreakActionStarted)
+	virtual void OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) {}
 
 	/** 피아노의 노이즈브레이크 시작 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator) PURE_VIRTUAL(USMCatchInteractionComponent::OnNoiseBreakActionStarted)
+	virtual void OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator) {}
 
 	/** 베이스의 노이즈브레이크 시작 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionStarted(ASMBassCharacter* Instigator) PURE_VIRTUAL(USMCatchInteractionComponent::OnNoiseBreakActionStarted)
+	virtual void OnNoiseBreakActionStarted(ASMBassCharacter* Instigator) {}
 
 	/** 일렉기타의 노이즈브레이크의 타일 상호작용 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) PURE_VIRTUAL(USMCatchInteractionComponent::OnNoiseBreakActionEnded)
+	virtual void OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
 
 	/** 피아노의 노이즈브레이크의 타일 상호작용 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) PURE_VIRTUAL(USMCatchInteractionComponent::OnNoiseBreakActionEnded)
+	virtual void OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
 
 	/** 베이스의 노이즈브레이크의 타일 상호작용 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) PURE_VIRTUAL(USMCatchInteractionComponent::OnNoiseBreakActionEnded)
+	virtual void OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
 
 	/** 잡힐때 이벤트입니다. */
 	FOnHoldStateChangedDelegate OnHoldedStateEntry;
