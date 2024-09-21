@@ -30,7 +30,7 @@ public:
 
 	ASMPlayerCharacter* GetSMPlayerCharacterFromActorInfo() const;
 
-	UAbilitySystemComponent* GetASC() const;
+	USMAbilitySystemComponent* GetASC() const;
 
 	template<typename T>
 	T* GetASC() const { return Cast<T>(GetASC()); }

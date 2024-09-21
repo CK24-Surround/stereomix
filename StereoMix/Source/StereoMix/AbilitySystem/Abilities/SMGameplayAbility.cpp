@@ -50,14 +50,14 @@ ASMPlayerCharacter* USMGameplayAbility::GetSMPlayerCharacterFromActorInfo() cons
 	return SourceCharacter;
 }
 
-UAbilitySystemComponent* USMGameplayAbility::GetASC() const
+USMAbilitySystemComponent* USMGameplayAbility::GetASC() const
 {
 	if (!ensureAlways(CurrentActorInfo))
 	{
 		return nullptr;
 	}
 
-	return CurrentActorInfo->AbilitySystemComponent.Get();
+	return Cast<USMAbilitySystemComponent>(CurrentActorInfo->AbilitySystemComponent.Get());
 }
 
 AActor* USMGameplayAbility::GetAvatarActor() const
