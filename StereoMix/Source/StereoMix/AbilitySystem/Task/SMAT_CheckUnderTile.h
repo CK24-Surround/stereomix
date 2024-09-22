@@ -22,7 +22,7 @@ public:
 	USMAT_CheckUnderTile();
 
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static USMAT_CheckUnderTile* CheckUnderTile(UGameplayAbility* OwningAbility, ASMPlayerCharacterBase* NewSourceCharacter);
+	static USMAT_CheckUnderTile* CheckUnderTile(UGameplayAbility* OwningAbility, ASMPlayerCharacterBase* NewSourceCharacter, float TickRate);
 
 	FOnUnderTileChangedDelegate OnUnderTileChanged;
 
@@ -34,4 +34,8 @@ protected:
 	TWeakObjectPtr<ASMPlayerCharacterBase> SourceCharacter;
 
 	TWeakObjectPtr<ASMTile> LastCheckedTile;
+
+	float AccumulatedTime = 0.0f;
+
+	float TickInterval = 0.0f;
 };

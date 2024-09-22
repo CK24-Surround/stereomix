@@ -6,6 +6,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 
 
 USMAT_CheckUnderTile::USMAT_CheckUnderTile()
@@ -13,15 +14,24 @@ USMAT_CheckUnderTile::USMAT_CheckUnderTile()
 	bTickingTask = true;
 }
 
-USMAT_CheckUnderTile* USMAT_CheckUnderTile::CheckUnderTile(UGameplayAbility* OwningAbility, ASMPlayerCharacterBase* NewSourceCharacter)
+USMAT_CheckUnderTile* USMAT_CheckUnderTile::CheckUnderTile(UGameplayAbility* OwningAbility, ASMPlayerCharacterBase* NewSourceCharacter, float TickRate)
 {
 	USMAT_CheckUnderTile* NewObj = NewAbilityTask<USMAT_CheckUnderTile>(OwningAbility);
 	NewObj->SourceCharacter = NewSourceCharacter;
+	NewObj->TickInterval = 1.0f / TickRate;
 	return NewObj;
 }
 
 void USMAT_CheckUnderTile::TickTask(float DeltaTime)
 {
+	AccumulatedTime += DeltaTime;
+	if (AccumulatedTime < TickInterval)
+	{
+		return;
+	}
+
+	AccumulatedTime -= TickInterval;
+
 	if (!SourceCharacter.Get())
 	{
 		return;

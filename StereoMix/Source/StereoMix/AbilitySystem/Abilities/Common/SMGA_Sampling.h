@@ -25,4 +25,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	FGameplayTagContainer DeactivateTags;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float TickRate = 10.0f;
 };

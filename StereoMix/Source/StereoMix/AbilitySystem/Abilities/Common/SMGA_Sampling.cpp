@@ -31,7 +31,7 @@ void USMGA_Sampling::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 		return;
 	}
 
-	USMAT_CheckUnderTile* CheckUnderTileTask = USMAT_CheckUnderTile::CheckUnderTile(this, SourceCharacter);
+	USMAT_CheckUnderTile* CheckUnderTileTask = USMAT_CheckUnderTile::CheckUnderTile(this, SourceCharacter, TickRate);
 	CheckUnderTileTask->OnUnderTileChanged.BindUObject(this, &ThisClass::OnUnderTileChanged);
 	CheckUnderTileTask->ReadyForActivation();
 }
