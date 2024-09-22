@@ -50,7 +50,7 @@ void USMTileManagerComponent::TileCaptureDelayedSqaure(ASMTile* StartTile, ESMTe
 	}
 }
 
-void USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize)
+int32 USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize)
 {
 	TArray<FOverlapResult> OverlapResults;
 	const FVector StartLocation = StartTile->GetTileLocation();
@@ -58,15 +58,25 @@ void USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam Instigator
 	const FCollisionShape BoxCollision = FCollisionShape::MakeBox(HalfExtend);
 	const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, BoxCollision);
 
+	int32 SuccessCaptureTileCount = 0;
 	if (bSuccess)
 	{
 		for (const FOverlapResult& OverlapResult : OverlapResults)
 		{
 			ASMTile* Tile = Cast<ASMTile>(OverlapResult.GetActor());
-			if (Tile)
+			if (!Tile)
 			{
-				Tile->TileTrigger(InstigatorTeam);
+				continue;
 			}
+
+			const ESMTeam TileTeam = Tile->GetTeam();
+			if (InstigatorTeam == TileTeam)
+			{
+				continue;
+			}
+
+			Tile->TileTrigger(InstigatorTeam);
+			++SuccessCaptureTileCount;
 		}
 	}
 
@@ -74,4 +84,6 @@ void USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam Instigator
 	{
 		DrawDebugBox(GetWorld(), StartLocation, HalfExtend, FColor::Turquoise, false, 2.0f);
 	}
+
+	return SuccessCaptureTileCount;
 }

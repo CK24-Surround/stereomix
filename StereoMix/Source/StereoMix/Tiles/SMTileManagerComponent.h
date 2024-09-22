@@ -23,7 +23,15 @@ public:
 	void TileCaptureDelayedSqaure(ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime);
 
 protected:
-	void TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize);
+	/**
+	 * 타일을 점령합니다.
+	 * @param StartTile 시작 타일입니다.
+	 * @param InstigatorTeam 점령을 시도하는 오브젝트의 팀입니다.
+	 * @param HalfHorizenSize 가로측 점령 사이즈입니다.
+	 * @param HalfVerticalSize 세로측 점령 사이즈입니다.
+	 * @return 점령에 성공한 타일의 개수를 반환합니다.
+	 */
+	int32 TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize);
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float TileHorizenSize = 150.0f;
