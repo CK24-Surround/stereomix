@@ -32,6 +32,7 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 		return;
 	}
 
+	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크 인디케이터 활성화"));
 	UNiagaraComponent* NoiseBreakIndicator = SourceCharacter->GetNoiseBreakIndicator();
 	const float NoiseBreakMaxDistance = NoiseBreakData->DistanceByTile * 150.0f; // 노이즈 브레이크 데이터를 통해 사거리를 가져옵니다.
 	USMAT_SkillIndicator* SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, NoiseBreakIndicator, NoiseBreakMaxDistance, true);
@@ -43,6 +44,7 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 
 void USMGA_NoiseBreakIndicator::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크 인디케이터 종료"));
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (SourceHIC)
 	{

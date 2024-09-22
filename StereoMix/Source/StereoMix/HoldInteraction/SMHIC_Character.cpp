@@ -219,7 +219,13 @@ void USMHIC_Character::SetActorIAmHolding(AActor* NewIAmHoldingActor)
 		// nullptr이 매개변수로 넘어왔다면 잡기가 해제된 상황으로 구독했던 이벤트를 해제합니다.
 		if (IAmHoldingActor.Get() && !NewIAmHoldingActor)
 		{
+			NET_LOG(GetOwner(), Log, TEXT("%s가 %s를 놓음"), *GetNameSafe(GetOwner()), *GetNameSafe(IAmHoldingActor.Get()));
 			IAmHoldingActor->OnDestroyed.RemoveAll(this);
+		}
+
+		if (!IAmHoldingActor.Get() || NewIAmHoldingActor)
+		{
+			NET_LOG(GetOwner(), Log, TEXT("%s가 %s를 잡음"), *GetNameSafe(GetOwner()), *GetNameSafe(NewIAmHoldingActor));
 		}
 
 		IAmHoldingActor = NewIAmHoldingActor;
@@ -295,6 +301,12 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 		if (SourceASC.Get() && GetOwnerRole() == ROLE_Authority)
 		{
 			SourceASC->AddTag(SMTags::Character::State::Hold);
+		}
+
+		// 로컬 컨트롤인 경우 노이즈 브레이크 인디케이터를 활성화합니다.
+		if ((SourceCharacter.Get() && SourceASC.Get()) ? SourceCharacter->IsLocallyControlled() : false)
+		{
+			SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::NoiseBreakIndicator));
 		}
 
 		OnHoldStateEnrty.Broadcast();
