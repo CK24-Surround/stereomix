@@ -3,7 +3,7 @@
 
 #include "SMGA_Sampling.h"
 
-#include "AbilitySystemComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_CheckUnderTile.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
@@ -15,6 +15,7 @@ USMGA_Sampling::USMGA_Sampling()
 	DeactivateTags.AddTag(SMTags::Character::State::Neutralize);
 	DeactivateTags.AddTag(SMTags::Character::State::Immune);
 	DeactivateTags.AddTag(SMTags::Character::State::NoiseBreak);
+	DeactivateTags.AddTag(SMTags::Character::State::Charge);
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
 }
@@ -23,7 +24,7 @@ void USMGA_Sampling::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
@@ -37,23 +38,14 @@ void USMGA_Sampling::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 
 void USMGA_Sampling::OnUnderTileChanged(ASMTile* UnderTile)
 {
-	if (!UnderTile)
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	if (!UnderTile || !SourceCharacter || !SourceASC)
 	{
 		return;
 	}
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		return;
-	}
-
-	UAbilitySystemComponent* SourceASC = GetASC();
-	if (!SourceASC)
-	{
-		return;
-	}
-
+	// 샘플링 비활성화 태그를 갖고 있다면 타일을 점령하지 않습니다.
 	if (SourceASC->HasAnyMatchingGameplayTags(DeactivateTags))
 	{
 		return;
@@ -61,7 +53,6 @@ void USMGA_Sampling::OnUnderTileChanged(ASMTile* UnderTile)
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	const ESMTeam TileTeam = UnderTile->GetTeam();
-
 	if (SourceTeam == TileTeam)
 	{
 		return;
