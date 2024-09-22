@@ -44,6 +44,8 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		return;
 	}
 
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s가 무력화 됨"), *GetNameSafe(GetAvatarActor()));
+
 	K2_CommitAbility();
 
 	// 무력화 몽타주를 재생합니다.
@@ -143,6 +145,8 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 		}
 	}
 
+	NET_LOG(GetAvatarActorFromActorInfo(), Log, TEXT("%s의 무력화 종료"), *GetNameSafe(GetAvatarActor()));
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
@@ -167,6 +171,8 @@ void USMGA_Neutralize::OnMinimalNeutralizeTimeEnded()
 	}
 	else
 	{
+		NET_LOG(GetAvatarActor(), Log, TEXT("%s의 무력화 상태가 조기 종료 상태로 진입"), *GetNameSafe(GetAvatarActor()));
+
 		// 무력화 조기 종료를 위한 상태로 진입합니다.
 		if (WaitTask)
 		{
@@ -179,7 +185,7 @@ void USMGA_Neutralize::OnMinimalNeutralizeTimeEnded()
 
 void USMGA_Neutralize::OnMinimalNeutralizeTimerReset(FGameplayEventData Payload)
 {
-	NET_LOG(GetCharacter(), Log, TEXT("최소 무력화 시간 타이머 초기화"));
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s의 조기 무력화 타이머 초기화"), *GetNameSafe(GetAvatarActor()));
 
 	if (MinimalWaitTask)
 	{
@@ -232,8 +238,9 @@ void USMGA_Neutralize::WaitUntilBuzzerBeaterEnd()
 		return;
 	}
 
+	NET_LOG(GetAvatarActorFromActorInfo(), Log, TEXT("%s가 버저 비터 종료 대기 상태 진입"), *GetNameSafe(GetAvatarActor()));
+
 	// 버저비터 종료 이벤트를 기다립니다.
-	NET_LOG(GetAvatarActorFromActorInfo(), Log, TEXT("버저 비터 진입"));
 	UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterEnd);
 	WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnBuzzerBeaterEnded);
 	WaitEventTask->ReadyForActivation();
@@ -241,6 +248,8 @@ void USMGA_Neutralize::WaitUntilBuzzerBeaterEnd()
 
 void USMGA_Neutralize::OnBuzzerBeaterEnded(FGameplayEventData Payload)
 {
+	NET_LOG(GetAvatarActorFromActorInfo(), Log, TEXT("%s의 버저 비터 종료"), *GetNameSafe(GetAvatarActor()));
+
 	// 노이즈 브레이크가 끝나면 잡기 상태도 풀려있어 PrepareNeutralizeEnd를 호출할 필요가 없습니다.
 	NeutralizeExitSyncPoint();
 }
@@ -291,7 +300,7 @@ void USMGA_Neutralize::NeutralizeEnd()
 
 	// 노이즈 브레이크를 1회라도 당해 넘어진 상태이거나, 잡혀있는 상태인 경우 무력화 종료 애니메이션이 달라져야하는데 이를 위해 현재 실행중인 애니메이션의 End 섹션으로 점프시키는 코드입니다. 해당 애니메이션을 무한루프하고 있는 상태이므로 가능합니다.
 	UAnimMontage* EndMontage = SourceAnimInstance->GetCurrentActiveMontage();
-	NET_LOG(GetAvatarActor(), Log, TEXT("무력화 상태에 사용되고 있는 몽타주: %s"), *EndMontage->GetName());
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s의 무력화 상태에 사용되고 있는 몽타주: %s"), *GetNameSafe(GetAvatarActor()), *GetNameSafe(EndMontage));
 	const FName EndMontageTaskName = TEXT("EndMontageTask");
 	const FName SectionName = TEXT("End");
 	UAbilityTask_PlayMontageAndWait* MontageWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, EndMontageTaskName, EndMontage, 1.0f, SectionName);
