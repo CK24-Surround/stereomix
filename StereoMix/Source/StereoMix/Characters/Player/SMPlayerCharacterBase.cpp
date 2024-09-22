@@ -20,6 +20,7 @@
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Games/SMGamePlayerState.h"
 #include "HoldInteraction/SMHIC_Character.h"
@@ -321,17 +322,10 @@ bool ASMPlayerCharacterBase::GetTileLocationFromCursor(FVector& OutTileLocation,
 {
 	OutTileLocation = FVector::ZeroVector;
 
-	FHitResult HitResult;
-	const FVector Start = GetLocationFromCursor(true, MaxDistance);
-	const FVector End = Start + FVector::DownVector * 100.0f;
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, SMCollisionTraceChannel::TileAction))
+	if (ASMTile* Tile = USMTileFunctionLibrary::GetTileFromLocation(GetWorld(), GetLocationFromCursor(true, MaxDistance)))
 	{
-		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
-		if (Tile)
-		{
-			OutTileLocation = Tile->GetTileLocation();
-			return true;
-		}
+		OutTileLocation = Tile->GetTileLocation();
+		return true;
 	}
 
 	return false;

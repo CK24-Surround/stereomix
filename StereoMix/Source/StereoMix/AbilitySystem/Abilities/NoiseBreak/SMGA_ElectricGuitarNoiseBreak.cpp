@@ -15,6 +15,7 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
 #include "Tiles/SMTile.h"
@@ -195,18 +196,12 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakEnded()
 
 void USMGA_ElectricGuitarNoiseBreak::TileCapture(const FVector& TargetLocation)
 {
-	ASMElectricGuitarCharacter* SourceCharacter = GetAvatarActor<ASMElectricGuitarCharacter>();
-	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
-	USMTileManagerComponent* TileManager = GameState ? GameState->GetTileManager() : nullptr;
-	if (!SourceCharacter || !ensureAlways(TileManager))
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const ESMTeam SourceTeam = SourceCharacter ? SourceCharacter->GetTeam() : ESMTeam::None;
+	if (!SourceCharacter || SourceTeam == ESMTeam::None)
 	{
 		return;
 	}
 
-	ASMTile* Tile = GetTileFromLocation(TargetLocation);
-	if (Tile)
-	{
-		const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-		TileManager->TileCaptureImmediateSqaure(Tile, SourceTeam, CaptureSize);
-	}
+	USMTileFunctionLibrary::TileCaptureImmediateSqaure(GetWorld(), TargetLocation, SourceTeam, CaptureSize);
 }

@@ -9,6 +9,7 @@
 
 class ASMTile;
 class USMTileManagerComponent;
+
 /**
  * 
  */
@@ -23,7 +24,7 @@ public:
 	static ASMTile* GetTileFromLocation(UWorld* World, const FVector& Location);
 
 	static void TileCaptureImmediateSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile);
-	
+
 	static void TileCaptureDelayedSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime);
 
 protected:

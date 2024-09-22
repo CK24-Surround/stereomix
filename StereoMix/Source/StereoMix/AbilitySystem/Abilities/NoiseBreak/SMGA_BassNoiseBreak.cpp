@@ -16,6 +16,7 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
 #include "Tiles/SMTile.h"
@@ -190,19 +191,13 @@ void USMGA_BassNoiseBreak::OnNoiseBreakEnded(FGameplayEventData Payload)
 
 void USMGA_BassNoiseBreak::TileCapture()
 {
-	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
-	USMTileManagerComponent* TileManager = GameState ? GameState->GetTileManager() : nullptr;
-	if (!SourceCharacter || !ensureAlways(TileManager))
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const ESMTeam SourceTeam = SourceCharacter ? SourceCharacter->GetTeam() : ESMTeam::None;
+	if (!SourceCharacter || SourceTeam == ESMTeam::None)
 	{
 		return;
 	}
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	ASMTile* Tile = GetTileFromLocation(SourceLocation);
-	if (Tile)
-	{
-		const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-		TileManager->TileCaptureDelayedSqaure(Tile, SourceTeam, CaptureSize, TotalTriggerTime);
-	}
+	USMTileFunctionLibrary::TileCaptureDelayedSqaure(GetWorld(), SourceLocation, SourceTeam, CaptureSize, TotalTriggerTime);
 }

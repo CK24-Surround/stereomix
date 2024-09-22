@@ -17,6 +17,7 @@
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
 #include "Tiles/SMTile.h"
@@ -173,18 +174,12 @@ void USMGA_PianoNoiseBreak::OnNoiseBreakEnded()
 
 void USMGA_PianoNoiseBreak::TileCapture()
 {
-	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
-	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
-	USMTileManagerComponent* TileManager = GameState ? GameState->GetTileManager() : nullptr;
-	if (!SourceCharacter || !ensureAlways(TileManager))
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const ESMTeam SourceTeam = SourceCharacter ? SourceCharacter->GetTeam() : ESMTeam::None;
+	if (!SourceCharacter || SourceTeam == ESMTeam::None)
 	{
 		return;
 	}
 
-	ASMTile* Tile = GetTileFromLocation(NoiseBreakTargetLocation);
-	if (Tile)
-	{
-		const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-		TileManager->TileCaptureImmediateSqaure(Tile, SourceTeam, CaptureSize);
-	}
+	USMTileFunctionLibrary::TileCaptureImmediateSqaure(GetWorld(), NoiseBreakTargetLocation, SourceTeam, CaptureSize);
 }

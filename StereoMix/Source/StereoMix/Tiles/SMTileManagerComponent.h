@@ -18,11 +18,6 @@ class STEREOMIX_API USMTileManagerComponent : public UActorComponent
 public:
 	USMTileManagerComponent();
 
-	void TileCaptureImmediateSqaure(ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile);
-
-	void TileCaptureDelayedSqaure(ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime);
-
-protected:
 	/**
 	 * 타일을 점령합니다.
 	 * @param StartTile 시작 타일입니다.
@@ -33,9 +28,7 @@ protected:
 	 */
 	int32 TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize);
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float TileHorizenSize = 150.0f;
-
+protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	uint32 bShowDebug:1 = false;
 };

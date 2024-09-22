@@ -7,6 +7,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_CheckUnderTile.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 
 USMGA_Sampling::USMGA_Sampling()
 {
@@ -53,10 +54,8 @@ void USMGA_Sampling::OnUnderTileChanged(ASMTile* UnderTile)
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	const ESMTeam TileTeam = UnderTile->GetTeam();
-	if (SourceTeam == TileTeam)
+	if (SourceTeam != TileTeam)
 	{
-		return;
+		USMTileFunctionLibrary::TileCaptureImmediateSqaure(GetWorld(), UnderTile->GetTileLocation(), SourceTeam, 1);
 	}
-
-	UnderTile->TileTrigger(SourceTeam);
 }
