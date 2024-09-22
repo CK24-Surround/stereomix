@@ -5,7 +5,6 @@
 
 #include "GameFramework/Character.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
-#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "FMODBlueprintStatics.h"
@@ -23,107 +22,55 @@ void USMGA_Immune::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	USMCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement<USMCharacterMovementComponent>() : nullptr;
+	if (!SourceCharacter || !SourceASC || !SourceMovement)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	if (!ensureAlways(SourceASC))
-	{
-		EndAbilityByCancel();
-		return;
-	}
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s의 면역 활성화"), *GetNameSafe(GetAvatarActor()));
 
-	USMCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement<USMCharacterMovementComponent>();
-	if (!ensureAlways(SourceMovement))
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
-	if (!ensureAlways(SourceAttributeSet))
-	{
-		EndAbilityByCancel();
-		return;
-	}
+	// 면역 시간만큼 기다립니다.
+	UAbilityTask_WaitDelay* WaitdelayTask = UAbilityTask_WaitDelay::WaitDelay(this, ImmuneTime);
+	WaitdelayTask->OnFinish.AddDynamic(this, &ThisClass::OnImmuneEnd);
+	WaitdelayTask->ReadyForActivation();
 
 	// 면역 시간동안 이동속도를 증가시킵니다.
 	SourceMovement->AddMoveSpeedBuff(MoveSpeedMultiplier, ImmuneTime);
 
-	// 면역 시간만큼 기다립니다.
-	UAbilityTask_WaitDelay* WaitdelayTask = UAbilityTask_WaitDelay::WaitDelay(this, ImmuneTime);
-	if (ensureAlways(WaitdelayTask))
-	{
-		WaitdelayTask->OnFinish.AddDynamic(this, &ThisClass::OnFinishDelay);
-		WaitdelayTask->ReadyForActivation();
-	}
-
-	// 면역 이펙트, 머티리얼을 적용합니다.
-	if (ActorInfo->IsNetAuthority())
-	{
-		// SourceCharacter->SetCharacterMoveTrailState(EMoveTrailState_Legacy::Immune);
-	}
-
-	// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialApply_ElectricGuitar);
-
-	if (ActorInfo->IsLocallyControlled())
-	{
-		UFMODBlueprintStatics::PlayEvent2D(SourceCharacter, ImmuneSound, true);
-	}
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = SourceCharacter;
+	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+	SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Immune, GCParams);
 }
 
-void USMGA_Immune::OnFinishDelay()
+void USMGA_Immune::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s의 면역 해제"), *GetNameSafe(GetAvatarActor()));
+
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	if (SourceCharacter && SourceASC)
 	{
-		EndAbilityByCancel();
-		return;
+		// 서버의 경우 태그를 제거해줍니다.
+		if (K2_HasAuthority())
+		{
+			SourceASC->RemoveTag(SMTags::Character::State::Immune);
+		}
+
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Common::Immune, GCParams);
 	}
 
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	if (!ensureAlways(SourceASC))
-	{
-		EndAbilityByCancel();
-		return;
-	}
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
 
-	UCharacterMovementComponent* SourceMovement = SourceCharacter->GetCharacterMovement();
-	if (!ensureAlways(SourceMovement))
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	const USMCharacterAttributeSet* SourceAttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>();
-	if (!ensureAlways(SourceAttributeSet))
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	// 서버의 경우 실제로 반영합니다. 그리고 면역 태그도 제거해줍니다.
-	if (CurrentActorInfo->IsNetAuthority())
-	{
-		// SourceCharacter->SetMaxWalkSpeed(SourceMovement->MaxWalkSpeed - MoveSpeedToAdd);
-		SourceASC->RemoveTag(SMTags::Character::State::Immune);
-	}
-
-	// 면역 종료 이펙트, 머티리얼을 적용합니다.
-	// if (CurrentActorInfo->IsNetAuthority())
-	// {
-	// 	SourceCharacter->SetCharacterMoveTrailState(EMoveTrailState_Legacy::Default);
-	// }
-
-	// FGameplayCueParameters GCParams;
-	// GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
-	// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneEnd, GCParams);
-	// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::ImmuneMaterialReset);
-
+void USMGA_Immune::OnImmuneEnd()
+{
 	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
 	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
 	SyncTask->ReadyForActivation();
