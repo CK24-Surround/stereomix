@@ -3,11 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
+#include "SMFunctionLibraryBase.h"
 #include "Data/SMCharacterType.h"
 #include "SMDataTableFunctionLibrary.generated.h"
 
-class USMGameInstance;
 struct FSMCharacterStatsData;
 struct FSMCharacterAttackData;
 struct FSMCharacterSkillData;
@@ -17,7 +16,7 @@ struct FSMCharacterNoiseBreakData;
  * 
  */
 UCLASS()
-class STEREOMIX_API USMDataTableFunctionLibrary : public UObject
+class STEREOMIX_API USMDataTableFunctionLibrary : public USMFunctionLibraryBase
 {
 	GENERATED_BODY()
 
@@ -29,7 +28,4 @@ public:
 	static FSMCharacterSkillData* GetCharacterSkillData(ESMCharacterType CharacterType);
 
 	static FSMCharacterNoiseBreakData* GetCharacterNoiseBreakData(ESMCharacterType CharacterType);
-
-protected:
-	static USMGameInstance* GetGameInstance();
 };
