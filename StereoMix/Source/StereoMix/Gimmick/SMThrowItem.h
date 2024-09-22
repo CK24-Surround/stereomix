@@ -4,7 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "SMThrowItem.generated.h"
 
-class ASMHoldableItemBase;
+class ASMThrowableItem;
 
 UCLASS()
 class STEREOMIX_API ASMThrowItem : public AActor
@@ -18,10 +18,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	virtual void Tick(float DeltaTime) override;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	TSubclassOf<ASMHoldableItemBase> ItemToThrow;
+	TSubclassOf<ASMThrowableItem> ItemToThrow;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
 	float ParabolaHeight;
@@ -31,22 +29,14 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
 	float ThrowInterval;
-
-	UPROPERTY(Replicated)
-	TArray<FVector> LaunchVelocity;
-		
-	UPROPERTY(Replicated)
-	TArray<FVector> InitialLocation;
 	
-	UPROPERTY(Replicated)
-	TArray<double> ThrowStartTime;
-
 	UFUNCTION(Server, Reliable)
 	void ServerThrowItem();
 
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Root")
+	TObjectPtr<USceneComponent> SceneComponent;
+	
 private:
 	FTimerHandle ThrowTimerHandle;
-
-	UPROPERTY(Replicated)
-	TArray<TObjectPtr<ASMHoldableItemBase>> SpawnedItem;
 };

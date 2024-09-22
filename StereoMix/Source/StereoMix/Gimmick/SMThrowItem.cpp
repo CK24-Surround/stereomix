@@ -1,8 +1,7 @@
 ﻿#include "SMThrowItem.h"
 
-#include "Net/UnrealNetwork.h"
+#include "Items/SMThrowableItem.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
-#include "Items/HoldableItem/SMHoldableItemBase.h"
 
 ASMThrowItem::ASMThrowItem()
 {
@@ -11,15 +10,15 @@ ASMThrowItem::ASMThrowItem()
     LandingTime = 2.0f;
     ThrowInterval = 5.0f;
 
-    bReplicates = true;
-    bAlwaysRelevant = true;
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	RootComponent = SceneComponent;
 }
 
 void ASMThrowItem::BeginPlay()
 {
     Super::BeginPlay();
 
-    if (HasAuthority())  // 서버에서만 실행
+    if (HasAuthority())
     {
         GetWorld()->GetTimerManager().SetTimer(ThrowTimerHandle, this, &ASMThrowItem::ServerThrowItem, ThrowInterval, true);
     }
@@ -28,63 +27,25 @@ void ASMThrowItem::BeginPlay()
 void ASMThrowItem::ServerThrowItem_Implementation()
 {
 	FVector SpawnLocation = GetActorLocation();
-
+	
 	for (int i = 0; i < 3; ++i)
 	{
 		float RandomX = FMath::RandRange(-1000.0f, 1000.0f);
 		float RandomY = FMath::RandRange(-1000.0f, 1000.0f);
-		FVector TargetLocation = FVector(SpawnLocation.X + RandomX, SpawnLocation.Y + RandomY, GetActorLocation().Z);
-
+		
+		FVector TargetLocation = FVector(
+			FMath::GridSnap(SpawnLocation.X + RandomX, 150.0f) - 75.0f,
+			FMath::GridSnap(SpawnLocation.Y + RandomY, 150.0f) - 75.0f,
+			GetActorLocation().Z);
+		
 		FRotator SpawnRotation = GetActorRotation();
+        
+		FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, -980.0f);
 
-		// 아이템 스폰
-		SpawnedItem.Add(GetWorld()->SpawnActor<ASMHoldableItemBase>(ItemToThrow, SpawnLocation, SpawnRotation));
-
-		InitialLocation.Add(SpawnLocation);
-		
-		float GravityZ = -980.0f;
-		LaunchVelocity.Add(USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, GravityZ));
-		
-		ThrowStartTime.Add(GetWorld()->GetTimeSeconds());
-	}
-}
-
-void ASMThrowItem::Tick(float DeltaTime)
-{
-    Super::Tick(DeltaTime);
-
-	for (int i = 0; i < SpawnedItem.Num(); ++i)
-	{
-		float CurrentTime = GetWorld()->GetTimeSeconds();
-		float ElapsedTime = CurrentTime - ThrowStartTime[i];
-
-		float x = LaunchVelocity[i].X * ElapsedTime;
-		float y = LaunchVelocity[i].Y * ElapsedTime;
-		float Z = LaunchVelocity[i].Z * ElapsedTime + 0.5f * -980.0f * FMath::Pow(ElapsedTime, 2);
-		FVector NewLocation = InitialLocation[i] + FVector(x, y, Z);
-
-		SpawnedItem[i]->SetActorLocation(NewLocation);
-	}
-
-	for (int i = 0; i < SpawnedItem.Num(); ++i)
-	{
-		if (SpawnedItem[i]->GetActorLocation().Z < GetActorLocation().Z)
+		ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ItemToThrow, SpawnLocation, SpawnRotation);
+		if (ThrowableItem)
 		{
-			SpawnedItem.RemoveAt(i);
-			LaunchVelocity.RemoveAt(i);
-			InitialLocation.RemoveAt(i);
-			ThrowStartTime.RemoveAt(i);
+			ThrowableItem->SetThrowItem(LaunchVelocity, SpawnLocation, TargetLocation);
 		}
 	}
-}
-
-// 복제 설정
-void ASMThrowItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-    Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-    DOREPLIFETIME(ASMThrowItem, SpawnedItem);
-    DOREPLIFETIME(ASMThrowItem, LaunchVelocity);
-    DOREPLIFETIME(ASMThrowItem, InitialLocation);
-    DOREPLIFETIME(ASMThrowItem, ThrowStartTime);
 }
