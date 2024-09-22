@@ -33,6 +33,9 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerRequestEffect(AActor* TargetActor);
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	FGameplayTagContainer ChargeHitIgnoreTags;
+
 	/** 돌진 시 초당 회전 각입니다.*/
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float RotationPerSecond = 45.0f;

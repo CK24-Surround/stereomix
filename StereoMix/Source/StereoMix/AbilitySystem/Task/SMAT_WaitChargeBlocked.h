@@ -18,10 +18,8 @@ class STEREOMIX_API USMAT_WaitChargeBlocked : public UAbilityTask
 	GENERATED_BODY()
 
 public:
-	USMAT_WaitChargeBlocked();
-
 	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static USMAT_WaitChargeBlocked* WaitChargeBlocked(UGameplayAbility* OwningAbility);
+	static USMAT_WaitChargeBlocked* WaitChargeBlocked(UGameplayAbility* OwningAbility, const FGameplayTagContainer& IgnoreTags);
 
 	FOnChargeBlockingDelegate OnChargeBlocked;
 
@@ -38,5 +36,5 @@ protected:
 
 	TWeakObjectPtr<ASMBassCharacter> SourceCharacter;
 
-	FGameplayTagContainer InvalidTags;
+	FGameplayTagContainer ChargeIgnoreTags;
 };

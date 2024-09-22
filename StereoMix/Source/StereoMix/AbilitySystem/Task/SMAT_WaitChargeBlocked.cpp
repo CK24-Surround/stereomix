@@ -5,26 +5,17 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
-USMAT_WaitChargeBlocked::USMAT_WaitChargeBlocked()
-{
-	InvalidTags.AddTag(SMTags::Character::State::Charge);
-	InvalidTags.AddTag(SMTags::Character::State::Neutralize);
-	InvalidTags.AddTag(SMTags::Character::State::Immune);
-	InvalidTags.AddTag(SMTags::Character::State::NoiseBreak);
-	InvalidTags.AddTag(SMTags::Character::State::NoiseBreaked);
-}
-
-USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility)
+USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility, const FGameplayTagContainer& IgnoreTags)
 {
 	USMAT_WaitChargeBlocked* MyObj = NewAbilityTask<USMAT_WaitChargeBlocked>(OwningAbility);
 	MyObj->SourceCharacter = Cast<ASMBassCharacter>(OwningAbility->GetAvatarActorFromActorInfo());
+	MyObj->ChargeIgnoreTags = IgnoreTags;
 	return MyObj;
 }
 
@@ -76,10 +67,10 @@ void USMAT_WaitChargeBlocked::OnChargeOverlappedCallback(UPrimitiveComponent* Ov
 		return;
 	}
 
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
-	if (TargetASC)
+
+	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
-		if (TargetASC->HasAnyMatchingGameplayTags(InvalidTags))
+		if (TargetASC->HasAnyMatchingGameplayTags(ChargeIgnoreTags))
 		{
 			return;
 		}

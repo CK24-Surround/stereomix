@@ -25,6 +25,12 @@ USMGA_Charge::USMGA_Charge()
 
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Charge);
 
+	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::Neutralize);
+	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::NoiseBreak);
+	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::NoiseBreaked);
+	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::Charge);
+	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::Immune);
+
 	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Bass))
 	{
 		Damage = SkillData->Damage;
@@ -66,7 +72,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	if (IsLocallyControlled())
 	{
-		USMAT_WaitChargeBlocked* ChargeBlockedTask = USMAT_WaitChargeBlocked::WaitChargeBlocked(this);
+		USMAT_WaitChargeBlocked* ChargeBlockedTask = USMAT_WaitChargeBlocked::WaitChargeBlocked(this, ChargeHitIgnoreTags);
 		ChargeBlockedTask->OnChargeBlocked.BindUObject(this, &ThisClass::OnChargeBlocked);
 		ChargeBlockedTask->ReadyForActivation();
 
@@ -146,6 +152,12 @@ void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!TargetASC || !SourceDataAsset)
+	{
+		return;
+	}
+
+	// 이미 태스크에서 한번 거르는 작업을 했지만 지연시간 등의 이유로 스턴에 걸리면 안되는 상태에 진입할 수 있습니다. 이를 다시한번 걸러줍니다.
+	if (TargetASC->HasAnyMatchingGameplayTags(ChargeHitIgnoreTags))
 	{
 		return;
 	}
