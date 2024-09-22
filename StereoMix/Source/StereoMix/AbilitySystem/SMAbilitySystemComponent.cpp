@@ -11,10 +11,6 @@
 #include "GameplayEffect/SMGameplayEffect_DynamicTag.h"
 #include "Utilities/SMLog.h"
 
-void USMAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
-{
-	OnChangedTag.Broadcast(Tag, TagExists);
-}
 
 void USMAbilitySystemComponent::AddTag(const FGameplayTag& InGameplayTag)
 {
@@ -116,6 +112,24 @@ void USMAbilitySystemComponent::ExecuteGC(AActor* TargetActor, const FGameplayTa
 	{
 		NET_LOG(SourceCharacter, Warning, TEXT("서버나 로컬 컨트롤인 경우 실행되어야합니다. "));
 	}
+}
+
+const FGameplayAbilitySpec* USMAbilitySystemComponent::FindGASpecFromClass(const TSubclassOf<UGameplayAbility>& InAbilityClass) const
+{
+	for (const FGameplayAbilitySpec& GASpec : GetActivatableAbilities())
+	{
+		if (GASpec.Ability && GASpec.Ability.IsA(InAbilityClass))
+		{
+			return &GASpec;
+		}
+	}
+
+	return nullptr;
+}
+
+void USMAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
+{
+	OnChangedTag.Broadcast(Tag, TagExists);
 }
 
 void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, EGameplayCueEvent::Type CueEvent, const FGameplayCueParameters& Parameters, bool bExcludeSelf)

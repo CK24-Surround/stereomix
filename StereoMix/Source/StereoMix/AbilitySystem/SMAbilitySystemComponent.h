@@ -32,6 +32,9 @@ public:
 	/** 게임플레이 큐를 실행하고 전파합니다. */
 	void ExecuteGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters);
 
+	/** 자신에게 부여된 어빌리티를 클래스를 기준으로 찾습니다. 기존 함수는 정확히 일치하는 클래스만 찾지만, 이 함수는 해당 클래스를 상속한 서브 클래스도 찾습니다. */
+	const FGameplayAbilitySpec* FindGASpecFromClass(const TSubclassOf<UGameplayAbility>& InAbilityClass) const;
+
 	FOnChangedTagSignature OnChangedTag;
 
 protected:
