@@ -35,7 +35,7 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	UAbilitySystemComponent* SourceASC = GetASC<UAbilitySystemComponent>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
 	if (!SourceCharacter || !SourceASC || !SourceHIC || !SourceDataAsset)
@@ -49,16 +49,9 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	// 무력화 몽타주를 재생합니다.
 	const FName MontageTaskName = TEXT("MontageTask");
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	CachedNeutralizeMontage = SourceDataAsset->NeutralizeMontage[SourceTeam];
-	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, CachedNeutralizeMontage);
+	UAnimMontage* NeutralizeMontage = SourceDataAsset->NeutralizeMontage[SourceTeam];
+	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NeutralizeMontage);
 	MontageTask->ReadyForActivation();
-
-	// 노이즈 브레이크 인디케이터가 활성화 되어있다면 제거합니다.
-	FGameplayAbilitySpec* GASpec = SourceASC->FindAbilitySpecFromClass(USMGA_NoiseBreakIndicator::StaticClass());
-	if (GASpec)
-	{
-		SourceASC->CancelAbilityHandle(GASpec->Handle);
-	}
 
 	if (K2_HasAuthority())
 	{

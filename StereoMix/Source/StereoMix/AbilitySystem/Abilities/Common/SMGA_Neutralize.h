@@ -46,23 +46,25 @@ protected:
 	UFUNCTION()
 	void NeutralizeEnd();
 
-	UPROPERTY()
-	TObjectPtr<UAnimMontage> CachedNeutralizeMontage;
-
 	FGameplayTagContainer NoiseBreakedTags;
 
+	/** 무력화 기본 시간입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float NeutralizedTime = 6.5f;
 
+	/** 무력화 기본 타이머 태스크입니다. */
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitDelay> WaitTask;
 
+	/** 무력화 최소 시간입니다. 노이즈 브레이크 액션을 당하지 않는 경우 이 시간이 적용됩니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float MinimalNeutralizedTime = 3.0f;
 
+	/** 무력화 최소 타이머 태스크입니다. */
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitDelay> MinimalWaitTask;
 
+	/** 무력화 최소 타이머를 리셋하기 위한 노이즈 브레이크 감지용 태스크입니다. */
 	UPROPERTY()
 	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitNoiseBreakEndWaitTask;
 

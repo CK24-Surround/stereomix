@@ -5,10 +5,8 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "GameInstance/SMGameInstance.h"
 #include "HoldInteraction/SMHIC_Character.h"
@@ -39,6 +37,7 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 	USMAT_SkillIndicator* SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, NoiseBreakIndicator, NoiseBreakMaxDistance, true);
 	SkillIndicatorTask->ReadyForActivation();
 
+	// 무력화나 시간만료 등의 이유로 잡은 대상이 풀려나는 경우 즉시 취소합니다.
 	SourceHIC->OnHoldStateExit.AddUObject(this, &ThisClass::K2_EndAbility);
 }
 
