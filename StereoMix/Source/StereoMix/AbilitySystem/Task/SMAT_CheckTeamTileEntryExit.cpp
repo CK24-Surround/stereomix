@@ -22,31 +22,37 @@ USMAT_CheckTeamTileEntryExit* USMAT_CheckTeamTileEntryExit::CheckTeamTileEntryEx
 
 void USMAT_CheckTeamTileEntryExit::TickTask(float DeltaTime)
 {
-	Super::TickTask(DeltaTime);
-
-	// TODO: 틱레이트 줄여야함.
-	if (SourceCharacter.Get())
+	AccumulatedTime += DeltaTime;
+	if (AccumulatedTime < TickInterval)
 	{
-		FHitResult HitResult;
-		const FVector Start = SourceCharacter->GetActorLocation();
-		const FVector End = Start + (FVector::DownVector * 1000.0f);
-		ECollisionChannel Channel = SMCollisionTraceChannel::TileAction;
-		if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, Channel))
-		{
-			ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
-			if (Tile)
-			{
-				ESMTeam TileTeam = Tile->GetTeam();
-				ESMTeam SourceTeam = SourceCharacter->GetTeam();
+		return;
+	}
 
-				if (SourceTeam == TileTeam)
-				{
-					SetIsEntry(true);
-				}
-				else
-				{
-					SetIsEntry(false);
-				}
+	AccumulatedTime -= TickInterval;
+
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	FHitResult HitResult;
+	const FVector Start = SourceCharacter->GetActorLocation();
+	const FVector End = Start + (FVector::DownVector * 1000.0f);
+	ECollisionChannel Channel = SMCollisionTraceChannel::TileAction;
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, Channel))
+	{
+		ASMTile* Tile = Cast<ASMTile>(HitResult.GetActor());
+		if (Tile)
+		{
+			ESMTeam TileTeam = Tile->GetTeam();
+			ESMTeam SourceTeam = SourceCharacter->GetTeam();
+			if (SourceTeam == TileTeam)
+			{
+				SetIsEntry(true);
+			}
+			else
+			{
+				SetIsEntry(false);
 			}
 		}
 	}

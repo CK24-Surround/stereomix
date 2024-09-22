@@ -44,4 +44,8 @@ protected:
 	TWeakObjectPtr<ASMPlayerCharacterBase> SourceCharacter;
 
 	uint32 bIsEntry:1 = false;
+
+	float AccumulatedTime = 0.0f;
+
+	float TickInterval = 0.1f;
 };

@@ -24,11 +24,6 @@ void USMGA_SkillGaugeControl::ActivateAbility(const FGameplayAbilitySpecHandle H
 	}
 
 	USMAT_CheckTeamTileEntryExit* CheckTeamTileTask = USMAT_CheckTeamTileEntryExit::CheckTeamTileEntryExit(this, SourceCharacter);
-	if (!ensureAlways(CheckTeamTileTask))
-	{
-		EndAbilityByCancel();
-		return;
-	}
 	CheckTeamTileTask->OnTeamTileEntry.BindUObject(this, &ThisClass::OnTeamTileEntry);
 	CheckTeamTileTask->OnTeamTileExit.BindUObject(this, &ThisClass::OnTeamTileExit);
 	CheckTeamTileTask->ReadyForActivation();
@@ -43,14 +38,9 @@ void USMGA_SkillGaugeControl::EndAbility(const FGameplayAbilitySpecHandle Handle
 
 void USMGA_SkillGaugeControl::OnTeamTileEntry()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		return;
-	}
-
-	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset();
-	if (!SourceDataAsset)
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+	if (!SourceCharacter || !SourceDataAsset)
 	{
 		return;
 	}
