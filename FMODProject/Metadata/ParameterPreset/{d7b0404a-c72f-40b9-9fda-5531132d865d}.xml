@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{d7b0404a-c72f-40b9-9fda-5531132d865d}">
+		<property name="name">
+			<value>ArrowCharge</value>
+		</property>
+		<relationship name="folder">
+			<destination>{e10234b1-19f2-434a-ba6d-03bb15ebcf75}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{24f67fc7-a06f-4586-bbc0-1a26cfe4d808}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{24f67fc7-a06f-4586-bbc0-1a26cfe4d808}">
+		<property name="parameterType">
+			<value>2</value>
+		</property>
+		<property name="maximum">
+			<value>3</value>
+		</property>
+		<property name="enumerationLabels">
+			<value>Charge-0</value>
+			<value>Charge-1</value>
+			<value>Charge-2</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
