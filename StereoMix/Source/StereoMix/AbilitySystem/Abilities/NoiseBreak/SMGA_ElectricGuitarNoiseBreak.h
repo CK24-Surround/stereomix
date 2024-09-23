@@ -23,14 +23,27 @@ protected:
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	UFUNCTION()
-	void OnFlash(FGameplayEventData Payload);
+	void OnReceivedFlashEvent(FGameplayEventData Payload);
 
 	UFUNCTION(Server, Reliable)
 	void ServerSendTargetLocation(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& TargetLocation);
 
-	FName OriginalCollisionProfileName;
+	void OnFlash();
 
+	UFUNCTION()
+	void OnNoiseBreak();
+
+	void TileCapture();
+
+	FName OriginalCollisionProfileName;
+	
 	FVector NoiseBreakStartLocation;
 
 	FVector NoiseBreakTargetLocation;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float FlashDelayTime = 0.3f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	int32 DivideCount = 9;
 };

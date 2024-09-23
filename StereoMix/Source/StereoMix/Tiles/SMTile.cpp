@@ -95,7 +95,7 @@ ESMTeam ASMTile::GetTeam() const
 	return TeamComponent->GetTeam();
 }
 
-FVector ASMTile::GetTileLocation()
+FVector ASMTile::GetTileLocation() const
 {
 	return TileMesh->GetComponentLocation();
 }

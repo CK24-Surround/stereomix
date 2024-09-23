@@ -44,7 +44,7 @@ public:
 
 	FORCEINLINE UBoxComponent* GetBoxComponent() const { return BoxComponent; }
 
-	FVector GetTileLocation();
+	FVector GetTileLocation() const;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
