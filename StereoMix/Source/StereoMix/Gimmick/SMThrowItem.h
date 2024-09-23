@@ -17,18 +17,29 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	virtual void OnConstruction(const FTransform& Transform) override;
+
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
 	TSubclassOf<ASMThrowableItem> ItemToThrow;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	float ParabolaHeight;
+	int32 ThrowCount;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	float LandingTime;
+	float ThrowInterval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
+	float TileSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
+	int32 MaxThrowTilesRow;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	float ThrowInterval;
+	int32 MaxThrowTilesColumn;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
+	float ParabolaHeight;
 	
 	UFUNCTION(Server, Reliable)
 	void ServerThrowItem();

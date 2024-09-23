@@ -6,7 +6,6 @@
 #include "NiagaraComponent.h"
 #include "HoldableItem/SMHoldableItemBase.h"
 #include "Net/UnrealNetwork.h"
-#include "Utilities/SMLog.h"
 
 
 ASMThrowableItem::ASMThrowableItem()
