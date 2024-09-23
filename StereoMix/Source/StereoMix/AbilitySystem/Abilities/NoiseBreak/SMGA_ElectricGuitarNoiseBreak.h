@@ -35,6 +35,9 @@ protected:
 
 	void TileCapture();
 
+	UFUNCTION()
+	void OnNoiseBreakEnded();
+
 	FName OriginalCollisionProfileName;
 	
 	FVector NoiseBreakStartLocation;

@@ -4,6 +4,7 @@
 #include "SMGA_ElectricGuitarNoiseBreak.h"
 
 
+#include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
@@ -15,6 +16,7 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
+#include "HoldInteraction/SMHIC_Character.h"
 #include "Utilities/SMCollision.h"
 
 USMGA_ElectricGuitarNoiseBreak::USMGA_ElectricGuitarNoiseBreak()
@@ -35,6 +37,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 
 	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (!SourceCharacter || !SourceDataAsset || !SourceCapsule)
 	{
@@ -52,7 +55,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	UAnimMontage* NoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceCharacter->GetTeam()];
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NoiseBreakMontage, 1.0f, NAME_None, false);
-	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
+	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);
 	MontageTask->ReadyForActivation();
 
 	if (IsLocallyControlled())
@@ -71,6 +74,17 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		NoiseBreakStartLocation = StartTile->GetTileLocation();
 		const float MaxDistance = MaxDistanceByTile * USMTileFunctionLibrary::DefaultTileSize;
 		SourceCharacter->GetTileLocationFromCursor(NoiseBreakTargetLocation, MaxDistance);
+	}
+
+	// 노이즈 브레이크 시작을 타겟에게 알립니다.
+	if (K2_HasAuthority())
+	{
+		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
+		if (TargetHIC)
+		{
+			TargetHIC->OnNoiseBreakActionStarted(SourceCharacter);
+		}
 	}
 }
 
@@ -130,7 +144,29 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 
 void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreak()
 {
+	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
+	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	if (!SourceCharacter || !SourceHIC)
+	{
+		K2_EndAbility();
+		return;
+	}
+
+	if (K2_HasAuthority())
+	{
+		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
+		if (TargetHIC)
+		{
+			TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
+			NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation;
+			TargetHIC->OnNoiseBreakActionPerformed(SourceCharacter, NoiseBreakData);
+		}
+	}
+
 	TileCapture();
+
+	SourceHIC->SetActorIAmHolding(nullptr);
 }
 
 void USMGA_ElectricGuitarNoiseBreak::TileCapture()
@@ -222,4 +258,11 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 	}
 
 	NET_LOG(GetAvatarActor(), Log, TEXT("점령 시도한 타일 개수: %d"), CaptureTiles.Num());
+}
+
+void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakEnded()
+{
+	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
+	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
+	SyncTask->ReadyForActivation();
 }
