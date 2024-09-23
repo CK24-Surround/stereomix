@@ -3,6 +3,7 @@
 
 #include "SMTileFunctionLibrary.h"
 
+#include "Engine/OverlapResult.h"
 #include "Games/SMGameState.h"
 #include "Tiles/SMTile.h"
 #include "Tiles/SMTileManagerComponent.h"
@@ -32,10 +33,45 @@ ASMTile* USMTileFunctionLibrary::GetTileFromLocation(UWorld* World, const FVecto
 	return Cast<ASMTile>(HitResult.GetActor());
 }
 
+TArray<ASMTile*> USMTileFunctionLibrary::GetTilesFromLocationSphere(UWorld* World, const FVector& Location, float Radius)
+{
+	TArray<ASMTile*> Result;
+
+	TArray<FOverlapResult> OverlapResults;
+	const FVector StartLocation = Location;
+	const FCollisionShape SphereCollider = FCollisionShape::MakeSphere(Radius);
+	if (World->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, SphereCollider))
+	{
+		for (const FOverlapResult& OverlapResult : OverlapResults)
+		{
+			ASMTile* Tile = Cast<ASMTile>(OverlapResult.GetActor());
+			if (Tile)
+			{
+				Result.Add(Tile);
+			}
+		}
+	}
+
+	return Result;
+}
+
 void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	ASMTile* StartTile = GetTileFromLocation(World, StartLocation);
+	if (!TileManager || !StartTile)
+	{
+		return;
+	}
+
+	const float Offset = 1.0f;
+	const float HalfSize = Offset + (DefaultTileSize * (CaptureSizeByTile - 1));
+	TileManager->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize);
+}
+
+void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile)
+{
+	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	if (!TileManager || !StartTile)
 	{
 		return;

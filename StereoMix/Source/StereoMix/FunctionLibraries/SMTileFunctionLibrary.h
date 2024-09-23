@@ -23,7 +23,11 @@ public:
 
 	static ASMTile* GetTileFromLocation(UWorld* World, const FVector& Location);
 
+	static TArray<ASMTile*> GetTilesFromLocationSphere(UWorld* World, const FVector& Location, float Radius);
+
 	static void TileCaptureImmediateSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile);
+
+	static void TileCaptureImmediateSqaure(UWorld* World, ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile);
 
 	static void TileCaptureDelayedSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime);
 
