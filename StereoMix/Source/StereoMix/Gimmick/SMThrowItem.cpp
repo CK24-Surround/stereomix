@@ -2,6 +2,7 @@
 
 #include "Items/SMThrowableItem.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
+#include "Utilities/SMLog.h"
 
 ASMThrowItem::ASMThrowItem()
 {
@@ -41,29 +42,50 @@ void ASMThrowItem::BeginPlay()
 
 void ASMThrowItem::ServerThrowItem_Implementation()
 {
-	FVector SpawnLocation = GetActorLocation();
-	
 	for (int i = 0; i < ThrowCount; ++i)
 	{
-		float XRange = MaxThrowTilesColumn * TileSize;
-		float YRange = MaxThrowTilesRow * TileSize;
-		float RandomX = FMath::RandRange(-XRange, XRange - TileSize);
-		float RandomY = FMath::RandRange(-YRange, YRange - TileSize);
-		
-		FVector TargetLocation = FVector(
-			FMath::GridSnap(SpawnLocation.X + RandomX, TileSize) + (TileSize / 2.0f),
-			FMath::GridSnap(SpawnLocation.Y + RandomY, TileSize) + (TileSize / 2.0f),
-			GetActorLocation().Z);
-		
-		FRotator SpawnRotation = GetActorRotation();
+		ThrowItem();
+	}
+}
 
-		float RandomGravity = FMath::RandRange(-2000.0f, -500.0f);
-		FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity);
+void ASMThrowItem::ThrowItem()
+{
+	FVector SpawnLocation = GetActorLocation();
+	
+	float XRange = MaxThrowTilesColumn * TileSize;
+	float YRange = MaxThrowTilesRow * TileSize;
+	float RandomX = FMath::RandRange(-XRange, XRange - TileSize);
+	float RandomY = FMath::RandRange(-YRange, YRange - TileSize);
+		
+	FVector TargetLocation = FVector(
+		FMath::GridSnap(SpawnLocation.X + RandomX, TileSize) + (TileSize / 2.0f),
+		FMath::GridSnap(SpawnLocation.Y + RandomY, TileSize) + (TileSize / 2.0f),
+		GetActorLocation().Z);
 
-		ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ItemToThrow, SpawnLocation, SpawnRotation);
-		if (ThrowableItem)
-		{
-			ThrowableItem->SetThrowItem(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
-		}
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
+
+	bool bIsBlocked = GetWorld()->LineTraceSingleByChannel(
+		HitResult,
+		TargetLocation + FVector(0.0f, 0.0f, 1000.0f),
+		TargetLocation,
+		ECC_Visibility,
+		CollisionParams);
+
+	if (bIsBlocked)
+	{
+		return ThrowItem();
+	}
+		
+	FRotator SpawnRotation = GetActorRotation();
+
+	float RandomGravity = FMath::RandRange(-2000.0f, -500.0f);
+	FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity);
+
+	ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ItemToThrow, SpawnLocation, SpawnRotation);
+	if (ThrowableItem)
+	{
+		ThrowableItem->SetThrowItem(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
 	}
 }

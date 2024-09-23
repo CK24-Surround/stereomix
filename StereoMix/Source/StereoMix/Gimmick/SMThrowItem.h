@@ -44,6 +44,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerThrowItem();
 
+	void ThrowItem();
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
