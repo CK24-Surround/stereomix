@@ -22,25 +22,15 @@ protected:
 
 	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
-	UFUNCTION(Server, Reliable)
-	void ServerSendLocationData(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation);
-
-	void LeapCharacter(const FVector& InStartLocation, const FVector& InTargetLocation, float InGravityZ);
-
-	void OnBurst(const FVector& TargetLocation);
-
-	void OnLanded();
-
 	UFUNCTION()
-	void OnNoiseBreakEnded();
+	void OnFlash(FGameplayEventData Payload);
 
-	void TileCapture(const FVector& TargetLocation);
-
-	/** 도약하는 동안 적용할 중력 스케일입니다. */
-	float NoiseBreakGravityScale = 0.0f;
-
-	/** 도약 정점의 높이입니다. */
-	float ApexHeight = 0.0f;
+	UFUNCTION(Server, Reliable)
+	void ServerSendTargetLocation(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& TargetLocation);
 
 	FName OriginalCollisionProfileName;
+
+	FVector NoiseBreakStartLocation;
+
+	FVector NoiseBreakTargetLocation;
 };

@@ -27,6 +27,5 @@ public:
 
 	static void TileCaptureDelayedSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime);
 
-protected:
 	static constexpr float DefaultTileSize = 150.0f;
 };

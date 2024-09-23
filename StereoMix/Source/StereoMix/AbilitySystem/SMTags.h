@@ -92,6 +92,11 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakEnd);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletShoot);
 
+			namespace ElectricGuitar
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakFlash);
+			}
+
 			namespace Attack
 			{
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(AttackStart);

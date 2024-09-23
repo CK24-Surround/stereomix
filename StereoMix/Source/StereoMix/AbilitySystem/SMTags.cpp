@@ -91,6 +91,11 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakEnd, "Event.AnimNotify.NoiseBreakEnd", "노이즈브레이크 종료 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletShoot, "Event.AnimNotify.SlowBulletShoot", "마비탄 발사 애님 노티파이의 이벤트로 사용됩니다.");
 
+			namespace ElectricGuitar
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakFlash, "Event.AnimNotify.ElectricGuitar.NoiseBreakFlash", "노이즈 브레이크 점멸 애님 노티파이의 이벤트로 사용됩니다.");
+			}
+
 			namespace Attack
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(AttackStart, "Event.AnimNotify.Attack.AttackStart", "공격 판정 시작 노티파이의 이벤트로 사용됩니다.");
