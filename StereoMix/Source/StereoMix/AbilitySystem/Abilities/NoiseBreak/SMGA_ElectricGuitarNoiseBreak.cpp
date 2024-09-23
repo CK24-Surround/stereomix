@@ -111,9 +111,6 @@ void USMGA_ElectricGuitarNoiseBreak::OnReceivedFlashEvent(FGameplayEventData Pay
 	}
 
 	ServerSendTargetLocation(NoiseBreakStartLocation, NoiseBreakTargetLocation);
-
-	const FVector NoiseBreakTargetLocationWithSourceZ(NoiseBreakTargetLocation.X, NoiseBreakTargetLocation.Y, NoiseBreakStartLocation.Z + SourceCapsule->GetScaledCapsuleHalfHeight());
-	SourceCharacter->SetActorLocation(NoiseBreakTargetLocationWithSourceZ);
 }
 
 void USMGA_ElectricGuitarNoiseBreak::ServerSendTargetLocation_Implementation(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& TargetLocation)
