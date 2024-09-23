@@ -56,13 +56,14 @@ void ASMThrowItem::ServerThrowItem_Implementation()
 			GetActorLocation().Z);
 		
 		FRotator SpawnRotation = GetActorRotation();
-        
-		FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, -980.0f);
+
+		float RandomGravity = FMath::RandRange(-2000.0f, -500.0f);
+		FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity);
 
 		ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ItemToThrow, SpawnLocation, SpawnRotation);
 		if (ThrowableItem)
 		{
-			ThrowableItem->SetThrowItem(LaunchVelocity, SpawnLocation, TargetLocation);
+			ThrowableItem->SetThrowItem(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
 		}
 	}
 }

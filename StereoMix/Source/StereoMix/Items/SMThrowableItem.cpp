@@ -47,7 +47,7 @@ void ASMThrowableItem::Tick(float DeltaTime)
 
 	float x = LaunchVelocity.X * ElapsedTime;
 	float y = LaunchVelocity.Y * ElapsedTime;
-	float Z = LaunchVelocity.Z * ElapsedTime + 0.5f * -980.0f * FMath::Pow(ElapsedTime, 2);
+	float Z = LaunchVelocity.Z * ElapsedTime + 0.5f * ThrowGravity * FMath::Pow(ElapsedTime, 2);
 	FVector NewLocation = InitialLocation + FVector(x, y, Z);
 	
 	SetActorLocation(NewLocation);
@@ -64,13 +64,14 @@ void ASMThrowableItem::Tick(float DeltaTime)
 	}
 }
 
-void ASMThrowableItem::SetThrowItem(const FVector& InLaunchVelocity, const FVector& InInitialLocation, const FVector& InTargetLocation)
+void ASMThrowableItem::SetThrowItem(const FVector& InLaunchVelocity, const FVector& InInitialLocation, const FVector& InTargetLocation, const float& InGravity)
 {
 	bEnableThrow = true;
 	ThrowStartTime = GetWorld()->GetTimeSeconds();
 	LaunchVelocity = InLaunchVelocity;
 	InitialLocation = InInitialLocation;
 	TargetLocation = InTargetLocation;
+	ThrowGravity = InGravity;
 }
 
 void ASMThrowableItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -82,4 +83,5 @@ void ASMThrowableItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(ASMThrowableItem, LaunchVelocity);
 	DOREPLIFETIME(ASMThrowableItem, InitialLocation);
 	DOREPLIFETIME(ASMThrowableItem, TargetLocation);
+	DOREPLIFETIME(ASMThrowableItem, ThrowGravity);
 }
