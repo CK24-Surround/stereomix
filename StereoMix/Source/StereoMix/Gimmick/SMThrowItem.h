@@ -20,36 +20,35 @@ protected:
 	virtual void OnConstruction(const FTransform& Transform) override;
 
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	TSubclassOf<ASMThrowableItem> ItemToThrow;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	int32 ThrowCount;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	int32 ThrowCount = 1;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	float ThrowInterval;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	float ThrowInterval = 5.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	float TileSize;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	float TileSize = 150.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	int32 MaxThrowTilesRow;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	int32 MaxThrowTilesColumn;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Gimmick")
-	float ParabolaHeight;
-	
-	UFUNCTION(Server, Reliable)
-	void ServerThrowItem();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	int32 MaxThrowTilesRow = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	int32 MaxThrowTilesColumn = 5;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	float ParabolaHeight = 1000.0f;
 
 	void ThrowItem();
 
 protected:
+	void InternalThrowItem();
+
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
-	
+
 private:
 	FTimerHandle ThrowTimerHandle;
 };

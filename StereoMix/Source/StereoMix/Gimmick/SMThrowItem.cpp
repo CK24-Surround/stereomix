@@ -6,13 +6,7 @@
 
 ASMThrowItem::ASMThrowItem()
 {
-    PrimaryActorTick.bCanEverTick = true;
-	ThrowCount = 1;
-    ThrowInterval = 5.0f;
-	TileSize = 150.0f;
-	MaxThrowTilesRow = 5;
-	MaxThrowTilesColumn = 5;
-    ParabolaHeight = 1000.0f;
+	PrimaryActorTick.bCanEverTick = true;
 
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
@@ -22,70 +16,69 @@ void ASMThrowItem::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	FVector BoxCenter = GetActorLocation();
-	FVector BoxExtent(MaxThrowTilesColumn * TileSize, MaxThrowTilesRow * TileSize, ParabolaHeight / 2.0f);
+	const FVector SourceLocation = GetActorLocation();
+	const FVector HalfExtent(MaxThrowTilesColumn * TileSize, MaxThrowTilesRow * TileSize, ParabolaHeight / 2.0f);
+	const FVector BoxCenter = FVector(SourceLocation.X, SourceLocation.Y, SourceLocation.Z + HalfExtent.Z);
 
-	BoxCenter.Z += BoxExtent.Z;
-	
-	DrawDebugBox(GetWorld(), BoxCenter, BoxExtent, FQuat::Identity, FColor::Red, false, -1, 0, 5.0f);
+	DrawDebugBox(GetWorld(), BoxCenter, HalfExtent, FQuat::Identity, FColor::Red, false, -1, 0, 5.0f);
 }
 
 void ASMThrowItem::BeginPlay()
 {
-    Super::BeginPlay();
+	Super::BeginPlay();
 
-    if (HasAuthority())
-    {
-        GetWorld()->GetTimerManager().SetTimer(ThrowTimerHandle, this, &ASMThrowItem::ServerThrowItem, ThrowInterval, true);
-    }
-}
-
-void ASMThrowItem::ServerThrowItem_Implementation()
-{
-	for (int i = 0; i < ThrowCount; ++i)
+	if (HasAuthority())
 	{
-		ThrowItem();
+		GetWorld()->GetTimerManager().SetTimer(ThrowTimerHandle, this, &ASMThrowItem::ThrowItem, ThrowInterval, true);
 	}
 }
 
 void ASMThrowItem::ThrowItem()
 {
-	FVector SpawnLocation = GetActorLocation();
-	
-	float XRange = MaxThrowTilesColumn * TileSize;
-	float YRange = MaxThrowTilesRow * TileSize;
-	float RandomX = FMath::RandRange(-XRange, XRange - TileSize);
-	float RandomY = FMath::RandRange(-YRange, YRange - TileSize);
-		
-	FVector TargetLocation = FVector(
-		FMath::GridSnap(SpawnLocation.X + RandomX, TileSize) + (TileSize / 2.0f),
-		FMath::GridSnap(SpawnLocation.Y + RandomY, TileSize) + (TileSize / 2.0f),
-		GetActorLocation().Z);
+	for (int i = 0; i < ThrowCount; ++i)
+	{
+		InternalThrowItem();
+	}
+}
+
+void ASMThrowItem::InternalThrowItem()
+{
+	const float XRange = MaxThrowTilesColumn * TileSize;
+	const float RandomX = FMath::RandRange(-XRange, XRange - TileSize);
+
+	const float YRange = MaxThrowTilesRow * TileSize;
+	const float RandomY = FMath::RandRange(-YRange, YRange - TileSize);
+
+	const FVector SpawnLocation = GetActorLocation();
+
+	FVector TargetLocation;
+	TargetLocation.X = FMath::GridSnap(SpawnLocation.X + RandomX, TileSize) + (TileSize / 2.0f);
+	TargetLocation.Y = FMath::GridSnap(SpawnLocation.Y + RandomY, TileSize) + (TileSize / 2.0f);
+	TargetLocation.Z = SpawnLocation.Z;
 
 	FHitResult HitResult;
+
+	const float ObstacleHeightThreshold = 1000.0f;
+	const FVector Offset(0.0f, 0.0f, ObstacleHeightThreshold);
+	const FVector Start = TargetLocation + Offset;
+	const FVector End = TargetLocation;
+
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
 
-	bool bIsBlocked = GetWorld()->LineTraceSingleByChannel(
-		HitResult,
-		TargetLocation + FVector(0.0f, 0.0f, 1000.0f),
-		TargetLocation,
-		ECC_Visibility,
-		CollisionParams);
-
-	if (bIsBlocked)
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams))
 	{
-		return ThrowItem();
+		return InternalThrowItem();
 	}
-		
-	FRotator SpawnRotation = GetActorRotation();
 
-	float RandomGravity = FMath::RandRange(-2000.0f, -500.0f);
-	FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity);
+	const FRotator SpawnRotation = GetActorRotation();
 
 	ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ItemToThrow, SpawnLocation, SpawnRotation);
 	if (ThrowableItem)
 	{
+		float RandomGravity = FMath::RandRange(-2000.0f, -500.0f);
+		FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity);
+
 		ThrowableItem->SetThrowItem(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
 	}
 }

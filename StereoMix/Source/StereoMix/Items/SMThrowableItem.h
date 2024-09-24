@@ -20,7 +20,9 @@ public:
 	void SetThrowItem(const FVector& InLaunchVelocity, const FVector& InInitialLocation, const FVector& InTargetLocation, const float& InGravity);
 
 protected:
-	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+
+	void OnTargetArrived();
 
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
@@ -28,24 +30,21 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Niagara")
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	TSubclassOf<ASMHoldableItemBase> ItemToSpawn;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	float DestroyTime;
- 
-	uint8 bEnableThrow:1;
-	
-	float ThrowStartTime;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	float DestroyTime = 15.0f;
+
+	uint8 bEnableThrow:1 = false;
+
+	float ThrowStartTime = 0.0f;
 
 	FVector LaunchVelocity;
 
 	FVector InitialLocation;
 
 	FVector TargetLocation;
-	
-	float ThrowGravity;
-	
-public:
-	virtual void Tick(float DeltaTime) override;
+
+	float ThrowGravity = 0.0f;
 };

@@ -6,7 +6,7 @@
 #include "SMHoldableItemBase.h"
 #include "SMHoldableItem_Overlap.generated.h"
 
-
+class UNiagaraComponent;
 
 UCLASS(Abstract)
 class STEREOMIX_API ASMHoldableItem_Overlap : public ASMHoldableItemBase
