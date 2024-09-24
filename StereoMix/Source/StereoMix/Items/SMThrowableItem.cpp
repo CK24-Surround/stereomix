@@ -5,7 +5,6 @@
 
 #include "NiagaraComponent.h"
 #include "HoldableItem/SMHoldableItemBase.h"
-#include "Net/UnrealNetwork.h"
 
 
 ASMThrowableItem::ASMThrowableItem()
@@ -21,6 +20,8 @@ ASMThrowableItem::ASMThrowableItem()
 
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	NiagaraComponent->SetupAttachment(RootComponent);
+
+	DestroyTime = 15.0f;
 }
 
 void ASMThrowableItem::BeginPlay()
@@ -55,11 +56,29 @@ void ASMThrowableItem::Tick(float DeltaTime)
 	if (NewLocation.Z < TargetLocation.Z)
 	{
 		bEnableThrow = false;
-		if (Item)
+		
+		if (!ItemToSpawn)
 		{
-			FRotator SpawnRotation = GetActorRotation();
-			GetWorld()->SpawnActor<ASMHoldableItemBase>(Item, TargetLocation, SpawnRotation);
+			Destroy();
+			return;
 		}
+
+		FRotator SpawnRotation = GetActorRotation();
+		ASMHoldableItemBase* SpawnedItem = GetWorld()->SpawnActor<ASMHoldableItemBase>(ItemToSpawn, TargetLocation, SpawnRotation);
+		if (SpawnedItem && DestroyTime > 0.0f)
+		{
+			TWeakObjectPtr<ASMHoldableItemBase> WeakSpawnedItem(SpawnedItem);
+
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, [WeakSpawnedItem]()
+			{
+				if (WeakSpawnedItem.IsValid())
+				{
+					WeakSpawnedItem->Destroy();
+				}
+			}, DestroyTime, false);
+		}
+		
 		Destroy();
 	}
 }
@@ -72,16 +91,4 @@ void ASMThrowableItem::SetThrowItem(const FVector& InLaunchVelocity, const FVect
 	InitialLocation = InInitialLocation;
 	TargetLocation = InTargetLocation;
 	ThrowGravity = InGravity;
-}
-
-void ASMThrowableItem::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ASMThrowableItem, bEnableThrow);
-	DOREPLIFETIME(ASMThrowableItem, ThrowStartTime);
-	DOREPLIFETIME(ASMThrowableItem, LaunchVelocity);
-	DOREPLIFETIME(ASMThrowableItem, InitialLocation);
-	DOREPLIFETIME(ASMThrowableItem, TargetLocation);
-	DOREPLIFETIME(ASMThrowableItem, ThrowGravity);
 }

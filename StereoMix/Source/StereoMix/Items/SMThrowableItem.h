@@ -17,7 +17,7 @@ class STEREOMIX_API ASMThrowableItem : public AActor
 public:
 	ASMThrowableItem();
 
-	void SetThrowItem(const FVector& InLaunchVelocity, const FVector& InInitialLocation, const FVector& InTargetLocation, const float& InDesiredTime);
+	void SetThrowItem(const FVector& InLaunchVelocity, const FVector& InInitialLocation, const FVector& InTargetLocation, const float& InGravity);
 
 protected:
 	virtual void BeginPlay() override;
@@ -29,28 +29,23 @@ protected:
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
-	TSubclassOf<ASMHoldableItemBase> Item;
+	TSubclassOf<ASMHoldableItemBase> ItemToSpawn;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Item")
+	float DestroyTime;
+ 
 	uint8 bEnableThrow:1;
 	
-	UPROPERTY(Replicated)
 	float ThrowStartTime;
 
-	UPROPERTY(Replicated)
 	FVector LaunchVelocity;
 
-	UPROPERTY(Replicated)
 	FVector InitialLocation;
 
-	UPROPERTY(Replicated)
 	FVector TargetLocation;
 	
-	UPROPERTY(Replicated)
 	float ThrowGravity;
 	
 public:
 	virtual void Tick(float DeltaTime) override;
-	
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 };

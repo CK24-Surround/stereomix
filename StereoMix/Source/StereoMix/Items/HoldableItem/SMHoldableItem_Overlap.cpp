@@ -22,5 +22,9 @@ void ASMHoldableItem_Overlap::ActivateItem(AActor* InActivator)
 void ASMHoldableItem_Overlap::OnHoldedStateEntry()
 {
 	ActivateItem(HIC->GetActorHoldingMe());
-	Destroy();
+
+	if (IsValid(this))
+	{
+		Destroy();
+	}
 }
