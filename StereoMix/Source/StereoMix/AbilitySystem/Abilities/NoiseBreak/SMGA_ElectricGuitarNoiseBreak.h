@@ -31,7 +31,7 @@ protected:
 	void OnFlash();
 
 	UFUNCTION()
-	void OnNoiseBreak();
+	void OnNoiseBreakBurst();
 
 	void TileCapture();
 
