@@ -48,6 +48,8 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		return;
 	}
 
+	NET_LOG(GetAvatarActor(), Warning, TEXT("노이즈 브레이크 활성화"));
+
 	K2_CommitAbility();
 
 	// 노이즈 브레이크 콜라이더로 변경합니다.
@@ -82,6 +84,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	// 노이즈 브레이크 시작을 타겟에게 알립니다.
 	if (K2_HasAuthority())
 	{
+		NET_LOG(GetAvatarActor(), Warning, TEXT("타겟에게 노브 시작 알림"));
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
 		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
 		if (TargetHIC)
@@ -93,6 +96,8 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 
 void USMGA_ElectricGuitarNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	NET_LOG(GetAvatarActor(), Warning, TEXT("노브 종료"));
+
 	ASMElectricGuitarCharacter* SourceCharacter = GetAvatarActor<ASMElectricGuitarCharacter>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (SourceCapsule)
@@ -105,6 +110,8 @@ void USMGA_ElectricGuitarNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle
 
 void USMGA_ElectricGuitarNoiseBreak::OnReceivedFlashEvent(FGameplayEventData Payload)
 {
+	NET_LOG(GetAvatarActor(), Warning, TEXT("플래시 노티파이 트리거"));
+
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (!SourceCharacter || !SourceCapsule)
@@ -114,10 +121,15 @@ void USMGA_ElectricGuitarNoiseBreak::OnReceivedFlashEvent(FGameplayEventData Pay
 	}
 
 	ServerSendTargetLocation(NoiseBreakStartLocation, NoiseBreakTargetLocation);
+
+	const FName SectionName = TEXT("End");
+	MontageJumpToSection(SectionName);
 }
 
 void USMGA_ElectricGuitarNoiseBreak::ServerSendTargetLocation_Implementation(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& TargetLocation)
 {
+	NET_LOG(GetAvatarActor(), Warning, TEXT("위치 정보 받음"));
+
 	NoiseBreakStartLocation = StartLocation;
 	NoiseBreakTargetLocation = TargetLocation;
 
@@ -137,6 +149,8 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 	const FVector NoiseBreakTargetLocationWithSourceZ(NoiseBreakTargetLocation.X, NoiseBreakTargetLocation.Y, NoiseBreakStartLocation.Z + SourceCapsule->GetScaledCapsuleHalfHeight());
 	SourceCharacter->MulitcastRPCSetLocation(NoiseBreakTargetLocationWithSourceZ);
 
+	NET_LOG(GetAvatarActor(), Warning, TEXT("버스트 대기"));
+
 	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, FlashDelayTime);
 	WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnNoiseBreak);
 	WaitTask->ReadyForActivation();
@@ -144,6 +158,8 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 
 void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreak()
 {
+	NET_LOG(GetAvatarActor(), Warning, TEXT("버스트"));
+
 	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (!SourceCharacter || !SourceHIC)
@@ -156,6 +172,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreak()
 	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
 	if (TargetHIC)
 	{
+		NET_LOG(GetAvatarActor(), Warning, TEXT("타겟에게 노브 종료 알림"));
 		const FVector TargetToStartDirection = (NoiseBreakStartLocation - NoiseBreakTargetLocation).GetSafeNormal();
 		TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
 		NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation + (TargetToStartDirection * 70.0f);
@@ -290,6 +307,7 @@ TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetSplashHitActorsForElectricGui
 
 void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakEnded()
 {
+	NET_LOG(GetAvatarActor(), Warning, TEXT("종료 대기"));
 	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
 	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
 	SyncTask->ReadyForActivation();
