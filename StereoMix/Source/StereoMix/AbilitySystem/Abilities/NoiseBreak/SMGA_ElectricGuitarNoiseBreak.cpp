@@ -152,16 +152,14 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreak()
 		return;
 	}
 
-	if (K2_HasAuthority())
+	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
+	if (TargetHIC)
 	{
-		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-		if (TargetHIC)
-		{
-			TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
-			NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation;
-			TargetHIC->OnNoiseBreakActionPerformed(SourceCharacter, NoiseBreakData);
-		}
+		const FVector TargetToStartDirection = (NoiseBreakStartLocation - NoiseBreakTargetLocation).GetSafeNormal();
+		TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
+		NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation + (TargetToStartDirection * 70.0f);
+		TargetHIC->OnNoiseBreakActionPerformed(SourceCharacter, NoiseBreakData);
 	}
 
 	TileCapture();

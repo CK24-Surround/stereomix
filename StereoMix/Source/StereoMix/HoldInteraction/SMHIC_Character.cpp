@@ -167,10 +167,10 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* I
 		return;
 	}
 
-	// const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
-	// SourceCharacter->MulitcastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
+	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
+	SourceCharacter->MulitcastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
 
-	HoldedReleased(Instigator, true);
+	HoldedReleased(Instigator, false);
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
 	NoiseBreaked();
