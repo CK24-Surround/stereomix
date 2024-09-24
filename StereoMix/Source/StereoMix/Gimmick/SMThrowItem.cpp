@@ -2,6 +2,7 @@
 
 #include "Items/SMThrowableItem.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Utilities/SMLog.h"
 
 ASMThrowItem::ASMThrowItem()
@@ -17,6 +18,7 @@ void ASMThrowItem::OnConstruction(const FTransform& Transform)
 	Super::OnConstruction(Transform);
 
 	const FVector SourceLocation = GetActorLocation();
+	const float TileSize = USMTileFunctionLibrary::DefaultTileSize;
 	const FVector HalfExtent(MaxThrowTilesColumn * TileSize, MaxThrowTilesRow * TileSize, ParabolaHeight / 2.0f);
 	const FVector BoxCenter = FVector(SourceLocation.X, SourceLocation.Y, SourceLocation.Z + HalfExtent.Z);
 
@@ -43,6 +45,8 @@ void ASMThrowItem::ThrowItem()
 
 void ASMThrowItem::InternalThrowItem()
 {
+	const float TileSize = USMTileFunctionLibrary::DefaultTileSize;
+
 	const float XRange = MaxThrowTilesColumn * TileSize;
 	const float RandomX = FMath::RandRange(-XRange, XRange - TileSize);
 

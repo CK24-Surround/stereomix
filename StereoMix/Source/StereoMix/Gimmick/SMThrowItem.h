@@ -30,9 +30,6 @@ public:
 	float ThrowInterval = 5.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
-	float TileSize = 150.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	int32 MaxThrowTilesRow = 5;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
