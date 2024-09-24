@@ -46,7 +46,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float FlashDelayTime = 0.3f;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	int32 DivideCount = 9;
 };

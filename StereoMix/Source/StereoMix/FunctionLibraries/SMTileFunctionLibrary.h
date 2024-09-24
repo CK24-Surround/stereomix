@@ -23,13 +23,13 @@ public:
 
 	static ASMTile* GetTileFromLocation(UWorld* World, const FVector& Location);
 
-	static TArray<ASMTile*> GetTilesFromLocationSphere(UWorld* World, const FVector& Location, float Radius);
+	static TArray<ASMTile*> GetTilesFromLocationByCapsule(UWorld* World, const FVector& StartLocation, const FVector& EndLocaiton, float Radius, bool bShowDebug = false);
 
-	static void TileCaptureImmediateSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile);
+	static void TileCaptureImmediateSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, bool bShowDebug = false);
 
-	static void TileCaptureImmediateSqaure(UWorld* World, ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile);
+	static void TileCaptureImmediateSqaure(UWorld* World, ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, bool bShowDebug = false);
 
-	static void TileCaptureDelayedSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime);
+	static void TileCaptureDelayedSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime, bool bShowDebug = false);
 
 	static constexpr float DefaultTileSize = 150.0f;
 };

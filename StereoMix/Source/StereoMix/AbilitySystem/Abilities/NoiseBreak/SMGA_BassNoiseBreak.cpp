@@ -199,5 +199,5 @@ void USMGA_BassNoiseBreak::TileCapture()
 	}
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	USMTileFunctionLibrary::TileCaptureDelayedSqaure(GetWorld(), SourceLocation, SourceTeam, CaptureSize, TotalTriggerTime);
+	USMTileFunctionLibrary::TileCaptureDelayedSqaure(GetWorld(), SourceLocation, SourceTeam, CaptureSize, TotalTriggerTime, true);
 }

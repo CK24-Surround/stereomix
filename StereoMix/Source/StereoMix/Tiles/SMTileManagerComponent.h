@@ -26,9 +26,5 @@ public:
 	 * @param HalfVerticalSize 세로측 점령 사이즈입니다.
 	 * @return 점령에 성공한 타일의 개수를 반환합니다.
 	 */
-	int32 TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize);
-
-protected:
-	UPROPERTY(EditAnywhere, Category = "Design")
-	uint32 bShowDebug:1 = false;
+	int32 TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize, bool bShowDebug = false);
 };

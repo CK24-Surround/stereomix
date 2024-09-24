@@ -15,7 +15,7 @@ USMTileManagerComponent::USMTileManagerComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 }
 
-int32 USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize)
+int32 USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize, bool bShowDebug)
 {
 	TArray<FOverlapResult> OverlapResults;
 	const FVector StartLocation = StartTile->GetTileLocation();

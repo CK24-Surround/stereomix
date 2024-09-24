@@ -162,6 +162,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreak()
 	}
 
 	TileCapture();
+	// TODO: 스플래시 데미지는 점령시도한 타일 위를 기준으로 여러개의 콜라이더를 오버랩시키고 중복을 걸러낸 뒤 대상에게 데미지를 주도록 로직을 구성해야한다.
 
 	SourceHIC->SetActorIAmHolding(nullptr);
 }
@@ -169,33 +170,24 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreak()
 void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	if (!SourceCharacter)
+	UWorld* World = GetWorld();
+	if (!SourceCharacter || !World)
 	{
 		return;
 	}
 
-	TArray<ASMTile*> CaptureTiles;
-	const FVector StartToTarget = NoiseBreakTargetLocation - NoiseBreakStartLocation;
-	const float Distance = StartToTarget.Size();
-
-	const FVector StartToTargetDirection = StartToTarget.GetSafeNormal();
-	const float DividedDistance = Distance / DivideCount;
-	for (int32 i = 0; i <= DivideCount; ++i)
-	{
-		const FVector TargetLocation = NoiseBreakStartLocation + (StartToTargetDirection * DividedDistance * i);
-		TArray<ASMTile*> Tiles = (USMTileFunctionLibrary::GetTilesFromLocationSphere(GetWorld(), TargetLocation, USMTileFunctionLibrary::DefaultTileSize));
-		for (ASMTile* Tile : Tiles)
-		{
-			CaptureTiles.AddUnique(Tile);
-		}
-	}
+	// 캡슐을 통해 시작 지점에서 끝지점까지 점령할 타일을 저장합니다.
+	TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesFromLocationByCapsule(World, NoiseBreakStartLocation, NoiseBreakTargetLocation, USMTileFunctionLibrary::DefaultTileSize, true);
 
 	// 시작과 종료 지점 앞 뒤 타일을 제거합니다.
-	CaptureTiles.RemoveAll([&](ASMTile* Tile) {
+	const FVector CachedNoiseBreakStartLocation = NoiseBreakStartLocation;
+	const FVector CachedNoiseBreakTargetLocation = NoiseBreakTargetLocation;
+	const FVector StartToTargetDirection = (NoiseBreakTargetLocation - NoiseBreakStartLocation).GetSafeNormal();
+	CaptureTiles.RemoveAll([CachedNoiseBreakStartLocation, CachedNoiseBreakTargetLocation, StartToTargetDirection](ASMTile* Tile) {
 		const FVector TileLocation = Tile->GetTileLocation();
 
-		const FVector StartToTileDirection = (TileLocation - NoiseBreakStartLocation).GetSafeNormal();
-		const FVector EndToTileDirection = (TileLocation - NoiseBreakTargetLocation).GetSafeNormal();
+		const FVector StartToTileDirection = (TileLocation - CachedNoiseBreakStartLocation).GetSafeNormal();
+		const FVector EndToTileDirection = (TileLocation - CachedNoiseBreakTargetLocation).GetSafeNormal();
 		if (StartToTileDirection.IsNearlyZero() || EndToTileDirection.IsNearlyZero())
 		{
 			return false;
@@ -210,51 +202,13 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 		return DotProductFromStart < -Cos || DotProductFromEnd > Cos;
 	});
 
-	// 기준점을 시작점의 뒤 1타일로 잡고 가까운 타일부터 순서대로 정렬합니다.
-	const FVector NoiseBreakStartLocationWithOffset = NoiseBreakStartLocation + (StartToTargetDirection * -USMTileFunctionLibrary::DefaultTileSize);
-	CaptureTiles.Sort([NoiseBreakStartLocationWithOffset](ASMTile& Lhs, ASMTile& Rhs) {
-		const float LhsDistSquared = FVector::DistSquared(NoiseBreakStartLocationWithOffset, Lhs.GetTileLocation());
-		const float RhsDistSquared = FVector::DistSquared(NoiseBreakStartLocationWithOffset, Rhs.GetTileLocation());
-		return LhsDistSquared < RhsDistSquared;
-	});
-
 	ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	for (int32 i = 0; i < CaptureTiles.Num(); ++i)
+	for (ASMTile* CaptureTile : CaptureTiles)
 	{
-		TArray<ASMTile*> Tiles;
-		Tiles.Add(CaptureTiles[i]);
-		for (int32 j = 0; j < 2; ++j)
-		{
-			if (i + 1 < CaptureTiles.Num())
-			{
-				Tiles.Add(CaptureTiles[i + 1]);
-				++i;
-			}
-		}
-
-		TWeakObjectPtr<USMGA_ElectricGuitarNoiseBreak> ThisWeakPtr = MakeWeakObjectPtr(this);
-		auto Lambda = [ThisWeakPtr, Tiles, SourceTeam]() {
-			if (ThisWeakPtr.Get())
-			{
-				for (ASMTile* Tile : Tiles)
-				{
-					USMTileFunctionLibrary::TileCaptureImmediateSqaure(ThisWeakPtr->GetWorld(), Tile, SourceTeam, 1);
-				}
-			}
-		};
-
-		if (i == 0)
-		{
-			Lambda();
-		}
-		else
-		{
-			FTimerHandle TimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, Lambda, 0.01f * i, false);
-		}
+		USMTileFunctionLibrary::TileCaptureImmediateSqaure(World, CaptureTile, SourceTeam, 1);
 	}
 
-	NET_LOG(GetAvatarActor(), Log, TEXT("점령 시도한 타일 개수: %d"), CaptureTiles.Num());
+	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크로 점령 시도한 타일 개수: %d"), CaptureTiles.Num());
 }
 
 void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakEnded()

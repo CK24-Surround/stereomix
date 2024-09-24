@@ -8,6 +8,7 @@
 #include "Tiles/SMTile.h"
 #include "Tiles/SMTileManagerComponent.h"
 #include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 
 USMTileManagerComponent* USMTileFunctionLibrary::GetTileManagerComponent(UWorld* World)
 {
@@ -22,25 +23,30 @@ USMTileManagerComponent* USMTileFunctionLibrary::GetTileManagerComponent(UWorld*
 
 ASMTile* USMTileFunctionLibrary::GetTileFromLocation(UWorld* World, const FVector& Location)
 {
-	FHitResult HitResult;
-	const FVector StartLocation = Location;
-	const FVector EndLocation = StartLocation + (FVector::DownVector * 1000.0);
-	if (!World->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction))
+	if (!World)
 	{
 		return nullptr;
 	}
 
+	FHitResult HitResult;
+	const FVector StartLocation = Location;
+	const FVector EndLocation = StartLocation + (FVector::DownVector * 1000.0);
+	World->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction);
 	return Cast<ASMTile>(HitResult.GetActor());
 }
 
-TArray<ASMTile*> USMTileFunctionLibrary::GetTilesFromLocationSphere(UWorld* World, const FVector& Location, float Radius)
+TArray<ASMTile*> USMTileFunctionLibrary::GetTilesFromLocationByCapsule(UWorld* World, const FVector& StartLocation, const FVector& EndLocaiton, float Radius, bool bShowDebug)
 {
 	TArray<ASMTile*> Result;
 
 	TArray<FOverlapResult> OverlapResults;
-	const FVector StartLocation = Location;
-	const FCollisionShape SphereCollider = FCollisionShape::MakeSphere(Radius);
-	if (World->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, SphereCollider))
+	const FVector CapsuleLocation = (StartLocation + EndLocaiton) / 2.0f;
+	const FVector CapsuleDirection = (EndLocaiton - StartLocation).GetSafeNormal();
+	const FRotator CapsuleRotation = CapsuleDirection.Rotation() + FRotator(90.0, 0.0, 0.0);
+	const FQuat CapsuleQuat = CapsuleRotation.Quaternion();
+	const float CapsuleHalfHeight = (FVector::Dist(StartLocation, EndLocaiton) / 2.0f) + Radius;
+	const FCollisionShape CapsuleCollider = FCollisionShape::MakeCapsule(Radius, CapsuleHalfHeight);
+	if (World->OverlapMultiByChannel(OverlapResults, CapsuleLocation, CapsuleQuat, SMCollisionTraceChannel::TileAction, CapsuleCollider))
 	{
 		for (const FOverlapResult& OverlapResult : OverlapResults)
 		{
@@ -52,10 +58,15 @@ TArray<ASMTile*> USMTileFunctionLibrary::GetTilesFromLocationSphere(UWorld* Worl
 		}
 	}
 
+	if (bShowDebug)
+	{
+		DrawDebugCapsule(World, CapsuleLocation, CapsuleHalfHeight, Radius, CapsuleQuat, FColor::Cyan, false, 2.0f);
+	}
+
 	return Result;
 }
 
-void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile)
+void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, bool bShowDebug)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	ASMTile* StartTile = GetTileFromLocation(World, StartLocation);
@@ -66,10 +77,10 @@ void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, const FVe
 
 	const float Offset = 1.0f;
 	const float HalfSize = Offset + (DefaultTileSize * (CaptureSizeByTile - 1));
-	TileManager->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize);
+	TileManager->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize, bShowDebug);
 }
 
-void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile)
+void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, bool bShowDebug)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	if (!TileManager || !StartTile)
@@ -79,10 +90,10 @@ void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, ASMTile* 
 
 	const float Offset = 1.0f;
 	const float HalfSize = Offset + (DefaultTileSize * (CaptureSizeByTile - 1));
-	TileManager->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize);
+	TileManager->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize, bShowDebug);
 }
 
-void USMTileFunctionLibrary::TileCaptureDelayedSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime)
+void USMTileFunctionLibrary::TileCaptureDelayedSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime, bool bShowDebug)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	ASMTile* StartTile = GetTileFromLocation(World, StartLocation);
@@ -98,10 +109,10 @@ void USMTileFunctionLibrary::TileCaptureDelayedSqaure(UWorld* World, const FVect
 	for (int32 i = 0; i < CaptureSizeByTile; ++i)
 	{
 		float HalfSize = OffSet + DefaultTileSize * i;
-		auto Lambda = [TileManagerWeakPtr, StartTile, InstigatorTeam, HalfSize]() {
+		auto Lambda = [TileManagerWeakPtr, StartTile, InstigatorTeam, HalfSize, bShowDebug]() {
 			if (TileManagerWeakPtr.Get())
 			{
-				TileManagerWeakPtr->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize);
+				TileManagerWeakPtr->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize, bShowDebug);
 			}
 		};
 
