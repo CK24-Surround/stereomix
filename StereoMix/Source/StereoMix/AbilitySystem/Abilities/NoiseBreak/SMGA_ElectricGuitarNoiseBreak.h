@@ -35,6 +35,10 @@ protected:
 
 	void TileCapture();
 
+	void ApplySplashForElectricGuitar();
+
+	TArray<AActor*> GetSplashHitActorsForElectricGuitar();
+
 	UFUNCTION()
 	void OnNoiseBreakEnded();
 
