@@ -18,10 +18,7 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
-#include "Games/SMGameState.h"
 #include "HoldInteraction/SMHIC_Character.h"
-#include "Tiles/SMTile.h"
-#include "Tiles/SMTileManagerComponent.h"
 #include "Utilities/SMCollision.h"
 
 USMGA_PianoNoiseBreak::USMGA_PianoNoiseBreak()
