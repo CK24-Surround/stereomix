@@ -185,7 +185,7 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
 	if (GESpecHandle.IsValid())
 	{
-		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
 		SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 	}
 

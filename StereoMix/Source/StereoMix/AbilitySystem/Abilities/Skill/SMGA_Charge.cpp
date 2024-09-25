@@ -169,7 +169,7 @@ void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
 	FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
 	if (GESpecHandle.IsValid())
 	{
-		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
 		TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 	}
 }

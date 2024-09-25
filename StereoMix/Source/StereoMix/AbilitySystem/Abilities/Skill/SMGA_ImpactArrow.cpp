@@ -204,7 +204,7 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 				FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
 				if (GESpecHandle.IsValid())
 				{
-					GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+					GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
 				}
 
 				TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);

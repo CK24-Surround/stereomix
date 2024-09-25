@@ -32,6 +32,8 @@ namespace SMTags
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stamina);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(MaxSkillGauge);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(SkillGauge);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Heal);
+		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage);
 	}
 
 	namespace Character
@@ -44,6 +46,7 @@ namespace SMTags
 
 		namespace State
 		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Invincible);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlashActivation);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Slash);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Catch);
@@ -69,9 +72,7 @@ namespace SMTags
 	namespace Data
 	{
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Duration);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Damage);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Cooldown);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(MoveSpeed);
 	}
 
 	namespace Item

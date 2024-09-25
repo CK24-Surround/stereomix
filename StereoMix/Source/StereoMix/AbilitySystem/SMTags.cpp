@@ -31,6 +31,8 @@ namespace SMTags
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stamina, "AttributeSet.Stamina", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MaxSkillGauge, "AttributeSet.MaxSkillGauge", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(SkillGauge, "AttributeSet.SkillGauge", "어트리뷰트 셋의 데이터를 가리키기위한 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Heal, "Data.Heal", "힐 메타 데이터 태그입니다.");
+		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage, "Data.Damage", "데미지 메타 데이터 태그입니다.");
 	}
 
 	namespace Character
@@ -43,6 +45,7 @@ namespace SMTags
 
 		namespace State
 		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Invincible, "Character.State.Invincible", "무적 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlashActivation, "Character.State.SlashActivation", "베기 콤보 활성화 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Slash, "Character.State.SlashActivation", "베기 로직에서 휘두르고 있는 상태를 나타냅니다. ");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Character.State.Catch", "캐릭터를 잡고 있는 상태를 나타냅니다.");
@@ -67,10 +70,8 @@ namespace SMTags
 
 	namespace Data
 	{
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Damage, "Data.Damage", "데미지 데이터 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Duration, "Data.Duration", "GE의 지속시간 데이터 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Cooldown, "Data.Cooldown", "쿨다운 데이터 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(MoveSpeed, "Data.MoveSpeed", "이동속도 데이터 태그입니다.");
 	}
 
 	namespace Item

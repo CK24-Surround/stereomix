@@ -435,7 +435,7 @@ void USMCatchInteractionComponent_Character::InternalApplySmashSplashDamage(cons
 			FGameplayEffectSpecHandle GESpecHandle = InstigatorASC->MakeOutgoingSpec(DamageGE, 1.0f, InstigatorASC->MakeEffectContext());
 			if (ensureAlways(GESpecHandle.IsValid()))
 			{
-				GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, DamageAmount);
+				GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, DamageAmount);
 			}
 			InstigatorASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 

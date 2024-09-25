@@ -102,7 +102,7 @@ void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation, const FGamepla
 		FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
 		if (GESpecHandle.IsValid())
 		{
-			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
 			TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
 

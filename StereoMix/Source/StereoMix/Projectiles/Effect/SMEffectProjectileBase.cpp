@@ -113,7 +113,7 @@ void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 	if (GESpecHandle.IsValid())
 	{
 		// SetByCaller를 통해 매개변수로 전달받은 Damage로 GE를 적용합니다.
-		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::Data::Damage, Damage);
+		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
 		SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
 	}
 

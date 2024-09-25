@@ -6,6 +6,8 @@
 #include "Items/SMItemBase.h"
 #include "SMOverlapItemBase.generated.h"
 
+class UGameplayEffect;
+
 UCLASS(Abstract)
 class STEREOMIX_API ASMOverlapItemBase : public ASMItemBase
 {
@@ -20,4 +22,7 @@ public:
 
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TSubclassOf<UGameplayEffect> GE;
 };

@@ -25,6 +25,7 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 	InitMaxSkillGauge(100.0f);
 	InitSkillGauge(GetMaxSkillGauge());
 
+	InvincibleStateTags.AddTag(SMTags::Character::State::Invincible);
 	InvincibleStateTags.AddTag(SMTags::Character::State::Neutralize);
 	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreak);
 	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreaked);
