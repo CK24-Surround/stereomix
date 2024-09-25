@@ -4,7 +4,6 @@
 #include "SMOverlapItem_ChangeAttribute.h"
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "AbilitySystem/SMTags.h"
 #include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
