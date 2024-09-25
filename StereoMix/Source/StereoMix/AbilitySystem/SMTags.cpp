@@ -46,6 +46,7 @@ namespace SMTags
 		namespace State
 		{
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Invincible, "Character.State.Invincible", "무적 상태를 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(UnlimitStamina, "Character.State.UnlimitStamina", "스태미나 소모가 없는 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlashActivation, "Character.State.SlashActivation", "베기 콤보 활성화 상태를 나타냅니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Slash, "Character.State.SlashActivation", "베기 로직에서 휘두르고 있는 상태를 나타냅니다. ");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Character.State.Catch", "캐릭터를 잡고 있는 상태를 나타냅니다.");

@@ -47,6 +47,7 @@ namespace SMTags
 		namespace State
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Invincible);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(UnlimitStamina);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlashActivation);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Slash);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Catch);

@@ -6,7 +6,7 @@
 #include "SMOverlapItemBase.h"
 #include "SMOverlapItem_ChangerMoveSpeed.generated.h"
 
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API ASMOverlapItem_ChangerMoveSpeed : public ASMOverlapItemBase
 {
 	GENERATED_BODY()

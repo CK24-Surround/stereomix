@@ -25,7 +25,7 @@ void ASMOverlapItem_ChangeAttribute::ActivateItem(AActor* InActivator)
 	if (GESpec.IsValid())
 	{
 		NET_LOG(this, Warning, TEXT("%s에게 GE 적용"), *GetNameSafe(InActivator));
-		GESpec.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::HP, Magnitude);
+		GESpec.Data->SetSetByCallerMagnitude(DataTag, Magnitude);
 		ActivatorASC->BP_ApplyGameplayEffectSpecToSelf(GESpec);
 	}
 

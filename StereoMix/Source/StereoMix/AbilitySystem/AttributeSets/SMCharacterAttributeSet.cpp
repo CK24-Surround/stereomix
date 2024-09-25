@@ -30,6 +30,8 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreak);
 	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	InvincibleStateTags.AddTag(SMTags::Character::State::Charge);
+
+	UnlimitStaminaTags.AddTag(SMTags::Character::State::UnlimitStamina);
 }
 
 void USMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -97,6 +99,15 @@ bool USMCharacterAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallba
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())
 	{
 		if (Data.Target.HasAnyMatchingGameplayTags(InvincibleStateTags))
+		{
+			Data.EvaluatedData.Magnitude = 0.0f;
+			return false;
+		}
+	}
+
+	if (Data.EvaluatedData.Attribute == GetStaminaAttribute())
+	{
+		if (Data.Target.HasAnyMatchingGameplayTags(UnlimitStaminaTags))
 		{
 			Data.EvaluatedData.Magnitude = 0.0f;
 			return false;

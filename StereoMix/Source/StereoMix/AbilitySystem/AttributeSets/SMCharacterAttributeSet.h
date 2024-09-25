@@ -98,4 +98,6 @@ protected:
 	FGameplayAttributeData HealStamina;
 
 	FGameplayTagContainer InvincibleStateTags;
+
+	FGameplayTagContainer UnlimitStaminaTags;
 };
