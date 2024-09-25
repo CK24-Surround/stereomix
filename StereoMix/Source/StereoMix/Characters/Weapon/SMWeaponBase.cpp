@@ -20,5 +20,6 @@ ASMWeaponBase::ASMWeaponBase(const FObjectInitializer& ObjectInitializer)
 	if (WeaponMeshComponent)
 	{
 		WeaponMeshComponent->SetupAttachment(RootComponent);
+		WeaponMeshComponent->bReceivesDecals = false;
 	}
 }
