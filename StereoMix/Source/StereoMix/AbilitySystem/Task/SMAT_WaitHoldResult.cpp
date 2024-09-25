@@ -6,7 +6,6 @@
 #include "Engine/OverlapResult.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
-#include "HoldInteraction/SMHIC_Character.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 

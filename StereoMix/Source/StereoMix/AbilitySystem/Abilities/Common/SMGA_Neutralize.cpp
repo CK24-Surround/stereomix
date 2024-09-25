@@ -10,10 +10,10 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/NoiseBreak/Indicator/SMGA_NoiseBreakIndicator.h"
+#include "Characters/Component/SMHIC_Character.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
-#include "HoldInteraction/SMHIC_Character.h"
 
 USMGA_Neutralize::USMGA_Neutralize()
 {

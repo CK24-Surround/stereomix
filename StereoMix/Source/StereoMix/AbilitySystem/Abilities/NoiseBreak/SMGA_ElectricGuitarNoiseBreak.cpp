@@ -12,6 +12,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "Characters/Component/SMHIC_Character.h"
 #include "Characters/Player/SMElectricGuitarCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -19,7 +20,6 @@
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
-#include "HoldInteraction/SMHIC_Character.h"
 #include "Utilities/SMCollision.h"
 
 USMGA_ElectricGuitarNoiseBreak::USMGA_ElectricGuitarNoiseBreak()

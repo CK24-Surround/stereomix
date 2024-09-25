@@ -10,6 +10,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_ModifyGravityUntilLanded.h"
+#include "Characters/Component/SMHIC_Character.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -17,10 +18,7 @@
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
-#include "Games/SMGameState.h"
-#include "HoldInteraction/SMHIC_Character.h"
 #include "Tiles/SMTile.h"
-#include "Tiles/SMTileManagerComponent.h"
 #include "Utilities/SMCollision.h"
 
 USMGA_BassNoiseBreak::USMGA_BassNoiseBreak()

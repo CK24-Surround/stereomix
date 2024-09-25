@@ -10,6 +10,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "Characters/Component/SMHIC_Character.h"
 #include "Characters/Player/SMPianoCharacter.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Components/CapsuleComponent.h"
@@ -18,7 +19,6 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
-#include "HoldInteraction/SMHIC_Character.h"
 #include "Utilities/SMCollision.h"
 
 USMGA_PianoNoiseBreak::USMGA_PianoNoiseBreak()

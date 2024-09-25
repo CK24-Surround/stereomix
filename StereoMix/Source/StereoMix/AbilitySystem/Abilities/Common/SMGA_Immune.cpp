@@ -7,9 +7,8 @@
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "FMODBlueprintStatics.h"
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
-#include "Characters/Movement/SMCharacterMovementComponent.h"
+#include "Characters/Component/SMCharacterMovementComponent.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Utilities/SMLog.h"
 

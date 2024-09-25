@@ -6,10 +6,10 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
+#include "Characters/Component/SMHIC_Character.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "GameInstance/SMGameInstance.h"
-#include "HoldInteraction/SMHIC_Character.h"
 
 
 USMGA_NoiseBreakIndicator::USMGA_NoiseBreakIndicator()
