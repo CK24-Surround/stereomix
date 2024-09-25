@@ -12,7 +12,7 @@ class STEREOMIX_API USMHIC_OverlapItem : public USMHIC_ItemBase
 	GENERATED_BODY()
 
 public:
-	virtual bool CanHolded(AActor* TargetActor) const override;
+	virtual bool CanHolded(AActor* Instigator) const override;
 
-	virtual void OnHolded(AActor* TargetActor) override;
+	virtual void OnHolded(AActor* Instigator) override;
 };

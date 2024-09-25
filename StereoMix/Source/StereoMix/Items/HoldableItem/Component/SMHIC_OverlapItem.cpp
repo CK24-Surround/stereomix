@@ -6,9 +6,9 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 
 
-bool USMHIC_OverlapItem::CanHolded(AActor* TargetActor) const
+bool USMHIC_OverlapItem::CanHolded(AActor* Instigator) const
 {
-	if (!ensureAlways(TargetActor))
+	if (!ensureAlways(Instigator))
 	{
 		return false;
 	}
@@ -16,12 +16,12 @@ bool USMHIC_OverlapItem::CanHolded(AActor* TargetActor) const
 	return true;
 }
 
-void USMHIC_OverlapItem::OnHolded(AActor* TargetActor)
+void USMHIC_OverlapItem::OnHolded(AActor* Instigator)
 {
-	if (!ensureAlways(TargetActor))
+	if (!ensureAlways(Instigator))
 	{
 		return;
 	}
 
-	SetActorHoldingMe(TargetActor);
+	SetActorHoldingMe(Instigator);
 }

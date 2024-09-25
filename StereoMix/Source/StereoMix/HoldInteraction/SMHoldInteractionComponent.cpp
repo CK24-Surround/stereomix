@@ -30,7 +30,7 @@ void USMHoldInteractionComponent::BeginPlay()
 	ensureAlways(SourceActor);
 }
 
-void USMHoldInteractionComponent::SetActorHoldingMe(AActor* NewActorHoldingMe)
+void USMHoldInteractionComponent::SetActorHoldingMe(AActor* Instigator)
 {
 	if (GetOwnerRole() != ROLE_Authority)
 	{
@@ -38,9 +38,9 @@ void USMHoldInteractionComponent::SetActorHoldingMe(AActor* NewActorHoldingMe)
 		return;
 	}
 
-	if (HoldingMeActor != NewActorHoldingMe)
+	if (HoldingMeActor != Instigator)
 	{
-		HoldingMeActor = NewActorHoldingMe;
+		HoldingMeActor = Instigator;
 		OnRep_HoldingMeActor();
 		SourceActor->ForceNetUpdate();
 	}

@@ -22,11 +22,15 @@ public:
 
 	void InitASC(USMAbilitySystemComponent* NewASC);
 
-	virtual bool CanHolded(AActor* TargetActor) const override;
+	virtual bool CanHolded(AActor* Instigator) const override;
 
-	virtual void OnHolded(AActor* TargetActor) override;
+	virtual void OnHolded(AActor* Instigator) override;
 
-	virtual void OnHoldedReleased(AActor* TargetActor) override;
+	virtual void OnHoldedReleased(AActor* Instigator) override;
+
+	virtual bool CanGenerateDamage(AActor* Instigator) const override { return true; }
+
+	virtual bool CanGenerateTileCapture(AActor* Instigator) const override { return true; }
 
 	virtual void OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) override;
 

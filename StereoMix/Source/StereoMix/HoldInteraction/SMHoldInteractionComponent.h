@@ -30,16 +30,22 @@ public:
 	FORCEINLINE virtual AActor* GetActorHoldingMe() const { return HoldingMeActor.Get(); }
 
 	/** 자신을 잡고 있는 액터를 할당합니다. 서버에서만 유효합니다. */
-	virtual void SetActorHoldingMe(AActor* NewActorHoldingMe);
+	virtual void SetActorHoldingMe(AActor* Instigator);
 
 	/** 잡을 수 있는지 여부를 반환하도록 구현해야합니다. 서버에서만 유효합니다. */
-	virtual bool CanHolded(AActor* TargetActor) const { return false; }
+	virtual bool CanHolded(AActor* Instigator) const { return false; }
 
-	/** 타겟에게 잡힐때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
-	virtual void OnHolded(AActor* TargetActor) {}
+	/** 시전자에게 잡힐때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
+	virtual void OnHolded(AActor* Instigator) {}
 
-	/** 타겟으로부터 잡히기가 풀릴때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
-	virtual void OnHoldedReleased(AActor* TargetActor) {}
+	/** 시전자로부터 잡히기가 풀릴때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
+	virtual void OnHoldedReleased(AActor* Instigator) {}
+
+	/** 데미지를 발생시키는지 여부를 반환합니다. */
+	virtual bool CanGenerateDamage(AActor* Instigator) const { return false; }
+
+	/** 타일 점령을 발생시키는지 여부를 반환합니다. */
+	virtual bool CanGenerateTileCapture(AActor* Instigator) const { return false; }
 
 	/** 일렉기타의 노이즈브레이크 시작 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
 	virtual void OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) {}
@@ -68,7 +74,7 @@ public:
 protected:
 	UFUNCTION()
 	void OnRep_HoldingMeActor();
-	
+
 	/** 자신을 잡고 있는 액터입니다. */
 	UPROPERTY(ReplicatedUsing = "OnRep_HoldingMeActor")
 	TWeakObjectPtr<AActor> HoldingMeActor;

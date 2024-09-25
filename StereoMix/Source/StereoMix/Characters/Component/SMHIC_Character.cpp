@@ -36,14 +36,14 @@ void USMHIC_Character::InitASC(USMAbilitySystemComponent* NewASC)
 	SourceASC = NewASC;
 }
 
-bool USMHIC_Character::CanHolded(AActor* TargetActor) const
+bool USMHIC_Character::CanHolded(AActor* Instigator) const
 {
 	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
 	{
 		return false;
 	}
 
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(Instigator);
 	if (!TargetCharacter)
 	{
 		return false;
@@ -79,15 +79,15 @@ bool USMHIC_Character::CanHolded(AActor* TargetActor) const
 	return true;
 }
 
-void USMHIC_Character::OnHolded(AActor* TargetActor)
+void USMHIC_Character::OnHolded(AActor* Instigator)
 {
 	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority())
 	{
 		return;
 	}
 
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	if (!ensureAlways(TargetActor))
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(Instigator);
+	if (!ensureAlways(Instigator))
 	{
 		return;
 	}
@@ -96,7 +96,7 @@ void USMHIC_Character::OnHolded(AActor* TargetActor)
 	SourceCharacter->SetCollisionEnable(false);
 	SourceCharacter->SetMovementEnable(false);
 
-	SetActorHoldingMe(TargetActor);
+	SetActorHoldingMe(Instigator);
 
 	HoldedMeCharcters.Add(TargetCharacter);
 
@@ -110,7 +110,7 @@ void USMHIC_Character::OnHolded(AActor* TargetActor)
 	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
 }
 
-void USMHIC_Character::OnHoldedReleased(AActor* TargetActor)
+void USMHIC_Character::OnHoldedReleased(AActor* Instigator)
 {
 	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
 	{
