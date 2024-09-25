@@ -17,9 +17,15 @@ void ASMThrowItem::OnConstruction(const FTransform& Transform)
 {
 	Super::OnConstruction(Transform);
 
-	const FVector SourceLocation = GetActorLocation();
 	const float TileSize = USMTileFunctionLibrary::DefaultTileSize;
-	const FVector HalfExtent(MaxThrowTilesColumn * TileSize, MaxThrowTilesRow * TileSize, ParabolaHeight / 2.0f);
+	const float CenterOffset = TileSize / 2.0f;
+
+	FVector HalfExtent;
+	HalfExtent.X = (MaxThrowTilesColumn * TileSize) + CenterOffset;
+	HalfExtent.Y = (MaxThrowTilesRow * TileSize) + CenterOffset;
+	HalfExtent.Z = ParabolaHeight / 2.0f;
+
+	const FVector SourceLocation = GetActorLocation();
 	const FVector BoxCenter = FVector(SourceLocation.X, SourceLocation.Y, SourceLocation.Z + HalfExtent.Z);
 
 	DrawDebugBox(GetWorld(), BoxCenter, HalfExtent, FQuat::Identity, FColor::Red, false, -1, 0, 5.0f);
@@ -46,11 +52,12 @@ void ASMThrowItem::ThrowItem()
 void ASMThrowItem::InternalThrowItem()
 {
 	const float TileSize = USMTileFunctionLibrary::DefaultTileSize;
+	const float CenterOffset = TileSize / 2.0f;
 
-	const float XRange = MaxThrowTilesColumn * TileSize;
+	const float XRange = (MaxThrowTilesColumn * TileSize) + CenterOffset;
 	const float RandomX = FMath::RandRange(-XRange, XRange - TileSize);
 
-	const float YRange = MaxThrowTilesRow * TileSize;
+	const float YRange = (MaxThrowTilesRow * TileSize) + CenterOffset;
 	const float RandomY = FMath::RandRange(-YRange, YRange - TileSize);
 
 	const FVector SpawnLocation = GetActorLocation();
