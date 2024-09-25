@@ -4,7 +4,7 @@
 #include "SMItemSpawner.h"
 
 #include "Games/SMGameMode.h"
-#include "SMItem.h"
+#include "SMItemBase.h"
 #include "Components/WidgetComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "UI/Widget/Item/SMItemSpawnTimerWidget.h"
@@ -91,7 +91,7 @@ void ASMItemSpawner::SpawnTimerCallback()
 
 void ASMItemSpawner::SpawnItem()
 {
-	Item = GetWorld()->SpawnActor<ASMItem>(SpawnItemClass, ItemSocketComponent->GetComponentTransform());
+	Item = GetWorld()->SpawnActor<ASMItemBase>(SpawnItemClass, ItemSocketComponent->GetComponentTransform());
 	if (ensureAlways(Item))
 	{
 		// 아이템이 사용되거나 파괴되면 다시 타이머를 시작합니다.

@@ -4,14 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "Interfaces/SMHoldInteractionInterface.h"
-#include "Items/SMItem.h"
+#include "Items/SMItemBase.h"
 #include "SMHoldableItemBase.generated.h"
 
-class USphereComponent;
-class UNiagaraComponent;
-
 UCLASS(Abstract)
-class STEREOMIX_API ASMHoldableItemBase : public ASMItem, public ISMHoldInteractionInterface
+class STEREOMIX_API ASMHoldableItemBase : public ASMItemBase, public ISMHoldInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -23,18 +20,6 @@ public:
 	const static FName HICName;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Root")
-	TObjectPtr<USceneComponent> SceneComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Collider")
-	TObjectPtr<USphereComponent> ColliderComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Visual")
-	TObjectPtr<UNiagaraComponent> NiagaraComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Visual")
-	TObjectPtr<UStaticMeshComponent> MeshComponent;
-
 	UPROPERTY(VisibleAnywhere, Category = "HoldInteraction")
 	TObjectPtr<USMHoldInteractionComponent> HIC;
 };

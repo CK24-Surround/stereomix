@@ -6,8 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "SMThrowableItem.generated.h"
 
+class ASMItemBase;
 class UNiagaraComponent;
-class ASMHoldableItemBase;
 
 UCLASS(Abstract)
 class STEREOMIX_API ASMThrowableItem : public AActor
@@ -31,7 +31,7 @@ protected:
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
-	TSubclassOf<ASMHoldableItemBase> ItemToSpawn;
+	TSubclassOf<ASMItemBase> ItemToSpawn;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	float DestroyTime = 15.0f;

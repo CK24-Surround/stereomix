@@ -8,7 +8,7 @@
 #include "SMItemSpawner.generated.h"
 
 class UWidgetComponent;
-class ASMItem;
+class ASMItemBase;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FRemainingCooldownChangedSignature, float, RemainingCooldownSeconds, float, RemainingCooldownPercent);
 
@@ -64,10 +64,10 @@ protected:
 
 	/** 스폰 시킬 아이템 클래스입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TSubclassOf<ASMItem> SpawnItemClass;
+	TSubclassOf<ASMItemBase> SpawnItemClass;
 
 	UPROPERTY()
-	TObjectPtr<ASMItem> Item;
+	TObjectPtr<ASMItemBase> Item;
 
 	/** 스폰까지 소요되는 시간을 나타냅니다. */
 	UPROPERTY(EditAnywhere, Category = "Design")

@@ -8,12 +8,9 @@
 
 ASMCatchableItem::ASMCatchableItem()
 {
-	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	RootComponent = SceneComponent;
-
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	StaticMeshComponent->SetupAttachment(SceneComponent);
-	StaticMeshComponent->SetCollisionProfileName(SMCollisionProfileName::CatchableItem);
+	// StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
+	// StaticMeshComponent->SetupAttachment(SceneComponent);
+	// StaticMeshComponent->SetCollisionProfileName(SMCollisionProfileName::CatchableItem);
 }
 
 void ASMCatchableItem::ActivateItem(AActor* InActivator)

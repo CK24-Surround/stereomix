@@ -4,7 +4,7 @@
 #include "SMThrowableItem.h"
 
 #include "NiagaraComponent.h"
-#include "HoldableItem/SMHoldableItemBase.h"
+#include "SMItemBase.h"
 #include "Utilities/SMCollision.h"
 
 
@@ -60,10 +60,10 @@ void ASMThrowableItem::OnTargetArrived()
 	}
 
 	const FRotator SpawnRotation = GetActorRotation();
-	ASMHoldableItemBase* SpawnedItem = GetWorld()->SpawnActor<ASMHoldableItemBase>(ItemToSpawn, TargetLocation, SpawnRotation);
+	ASMItemBase* SpawnedItem = GetWorld()->SpawnActor<ASMItemBase>(ItemToSpawn, TargetLocation, SpawnRotation);
 	if (SpawnedItem && DestroyTime > 0.0f)
 	{
-		TWeakObjectPtr<ASMHoldableItemBase> WeakSpawnedItem(SpawnedItem);
+		TWeakObjectPtr<ASMItemBase> WeakSpawnedItem(SpawnedItem);
 
 		FTimerHandle TimerHandle;
 		GetWorld()->GetTimerManager().SetTimer(TimerHandle, [WeakSpawnedItem]() {

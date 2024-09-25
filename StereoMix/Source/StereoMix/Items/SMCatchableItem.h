@@ -3,17 +3,16 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Data/SMTeam.h"
 #include "GameplayTagContainer.h"
+#include "SMItemBase.h"
 #include "Interfaces/SMCatchInteractionInterface.h"
-#include "SMItem.h"
 
 #include "SMCatchableItem.generated.h"
 
 class USMCatchInteractionComponent_CatchableItem_AttributeChanger;
 
 UCLASS(Abstract)
-class STEREOMIX_API ASMCatchableItem : public ASMItem, public ISMCatchInteractionInterface
+class STEREOMIX_API ASMCatchableItem : public ASMItemBase, public ISMCatchInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -29,9 +28,6 @@ public:
 	FGameplayTag SmashGCTag;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Root")
-	TObjectPtr<USceneComponent> SceneComponent;
-
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
 	TObjectPtr<UStaticMeshComponent> StaticMeshComponent;
 };
