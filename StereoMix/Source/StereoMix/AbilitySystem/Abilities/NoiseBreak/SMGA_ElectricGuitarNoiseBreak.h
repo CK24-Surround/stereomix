@@ -53,8 +53,4 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float FlashDelayTime = 0.3f;
-
-private:
-	UFUNCTION()
-	void MontageEnd();
 };

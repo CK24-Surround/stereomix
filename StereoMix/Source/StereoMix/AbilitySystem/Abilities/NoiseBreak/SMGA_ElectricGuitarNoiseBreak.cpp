@@ -48,7 +48,6 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		return;
 	}
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 노브 활성화"));
 	K2_CommitAbility();
 
 	// 노이즈 브레이크 콜라이더로 변경합니다.
@@ -59,7 +58,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	UAnimMontage* NoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceCharacter->GetTeam()];
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NoiseBreakMontage, 1.0f, NAME_None, false);
-	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::MontageEnd);
+	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->ReadyForActivation();
 
 	if (IsLocallyControlled())
@@ -99,8 +98,6 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 
 void USMGA_ElectricGuitarNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 노브 종료"));
-
 	ASMElectricGuitarCharacter* SourceCharacter = GetAvatarActor<ASMElectricGuitarCharacter>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (SourceCapsule)
@@ -121,7 +118,6 @@ void USMGA_ElectricGuitarNoiseBreak::OnReceivedFlashEvent(FGameplayEventData Pay
 		return;
 	}
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 일섬 이벤트 수신 및 몽타주 점프"));
 	ServerSendTargetLocation(NoiseBreakStartLocation, NoiseBreakTargetLocation);
 }
 
@@ -143,8 +139,10 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 		return;
 	}
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 일섬"));
-	const FVector NoiseBreakTargetLocationWithSourceZ(NoiseBreakTargetLocation.X, NoiseBreakTargetLocation.Y, NoiseBreakStartLocation.Z + SourceCapsule->GetScaledCapsuleHalfHeight());
+	FVector NoiseBreakTargetLocationWithSourceZ;
+	NoiseBreakTargetLocationWithSourceZ.X = NoiseBreakTargetLocation.X;
+	NoiseBreakTargetLocationWithSourceZ.Y = NoiseBreakTargetLocation.Y;
+	NoiseBreakTargetLocationWithSourceZ.Z = NoiseBreakStartLocation.Z + SourceCapsule->GetScaledCapsuleHalfHeight();
 	SourceCharacter->MulticastRPCSetLocation(NoiseBreakTargetLocationWithSourceZ);
 
 	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, FlashDelayTime);
@@ -161,8 +159,6 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 		K2_EndAbility();
 		return;
 	}
-
-	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 버스트"));
 
 	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
 	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
@@ -313,10 +309,4 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakEnded()
 {
 	const FName SectionName = TEXT("End");
 	MontageJumpToSection(SectionName);
-}
-
-void USMGA_ElectricGuitarNoiseBreak::MontageEnd()
-{
-	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 노이즈 브레이크 몽타주 종료"));
-	K2_EndAbility();
 }
