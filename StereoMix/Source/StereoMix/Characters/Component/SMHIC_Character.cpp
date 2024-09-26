@@ -168,7 +168,7 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* I
 	}
 
 	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
-	SourceCharacter->MulitcastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
+	SourceCharacter->MulticastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
 
 	HoldedReleased(Instigator, false);
 
@@ -185,7 +185,7 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator
 	}
 
 	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
-	SourceCharacter->MulitcastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
+	SourceCharacter->MulticastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
 
 	HoldedReleased(Instigator, false);
 
@@ -272,7 +272,7 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdj
 
 	if (bNeedLocationAdjust)
 	{
-		SourceCharacter->MulitcastRPCSetLocation(NewLocation + Offset);
+		SourceCharacter->MulticastRPCSetLocation(NewLocation + Offset);
 	}
 
 	// SourceCharacter->ServerRPCPreventGroundEmbedding();
@@ -282,9 +282,9 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdj
 
 	// 자신을 잡았던 대상을 제외하고 다시 잡기 인디케이터를 활성화합니다.
 	SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
-	for (const auto& HoldedMeCharcter : HoldedMeCharcters)
+	for (const auto& HoldedMeCharacter : HoldedMeCharcters)
 	{
-		HoldedMeCharcter->ClientRPCRemoveScreendIndicatorToSelf(SourceCharacter);
+		HoldedMeCharacter->ClientRPCRemoveScreendIndicatorToSelf(SourceCharacter);
 	}
 }
 

@@ -290,16 +290,6 @@ USMHoldInteractionComponent* ASMPlayerCharacterBase::GetHoldInteractionComponent
 	return HIC;
 }
 
-void ASMPlayerCharacterBase::PredictMoveSpeedBuff_Implementation(float MoveSpeedMultiplier, float Duration)
-{
-	USMCharacterMovementComponent* SourceMovement = GetCharacterMovement<USMCharacterMovementComponent>();
-	if (!SourceMovement)
-	{
-		return;
-	}
-	SourceMovement->AddMoveSpeedBuff(MoveSpeedMultiplier, Duration);
-}
-
 void ASMPlayerCharacterBase::PredictHPChange(float Amount)
 {
 	UAbilitySystemComponent* SourceASC = GetAbilitySystemComponent();
@@ -450,7 +440,7 @@ void ASMPlayerCharacterBase::MulticastRPCSetYawRotation_Implementation(float InY
 	SetActorRotation(FRotator(0.0, InYaw, 0.0));
 }
 
-void ASMPlayerCharacterBase::MulitcastRPCSetLocation_Implementation(const FVector_NetQuantize10& NewLocation)
+void ASMPlayerCharacterBase::MulticastRPCSetLocation_Implementation(const FVector_NetQuantize10& NewLocation)
 {
 	SetActorLocation(NewLocation);
 }

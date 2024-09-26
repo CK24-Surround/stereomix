@@ -14,12 +14,7 @@ void ASMOverlapItem_ChangeMoveSpeed::ActivateItem(AActor* InActivator)
 		return;
 	}
 
-	if (SourceCharacter->HasAuthority())
-	{
-		SourceCharacter->PredictMoveSpeedBuff(MoveSpeedMultiplier, Duration);
-	}
-
-	SourceMovement->AddMoveSpeedBuff(MoveSpeedMultiplier, Duration);
+	SourceMovement->ClientAddMoveSpeedBuff(MoveSpeedMultiplier, Duration);
 
 	Super::ActivateItem(InActivator);
 }

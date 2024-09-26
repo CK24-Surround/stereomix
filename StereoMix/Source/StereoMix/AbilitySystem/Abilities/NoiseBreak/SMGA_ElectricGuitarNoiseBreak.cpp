@@ -138,7 +138,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 	}
 
 	const FVector NoiseBreakTargetLocationWithSourceZ(NoiseBreakTargetLocation.X, NoiseBreakTargetLocation.Y, NoiseBreakStartLocation.Z + SourceCapsule->GetScaledCapsuleHalfHeight());
-	SourceCharacter->MulitcastRPCSetLocation(NoiseBreakTargetLocationWithSourceZ);
+	SourceCharacter->MulticastRPCSetLocation(NoiseBreakTargetLocationWithSourceZ);
 
 	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, FlashDelayTime);
 	WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnNoiseBreakBurst);

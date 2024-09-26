@@ -55,6 +55,12 @@ void USMCharacterMovementComponent::RemoveMoveSpeedBuff(const FSMMoveSpeedModifi
 	RemoveMoveSpeedModifier(Handle);
 }
 
+void USMCharacterMovementComponent::ClientAddMoveSpeedBuff_Implementation(float SpeedMultiplier, float Duration)
+{
+	AddMoveSpeedBuff(SpeedMultiplier, Duration);
+	ServerAddMoveSpeedBuff(SpeedMultiplier, Duration);
+}
+
 FSMMoveSpeedModifierHandle USMCharacterMovementComponent::AddMoveSpeedModifier(float SpeedMultiplier, float Duration)
 {
 	int32 NewHandleID;
@@ -109,4 +115,9 @@ void USMCharacterMovementComponent::RemoveMoveSpeedModifier(const FSMMoveSpeedMo
 		AvailableIDs.Push(RemoveModifier->Handle.ID);
 		ActiveModifiers.RemoveAll([&Handle](const FMoveSpeedModifierData& SpeedModifierData) { return Handle.ID == SpeedModifierData.Handle.ID; });
 	}
+}
+
+void USMCharacterMovementComponent::ServerAddMoveSpeedBuff_Implementation(float SpeedMultiplier, float Duration)
+{
+	AddMoveSpeedBuff(SpeedMultiplier, Duration);
 }

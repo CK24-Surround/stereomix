@@ -31,6 +31,13 @@ public:
 
 	void RemoveMoveSpeedBuff(const FSMMoveSpeedModifierHandle& Handle);
 
+	/**
+	 * 서버에서 편하게 사용하기 위한 유틸리티 함수입니다. 이 함수는 핸들을 반환하지 못합니다. 따라서 조기 종료는 불가능합니다.
+	 * 조기 종료가 필요하다면 다른 함수를 사용해주세요.
+	 */
+	UFUNCTION(Client, Reliable)
+	void ClientAddMoveSpeedBuff(float SpeedMultiplier, float Duration);
+
 protected:
 	FSMMoveSpeedModifierHandle AddMoveSpeedModifier(float SpeedMultiplier, float Duration);
 
@@ -42,4 +49,8 @@ protected:
 	int32 NextModifierID = 1;
 
 	float ModifierMoveSpeed = 0.0f;
+
+private:
+	UFUNCTION(Server, Reliable)
+	void ServerAddMoveSpeedBuff(float SpeedMultiplier, float Duration);
 };

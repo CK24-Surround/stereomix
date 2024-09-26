@@ -79,10 +79,6 @@ public:
 
 	template<typename T>
 	T* GetHoldInteractionComponent() { return Cast<T>(HIC); }
-	
-	/** 예측적으로 속도를 먼저 클라이언트에 반영해야할 때 사용합니다. */
-	UFUNCTION(Client, Reliable)
-	void PredictMoveSpeedBuff(float MoveSpeedMultiplier, float Duration);
 
 	/** 예측적으로 데미지를 먼저 UI에 반영해야할 때 사용합니다.*/
 	void PredictHPChange(float Amount);
@@ -135,7 +131,7 @@ public:
 	void MulticastRPCSetYawRotation(float InYaw);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MulitcastRPCSetLocation(const FVector_NetQuantize10& NewLocation);
+	void MulticastRPCSetLocation(const FVector_NetQuantize10& NewLocation);
 
 	virtual void Landed(const FHitResult& Hit) override;
 
