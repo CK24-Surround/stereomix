@@ -73,6 +73,12 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
+	NoteMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("NoteMeshComponent"));
+	NoteMeshComponent->SetupAttachment(RootComponent);
+	NoteMeshComponent->SetVisibility(false);
+	NoteMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	NoteMeshComponent->bReceivesDecals = false;
+
 	CharacterStateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("CharacterStateWidgetComponent"));
 	CharacterStateWidgetComponent->SetupAttachment(CachedMeshComponent);
 	CharacterStateWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
@@ -128,12 +134,13 @@ void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ThisClass, bIsHiddenCharacter);
-	DOREPLIFETIME(ThisClass, bActivateCollision);
-	DOREPLIFETIME(ThisClass, bEnableMovement);
+	DOREPLIFETIME(ThisClass, bIsActorHidden);
+	DOREPLIFETIME(ThisClass, bIsCollisionEnabled);
+	DOREPLIFETIME(ThisClass, bIsMovementEnabled);
 	DOREPLIFETIME(ThisClass, bUseControllerRotation);
 	DOREPLIFETIME(ThisClass, LastAttackInstigator);
 	DOREPLIFETIME(ThisClass, Weapon);
+	DOREPLIFETIME(ThisClass, bIsNoteState);
 }
 
 void ASMPlayerCharacterBase::PostInitializeComponents()
@@ -261,6 +268,13 @@ void ASMPlayerCharacterBase::OnRep_PlayerState()
 	NoiseBreakIndicatorComponent->SetAsset(DataAsset->NoiseBreakIndicatorFX[SourceTeam]);
 }
 
+void ASMPlayerCharacterBase::SetActorHiddenInGame(bool bNewHidden)
+{
+	Super::SetActorHiddenInGame(bNewHidden);
+
+	Weapon->SetActorHiddenInGame(bNewHidden);
+}
+
 UAbilitySystemComponent* ASMPlayerCharacterBase::GetAbilitySystemComponent() const
 {
 	return ASC.Get();
@@ -331,46 +345,26 @@ bool ASMPlayerCharacterBase::GetTileLocationFromCursor(FVector& OutTileLocation,
 	return false;
 }
 
-void ASMPlayerCharacterBase::SetCharacterHidden(bool bIsEnable)
+void ASMPlayerCharacterBase::ServerSetActorHiddenInGame_Implementation(bool bNewIsActorHidden)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	bIsHiddenCharacter = bIsEnable;
-	OnRep_bIsHiddenCharacter();
+	bIsActorHidden = bNewIsActorHidden;
+	OnRep_bIsActorHidden();
 }
 
-void ASMPlayerCharacterBase::SetCollisionEnable(bool bIsEnable)
+void ASMPlayerCharacterBase::ServerSetCollisionEnabled_Implementation(bool bNewIsCollisionEnabled)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	bActivateCollision = bIsEnable;
-	OnRep_bActivateCollision();
+	bIsCollisionEnabled = bNewIsCollisionEnabled;
+	OnRep_bIsCollisionEnabled();
 }
 
-void ASMPlayerCharacterBase::SetMovementEnable(bool bIsEnable)
+void ASMPlayerCharacterBase::ServerSetMovementEnabled_Implementation(bool bNewIsMovementEnabled)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
-	bEnableMovement = bIsEnable;
-	OnRep_bEnableMovement();
+	bIsMovementEnabled = bNewIsMovementEnabled;
+	OnRep_bIsMovementEnabled();
 }
 
-void ASMPlayerCharacterBase::SetUseControllerRotation(bool bNewUseControllerRotation)
+void ASMPlayerCharacterBase::ServerSetUseControllerRotation_Implementation(bool bNewUseControllerRotation)
 {
-	if (!HasAuthority())
-	{
-		return;
-	}
-
 	bUseControllerRotation = true;
 	OnRep_bUseControllerRotation();
 }
@@ -523,6 +517,15 @@ void ASMPlayerCharacterBase::OnTeamChanged()
 				Weapon->SetOwner(this);
 			}
 		}
+	}
+}
+
+void ASMPlayerCharacterBase::ServerSetNoteState_Implementation(bool bNewIsNote)
+{
+	if (bIsNoteState != bNewIsNote)
+	{
+		bIsNoteState = bNewIsNote;
+		OnRep_bIsNoteState();
 	}
 }
 
@@ -789,21 +792,17 @@ void ASMPlayerCharacterBase::BindCharacterStateWidget(USMUserWidget_CharacterSta
 	}
 }
 
-void ASMPlayerCharacterBase::OnRep_bIsHiddenCharacter()
+void ASMPlayerCharacterBase::OnRep_bIsActorHidden()
 {
-	SetActorHiddenInGame(bIsHiddenCharacter);
-	if (Weapon)
-	{
-		Weapon->SetActorHiddenInGame(bIsHiddenCharacter);
-	}
+	SetActorHiddenInGame(bIsActorHidden);
 }
 
-void ASMPlayerCharacterBase::OnRep_bActivateCollision()
+void ASMPlayerCharacterBase::OnRep_bIsCollisionEnabled()
 {
-	SetActorEnableCollision(bActivateCollision);
+	SetActorEnableCollision(bIsCollisionEnabled);
 }
 
-void ASMPlayerCharacterBase::OnRep_bEnableMovement()
+void ASMPlayerCharacterBase::OnRep_bIsMovementEnabled()
 {
 	UCharacterMovementComponent* SourceMovementComponent = GetCharacterMovement();
 	if (!SourceMovementComponent)
@@ -811,14 +810,8 @@ void ASMPlayerCharacterBase::OnRep_bEnableMovement()
 		return;
 	}
 
-	if (bEnableMovement)
-	{
-		SourceMovementComponent->SetMovementMode(MOVE_Walking);
-	}
-	else
-	{
-		SourceMovementComponent->SetMovementMode(MOVE_None);
-	}
+	EMovementMode MovementMode = bIsMovementEnabled ? MOVE_Walking : MOVE_None;
+	SourceMovementComponent->SetMovementMode(MovementMode);
 }
 
 void ASMPlayerCharacterBase::OnRep_bUseControllerRotation()
@@ -826,6 +819,20 @@ void ASMPlayerCharacterBase::OnRep_bUseControllerRotation()
 	bUseControllerRotationPitch = bUseControllerRotation;
 	bUseControllerRotationYaw = bUseControllerRotation;
 	bUseControllerRotationRoll = bUseControllerRotation;
+}
+
+void ASMPlayerCharacterBase::OnRep_bIsNoteState()
+{
+	USkeletalMeshComponent* CharacterMeshComponent = GetMesh();
+	UMeshComponent* WeaponMeshComponent = Weapon.Get() ? Weapon->GetWeaponMeshComponent() : nullptr;
+	if (!CharacterMeshComponent || !WeaponMeshComponent || !NoteMeshComponent)
+	{
+		return;
+	}
+
+	CharacterMeshComponent->SetVisibility(!bIsNoteState);
+	WeaponMeshComponent->SetVisibility(!bIsNoteState);
+	NoteMeshComponent->SetVisibility(bIsNoteState);
 }
 
 void ASMPlayerCharacterBase::ServerRPCAddMoveSpeed_Implementation(float MoveSpeedMultiplier, float Duration)

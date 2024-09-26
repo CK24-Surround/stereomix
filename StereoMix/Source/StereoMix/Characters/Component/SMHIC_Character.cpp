@@ -92,9 +92,9 @@ void USMHIC_Character::OnHolded(AActor* Instigator)
 		return;
 	}
 
-	SourceCharacter->SetCharacterHidden(true);
-	SourceCharacter->SetCollisionEnable(false);
-	SourceCharacter->SetMovementEnable(false);
+	SourceCharacter->ServerSetActorHiddenInGame(true);
+	SourceCharacter->ServerSetCollisionEnabled(false);
+	SourceCharacter->ServerSetMovementEnabled(false);
 
 	SetActorHoldingMe(Instigator);
 
@@ -249,9 +249,9 @@ void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdj
 
 	SetActorHoldingMe(nullptr);
 
-	SourceCharacter->SetCharacterHidden(false);
-	SourceCharacter->SetCollisionEnable(true);
-	SourceCharacter->SetMovementEnable(true);
+	SourceCharacter->ServerSetActorHiddenInGame(false);
+	SourceCharacter->ServerSetCollisionEnabled(true);
+	SourceCharacter->ServerSetMovementEnabled(true);
 
 	// 회전 및 위치를 재지정합니다.
 	FVector NewLocation;

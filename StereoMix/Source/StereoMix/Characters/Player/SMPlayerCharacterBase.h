@@ -61,6 +61,8 @@ public:
 
 	virtual void OnRep_PlayerState() override;
 
+	virtual void SetActorHiddenInGame(bool bNewHidden) override;
+
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 	virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; };
@@ -88,18 +90,22 @@ public:
 
 	/** 현재 커서가 위치한 곳의 타일좌표를 가져옵니다. 양수 값의 사거리를 매개변수로 넘겨주면 사거리 내의 타일의 좌표를 가져옵니다. 실패시 false를 반환합니다. */
 	bool GetTileLocationFromCursor(FVector& OutTileLocation, float MaxDistance = -1.0f);
+	
+	/** 액터를 숨깁니다. 리플리케이트 됩니다. */
+	UFUNCTION(Server, Reliable)
+	void ServerSetActorHiddenInGame(bool bNewIsActorHidden);
 
-	/** 액터를 숨깁니다. 서버에서 호출되어야합니다. */
-	void SetCharacterHidden(bool bIsEnable);
+	/** 액터의 콜리전을 설정합니다. 리플리케이트 됩니다.*/
+	UFUNCTION(Server, Reliable)
+	void ServerSetCollisionEnabled(bool bNewIsCollisionEnabled);
 
-	/** 액터의 콜리전을 설정합니다. 서버에서 호출되어야합니다.*/
-	void SetCollisionEnable(bool bIsEnable);
-
-	/** 움직임을 잠급니다. 서버에서 호출되어야합니다. */
-	void SetMovementEnable(bool bIsEnable);
+	/** 움직임을 잠급니다. 리플리케이트 됩니다. */
+	UFUNCTION(Server, Reliable)
+	void ServerSetMovementEnabled(bool bNewIsMovementEnabled);
 
 	/** 컨트롤 로테이션을 기준으로 캐릭터를 회전시킬지 여부를 나타냅니다. 서버에서 호출되어야합니다. */
-	void SetUseControllerRotation(bool bNewUseControllerRotation);
+	UFUNCTION(Server, Reliable)
+	void ServerSetUseControllerRotation(bool bNewUseControllerRotation);
 
 	/** 캐릭터 상태 위젯의 가시성을 조절합니다. */
 	UFUNCTION(NetMulticast, Reliable)
@@ -151,6 +157,10 @@ public:
 
 	ESMCharacterType GetCharacterType() { return CharacterType; }
 
+	/** True면 음표 상태로, False면 기본 상태로 설정합니다. 서버에서 호출해야합니다.*/
+	UFUNCTION(Server, Reliable)
+	void ServerSetNoteState(bool bNewIsNote);
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:
@@ -177,19 +187,22 @@ protected:
 	void BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget);
 
 	UFUNCTION()
-	void OnRep_bIsHiddenCharacter();
+	void OnRep_bIsActorHidden();
 
 	UFUNCTION()
-	void OnRep_bActivateCollision();
+	void OnRep_bIsCollisionEnabled();
 
 	UFUNCTION()
-	void OnRep_bEnableMovement();
+	void OnRep_bIsMovementEnabled();
 
 	UFUNCTION()
 	void OnRep_bUseControllerRotation();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPCAddMoveSpeed(float MoveSpeedMultiplier, float Duration);
+
+	UFUNCTION()
+	void OnRep_bIsNoteState();
 
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;
@@ -213,6 +226,9 @@ protected:
 
 	UPROPERTY(Replicated)
 	TObjectPtr<ASMWeaponBase> Weapon;
+
+	UPROPERTY(VisibleAnywhere, Category = "Note")
+	TObjectPtr<USkeletalMeshComponent> NoteMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Widget")
 	TObjectPtr<UWidgetComponent> CharacterStateWidgetComponent;
@@ -262,14 +278,14 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
 	float CameraMoveMaxDistance = 250.0f;
 
-	UPROPERTY(ReplicatedUsing = "OnRep_bIsHiddenCharacter")
-	uint32 bIsHiddenCharacter:1 = false;
+	UPROPERTY(ReplicatedUsing = "OnRep_bIsActorHidden")
+	uint32 bIsActorHidden:1 = false;
 
-	UPROPERTY(ReplicatedUsing = "OnRep_bActivateCollision")
-	uint32 bActivateCollision:1 = true;
+	UPROPERTY(ReplicatedUsing = "OnRep_bIsCollisionEnabled")
+	uint32 bIsCollisionEnabled:1 = true;
 
-	UPROPERTY(ReplicatedUsing = "OnRep_bEnableMovement")
-	uint32 bEnableMovement:1 = true;
+	UPROPERTY(ReplicatedUsing = "OnRep_bIsMovementEnabled")
+	uint32 bIsMovementEnabled:1 = true;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_bUseControllerRotation")
 	uint32 bUseControllerRotation:1 = true;
@@ -278,4 +294,7 @@ protected:
 	TWeakObjectPtr<AActor> LastAttackInstigator;
 
 	ESMCharacterType CharacterType = ESMCharacterType::None;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_bIsNoteState")
+	uint32 bIsNoteState:1 = false;
 };

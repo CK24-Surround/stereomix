@@ -87,13 +87,16 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 		// 무력화 후 어떤 액션을 당해도 커서를 바라보지 않도록 합니다.
 		// 만약 잠그지 않는다면 노이즈브레이크를 당해도 마지막으로 입력된 커서의 방향을 바라보게 됩니다.
-		SourceCharacter->SetUseControllerRotation(false);
+		SourceCharacter->ServerSetUseControllerRotation(false);
 
 		// 캐릭터 상태 위젯을 숨깁니다.
 		SourceCharacter->MulticastSetCharacterStateVisibility(false);
 
 		// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 활성화하도록 합니다.
 		SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
+
+		// 캐릭터를 노트 상태로 변경합니다.
+		SourceCharacter->ServerSetNoteState(true);
 	}
 	else if (IsLocallyControlled()) // 데디 서버를 위한 예외처리입니다.
 	{
@@ -111,10 +114,13 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 			if (SourceCharacter)
 			{
 				// 컨트롤 로테이션을 따라가도록 복구해줍니다.
-				SourceCharacter->SetUseControllerRotation(true);
+				SourceCharacter->ServerSetUseControllerRotation(true);
 
 				// 캐릭터 상태 위젯을 다시 보이게합니다.
 				SourceCharacter->MulticastSetCharacterStateVisibility(true);
+
+				// 캐릭터를 노트 상태로 변경합니다.
+				SourceCharacter->ServerSetNoteState(false);
 			}
 
 			USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
