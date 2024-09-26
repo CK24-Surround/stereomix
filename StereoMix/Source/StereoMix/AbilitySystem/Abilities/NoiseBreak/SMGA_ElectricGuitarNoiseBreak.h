@@ -40,6 +40,9 @@ protected:
 	TArray<AActor*> GetSplashHitActorsForElectricGuitar();
 
 	UFUNCTION()
+	void SyncPointNoiseBreakEnded();
+
+	UFUNCTION()
 	void OnNoiseBreakEnded();
 
 	FName OriginalCollisionProfileName;
@@ -50,4 +53,8 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float FlashDelayTime = 0.3f;
+
+private:
+	UFUNCTION()
+	void MontageEnd();
 };

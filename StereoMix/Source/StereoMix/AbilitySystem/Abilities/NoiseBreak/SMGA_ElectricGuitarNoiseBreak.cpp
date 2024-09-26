@@ -48,6 +48,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		return;
 	}
 
+	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 노브 활성화"));
 	K2_CommitAbility();
 
 	// 노이즈 브레이크 콜라이더로 변경합니다.
@@ -58,7 +59,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	UAnimMontage* NoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceCharacter->GetTeam()];
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NoiseBreakMontage, 1.0f, NAME_None, false);
-	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);
+	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::MontageEnd);
 	MontageTask->ReadyForActivation();
 
 	if (IsLocallyControlled())
@@ -77,6 +78,11 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		NoiseBreakStartLocation = StartTile->GetTileLocation();
 		const float MaxDistance = MaxDistanceByTile * USMTileFunctionLibrary::DefaultTileSize;
 		SourceCharacter->GetTileLocationFromCursor(NoiseBreakTargetLocation, MaxDistance);
+
+		if (!K2_HasAuthority())
+		{
+			SyncPointNoiseBreakEnded();
+		}
 	}
 
 	// 노이즈 브레이크 시작을 타겟에게 알립니다.
@@ -93,6 +99,8 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 
 void USMGA_ElectricGuitarNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 노브 종료"));
+
 	ASMElectricGuitarCharacter* SourceCharacter = GetAvatarActor<ASMElectricGuitarCharacter>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (SourceCapsule)
@@ -113,10 +121,8 @@ void USMGA_ElectricGuitarNoiseBreak::OnReceivedFlashEvent(FGameplayEventData Pay
 		return;
 	}
 
+	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 일섬 이벤트 수신 및 몽타주 점프"));
 	ServerSendTargetLocation(NoiseBreakStartLocation, NoiseBreakTargetLocation);
-
-	const FName SectionName = TEXT("End");
-	MontageJumpToSection(SectionName);
 }
 
 void USMGA_ElectricGuitarNoiseBreak::ServerSendTargetLocation_Implementation(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& TargetLocation)
@@ -137,6 +143,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 		return;
 	}
 
+	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 일섬"));
 	const FVector NoiseBreakTargetLocationWithSourceZ(NoiseBreakTargetLocation.X, NoiseBreakTargetLocation.Y, NoiseBreakStartLocation.Z + SourceCapsule->GetScaledCapsuleHalfHeight());
 	SourceCharacter->MulticastRPCSetLocation(NoiseBreakTargetLocationWithSourceZ);
 
@@ -147,8 +154,6 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 
 void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 {
-	NET_LOG(GetAvatarActor(), Warning, TEXT("버스트"));
-
 	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (!SourceCharacter || !SourceHIC)
@@ -156,6 +161,8 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 		K2_EndAbility();
 		return;
 	}
+
+	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 버스트"));
 
 	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
 	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
@@ -171,6 +178,8 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	ApplySplashForElectricGuitar();
 
 	SourceHIC->SetActorIAmHolding(nullptr);
+
+	SyncPointNoiseBreakEnded();
 }
 
 void USMGA_ElectricGuitarNoiseBreak::TileCapture()
@@ -293,9 +302,21 @@ TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetSplashHitActorsForElectricGui
 	return Results;
 }
 
-void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakEnded()
+void USMGA_ElectricGuitarNoiseBreak::SyncPointNoiseBreakEnded()
 {
 	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
-	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
+	SyncTask->OnSync.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);
 	SyncTask->ReadyForActivation();
+}
+
+void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakEnded()
+{
+	const FName SectionName = TEXT("End");
+	MontageJumpToSection(SectionName);
+}
+
+void USMGA_ElectricGuitarNoiseBreak::MontageEnd()
+{
+	NET_LOG(GetAvatarActor(), Warning, TEXT("일렉 노이즈 브레이크 몽타주 종료"));
+	K2_EndAbility();
 }
