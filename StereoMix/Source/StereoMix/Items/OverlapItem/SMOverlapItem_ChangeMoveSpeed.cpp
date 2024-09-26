@@ -14,6 +14,7 @@ void ASMOverlapItem_ChangeMoveSpeed::ActivateItem(AActor* InActivator)
 		return;
 	}
 
+	NET_VLOG(this, INDEX_NONE, Duration < 0.0f ? 3.0f : Duration, TEXT("%s 버프 적용 중"), *GetName());
 	SourceMovement->ClientAddMoveSpeedBuff(MoveSpeedMultiplier, Duration);
 
 	Super::ActivateItem(InActivator);

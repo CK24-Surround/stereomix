@@ -23,7 +23,7 @@ void ASMOverlapItem_ChangeAttribute::ActivateItem(AActor* InActivator)
 	FGameplayEffectSpecHandle GESpec = ActivatorASC->MakeOutgoingSpec(GE, 1.0f, ActivatorASC->MakeEffectContext());
 	if (GESpec.IsValid())
 	{
-		NET_LOG(this, Warning, TEXT("%s에게 GE 적용"), *GetNameSafe(InActivator));
+		NET_VLOG(this, INDEX_NONE, Magnitude < 0.0f ? 3.0f : Magnitude, TEXT("%s 버프 적용 중"), *GetName());
 		GESpec.Data->SetSetByCallerMagnitude(DataTag, Magnitude);
 		ActivatorASC->BP_ApplyGameplayEffectSpecToSelf(GESpec);
 	}
