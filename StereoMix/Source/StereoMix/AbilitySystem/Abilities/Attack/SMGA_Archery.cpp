@@ -85,7 +85,10 @@ void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	{
 		if (IsLocallyControlled())
 		{
-			SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Piano::Archery, FGameplayCueParameters());
+			// 만약에 쏘지못하고 끊기게 되는 경우의 예외처리입니다.
+			FGameplayCueParameters GCParams;
+			GCParams.RawMagnitude = -1;
+			SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Piano::Archery, GCParams);
 		}
 	}
 
@@ -103,7 +106,9 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 		return;
 	}
 
-	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, FGameplayCueParameters());
+	FGameplayCueParameters GCParams;
+	GCParams.RawMagnitude = ChargingLevel;
+	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, GCParams);
 
 	if (ChargingLevel == 0)
 	{
