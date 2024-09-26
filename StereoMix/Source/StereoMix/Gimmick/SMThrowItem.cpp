@@ -51,8 +51,8 @@ void ASMThrowItem::ThrowItem()
 
 void ASMThrowItem::InternalThrowItem()
 {
-	const float TileSize = USMTileFunctionLibrary::DefaultTileSize;
-	const float CenterOffset = TileSize / 2.0f;
+	constexpr float TileSize = USMTileFunctionLibrary::DefaultTileSize;
+	constexpr float CenterOffset = TileSize / 2.0f;
 
 	const float XRange = (MaxThrowTilesColumn * TileSize) + CenterOffset;
 	const float RandomX = FMath::RandRange(-XRange, XRange - TileSize);
@@ -69,7 +69,7 @@ void ASMThrowItem::InternalThrowItem()
 
 	FHitResult HitResult;
 
-	const float ObstacleHeightThreshold = 1000.0f;
+	constexpr float ObstacleHeightThreshold = 1000.0f;
 	const FVector Offset(0.0f, 0.0f, ObstacleHeightThreshold);
 	const FVector Start = TargetLocation + Offset;
 	const FVector End = TargetLocation;
@@ -84,12 +84,15 @@ void ASMThrowItem::InternalThrowItem()
 
 	const FRotator SpawnRotation = GetActorRotation();
 
-	ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ItemToThrow, SpawnLocation, SpawnRotation);
+	ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ThrowableItemClass, SpawnLocation, SpawnRotation);
 	if (ThrowableItem)
 	{
 		float RandomGravity = FMath::RandRange(-2000.0f, -500.0f);
 		FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity);
 
-		ThrowableItem->SetThrowItem(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
+		TSubclassOf<ASMItemBase> RandomItem = ThrowingItems[FMath::RandRange(0, ThrowingItems.Num() - 1)];
+		
+		ThrowableItem->SetSpawnItem(RandomItem);
+		ThrowableItem->SetAttribute(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
 	}
 }

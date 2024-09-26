@@ -23,6 +23,11 @@ ASMThrowableItem::ASMThrowableItem()
 	NiagaraComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 }
 
+void ASMThrowableItem::SetSpawnItem(TSubclassOf<ASMItemBase> InItemToSpawn)
+{
+	ItemToSpawn = InItemToSpawn;
+}
+
 void ASMThrowableItem::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -77,7 +82,7 @@ void ASMThrowableItem::OnTargetArrived()
 	Destroy();
 }
 
-void ASMThrowableItem::SetThrowItem(const FVector& InLaunchVelocity, const FVector& InInitialLocation, const FVector& InTargetLocation, const float& InGravity)
+void ASMThrowableItem::SetAttribute(const FVector& InLaunchVelocity, const FVector& InInitialLocation, const FVector& InTargetLocation, const float& InGravity)
 {
 	bEnableThrow = true;
 	ThrowStartTime = GetWorld()->GetTimeSeconds();

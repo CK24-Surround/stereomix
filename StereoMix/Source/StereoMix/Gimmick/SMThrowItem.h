@@ -4,9 +4,10 @@
 #include "GameFramework/Actor.h"
 #include "SMThrowItem.generated.h"
 
+class ASMItemBase;
 class ASMThrowableItem;
 
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API ASMThrowItem : public AActor
 {
 	GENERATED_BODY()
@@ -21,8 +22,11 @@ protected:
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
-	TSubclassOf<ASMThrowableItem> ItemToThrow;
-
+	TArray<TSubclassOf<ASMItemBase>> ThrowingItems;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
+	TSubclassOf<ASMThrowableItem> ThrowableItemClass;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	int32 ThrowCount = 1;
 
