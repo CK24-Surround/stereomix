@@ -272,11 +272,11 @@ protected:
 
 	/** 카메라 이동에 사용될 마우스 인식 범위입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
-	float CameraMoveMouseThreshold = 1150.0f;
+	float CameraMoveMouseThreshold = 1400.0f;
 
 	/** 카메라의 최대 이동 거리입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
-	float CameraMoveMaxDistance = 250.0f;
+	float CameraMoveMaxDistance = 500.0f;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_bIsActorHidden")
 	uint32 bIsActorHidden:1 = false;
