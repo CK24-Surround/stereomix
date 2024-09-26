@@ -2,8 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
+#include "Logging/LogMacros.h"
 
-DECLARE_LOG_CATEGORY_CLASS(LogStereoMix, VeryVerbose, All)
+class UObject;
 
-DECLARE_LOG_CATEGORY_CLASS(LogStereoMixUI, VeryVerbose, All)
+STEREOMIX_API DECLARE_LOG_CATEGORY_EXTERN(LogStereoMix, Log, All)
+STEREOMIX_API DECLARE_LOG_CATEGORY_EXTERN(LogStereoMixUI, Log, All)
+
+STEREOMIX_API FString GetClientServerContextString(UObject* ContextObject = nullptr);
