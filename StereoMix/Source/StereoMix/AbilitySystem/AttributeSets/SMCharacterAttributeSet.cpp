@@ -109,7 +109,7 @@ bool USMCharacterAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallba
 	{
 		if (Data.Target.HasAnyMatchingGameplayTags(UnlimitStaminaTags))
 		{
-			Data.EvaluatedData.Magnitude = 0.0f;
+			Data.EvaluatedData.Magnitude = Data.EvaluatedData.Magnitude < 0.0f ? 0.0f : Data.EvaluatedData.Magnitude;
 			return false;
 		}
 	}

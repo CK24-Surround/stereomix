@@ -20,13 +20,16 @@ protected:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
-public:
+	void ThrowItem();
+
+	void InternalThrowItem();
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	TArray<TSubclassOf<ASMItemBase>> ThrowingItems;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	TSubclassOf<ASMThrowableItem> ThrowableItemClass;
-	
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	int32 ThrowCount = 1;
 
@@ -41,11 +44,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	float ParabolaHeight = 1000.0f;
-
-	void ThrowItem();
-
-protected:
-	void InternalThrowItem();
 
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;

@@ -23,7 +23,7 @@ ASMThrowableItem::ASMThrowableItem()
 	NiagaraComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 }
 
-void ASMThrowableItem::SetSpawnItem(TSubclassOf<ASMItemBase> InItemToSpawn)
+void ASMThrowableItem::SetSpawnItem(const TSubclassOf<ASMItemBase>& InItemToSpawn)
 {
 	ItemToSpawn = InItemToSpawn;
 }

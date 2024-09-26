@@ -17,8 +17,8 @@ class STEREOMIX_API ASMThrowableItem : public AActor
 public:
 	ASMThrowableItem();
 
-	void SetSpawnItem(TSubclassOf<ASMItemBase> InItemToSpawn);
-	
+	void SetSpawnItem(const TSubclassOf<ASMItemBase>& InItemToSpawn);
+
 	void SetAttribute(const FVector& InLaunchVelocity, const FVector& InInitialLocation, const FVector& InTargetLocation, const float& InGravity);
 
 protected:
