@@ -27,4 +27,5 @@ namespace SMCollisionTraceChannel
 {
 	static ECollisionChannel Action = ECC_GameTraceChannel2;
 	static ECollisionChannel TileAction = ECC_GameTraceChannel4;
+	static ECollisionChannel Obstacle = ECC_GameTraceChannel8;
 }

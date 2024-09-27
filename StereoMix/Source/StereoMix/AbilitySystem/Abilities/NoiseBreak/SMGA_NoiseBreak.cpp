@@ -148,7 +148,7 @@ TArray<AActor*> USMGA_NoiseBreak::GetSplashHitActors(const FVector& TargetLocati
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionObjectQueryParams CollisionParams;
 	CollisionParams.AddObjectTypesToQuery(ECC_Pawn);
-	CollisionParams.AddObjectTypesToQuery(ECC_GameTraceChannel8);
+	CollisionParams.AddObjectTypesToQuery(SMCollisionTraceChannel::Obstacle);
 	const float Size = (CaptureSize * 150.0f) - 75.0f;
 	const FVector BoxHalfExtend = FVector(Size, Size, 100.0f);
 	const FCollisionShape BoxCollider = FCollisionShape::MakeBox(BoxHalfExtend);

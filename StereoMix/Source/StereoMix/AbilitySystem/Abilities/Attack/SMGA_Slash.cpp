@@ -189,6 +189,18 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 		return;
 	}
 
+	ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(TargetActor);
+	if (DestroyableObstacle)
+	{
+		DestroyableObstacle->HandleDamage(Damage);
+		return;
+	}
+	
+	if (!TargetASC)
+	{
+		return;
+	}
+
 	FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
 	if (GESpecHandle.IsValid())
 	{

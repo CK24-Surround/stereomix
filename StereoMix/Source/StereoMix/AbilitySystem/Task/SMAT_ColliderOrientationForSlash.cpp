@@ -59,6 +59,7 @@ void USMAT_ColliderOrientationForSlash::Activate()
 	const float HalfRange = Range / 2.0f;
 	SourceSlashColliderComponent->SetCapsuleHalfHeight(HalfRange);
 	SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SourceSlashColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Obstacle);
 	SourceSlashColliderComponent->SetRelativeLocation(FVector(HalfRange, 0.0, 0.0));
 	SourceSlashColliderComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::BeginOnOverlaped);
 
