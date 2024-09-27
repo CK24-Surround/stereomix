@@ -87,6 +87,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
+		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, GCParams);
 
 		SourceCharacter->FocusToCursor();
@@ -114,7 +115,7 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 
 	FGameplayCueParameters ChargeGCParams;
 	ChargeGCParams.SourceObject = SourceCharacter;
-	SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Bass::Charge, ChargeGCParams);
+	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, ChargeGCParams);
 
 	FGameplayCueParameters ChargeHitGCParams;
 	ChargeHitGCParams.SourceObject = SourceCharacter;
@@ -124,14 +125,16 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 
 void USMGA_Charge::OnChargeEndEntry(FGameplayEventData Payload)
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	if (!SourceASC)
+	if (!SourceCharacter || !SourceASC)
 	{
 		return;
 	}
 
 	FGameplayCueParameters GCParams;
-	SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Bass::Charge, GCParams);
+	GCParams.SourceObject = SourceCharacter;
+	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, GCParams);
 }
 
 void USMGA_Charge::OnChargeEnded()
