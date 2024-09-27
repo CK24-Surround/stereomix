@@ -12,6 +12,7 @@ class USMUserWidget_CharacterState;
 class UNiagaraSystem;
 class UGameplayAbility;
 class UGameplayEffect;
+class ASMWeaponBase;
 
 /**
  * 

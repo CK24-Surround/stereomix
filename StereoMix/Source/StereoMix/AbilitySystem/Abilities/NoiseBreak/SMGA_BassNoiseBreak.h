@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "SMGA_NoiseBreak.h"
-#include "Data/SMTeam.h"
 #include "SMGA_BassNoiseBreak.generated.h"
 
 class UAnimMontage;
@@ -43,8 +42,21 @@ protected:
 	/** 타일을 점령합니다. */
 	void TileCapture();
 
+	UFUNCTION()
+	void OnWeaponTrailActivate(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void OnWeaponTrailDeactivate(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void OnSlash(FGameplayEventData Payload);
+
 	UPROPERTY()
 	TObjectPtr<UAnimMontage> CachedNoiseBreakMontage;
+
+	FVector NoiseBreakStartLocation;
+	
+	FVector NoiseBreakTargetLocation;
 
 	/** 도약하는 동안 적용할 중력 스케일입니다. */
 	float NoiseBreakGravityScale = 3.0f;

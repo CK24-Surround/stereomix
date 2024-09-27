@@ -99,6 +99,13 @@ namespace SMTags
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakFlash);
 			}
 
+			namespace Bass
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakWeaponTrailActivate);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakWeaponTrailDeactivate);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakSlash);
+			}
+
 			namespace Attack
 			{
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(AttackStart);
@@ -187,6 +194,8 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ChargeHit);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurst);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurstHit);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakWeaponTrail);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakSlash);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldWeapon);
 		}
 

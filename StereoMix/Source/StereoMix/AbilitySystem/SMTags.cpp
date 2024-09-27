@@ -98,6 +98,13 @@ namespace SMTags
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakFlash, "Event.AnimNotify.ElectricGuitar.NoiseBreakFlash", "노이즈 브레이크 점멸 애님 노티파이의 이벤트로 사용됩니다.");
 			}
 
+			namespace Bass
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakWeaponTrailActivate, "Event.AnimNotify.Bass.NoiseBreakWeaponTrailActivate", "노이즈 브레이크 중 무기 트레일 활성화 애님 노티파이의 이벤트로 사용됩니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakWeaponTrailDeactivate, "Event.AnimNotify.Bass.NoiseBreakWeaponTrailDeactivate", "노이즈 브레이크 중 무기 트레일 비활성화 애님 노티파이의 이벤트로 사용됩니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakSlash, "Event.AnimNotify.Bass.NoiseBreakSlash", "노이즈 브레이크 중 베기 애님 노티파이의 이벤트로 사용됩니다.");
+			}
+
 			namespace Attack
 			{
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(AttackStart, "Event.AnimNotify.Attack.AttackStart", "공격 판정 시작 노티파이의 이벤트로 사용됩니다.");
@@ -186,6 +193,8 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ChargeHit, "GameplayCue.Bass.ChargeHit", "돌진 적중 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurst, "GameplayCue.Bass.NoiseBreakBurst", "노이즈 브레이크 버스트 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurstHit, "GameplayCue.Bass.NoiseBreakBurstHit", "노이즈 브레이크 버스트 적중 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakWeaponTrail, "GameplayCue.Bass.NoiseBreakWeaponTrail", "노이즈 브레이크 무기 트레일 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakSlash, "GameplayCue.Bass.NoiseBreakSlash", "노이즈 브레이크 베기 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldWeapon, "GameplayCue.Bass.HoldWeapon", "무기의 잡기 상태 게임플레이 큐의 태그입니다.");
 		}
 

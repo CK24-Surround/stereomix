@@ -12,6 +12,7 @@
 #include "AbilitySystem/Task/SMAT_ModifyGravityUntilLanded.h"
 #include "Characters/Component/SMHIC_Character.h"
 #include "Characters/Player/SMBassCharacter.h"
+#include "Characters/Weapon/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
@@ -69,17 +70,28 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, CachedNoiseBreakMontage, 1.0f, NAME_None, false);
 	PlayMontageAndWaitTask->ReadyForActivation();
 
-	// 타겟 위치로 도약합니다.
 	if (IsLocallyControlled())
 	{
-		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		FVector TargetLocation;
+		UAbilityTask_WaitGameplayEvent* WeaponTrailActivationTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Bass::NoiseBreakWeaponTrailActivate);
+		WeaponTrailActivationTask->EventReceived.AddDynamic(this, &ThisClass::OnWeaponTrailActivate);
+		WeaponTrailActivationTask->ReadyForActivation();
+
+		UAbilityTask_WaitGameplayEvent* WeaponTrailDeactivationTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Bass::NoiseBreakWeaponTrailDeactivate);
+		WeaponTrailDeactivationTask->EventReceived.AddDynamic(this, &ThisClass::OnWeaponTrailDeactivate);
+		WeaponTrailDeactivationTask->ReadyForActivation();
+
+		UAbilityTask_WaitGameplayEvent* SlashTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Bass::NoiseBreakSlash);
+		SlashTask->EventReceived.AddDynamic(this, &ThisClass::OnSlash);
+		SlashTask->ReadyForActivation();
+
+		// 타겟 위치로 도약합니다.
+		NoiseBreakStartLocation = SourceCharacter->GetActorLocation();
 
 		const float MaxDistance = MaxDistanceByTile * 150.0f;
-		SourceCharacter->GetTileLocationFromCursor(TargetLocation, MaxDistance);
+		SourceCharacter->GetTileLocationFromCursor(NoiseBreakTargetLocation, MaxDistance);
 
-		ServerSendLocationData(SourceLocation, TargetLocation);
-		LeapCharacter(SourceLocation, TargetLocation, SourceMovement->GetGravityZ());
+		ServerSendLocationData(NoiseBreakStartLocation, NoiseBreakTargetLocation);
+		LeapCharacter(NoiseBreakStartLocation, NoiseBreakTargetLocation, SourceMovement->GetGravityZ());
 	}
 
 	// 노이즈 브레이크 시작을 타겟에게 알립니다.
@@ -108,6 +120,9 @@ void USMGA_BassNoiseBreak::ServerSendLocationData_Implementation(const FVector_N
 		EndAbilityByCancel();
 		return;
 	}
+
+	NoiseBreakStartLocation = NewSourceLocation;
+	NoiseBreakTargetLocation = NewTargetLocation;
 
 	LeapCharacter(NewSourceLocation, NewTargetLocation, SourceMovement->GetGravityZ());
 }
@@ -198,4 +213,56 @@ void USMGA_BassNoiseBreak::TileCapture()
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	USMTileFunctionLibrary::TileCaptureDelayedSqaure(GetWorld(), SourceLocation, SourceTeam, CaptureSize, TotalTriggerTime, true);
+}
+
+void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
+	UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
+	if (!SourceCharacter || !SourceASC || !SourceWeaponMesh)
+	{
+		return;
+	}
+
+	NET_LOG(GetAvatarActor(), Warning, TEXT("트레일 온"));
+	const FVector WeaponOffset(30.0, 0.0, -145.0);
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = SourceCharacter;
+	GCParams.TargetAttachComponent = SourceWeaponMesh;
+	GCParams.Location = WeaponOffset;
+	SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakWeaponTrail, GCParams);
+}
+
+void USMGA_BassNoiseBreak::OnWeaponTrailDeactivate(FGameplayEventData Payload)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	if (!SourceCharacter || !SourceASC)
+	{
+		return;
+	}
+
+	NET_LOG(GetAvatarActor(), Warning, TEXT("트레일 오프"));
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = SourceCharacter;
+	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakWeaponTrail, GCParams);
+}
+
+void USMGA_BassNoiseBreak::OnSlash(FGameplayEventData Payload)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	if (!SourceCharacter || !SourceASC)
+	{
+		return;
+	}
+
+	NET_LOG(GetAvatarActor(), Warning, TEXT("슬래시"));
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = SourceCharacter;
+	GCParams.Location = NoiseBreakTargetLocation;
+	GCParams.Normal = SourceCharacter->GetActorRotation().Vector();
+	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakSlash, GCParams);
 }
