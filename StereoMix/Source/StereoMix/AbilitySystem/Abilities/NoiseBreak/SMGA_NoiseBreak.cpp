@@ -10,6 +10,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "Gimmick/SMFragileObstacle.h"
 #include "Indicator/SMGA_NoiseBreakIndicator.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
@@ -93,6 +94,13 @@ void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation, const FGamepla
 	TArray<AActor*> SplashHitActors = GetSplashHitActors(TileLocation);
 	for (AActor* SplashHitActor : SplashHitActors)
 	{
+		ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(SplashHitActor);
+		if (DestroyableObstacle)
+		{
+			DestroyableObstacle->HandleDamage(Damage);
+			continue;
+		}
+		
 		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SplashHitActor);
 		if (!TargetASC)
 		{
@@ -140,6 +148,7 @@ TArray<AActor*> USMGA_NoiseBreak::GetSplashHitActors(const FVector& TargetLocati
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionObjectQueryParams CollisionParams;
 	CollisionParams.AddObjectTypesToQuery(ECC_Pawn);
+	CollisionParams.AddObjectTypesToQuery(ECC_GameTraceChannel8);
 	const float Size = (CaptureSize * 150.0f) - 75.0f;
 	const FVector BoxHalfExtend = FVector(Size, Size, 100.0f);
 	const FCollisionShape BoxCollider = FCollisionShape::MakeBox(BoxHalfExtend);
