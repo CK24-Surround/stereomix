@@ -42,7 +42,7 @@ bool ASMGCNA_OnOff::OnActive_Implementation(AActor* MyTarget, const FGameplayCue
 			VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttachedWithParams(NiagaraParams);
 			if (VFXComponent)
 			{
-				VFXComponent->SetAbsolute(false, true, false);
+				VFXComponent->SetAbsolute(false, !bUseRotationAttach, false);
 			}
 		}
 		else
@@ -111,7 +111,7 @@ bool ASMGCNA_OnOff::OnRemove_Implementation(AActor* MyTarget, const FGameplayCue
 		{
 			if (UNiagaraComponent* OffVFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttachedWithParams(NiagaraParams))
 			{
-				OffVFXComponent->SetAbsolute(false, true, false);
+				OffVFXComponent->SetAbsolute(false, !bUseRotationAttach, false);
 			}
 		}
 		else

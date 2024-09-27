@@ -34,5 +34,8 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UFMODAudioComponent> SFXComponent;
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 bUseRotationAttach:1 = false;
+
 	FFMODEventInstance SFXInstance;
 };
