@@ -123,6 +123,7 @@ void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 	ColliderOrientationForSlashTask->ReadyForActivation();
 
 	FGameplayCueParameters CueParams;
+	CueParams.SourceObject = SourceCharacter;
 	CueParams.Normal = SourceCharacter->GetActorRotation().Vector();
 	CueParams.RawMagnitude = bIsLeftSlashNext ? 0.0f : 1.0f;
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::Slash, CueParams);
@@ -159,17 +160,22 @@ void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC();
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	if (!SourceCharacter || !SourceASC || !TargetCharacter)
+	if (!SourceCharacter || !SourceASC || !TargetActor)
 	{
 		return;
 	}
 
-	ServerRPCSlashHit(TargetCharacter);
+	ServerRPCSlashHit(TargetActor);
+
+	const FVector SourceLocation = SourceCharacter->GetActorLocation();
+	const FVector TargetLocation = TargetActor->GetActorLocation();
+	const FVector SourceToTargetDireciton = (TargetLocation - SourceLocation).GetSafeNormal();
 
 	FGameplayCueParameters CueParams;
-	CueParams.Instigator = SourceCharacter;
-	SourceASC->ExecuteGC(TargetCharacter, SMTags::GameplayCue::Bass::SlashHit, CueParams);
+	CueParams.SourceObject = SourceCharacter;
+	CueParams.TargetAttachComponent = TargetActor->GetRootComponent();
+	CueParams.Normal = SourceToTargetDireciton;
+	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::SlashHit, CueParams);
 }
 
 void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
