@@ -6,6 +6,7 @@
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -27,9 +28,10 @@ void USMGA_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !SourceDataAsset || !TriggerEventData)
+	if (!SourceCharacter || !SourceASC || !SourceDataAsset || !TriggerEventData)
 	{
 		EndAbilityByCancel();
 		return;
@@ -46,10 +48,31 @@ void USMGA_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	WaitTask->ReadyForActivation();
 
 	NET_LOG(GetAvatarActor(), Log, TEXT("%s: %f초 스턴에 빠집니다."), *GetNameSafe(SourceCharacter), StunTime);
+
+	if (K2_HasAuthority())
+	{
+		AActor* Instigator = const_cast<AActor*>(TriggerEventData->Instigator.Get());
+
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+		SourceASC->AddGC(Instigator, SMTags::GameplayCue::Common::Stun, GCParams);
+	}
 }
 
 void USMGA_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
+	if (K2_HasAuthority())
+	{
+		if (USMAbilitySystemComponent* SourceASC = GetASC())
+		{
+			AActor* SourceActor = GetAvatarActor();
+			FGameplayCueParameters GCParams;
+			GCParams.SourceObject = SourceActor;
+			SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::Common::Stun, GCParams);
+		}
+	}
+
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

@@ -86,6 +86,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		ChargeEndEventTask->ReadyForActivation();
 
 		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
 		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, GCParams);
 
 		SourceCharacter->FocusToCursor();
@@ -94,8 +95,9 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 {
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	if (!SourceASC)
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	if (!SourceCharacter || !SourceASC)
 	{
 		return;
 	}
@@ -111,11 +113,13 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 	}
 
 	FGameplayCueParameters ChargeGCParams;
+	ChargeGCParams.SourceObject = SourceCharacter;
 	SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Bass::Charge, ChargeGCParams);
 
 	FGameplayCueParameters ChargeHitGCParams;
-	ChargeHitGCParams.Instigator = GetAvatarActor();
-	SourceASC->ExecuteGC(TargetActor, SMTags::GameplayCue::Bass::ChargeHit, ChargeHitGCParams);
+	ChargeHitGCParams.SourceObject = SourceCharacter;
+	ChargeHitGCParams.TargetAttachComponent = TargetActor->GetRootComponent();
+	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::ChargeHit, ChargeHitGCParams);
 }
 
 void USMGA_Charge::OnChargeEndEntry(FGameplayEventData Payload)
@@ -149,9 +153,10 @@ void USMGA_Charge::OnChargeEnded()
 
 void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!TargetASC || !SourceDataAsset)
+	if (!SourceCharacter || !TargetASC || !SourceDataAsset)
 	{
 		return;
 	}
@@ -163,6 +168,7 @@ void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
 	}
 
 	FGameplayEventData EventData;
+	EventData.Instigator = SourceCharacter;
 	EventData.EventMagnitude = StunTime;
 	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, SMTags::Event::Character::Stun, EventData);
 

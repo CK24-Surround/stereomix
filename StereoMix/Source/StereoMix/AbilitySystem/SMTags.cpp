@@ -152,6 +152,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "GameplayCue.Common.Hold", "잡기 시전 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldSuccess, "GameplayCue.Common.HoldSuccess", "잡기 성공 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldHit, "GameplayCue.Common.HoldHit", "잡기 적중 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "GameplayCue.Common.Stun", "스턴 게임플레이 큐의 태그입니다.");
 		}
 
 		namespace Piano
