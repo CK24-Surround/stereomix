@@ -12,7 +12,6 @@
 bool USMGCN_OneShot::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
 {
 	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	if (!SourceCharacter)
 	{
 		return false;
@@ -23,6 +22,7 @@ bool USMGCN_OneShot::OnExecute_Implementation(AActor* MyTarget, const FGameplayC
 	USMGameplayCueBlueprintLibrary::GetLocationAndRotation(Parameters, TargetLocation, TargetRotation);
 	USceneComponent* TargetComponent = Parameters.TargetAttachComponent.Get();
 
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	if (VFX.Find(SourceTeam))
 	{
 		FFXSystemSpawnParameters NiagaraParams;
