@@ -226,7 +226,6 @@ void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
 		return;
 	}
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("트레일 온"));
 	const FVector WeaponOffset(30.0, 0.0, -145.0);
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
@@ -244,7 +243,6 @@ void USMGA_BassNoiseBreak::OnWeaponTrailDeactivate(FGameplayEventData Payload)
 		return;
 	}
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("트레일 오프"));
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
 	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakWeaponTrail, GCParams);
@@ -259,7 +257,6 @@ void USMGA_BassNoiseBreak::OnSlash(FGameplayEventData Payload)
 		return;
 	}
 
-	NET_LOG(GetAvatarActor(), Warning, TEXT("슬래시"));
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
 	GCParams.Location = NoiseBreakTargetLocation;
