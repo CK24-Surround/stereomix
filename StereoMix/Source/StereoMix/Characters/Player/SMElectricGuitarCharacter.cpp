@@ -12,10 +12,6 @@ ASMElectricGuitarCharacter::ASMElectricGuitarCharacter(const FObjectInitializer&
 	: Super(ObjectInitializer)
 {
 	CharacterType = ESMCharacterType::ElectricGuitar;
-
-	LockAimTags.AddTag(SMTags::Character::State::SlowBullet);
-
-	LockMovementTags.AddTag(SMTags::Character::State::SlowBullet);
 }
 
 void ASMElectricGuitarCharacter::OnHoldStateEntry()

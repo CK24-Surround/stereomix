@@ -52,9 +52,6 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	if (IsLocallyControlled())
 	{
-		SourceLocation = SourceCharacter->GetActorLocation();
-		TargetLocation = SourceCharacter->GetLocationFromCursor();
-
 		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::SlowBulletShoot);
 		WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnEventReceived);
 		WaitEventTask->ReadyForActivation();
@@ -63,6 +60,15 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 void USMGA_SlowBullet::OnEventReceived(FGameplayEventData Payload)
 {
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	if (!SourceCharacter)
+	{
+		K2_EndAbility();
+		return;
+	}
+
+	SourceLocation = SourceCharacter->GetActorLocation();
+	TargetLocation = SourceCharacter->GetLocationFromCursor();
 	ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
 
 	SyncPointEndAbility();
