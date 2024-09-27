@@ -15,6 +15,7 @@
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "Gimmick/SMFragileObstacle.h"
 
 USMGA_Slash::USMGA_Slash()
 {
@@ -169,12 +170,12 @@ void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocation = TargetActor->GetActorLocation();
-	const FVector SourceToTargetDireciton = (TargetLocation - SourceLocation).GetSafeNormal();
+	const FVector SourceToTargetDirection = (TargetLocation - SourceLocation).GetSafeNormal();
 
 	FGameplayCueParameters CueParams;
 	CueParams.SourceObject = SourceCharacter;
 	CueParams.TargetAttachComponent = TargetActor->GetRootComponent();
-	CueParams.Normal = SourceToTargetDireciton;
+	CueParams.Normal = SourceToTargetDirection;
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::SlashHit, CueParams);
 }
 
@@ -183,7 +184,7 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (!SourceASC || !SourceDataAsset || !TargetASC)
+	if (!SourceASC || !SourceDataAsset)
 	{
 		return;
 	}

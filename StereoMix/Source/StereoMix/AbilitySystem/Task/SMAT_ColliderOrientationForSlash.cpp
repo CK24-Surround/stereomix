@@ -10,6 +10,7 @@
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "Gimmick/SMFragileObstacle.h"
 #include "Utilities/SMCollision.h"
 
 USMAT_ColliderOrientationForSlash::USMAT_ColliderOrientationForSlash()
@@ -151,18 +152,14 @@ void USMAT_ColliderOrientationForSlash::HandleHit(AActor* OtherActor)
 		return;
 	}
 
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(OtherActor);
-	if (TargetCharacter)
+	// 이미 이번 베기에 감지된 타겟은 다시 처리되면 안 됩니다. 이를 방지하고자 작성된 코드입니다. 
+	if (DetectedActors.Find(OtherActor) == INDEX_NONE)
 	{
-		// 이미 이번 베기에 감지된 타겟은 다시 처리되면 안 됩니다. 이를 방지하고자 작성된 코드입니다. 
-		if (DetectedActors.Find(TargetCharacter) == INDEX_NONE)
-		{
-			DetectedActors.Push(TargetCharacter);
+		DetectedActors.Push(OtherActor);
 
-			if (ShouldBroadcastAbilityTaskDelegates())
-			{
-				(void)OnSlashHit.ExecuteIfBound(TargetCharacter);
-			}
+		if (ShouldBroadcastAbilityTaskDelegates())
+		{
+			(void)OnSlashHit.ExecuteIfBound(OtherActor);
 		}
 	}
 }
@@ -170,6 +167,18 @@ void USMAT_ColliderOrientationForSlash::HandleHit(AActor* OtherActor)
 bool USMAT_ColliderOrientationForSlash::IsValidTarget(AActor* OtherActor)
 {
 	if (!OtherActor)
+	{
+		return false;
+	}
+
+	ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(OtherActor);
+	if (DestroyableObstacle)
+	{
+		return true;
+	}
+
+	ASMCharacterBase* TargetCharacter = Cast<ASMCharacterBase>(OtherActor);
+	if (!TargetCharacter)
 	{
 		return false;
 	}
