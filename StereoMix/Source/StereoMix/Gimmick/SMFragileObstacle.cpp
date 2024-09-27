@@ -50,6 +50,8 @@ void ASMFragileObstacle::HandleDamage(float InDamage)
 	CurrentHealth -= InDamage;
 	CurrentHealth = FMath::Clamp(CurrentHealth, 0.0f, MaxHealth);
 
+	NET_LOG(this, Log, TEXT("%s Damage: %f, CurrentHealth: %f"), *GetNameSafe(this), InDamage, CurrentHealth);
+
 	// 체력에 따른 메쉬 변경
 	UpdateMeshBasedOnHealth(CurrentHealth);
 	
