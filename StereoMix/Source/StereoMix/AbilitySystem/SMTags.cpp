@@ -160,6 +160,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreak, "GameplayCue.Piano.NoiseBreak", "노이즈 브레이크 발사 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurst, "GameplayCue.Piano.NoiseBreakBurst", "노이즈 브레이크 버스트 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurstHit, "GameplayCue.Piano.NoiseBreakBurstHit", "노이즈 브레이크 버스트 적중 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldWeapon, "GameplayCue.Piano.HoldWeapon", "무기의 잡기 상태 게임플레이 큐의 태그입니다.");
 		}
 
 		namespace ElectricGuitar
@@ -174,6 +175,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakFlash, "GameplayCue.ElectricGuitar.NoiseBreakFlash", "노이즈 브레이크 플래시 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurst, "GameplayCue.ElectricGuitar.NoiseBreakBurst", "노이즈 브레이크 버스트 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurstHit, "GameplayCue.ElectricGuitar.NoiseBreakBurstHit", "노이즈 브레이크 버스트 적중 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldWeapon, "GameplayCue.ElectricGuitar.HoldWeapon", "무기의 잡기 상태 게임플레이 큐의 태그입니다.");
 		}
 
 		namespace Bass
@@ -184,6 +186,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ChargeHit, "GameplayCue.Bass.ChargeHit", "돌진 적중 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurst, "GameplayCue.Bass.NoiseBreakBurst", "노이즈 브레이크 버스트 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurstHit, "GameplayCue.Bass.NoiseBreakBurstHit", "노이즈 브레이크 버스트 적중 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldWeapon, "GameplayCue.Bass.HoldWeapon", "무기의 잡기 상태 게임플레이 큐의 태그입니다.");
 		}
 
 		namespace SpecialAction

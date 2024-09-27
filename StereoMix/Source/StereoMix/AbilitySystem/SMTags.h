@@ -161,6 +161,7 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreak);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurst);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurstHit);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldWeapon);
 		}
 
 		namespace ElectricGuitar
@@ -175,6 +176,7 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakFlash);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurst);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurstHit);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldWeapon);
 		}
 
 		namespace Bass
@@ -185,6 +187,7 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ChargeHit);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurst);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakBurstHit);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldWeapon);
 		}
 
 		namespace SpecialAction

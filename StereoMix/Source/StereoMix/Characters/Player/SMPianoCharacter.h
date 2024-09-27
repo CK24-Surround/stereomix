@@ -21,9 +21,9 @@ public:
 	UNiagaraComponent* GetImpactArrowIndicator() { return ImpactArrowIndicatorNiagaraComponent; }
 
 protected:
-	virtual void BeginPlay() override;
+	virtual void OnHoldStateEntry() override;
 
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void OnHoldStateExit() override;
 
 	TObjectPtr<UNiagaraComponent> ImpactArrowIndicatorNiagaraComponent;
 };

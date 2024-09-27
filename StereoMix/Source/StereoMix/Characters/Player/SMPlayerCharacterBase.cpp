@@ -108,6 +108,8 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	ImmuneMoveTrailFXComponent->SetAutoActivate(false);
 
 	HIC = CreateDefaultSubobject<USMHIC_Character>(TEXT("HIC"));
+	HIC->OnHoldStateEnrty.AddUObject(this, &ThisClass::OnHoldStateEntry);
+	HIC->OnHoldStateExit.AddUObject(this, &ThisClass::OnHoldStateExit);
 
 	LockAimTags.AddTag(SMTags::Character::State::Holded);
 	LockAimTags.AddTag(SMTags::Character::State::NoiseBreak);

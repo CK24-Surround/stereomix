@@ -4,6 +4,9 @@
 #include "SMPianoCharacter.h"
 
 #include "NiagaraComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
+#include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPianoCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
 
@@ -39,14 +42,31 @@ void ASMPianoCharacter::OnRep_PlayerState()
 	}
 }
 
-void ASMPianoCharacter::BeginPlay()
+void ASMPianoCharacter::OnHoldStateEntry()
 {
-	Super::BeginPlay();
+	Super::OnHoldStateEntry();
+
+	if (HasAuthority())
+	{
+		if (UAbilitySystemComponent* SourceASC = GetAbilitySystemComponent<USMAbilitySystemComponent>())
+		{
+			FGameplayCueParameters GCParams;
+			GCParams.SourceObject = this;
+			GCParams.TargetAttachComponent = Weapon ? Weapon->GetWeaponMeshComponent() : nullptr;
+			SourceASC->AddGameplayCue(SMTags::GameplayCue::Piano::HoldWeapon, GCParams);
+		}
+	}
 }
 
-void ASMPianoCharacter::Tick(float DeltaSeconds)
+void ASMPianoCharacter::OnHoldStateExit()
 {
-	Super::Tick(DeltaSeconds);
+	Super::OnHoldStateExit();
 
-	// DrawDebugSphere(GetWorld(), GetMesh()->GetSocketLocation(TEXT("ik_hand_weapon_l")), 30.0f, 16, FColor::Emerald, false, 0.1f);
+	if (HasAuthority())
+	{
+		if (UAbilitySystemComponent* SourceASC = GetAbilitySystemComponent<USMAbilitySystemComponent>())
+		{
+			SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Piano::HoldWeapon);
+		}
+	}
 }

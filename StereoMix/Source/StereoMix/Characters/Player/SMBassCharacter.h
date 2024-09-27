@@ -26,6 +26,10 @@ public:
 	UBoxComponent* GetChargeColliderComponent() const { return ChargeColliderComponent; }
 
 protected:
+	virtual void OnHoldStateEntry() override;
+
+	virtual void OnHoldStateExit() override;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<USceneComponent> SlashColliderRootComponent;
 

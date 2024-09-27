@@ -65,6 +65,9 @@ public:
 
 	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
+	template<typename T>
+	T* GetAbilitySystemComponent() const { return Cast<T>(GetAbilitySystemComponent()); }
+
 	virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; };
 
 	virtual ESMTeam GetTeam() const override;
@@ -90,7 +93,7 @@ public:
 
 	/** 현재 커서가 위치한 곳의 타일좌표를 가져옵니다. 양수 값의 사거리를 매개변수로 넘겨주면 사거리 내의 타일의 좌표를 가져옵니다. 실패시 false를 반환합니다. */
 	bool GetTileLocationFromCursor(FVector& OutTileLocation, float MaxDistance = -1.0f);
-	
+
 	/** 액터를 숨깁니다. 리플리케이트 됩니다. */
 	UFUNCTION(Server, Reliable)
 	void ServerSetActorHiddenInGame(bool bNewIsActorHidden);
@@ -203,6 +206,10 @@ protected:
 
 	UFUNCTION()
 	void OnRep_bIsNoteState();
+
+	virtual void OnHoldStateEntry() {};
+
+	virtual void OnHoldStateExit() {};
 
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;

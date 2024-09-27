@@ -3,7 +3,9 @@
 
 #include "SMBassCharacter.h"
 
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "Characters/Weapon/SMWeaponBase.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Utilities/SMCollision.h"
@@ -35,4 +37,33 @@ ASMBassCharacter::ASMBassCharacter(const FObjectInitializer& ObjectInitializer)
 	LockMovementTags.AddTag(SMTags::Character::State::Charge);
 
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Charge);
+}
+
+void ASMBassCharacter::OnHoldStateEntry()
+{
+	Super::OnHoldStateEntry();
+
+	if (HasAuthority())
+	{
+		if (UAbilitySystemComponent* SourceASC = GetAbilitySystemComponent<USMAbilitySystemComponent>())
+		{
+			FGameplayCueParameters GCParams;
+			GCParams.SourceObject = this;
+			GCParams.TargetAttachComponent = Weapon ? Weapon->GetWeaponMeshComponent() : nullptr;
+			SourceASC->AddGameplayCue(SMTags::GameplayCue::Bass::HoldWeapon, GCParams);
+		}
+	}
+}
+
+void ASMBassCharacter::OnHoldStateExit()
+{
+	Super::OnHoldStateExit();
+
+	if (HasAuthority())
+	{
+		if (UAbilitySystemComponent* SourceASC = GetAbilitySystemComponent<USMAbilitySystemComponent>())
+		{
+			SourceASC->RemoveGameplayCue(SMTags::GameplayCue::Bass::HoldWeapon);
+		}
+	}
 }

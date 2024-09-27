@@ -14,4 +14,8 @@ class STEREOMIX_API ASMElectricGuitarCharacter : public ASMPlayerCharacterBase
 public:
 	ASMElectricGuitarCharacter(const FObjectInitializer& ObjectInitializer);
 
+protected:
+	virtual void OnHoldStateEntry() override;
+
+	virtual void OnHoldStateExit() override;
 };
