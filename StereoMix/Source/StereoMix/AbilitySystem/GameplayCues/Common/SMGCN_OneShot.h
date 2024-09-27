@@ -16,4 +16,7 @@ class STEREOMIX_API USMGCN_OneShot : public USMGameplayCueNotifyBase
 
 protected:
 	virtual bool OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const override;
+	
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 bUseRotationAttach:1 = false;
 };

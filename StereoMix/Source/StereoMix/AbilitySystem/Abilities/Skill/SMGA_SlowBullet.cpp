@@ -9,6 +9,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
@@ -36,8 +37,9 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !SourceDataAsset)
+	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -55,6 +57,21 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::SlowBulletShoot);
 		WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnEventReceived);
 		WaitEventTask->ReadyForActivation();
+
+		ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
+		UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
+		if (SourceWeaponMesh)
+		{
+			const FVector LocationOffset(5.0, -5.0, -50.0);
+			const FRotator RotationOffset(90.0, -90.0, 0.0);
+
+			FGameplayCueParameters GCParams;
+			GCParams.SourceObject = SourceCharacter;
+			GCParams.TargetAttachComponent = SourceWeaponMesh;
+			GCParams.Location = LocationOffset;
+			GCParams.Normal = RotationOffset.Vector();
+			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::SlowBulletCharge, GCParams);
+		}
 	}
 }
 

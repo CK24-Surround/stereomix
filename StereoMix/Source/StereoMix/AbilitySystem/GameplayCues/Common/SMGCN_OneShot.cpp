@@ -40,7 +40,7 @@ bool USMGCN_OneShot::OnExecute_Implementation(AActor* MyTarget, const FGameplayC
 		{
 			if (UNiagaraComponent* VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttachedWithParams(NiagaraParams))
 			{
-				VFXComponent->SetAbsolute(false, true, false);
+				VFXComponent->SetAbsolute(false, !bUseRotationAttach, false);
 			}
 		}
 		else
