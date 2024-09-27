@@ -9,6 +9,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Components/CapsuleComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 
 
@@ -51,11 +52,16 @@ void USMGA_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 
 	if (K2_HasAuthority())
 	{
-		AActor* Instigator = const_cast<AActor*>(TriggerEventData->Instigator.Get());
+		Instigator = const_cast<AActor*>(TriggerEventData->Instigator.Get());
+
+		class UCapsuleComponent* Capsulecomponent = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+		const float CapsuleHalfHeight = Capsulecomponent ? Capsulecomponent->GetScaledCapsuleHalfHeight() : 0.0f;
+		const FVector Offset(0.0, 0.0, CapsuleHalfHeight + 15.0);
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+		GCParams.Location = Offset;
 		SourceASC->AddGC(Instigator, SMTags::GameplayCue::Common::Stun, GCParams);
 	}
 }
@@ -69,7 +75,7 @@ void USMGA_Stun::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 			AActor* SourceActor = GetAvatarActor();
 			FGameplayCueParameters GCParams;
 			GCParams.SourceObject = SourceActor;
-			SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::Common::Stun, GCParams);
+			SourceASC->RemoveGC(Instigator, SMTags::GameplayCue::Common::Stun, GCParams);
 		}
 	}
 

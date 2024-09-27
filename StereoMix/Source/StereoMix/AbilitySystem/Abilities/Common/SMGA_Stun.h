@@ -24,4 +24,7 @@ protected:
 	
 	UFUNCTION()
 	void OnStunEnded();
+
+	UPROPERTY()
+	TObjectPtr<AActor> Instigator; 
 };
