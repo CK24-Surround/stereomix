@@ -36,7 +36,6 @@ bool USMGCN_ElectricGuitarNoiseBreakBurst::OnExecute_Implementation(AActor* MyTa
 		auto SpawnFX = [SourceCharacterWeakPtr, CachedVFX, CurrentStepLocation, SourceToTargetRotation]() {
 			if (SourceCharacterWeakPtr.Get() && CachedVFX)
 			{
-				DrawDebugSphere(SourceCharacterWeakPtr->GetWorld(), CurrentStepLocation, 10.0f, 16, FColor::Red, false, 10.0f);
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacterWeakPtr.Get(), CachedVFX, CurrentStepLocation, SourceToTargetRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease);
 			}
 		};
