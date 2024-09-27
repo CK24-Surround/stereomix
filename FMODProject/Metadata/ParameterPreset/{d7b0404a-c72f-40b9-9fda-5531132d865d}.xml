@@ -16,9 +16,10 @@
 			<value>2</value>
 		</property>
 		<property name="maximum">
-			<value>3</value>
+			<value>4</value>
 		</property>
 		<property name="enumerationLabels">
+			<value>No Shot</value>
 			<value>Charge-0</value>
 			<value>Charge-1</value>
 			<value>Charge-2</value>
