@@ -9,6 +9,7 @@ namespace SMCollisionProfileName
 	static FName Tile = TEXT("Tile");
 	static FName HealPack = TEXT("HealPack");
 	static FName Gimmick = TEXT("Gimmick");
+	static FName Obstacle = TEXT("Obstacle");
 	static FName HoldableItem = TEXT("HoldableItem");
 	static FName OverlapItem = TEXT("OverlapItem");
 	static FName CatchableItem = TEXT("CatchableItem");

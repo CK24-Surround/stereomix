@@ -9,7 +9,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "Gimmick/SMDestroyableObstacle.h"
+#include "Gimmick/SMFragileObstacle.h"
 
 ASMEffectProjectileBase::ASMEffectProjectileBase()
 {
@@ -28,6 +28,12 @@ bool ASMEffectProjectileBase::IsValidateTarget(AActor* InTarget)
 	if (!Super::IsValidateTarget(InTarget))
 	{
 		return false;
+	}
+	
+	ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(InTarget);
+	if (DestroyableObstacle)
+	{
+		return true;
 	}
 
 	// 투사체가 무소속인 경우 무시합니다.
@@ -110,7 +116,7 @@ void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 		return;
 	}
 
-	ASMDestroyableObstacle* DestroyableObstacle = Cast<ASMDestroyableObstacle>(InTarget);
+	ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(InTarget);
 	if (DestroyableObstacle)
 	{
 		DestroyableObstacle->HandleDamage(Damage);
