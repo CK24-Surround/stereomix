@@ -9,6 +9,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "Gimmick/SMDestroyableObstacle.h"
 
 ASMEffectProjectileBase::ASMEffectProjectileBase()
 {
@@ -104,7 +105,19 @@ void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceCharacter);
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
 	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
-	if (!SourceCharacter || !SourceASC || !TargetASC || !SourceDataAsset)
+	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
+	{
+		return;
+	}
+
+	ASMDestroyableObstacle* DestroyableObstacle = Cast<ASMDestroyableObstacle>(InTarget);
+	if (DestroyableObstacle)
+	{
+		DestroyableObstacle->HandleDamage(Damage);
+		return;
+	}
+
+	if (!TargetASC)
 	{
 		return;
 	}
