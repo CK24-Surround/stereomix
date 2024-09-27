@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
-#include "Data/SMTeam.h"
 #include "SMGA_Hold.generated.h"
 
 class USMAT_SkillIndicator;

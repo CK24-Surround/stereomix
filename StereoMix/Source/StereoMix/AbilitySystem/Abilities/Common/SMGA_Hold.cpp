@@ -33,8 +33,8 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !ensureAlways(SourceASC) || !ensureAlways(SourceDataAsset))
 	{
@@ -54,12 +54,6 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	PlayMontageAndWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	PlayMontageAndWaitTask->ReadyForActivation();
 
-	// 잡기 시전 시 이펙트 입니다.
-	// FGameplayCueParameters GCParams;
-	// GCParams.Location = SourceCharacter->GetActorLocation();
-	// GCParams.Normal = SourceCharacter->GetActorRotation().Vector();
-	// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::Hold, GCParams);
-
 	if (IsLocallyControlled())
 	{
 		// 커서위치는 즉시 저장합니다. 시작 위치는 ServerRPC를 호출할때 저장합니다.
@@ -69,12 +63,34 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Hold);
 		WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnHoldAnimNotifyTrigger);
 		WaitGameplayEventTask->ReadyForActivation();
+
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		const FVector SourceToCursorDirection = (CursorLocation - SourceLocation).GetSafeNormal();
+
+		// 잡기 시전 시 이펙트 입니다.
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+		GCParams.Normal = SourceToCursorDirection;
+		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Hold, GCParams);
 	}
 }
 
 void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	bSuccessHold = false;
+
+	if (K2_HasAuthority())
+	{
+		if (USMAbilitySystemComponent* SourceASC = GetASC())
+		{
+			AActor* SourceActor = GetAvatarActor();
+
+			FGameplayCueParameters GCParams;
+			GCParams.SourceObject = SourceActor;
+			SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::Common::Hold, GCParams);
+		}
+	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
@@ -118,22 +134,12 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 	{
 		bSuccess = true;
 
-		// 이펙트 재생을 위해 잡기 전 타겟의 위치를 저장해둡니다.
-		// const FVector TargetLocationBeforeHold = TargetActor->GetActorLocation();
-
 		// 타겟의 잡히기 로직을 실행합니다.
 		TargetHIC->OnHolded(SourceCharacter);
 
 		// 잡은 대상을 저장하고 자신의 상태를 잡기로 변경합니다. 예외처리를 위해 잡은 액터의 파괴 시 수행해야할 이벤트를 바인드합니다.
 		SourceHIC->SetActorIAmHolding(TargetActor);
 		TargetActor->OnDestroyed.AddDynamic(SourceHIC, &USMHIC_Character::OnDestroyedIAmHoldingActor);
-
-		// 잡기 적중에 성공하여 성공 이펙트를 재생합니다.
-		// FGameplayCueParameters GCParams;
-		// const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		// GCParams.Location = SourceCharacter->GetActorLocation();
-		// GCParams.Normal = (TargetLocationBeforeHold - SourceLocation).GetSafeNormal();
-		// SourceASC->ExecuteGameplayCue(SMTags::GameplayCue::CatchHit, GCParams);
 
 		// 잡기 버프를 활성화합니다. 캐릭터를 잡은 경우 이동속도가 증가합니다.
 		if (Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()))
@@ -143,6 +149,32 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 
 		// 로컬에서 타겟 인디케이터를 제거합니다.
 		SourceCharacter->ClientRPCRemoveScreendIndicatorToSelf(TargetActor);
+
+		if (USMAbilitySystemComponent* SourceASC = GetASC())
+		{
+			const FVector SourceLocation = SourceCharacter->GetActorLocation();
+			const FVector TargetLocation = TargetActor->GetActorLocation();
+			const FVector SourceToTargetDirection = (TargetLocation - SourceLocation).GetSafeNormal();
+
+			// 잡기 적중에 성공하여 성공 이펙트를 재생합니다.
+			FGameplayCueParameters SuccessGCParams;
+			SuccessGCParams.SourceObject = SourceCharacter;
+			SuccessGCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+			SuccessGCParams.Normal = SourceToTargetDirection;
+			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Common::HoldSuccess, SuccessGCParams);
+
+			// 대상위치에 적중 이펙트를 재생합니다.
+			FGameplayCueParameters HitGCParams;
+			HitGCParams.SourceObject = SourceCharacter;
+			HitGCParams.Location = TargetLocation;
+			HitGCParams.Normal = SourceToTargetDirection;
+			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Common::HoldHit, HitGCParams);
+
+			// 잡기 시전 이펙트는 제거합니다.
+			FGameplayCueParameters HoldCancelGCParams;
+			HoldCancelGCParams.SourceObject = SourceCharacter;
+			SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Common::Hold, HoldCancelGCParams);
+		}
 	}
 
 	bSuccessHold = bSuccess;

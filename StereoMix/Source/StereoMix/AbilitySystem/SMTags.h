@@ -143,6 +143,9 @@ namespace SMTags
 		namespace Common
 		{
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldSuccess);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldHit);
 		}
 
 		namespace Piano
