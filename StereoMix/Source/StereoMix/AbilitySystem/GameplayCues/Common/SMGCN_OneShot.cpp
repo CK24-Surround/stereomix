@@ -1,16 +1,15 @@
 // Copyright Studio Surround. All Rights Reserved.
 
 
-#include "SMGCN_Hit.h"
+#include "SMGCN_OneShot.h"
 
 #include "FMODBlueprintStatics.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "FunctionLibraries/SMGameplayCueBlueprintLibrary.h"
-#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 
-bool USMGCN_Hit::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
+bool USMGCN_OneShot::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
 {
 	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
