@@ -162,6 +162,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ArcheryHitCharge1, "GameplayCue.Piano.ArcheryHitCharge1", "1단계 충전 화살 적중 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ArcheryHitCharge2, "GameplayCue.Piano.ArcheryHitCharge2", "2단계 충전 화살 적중 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrow, "GameplayCue.Piano.ImpactArrow", "충격 화살 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrowReady, "GameplayCue.Piano.ImpactArrowReady", "충격 화살 준비 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrowExplosion, "GameplayCue.Piano.ImpactArrowExplosion", "충격 화살 폭발 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrowHit, "GameplayCue.Piano.ImpactArrowHit", "충격 화살 적중 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreak, "GameplayCue.Piano.NoiseBreak", "노이즈 브레이크 발사 게임플레이 큐의 태그입니다.");
