@@ -168,6 +168,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletProjectile, "GameplayCue.ElectricGuitar.SlowBulletProjectile", "마비탄 투사체 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletHit, "GameplayCue.ElectricGuitar.SlowBulletHit", "마비탄 적중 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletDebuff, "GameplayCue.ElectricGuitar.SlowBulletDebuff", "마비탄 적중 게임플레이 큐의 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakFlash, "GameplayCue.ElectricGuitar.NoiseBreakFlash", "노이즈 브레이크 플래시 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurst, "GameplayCue.ElectricGuitar.NoiseBreakBurst", "노이즈 브레이크 버스트 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakBurstHit, "GameplayCue.ElectricGuitar.NoiseBreakBurstHit", "노이즈 브레이크 버스트 적중 게임플레이 큐의 태그입니다.");
 		}

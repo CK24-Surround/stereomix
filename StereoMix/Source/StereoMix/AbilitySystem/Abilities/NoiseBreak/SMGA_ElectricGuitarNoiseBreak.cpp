@@ -39,6 +39,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
@@ -82,6 +83,17 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		{
 			SyncPointNoiseBreakEnded();
 		}
+
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		const FVector SourceToTarget = NoiseBreakTargetLocation - SourceLocation;
+		const FVector SourceToTargetDirection = SourceToTarget.GetSafeNormal();
+
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.Location = SourceLocation;
+		GCParams.Normal = SourceToTargetDirection;
+		GCParams.RawMagnitude = SourceToTarget.Size();
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakFlash, GCParams);
 	}
 
 	// 노이즈 브레이크 시작을 타겟에게 알립니다.
@@ -153,6 +165,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 {
 	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (!SourceCharacter || !SourceHIC)
 	{
@@ -174,6 +187,15 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	ApplySplashForElectricGuitar();
 
 	SourceHIC->SetActorIAmHolding(nullptr);
+
+	const FVector StartToTarget = NoiseBreakTargetLocation - NoiseBreakStartLocation;
+
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = SourceCharacter;
+	GCParams.Location = NoiseBreakStartLocation;
+	GCParams.Normal = StartToTarget.GetSafeNormal();
+	GCParams.RawMagnitude = StartToTarget.Size();
+	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakBurst, GCParams);
 
 	SyncPointNoiseBreakEnded();
 }

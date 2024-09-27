@@ -46,7 +46,7 @@ protected:
 	void OnNoiseBreakEnded();
 
 	FName OriginalCollisionProfileName;
-	
+
 	FVector NoiseBreakStartLocation;
 
 	FVector NoiseBreakTargetLocation;
