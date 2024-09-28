@@ -12,8 +12,7 @@ ESMTeam USMTeamBlueprintLibrary::GetTeam(const AActor* SourceActor)
 	const ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(SourceActor);
 	if (!SourceTeamInterface)
 	{
-		NET_LOG(SourceActor, Warning, TEXT("팀 인터페이스를 소유하고 있지 않습니다."));
-		return ESMTeam();
+		return ESMTeam::None;
 	}
 
 	ESMTeam Team = SourceTeamInterface->GetTeam();
