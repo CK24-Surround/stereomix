@@ -211,6 +211,6 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
 	if (TargetDamageInterface)
 	{
-		TargetDamageInterface->SetLastAttackInstigator(GetAvatarActor());
+		TargetDamageInterface->SetLastAttacker(GetAvatarActor());
 	}
 }

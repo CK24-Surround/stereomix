@@ -292,9 +292,9 @@ protected:
 
 	// ~Damage Section
 public:
-	FORCEINLINE virtual AActor* GetLastAttackInstigator() const override { return LastAttackInstigator.Get(); };
+	FORCEINLINE virtual AActor* GetLastAttacker() const override { return LastAttackInstigator.Get(); };
 
-	FORCEINLINE virtual void SetLastAttackInstigator(AActor* NewStunInstigator) override { LastAttackInstigator = NewStunInstigator; }
+	FORCEINLINE virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttackInstigator = NewAttacker; }
 
 protected:
 	UPROPERTY(Replicated)

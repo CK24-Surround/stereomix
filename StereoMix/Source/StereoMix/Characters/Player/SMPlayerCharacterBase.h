@@ -126,9 +126,11 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRPCRemoveScreendIndicatorToSelf(AActor* TargetActor);
 
-	virtual AActor* GetLastAttackInstigator() const override { return LastAttackInstigator.Get(); }
+	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 
-	virtual void SetLastAttackInstigator(AActor* NewStunInstigator) override { LastAttackInstigator = NewStunInstigator; }
+	virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttacker = NewAttacker; }
+
+	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCSetYawRotation(float InYaw);
@@ -298,7 +300,7 @@ protected:
 	uint32 bUseControllerRotation:1 = true;
 
 	UPROPERTY(Replicated)
-	TWeakObjectPtr<AActor> LastAttackInstigator;
+	TWeakObjectPtr<AActor> LastAttacker;
 
 	ESMCharacterType CharacterType = ESMCharacterType::None;
 

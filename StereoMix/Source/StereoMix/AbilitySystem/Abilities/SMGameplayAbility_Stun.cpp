@@ -96,7 +96,7 @@ void USMGameplayAbility_Stun::ActivateAbility(const FGameplayAbilitySpecHandle H
 
 	// 스턴 즉시 이펙트를 재생합니다.
 	FGameplayCueParameters GCParams;
-	GCParams.Instigator = SourceCharacter->GetLastAttackInstigator();
+	GCParams.Instigator = SourceCharacter->GetLastAttacker();
 	GCParams.TargetAttachComponent = SourceCharacter->GetMesh();
 	SourceASC->AddGameplayCue(SMTags::GameplayCue::Stun, GCParams);
 

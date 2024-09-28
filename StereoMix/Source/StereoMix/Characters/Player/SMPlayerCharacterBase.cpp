@@ -5,6 +5,7 @@
 
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputComponent.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
@@ -140,7 +141,7 @@ void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 	DOREPLIFETIME(ThisClass, bIsCollisionEnabled);
 	DOREPLIFETIME(ThisClass, bIsMovementEnabled);
 	DOREPLIFETIME(ThisClass, bUseControllerRotation);
-	DOREPLIFETIME(ThisClass, LastAttackInstigator);
+	DOREPLIFETIME(ThisClass, LastAttacker);
 	DOREPLIFETIME(ThisClass, Weapon);
 	DOREPLIFETIME(ThisClass, bIsNoteState);
 }
@@ -445,6 +446,22 @@ void ASMPlayerCharacterBase::MulticastRPCSetYawRotation_Implementation(float InY
 void ASMPlayerCharacterBase::MulticastRPCSetLocation_Implementation(const FVector_NetQuantize10& NewLocation)
 {
 	SetActorLocation(NewLocation);
+}
+
+void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
+{
+	if (!ASC.Get() || !DataAsset)
+	{
+		return;
+	}
+
+	FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->DamageGE, 1.0f, ASC->MakeEffectContext());
+	if (GESpecHandle.IsValid())
+	{
+		SetLastAttacker(NewAttacker);
+		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, InDamageAmount);
+		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+	}
 }
 
 void ASMPlayerCharacterBase::Landed(const FHitResult& Hit)
