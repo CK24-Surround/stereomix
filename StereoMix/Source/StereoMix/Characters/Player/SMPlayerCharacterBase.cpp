@@ -40,6 +40,7 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 	CachedMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	CachedMeshComponent->SetRelativeRotation(FRotator(0.0, -90.0, 0.0));
+	CachedMeshComponent->bRenderCustomDepth = true;
 	CachedMeshComponent->bReceivesDecals = false;
 
 	UCharacterMovementComponent* CachedMovementComponent = GetCharacterMovement();
