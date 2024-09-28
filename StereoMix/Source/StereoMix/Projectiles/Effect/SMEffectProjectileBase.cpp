@@ -67,7 +67,16 @@ void ASMEffectProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
 
 void ASMEffectProjectileBase::HandleHitEffect(AActor* InTarget)
 {
-	PlayHitFX(InTarget);
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
+	const bool IsObstacle = TargetDamageInterface ? TargetDamageInterface->IsObstacle() : true;
+	if (IsObstacle)
+	{
+		PlayWallHitFX(GetActorLocation());
+	}
+	else
+	{
+		PlayHitFX(InTarget);
+	}
 }
 
 void ASMEffectProjectileBase::NotifyHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, bool bSelfMoved, FVector HitLocation, FVector HitNormal, FVector NormalImpulse, const FHitResult& Hit)

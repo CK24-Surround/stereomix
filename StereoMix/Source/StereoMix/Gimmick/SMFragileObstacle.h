@@ -51,6 +51,8 @@ public:
 
 	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
 
+	virtual bool IsObstacle() override { return true; }
+
 protected:
 	UFUNCTION()
 	void OnRep_CurrentDurability();

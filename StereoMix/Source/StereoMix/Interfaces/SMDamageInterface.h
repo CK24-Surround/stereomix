@@ -33,4 +33,7 @@ public:
 	 * @param NewAttacker SetLastAttacker에 사용하기 위한 매개변수입니다.
 	 */
 	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) = 0;
+
+	/** 이펙트 처리를 위한 장애물 여부입니다. */
+	virtual bool IsObstacle() = 0;
 };
