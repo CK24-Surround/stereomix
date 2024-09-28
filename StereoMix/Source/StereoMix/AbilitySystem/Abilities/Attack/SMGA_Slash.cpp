@@ -15,6 +15,7 @@
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 
 USMGA_Slash::USMGA_Slash()
 {
@@ -117,7 +118,7 @@ void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 		return;
 	}
 
-	const float MaxDistance = MaxDistanceByTile * 150.0f;
+	const float MaxDistance = MaxDistanceByTile * USMTileFunctionLibrary::DefaultTileSize;
 	USMAT_ColliderOrientationForSlash* ColliderOrientationForSlashTask = USMAT_ColliderOrientationForSlash::ColliderOrientationForSlash(this, MaxDistance, Angle, TotalSlashTime, bShowDebug);
 	ColliderOrientationForSlashTask->OnSlashHit.BindUObject(this, &ThisClass::OnSlashHit);
 	ColliderOrientationForSlashTask->ReadyForActivation();
