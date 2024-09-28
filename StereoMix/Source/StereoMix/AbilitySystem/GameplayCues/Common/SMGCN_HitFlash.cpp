@@ -15,7 +15,6 @@ bool USMGCN_HitFlash::OnExecute_Implementation(AActor* MyTarget, const FGameplay
 		return false;
 	}
 
-	NET_LOG(MyTarget, Warning, TEXT("섬광"));
 	SourceMesh->SetCustomDepthStencilValue(1);
 
 	TWeakObjectPtr<USkeletalMeshComponent> SourceMeshWeakPtr = MakeWeakObjectPtr(SourceMesh);

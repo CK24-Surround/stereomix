@@ -211,9 +211,9 @@ protected:
 	UFUNCTION()
 	void OnRep_bIsNoteState();
 
-	virtual void OnHoldStateEntry() {};
+	virtual void OnHoldStateEntry() {}
 
-	virtual void OnHoldStateExit() {};
+	virtual void OnHoldStateExit() {}
 
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;
