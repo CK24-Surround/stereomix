@@ -126,7 +126,13 @@ ASMTile* USMGA_NoiseBreak::GetTileFromLocation(const FVector& Location)
 	const FVector EndLocation = StartLocation + FVector::DownVector * 1000.0;
 	if (!GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction))
 	{
-		return nullptr;
+		// 만약 실패하면 타일의 2배 사이즈 크기의 원으로 다시 타일을 찾습니다. 이번에도 실패하면 nullptr을 반환합니다.
+		HitResult = FHitResult();
+		const FCollisionShape Sphere = FCollisionShape::MakeSphere(USMTileFunctionLibrary::DefaultTileSize);
+		if (!GetWorld()->SweepSingleByChannel(HitResult, StartLocation, EndLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, Sphere))
+		{
+			return nullptr;
+		}
 	}
 
 	return Cast<ASMTile>(HitResult.GetActor());
