@@ -20,7 +20,6 @@
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
-#include "Gimmick/SMFragileObstacle.h"
 #include "Utilities/SMCollision.h"
 
 USMGA_ElectricGuitarNoiseBreak::USMGA_ElectricGuitarNoiseBreak()
@@ -260,25 +259,13 @@ void USMGA_ElectricGuitarNoiseBreak::ApplySplashForElectricGuitar()
 
 	for (AActor* SplashHitActor : SplashHitActors)
 	{
-		ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(SplashHitActor);
-		if (DestroyableObstacle)
-		{
-			DestroyableObstacle->HandleDurability(Damage);
-			continue;
-		}
-		
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SplashHitActor);
-		if (!TargetASC)
+		ISMDamageInterface* HitActorDamageInterface = Cast<ISMDamageInterface>(SplashHitActor);
+		if (!HitActorDamageInterface)
 		{
 			continue;
 		}
 
-		FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
-		if (GESpecHandle.IsValid())
-		{
-			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
-			TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
-		}
+		HitActorDamageInterface->ReceiveDamage(SourceCharacter, Damage);
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
@@ -313,13 +300,6 @@ TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetSplashHitActorsForElectricGui
 			AActor* SplashHitActor = OverlapResult.GetActor();
 			if (SplashHitActor)
 			{
-				ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(SplashHitActor);
-				if (DestroyableObstacle)
-				{
-					Results.Add(DestroyableObstacle);
-					continue;
-				}
-				
 				const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 				const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(SplashHitActor);
 				if (SourceTeam == TargetTeam)

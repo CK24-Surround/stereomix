@@ -183,34 +183,11 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 {
 	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (!SourceASC || !SourceDataAsset)
-	{
-		return;
-	}
-
-	ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(TargetActor);
-	if (DestroyableObstacle)
-	{
-		DestroyableObstacle->HandleDurability(Damage);
-		return;
-	}
-	
-	if (!TargetASC)
-	{
-		return;
-	}
-
-	FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
-	if (GESpecHandle.IsValid())
-	{
-		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
-		SourceASC->BP_ApplyGameplayEffectSpecToTarget(GESpecHandle, TargetASC);
-	}
-
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
-	if (TargetDamageInterface)
+	if (!SourceASC || !SourceDataAsset || !TargetDamageInterface)
 	{
-		TargetDamageInterface->SetLastAttacker(GetAvatarActor());
+		return;
 	}
+
+	TargetDamageInterface->ReceiveDamage(GetAvatarActor(), Damage);
 }

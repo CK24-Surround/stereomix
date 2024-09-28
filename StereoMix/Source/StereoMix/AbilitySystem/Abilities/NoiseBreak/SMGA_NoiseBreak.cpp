@@ -10,7 +10,7 @@
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "Gimmick/SMFragileObstacle.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Indicator/SMGA_NoiseBreakIndicator.h"
 #include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
@@ -94,28 +94,17 @@ void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation, const FGamepla
 	TArray<AActor*> SplashHitActors = GetSplashHitActors(TileLocation);
 	for (AActor* SplashHitActor : SplashHitActors)
 	{
-		ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(SplashHitActor);
-		if (DestroyableObstacle)
-		{
-			DestroyableObstacle->HandleDurability(Damage);
-			continue;
-		}
-		
-		UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SplashHitActor);
-		if (!TargetASC)
+		ISMDamageInterface* HitActorDamageInterface = Cast<ISMDamageInterface>(SplashHitActor);
+		if (!HitActorDamageInterface)
 		{
 			continue;
 		}
 
-		FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
-		if (GESpecHandle.IsValid())
-		{
-			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
-			TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
-		}
+		HitActorDamageInterface->ReceiveDamage(SourceCharacter, Damage);
 
 		const FVector SplashHitActorLocation = SplashHitActor->GetActorLocation();
 		const FVector NoiseBreakPointToSplashHitActorDirection = (SplashHitActorLocation - TileLocation).GetSafeNormal();
+
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Normal = NoiseBreakPointToSplashHitActorDirection;
@@ -145,22 +134,28 @@ ASMTile* USMGA_NoiseBreak::GetTileFromLocation(const FVector& Location)
 
 TArray<AActor*> USMGA_NoiseBreak::GetSplashHitActors(const FVector& TargetLocation)
 {
+	TArray<AActor*> TargetActors;
+
 	TArray<FOverlapResult> OverlapResults;
+
 	FCollisionObjectQueryParams CollisionParams;
-	CollisionParams.AddObjectTypesToQuery(ECC_Pawn);
-	CollisionParams.AddObjectTypesToQuery(SMCollisionTraceChannel::Obstacle);
-	const float Size = (CaptureSize * 150.0f) - 75.0f;
+	CollisionParams.AddObjectTypesToQuery(ECC_Pawn); // 플레이어의 히트박스는 플레이어의 생김새보다 훨씬 크기때문에 캡슐 콜라이더만 트리거되도록합니다.
+	CollisionParams.AddObjectTypesToQuery(SMCollisionObjectChannel::Obstacle);
+
+	const float TileSize = USMTileFunctionLibrary::DefaultTileSize;
+	const float Size = (CaptureSize * TileSize) - (TileSize / 2.0f);
 	const FVector BoxHalfExtend = FVector(Size, Size, 100.0f);
+
 	const FCollisionShape BoxCollider = FCollisionShape::MakeBox(BoxHalfExtend);
-	const FCollisionQueryParams Params(TEXT("NoiseBreakSplash"), false, GetCharacter());
+	const FCollisionQueryParams Params(TEXT("NoiseBreakSplash"), false, GetAvatarActor());
+
 	if (!GetWorld()->OverlapMultiByObjectType(OverlapResults, TargetLocation, FQuat::Identity, CollisionParams, BoxCollider, Params))
 	{
-		return TArray<AActor*>();
+		return TargetActors;
 	}
 
 	DrawDebugBox(GetWorld(), TargetLocation, BoxHalfExtend, FColor::Red, false, 3.0f);
 
-	TArray<AActor*> TargetActors;
 	for (const FOverlapResult& OverlapResult : OverlapResults)
 	{
 		AActor* OverlapActor = OverlapResult.GetActor();

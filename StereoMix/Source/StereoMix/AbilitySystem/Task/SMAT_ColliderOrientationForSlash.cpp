@@ -10,7 +10,6 @@
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "Gimmick/SMFragileObstacle.h"
 #include "Utilities/SMCollision.h"
 
 USMAT_ColliderOrientationForSlash::USMAT_ColliderOrientationForSlash()
@@ -59,7 +58,6 @@ void USMAT_ColliderOrientationForSlash::Activate()
 	const float HalfRange = Range / 2.0f;
 	SourceSlashColliderComponent->SetCapsuleHalfHeight(HalfRange);
 	SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	SourceSlashColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Obstacle);
 	SourceSlashColliderComponent->SetRelativeLocation(FVector(HalfRange, 0.0, 0.0));
 	SourceSlashColliderComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::BeginOnOverlaped);
 
@@ -172,28 +170,15 @@ bool USMAT_ColliderOrientationForSlash::IsValidTarget(AActor* OtherActor)
 		return false;
 	}
 
-	ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(OtherActor);
-	if (DestroyableObstacle)
-	{
-		return true;
-	}
-
-	ASMCharacterBase* TargetCharacter = Cast<ASMCharacterBase>(OtherActor);
-	if (!TargetCharacter)
-	{
-		return false;
-	}
-
-	ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(SourceCharacter.Get());
-	ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(OtherActor);
+	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(SourceCharacter.Get());
+	const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(OtherActor);
 	if (SourceTeam == TargetTeam)
 	{
 		return false;
 	}
 
 	// 대상이 면역상태라면 무시합니다.
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
-	if (TargetASC)
+	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
 		if (TargetASC->HasAnyMatchingGameplayTags(InvalidTargetTag))
 		{

@@ -4,12 +4,10 @@
 #include "SMEffectProjectileBase.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "Gimmick/SMFragileObstacle.h"
 
 ASMEffectProjectileBase::ASMEffectProjectileBase()
 {
@@ -97,10 +95,8 @@ void ASMEffectProjectileBase::HandleWallHitEffect(const FVector& HitLocation)
 void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
-	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceCharacter);
-	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
-	if (!SourceCharacter || !SourceASC || !SourceDataAsset || !TargetDamageInterface)
+	if (!SourceCharacter || !TargetDamageInterface)
 	{
 		return;
 	}
