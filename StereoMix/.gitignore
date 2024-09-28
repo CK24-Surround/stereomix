@@ -61,11 +61,13 @@ Binaries/Win64/*
 !Binaries/Win64/*Editor.target
 !Binaries/Win64/UnrealEditor.modules
 !Binaries/Win64/UnrealEditor-*.dll
+Binaries/Win64/UnrealEditor-*-DebugGame.dll
 
 !Plugins/*/Binaries/Win64
 Plugins/*/Binaries/Win64/*
 !Plugins/*/Binaries/Win64/UnrealEditor.modules
 !Plugins/*/Binaries/Win64/UnrealEditor-*.dll
+Plugins/*/Binaries/Win64/UnrealEditor-*-DebugGame.dll
 
 # Releases
 Releases
