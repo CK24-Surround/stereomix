@@ -7,7 +7,12 @@ public class StereoMixEditorTarget : TargetRules
 	public StereoMixEditorTarget(TargetInfo target) : base(target)
 	{
 		Type = TargetType.Editor;
-		ExtraModuleNames.Add("StereoMix");
+		ExtraModuleNames.AddRange(new[] { "StereoMix", "StereoMixEditor" });
+
+		if (!bBuildAllModules)
+		{
+			NativePointerMemberBehaviorOverride = PointerMemberBehavior.Disallow;
+		}
 
 		StereoMixTarget.ApplySharedStereoMixTargetSettings(this);
 	}

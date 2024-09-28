@@ -9,8 +9,14 @@
 			"Type": "Runtime",
 			"LoadingPhase": "Default",
 			"AdditionalDependencies": [
-				"CoreUObject"
+				"CoreUObject",
+				"DeveloperSettings"
 			]
+		},
+		{
+			"Name": "StereoMixEditor",
+			"Type": "Editor",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [
@@ -56,6 +62,18 @@
 		},
 		{
 			"Name": "GPULightmass",
+			"Enabled": true
+		},
+		{
+			"Name": "DataValidation",
+			"Enabled": true
+		},
+		{
+			"Name": "GameplayTagsEditor",
+			"Enabled": true
+		},
+		{
+			"Name": "StudioTelemetry",
 			"Enabled": true
 		}
 	],
