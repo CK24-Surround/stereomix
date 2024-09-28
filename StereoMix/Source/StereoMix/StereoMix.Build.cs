@@ -12,7 +12,7 @@ public class StereoMix : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new[]
 		{
-			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "CommonUI", "ModelViewViewModel", "AnimGraphRuntime", "Niagara", "AdvancedWidgets", "JSon", "HTTP"
+			"Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput", "UMG", "CommonUI", "ModelViewViewModel", "AnimGraphRuntime", "Niagara", "AdvancedWidgets", "Json", "HTTP"
 		});
 		PrivateDependencyModuleNames.AddRange(new[]
 		{
