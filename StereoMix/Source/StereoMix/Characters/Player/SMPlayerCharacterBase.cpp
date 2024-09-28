@@ -75,7 +75,9 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
 	NoteMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("NoteMeshComponent"));
-	NoteMeshComponent->SetupAttachment(RootComponent);
+	NoteMeshComponent->SetupAttachment(CachedMeshComponent);
+	NoteMeshComponent->SetAbsolute(false, true, false);
+	NoteMeshComponent->SetWorldRotation(FRotator(0.0, 90.0, 0.0));
 	NoteMeshComponent->SetVisibility(false);
 	NoteMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	NoteMeshComponent->bReceivesDecals = false;
@@ -852,6 +854,16 @@ void ASMPlayerCharacterBase::OnRep_bIsNoteState()
 	CharacterMeshComponent->SetVisibility(!bIsNoteState);
 	WeaponMeshComponent->SetVisibility(!bIsNoteState);
 	NoteMeshComponent->SetVisibility(bIsNoteState);
+
+	if (bIsNoteState)
+	{
+		NoteMeshComponent->SetPosition(0.0f);
+		NoteMeshComponent->Play(false);
+	}
+	else
+	{
+		NoteMeshComponent->Stop();
+	}
 }
 
 void ASMPlayerCharacterBase::ServerRPCAddMoveSpeed_Implementation(float MoveSpeedMultiplier, float Duration)
