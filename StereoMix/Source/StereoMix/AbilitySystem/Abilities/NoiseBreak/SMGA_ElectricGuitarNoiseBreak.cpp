@@ -59,7 +59,6 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	UAnimMontage* NoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceCharacter->GetTeam()];
 	const FName MontageTaskName = TEXT("MontageTask");
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NoiseBreakMontage, 1.0f, NAME_None, false);
-	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->ReadyForActivation();
 
 	if (IsLocallyControlled())
@@ -122,14 +121,6 @@ void USMGA_ElectricGuitarNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle
 
 void USMGA_ElectricGuitarNoiseBreak::OnReceivedFlashEvent(FGameplayEventData Payload)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
-	if (!SourceCharacter || !SourceCapsule)
-	{
-		K2_EndAbility();
-		return;
-	}
-
 	ServerSendTargetLocation(NoiseBreakStartLocation, NoiseBreakTargetLocation);
 }
 
@@ -157,9 +148,13 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 	NoiseBreakTargetLocationWithSourceZ.Z = NoiseBreakStartLocation.Z + SourceCapsule->GetScaledCapsuleHalfHeight();
 	SourceCharacter->MulticastRPCSetLocation(NoiseBreakTargetLocationWithSourceZ);
 
-	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, FlashDelayTime);
-	WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnNoiseBreakBurst);
-	WaitTask->ReadyForActivation();
+	UAbilityTask_WaitDelay* WaitBurstTask = UAbilityTask_WaitDelay::WaitDelay(this, BurstDelayAfterFlash);
+	WaitBurstTask->OnFinish.AddDynamic(this, &ThisClass::OnNoiseBreakBurst);
+	WaitBurstTask->ReadyForActivation();
+
+	UAbilityTask_WaitDelay* WaitEndTask = UAbilityTask_WaitDelay::WaitDelay(this, EndDelayAfterFlash);
+	WaitEndTask->OnFinish.AddDynamic(this, &ThisClass::SyncPointNoiseBreakEnded);
+	WaitEndTask->ReadyForActivation();
 }
 
 void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
@@ -167,7 +162,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
 	USMAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceCharacter || !SourceHIC)
+	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
 		K2_EndAbility();
 		return;
@@ -196,8 +191,6 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	GCParams.Normal = StartToTarget.GetSafeNormal();
 	GCParams.RawMagnitude = StartToTarget.Size();
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakBurst, GCParams);
-
-	SyncPointNoiseBreakEnded();
 }
 
 void USMGA_ElectricGuitarNoiseBreak::TileCapture()
@@ -318,12 +311,6 @@ TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetSplashHitActorsForElectricGui
 void USMGA_ElectricGuitarNoiseBreak::SyncPointNoiseBreakEnded()
 {
 	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
-	SyncTask->OnSync.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);
+	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
 	SyncTask->ReadyForActivation();
-}
-
-void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakEnded()
-{
-	const FName SectionName = TEXT("End");
-	MontageJumpToSection(SectionName);
 }

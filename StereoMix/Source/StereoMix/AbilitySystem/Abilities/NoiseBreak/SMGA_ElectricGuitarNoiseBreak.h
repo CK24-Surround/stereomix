@@ -42,9 +42,6 @@ protected:
 	UFUNCTION()
 	void SyncPointNoiseBreakEnded();
 
-	UFUNCTION()
-	void OnNoiseBreakEnded();
-
 	FName OriginalCollisionProfileName;
 
 	FVector NoiseBreakStartLocation;
@@ -52,5 +49,8 @@ protected:
 	FVector NoiseBreakTargetLocation;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float FlashDelayTime = 0.3f;
+	float BurstDelayAfterFlash = 0.3f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float EndDelayAfterFlash = 0.5f;
 };
