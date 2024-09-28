@@ -5,6 +5,7 @@
 
 #include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
+#include "UObject/ObjectSaveContext.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
@@ -25,6 +26,8 @@ ASMFragileObstacle::ASMFragileObstacle()
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 
+	CurrentDurability = Durability;
+
 	DurabilityThresholds.Add({ 0.0f, nullptr });
 }
 
@@ -33,8 +36,17 @@ void ASMFragileObstacle::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ASMFragileObstacle, CurrentDurability);
-	DOREPLIFETIME(ASMFragileObstacle, MaxDurability);
+	DOREPLIFETIME(ASMFragileObstacle, Durability);
 	DOREPLIFETIME(ASMFragileObstacle, LastAttacker);
+}
+
+void ASMFragileObstacle::PreSave(FObjectPreSaveContext SaveContext)
+{
+	Super::PreSave(SaveContext);
+
+	DurabilityThresholds.Sort([](const FSMFragileObstacleDurabilityThresholdData& lhs, const FSMFragileObstacleDurabilityThresholdData& rhs) {
+		return lhs.DurabilityRatio > rhs.DurabilityRatio;
+	});
 }
 
 void ASMFragileObstacle::PostInitializeComponents()
@@ -44,7 +56,7 @@ void ASMFragileObstacle::PostInitializeComponents()
 	OriginalMesh = MeshComponent->GetStaticMesh();
 
 	DurabilityThresholds.Sort([](const FSMFragileObstacleDurabilityThresholdData& lhs, const FSMFragileObstacleDurabilityThresholdData& rhs) {
-		return lhs.DurabilityRatio < rhs.DurabilityRatio;
+		return lhs.DurabilityRatio > rhs.DurabilityRatio;
 	});
 }
 
@@ -57,21 +69,21 @@ void ASMFragileObstacle::ServerSetCurrentDurability_Implementation(float NewCurr
 
 void ASMFragileObstacle::ServerSetMaxDurability_Implementation(float NewMaxDurability)
 {
-	MaxDurability = NewMaxDurability;
+	Durability = NewMaxDurability;
 
-	OnRep_MaxDurability();
+	OnRep_Durability();
 }
 
 void ASMFragileObstacle::ServerRestoreObstacle_Implementation()
 {
-	CurrentDurability = MaxDurability;
+	ServerSetCurrentDurability(Durability);
 }
 
 void ASMFragileObstacle::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
 	SetLastAttacker(NewAttacker);
 
-	CurrentDurability = FMath::Clamp(CurrentDurability - InDamageAmount, 0.0f, MaxDurability);
+	ServerSetCurrentDurability(FMath::Clamp(CurrentDurability - InDamageAmount, 0.0f, Durability));
 	NET_LOG(this, Log, TEXT("%s Damage: %f, CurrentHealth: %f"), *GetName(), InDamageAmount, CurrentDurability);
 }
 
@@ -86,7 +98,7 @@ void ASMFragileObstacle::OnRep_CurrentDurability()
 	}
 }
 
-void ASMFragileObstacle::OnRep_MaxDurability()
+void ASMFragileObstacle::OnRep_Durability()
 {
 	UpdateMeshBasedOnDurability();
 }
@@ -97,13 +109,14 @@ void ASMFragileObstacle::SetCollisionEnabled(bool bNewIsCollisionEnabled)
 	if (ColliderComponent->GetCollisionProfileName() != CollisionProfileName)
 	{
 		ColliderComponent->SetCollisionProfileName(CollisionProfileName);
+		NET_LOG(this, Warning, TEXT("채널 변경! %s"), *ColliderComponent->GetCollisionProfileName().ToString());
 	}
 }
 
 void ASMFragileObstacle::UpdateMeshBasedOnDurability()
 {
 	UStaticMesh* NewMesh = nullptr;
-	const float CurrentDurabilityRatio = CurrentDurability / MaxDurability;
+	const float CurrentDurabilityRatio = CurrentDurability / Durability;
 	for (const FSMFragileObstacleDurabilityThresholdData& DurabilityThreshold : DurabilityThresholds)
 	{
 		if (CurrentDurabilityRatio <= DurabilityThreshold.DurabilityRatio)

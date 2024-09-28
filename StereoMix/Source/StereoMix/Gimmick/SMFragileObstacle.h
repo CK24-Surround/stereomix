@@ -14,9 +14,10 @@ struct FSMFragileObstacleDurabilityThresholdData
 {
 	GENERATED_BODY()
 
-	float DurabilityRatio;
+	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "1.0"))
+	float DurabilityRatio = 0.0f;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMesh> Mesh;
 };
 
@@ -29,6 +30,8 @@ public:
 	ASMFragileObstacle();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	virtual void PreSave(FObjectPreSaveContext SaveContext) override;
 
 	virtual void PostInitializeComponents() override;
 
@@ -53,7 +56,7 @@ protected:
 	void OnRep_CurrentDurability();
 
 	UFUNCTION()
-	void OnRep_MaxDurability();
+	void OnRep_Durability();
 
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
@@ -64,11 +67,11 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_CurrentDurability", Category = "Design")
-	float CurrentDurability = 100.0f;
+	UPROPERTY(ReplicatedUsing = "OnRep_CurrentDurability")
+	float CurrentDurability = 0.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_MaxDurability", Category = "Design")
-	float MaxDurability = 100.0f;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design", ReplicatedUsing = "OnRep_Durability")
+	float Durability = 100.0f;
 
 	/** 좌측에는 퍼센트를 정규화한 값을 넣고, 우측에는 해당하는 메시를 넣어주세요. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design")
@@ -82,6 +85,6 @@ protected:
 
 private:
 	void SetCollisionEnabled(bool bNewIsCollisionEnabled);
-	
+
 	void UpdateMeshBasedOnDurability();
 };
