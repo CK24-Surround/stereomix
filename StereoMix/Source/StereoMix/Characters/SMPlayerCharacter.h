@@ -296,6 +296,8 @@ public:
 
 	FORCEINLINE virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttackInstigator = NewAttacker; }
 
+	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
+
 protected:
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<AActor> LastAttackInstigator;

@@ -15,7 +15,6 @@
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
-#include "Gimmick/SMFragileObstacle.h"
 
 USMGA_Slash::USMGA_Slash()
 {

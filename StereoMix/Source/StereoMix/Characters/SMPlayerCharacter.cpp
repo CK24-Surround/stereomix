@@ -721,9 +721,9 @@ void ASMPlayerCharacter::OnCatchRelease()
 	}
 }
 
-void ASMPlayerCharacter::OnTeamChangeCallback()
-{
-}
+void ASMPlayerCharacter::ReceiveDamage(AActor* NewAttacker, float InDamageAmount) {}
+
+void ASMPlayerCharacter::OnTeamChangeCallback() {}
 
 bool ASMPlayerCharacter::bAmICatching()
 {
