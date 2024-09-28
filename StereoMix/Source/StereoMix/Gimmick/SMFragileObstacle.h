@@ -29,10 +29,10 @@ protected:
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Design")
-	float CurrentHealth = 100.0f;
+	float CurrentDurability = 100.0f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Design")
-	float MaxHealth = 100.0f;
+	float MaxDurability = 100.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design")
 	TArray<float> HealthThresholds;
@@ -48,7 +48,7 @@ public:
 	void InitObstacle();
 
 	/** 장애물에 데미지를 줄 때 호출됩니다. 서버에서만 호출해야합니다. */
-	void HandleDamage(float InDamage);
+	void HandleDurability(float InDamage);
 	
 private:
 	UFUNCTION(NetMulticast, Reliable)

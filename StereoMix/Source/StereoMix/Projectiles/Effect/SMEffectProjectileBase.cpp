@@ -119,7 +119,7 @@ void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 	ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(InTarget);
 	if (DestroyableObstacle)
 	{
-		DestroyableObstacle->HandleDamage(Damage);
+		DestroyableObstacle->HandleDurability(Damage);
 		return;
 	}
 

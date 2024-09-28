@@ -97,7 +97,7 @@ void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation, const FGamepla
 		ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(SplashHitActor);
 		if (DestroyableObstacle)
 		{
-			DestroyableObstacle->HandleDamage(Damage);
+			DestroyableObstacle->HandleDurability(Damage);
 			continue;
 		}
 		

@@ -38,24 +38,24 @@ void ASMFragileObstacle::BeginPlay()
 
 void ASMFragileObstacle::InitObstacle()
 {
-	CurrentHealth = MaxHealth;
+	CurrentDurability = MaxDurability;
 
-	UpdateMeshBasedOnHealth(CurrentHealth);
+	UpdateMeshBasedOnHealth(CurrentDurability);
 
 	UpdateColliderProfile(SMCollisionProfileName::Obstacle);
 }
 
-void ASMFragileObstacle::HandleDamage(float InDamage)
+void ASMFragileObstacle::HandleDurability(float InDamage)
 {
-	CurrentHealth -= InDamage;
-	CurrentHealth = FMath::Clamp(CurrentHealth, 0.0f, MaxHealth);
+	CurrentDurability -= InDamage;
+	CurrentDurability = FMath::Clamp(CurrentDurability, 0.0f, MaxDurability);
 
-	NET_LOG(this, Log, TEXT("%s Damage: %f, CurrentHealth: %f"), *GetNameSafe(this), InDamage, CurrentHealth);
+	NET_LOG(this, Log, TEXT("%s Damage: %f, CurrentHealth: %f"), *GetNameSafe(this), InDamage, CurrentDurability);
 
 	// 체력에 따른 메쉬 변경
-	UpdateMeshBasedOnHealth(CurrentHealth);
+	UpdateMeshBasedOnHealth(CurrentDurability);
 	
-	if (CurrentHealth <= 0.0f)
+	if (CurrentDurability <= 0.0f)
 	{
 		UpdateColliderProfile(SMCollisionProfileName::NoCollision);
 	}
@@ -91,6 +91,6 @@ void ASMFragileObstacle::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ASMFragileObstacle, CurrentHealth);
-	DOREPLIFETIME(ASMFragileObstacle, MaxHealth);
+	DOREPLIFETIME(ASMFragileObstacle, CurrentDurability);
+	DOREPLIFETIME(ASMFragileObstacle, MaxDurability);
 }

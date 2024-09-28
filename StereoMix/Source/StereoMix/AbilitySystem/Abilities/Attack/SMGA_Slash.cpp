@@ -192,7 +192,7 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	ASMFragileObstacle* DestroyableObstacle = Cast<ASMFragileObstacle>(TargetActor);
 	if (DestroyableObstacle)
 	{
-		DestroyableObstacle->HandleDamage(Damage);
+		DestroyableObstacle->HandleDurability(Damage);
 		return;
 	}
 	
