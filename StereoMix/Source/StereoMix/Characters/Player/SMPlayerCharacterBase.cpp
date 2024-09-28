@@ -465,6 +465,11 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, InDamageAmount);
 		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 	}
+
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = this;
+	GCParams.TargetAttachComponent = GetMesh();
+	ASC->ExecuteGC(this, SMTags::GameplayCue::Common::HitFlash, GCParams);
 }
 
 void ASMPlayerCharacterBase::Landed(const FHitResult& Hit)
