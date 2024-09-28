@@ -14,11 +14,8 @@ ASMFragileObstacle::ASMFragileObstacle()
 {
 	bReplicates = true;
 
-	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	RootComponent = SceneComponent;
-
 	ColliderComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("ColliderComponent"));
-	ColliderComponent->SetupAttachment(RootComponent);
+	RootComponent = ColliderComponent;
 	ColliderComponent->SetBoxExtent(FVector(75.0f, 75.0f, 75.0f));
 	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Obstacle);
 
@@ -109,7 +106,6 @@ void ASMFragileObstacle::SetCollisionEnabled(bool bNewIsCollisionEnabled)
 	if (ColliderComponent->GetCollisionProfileName() != CollisionProfileName)
 	{
 		ColliderComponent->SetCollisionProfileName(CollisionProfileName);
-		NET_LOG(this, Warning, TEXT("채널 변경! %s"), *ColliderComponent->GetCollisionProfileName().ToString());
 	}
 }
 

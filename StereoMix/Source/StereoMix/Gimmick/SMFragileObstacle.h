@@ -60,9 +60,6 @@ protected:
 	UFUNCTION()
 	void OnRep_Durability();
 
-	UPROPERTY(VisibleAnywhere, Category = "Root")
-	TObjectPtr<USceneComponent> SceneComponent;
-
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<UBoxComponent> ColliderComponent;
 
