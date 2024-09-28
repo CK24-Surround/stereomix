@@ -167,6 +167,20 @@ void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 	}
 
 	ServerRPCSlashHit(TargetActor);
+}
+
+void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
+	if (!SourceCharacter || !SourceASC || !SourceDataAsset || !TargetDamageInterface)
+	{
+		return;
+	}
+
+	TargetDamageInterface->ReceiveDamage(GetAvatarActor(), Damage);
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocation = TargetActor->GetActorLocation();
@@ -177,17 +191,4 @@ void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 	CueParams.TargetAttachComponent = TargetActor->GetRootComponent();
 	CueParams.Normal = SourceToTargetDirection;
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::SlashHit, CueParams);
-}
-
-void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
-{
-	USMAbilitySystemComponent* SourceASC = GetASC();
-	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
-	if (!SourceASC || !SourceDataAsset || !TargetDamageInterface)
-	{
-		return;
-	}
-
-	TargetDamageInterface->ReceiveDamage(GetAvatarActor(), Damage);
 }

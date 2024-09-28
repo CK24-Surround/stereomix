@@ -170,6 +170,12 @@ bool USMAT_ColliderOrientationForSlash::IsValidTarget(AActor* OtherActor)
 		return false;
 	}
 
+	ISMDamageInterface* OtherActorDamageInterface = Cast<ISMDamageInterface>(OtherActor);
+	if (!OtherActorDamageInterface)
+	{
+		return false;
+	}
+
 	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(SourceCharacter.Get());
 	const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(OtherActor);
 	if (SourceTeam == TargetTeam)
