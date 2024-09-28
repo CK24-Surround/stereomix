@@ -4,11 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "Data/SMCharacterType.h"
-#include "Data/DataTable/SMCharacterData.h"
 #include "Interfaces/IHttpRequest.h"
 
 #include "SMGameInstance.generated.h"
 
+struct FSMCharacterNoiseBreakData;
+struct FSMCharacterSkillData;
+struct FSMCharacterAttackData;
+struct FSMCharacterStatsData;
 class FHttpModule;
 
 /**
