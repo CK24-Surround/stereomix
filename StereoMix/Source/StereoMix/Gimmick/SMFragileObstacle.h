@@ -9,6 +9,17 @@
 
 class UBoxComponent;
 
+USTRUCT(BlueprintType)
+struct FSMFragileObstacleDurabilityThresholdData
+{
+	GENERATED_BODY()
+
+	float DurabilityRatio;
+
+	UPROPERTY()
+	TObjectPtr<UStaticMesh> Mesh;
+};
+
 UCLASS(Abstract)
 class STEREOMIX_API ASMFragileObstacle : public AActor, public ISMDamageInterface
 {
@@ -19,10 +30,17 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	virtual void BeginPlay() override;
+	virtual void PostInitializeComponents() override;
 
-	/** 장애물을 처음 상태로 초기화할 때 호출됩니다. 서버에서만 호출해야합니다. */
-	void InitObstacle();
+	/** 장애물을 처음 상태로 복구할때 사용합니다. */
+	UFUNCTION(Server, Reliable)
+	void ServerRestoreObstacle();
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetCurrentDurability(float NewCurrentDurability);
+
+	UFUNCTION(Server, Reliable)
+	void ServerSetMaxDurability(float NewMaxDurability);
 
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 
@@ -31,6 +49,12 @@ public:
 	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
 
 protected:
+	UFUNCTION()
+	void OnRep_CurrentDurability();
+
+	UFUNCTION()
+	void OnRep_MaxDurability();
+
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -40,28 +64,24 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Design")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_CurrentDurability", Category = "Design")
 	float CurrentDurability = 100.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Replicated, Category = "Design")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, ReplicatedUsing = "OnRep_MaxDurability", Category = "Design")
 	float MaxDurability = 100.0f;
 
+	/** 좌측에는 퍼센트를 정규화한 값을 넣고, 우측에는 해당하는 메시를 넣어주세요. */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design")
-	TArray<float> HealthThresholds;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design")
-	TArray<TObjectPtr<UStaticMesh>> HealthThresholdMeshes;
+	TArray<FSMFragileObstacleDurabilityThresholdData> DurabilityThresholds;
 
 	UPROPERTY()
-	TObjectPtr<UStaticMesh> InitialMesh;
+	TObjectPtr<UStaticMesh> OriginalMesh;
 
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<AActor> LastAttacker;
 
 private:
-	UFUNCTION(NetMulticast, Reliable)
-	void UpdateColliderProfile(FName InProfileName);
-
-	UFUNCTION(NetMulticast, Reliable)
-	void UpdateMeshBasedOnHealth(float InHealth);
+	void SetCollisionEnabled(bool bNewIsCollisionEnabled);
+	
+	void UpdateMeshBasedOnDurability();
 };

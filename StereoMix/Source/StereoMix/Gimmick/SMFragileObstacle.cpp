@@ -24,6 +24,8 @@ ASMFragileObstacle::ASMFragileObstacle()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+
+	DurabilityThresholds.Add({ 0.0f, nullptr });
 }
 
 void ASMFragileObstacle::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -35,65 +37,86 @@ void ASMFragileObstacle::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(ASMFragileObstacle, LastAttacker);
 }
 
-void ASMFragileObstacle::BeginPlay()
+void ASMFragileObstacle::PostInitializeComponents()
 {
-	Super::BeginPlay();
+	Super::PostInitializeComponents();
 
-	if (MeshComponent && MeshComponent->GetStaticMesh())
-	{
-		InitialMesh = MeshComponent->GetStaticMesh();
-	}
+	OriginalMesh = MeshComponent->GetStaticMesh();
+
+	DurabilityThresholds.Sort([](const FSMFragileObstacleDurabilityThresholdData& lhs, const FSMFragileObstacleDurabilityThresholdData& rhs) {
+		return lhs.DurabilityRatio < rhs.DurabilityRatio;
+	});
 }
 
-void ASMFragileObstacle::InitObstacle()
+void ASMFragileObstacle::ServerSetCurrentDurability_Implementation(float NewCurrentDurability)
+{
+	CurrentDurability = NewCurrentDurability;
+
+	OnRep_CurrentDurability();
+}
+
+void ASMFragileObstacle::ServerSetMaxDurability_Implementation(float NewMaxDurability)
+{
+	MaxDurability = NewMaxDurability;
+
+	OnRep_MaxDurability();
+}
+
+void ASMFragileObstacle::ServerRestoreObstacle_Implementation()
 {
 	CurrentDurability = MaxDurability;
-
-	UpdateMeshBasedOnHealth(CurrentDurability);
-
-	UpdateColliderProfile(SMCollisionProfileName::Obstacle);
 }
 
 void ASMFragileObstacle::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
 	SetLastAttacker(NewAttacker);
-	
-	CurrentDurability -= InDamageAmount;
-	CurrentDurability = FMath::Clamp(CurrentDurability, 0.0f, MaxDurability);
 
-	NET_LOG(this, Log, TEXT("%s Damage: %f, CurrentHealth: %f"), *GetNameSafe(this), InDamageAmount, CurrentDurability);
+	CurrentDurability = FMath::Clamp(CurrentDurability - InDamageAmount, 0.0f, MaxDurability);
+	NET_LOG(this, Log, TEXT("%s Damage: %f, CurrentHealth: %f"), *GetName(), InDamageAmount, CurrentDurability);
+}
 
-	// 체력에 따른 메쉬 변경
-	UpdateMeshBasedOnHealth(CurrentDurability);
+void ASMFragileObstacle::OnRep_CurrentDurability()
+{
+	UpdateMeshBasedOnDurability();
 
+	SetCollisionEnabled(true);
 	if (CurrentDurability <= 0.0f)
 	{
-		UpdateColliderProfile(SMCollisionProfileName::NoCollision);
+		SetCollisionEnabled(false);
 	}
 }
 
-void ASMFragileObstacle::UpdateColliderProfile_Implementation(FName InProfileName)
+void ASMFragileObstacle::OnRep_MaxDurability()
 {
-	ColliderComponent->SetCollisionProfileName(InProfileName);
+	UpdateMeshBasedOnDurability();
 }
 
-void ASMFragileObstacle::UpdateMeshBasedOnHealth_Implementation(float InHealth)
+void ASMFragileObstacle::SetCollisionEnabled(bool bNewIsCollisionEnabled)
+{
+	const FName CollisionProfileName = bNewIsCollisionEnabled ? SMCollisionProfileName::Obstacle : SMCollisionProfileName::NoCollision;
+	if (ColliderComponent->GetCollisionProfileName() != CollisionProfileName)
+	{
+		ColliderComponent->SetCollisionProfileName(CollisionProfileName);
+	}
+}
+
+void ASMFragileObstacle::UpdateMeshBasedOnDurability()
 {
 	UStaticMesh* NewMesh = nullptr;
-
-	for (int32 i = 0; i < HealthThresholds.Num(); i++)
+	const float CurrentDurabilityRatio = CurrentDurability / MaxDurability;
+	for (const FSMFragileObstacleDurabilityThresholdData& DurabilityThreshold : DurabilityThresholds)
 	{
-		if (InHealth <= HealthThresholds[i] && HealthThresholdMeshes.IsValidIndex(i))
+		if (CurrentDurabilityRatio <= DurabilityThreshold.DurabilityRatio)
 		{
-			NewMesh = HealthThresholdMeshes[i];
+			NewMesh = DurabilityThreshold.Mesh;
 		}
 	}
 
 	MeshComponent->SetStaticMesh(NewMesh);
 
-	// 체력이 모든 Threshold보다 높다면 초기 메쉬로 복원
-	if (InHealth > HealthThresholds[0])
+	// 내구도가 모든 Threshold보다 높다면 초기 메쉬로 복원
+	if (CurrentDurabilityRatio > DurabilityThresholds[0].DurabilityRatio)
 	{
-		MeshComponent->SetStaticMesh(InitialMesh);
+		MeshComponent->SetStaticMesh(OriginalMesh);
 	}
 }
