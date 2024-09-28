@@ -16,7 +16,7 @@ public class StereoMix : ModuleRules
 		});
 		PrivateDependencyModuleNames.AddRange(new[]
 		{
-			"GameplayAbilities", "GameplayTasks", "GameplayTags", "TurboLinkGrpc", "ApplicationCore", "FMODStudio", "KawaiiPhysics"
+			"GameplayAbilities", "GameplayTasks", "GameplayTags", "TurboLinkGrpc", "ApplicationCore", "FMODStudio", "KawaiiPhysics", "GameplayMessageRuntime"
 		});
 
 		// Uncomment if you are using Slate UI
