@@ -4,10 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "SMObstacleBase.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "SMFragileObstacle.generated.h"
-
-class UBoxComponent;
 
 USTRUCT(BlueprintType)
 struct FSMFragileObstacleDurabilityThresholdData
@@ -22,7 +21,7 @@ struct FSMFragileObstacleDurabilityThresholdData
 };
 
 UCLASS(Abstract)
-class STEREOMIX_API ASMFragileObstacle : public AActor, public ISMDamageInterface
+class STEREOMIX_API ASMFragileObstacle : public ASMObstacleBase, public ISMDamageInterface
 {
 	GENERATED_BODY()
 
@@ -60,12 +59,6 @@ protected:
 	UFUNCTION()
 	void OnRep_Durability();
 
-	UPROPERTY(VisibleAnywhere, Category = "Collider")
-	TObjectPtr<UBoxComponent> ColliderComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Visual")
-	TObjectPtr<UStaticMeshComponent> MeshComponent;
-
 	UPROPERTY(ReplicatedUsing = "OnRep_CurrentDurability")
 	float CurrentDurability = 0.0f;
 
@@ -83,7 +76,5 @@ protected:
 	TWeakObjectPtr<AActor> LastAttacker;
 
 private:
-	void SetCollisionEnabled(bool bNewIsCollisionEnabled);
-
 	void UpdateMeshBasedOnDurability();
 };
