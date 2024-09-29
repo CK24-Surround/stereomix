@@ -2,6 +2,7 @@
 	"BuildId": "87675501-4474-4329-bfcd-a9748825dcc3",
 	"Modules": 
 	{
-		"StereoMix": "UnrealEditor-StereoMix.dll"
+		"StereoMix": "UnrealEditor-StereoMix.dll",
+		"StereoMixEditor": "UnrealEditor-StereoMixEditor.dll"
 	}
 }
