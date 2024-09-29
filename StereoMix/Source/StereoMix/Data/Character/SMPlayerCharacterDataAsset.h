@@ -8,6 +8,7 @@
 #include "Data/SMActiveAbility.h"
 #include "SMPlayerCharacterDataAsset.generated.h"
 
+class ASMNoteBase;
 class USMUserWidget_CharacterState;
 class UNiagaraSystem;
 class UGameplayAbility;
@@ -88,4 +89,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	FName WeaponSocketName;
+
+	UPROPERTY(EditAnywhere, Category = "Note")
+	TMap<ESMTeam, TSubclassOf<ASMNoteBase>> NoteClass;
 };

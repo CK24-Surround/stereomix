@@ -14,6 +14,7 @@
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
 
+class ASMNoteBase;
 class ASMWeaponBase;
 class USMHIC_Character;
 class ASMGamePlayerController;
@@ -242,7 +243,10 @@ protected:
 	TObjectPtr<ASMWeaponBase> Weapon;
 
 	UPROPERTY(VisibleAnywhere, Category = "Note")
-	TObjectPtr<USkeletalMeshComponent> NoteMeshComponent;
+	TObjectPtr<USceneComponent> NoteSlotComponent;
+
+	UPROPERTY(Replicated)
+	TObjectPtr<ASMNoteBase> Note;
 
 	UPROPERTY(VisibleAnywhere, Category = "Widget")
 	TObjectPtr<UWidgetComponent> CharacterStateWidgetComponent;

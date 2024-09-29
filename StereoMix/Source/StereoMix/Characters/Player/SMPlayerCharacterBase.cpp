@@ -14,6 +14,7 @@
 #include "Camera/CameraComponent.h"
 #include "Characters/Component/SMCharacterMovementComponent.h"
 #include "Characters/Component/SMHIC_Character.h"
+#include "Characters/Note/SMNoteBase.h"
 #include "Characters/Weapon/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SMTeamComponent.h"
@@ -75,13 +76,9 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
-	NoteMeshComponent = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("NoteMeshComponent"));
-	NoteMeshComponent->SetupAttachment(CachedMeshComponent);
-	NoteMeshComponent->SetAbsolute(false, true, false);
-	NoteMeshComponent->SetWorldRotation(FRotator(0.0, 90.0, 0.0));
-	NoteMeshComponent->SetVisibility(false);
-	NoteMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	NoteMeshComponent->bReceivesDecals = false;
+	NoteSlotComponent = CreateDefaultSubobject<USceneComponent>(TEXT("NoteSlotComponent"));
+	NoteSlotComponent->SetupAttachment(CachedMeshComponent);
+	NoteSlotComponent->SetAbsolute(false, true, false);
 
 	CharacterStateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("CharacterStateWidgetComponent"));
 	CharacterStateWidgetComponent->SetupAttachment(CachedMeshComponent);
@@ -146,6 +143,7 @@ void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 	DOREPLIFETIME(ThisClass, bUseControllerRotation);
 	DOREPLIFETIME(ThisClass, LastAttacker);
 	DOREPLIFETIME(ThisClass, Weapon);
+	DOREPLIFETIME(ThisClass, Note);
 	DOREPLIFETIME(ThisClass, bIsNoteState);
 }
 
@@ -158,18 +156,34 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 		return;
 	}
 
+	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
+
 	UCharacterMovementComponent* CachedMovementComponent = GetCharacterMovement();
 	CachedMovementComponent->MaxWalkSpeed = DataAsset->MoveSpeed;
 	CachedMovementComponent->GravityScale = 2.0f;
 
 	// 트레일 위치를 교정하기 위해 재어태치합니다. 재어태치하는 이유는 생성자에서는 메시가 null이므로 소켓을 찾을 수 없기 때문입니다.
-	DefaultMoveTrailFXComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
-	CatchMoveTrailFXComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
-	ImmuneMoveTrailFXComponent->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
+	DefaultMoveTrailFXComponent->AttachToComponent(CachedMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
+	CatchMoveTrailFXComponent->AttachToComponent(CachedMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
+	ImmuneMoveTrailFXComponent->AttachToComponent(CachedMeshComponent, FAttachmentTransformRules::SnapToTargetIncludingScale, TrailSocket);
 
 	// 원본 머티리얼을 저장해둡니다. 플레이 도중 시시각각 머티리얼이 변하게 되는데 이때 기존 머티리얼로 돌아오기 위해 사용됩니다.
-	OriginalMaterials = GetMesh()->GetMaterials();
-	OriginalOverlayMaterial = GetMesh()->GetOverlayMaterial();
+	OriginalMaterials = CachedMeshComponent->GetMaterials();
+	OriginalOverlayMaterial = CachedMeshComponent->GetOverlayMaterial();
+
+	if (HasAuthority())
+	{
+		const ESMTeam SourceTeam = GetTeam();
+		if (DataAsset->NoteClass.Find(SourceTeam))
+		{
+			Note = GetWorld()->SpawnActor<ASMNoteBase>(DataAsset->NoteClass[SourceTeam]);
+			if (Note)
+			{
+				Note->AttachToComponent(NoteSlotComponent, FAttachmentTransformRules::KeepRelativeTransform);
+				Note->SetOwner(this);
+			}
+		}
+	}
 
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ThisClass::OnTeamChanged);
 }
@@ -217,6 +231,11 @@ void ASMPlayerCharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	if (Weapon)
 	{
 		Weapon->Destroy();
+	}
+
+	if (Note)
+	{
+		Note->Destroy();
 	}
 
 	Super::EndPlay(EndPlayReason);
@@ -278,7 +297,15 @@ void ASMPlayerCharacterBase::SetActorHiddenInGame(bool bNewHidden)
 {
 	Super::SetActorHiddenInGame(bNewHidden);
 
-	Weapon->SetActorHiddenInGame(bNewHidden);
+	if (Weapon)
+	{
+		Weapon->SetActorHiddenInGame(bNewHidden);
+	}
+
+	if (Note)
+	{
+		Note->SetActorHiddenInGame(bNewHidden);
+	}
 }
 
 UAbilitySystemComponent* ASMPlayerCharacterBase::GetAbilitySystemComponent() const
@@ -851,26 +878,26 @@ void ASMPlayerCharacterBase::OnRep_bUseControllerRotation()
 void ASMPlayerCharacterBase::OnRep_bIsNoteState()
 {
 	USkeletalMeshComponent* CharacterMeshComponent = GetMesh();
-	USceneComponent* WeaponRootComponent = Weapon->GetRootComponent();
-	if (!CharacterMeshComponent || !WeaponRootComponent)
+	USceneComponent* WeaponRootComponent = Weapon ? Weapon->GetRootComponent() : nullptr;
+	USceneComponent* NoteRootComponent = Note ? Note->GetRootComponent() : nullptr;
+	if (!CharacterMeshComponent || !WeaponRootComponent || !NoteRootComponent)
 	{
 		return;
 	}
 
 	CharacterMeshComponent->SetVisibility(!bIsNoteState);
-	NoteMeshComponent->SetVisibility(bIsNoteState);
 
 	// SetActorHidden을 하지않고 루트를 기준으로 자식들을 비활성화하는 이유는 Hold, Holded 될때 SetActorHidden을 사용하기 때문에 Holded 되었을때 무기가 보이게 됩니다. 이를 방지하고자 아예 컴포넌트들의 비지빌리티를 끕니다.
 	WeaponRootComponent->SetVisibility(!bIsNoteState, true);
+	NoteRootComponent->SetVisibility(bIsNoteState, true);
 
 	if (bIsNoteState)
 	{
-		NoteMeshComponent->SetPosition(0.0f);
-		NoteMeshComponent->Play(false);
+		Note->PlayAnimation();
 	}
 	else
 	{
-		NoteMeshComponent->Stop();
+		Note->StopAnimation();
 	}
 }
 

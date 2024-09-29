@@ -14,7 +14,16 @@ class STEREOMIX_API ASMNoteBase : public AActor
 public:
 	ASMNoteBase();
 
+	virtual void PostInitializeComponents() override;
+
+	void PlayAnimation();
+
+	void StopAnimation();
+
 protected:
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	TObjectPtr<USceneComponent> SceneComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<USkeletalMeshComponent> MeshComponent; 
+	TObjectPtr<USkeletalMeshComponent> MeshComponent;
 };
