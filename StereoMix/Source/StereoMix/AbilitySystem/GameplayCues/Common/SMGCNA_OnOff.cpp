@@ -69,6 +69,8 @@ bool ASMGCNA_OnOff::OnActive_Implementation(AActor* MyTarget, const FGameplayCue
 
 bool ASMGCNA_OnOff::OnRemove_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
+	(void)Super::OnRemove_Implementation(MyTarget, Parameters);
+
 	if (VFXComponent)
 	{
 		VFXComponent->ReleaseToPool();
