@@ -120,7 +120,7 @@ void UEditorValidator::ValidateCheckedOutContent(bool bInteractive, const EDataV
 		{
 			FScopedSlowTask SlowTask(0.f, LOCTEXT("CheckingContentTask", "Checking content..."));
 			SlowTask.MakeDialog();
-			if (!ValidatePackages(ChangedPackageNames, DeletedPackageNames, 2000, AllWarningsAndErrors, InValidationUsecase))
+			if (!ValidatePackages(ChangedPackageNames, DeletedPackageNames, 6000, AllWarningsAndErrors, InValidationUsecase))
 			{
 				bAnyIssuesFound = true;
 			}
