@@ -3,6 +3,7 @@
 
 #include "SMAT_ColliderOrientationForSlash.h"
 
+#include "Engine/OverlapResult.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
@@ -95,12 +96,17 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	FCollisionQueryParams Params(TEXT("SlashTrace"), false, SourceCharacter.Get());
 	for (int32 i = 0; i < Locations.Num(); ++i)
 	{
-		TArray<FHitResult> HitResults;
-		if (GetWorld()->LineTraceMultiByChannel(HitResults, PreviousLocations[i], Locations[i], SMCollisionTraceChannel::Action, Params))
+		TArray<FOverlapResult> OverlapResults;
+		const FVector CenterLocation = (PreviousLocations[i] + Locations[i]) / 2.0;
+		const FVector PreviousToCurrent = Locations[i] - PreviousLocations[i];
+		const FVector PreviousToCurrentDirection = PreviousToCurrent.GetSafeNormal();
+		const FQuat PreviousToCurrentRotation = (PreviousToCurrentDirection.Rotation() + FRotator(90.0, 0.0, 0.0)).Quaternion();
+		const FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(10.0f, PreviousToCurrent.Size());
+		if (GetWorld()->OverlapMultiByChannel(OverlapResults, CenterLocation, PreviousToCurrentRotation, SMCollisionTraceChannel::Action, CollisionShape, Params))
 		{
-			for (const FHitResult& HitResult : HitResults)
+			for (const FOverlapResult& OverlapResult : OverlapResults)
 			{
-				HandleHit(HitResult.GetActor());
+				HandleHit(OverlapResult.GetActor());
 			}
 		}
 	}
@@ -108,8 +114,22 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	if (bShowDebug)
 	{
 		DrawDebugCapsule(GetWorld(), SourceSlashColliderComponent->GetComponentLocation(), SourceSlashColliderComponent->GetScaledCapsuleHalfHeight(), SourceSlashColliderComponent->GetScaledCapsuleRadius(), SourceSlashColliderComponent->GetComponentRotation().Quaternion(), FColor::Red, false, 0.5f);
-		DrawDebugLine(GetWorld(), PreviousLocations[0], Locations[0], FColor::Cyan, false, 0.5f);
-		DrawDebugLine(GetWorld(), PreviousLocations[1], Locations[1], FColor::Cyan, false, 0.5f);
+
+		{
+			const FVector CenterLocation = (PreviousLocations[0] + Locations[0]) / 2.0;
+			const FVector PreviousToCurrent = Locations[0] - PreviousLocations[0];
+			const FVector PreviousToCurrentDirection = PreviousToCurrent.GetSafeNormal();
+			const FQuat PreviousToCurrentRotation = (PreviousToCurrentDirection.Rotation() + FRotator(90.0, 0.0, 0.0)).Quaternion();
+			DrawDebugCapsule(GetWorld(), CenterLocation, PreviousToCurrent.Size(), 10.0f, PreviousToCurrentRotation, FColor::Cyan, false, 0.5f);
+		}
+
+		{
+			const FVector CenterLocation = (PreviousLocations[1] + Locations[1]) / 2.0;
+			const FVector PreviousToCurrent = Locations[1] - PreviousLocations[1];
+			const FVector PreviousToCurrentDirection = PreviousToCurrent.GetSafeNormal();
+			const FQuat PreviousToCurrentRotation = (PreviousToCurrentDirection.Rotation() + FRotator(90.0, 0.0, 0.0)).Quaternion();
+			DrawDebugCapsule(GetWorld(), CenterLocation, PreviousToCurrent.Size(), 10.0f, PreviousToCurrentRotation, FColor::Cyan, false, 0.5f);
+		}
 	}
 
 	// 타겟 Yaw에 도달했다면 끝냅니다.
