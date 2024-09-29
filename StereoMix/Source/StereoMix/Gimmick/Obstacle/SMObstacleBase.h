@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "SMObstacleBase.generated.h"
 
+class UNiagaraComponent;
 class UBoxComponent;
 
 UCLASS(Abstract)
@@ -24,4 +25,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
+	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 };

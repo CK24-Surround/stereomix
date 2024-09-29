@@ -3,6 +3,7 @@
 
 #include "SMObstacleBase.h"
 
+#include "NiagaraComponent.h"
 #include "Components/BoxComponent.h"
 #include "Utilities/SMCollision.h"
 
@@ -19,6 +20,10 @@ ASMObstacleBase::ASMObstacleBase()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
+	NiagaraComponent->SetupAttachment(RootComponent);
+	NiagaraComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 }
 
 void ASMObstacleBase::SetCollisionEnabled(bool bNewIsCollisionEnabled)

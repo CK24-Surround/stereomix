@@ -8,6 +8,8 @@
 #include "Interfaces/SMDamageInterface.h"
 #include "SMFragileObstacle.generated.h"
 
+class UNiagaraSystem;
+
 USTRUCT(BlueprintType)
 struct FSMFragileObstacleDurabilityThresholdData
 {
@@ -18,6 +20,9 @@ struct FSMFragileObstacleDurabilityThresholdData
 
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMesh> Mesh;
+
+	UPROPERTY(EditAnywhere)
+	TObjectPtr<UNiagaraSystem> NiagaraSystem;
 };
 
 UCLASS(Abstract)
@@ -72,9 +77,12 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UStaticMesh> OriginalMesh;
 
+	UPROPERTY()
+	TObjectPtr<UNiagaraSystem> OriginalNiagaraSystem;
+
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<AActor> LastAttacker;
 
 private:
-	void UpdateMeshBasedOnDurability();
+	void UpdateVisualBasedOnDurability();
 };
