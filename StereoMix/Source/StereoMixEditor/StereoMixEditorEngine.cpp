@@ -26,7 +26,22 @@ FGameInstancePIEResult UStereoMixEditorEngine::PreCreatePIEInstances(const bool 
 			{
 				PlaySessionRequest->EditorPlaySettings->SetPlayNetMode(NetModeOverride);
 
-				FNotificationInfo Info(LOCTEXT("ForcingStandaloneForFrontend", "Forcing NetMode: Standalone for the Frontend"));
+				static const FText ForcingOverrideNetModeFormat = LOCTEXT("ForcingOverrideNetMode", "Forcing NetMode: Override PIE NetMode to {NetMode}");
+				FText NetModeText;
+				switch (NetModeOverride)
+				{
+					case PIE_Standalone:
+						NetModeText = LOCTEXT("NetModeStandalone", "Standalone");
+						break;
+					case PIE_ListenServer:
+						NetModeText = LOCTEXT("NetModeListenServer", "ListenServer");
+						break;
+					case PIE_Client:
+						NetModeText = LOCTEXT("NetModeClient", "Client");
+						break;
+				}
+				FText Message = FText::FormatNamed(ForcingOverrideNetModeFormat, TEXT("NetMode"), NetModeText);
+				FNotificationInfo Info(Message);
 				Info.ExpireDuration = 2.0f;
 				FSlateNotificationManager::Get().AddNotification(Info);
 			}
