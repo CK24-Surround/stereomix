@@ -851,15 +851,17 @@ void ASMPlayerCharacterBase::OnRep_bUseControllerRotation()
 void ASMPlayerCharacterBase::OnRep_bIsNoteState()
 {
 	USkeletalMeshComponent* CharacterMeshComponent = GetMesh();
-	UMeshComponent* WeaponMeshComponent = Weapon.Get() ? Weapon->GetWeaponMeshComponent() : nullptr;
-	if (!CharacterMeshComponent || !WeaponMeshComponent || !NoteMeshComponent)
+	USceneComponent* WeaponRootComponent = Weapon->GetRootComponent();
+	if (!CharacterMeshComponent || !WeaponRootComponent)
 	{
 		return;
 	}
 
 	CharacterMeshComponent->SetVisibility(!bIsNoteState);
-	WeaponMeshComponent->SetVisibility(!bIsNoteState);
 	NoteMeshComponent->SetVisibility(bIsNoteState);
+
+	// SetActorHidden을 하지않고 루트를 기준으로 자식들을 비활성화하는 이유는 Hold, Holded 될때 SetActorHidden을 사용하기 때문에 Holded 되었을때 무기가 보이게 됩니다. 이를 방지하고자 아예 컴포넌트들의 비지빌리티를 끕니다.
+	WeaponRootComponent->SetVisibility(!bIsNoteState, true);
 
 	if (bIsNoteState)
 	{
