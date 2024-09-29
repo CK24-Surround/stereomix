@@ -6,6 +6,8 @@
 #include "SMWeaponBase.h"
 #include "SMBow.generated.h"
 
+class UNiagaraComponent;
+
 UCLASS(Abstract)
 class STEREOMIX_API ASMBow : public ASMWeaponBase
 {
@@ -13,4 +15,10 @@ class STEREOMIX_API ASMBow : public ASMWeaponBase
 
 public:
 	ASMBow(const FObjectInitializer& ObjectInitializer);
+
+	void SetVFXEnabled(bool bNewIsVFXEnabled);
+
+protected:
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
+	TObjectPtr<UNiagaraComponent> VFXComponent;
 };

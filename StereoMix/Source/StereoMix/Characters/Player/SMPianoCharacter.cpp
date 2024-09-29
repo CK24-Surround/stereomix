@@ -6,6 +6,7 @@
 #include "NiagaraComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "Characters/Weapon/SMBow.h"
 #include "Characters/Weapon/SMWeaponBase.h"
 #include "Data/Character/SMPianoCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
@@ -31,14 +32,19 @@ void ASMPianoCharacter::OnRep_PlayerState()
 	if (PianoDataAsset)
 	{
 		const TObjectPtr<UNiagaraSystem>* ImpactArrowIndicatorPtr = PianoDataAsset->ImpactArrowIndicator.Find(GetTeam());
-		if (ImpactArrowIndicatorPtr)
+		UNiagaraSystem* ImpactArrowIndicator = ImpactArrowIndicatorPtr ? *ImpactArrowIndicatorPtr : nullptr;
+		if (ImpactArrowIndicator)
 		{
-			UNiagaraSystem* ImpactArrowIndicator = *ImpactArrowIndicatorPtr;
-			if (ImpactArrowIndicator)
-			{
-				ImpactArrowIndicatorNiagaraComponent->SetAsset(ImpactArrowIndicator);
-			}
+			ImpactArrowIndicatorNiagaraComponent->SetAsset(ImpactArrowIndicator);
 		}
+	}
+}
+
+void ASMPianoCharacter::SetWeaponVFXEnabled(bool bNewIsEnabled)
+{
+	if (ASMBow* Bow = GetWeapon<ASMBow>())
+	{
+		Bow->SetVFXEnabled(bNewIsEnabled);
 	}
 }
 

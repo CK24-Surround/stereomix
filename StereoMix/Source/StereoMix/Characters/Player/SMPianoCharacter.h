@@ -20,6 +20,8 @@ public:
 
 	UNiagaraComponent* GetImpactArrowIndicator() { return ImpactArrowIndicatorNiagaraComponent; }
 
+	void SetWeaponVFXEnabled(bool bNewIsEnabled);
+
 protected:
 	virtual void OnHoldStateEntry() override;
 
