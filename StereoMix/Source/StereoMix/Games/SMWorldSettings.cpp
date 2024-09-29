@@ -5,9 +5,11 @@
 
 #include UE_INLINE_GENERATED_CPP_BY_NAME(SMWorldSettings)
 
+#if WITH_EDITOR
 void ASMWorldSettings::CheckForErrors()
 {
 	Super::CheckForErrors();
 
 	// 맵 에러 검출 로직 구현
 }
+#endif
