@@ -29,7 +29,7 @@ protected:
 	void MulticastSetCollisionEnabled(bool bNewIsCollisionEnabled);
 
 	UFUNCTION(NetMulticast, Reliable)
-	void ClientSetMeshAndNiagaraSystem(UStaticMesh* NewMesh, UNiagaraSystem* NewNiagaraSystem);
+	void MulticastSetMeshAndNiagaraSystem(UStaticMesh* NewMesh, UNiagaraSystem* NewNiagaraSystem);
 
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<UBoxComponent> ColliderComponent;
@@ -39,25 +39,28 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Design")
+	uint8 bSpawnImmediately:1 = true;
+
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
 	float SpawnDelay = 3.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float DelayEffectDuration = 0.0f;
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.01"))
+	float PreSpawnEffectDuration = 0.01f;
+
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.01"))
+	float SpawnEffectDuration = 0.01f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float SpawnEffectDuration = 0.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	TObjectPtr<UNiagaraSystem> DelayEffect;
+	TObjectPtr<UNiagaraSystem> PreSpawnEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UNiagaraSystem> SpawnEffect;
 
 	UPROPERTY()
-	TObjectPtr<UStaticMesh> OriginMesh;
+	TObjectPtr<UStaticMesh> OriginalMesh;
 
 	UPROPERTY()
-	TObjectPtr<UNiagaraSystem> OriginNiagaraSystem;
+	TObjectPtr<UNiagaraSystem> OriginalNiagaraSystem;
 };

@@ -32,50 +32,73 @@ void ASMObstacleBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	OriginMesh = MeshComponent->GetStaticMesh();
-	OriginNiagaraSystem = NiagaraComponent->GetAsset();
+	OriginalMesh = MeshComponent->GetStaticMesh();
+	OriginalNiagaraSystem = NiagaraComponent->GetAsset();
 
-	MeshComponent->SetStaticMesh(nullptr);
-	NiagaraComponent->SetAsset(nullptr);
+	SetCollisionEnabled(true);
 
-	SetCollisionEnabled(false);
+	if (!bSpawnImmediately)
+	{
+		MeshComponent->SetStaticMesh(nullptr);
+		NiagaraComponent->SetAsset(nullptr);
+
+		SetCollisionEnabled(false);
+	}
 }
 
 void ASMObstacleBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (!HasAuthority())
+	UWorld* World = GetWorld();
+
+	if (!HasAuthority() || !World || bSpawnImmediately)
 	{
 		return;
 	}
 
-	TWeakObjectPtr<ASMObstacleBase> WeakThis = this;
+	TWeakObjectPtr<ASMObstacleBase> ThisWeakPtr = this;
 
-	FTimerHandle TimerHandle;
-	
-	if (DelayEffectDuration <= 0.0f)
-	{
-		GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
-			WeakThis->MulticastSetCollisionEnabled(true);
-			WeakThis->ClientSetMeshAndNiagaraSystem(WeakThis->OriginMesh, WeakThis->OriginNiagaraSystem);
-		}, SpawnDelay, false);
-		return;
-	}
-	
-	GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
-		WeakThis->ClientSetMeshAndNiagaraSystem(nullptr, WeakThis->DelayEffect);
-		FTimerHandle TimerHandle;
-		WeakThis->GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
-			WeakThis->ClientSetMeshAndNiagaraSystem(nullptr, WeakThis->SpawnEffect);
+	float AccumulatedTime = 0.0f;
 
-			FTimerHandle TimerHandle;
-			WeakThis->GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
-				WeakThis->MulticastSetCollisionEnabled(true);
-				WeakThis->ClientSetMeshAndNiagaraSystem(WeakThis->OriginMesh, WeakThis->OriginNiagaraSystem);
-			}, WeakThis->SpawnEffectDuration, false);
-		}, WeakThis->DelayEffectDuration, false);
-	}, SpawnDelay, false);
+	auto SetVisual = [ThisWeakPtr](UStaticMesh* NewStaticMesh, UNiagaraSystem* NewNiagaraSystem) {
+		if (ThisWeakPtr.Get())
+		{
+			ThisWeakPtr->MulticastSetMeshAndNiagaraSystem(NewStaticMesh, NewNiagaraSystem);
+		}
+	};
+
+	auto SetVisualAndCollision = [ThisWeakPtr](UStaticMesh* NewStaticMesh, UNiagaraSystem* NewNiagaraSystem) {
+		if (ThisWeakPtr.Get())
+		{
+			ThisWeakPtr->MulticastSetCollisionEnabled(true);
+			ThisWeakPtr->MulticastSetMeshAndNiagaraSystem(NewStaticMesh, NewNiagaraSystem);
+		}
+	};
+
+	AccumulatedTime += SpawnDelay;
+
+	FTimerHandle PreSpawnEffectTimerHandle;
+	UNiagaraSystem* CachedPreSpawnEffect = PreSpawnEffect;
+	AccumulatedTime += PreSpawnEffectDuration;
+	World->GetTimerManager().SetTimer(PreSpawnEffectTimerHandle, [SetVisual, CachedPreSpawnEffect] {
+		SetVisual(nullptr, CachedPreSpawnEffect);
+	}, AccumulatedTime, false);
+
+	FTimerHandle SpawnEffectTimerHandle;
+	UNiagaraSystem* CachedSpawnEffect = SpawnEffect;
+	AccumulatedTime += SpawnEffectDuration;
+	World->GetTimerManager().SetTimer(SpawnEffectTimerHandle, [SetVisual, CachedSpawnEffect] {
+		SetVisual(nullptr, CachedSpawnEffect);
+	}, AccumulatedTime, false);
+
+	FTimerHandle SpawnTimerHandle;
+	UStaticMesh* CachedOriginalMesh = OriginalMesh;
+	UNiagaraSystem* CachedOriginNiagaraSystem = OriginalNiagaraSystem;
+	AccumulatedTime += SpawnEffectDuration;
+	World->GetTimerManager().SetTimer(SpawnTimerHandle, [SetVisualAndCollision, CachedOriginalMesh, CachedOriginNiagaraSystem] {
+		SetVisualAndCollision(CachedOriginalMesh, CachedOriginNiagaraSystem);
+	}, AccumulatedTime, false);
 }
 
 void ASMObstacleBase::SetCollisionEnabled(bool bNewIsCollisionEnabled)
@@ -92,7 +115,7 @@ void ASMObstacleBase::MulticastSetCollisionEnabled_Implementation(bool bNewIsCol
 	SetCollisionEnabled(bNewIsCollisionEnabled);
 }
 
-void ASMObstacleBase::ClientSetMeshAndNiagaraSystem_Implementation(UStaticMesh* NewMesh, UNiagaraSystem* NewNiagaraSystem)
+void ASMObstacleBase::MulticastSetMeshAndNiagaraSystem_Implementation(UStaticMesh* NewMesh, UNiagaraSystem* NewNiagaraSystem)
 {
 	if (!HasAuthority())
 	{

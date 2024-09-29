@@ -41,6 +41,13 @@ void ASMFragileObstacle::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	SetCollisionEnabled(true);
+
+	if (!bSpawnImmediately)
+	{
+		SetCollisionEnabled(false);
+	}
+
 	DurabilityThresholds.Sort([](const FSMFragileObstacleDurabilityThresholdData& lhs, const FSMFragileObstacleDurabilityThresholdData& rhs) {
 		return lhs.DurabilityRatio > rhs.DurabilityRatio;
 	});
@@ -107,8 +114,8 @@ void ASMFragileObstacle::UpdateVisualBasedOnDurability()
 
 	for (const FSMFragileObstacleDurabilityThresholdData& DurabilityThreshold : DurabilityThresholds)
 	{
-		if (FMath::IsNearlyEqual(CurrentDurabilityRatio, DurabilityThreshold.DurabilityRatio, UE::CADKernel::Slope::Epsilon) || 
-			CurrentDurabilityRatio <= DurabilityThreshold.DurabilityRatio)
+		if (FMath::IsNearlyEqual(CurrentDurabilityRatio, DurabilityThreshold.DurabilityRatio, UE::CADKernel::Slope::Epsilon) ||
+		    CurrentDurabilityRatio <= DurabilityThreshold.DurabilityRatio)
 		{
 			NewMesh = DurabilityThreshold.Mesh;
 			NewNiagaraSystem = DurabilityThreshold.NiagaraSystem;
@@ -118,8 +125,8 @@ void ASMFragileObstacle::UpdateVisualBasedOnDurability()
 	// 내구도가 모든 Threshold보다 높다면 초기 메쉬로 복원
 	if (CurrentDurabilityRatio > DurabilityThresholds[0].DurabilityRatio)
 	{
-		MeshComponent->SetStaticMesh(OriginMesh);
-		NiagaraComponent->SetAsset(OriginNiagaraSystem);
+		MeshComponent->SetStaticMesh(OriginalMesh);
+		NiagaraComponent->SetAsset(OriginalNiagaraSystem);
 		return;
 	}
 
