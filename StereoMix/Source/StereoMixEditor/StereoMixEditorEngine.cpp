@@ -17,13 +17,14 @@ FGameInstancePIEResult UStereoMixEditorEngine::PreCreatePIEInstances(const bool 
 {
 	if (const ASMWorldSettings* WorldSettings = Cast<ASMWorldSettings>(EditorWorld->GetWorldSettings()))
 	{
-		if (WorldSettings->bForceStandaloneNetMode)
+		if (WorldSettings->bForceUseNetMode)
 		{
 			EPlayNetMode OutPlayNetMode;
 			PlaySessionRequest->EditorPlaySettings->GetPlayNetMode(OutPlayNetMode);
-			if (OutPlayNetMode != PIE_Standalone)
+			EPlayNetMode NetModeOverride = static_cast<EPlayNetMode>(WorldSettings->NetModeOverride);
+			if (OutPlayNetMode != NetModeOverride)
 			{
-				PlaySessionRequest->EditorPlaySettings->SetPlayNetMode(PIE_Standalone);
+				PlaySessionRequest->EditorPlaySettings->SetPlayNetMode(NetModeOverride);
 
 				FNotificationInfo Info(LOCTEXT("ForcingStandaloneForFrontend", "Forcing NetMode: Standalone for the Frontend"));
 				Info.ExpireDuration = 2.0f;
