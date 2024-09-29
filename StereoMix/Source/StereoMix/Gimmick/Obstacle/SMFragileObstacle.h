@@ -74,12 +74,6 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design")
 	TArray<FSMFragileObstacleDurabilityThresholdData> DurabilityThresholds;
 
-	UPROPERTY()
-	TObjectPtr<UStaticMesh> OriginalMesh;
-
-	UPROPERTY()
-	TObjectPtr<UNiagaraSystem> OriginalNiagaraSystem;
-
 	UPROPERTY(Replicated)
 	TWeakObjectPtr<AActor> LastAttacker;
 
