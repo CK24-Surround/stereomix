@@ -50,37 +50,37 @@ void ASMObstacleBase::BeginPlay()
 		return;
 	}
 
-	if (SpawnDelay > 0.0f)
+	TWeakObjectPtr<ASMObstacleBase> WeakThis = this;
+
+	FTimerHandle TimerHandle;
+	
+	if (SpawnDelay <= 0.0f)
 	{
-		TWeakObjectPtr<ASMObstacleBase> WeakThis = this;
-
-		FTimerHandle TimerHandle;
 		GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
-			WeakThis->ClientSetMeshAndNiagaraSystem(nullptr, WeakThis->DelayEffect);
-			FTimerHandle TimerHandle;
-			WeakThis->GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
-				WeakThis->ClientSetMeshAndNiagaraSystem(nullptr, WeakThis->SpawnEffect);
-
-				FTimerHandle TimerHandle;
-				WeakThis->GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
-					UE_LOG(LogTemp, Warning, TEXT("SpawnEffectDuration: %f"), WeakThis->SpawnEffectDuration);
-					WeakThis->MulticastSetCollisionEnabled(true);
-					WeakThis->ClientSetMeshAndNiagaraSystem(WeakThis->OriginMesh, WeakThis->OriginNiagaraSystem);
-				}, WeakThis->SpawnEffectDuration, false);
-			}, WeakThis->SpawnDelay, false);
+			WeakThis->MulticastSetCollisionEnabled(true);
+			WeakThis->ClientSetMeshAndNiagaraSystem(WeakThis->OriginMesh, WeakThis->OriginNiagaraSystem);
 		}, 3.0f, false);
-
 		return;
 	}
+	
+	GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
+		WeakThis->ClientSetMeshAndNiagaraSystem(nullptr, WeakThis->DelayEffect);
+		FTimerHandle TimerHandle;
+		WeakThis->GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
+			WeakThis->ClientSetMeshAndNiagaraSystem(nullptr, WeakThis->SpawnEffect);
 
-	// 바로 콜리전 활성화 및 원래 메시와 이펙트 설정
-	MulticastSetCollisionEnabled(true);
-	ClientSetMeshAndNiagaraSystem(OriginMesh, OriginNiagaraSystem);
+			FTimerHandle TimerHandle;
+			WeakThis->GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
+				WeakThis->MulticastSetCollisionEnabled(true);
+				WeakThis->ClientSetMeshAndNiagaraSystem(WeakThis->OriginMesh, WeakThis->OriginNiagaraSystem);
+			}, WeakThis->SpawnEffectDuration, false);
+		}, WeakThis->SpawnDelay, false);
+	}, 3.0f, false);
 }
 
 void ASMObstacleBase::SetCollisionEnabled(bool bNewIsCollisionEnabled)
 {
-	const FName CollisionProfileName = bNewIsCollisionEnabled ? SMCollisionProfileName::Obstacle : SMCollisionProfileName::NoCollision;
+	const FName CollisionProfileName = bNewIsCollisionEnabled ? SMCollisionProfileName::BlockAll : SMCollisionProfileName::NoCollision;
 	if (ColliderComponent->GetCollisionProfileName() != CollisionProfileName)
 	{
 		ColliderComponent->SetCollisionProfileName(CollisionProfileName);
@@ -94,7 +94,6 @@ void ASMObstacleBase::MulticastSetCollisionEnabled_Implementation(bool bNewIsCol
 
 void ASMObstacleBase::ClientSetMeshAndNiagaraSystem_Implementation(UStaticMesh* NewMesh, UNiagaraSystem* NewNiagaraSystem)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ClientSetMeshAndNiagaraSystem_Implementation"));
 	if (!HasAuthority())
 	{
 		MeshComponent->SetStaticMesh(NewMesh);

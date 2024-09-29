@@ -49,6 +49,8 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSetMaxDurability(float NewMaxDurability);
 
+	virtual void SetCollisionEnabled(bool bNewIsCollisionEnabled) override;
+
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 
 	virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttacker = NewAttacker; }

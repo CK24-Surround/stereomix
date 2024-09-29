@@ -5,8 +5,10 @@
 
 #include "NiagaraComponent.h"
 #include "CADKernel/Math/SlopeUtils.h"
+#include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "UObject/ObjectSaveContext.h"
+#include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
 
@@ -61,6 +63,15 @@ void ASMFragileObstacle::ServerSetMaxDurability_Implementation(float NewMaxDurab
 void ASMFragileObstacle::ServerRestoreObstacle_Implementation()
 {
 	ServerSetCurrentDurability(Durability);
+}
+
+void ASMFragileObstacle::SetCollisionEnabled(bool bNewIsCollisionEnabled)
+{
+	const FName CollisionProfileName = bNewIsCollisionEnabled ? SMCollisionProfileName::Obstacle : SMCollisionProfileName::NoCollision;
+	if (ColliderComponent->GetCollisionProfileName() != CollisionProfileName)
+	{
+		ColliderComponent->SetCollisionProfileName(CollisionProfileName);
+	}
 }
 
 void ASMFragileObstacle::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
