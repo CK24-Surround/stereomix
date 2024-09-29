@@ -24,21 +24,8 @@ protected:
 
 	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
 
-	UFUNCTION()
-	void OnCharged1();
-
-	UFUNCTION()
-	void OnCharged2();
-
-	void Charge1();
-
-	void Charge2();
-
 	UFUNCTION(Server, Reliable)
-	void ServerRPCLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargingLevel);
-
-	UFUNCTION(Server, Reliable)
-	void ServerApplyCost();
+	void ServerLaunchProjectile(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargedLevel);
 
 	float ProjectileSpeed = 0.0f;
 
@@ -47,12 +34,16 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Charge2DamageMultiply = 1.0f;
-	
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float Charge1Time = 0.4f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float Charge2Time = 0.9f;
+	float TimeToChargeLevel1 = 0.4f;
 
-	int32 ChargingLevel = 0;
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float TimeToChargeLevel2 = 0.9f;
+
+	int32 ChargedLevel = 0;
+
+	FTimerHandle Level1ChargedTimerHandle;
+
+	FTimerHandle Level2ChargedTimerHandle;
 };

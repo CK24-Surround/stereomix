@@ -34,8 +34,8 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
 	{
@@ -61,45 +61,60 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 
 	if (IsLocallyControlled())
 	{
-		UAbilityTask_WaitDelay* Charge1Task = UAbilityTask_WaitDelay::WaitDelay(this, Charge1Time);
-		Charge1Task->OnFinish.AddDynamic(this, &ThisClass::OnCharged1);
-		Charge1Task->ReadyForActivation();
+		if (UWorld* World = GetWorld())
+		{
+			TWeakObjectPtr<USMGA_Archery> ThisWeakPtr = MakeWeakObjectPtr(this);
+			auto OnCharged = [ThisWeakPtr](int32 Level) {
+				if (ThisWeakPtr.Get())
+				{
+					ThisWeakPtr->ChargedLevel = Level;
+				}
+			};
 
-		UAbilityTask_WaitDelay* Charge2Task = UAbilityTask_WaitDelay::WaitDelay(this, Charge2Time);
-		Charge2Task->OnFinish.AddDynamic(this, &ThisClass::OnCharged2);
-		Charge2Task->ReadyForActivation();
+			World->GetTimerManager().SetTimer(Level1ChargedTimerHandle, [OnCharged]() { OnCharged(1); }, TimeToChargeLevel1, false);
+			World->GetTimerManager().SetTimer(Level2ChargedTimerHandle, [OnCharged]() { OnCharged(2); }, TimeToChargeLevel2, false);
+		}
+
+		ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
+		UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
 
 		FGameplayCueParameters GCParams;
-		ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
-		if (SourceWeapon)
-		{
-			GCParams.TargetAttachComponent = SourceWeapon->GetWeaponMeshComponent();
-		}
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.TargetAttachComponent = SourceWeaponMesh;
 		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, GCParams);
 	}
 }
 
 void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
+	if (IsLocallyControlled())
 	{
-		if (IsLocallyControlled())
+		ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+		USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+		if (SourceCharacter && SourceASC)
 		{
 			// 만약에 쏘지못하고 끊기게 되는 경우의 예외처리입니다.
 			FGameplayCueParameters GCParams;
+			GCParams.SourceObject = SourceCharacter;
 			GCParams.RawMagnitude = -1;
-			SourceASC->RemoveGC(GetAvatarActor(), SMTags::GameplayCue::Piano::Archery, GCParams);
+			SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, GCParams);
+		}
+
+		if (UWorld* World = GetWorld())
+		{
+			World->GetTimerManager().ClearTimer(Level1ChargedTimerHandle);
+			World->GetTimerManager().ClearTimer(Level2ChargedTimerHandle);
 		}
 	}
 
-	ChargingLevel = 0;
+	ChargedLevel = 0;
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
 	if (!SourceCharacter || !SourceASC)
 	{
@@ -107,75 +122,32 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 	}
 
 	FGameplayCueParameters GCParams;
-	GCParams.RawMagnitude = ChargingLevel;
+	GCParams.SourceObject = SourceCharacter;
+	GCParams.RawMagnitude = ChargedLevel;
 	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, GCParams);
 
-	if (ChargingLevel == 0)
+	if (ChargedLevel > 0)
+	{
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
+		ServerLaunchProjectile(SourceLocation, TargetLocation, ChargedLevel);
+
+		const FName EndSectionName = TEXT("End");
+		MontageJumpToSection(EndSectionName);
+	}
+	else
 	{
 		const FName CancelSectionName = TEXT("Cancel");
 		MontageJumpToSection(CancelSectionName);
 		K2_EndAbility();
 	}
-	else if (ChargingLevel == 1)
-	{
-		Charge1();
-	}
-	else
-	{
-		Charge2();
-	}
-
-	const FName EndSectionName = TEXT("End");
-	MontageJumpToSection(EndSectionName);
 }
 
-void USMGA_Archery::OnCharged1()
+void USMGA_Archery::ServerLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargedLevel)
 {
-	ChargingLevel = 1;
-}
-
-void USMGA_Archery::OnCharged2()
-{
-	ChargingLevel = 2;
-}
-
-void USMGA_Archery::Charge1()
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	ServerApplyCost();
-
-	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
-	ServerRPCLaunchProjectile(SourceLocation, TargetLocation, 1);
-}
-
-void USMGA_Archery::Charge2()
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	if (!SourceCharacter)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	ServerApplyCost();
-	ServerApplyCost();
-
-	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
-	ServerRPCLaunchProjectile(SourceLocation, TargetLocation, 2);
-}
-
-void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargingLevel)
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	ASMGameState* GameState = GetWorld()->GetGameState<ASMGameState>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	UWorld* World = GetWorld();
+	ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
 	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
 	if (!SourceCharacter || !ProjectilePoolManager)
 	{
@@ -183,9 +155,14 @@ void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQu
 		return;
 	}
 
+	for (int32 i = 0; i < InChargedLevel; ++i)
+	{
+		K2_CommitAbilityCost();
+	}
+
 	float NewDamage;
 	ASMProjectile* Projectile;
-	if (InChargingLevel == 1)
+	if (InChargedLevel == 1)
 	{
 		NewDamage = Damage * Charge1DamageMultiply;
 		Projectile = ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam());
@@ -214,9 +191,4 @@ void USMGA_Archery::ServerRPCLaunchProjectile_Implementation(const FVector_NetQu
 	Projectile->Launch(ProjectileParams);
 
 	K2_EndAbility();
-}
-
-void USMGA_Archery::ServerApplyCost_Implementation()
-{
-	K2_CommitAbilityCost();
 }
