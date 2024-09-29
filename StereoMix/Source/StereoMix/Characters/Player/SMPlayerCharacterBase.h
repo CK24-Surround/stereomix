@@ -159,6 +159,9 @@ public:
 
 	ASMWeaponBase* GetWeapon() const { return Weapon; }
 
+	template<typename T>
+	T* GetWeapon() const { return Cast<T>(GetWeapon()); }
+
 	UFUNCTION()
 	void OnTeamChanged();
 
