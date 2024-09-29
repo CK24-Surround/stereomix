@@ -26,7 +26,8 @@ public class StereoMix : ModuleRules
 			"HTTP",
 			"StateTreeModule",
 			"DeveloperSettings",
-			"GameplayMessageRuntime"
+			"GameplayMessageRuntime",
+			"CADKernel"
 		});
 
 		// Uncomment if you are using Slate UI

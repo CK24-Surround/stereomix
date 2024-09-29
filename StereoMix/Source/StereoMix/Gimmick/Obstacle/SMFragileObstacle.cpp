@@ -4,6 +4,7 @@
 #include "SMFragileObstacle.h"
 
 #include "NiagaraComponent.h"
+#include "CADKernel/Math/SlopeUtils.h"
 #include "Net/UnrealNetwork.h"
 #include "UObject/ObjectSaveContext.h"
 #include "Utilities/SMLog.h"
@@ -93,21 +94,22 @@ void ASMFragileObstacle::UpdateVisualBasedOnDurability()
 
 	const float CurrentDurabilityRatio = CurrentDurability / Durability;
 
-	// 내구도가 모든 Threshold보다 높다면 초기 메쉬로 복원
-	if (CurrentDurabilityRatio >= DurabilityThresholds[0].DurabilityRatio)
-	{
-		MeshComponent->SetStaticMesh(OriginMesh);
-		NiagaraComponent->SetAsset(OriginNiagaraSystem);
-		return;
-	}
-
 	for (const FSMFragileObstacleDurabilityThresholdData& DurabilityThreshold : DurabilityThresholds)
 	{
-		if (CurrentDurabilityRatio <= DurabilityThreshold.DurabilityRatio)
+		if (FMath::IsNearlyEqual(CurrentDurabilityRatio, DurabilityThreshold.DurabilityRatio, UE::CADKernel::Slope::Epsilon) || 
+			CurrentDurabilityRatio <= DurabilityThreshold.DurabilityRatio)
 		{
 			NewMesh = DurabilityThreshold.Mesh;
 			NewNiagaraSystem = DurabilityThreshold.NiagaraSystem;
 		}
+	}
+
+	// 내구도가 모든 Threshold보다 높다면 초기 메쉬로 복원
+	if (CurrentDurabilityRatio > DurabilityThresholds[0].DurabilityRatio)
+	{
+		MeshComponent->SetStaticMesh(OriginMesh);
+		NiagaraComponent->SetAsset(OriginNiagaraSystem);
+		return;
 	}
 
 	if (NewMesh != MeshComponent->GetStaticMesh())
