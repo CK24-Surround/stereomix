@@ -54,12 +54,12 @@ void ASMObstacleBase::BeginPlay()
 
 	FTimerHandle TimerHandle;
 	
-	if (SpawnDelay <= 0.0f)
+	if (DelayEffectDuration <= 0.0f)
 	{
 		GetWorldTimerManager().SetTimer(TimerHandle, [WeakThis]() {
 			WeakThis->MulticastSetCollisionEnabled(true);
 			WeakThis->ClientSetMeshAndNiagaraSystem(WeakThis->OriginMesh, WeakThis->OriginNiagaraSystem);
-		}, 3.0f, false);
+		}, SpawnDelay, false);
 		return;
 	}
 	
@@ -74,8 +74,8 @@ void ASMObstacleBase::BeginPlay()
 				WeakThis->MulticastSetCollisionEnabled(true);
 				WeakThis->ClientSetMeshAndNiagaraSystem(WeakThis->OriginMesh, WeakThis->OriginNiagaraSystem);
 			}, WeakThis->SpawnEffectDuration, false);
-		}, WeakThis->SpawnDelay, false);
-	}, 3.0f, false);
+		}, WeakThis->DelayEffectDuration, false);
+	}, SpawnDelay, false);
 }
 
 void ASMObstacleBase::SetCollisionEnabled(bool bNewIsCollisionEnabled)

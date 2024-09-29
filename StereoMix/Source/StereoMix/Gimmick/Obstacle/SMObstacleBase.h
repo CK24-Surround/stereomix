@@ -39,9 +39,12 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
+	
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float SpawnDelay = 3.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float SpawnDelay = 0.0f;
+	float DelayEffectDuration = 0.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float SpawnEffectDuration = 0.0f;
