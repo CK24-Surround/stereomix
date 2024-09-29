@@ -34,11 +34,10 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
-	if (!SourceCharacter || !SourceASC || !SourceHIC || !SourceDataAsset)
+	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
 		EndAbilityByCancel();
 		return;
@@ -47,13 +46,6 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	NET_LOG(GetAvatarActor(), Log, TEXT("%s가 무력화 됨"), *GetNameSafe(GetAvatarActor()));
 
 	K2_CommitAbility();
-
-	// 무력화 몽타주를 재생합니다.
-	const FName MontageTaskName = TEXT("MontageTask");
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	UAnimMontage* NeutralizeMontage = SourceDataAsset->NeutralizeMontage[SourceTeam];
-	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, NeutralizeMontage);
-	MontageTask->ReadyForActivation();
 
 	if (K2_HasAuthority())
 	{
@@ -97,6 +89,11 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 		// 캐릭터를 노트 상태로 변경합니다.
 		SourceCharacter->ServerSetNoteState(true);
+
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Neutralize, GCParams);
 	}
 	else if (IsLocallyControlled()) // 데디 서버를 위한 예외처리입니다.
 	{
@@ -110,7 +107,8 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 	{
 		if (K2_HasAuthority())
 		{
-			ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+			ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+			USMAbilitySystemComponent* SourceASC = GetASC();
 			if (SourceCharacter)
 			{
 				// 컨트롤 로테이션을 따라가도록 복구해줍니다.
@@ -121,6 +119,14 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 
 				// 캐릭터를 노트 상태로 변경합니다.
 				SourceCharacter->ServerSetNoteState(false);
+
+				if (SourceASC)
+				{
+					FGameplayCueParameters GCParams;
+					GCParams.SourceObject = SourceCharacter;
+					GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+					SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Common::Neutralize, GCParams);
+				}
 			}
 
 			USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
@@ -139,7 +145,6 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 				}
 			}
 
-			USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
 			if (SourceASC)
 			{
 				// 면역상태로 진입합니다. 딜레이로 인해 데미지를 받을 수도 있으니 GA실행 전에 먼저 면역태그를 추가합니다.
@@ -304,12 +309,5 @@ void USMGA_Neutralize::NeutralizeEnd()
 		SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
 	}
 
-	// 노이즈 브레이크를 1회라도 당해 넘어진 상태이거나, 잡혀있는 상태인 경우 무력화 종료 애니메이션이 달라져야하는데 이를 위해 현재 실행중인 애니메이션의 End 섹션으로 점프시키는 코드입니다. 해당 애니메이션을 무한루프하고 있는 상태이므로 가능합니다.
-	UAnimMontage* EndMontage = SourceAnimInstance->GetCurrentActiveMontage();
-	NET_LOG(GetAvatarActor(), Log, TEXT("%s의 무력화 상태에 사용되고 있는 몽타주: %s"), *GetNameSafe(GetAvatarActor()), *GetNameSafe(EndMontage));
-	const FName EndMontageTaskName = TEXT("EndMontageTask");
-	const FName SectionName = TEXT("End");
-	UAbilityTask_PlayMontageAndWait* MontageWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, EndMontageTaskName, EndMontage, 1.0f, SectionName);
-	MontageWaitTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
-	MontageWaitTask->ReadyForActivation();
+	K2_EndAbility();
 }

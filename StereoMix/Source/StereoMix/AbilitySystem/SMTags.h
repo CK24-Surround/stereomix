@@ -149,6 +149,7 @@ namespace SMTags
 
 		namespace Common
 		{
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Neutralize);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldSuccess);

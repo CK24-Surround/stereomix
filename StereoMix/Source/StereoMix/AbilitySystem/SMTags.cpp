@@ -148,6 +148,7 @@ namespace SMTags
 
 		namespace Common
 		{
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "GameplayCue.Common.Neutralize", "무력화 상태 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "GameplayCue.Common.Immune", "면역 상태 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "GameplayCue.Common.Hold", "잡기 시전 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldSuccess, "GameplayCue.Common.HoldSuccess", "잡기 성공 큐의 태그입니다.");
