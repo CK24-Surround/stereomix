@@ -3,10 +3,24 @@
 #include "SMLevelChanger.h"
 
 #include "Engine/LevelStreaming.h"
+#include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Obstacle/SMObstacleBase.h"
+#include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
+
+ASMLevelChanger::ASMLevelChanger()
+{
+	bReplicates = true;
+	
+	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+	RootComponent = SceneComponent;
+
+	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
+	NiagaraComponent->SetupAttachment(RootComponent);
+	NiagaraComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+}
 
 void ASMLevelChanger::BeginPlay()
 {
@@ -14,15 +28,15 @@ void ASMLevelChanger::BeginPlay()
 
 	UWorld* World = GetWorld();
 
+	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr = this;
+
 	if (!HasAuthority() || !World)
 	{
 		return;
 	}
 
 	// 시작할 때 첫 번째 서브 레벨을 활성화
-	MulticastSetLevelVisibility(SubLevel1, true);
-
-	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr = this;
+	ServerSetLevelVisibility(SubLevel1, true);
 
 	FTimerHandle PreSpawnEffectTimerHandle;
 	World->GetTimerManager().SetTimer(PreSpawnEffectTimerHandle, [ThisWeakPtr] {
@@ -33,7 +47,21 @@ void ASMLevelChanger::BeginPlay()
 	}, SwitchInterval, true);
 }
 
-void ASMLevelChanger::MulticastSetLevelVisibility_Implementation(FName LevelName, bool bVisible)
+void ASMLevelChanger::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	ActiveNiagaraSystem = NiagaraComponent->GetAsset();
+	NiagaraComponent->SetAsset(nullptr);
+}
+
+void ASMLevelChanger::MulticastShowActiveEffect_Implementation()
+{
+	NiagaraComponent->SetAsset(nullptr);
+	NiagaraComponent->SetAsset(ActiveNiagaraSystem);
+}
+
+void ASMLevelChanger::ServerSetLevelVisibility_Implementation(FName LevelName, bool bVisible)
 {
 	SetLevelVisibility(LevelName, true);
 }
@@ -41,15 +69,17 @@ void ASMLevelChanger::MulticastSetLevelVisibility_Implementation(FName LevelName
 void ASMLevelChanger::SwitchLevels()
 {
 	bIsSubLevel1Active = !bIsSubLevel1Active;
-	MulticastSetLevelVisibility(bIsSubLevel1Active ? SubLevel1 : SubLevel2, true);
+	ServerSetLevelVisibility(bIsSubLevel1Active ? SubLevel1 : SubLevel2, true);
 }
 
 void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
 {
-	if (LevelName.IsNone())
+	if (!HasAuthority() || LevelName.IsNone())
 	{
 		return;
 	}
+
+	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr = this;
 
 	if (bVisibility)
 	{
@@ -58,8 +88,11 @@ void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
 			UGameplayStatics::LoadStreamLevel(this, LevelName, true, true, FLatentActionInfo());
 
 			FTimerHandle TimerHandle;
-			World->GetTimerManager().SetTimer(TimerHandle, [this, LevelName] {
-				SetLevelVisibility(LevelName, false);
+			World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, LevelName] {
+				if (ThisWeakPtr.Get())
+				{
+					ThisWeakPtr->SetLevelVisibility(LevelName, false);
+				}
 			}, LevelLifetime, false);
 		}
 
@@ -84,13 +117,19 @@ void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
 			}
 		}
 
+		MulticastShowActiveEffect();
+		
 		FTimerHandle TimerHandle;
-		World->GetTimerManager().SetTimer(TimerHandle, [this, LevelName] {
-			UGameplayStatics::UnloadStreamLevel(this, LevelName, FLatentActionInfo(), true);
+		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, LevelName] {
+			if (ThisWeakPtr.Get())
+			{
+				UGameplayStatics::UnloadStreamLevel(ThisWeakPtr.Get(), LevelName, FLatentActionInfo(), true);
+			}
 		}, TimeToUnload, false);
-
+		
 		return;
 	}
 
+	MulticastShowActiveEffect();
 	UGameplayStatics::UnloadStreamLevel(this, LevelName, FLatentActionInfo(), true);
 }

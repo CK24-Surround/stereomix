@@ -7,27 +7,44 @@
 #include "Engine/LevelStreaming.h"
 #include "SMLevelChanger.generated.h"
 
+class UNiagaraSystem;
+class UNiagaraComponent;
+
 UCLASS()
 class STEREOMIX_API ASMLevelChanger : public AActor
 {
 	GENERATED_BODY()
 
+public:
+	ASMLevelChanger();
+
 protected:
 	virtual void BeginPlay() override;
 
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastSetLevelVisibility(FName LevelName, bool bVisible);
+	virtual void PostInitializeComponents() override;
 
-	UPROPERTY(EditAnywhere, Category = "Level")
+	UFUNCTION(Server, Reliable)
+	void ServerSetLevelVisibility(FName LevelName, bool bVisible);
+	
+	UPROPERTY(VisibleAnywhere, Category = "Root")
+	TObjectPtr<USceneComponent> SceneComponent;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
+	TObjectPtr<UNiagaraComponent> NiagaraComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
+	TObjectPtr<UNiagaraSystem> ActiveNiagaraSystem;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
 	FName SubLevel1;
 
-	UPROPERTY(EditAnywhere, Category = "Level")
+	UPROPERTY(EditAnywhere, Category = "Design")
 	FName SubLevel2;
 
-	UPROPERTY(EditAnywhere, Category = "Level")
+	UPROPERTY(EditAnywhere, Category = "Design")
 	float SwitchInterval = 10.0f;
 
-	UPROPERTY(EditAnywhere, Category = "Level")
+	UPROPERTY(EditAnywhere, Category = "Design")
 	float LevelLifetime = 10.0f;
 
 	float TimeSinceLastSwitch = 0.0f;
@@ -36,6 +53,9 @@ protected:
 
 private:
 	void SwitchLevels();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastShowActiveEffect();
 
 	void SetLevelVisibility(FName LevelName, bool bVisibility);
 };
