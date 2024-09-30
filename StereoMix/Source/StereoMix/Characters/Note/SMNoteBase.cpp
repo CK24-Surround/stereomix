@@ -3,6 +3,7 @@
 
 #include "SMNoteBase.h"
 
+#include "NiagaraComponent.h"
 #include "Animations/SMNoteAnimInstance.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
@@ -20,13 +21,26 @@ ASMNoteBase::ASMNoteBase()
 	MeshComponent->SetRelativeRotation(FRotator(0.0, 90.0, 0.0));
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	MeshComponent->bReceivesDecals = false;
+
+	GlowFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("GlowFXComponent"));
+	GlowFXComponent->SetupAttachment(MeshComponent);
+	GlowFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 }
 
 void ASMNoteBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
+	const FName SocketName = TEXT("PRoot");
+	GlowFXComponent->AttachToComponent(MeshComponent, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+}
+
+void ASMNoteBase::BeginPlay()
+{
+	Super::BeginPlay();
+
 	MeshComponent->SetVisibility(false);
+	GlowFXComponent->SetVisibility(false);
 }
 
 void ASMNoteBase::PlayAnimation()

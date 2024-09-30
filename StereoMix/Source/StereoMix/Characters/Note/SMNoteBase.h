@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "SMNoteBase.generated.h"
 
+class UNiagaraComponent;
+
 UCLASS()
 class STEREOMIX_API ASMNoteBase : public AActor
 {
@@ -16,6 +18,10 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
+	virtual void BeginPlay() override;
+
+	USkeletalMeshComponent* GetMesh() { return MeshComponent; }
+
 	void PlayAnimation();
 
 	void StopAnimation();
@@ -24,6 +30,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
 	TObjectPtr<USceneComponent> SceneComponent;
 
-	UPROPERTY(VisibleAnywhere, Category = "Mesh")
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<USkeletalMeshComponent> MeshComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
+	TObjectPtr<UNiagaraComponent> GlowFXComponent;
 };

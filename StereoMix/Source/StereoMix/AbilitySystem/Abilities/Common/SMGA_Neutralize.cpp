@@ -92,7 +92,6 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
-		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Neutralize, GCParams);
 	}
 	else if (IsLocallyControlled()) // 데디 서버를 위한 예외처리입니다.
@@ -124,7 +123,6 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 				{
 					FGameplayCueParameters GCParams;
 					GCParams.SourceObject = SourceCharacter;
-					GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 					SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Common::Neutralize, GCParams);
 				}
 			}
