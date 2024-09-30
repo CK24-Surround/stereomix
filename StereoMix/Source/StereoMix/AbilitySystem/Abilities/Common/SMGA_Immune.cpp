@@ -42,7 +42,6 @@ void USMGA_Immune::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
-	GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 	SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Immune, GCParams);
 }
 

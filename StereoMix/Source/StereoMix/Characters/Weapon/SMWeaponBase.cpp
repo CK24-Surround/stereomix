@@ -12,7 +12,7 @@ ASMWeaponBase::ASMWeaponBase(const FObjectInitializer& ObjectInitializer)
 	bAlwaysRelevant = true;
 
 	SetActorEnableCollision(false);
-	
+
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 
@@ -22,4 +22,12 @@ ASMWeaponBase::ASMWeaponBase(const FObjectInitializer& ObjectInitializer)
 		WeaponMeshComponent->SetupAttachment(RootComponent);
 		WeaponMeshComponent->bReceivesDecals = false;
 	}
+}
+
+void ASMWeaponBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	OriginalMaterials = WeaponMeshComponent->GetMaterials();
+	OriginalOverlayMaterial = WeaponMeshComponent->GetOverlayMaterial();
 }

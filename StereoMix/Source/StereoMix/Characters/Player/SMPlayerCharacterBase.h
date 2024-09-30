@@ -174,6 +174,10 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSetNoteState(bool bNewIsNote);
 
+	TArray<UMaterialInterface*> GetOriginalMaterials() { return OriginalMaterials; }
+
+	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:

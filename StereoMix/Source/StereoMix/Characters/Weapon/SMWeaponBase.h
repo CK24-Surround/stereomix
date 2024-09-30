@@ -14,6 +14,8 @@ class STEREOMIX_API ASMWeaponBase : public AActor
 public:
 	ASMWeaponBase(const FObjectInitializer& ObjectInitializer);
 
+	virtual void PostInitializeComponents() override;
+
 	const static FName WeaponMeshComponentName;
 
 	UMeshComponent* GetWeaponMeshComponent() const { return WeaponMeshComponent; }
@@ -21,10 +23,20 @@ public:
 	template<typename T>
 	T* GetWeaponMeshComponent() const { return Cast<T>(GetWeaponMeshComponent()); }
 
+	TArray<UMaterialInterface*> GetOriginalMaterials() { return OriginalMaterials; }
+
+	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	TObjectPtr<USceneComponent> SceneComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Component")
 	TObjectPtr<UMeshComponent> WeaponMeshComponent;
+
+	UPROPERTY()
+	TArray<TObjectPtr<UMaterialInterface>> OriginalMaterials;
+
+	UPROPERTY()
+	TObjectPtr<UMaterialInterface> OriginalOverlayMaterial;
 };
