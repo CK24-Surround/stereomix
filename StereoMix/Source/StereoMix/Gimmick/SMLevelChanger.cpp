@@ -3,6 +3,7 @@
 #include "SMLevelChanger.h"
 
 #include "Engine/LevelStreaming.h"
+#include "EngineUtils.h"
 #include "NiagaraComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Obstacle/SMObstacleBase.h"
@@ -22,12 +23,19 @@ ASMLevelChanger::ASMLevelChanger()
 	NiagaraComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 }
 
+void ASMLevelChanger::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	ActiveNiagaraSystem = NiagaraComponent->GetAsset();
+	NiagaraComponent->SetAsset(nullptr);
+}
+
 void ASMLevelChanger::BeginPlay()
 {
 	Super::BeginPlay();
 
 	UWorld* World = GetWorld();
-
 	if (!HasAuthority() || !World)
 	{
 		return;
@@ -36,21 +44,13 @@ void ASMLevelChanger::BeginPlay()
 	SetRandomSubLevel();
 
 	FTimerHandle PreSpawnEffectTimerHandle;
-	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr = this;
+	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr(this);
 	World->GetTimerManager().SetTimer(PreSpawnEffectTimerHandle, [ThisWeakPtr] {
 		if (ThisWeakPtr.Get())
 		{
 			ThisWeakPtr->SetRandomSubLevel();
 		}
 	}, SwitchInterval, true);
-}
-
-void ASMLevelChanger::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	ActiveNiagaraSystem = NiagaraComponent->GetAsset();
-	NiagaraComponent->SetAsset(nullptr);
 }
 
 void ASMLevelChanger::MulticastShowActiveEffect_Implementation()
@@ -68,7 +68,7 @@ void ASMLevelChanger::SetRandomSubLevel()
 		SetLevelVisibility(CurrentSubLevel, true);
 		return;
 	}
-	
+
 	if (SubLevels.Num() > 1)
 	{
 		SetRandomSubLevel();
@@ -77,7 +77,8 @@ void ASMLevelChanger::SetRandomSubLevel()
 
 void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
 {
-	if (!HasAuthority() || LevelName.IsNone())
+	UWorld* World = GetWorld();
+	if (!HasAuthority() || LevelName.IsNone() || !World)
 	{
 		return;
 	}
@@ -86,53 +87,41 @@ void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
 
 	if (bVisibility)
 	{
-		if (UWorld* World = GetWorld())
-		{
-			UGameplayStatics::LoadStreamLevel(this, LevelName, true, true, FLatentActionInfo());
-
-			FTimerHandle TimerHandle;
-			World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, LevelName] {
-				if (ThisWeakPtr.Get())
-				{
-					ThisWeakPtr->SetLevelVisibility(LevelName, false);
-				}
-			}, LevelLifetime, false);
-		}
-
-		return;
-	}
-
-	if (UWorld* World = GetWorld())
-	{
-		float TimeToUnload = 0.0f;
-
-		TArray<AActor*> FoundActors;
-		UGameplayStatics::GetAllActorsOfClass(World, ASMObstacleBase::StaticClass(), FoundActors);
-		for (AActor* Actor : FoundActors)
-		{
-			if (Actor && Actor->GetLevel()->GetOuter()->GetFName() == LevelName)
-			{
-				if (ASMObstacleBase* Obstacle = Cast<ASMObstacleBase>(Actor))
-				{
-					TimeToUnload = FMath::Max(TimeToUnload, Obstacle->GetDestroyEffectDuration());
-					Obstacle->UnloadObstacle();
-				}
-			}
-		}
-
-		MulticastShowActiveEffect();
+		UGameplayStatics::LoadStreamLevel(this, LevelName, true, true, FLatentActionInfo());
 
 		FTimerHandle TimerHandle;
 		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, LevelName] {
 			if (ThisWeakPtr.Get())
 			{
-				UGameplayStatics::UnloadStreamLevel(ThisWeakPtr.Get(), LevelName, FLatentActionInfo(), true);
+				ThisWeakPtr->SetLevelVisibility(LevelName, false);
 			}
-		}, TimeToUnload, false);
+		}, LevelLifetime, false);
 
 		return;
 	}
 
+	float TimeToUnload = 0.0f;
+
+	for (AActor* Actor : TActorRange<ASMObstacleBase>(World))
+	{
+		ASMObstacleBase* Obstacle = Cast<ASMObstacleBase>(Actor);
+		ULevel* Level = Obstacle ? Obstacle->GetLevel() : nullptr;
+		UObject* Outer = Level ? Level->GetOuter() : nullptr;
+		FString ObstacleLevelName = GetNameSafe(Outer);
+		if (Obstacle && ObstacleLevelName == LevelName)
+		{
+			TimeToUnload = FMath::Max(TimeToUnload, Obstacle->GetDestroyEffectDuration());
+			Obstacle->UnloadObstacle();
+		}
+	}
+
 	MulticastShowActiveEffect();
-	UGameplayStatics::UnloadStreamLevel(this, LevelName, FLatentActionInfo(), true);
+
+	FTimerHandle TimerHandle;
+	World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, LevelName] {
+		if (ThisWeakPtr.Get())
+		{
+			UGameplayStatics::UnloadStreamLevel(ThisWeakPtr.Get(), LevelName, FLatentActionInfo(), true);
+		}
+	}, TimeToUnload, false);
 }

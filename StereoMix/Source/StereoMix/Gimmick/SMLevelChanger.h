@@ -19,10 +19,10 @@ public:
 	ASMLevelChanger();
 
 protected:
-	virtual void BeginPlay() override;
-
 	virtual void PostInitializeComponents() override;
 
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
 
