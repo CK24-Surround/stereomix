@@ -13,7 +13,7 @@
 ASMLevelChanger::ASMLevelChanger()
 {
 	bReplicates = true;
-	
+
 	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
 	RootComponent = SceneComponent;
 
@@ -118,7 +118,7 @@ void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
 		}
 
 		MulticastShowActiveEffect();
-		
+
 		FTimerHandle TimerHandle;
 		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, LevelName] {
 			if (ThisWeakPtr.Get())
@@ -126,7 +126,7 @@ void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
 				UGameplayStatics::UnloadStreamLevel(ThisWeakPtr.Get(), LevelName, FLatentActionInfo(), true);
 			}
 		}, TimeToUnload, false);
-		
+
 		return;
 	}
 

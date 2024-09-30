@@ -25,10 +25,10 @@ protected:
 
 	UFUNCTION(Server, Reliable)
 	void ServerSetLevelVisibility(FName LevelName, bool bVisible);
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 

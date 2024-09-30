@@ -55,7 +55,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.01"))
 	float SpawnEffectDuration = 0.01f;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.01"))
 	float DestroyEffectDuration = 0.01f;
 
@@ -64,7 +64,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UNiagaraSystem> SpawnEffect;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UNiagaraSystem> DestroyEffect;
 

@@ -87,7 +87,7 @@ void ASMFragileObstacle::UnloadObstacle()
 	{
 		return;
 	}
-	
+
 	Super::UnloadObstacle();
 }
 
