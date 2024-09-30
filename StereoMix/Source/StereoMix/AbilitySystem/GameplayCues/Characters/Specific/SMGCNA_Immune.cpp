@@ -75,10 +75,10 @@ bool ASMGCNA_Immune::OnRemove_Implementation(AActor* MyTarget, const FGameplayCu
 	UMaterialInterface* WeaponOriginalOverlayMaterial = SourceWeapon->GetOriginalOverlayMaterial();
 	for (int32 i = 0; i < SourceWeaponMesh->GetNumMaterials(); ++i)
 	{
-		SourceMesh->SetMaterial(i, WeaponOriginalMaterials[i]);
+		SourceWeaponMesh->SetMaterial(i, WeaponOriginalMaterials[i]);
 	}
 
-	SourceMesh->SetOverlayMaterial(WeaponOriginalOverlayMaterial);
+	SourceWeaponMesh->SetOverlayMaterial(WeaponOriginalOverlayMaterial);
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
