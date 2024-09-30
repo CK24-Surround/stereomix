@@ -21,14 +21,7 @@ ASMLevelChanger::ASMLevelChanger()
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
 	NiagaraComponent->SetupAttachment(RootComponent);
 	NiagaraComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-}
-
-void ASMLevelChanger::PostInitializeComponents()
-{
-	Super::PostInitializeComponents();
-
-	ActiveNiagaraSystem = NiagaraComponent->GetAsset();
-	NiagaraComponent->SetAsset(nullptr);
+	NiagaraComponent->SetAutoActivate(false);
 }
 
 void ASMLevelChanger::BeginPlay()
@@ -36,27 +29,29 @@ void ASMLevelChanger::BeginPlay()
 	Super::BeginPlay();
 
 	UWorld* World = GetWorld();
-	if (!HasAuthority() || !World)
+	if (!World)
 	{
 		return;
 	}
 
-	SetRandomSubLevel();
+	if (HasAuthority())
+	{
+		SetRandomSubLevel();
 
-	FTimerHandle PreSpawnEffectTimerHandle;
-	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr(this);
-	World->GetTimerManager().SetTimer(PreSpawnEffectTimerHandle, [ThisWeakPtr] {
-		if (ThisWeakPtr.Get())
-		{
-			ThisWeakPtr->SetRandomSubLevel();
-		}
-	}, SwitchInterval, true);
+		FTimerHandle TimerHandle;
+		TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr(this);
+		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr] {
+			if (ThisWeakPtr.Get())
+			{
+				ThisWeakPtr->SetRandomSubLevel();
+			}
+		}, SwitchInterval, true);
+	}
 }
 
 void ASMLevelChanger::MulticastShowActiveEffect_Implementation()
 {
-	NiagaraComponent->SetAsset(nullptr);
-	NiagaraComponent->SetAsset(ActiveNiagaraSystem);
+	NiagaraComponent->Activate(true);
 }
 
 void ASMLevelChanger::SetRandomSubLevel()

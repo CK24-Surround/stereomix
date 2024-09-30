@@ -19,8 +19,6 @@ public:
 	ASMLevelChanger();
 
 protected:
-	virtual void PostInitializeComponents() override;
-
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(VisibleAnywhere, Category = "Root")
@@ -28,9 +26,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Visual")
-	TObjectPtr<UNiagaraSystem> ActiveNiagaraSystem;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TArray<TObjectPtr<UWorld>> SubLevels;
