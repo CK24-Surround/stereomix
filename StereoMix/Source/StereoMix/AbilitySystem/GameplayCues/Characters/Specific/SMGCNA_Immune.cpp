@@ -3,9 +3,11 @@
 
 #include "SMGCNA_Immune.h"
 
+#include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Characters/Weapon/SMWeaponBase.h"
+#include "Utilities/SMLog.h"
 
 
 ASMGCNA_Immune::ASMGCNA_Immune()
@@ -30,6 +32,11 @@ bool ASMGCNA_Immune::OnActive_Implementation(AActor* MyTarget, const FGameplayCu
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
+	if (VFX.Find(SourceTeam))
+	{
+		VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], SourceCharacter->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
+	}
+
 	if (ImmuneMaterial.Find(SourceTeam) && ImmuneOverlayMaterial.Find(SourceTeam))
 	{
 		for (int32 i = 0; i < SourceMesh->GetNumMaterials(); ++i)
@@ -52,6 +59,13 @@ bool ASMGCNA_Immune::OnActive_Implementation(AActor* MyTarget, const FGameplayCu
 bool ASMGCNA_Immune::OnRemove_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
 	(void)Super::OnRemove_Implementation(MyTarget, Parameters);
+
+	if (VFXComponent)
+	{
+		VFXComponent->Deactivate();
+		VFXComponent->ReleaseToPool();
+		VFXComponent = nullptr;
+	}
 
 	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
 	USkeletalMeshComponent* SourceMesh = SourceCharacter ? SourceCharacter->GetMesh() : nullptr;
