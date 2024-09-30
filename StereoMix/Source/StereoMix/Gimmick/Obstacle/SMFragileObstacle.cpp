@@ -81,6 +81,16 @@ void ASMFragileObstacle::SetCollisionEnabled(bool bNewIsCollisionEnabled)
 	}
 }
 
+void ASMFragileObstacle::UnloadObstacle()
+{
+	if (CurrentDurability < 0.0f)
+	{
+		return;
+	}
+	
+	Super::UnloadObstacle();
+}
+
 void ASMFragileObstacle::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
 	SetLastAttacker(NewAttacker);

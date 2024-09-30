@@ -24,6 +24,10 @@ public:
 
 	virtual void SetCollisionEnabled(bool bNewIsCollisionEnabled);
 
+	virtual void UnloadObstacle();
+
+	FORCEINLINE float GetDestroyEffectDuration() const { return DestroyEffectDuration; }
+
 protected:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSetCollisionEnabled(bool bNewIsCollisionEnabled);
@@ -51,12 +55,18 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.01"))
 	float SpawnEffectDuration = 0.01f;
+	
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.01"))
+	float DestroyEffectDuration = 0.01f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UNiagaraSystem> PreSpawnEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UNiagaraSystem> SpawnEffect;
+	
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UNiagaraSystem> DestroyEffect;
 
 	UPROPERTY()
 	TObjectPtr<UStaticMesh> OriginalMesh;

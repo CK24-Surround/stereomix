@@ -110,6 +110,11 @@ void ASMObstacleBase::SetCollisionEnabled(bool bNewIsCollisionEnabled)
 	}
 }
 
+void ASMObstacleBase::UnloadObstacle()
+{
+	MulticastSetMeshAndNiagaraSystem(nullptr, DestroyEffect);
+}
+
 void ASMObstacleBase::MulticastSetCollisionEnabled_Implementation(bool bNewIsCollisionEnabled)
 {
 	SetCollisionEnabled(bNewIsCollisionEnabled);

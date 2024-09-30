@@ -51,6 +51,8 @@ public:
 
 	virtual void SetCollisionEnabled(bool bNewIsCollisionEnabled) override;
 
+	virtual void UnloadObstacle() override;
+
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 
 	virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttacker = NewAttacker; }
