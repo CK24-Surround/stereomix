@@ -40,7 +40,6 @@ bool ASMGCNA_Neutralize::OnActive_Implementation(AActor* MyTarget, const FGamepl
 
 	if (VFX.Find(SourceTeam))
 	{
-		NET_LOG(SourceCharacter, Warning, TEXT(""));
 		UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], SourceRoot, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::AutoRelease);
 	}
 
