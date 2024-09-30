@@ -10,7 +10,7 @@
 class UNiagaraSystem;
 class UNiagaraComponent;
 
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API ASMLevelChanger : public AActor
 {
 	GENERATED_BODY()
@@ -23,9 +23,6 @@ protected:
 
 	virtual void PostInitializeComponents() override;
 
-	UFUNCTION(Server, Reliable)
-	void ServerSetLevelVisibility(FName LevelName, bool bVisible);
-
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -36,10 +33,7 @@ protected:
 	TObjectPtr<UNiagaraSystem> ActiveNiagaraSystem;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	FName SubLevel1;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	FName SubLevel2;
+	TArray<TObjectPtr<UWorld>> SubLevels;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float SwitchInterval = 10.0f;
@@ -49,10 +43,10 @@ protected:
 
 	float TimeSinceLastSwitch = 0.0f;
 
-	uint8 bIsSubLevel1Active:1 = true;
+	FName CurrentSubLevel = NAME_None;
 
 private:
-	void SwitchLevels();
+	void SetRandomSubLevel();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastShowActiveEffect();

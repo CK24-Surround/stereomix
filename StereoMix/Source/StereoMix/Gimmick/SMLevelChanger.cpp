@@ -28,21 +28,19 @@ void ASMLevelChanger::BeginPlay()
 
 	UWorld* World = GetWorld();
 
-	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr = this;
-
 	if (!HasAuthority() || !World)
 	{
 		return;
 	}
 
-	// 시작할 때 첫 번째 서브 레벨을 활성화
-	ServerSetLevelVisibility(SubLevel1, true);
+	SetRandomSubLevel();
 
 	FTimerHandle PreSpawnEffectTimerHandle;
+	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr = this;
 	World->GetTimerManager().SetTimer(PreSpawnEffectTimerHandle, [ThisWeakPtr] {
 		if (ThisWeakPtr.Get())
 		{
-			ThisWeakPtr->SwitchLevels();
+			ThisWeakPtr->SetRandomSubLevel();
 		}
 	}, SwitchInterval, true);
 }
@@ -61,15 +59,20 @@ void ASMLevelChanger::MulticastShowActiveEffect_Implementation()
 	NiagaraComponent->SetAsset(ActiveNiagaraSystem);
 }
 
-void ASMLevelChanger::ServerSetLevelVisibility_Implementation(FName LevelName, bool bVisible)
+void ASMLevelChanger::SetRandomSubLevel()
 {
-	SetLevelVisibility(LevelName, true);
-}
-
-void ASMLevelChanger::SwitchLevels()
-{
-	bIsSubLevel1Active = !bIsSubLevel1Active;
-	ServerSetLevelVisibility(bIsSubLevel1Active ? SubLevel1 : SubLevel2, true);
+	TObjectPtr<UWorld> RandomSubLevel = SubLevels[FMath::RandRange(0, SubLevels.Num() - 1)];
+	if (CurrentSubLevel != RandomSubLevel->GetFName())
+	{
+		CurrentSubLevel = RandomSubLevel->GetFName();
+		SetLevelVisibility(CurrentSubLevel, true);
+		return;
+	}
+	
+	if (SubLevels.Num() > 1)
+	{
+		SetRandomSubLevel();
+	}
 }
 
 void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
