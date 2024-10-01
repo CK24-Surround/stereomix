@@ -179,7 +179,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	}
 
 	TileCapture();
-	ApplySplashForElectricGuitar();
+	PerformElectricGuitarBurstAttack();
 
 	SourceHIC->SetActorIAmHolding(nullptr);
 
@@ -237,79 +237,65 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크로 점령 시도한 타일 개수: %d"), CaptureTiles.Num());
 }
 
-void USMGA_ElectricGuitarNoiseBreak::ApplySplashForElectricGuitar()
+void USMGA_ElectricGuitarNoiseBreak::PerformElectricGuitarBurstAttack()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC();
-	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
+	if (!SourceCharacter || !SourceASC)
 	{
 		return;
 	}
 
-	TArray<AActor*> SplashHitActors = GetSplashHitActorsForElectricGuitar();
 	const FVector NoiseBreakDirection = (NoiseBreakTargetLocation - NoiseBreakStartLocation).GetSafeNormal();
 
-	for (AActor* SplashHitActor : SplashHitActors)
+	for (AActor* BurstHitActor : GetElectricGuitarBurstHitActors())
 	{
-		ISMDamageInterface* HitActorDamageInterface = Cast<ISMDamageInterface>(SplashHitActor);
-		if (!HitActorDamageInterface)
+		ISMDamageInterface* BurstHitActorDamageInterface = Cast<ISMDamageInterface>(BurstHitActor);
+		if (!BurstHitActorDamageInterface || BurstHitActorDamageInterface->CanIgnoreAttack())
 		{
 			continue;
 		}
 
-		HitActorDamageInterface->ReceiveDamage(SourceCharacter, Damage);
+		if (USMTeamBlueprintLibrary::IsSameTeam(SourceCharacter, BurstHitActor))
+		{
+			continue;
+		}
+
+		BurstHitActorDamageInterface->ReceiveDamage(SourceCharacter, Damage);
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Normal = NoiseBreakDirection;
-		GCParams.TargetAttachComponent = SplashHitActor->GetRootComponent();
+		GCParams.TargetAttachComponent = BurstHitActor->GetRootComponent();
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakBurstHit, GCParams);
 	}
 }
 
-TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetSplashHitActorsForElectricGuitar()
+TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetElectricGuitarBurstHitActors()
 {
 	TArray<AActor*> Results;
 
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	if (!SourceCharacter)
+	TArray<FOverlapResult> OverlapResults;
+	const FVector CapsuleCenterLocation = (NoiseBreakStartLocation + NoiseBreakTargetLocation) / 2.0f;
+
+	const FVector CapsuleDirection = (NoiseBreakTargetLocation - NoiseBreakStartLocation).GetSafeNormal();
+	const FRotator CapsuleRotation = CapsuleDirection.Rotation() + FRotator(90.0, 0.0, 0.0);
+	const FQuat CapsuleQuat = CapsuleRotation.Quaternion();
+
+	const float Radius = USMTileFunctionLibrary::DefaultTileSize;
+	const float CapsuleHalfHeight = (FVector::Dist(NoiseBreakStartLocation, NoiseBreakTargetLocation) / 2.0f) + Radius;
+	const FCollisionShape CapsuleCollider = FCollisionShape::MakeCapsule(Radius, CapsuleHalfHeight);
+
+	if (!GetWorld()->OverlapMultiByChannel(OverlapResults, CapsuleCenterLocation, CapsuleQuat, SMCollisionTraceChannel::Action, CapsuleCollider))
 	{
 		return Results;
 	}
 
-	TArray<FOverlapResult> OverlapResults;
-	const FVector CapsuleLocation = (NoiseBreakStartLocation + NoiseBreakTargetLocation) / 2.0f;
-	const FVector CapsuleDirection = (NoiseBreakTargetLocation - NoiseBreakStartLocation).GetSafeNormal();
-	const FRotator CapsuleRotation = CapsuleDirection.Rotation() + FRotator(90.0, 0.0, 0.0);
-	const FQuat CapsuleQuat = CapsuleRotation.Quaternion();
-	const float Radius = USMTileFunctionLibrary::DefaultTileSize;
-	const float CapsuleHalfHeight = (FVector::Dist(NoiseBreakStartLocation, NoiseBreakTargetLocation) / 2.0f) + Radius;
-	const FCollisionShape CapsuleCollider = FCollisionShape::MakeCapsule(Radius, CapsuleHalfHeight);
-	if (GetWorld()->OverlapMultiByChannel(OverlapResults, CapsuleLocation, CapsuleQuat, SMCollisionTraceChannel::Action, CapsuleCollider))
+	for (FOverlapResult& OverlapResult : OverlapResults)
 	{
-		for (const FOverlapResult& OverlapResult : OverlapResults)
+		if (AActor* BurstHitActor = OverlapResult.GetActor())
 		{
-			AActor* SplashHitActor = OverlapResult.GetActor();
-			if (SplashHitActor)
-			{
-				const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-				const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(SplashHitActor);
-				if (SourceTeam == TargetTeam)
-				{
-					continue;
-				}
-
-				if (UAbilitySystemComponent* SplashHitActorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SplashHitActor))
-				{
-					if (SplashHitActorASC->HasAnyMatchingGameplayTags(NoSplashEffectTags))
-					{
-						continue;
-					}
-				}
-
-				Results.Add(SplashHitActor);
-			}
+			Results.Add(BurstHitActor);
 		}
 	}
 

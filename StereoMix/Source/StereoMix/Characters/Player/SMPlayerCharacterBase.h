@@ -6,6 +6,7 @@
 #include "AbilitySystemInterface.h"
 #include "GameplayTagContainer.h"
 #include "InputActionValue.h"
+#include "AbilitySystem/SMTags.h"
 #include "Characters/SMCharacterBase.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Data/SMActiveAbility.h"
@@ -132,6 +133,8 @@ public:
 	virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttacker = NewAttacker; }
 
 	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
+
+	virtual bool CanIgnoreAttack() const override;
 
 	virtual bool IsObstacle() override { return false; }
 
@@ -273,6 +276,10 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMHIC_Character> HIC;
+
+	/** 공격을 무시하는 태그들입니다. */
+	UPROPERTY(EditAnywhere, Category = "Desing|GAS|Tag")
+	FGameplayTagContainer IgnoreAttackTags;
 
 	UPROPERTY(EditAnywhere, Category = "Design|GAS|Tag")
 	FGameplayTagContainer LockAimTags;

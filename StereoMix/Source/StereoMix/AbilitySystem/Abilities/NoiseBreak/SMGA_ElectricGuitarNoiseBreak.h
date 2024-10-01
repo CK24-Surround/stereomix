@@ -35,9 +35,11 @@ protected:
 
 	void TileCapture();
 
-	void ApplySplashForElectricGuitar();
+	/** 일렉기타용으로 커스텀한 버스트 공격 수행입니다. */
+	void PerformElectricGuitarBurstAttack();
 
-	TArray<AActor*> GetSplashHitActorsForElectricGuitar();
+	/** 일렉기타용으로 커스텀한 버스트 적중 액터 반환 함수입니다. */
+	TArray<AActor*> GetElectricGuitarBurstHitActors();
 
 	UFUNCTION()
 	void SyncPointNoiseBreakEnded();

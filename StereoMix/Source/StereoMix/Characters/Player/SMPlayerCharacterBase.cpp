@@ -112,6 +112,12 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	HIC->OnHoldStateEnrty.AddUObject(this, &ThisClass::OnHoldStateEntry);
 	HIC->OnHoldStateExit.AddUObject(this, &ThisClass::OnHoldStateExit);
 
+	IgnoreAttackTags.AddTag(SMTags::Character::State::Holded);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::Neutralize);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::Immune);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::NoiseBreak);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::NoiseBreaked);
+
 	LockAimTags.AddTag(SMTags::Character::State::Holded);
 	LockAimTags.AddTag(SMTags::Character::State::NoiseBreak);
 	LockAimTags.AddTag(SMTags::Character::State::NoiseBreaked);
@@ -497,6 +503,16 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 	GCParams.SourceObject = this;
 	GCParams.TargetAttachComponent = GetMesh();
 	ASC->ExecuteGC(this, SMTags::GameplayCue::Common::HitFlash, GCParams);
+}
+
+bool ASMPlayerCharacterBase::CanIgnoreAttack() const
+{
+	if (!ASC.Get())
+	{
+		return false;
+	}
+
+	return ASC->HasAnyMatchingGameplayTags(IgnoreAttackTags);
 }
 
 void ASMPlayerCharacterBase::Landed(const FHitResult& Hit)

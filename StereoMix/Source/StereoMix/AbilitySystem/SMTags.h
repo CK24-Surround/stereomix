@@ -89,7 +89,6 @@ namespace SMTags
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smash);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SmashEnd);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ChargeEndEntry);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(PianoNoiseBreakShoot);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakEnd);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletShoot);
@@ -101,6 +100,7 @@ namespace SMTags
 
 			namespace Bass
 			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(ChargeFail);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakWeaponTrailActivate);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakWeaponTrailDeactivate);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakSlash);

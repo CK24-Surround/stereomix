@@ -19,6 +19,11 @@ ESMTeam USMTeamBlueprintLibrary::GetTeam(const AActor* SourceActor)
 	return Team;
 }
 
+bool USMTeamBlueprintLibrary::IsSameTeam(const AActor* lhs, const AActor* rhs)
+{
+	return GetTeam(lhs) == GetTeam(rhs);
+}
+
 ESMLocalTeam USMTeamBlueprintLibrary::GetLocalTeam(AActor* SourceActor)
 {
 	ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(SourceActor);
@@ -49,7 +54,7 @@ ESMLocalTeam USMTeamBlueprintLibrary::GetLocalTeam(AActor* SourceActor)
 	return ESMLocalTeam::Equal;
 }
 
-bool USMTeamBlueprintLibrary::IsSameTeam(AActor* SourceActor)
+bool USMTeamBlueprintLibrary::IsSameLocalTeam(AActor* SourceActor)
 {
 	const ESMLocalTeam LocalTeam = GetLocalTeam(SourceActor);
 	return LocalTeam == ESMLocalTeam::Equal;

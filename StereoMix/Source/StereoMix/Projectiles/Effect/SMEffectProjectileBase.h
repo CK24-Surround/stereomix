@@ -11,13 +11,10 @@ class STEREOMIX_API ASMEffectProjectileBase : public ASMProjectile
 {
 	GENERATED_BODY()
 
-public:
-	ASMEffectProjectileBase();
-
 protected:
 	virtual void PreLaunch(const FSMProjectileParameters& InParameters) override;
 
-	virtual bool IsValidateTarget(AActor* InTarget) override;
+	virtual bool IsValidTarget(AActor* InTarget) override;
 
 	/** 오버렙 판정 발생 시 호출됩니다. 보통 플레이어와 충돌할때 호출됩니다.*/
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;

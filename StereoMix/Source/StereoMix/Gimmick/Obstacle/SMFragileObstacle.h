@@ -59,6 +59,8 @@ public:
 
 	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
 
+	virtual bool CanIgnoreAttack() const override { return false; }
+
 	virtual bool IsObstacle() override { return true; }
 
 protected:

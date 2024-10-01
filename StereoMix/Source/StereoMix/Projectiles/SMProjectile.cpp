@@ -159,21 +159,11 @@ void ASMProjectile::ReturnToPoolIfOutOfMaxDistance()
 	}
 }
 
-bool ASMProjectile::IsValidateTarget(AActor* InTarget)
+bool ASMProjectile::IsValidTarget(AActor* InTarget)
 {
 	if (InTarget == GetOwner())
 	{
 		return false;
-	}
-
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(InTarget);
-	if (TargetASC)
-	{
-		// 타겟이 되지 않아야하는 상태라면 무시합니다.
-		if (TargetASC->HasAnyMatchingGameplayTags(IgnoreTargetStateTags))
-		{
-			return false;
-		}
 	}
 
 	return true;

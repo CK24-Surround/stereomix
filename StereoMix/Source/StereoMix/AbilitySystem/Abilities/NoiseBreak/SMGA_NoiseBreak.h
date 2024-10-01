@@ -27,11 +27,13 @@ protected:
 	bool IsValidTarget() const;
 
 	/**
-	 * 스플래시 데미지를 적용할때 호출합니다.
+	 * 버스트 공격을 수행합니다.
 	 * @param GCTag 히트 이펙트에 사용할 게임플레이 큐 태그
 	 */
-	virtual void ApplySplash(const FVector& TargetLocation, const FGameplayTag& GCTag);
-	
+	virtual void PerformBurstAttack(const FVector& TargetLocation, const FGameplayTag& GCTag);
+
+	virtual TArray<AActor*> GetBurstHitActors(const FVector& TargetLocation);
+
 	/** 해당 위치의 타일을 가져옵니다. */
 	ASMTile* GetTileFromLocation(const FVector& Location);
 
@@ -43,12 +45,4 @@ protected:
 
 	/** 타일기준 최대 사거리를 나타냅니다. */
 	float MaxDistanceByTile = 0.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
-	FGameplayTagContainer NoSplashEffectTags;
-
-private:
-	TArray<AActor*> GetSplashHitActors(const FVector& TargetLocation);
-
-	bool CanApplySplashDamage(AActor* TargetActor);
 };

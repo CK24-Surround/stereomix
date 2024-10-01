@@ -22,19 +22,18 @@ public:
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
+	
 	void OnChargeBlocked(AActor* TargetActor);
-
-	UFUNCTION()
-	void OnChargeEndEntry(FGameplayEventData Payload);
-
-	UFUNCTION()
-	void OnChargeEnded();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRequestEffect(AActor* TargetActor);
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	FGameplayTagContainer ChargeHitIgnoreTags;
+	UFUNCTION()
+	void OnChargeFailed(FGameplayEventData Payload);
+
+	UFUNCTION()
+	void OnChargeEndedSyncPoint();
 
 	/** 돌진 시 초당 회전 각입니다.*/
 	UPROPERTY(EditAnywhere, Category = "Design")

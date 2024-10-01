@@ -4,9 +4,7 @@
 #include "SMAT_ColliderOrientationForSlash.h"
 
 #include "Engine/OverlapResult.h"
-#include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/Attack/SMGA_Slash.h"
 #include "Characters/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
@@ -16,9 +14,6 @@
 USMAT_ColliderOrientationForSlash::USMAT_ColliderOrientationForSlash()
 {
 	bTickingTask = true;
-
-	InvalidTargetTag.AddTag(SMTags::Character::State::Immune);
-	InvalidTargetTag.AddTag(SMTags::Character::State::Neutralize);
 }
 
 USMAT_ColliderOrientationForSlash* USMAT_ColliderOrientationForSlash::ColliderOrientationForSlash(UGameplayAbility* OwningAbility, float Range, float Angle, float TotalSlashTime, bool bShowDebug)
@@ -161,56 +156,26 @@ void USMAT_ColliderOrientationForSlash::BeginOnOverlaped(UPrimitiveComponent* Ov
 
 void USMAT_ColliderOrientationForSlash::HandleHit(AActor* OtherActor)
 {
-	if (OtherActor == SourceCharacter)
-	{
-		return;
-	}
-
-	if (!IsValidTarget(OtherActor))
-	{
-		return;
-	}
-
-	// 이미 이번 베기에 감지된 타겟은 다시 처리되면 안 됩니다. 이를 방지하고자 작성된 코드입니다. 
-	if (DetectedActors.Find(OtherActor) == INDEX_NONE)
-	{
-		DetectedActors.Push(OtherActor);
-
-		if (ShouldBroadcastAbilityTaskDelegates())
-		{
-			(void)OnSlashHit.ExecuteIfBound(OtherActor);
-		}
-	}
-}
-
-bool USMAT_ColliderOrientationForSlash::IsValidTarget(AActor* OtherActor)
-{
-	if (!OtherActor)
-	{
-		return false;
-	}
-
 	ISMDamageInterface* OtherActorDamageInterface = Cast<ISMDamageInterface>(OtherActor);
-	if (!OtherActorDamageInterface)
+	if (!OtherActorDamageInterface || OtherActorDamageInterface->CanIgnoreAttack())
 	{
-		return false;
+		return;
 	}
 
-	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(SourceCharacter.Get());
-	const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(OtherActor);
-	if (SourceTeam == TargetTeam)
+	if (USMTeamBlueprintLibrary::IsSameTeam(SourceCharacter.Get(), OtherActor))
 	{
-		return false;
+		return;
 	}
 
-	// 대상이 면역상태라면 무시합니다.
-	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	if (DetectedActors.Find(OtherActor) != INDEX_NONE) // 이미 이번 베기에 포함된 타겟은 다시 처리되면 안 됩니다. 이를 방지하고자 작성된 코드입니다. 
 	{
-		if (TargetASC->HasAnyMatchingGameplayTags(InvalidTargetTag))
-		{
-			return false;
-		}
+		return;
 	}
 
-	return true;
+	DetectedActors.Push(OtherActor);
+
+	if (ShouldBroadcastAbilityTaskDelegates())
+	{
+		(void)OnSlashHit.ExecuteIfBound(OtherActor);
+	}
 }

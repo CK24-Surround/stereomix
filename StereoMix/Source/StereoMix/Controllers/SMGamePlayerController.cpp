@@ -249,7 +249,7 @@ void ASMGamePlayerController::AddScreendIndicator(AActor* TargetActor)
 	}
 
 	// 같은 팀인 경우 인디케이터를 생성하지 않습니다.
-	if (USMTeamBlueprintLibrary::IsSameTeam(TargetActor))
+	if (USMTeamBlueprintLibrary::IsSameLocalTeam(TargetActor))
 	{
 		return;
 	}

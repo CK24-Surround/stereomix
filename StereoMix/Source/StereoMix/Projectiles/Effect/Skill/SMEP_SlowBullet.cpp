@@ -75,28 +75,21 @@ void ASMEP_SlowBullet::PlayWallHitFX(const FVector& HitLocation)
 
 void ASMEP_SlowBullet::ApplySlowEffect(AActor* TargetActor)
 {
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (!TargetASC)
-	{
-		return;
-	}
-
 	// 대상이 캐릭터면 디버프를 적용합니다.
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	if (TargetCharacter)
+	if (ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor))
 	{
 		TargetCharacter->ClientRPCAddMoveSpeed(SlowDebuffMultiplier, SlowDebuffDuration);
-	}
 
-	// 디버프 VFX를 적용합니다. 이 이펙트는 스스로 종료됩니다.
-	AActor* SourceActor = GetOwner();
-	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-	if (SourceASC)
-	{
-		FGameplayCueParameters GCParams;
-		GCParams.RawMagnitude = SlowDebuffDuration;
-		GCParams.TargetAttachComponent = TargetActor->GetRootComponent();
-		SourceASC->AddGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::SlowBulletDebuff, GCParams);
+		// 디버프 VFX를 적용합니다. 이 이펙트는 스스로 종료됩니다.
+		AActor* SourceActor = GetOwner();
+		USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
+		if (SourceASC)
+		{
+			FGameplayCueParameters GCParams;
+			GCParams.RawMagnitude = SlowDebuffDuration;
+			GCParams.TargetAttachComponent = TargetActor->GetRootComponent();
+			SourceASC->AddGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::SlowBulletDebuff, GCParams);
+		}
 	}
 
 	NET_LOG(this, Log, TEXT("%s에게 마비탄 적중"), *GetNameSafe(TargetActor));

@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
@@ -24,12 +25,6 @@ USMGA_Charge::USMGA_Charge()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Charge);
-
-	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::Neutralize);
-	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::NoiseBreak);
-	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::NoiseBreaked);
-	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::Charge);
-	ChargeHitIgnoreTags.AddTag(SMTags::Character::State::Immune);
 
 	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Bass))
 	{
@@ -58,10 +53,10 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	const FName TaskName = TEXT("ChargeMontage");
 	UAnimMontage* ChargeMontage = SourceDataAsset->SkillMontage[SourceCharacter->GetTeam()];
 	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TaskName, ChargeMontage);
-	MontageTask->OnCancelled.AddDynamic(this, &ThisClass::OnChargeEnded);
-	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::OnChargeEnded);
-	MontageTask->OnBlendOut.AddDynamic(this, &ThisClass::OnChargeEnded);
-	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnChargeEnded);
+	MontageTask->OnCancelled.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
+	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
+	MontageTask->OnBlendOut.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
+	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
 	MontageTask->ReadyForActivation();
 
 	OriginalCapsuleCollisionProfileName = SourceCapsule->GetCollisionProfileName();
@@ -72,7 +67,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	if (IsLocallyControlled())
 	{
-		USMAT_WaitChargeBlocked* ChargeBlockedTask = USMAT_WaitChargeBlocked::WaitChargeBlocked(this, ChargeHitIgnoreTags);
+		USMAT_WaitChargeBlocked* ChargeBlockedTask = USMAT_WaitChargeBlocked::WaitChargeBlocked(this);
 		ChargeBlockedTask->OnChargeBlocked.BindUObject(this, &ThisClass::OnChargeBlocked);
 		ChargeBlockedTask->ReadyForActivation();
 
@@ -81,8 +76,8 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		AdjustableDashTask->ReadyForActivation();
 
 		// 박지 않고 끝나더라도 이펙트를 종료할 수 있도록 이벤트를 받습니다.
-		UAbilityTask_WaitGameplayEvent* ChargeEndEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::ChargeEndEntry);
-		ChargeEndEventTask->EventReceived.AddDynamic(this, &ThisClass::OnChargeEndEntry);
+		UAbilityTask_WaitGameplayEvent* ChargeEndEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Bass::ChargeFail);
+		ChargeEndEventTask->EventReceived.AddDynamic(this, &ThisClass::OnChargeFailed);
 		ChargeEndEventTask->ReadyForActivation();
 
 		FGameplayCueParameters GCParams;
@@ -94,39 +89,93 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	}
 }
 
+void USMGA_Charge::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
+
+	if (UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr)
+	{
+		SourceCapsule->SetCollisionProfileName(OriginalCapsuleCollisionProfileName);
+	}
+
+	if (UBoxComponent* SourceChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr)
+	{
+		SourceChargeCollider->SetCollisionProfileName(OriginalChargeCollisionProfileName);
+	}
+
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
 void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
 	USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
 	}
 
+	NET_LOG(GetAvatarActor(), Log, TEXT("돌진에 적중된 대상: %s"), *GetNameSafe(TargetActor));
+
 	const FName SectionName = TEXT("End");
 	MontageJumpToSection(SectionName);
 
-	NET_LOG(GetAvatarActor(), Log, TEXT("돌진에 적중된 대상: %s"), *GetNameSafe(TargetActor));
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	if (TargetASC)
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
+	if (TargetDamageInterface && !TargetDamageInterface->CanIgnoreAttack())
 	{
 		ServerRequestEffect(TargetActor);
+
+		FGameplayCueParameters ChargeHitGCParams;
+		ChargeHitGCParams.SourceObject = SourceCharacter;
+		ChargeHitGCParams.TargetAttachComponent = TargetActor->GetRootComponent();
+		ChargeHitGCParams.Normal = SourceCharacter->GetActorRotation().Vector();
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::ChargeHit, ChargeHitGCParams);
+	}
+	else
+	{
+		if (UBoxComponent* ChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr)
+		{
+			FGameplayCueParameters ChargeHitGCParams;
+			ChargeHitGCParams.SourceObject = SourceCharacter;
+			ChargeHitGCParams.Location = ChargeCollider->GetComponentLocation();
+			ChargeHitGCParams.Normal = ChargeCollider->GetComponentRotation().Vector();
+			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::ChargeHit, ChargeHitGCParams);
+		}
 	}
 
 	FGameplayCueParameters ChargeGCParams;
 	ChargeGCParams.SourceObject = SourceCharacter;
 	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, ChargeGCParams);
-
-	FGameplayCueParameters ChargeHitGCParams;
-	ChargeHitGCParams.SourceObject = SourceCharacter;
-	ChargeHitGCParams.TargetAttachComponent = TargetActor->GetRootComponent();
-	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::ChargeHit, ChargeHitGCParams);
 }
 
-void USMGA_Charge::OnChargeEndEntry(FGameplayEventData Payload)
+
+void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	if (!SourceCharacter)
+	{
+		return;
+	}
+
+	// 이미 태스크에서 한번 거르는 작업을 했지만 지연시간 등의 이유로 스턴에 걸리면 안되는 상태에 진입할 수 있습니다. 이를 다시한번 필터링합니다.
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
+	if (!TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
+	{
+		return;
+	}
+
+	TargetDamageInterface->ReceiveDamage(SourceCharacter, Damage);
+
+	FGameplayEventData EventData;
+	EventData.Instigator = SourceCharacter;
+	EventData.EventMagnitude = StunTime;
+	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, SMTags::Event::Character::Stun, EventData);
+}
+
+void USMGA_Charge::OnChargeFailed(FGameplayEventData Payload)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
@@ -137,48 +186,9 @@ void USMGA_Charge::OnChargeEndEntry(FGameplayEventData Payload)
 	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, GCParams);
 }
 
-void USMGA_Charge::OnChargeEnded()
+void USMGA_Charge::OnChargeEndedSyncPoint()
 {
-	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-	UBoxComponent* SourceChargeCollider = SourceCharacter->GetChargeColliderComponent();
-	if (!SourceCharacter || !SourceCapsule || !SourceChargeCollider)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	SourceCapsule->SetCollisionProfileName(OriginalCapsuleCollisionProfileName);
-	SourceChargeCollider->SetCollisionProfileName(OriginalChargeCollisionProfileName);
-
-	K2_EndAbilityLocally();
-}
-
-void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !TargetASC || !SourceDataAsset)
-	{
-		return;
-	}
-
-	// 이미 태스크에서 한번 거르는 작업을 했지만 지연시간 등의 이유로 스턴에 걸리면 안되는 상태에 진입할 수 있습니다. 이를 다시한번 걸러줍니다.
-	if (TargetASC->HasAnyMatchingGameplayTags(ChargeHitIgnoreTags))
-	{
-		return;
-	}
-
-	FGameplayEventData EventData;
-	EventData.Instigator = SourceCharacter;
-	EventData.EventMagnitude = StunTime;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, SMTags::Event::Character::Stun, EventData);
-
-	FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
-	if (GESpecHandle.IsValid())
-	{
-		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
-		TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
-	}
+	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
+	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
+	SyncTask->ReadyForActivation();
 }

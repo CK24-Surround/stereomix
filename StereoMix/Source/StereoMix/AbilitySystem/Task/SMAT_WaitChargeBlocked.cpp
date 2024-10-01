@@ -11,33 +11,24 @@
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
-USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility, const FGameplayTagContainer& IgnoreTags)
+USMAT_WaitChargeBlocked* USMAT_WaitChargeBlocked::WaitChargeBlocked(UGameplayAbility* OwningAbility)
 {
 	USMAT_WaitChargeBlocked* MyObj = NewAbilityTask<USMAT_WaitChargeBlocked>(OwningAbility);
 	MyObj->SourceCharacter = Cast<ASMBassCharacter>(OwningAbility->GetAvatarActorFromActorInfo());
-	MyObj->ChargeIgnoreTags = IgnoreTags;
 	return MyObj;
 }
 
 void USMAT_WaitChargeBlocked::Activate()
 {
-	if (SourceCharacter.Get())
+	UBoxComponent* ChargeCollider = SourceCharacter.Get() ? SourceCharacter->GetChargeColliderComponent() : nullptr;
+	UCapsuleComponent* CapsuleComponent = SourceCharacter.Get() ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	if (!ChargeCollider || !CapsuleComponent)
 	{
-		UCapsuleComponent* SourceCapsuleComponent = SourceCharacter->GetCapsuleComponent();
-		if (!SourceCapsuleComponent)
-		{
-			return;
-		}
-
-		UBoxComponent* SourceChargeCollider = SourceCharacter->GetChargeColliderComponent();
-		if (!SourceChargeCollider)
-		{
-			return;
-		}
-
-		SourceChargeCollider->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnChargeOverlappedCallback);
-		SourceCapsuleComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnChargeBlockedCallback);
+		return;
 	}
+
+	ChargeCollider->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::OnChargeOverlappedCallback);
+	CapsuleComponent->OnComponentHit.AddDynamic(this, &ThisClass::OnChargeBlockedCallback);
 }
 
 void USMAT_WaitChargeBlocked::OnDestroy(bool bInOwnerFinished)
@@ -49,28 +40,25 @@ void USMAT_WaitChargeBlocked::OnDestroy(bool bInOwnerFinished)
 
 void USMAT_WaitChargeBlocked::OnChargeOverlappedCallback(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (!SourceCharacter.Get())
+	if (!SourceCharacter.Get() || !OtherActor)
 	{
 		return;
 	}
 
-	if (!OtherActor)
+	if (USMTeamBlueprintLibrary::IsSameTeam(SourceCharacter.Get(), OtherActor))
 	{
 		return;
 	}
 
-	ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(SourceCharacter.Get());
-	ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(OtherActor);
-
-	if (SourceTeam == TargetTeam)
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(OtherActor);
+	if (!TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
 	{
 		return;
 	}
-
 
 	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
-		if (TargetASC->HasAnyMatchingGameplayTags(ChargeIgnoreTags))
+		if (TargetASC->HasMatchingGameplayTag(SMTags::Character::State::Charge)) // 만약 상대도 돌진중이라면 그대로 지나갑니다.
 		{
 			return;
 		}

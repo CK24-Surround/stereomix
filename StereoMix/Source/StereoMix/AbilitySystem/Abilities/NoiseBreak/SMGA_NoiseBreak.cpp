@@ -22,9 +22,6 @@ USMGA_NoiseBreak::USMGA_NoiseBreak()
 	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Hold);
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
-
-	NoSplashEffectTags.AddTag(SMTags::Character::State::Neutralize);
-	NoSplashEffectTags.AddTag(SMTags::Character::State::Immune);
 }
 
 bool USMGA_NoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
@@ -82,36 +79,39 @@ bool USMGA_NoiseBreak::IsValidTarget() const
 	return true;
 }
 
-void USMGA_NoiseBreak::ApplySplash(const FVector& TargetLocation, const FGameplayTag& GCTag)
+void USMGA_NoiseBreak::PerformBurstAttack(const FVector& TargetLocation, const FGameplayTag& GCTag)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC();
-	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	ASMTile* Tile = GetTileFromLocation(TargetLocation);
-	if (!SourceCharacter || !SourceASC || !SourceDataAsset || !Tile)
+	if (!SourceCharacter || !SourceASC || !Tile)
 	{
 		return;
 	}
 
 	const FVector TileLocation = Tile->GetTileLocation();
-	TArray<AActor*> SplashHitActors = GetSplashHitActors(TileLocation);
-	for (AActor* SplashHitActor : SplashHitActors)
+	for (AActor* BurstHitActor : GetBurstHitActors(TileLocation))
 	{
-		ISMDamageInterface* HitActorDamageInterface = Cast<ISMDamageInterface>(SplashHitActor);
-		if (!HitActorDamageInterface)
+		ISMDamageInterface* HitActorDamageInterface = Cast<ISMDamageInterface>(BurstHitActor);
+		if (!HitActorDamageInterface || HitActorDamageInterface->CanIgnoreAttack())
+		{
+			continue;
+		}
+
+		if (USMTeamBlueprintLibrary::IsSameTeam(SourceCharacter, BurstHitActor))
 		{
 			continue;
 		}
 
 		HitActorDamageInterface->ReceiveDamage(SourceCharacter, Damage);
 
-		const FVector SplashHitActorLocation = SplashHitActor->GetActorLocation();
+		const FVector SplashHitActorLocation = BurstHitActor->GetActorLocation();
 		const FVector NoiseBreakPointToSplashHitActorDirection = (SplashHitActorLocation - TileLocation).GetSafeNormal();
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Normal = NoiseBreakPointToSplashHitActorDirection;
-		GCParams.TargetAttachComponent = SplashHitActor->GetRootComponent();
+		GCParams.TargetAttachComponent = BurstHitActor->GetRootComponent();
 		SourceASC->ExecuteGC(SourceCharacter, GCTag, GCParams);
 	}
 }
@@ -129,7 +129,7 @@ ASMTile* USMGA_NoiseBreak::GetTileFromLocation(const FVector& Location)
 	const FVector EndLocation = StartLocation + FVector::DownVector * 1000.0;
 	if (!GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, SMCollisionTraceChannel::TileAction))
 	{
-		// 만약 실패하면 타일의 2배 사이즈 크기의 원으로 다시 타일을 찾습니다. 이번에도 실패하면 nullptr을 반환합니다.
+		// 만약 실패하면 타일의 2배 사이즈 크기의 원으로 스윕해 다시 타일을 찾습니다. 이번에도 실패하면 nullptr을 반환합니다.
 		HitResult = FHitResult();
 		const FCollisionShape Sphere = FCollisionShape::MakeSphere(USMTileFunctionLibrary::DefaultTileSize);
 		if (!GetWorld()->SweepSingleByChannel(HitResult, StartLocation, EndLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, Sphere))
@@ -141,7 +141,7 @@ ASMTile* USMGA_NoiseBreak::GetTileFromLocation(const FVector& Location)
 	return Cast<ASMTile>(HitResult.GetActor());
 }
 
-TArray<AActor*> USMGA_NoiseBreak::GetSplashHitActors(const FVector& TargetLocation)
+TArray<AActor*> USMGA_NoiseBreak::GetBurstHitActors(const FVector& TargetLocation)
 {
 	TArray<AActor*> TargetActors;
 
@@ -167,38 +167,11 @@ TArray<AActor*> USMGA_NoiseBreak::GetSplashHitActors(const FVector& TargetLocati
 
 	for (const FOverlapResult& OverlapResult : OverlapResults)
 	{
-		AActor* OverlapActor = OverlapResult.GetActor();
-		if (CanApplySplashDamage(OverlapActor))
+		if (AActor* OverlapActor = OverlapResult.GetActor())
 		{
 			TargetActors.Add(OverlapActor);
 		}
 	}
 
 	return TargetActors;
-}
-
-bool USMGA_NoiseBreak::CanApplySplashDamage(AActor* TargetActor)
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	if (!SourceCharacter)
-	{
-		return false;
-	}
-
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(TargetActor);
-	if (SourceTeam == TargetTeam)
-	{
-		return false;
-	}
-
-	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor))
-	{
-		if (TargetASC->HasAnyMatchingGameplayTags(NoSplashEffectTags))
-		{
-			return false;
-		}
-	}
-
-	return true;
 }

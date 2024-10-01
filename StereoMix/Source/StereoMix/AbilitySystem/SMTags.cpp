@@ -88,7 +88,6 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Event.AnimNotify.Hold", "잡기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "Event.AnimNotify.Smash", "매치기 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashEnd, "Event.AnimNotify.SmashEnd", "매치기 종료 애님 노티파이의 이벤트로 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ChargeEndEntry, "Event.AnimNotify.ChargeEndEntry", "돌격 종료 애니메이션 진입 시 알리는 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(PianoNoiseBreakShoot, "Event.AnimNotify.PianoNoiseBreakShoot", "피아노의 노이즈 브레이크 발사 시점을 알리는 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakEnd, "Event.AnimNotify.NoiseBreakEnd", "노이즈브레이크 종료 애님 노티파이의 이벤트로 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletShoot, "Event.AnimNotify.SlowBulletShoot", "마비탄 발사 애님 노티파이의 이벤트로 사용됩니다.");
@@ -100,6 +99,7 @@ namespace SMTags
 
 			namespace Bass
 			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(ChargeFail, "Event.AnimNotify.Bass.ChargeFail", "돌진 실패 노티파이의 이벤트로 사용됩니다. ");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakWeaponTrailActivate, "Event.AnimNotify.Bass.NoiseBreakWeaponTrailActivate", "노이즈 브레이크 중 무기 트레일 활성화 애님 노티파이의 이벤트로 사용됩니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakWeaponTrailDeactivate, "Event.AnimNotify.Bass.NoiseBreakWeaponTrailDeactivate", "노이즈 브레이크 중 무기 트레일 비활성화 애님 노티파이의 이벤트로 사용됩니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakSlash, "Event.AnimNotify.Bass.NoiseBreakSlash", "노이즈 브레이크 중 베기 애님 노티파이의 이벤트로 사용됩니다.");

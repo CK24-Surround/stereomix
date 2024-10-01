@@ -3,42 +3,29 @@
 
 #include "SMEffectProjectileBase.h"
 
-#include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystem/SMTags.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 
-ASMEffectProjectileBase::ASMEffectProjectileBase()
-{
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Neutralize);
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::Immune);
-	IgnoreTargetStateTags.AddTag(SMTags::Character::State::NoiseBreak);
-}
 
 void ASMEffectProjectileBase::PreLaunch(const FSMProjectileParameters& InParameters)
 {
 	Damage = InParameters.Damage;
 }
 
-bool ASMEffectProjectileBase::IsValidateTarget(AActor* InTarget)
+bool ASMEffectProjectileBase::IsValidTarget(AActor* InTarget)
 {
-	if (!Super::IsValidateTarget(InTarget))
+	if (!Super::IsValidTarget(InTarget))
 	{
 		return false;
 	}
 
-	// 대상이 데미지 인터페이스를 상속하고 있는지 확인합니다.
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
-	if (!TargetDamageInterface)
+	if (!TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
 	{
 		return false;
 	}
 
-	// 투사체와 타겟이 같은 팀이라면 무시합니다. (팀킬 방지)
-	const ESMTeam SourceTeam = GetTeam();
-	const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(InTarget);
-	if (SourceTeam == TargetTeam)
+	if (USMTeamBlueprintLibrary::IsSameTeam(this, InTarget)) // 투사체와 타겟이 같은 팀이라면 무시합니다. (팀킬 방지)
 	{
 		return false;
 	}
@@ -53,7 +40,7 @@ void ASMEffectProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (HasAuthority())
 	{
 		// 유효한 타겟인지 검증합니다.
-		if (!IsValidateTarget(OtherActor))
+		if (!IsValidTarget(OtherActor))
 		{
 			return;
 		}
@@ -105,7 +92,7 @@ void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
-	if (!SourceCharacter || !TargetDamageInterface)
+	if (!SourceCharacter || !TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
 	{
 		return;
 	}

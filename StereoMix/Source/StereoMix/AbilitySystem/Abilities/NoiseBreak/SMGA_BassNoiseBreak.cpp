@@ -177,7 +177,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 		SourceHIC->SetActorIAmHolding(nullptr);
 
 		TileCapture();
-		ApplySplash(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
+		PerformBurstAttack(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
 	}
 
 	if (IsLocallyControlled())

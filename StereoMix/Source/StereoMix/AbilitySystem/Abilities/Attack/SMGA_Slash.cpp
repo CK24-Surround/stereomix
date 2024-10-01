@@ -15,6 +15,7 @@
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 
 USMGA_Slash::USMGA_Slash()
@@ -159,23 +160,28 @@ void USMGA_Slash::ServerRPCApplyCost_Implementation()
 
 void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
-	if (!SourceCharacter || !SourceASC || !TargetActor)
+	if (TargetActor)
 	{
-		return;
+		ServerRPCSlashHit(TargetActor);
 	}
-
-	ServerRPCSlashHit(TargetActor);
 }
 
 void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC();
-	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
+	if (!SourceCharacter || !SourceASC)
+	{
+		return;
+	}
+
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
-	if (!SourceCharacter || !SourceASC || !SourceDataAsset || !TargetDamageInterface)
+	if (!TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
+	{
+		return;
+	}
+
+	if (USMTeamBlueprintLibrary::IsSameTeam(SourceCharacter, TargetActor))
 	{
 		return;
 	}

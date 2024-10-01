@@ -148,7 +148,7 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 		}
 
 		TileCapture();
-		ApplySplash(NoiseBreakTargetLocation, SMTags::GameplayCue::Piano::NoiseBreakBurstHit);
+		PerformBurstAttack(NoiseBreakTargetLocation, SMTags::GameplayCue::Piano::NoiseBreakBurstHit);
 
 		SourceHIC->SetActorIAmHolding(nullptr);
 
