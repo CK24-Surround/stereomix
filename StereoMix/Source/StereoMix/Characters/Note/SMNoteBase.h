@@ -35,4 +35,10 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> GlowFXComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
+	TObjectPtr<UNiagaraComponent> ParticleFXComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
+	TObjectPtr<UNiagaraComponent> FloorFXComponent;
 };

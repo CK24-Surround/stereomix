@@ -4,11 +4,9 @@
 #include "SMGCNA_Neutralize.h"
 
 #include "FMODBlueprintStatics.h"
-#include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Characters/Note/SMNoteBase.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
@@ -17,8 +15,6 @@ ASMGCNA_Neutralize::ASMGCNA_Neutralize()
 	for (int32 i = 1; i < static_cast<int32>(ESMTeam::Max); ++i)
 	{
 		ESMTeam Key = static_cast<ESMTeam>(i);
-		LoopVFX.Add(Key, nullptr);
-		LoopFloorVFX.Add(Key, nullptr);
 		EndVFX.Add(Key, nullptr);
 		EndSFX.Add(Key, nullptr);
 	}
@@ -48,40 +44,12 @@ bool ASMGCNA_Neutralize::OnActive_Implementation(AActor* MyTarget, const FGamepl
 		UFMODBlueprintStatics::PlayEventAttached(SFX[SourceTeam], SourceRoot, NAME_None, FVector::ZeroVector, EAttachLocation::KeepRelativeOffset, false, true, true);
 	}
 
-	if (LoopVFX.Find(SourceTeam))
-	{
-		const FName SoketName = TEXT("PRoot");
-		LoopVFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(LoopVFX[SourceTeam], SourceNoteMesh, SoketName, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
-	}
-
-	if (LoopFloorVFX.Find(SourceTeam))
-	{
-		UCapsuleComponent* SourceCapsule = SourceCharacter->GetCapsuleComponent();
-		const float SourceCapsuleHalfHeight = SourceCapsule ? SourceCapsule->GetScaledCapsuleHalfHeight() : 0.0f;
-		const FVector Offset(0.0, 0.0, -SourceCapsuleHalfHeight);
-		LoopVFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(LoopFloorVFX[SourceTeam], SourceNoteMesh, NAME_None, Offset, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
-	}
-
 	return true;
 }
 
 bool ASMGCNA_Neutralize::OnRemove_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
 	(void)Super::OnRemove_Implementation(MyTarget, Parameters);
-
-	if (LoopVFXComponent)
-	{
-		LoopVFXComponent->Deactivate();
-		LoopVFXComponent->ReleaseToPool();
-		LoopVFXComponent = nullptr;
-	}
-
-	if (LoopFloorVFXComponent)
-	{
-		LoopFloorVFXComponent->Deactivate();
-		LoopFloorVFXComponent->ReleaseToPool();
-		LoopFloorVFXComponent = nullptr;
-	}
 
 	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
 	UWorld* World = SourceCharacter ? SourceCharacter->GetWorld() : nullptr;

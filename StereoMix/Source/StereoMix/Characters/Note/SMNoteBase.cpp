@@ -24,7 +24,12 @@ ASMNoteBase::ASMNoteBase()
 
 	GlowFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("GlowFXComponent"));
 	GlowFXComponent->SetupAttachment(MeshComponent);
-	GlowFXComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+
+	ParticleFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ParticleFXComponent"));
+	ParticleFXComponent->SetupAttachment(RootComponent);
+
+	FloorFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("FloorFXComponent"));
+	FloorFXComponent->SetupAttachment(RootComponent);
 }
 
 void ASMNoteBase::PostInitializeComponents()
@@ -33,6 +38,9 @@ void ASMNoteBase::PostInitializeComponents()
 
 	const FName SocketName = TEXT("PRoot");
 	GlowFXComponent->AttachToComponent(MeshComponent, FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+
+	const FVector ZOffset = MeshComponent->GetSocketTransform(SocketName, RTS_Actor).GetLocation();
+	ParticleFXComponent->SetRelativeLocation(ZOffset);
 }
 
 void ASMNoteBase::BeginPlay()
@@ -41,6 +49,8 @@ void ASMNoteBase::BeginPlay()
 
 	MeshComponent->SetVisibility(false);
 	GlowFXComponent->SetVisibility(false);
+	ParticleFXComponent->SetVisibility(false);
+	FloorFXComponent->SetVisibility(false);
 }
 
 void ASMNoteBase::PlayAnimation()
