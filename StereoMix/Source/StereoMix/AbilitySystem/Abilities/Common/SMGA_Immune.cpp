@@ -40,9 +40,12 @@ void USMGA_Immune::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	// 면역 시간동안 이동속도를 증가시킵니다.
 	SourceMovement->AddMoveSpeedBuff(MoveSpeedMultiplier, ImmuneTime);
 
-	FGameplayCueParameters GCParams;
-	GCParams.SourceObject = SourceCharacter;
-	SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Immune, GCParams);
+	if (IsLocallyControlled())
+	{
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Immune, GCParams);
+	}
 }
 
 void USMGA_Immune::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -59,9 +62,12 @@ void USMGA_Immune::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 			SourceASC->RemoveTag(SMTags::Character::State::Immune);
 		}
 
-		FGameplayCueParameters GCParams;
-		GCParams.SourceObject = SourceCharacter;
-		SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Common::Immune, GCParams);
+		if (IsLocallyControlled())
+		{
+			FGameplayCueParameters GCParams;
+			GCParams.SourceObject = SourceCharacter;
+			SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Common::Immune, GCParams);
+		}
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
