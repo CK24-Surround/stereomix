@@ -203,7 +203,7 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 	}
 
 	// 캡슐을 통해 시작 지점에서 끝지점까지 점령할 타일을 저장합니다.
-	TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesFromLocationByCapsule(World, NoiseBreakStartLocation, NoiseBreakTargetLocation, USMTileFunctionLibrary::DefaultTileSize, true);
+	TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesFromLocationByCapsule(World, NoiseBreakStartLocation, NoiseBreakTargetLocation, USMTileFunctionLibrary::DefaultTileSize);
 
 	// 시작과 종료 지점 앞 뒤 타일을 제거합니다.
 	const FVector CachedNoiseBreakStartLocation = NoiseBreakStartLocation;
