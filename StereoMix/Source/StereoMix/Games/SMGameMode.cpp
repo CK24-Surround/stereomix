@@ -120,7 +120,7 @@ void ASMGameMode::HandleLeavingMap()
 
 	if (bUseRestart)
 	{
-		RestartGame();
+		ProcessServerTravel("/Game/StereoMix/Levels/Room/L_Room");
 		return;
 	}
 

@@ -82,7 +82,7 @@ protected:
 
 	TWeakObjectPtr<ASMGameState> CachedSMGameState;
 
-	/** 시간이 만료되면 현재 레벨을 재시작할지 여부입니다. 테스트용으로 사용됩니다. */
+	/** 시간이 만료되면 다시 팀선택 창으로 이동할지 여부입니다. 테스트용으로 사용됩니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Test")
 	uint32 bUseRestart:1 = false;
 
