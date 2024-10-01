@@ -20,7 +20,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
+
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;
 
@@ -36,15 +36,17 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float LevelLifetime = 10.0f;
 
-	float TimeSinceLastSwitch = 0.0f;
-
-	FName CurrentSubLevel = NAME_None;
+	TArray<TObjectPtr<UWorld>> ActiveSubLevels;
 
 private:
-	void SetRandomSubLevel();
-
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastShowActiveEffect();
 
-	void SetLevelVisibility(FName LevelName, bool bVisibility);
+	void SetRandomSubLevel();
+
+	bool IsLevelActive(const TObjectPtr<UWorld>& SubLevel) const;
+
+	void MarkLevelAsActive(const TObjectPtr<UWorld>& SubLevel);
+
+	void SetLevelVisibility(const TObjectPtr<UWorld>& SubLevel, bool bVisibility);
 };
