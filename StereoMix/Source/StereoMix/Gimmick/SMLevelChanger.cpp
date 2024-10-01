@@ -27,17 +27,30 @@ ASMLevelChanger::ASMLevelChanger()
 	SubLevels.Add(nullptr);
 }
 
-void ASMLevelChanger::PreEditChange(FProperty* PropertyAboutToChange)
+void ASMLevelChanger::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
-	Super::PreEditChange(PropertyAboutToChange);
+	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (PropertyAboutToChange && PropertyAboutToChange->GetFName() == GET_MEMBER_NAME_CHECKED(ASMLevelChanger, ActiveLevelCount))
+	if (FProperty* PropertyThatChanged = PropertyChangedEvent.Property)
 	{
-		if (ActiveLevelCount > SubLevels.Num())
+		FName PropertyName = PropertyThatChanged->GetFName();
+
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(ASMLevelChanger, ActiveLevelCount))
 		{
-			for (int32 Index = SubLevels.Num(); Index < ActiveLevelCount; ++Index)
+			if (ActiveLevelCount + 1 > SubLevels.Num())
 			{
-				SubLevels.Add(nullptr);
+				for (int32 Index = SubLevels.Num(); Index < ActiveLevelCount + 1; ++Index)
+				{
+					SubLevels.Add(nullptr);
+				}
+			}
+		}
+		else if (PropertyName == GET_MEMBER_NAME_CHECKED(ASMLevelChanger, SwitchInterval))
+		{
+			if (ActiveLevelCount > 1 && (SwitchInterval * ActiveLevelCount) % (ActiveLevelCount - 1) != 0)
+			{
+				int32 Remainder = (SwitchInterval * ActiveLevelCount) % (ActiveLevelCount - 1);
+				SwitchInterval += ((ActiveLevelCount - 1) - Remainder);
 			}
 		}
 	}

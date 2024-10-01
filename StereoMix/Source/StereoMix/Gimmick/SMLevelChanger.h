@@ -19,7 +19,7 @@ public:
 	ASMLevelChanger();
 
 protected:
-	virtual void PreEditChange(FProperty* PropertyAboutToChange) override;
+	virtual void PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent) override;
 
 	virtual void BeginPlay() override;
 
@@ -29,8 +29,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
-	float SwitchInterval = 10.0f;
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "1"))
+	int32 SwitchInterval = 10;
 
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
 	float SwitchOffset = 3.0f;
