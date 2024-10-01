@@ -23,11 +23,15 @@ void USMGA_Skill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	UAbilityTask_WaitGameplayEvent* NeutralizeWaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::Neutralize);
-	NeutralizeWaitTask->EventReceived.AddDynamic(this, &ThisClass::OnNeutralized);
+	NeutralizeWaitTask->EventReceived.AddDynamic(this, &ThisClass::OnCanceled);
 	NeutralizeWaitTask->ReadyForActivation();
+
+	UAbilityTask_WaitGameplayEvent* StunWaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::Stun);
+	StunWaitTask->EventReceived.AddDynamic(this, &ThisClass::OnCanceled);
+	StunWaitTask->ReadyForActivation();
 }
 
-void USMGA_Skill::OnNeutralized(FGameplayEventData Payload)
+void USMGA_Skill::OnCanceled(FGameplayEventData Payload)
 {
 	K2_EndAbility();
 }

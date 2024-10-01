@@ -3,6 +3,7 @@
 
 #include "SMGA_Attack.h"
 
+#include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMTags.h"
 
 USMGA_Attack::USMGA_Attack()
@@ -25,4 +26,17 @@ void USMGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	{
 		Damage = 999999.0f;
 	}
+
+	UAbilityTask_WaitGameplayEvent* NeutralizeWaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::Neutralize);
+	NeutralizeWaitTask->EventReceived.AddDynamic(this, &ThisClass::OnCanceled);
+	NeutralizeWaitTask->ReadyForActivation();
+
+	UAbilityTask_WaitGameplayEvent* StunWaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::Stun);
+	StunWaitTask->EventReceived.AddDynamic(this, &ThisClass::OnCanceled);
+	StunWaitTask->ReadyForActivation();
+}
+
+void USMGA_Attack::OnCanceled(FGameplayEventData Payload)
+{
+	K2_EndAbility();
 }
