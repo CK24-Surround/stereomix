@@ -37,8 +37,8 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	UBoxComponent* SourceChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr;
 	const USMBassCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset<USMBassCharacterDataAsset>() : nullptr;
@@ -131,7 +131,7 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 		ChargeHitGCParams.Normal = SourceCharacter->GetActorRotation().Vector();
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::ChargeHit, ChargeHitGCParams);
 	}
-	else
+	else // 벽인 경우입니다.
 	{
 		if (UBoxComponent* ChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr)
 		{
