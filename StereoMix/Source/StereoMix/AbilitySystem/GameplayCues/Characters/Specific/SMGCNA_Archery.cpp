@@ -66,7 +66,11 @@ bool ASMGCNA_Archery::OnRemove_Implementation(AActor* MyTarget, const FGameplayC
 
 	if (ASMPianoCharacter* SourceCharacter = Cast<ASMPianoCharacter>(MyTarget))
 	{
-		SourceCharacter->SetWeaponVFXEnabled(true);
+		// 노트 상태 즉 무력화 상태가 아닌 경우만 이펙트를 다시 활성화합니다.
+		if (!SourceCharacter->IsNoteState())
+		{
+			SourceCharacter->SetWeaponVFXEnabled(true);
+		}
 	}
 
 	return true;
