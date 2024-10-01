@@ -26,6 +26,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<UGameplayEffect> GE;
+	
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float ActivateDelay = 0.5f;
 
 private:
 	FGameplayTagContainer UnavailableTags;
