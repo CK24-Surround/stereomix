@@ -57,7 +57,7 @@ void ASMObstacleBase::BeginPlay()
 		return;
 	}
 
-	TWeakObjectPtr<ASMObstacleBase> ThisWeakPtr = this;
+	TWeakObjectPtr<ASMObstacleBase> ThisWeakPtr(this);
 
 	float AccumulatedTime = 0.0f;
 

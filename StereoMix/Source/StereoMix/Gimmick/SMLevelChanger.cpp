@@ -78,7 +78,7 @@ void ASMLevelChanger::SetLevelVisibility(FName LevelName, bool bVisibility)
 		return;
 	}
 
-	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr = this;
+	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr(this);
 
 	if (bVisibility)
 	{
