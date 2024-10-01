@@ -23,9 +23,17 @@ void ASMOverlapItemBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	if (HasAuthority())
+	UWorld* World = GetWorld();
+	if (HasAuthority() && World)
 	{
-		ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::OverlapItem);
+		TWeakObjectPtr<ASMOverlapItemBase> ThisWeakPtr(this);
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr] {
+			if (ThisWeakPtr.IsValid())
+			{
+				ThisWeakPtr->ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::OverlapItem);
+			}
+		}, ActivateDelay, false);
 	}
 }
 
