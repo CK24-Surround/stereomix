@@ -44,6 +44,9 @@ protected:
 	/** 타일기준 최대 사거리를 나타냅니다. */
 	float MaxDistanceByTile = 0.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	FGameplayTagContainer NoSplashEffectTags;
+
 private:
 	TArray<AActor*> GetSplashHitActors(const FVector& TargetLocation);
 

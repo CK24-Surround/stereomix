@@ -300,6 +300,14 @@ TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetSplashHitActorsForElectricGui
 					continue;
 				}
 
+				if (UAbilitySystemComponent* SplashHitActorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SplashHitActor))
+				{
+					if (SplashHitActorASC->HasAnyMatchingGameplayTags(NoSplashEffectTags))
+					{
+						continue;
+					}
+				}
+
 				Results.Add(SplashHitActor);
 			}
 		}

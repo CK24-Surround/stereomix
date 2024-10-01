@@ -22,6 +22,9 @@ USMGA_NoiseBreak::USMGA_NoiseBreak()
 	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Hold);
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
+
+	NoSplashEffectTags.AddTag(SMTags::Character::State::Neutralize);
+	NoSplashEffectTags.AddTag(SMTags::Character::State::Immune);
 }
 
 bool USMGA_NoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
@@ -187,6 +190,14 @@ bool USMGA_NoiseBreak::CanApplySplashDamage(AActor* TargetActor)
 	if (SourceTeam == TargetTeam)
 	{
 		return false;
+	}
+
+	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor))
+	{
+		if (TargetASC->HasAnyMatchingGameplayTags(NoSplashEffectTags))
+		{
+			return false;
+		}
 	}
 
 	return true;
