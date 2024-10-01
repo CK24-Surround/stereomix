@@ -22,6 +22,25 @@ ASMLevelChanger::ASMLevelChanger()
 	NiagaraComponent->SetupAttachment(RootComponent);
 	NiagaraComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	NiagaraComponent->SetAutoActivate(false);
+
+	SubLevels.Add(nullptr);
+	SubLevels.Add(nullptr);
+}
+
+void ASMLevelChanger::PreEditChange(FProperty* PropertyAboutToChange)
+{
+	Super::PreEditChange(PropertyAboutToChange);
+
+	if (PropertyAboutToChange && PropertyAboutToChange->GetFName() == GET_MEMBER_NAME_CHECKED(ASMLevelChanger, ActiveLevelCount))
+	{
+		if (ActiveLevelCount > SubLevels.Num())
+		{
+			for (int32 Index = SubLevels.Num(); Index < ActiveLevelCount; ++Index)
+			{
+				SubLevels.Add(nullptr);
+			}
+		}
+	}
 }
 
 void ASMLevelChanger::BeginPlay()
@@ -107,7 +126,7 @@ void ASMLevelChanger::SetLevelVisibility(const TObjectPtr<UWorld>& SubLevel, boo
 			{
 				ThisWeakPtr->SetLevelVisibility(SubLevel, false);
 			}
-		}, LevelLifetime, false);
+		}, (SwitchInterval * ActiveLevelCount) + SwitchOffset, false);
 
 		return;
 	}
@@ -134,6 +153,7 @@ void ASMLevelChanger::SetLevelVisibility(const TObjectPtr<UWorld>& SubLevel, boo
 		if (ThisWeakPtr.Get())
 		{
 			UGameplayStatics::UnloadStreamLevel(ThisWeakPtr.Get(), GetFNameSafe(SubLevel), FLatentActionInfo(), true);
+			ThisWeakPtr->ActiveSubLevels.Remove(SubLevel);
 		}
 	}, TimeToUnload, false);
 }

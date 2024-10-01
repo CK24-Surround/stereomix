@@ -19,6 +19,8 @@ public:
 	ASMLevelChanger();
 
 protected:
+	virtual void PreEditChange(FProperty* PropertyAboutToChange) override;
+
 	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere, Category = "Root")
@@ -27,14 +29,17 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	TArray<TObjectPtr<UWorld>> SubLevels;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
 	float SwitchInterval = 10.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
+	float SwitchOffset = 3.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "1"))
+	int32 ActiveLevelCount = 1;
+
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float LevelLifetime = 10.0f;
+	TArray<TObjectPtr<UWorld>> SubLevels;
 
 	TArray<TObjectPtr<UWorld>> ActiveSubLevels;
 
