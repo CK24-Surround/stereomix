@@ -34,7 +34,7 @@ void ASMLevelChanger::BeginPlay()
 		return;
 	}
 
-	if (HasAuthority())
+	if (HasAuthority() && SubLevels.Num() > 0)
 	{
 		SetRandomSubLevel();
 
