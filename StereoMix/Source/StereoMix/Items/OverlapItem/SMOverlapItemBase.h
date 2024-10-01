@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "Items/SMItemBase.h"
 #include "SMOverlapItemBase.generated.h"
 
@@ -25,4 +26,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<UGameplayEffect> GE;
+
+private:
+	FGameplayTagContainer UnavailableTags;
 };

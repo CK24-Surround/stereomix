@@ -16,7 +16,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float MoveSpeedMultiplier = 1.5f;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Duration = 5.0f;
 };
