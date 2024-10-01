@@ -47,6 +47,13 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	K2_CommitAbility();
 
+	// 재생 중인 모든 애니메이션을 종료합니다.
+	UAnimInstance* SourceAnimInstance = ActorInfo->GetAnimInstance();
+	if (SourceAnimInstance)
+	{
+		SourceAnimInstance->StopAllMontages(0.0f);
+	}
+
 	if (K2_HasAuthority())
 	{
 		// 무력화 시간동안 기다립니다.
