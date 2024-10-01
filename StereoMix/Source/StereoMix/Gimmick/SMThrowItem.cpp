@@ -35,9 +35,17 @@ void ASMThrowItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (HasAuthority())
+	UWorld* World = GetWorld();
+	
+	if (HasAuthority() && World)
 	{
-		GetWorld()->GetTimerManager().SetTimer(ThrowTimerHandle, this, &ASMThrowItem::ThrowItem, ThrowInterval, true);
+		TWeakObjectPtr<ASMThrowItem> ThisWeakPtr(this);
+		World->GetTimerManager().SetTimer(ThrowTimerHandle, [ThisWeakPtr] {
+			if (ThisWeakPtr.Get())
+			{
+				ThisWeakPtr->ThrowItem();
+			}
+		}, ThrowInterval, true);
 	}
 }
 
