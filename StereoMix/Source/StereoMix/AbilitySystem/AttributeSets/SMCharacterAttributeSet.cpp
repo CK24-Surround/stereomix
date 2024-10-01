@@ -27,6 +27,7 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 
 	InvincibleStateTags.AddTag(SMTags::Character::State::Invincible);
 	InvincibleStateTags.AddTag(SMTags::Character::State::Neutralize);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Immune);
 	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreak);
 	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreaked);
 	InvincibleStateTags.AddTag(SMTags::Character::State::Charge);
