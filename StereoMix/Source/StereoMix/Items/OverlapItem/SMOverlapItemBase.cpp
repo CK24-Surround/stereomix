@@ -3,14 +3,20 @@
 
 #include "SMOverlapItemBase.h"
 
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "Components/SphereComponent.h"
+#include "UI/SMTags.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
 ASMOverlapItemBase::ASMOverlapItemBase()
 {
 	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+
+	UnavailableTags.AddTag(SMTags::Character::State::Immune);
+	UnavailableTags.AddTag(SMTags::Character::State::Neutralize);
 }
 
 void ASMOverlapItemBase::PostInitializeComponents()
@@ -32,12 +38,12 @@ void ASMOverlapItemBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	ASMPlayerCharacterBase* OtherCharacter = Cast<ASMPlayerCharacterBase>(OtherActor);
-	if (!OtherCharacter)
+	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	if (!SourceASC || SourceASC->HasAnyMatchingGameplayTags(UnavailableTags))
 	{
 		return;
 	}
-
+	
 	NET_LOG(this, Warning, TEXT("%s가 아이템을 획득 했습니다."), *GetNameSafe(OtherActor));
 	ActivateItem(OtherActor);
 
