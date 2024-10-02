@@ -8,8 +8,9 @@
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Characters/Component/SMHIC_Character.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
-#include "GameInstance/SMGameInstance.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 
 
 USMGA_NoiseBreakIndicator::USMGA_NoiseBreakIndicator()
@@ -34,7 +35,7 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 
 	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크 인디케이터 활성화"));
 	UNiagaraComponent* NoiseBreakIndicator = SourceCharacter->GetNoiseBreakIndicator();
-	const float NoiseBreakMaxDistance = NoiseBreakData->DistanceByTile * 150.0f; // 노이즈 브레이크 데이터를 통해 사거리를 가져옵니다.
+	const float NoiseBreakMaxDistance = NoiseBreakData->DistanceByTile * USMTileFunctionLibrary::DefaultTileSize; // 노이즈 브레이크 데이터를 통해 사거리를 가져옵니다.
 	USMAT_SkillIndicator* SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, NoiseBreakIndicator, NoiseBreakMaxDistance, true);
 	SkillIndicatorTask->ReadyForActivation();
 
