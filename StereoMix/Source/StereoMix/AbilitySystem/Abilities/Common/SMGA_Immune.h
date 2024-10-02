@@ -31,5 +31,5 @@ protected:
 	float MoveSpeedMultiplier = 1.5f;
 
 	UPROPERTY(EditAnywhere, Category = "Design|Immune")
-	float ImmuneTime = 3.0f;
+	float ImmuneTime = 1.0f;
 };
