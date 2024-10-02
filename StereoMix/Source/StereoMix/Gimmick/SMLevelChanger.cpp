@@ -35,7 +35,7 @@ void ASMLevelChanger::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 	{
 		FName PropertyName = PropertyThatChanged->GetFName();
 
-		if (PropertyName == GET_MEMBER_NAME_CHECKED(ASMLevelChanger, ActiveLevelCount))
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, ActiveLevelCount))
 		{
 			if (ActiveLevelCount + 1 > SubLevels.Num())
 			{
@@ -45,12 +45,13 @@ void ASMLevelChanger::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 				}
 			}
 		}
-		else if (PropertyName == GET_MEMBER_NAME_CHECKED(ASMLevelChanger, SwitchInterval))
+
+		if (PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, LevelSwitchInterval) || PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, ObstacleSpawnEffectDuration))
 		{
-			if (ActiveLevelCount > 1 && (SwitchInterval * ActiveLevelCount) % (ActiveLevelCount - 1) != 0)
+			const float ObstacleLoadAndUnloadDuration = ObstacleSpawnEffectDuration + 2.0f;
+			if (LevelSwitchInterval <= ObstacleLoadAndUnloadDuration) // 인터벌을 안전하게 스폰과 제거에 소요되는 이펙트 재생시간보다 크게 설정합니다.
 			{
-				int32 Remainder = (SwitchInterval * ActiveLevelCount) % (ActiveLevelCount - 1);
-				SwitchInterval += ((ActiveLevelCount - 1) - Remainder);
+				LevelSwitchInterval = ObstacleLoadAndUnloadDuration;
 			}
 		}
 	}
@@ -77,7 +78,7 @@ void ASMLevelChanger::BeginPlay()
 			{
 				ThisWeakPtr->SetRandomSubLevel();
 			}
-		}, SwitchInterval, true);
+		}, LevelSwitchInterval, true);
 	}
 }
 
@@ -88,9 +89,9 @@ void ASMLevelChanger::MulticastShowActiveEffect_Implementation()
 
 void ASMLevelChanger::SetRandomSubLevel()
 {
-	TArray<TObjectPtr<UWorld>> AvailableSubLevels;
+	TArray<UWorld*> AvailableSubLevels;
 
-	for (TObjectPtr<UWorld> SubLevel : SubLevels)
+	for (UWorld* SubLevel : SubLevels)
 	{
 		if (!IsLevelActive(SubLevel))
 		{
@@ -100,26 +101,23 @@ void ASMLevelChanger::SetRandomSubLevel()
 
 	if (AvailableSubLevels.Num() > 0)
 	{
-		TObjectPtr<UWorld> RandomSubLevel = AvailableSubLevels[FMath::RandRange(0, AvailableSubLevels.Num() - 1)];
+		const UWorld* RandomSubLevel = AvailableSubLevels[FMath::RandRange(0, AvailableSubLevels.Num() - 1)];
 		SetLevelVisibility(RandomSubLevel, true);
 		MarkLevelAsActive(RandomSubLevel);
 	}
 }
 
-bool ASMLevelChanger::IsLevelActive(const TObjectPtr<UWorld>& SubLevel) const
+bool ASMLevelChanger::IsLevelActive(const UWorld* SubLevel) const
 {
 	return ActiveSubLevels.Contains(SubLevel);
 }
 
-void ASMLevelChanger::MarkLevelAsActive(const TObjectPtr<UWorld>& SubLevel)
+void ASMLevelChanger::MarkLevelAsActive(const UWorld* SubLevel)
 {
-	if (!ActiveSubLevels.Contains(SubLevel))
-	{
-		ActiveSubLevels.Add(SubLevel);
-	}
+	ActiveSubLevels.AddUnique(SubLevel);
 }
 
-void ASMLevelChanger::SetLevelVisibility(const TObjectPtr<UWorld>& SubLevel, bool bVisibility)
+void ASMLevelChanger::SetLevelVisibility(const UWorld* SubLevel, bool bVisibility)
 {
 	UWorld* World = GetWorld();
 	if (!HasAuthority() || !SubLevel || !World)
@@ -131,7 +129,7 @@ void ASMLevelChanger::SetLevelVisibility(const TObjectPtr<UWorld>& SubLevel, boo
 
 	if (bVisibility)
 	{
-		UGameplayStatics::LoadStreamLevel(this, SubLevel->GetFName(), true, true, FLatentActionInfo());
+		UGameplayStatics::LoadStreamLevel(this, SubLevel->GetFName(), true, false, FLatentActionInfo());
 
 		FTimerHandle TimerHandle;
 		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, SubLevel] {
@@ -139,34 +137,34 @@ void ASMLevelChanger::SetLevelVisibility(const TObjectPtr<UWorld>& SubLevel, boo
 			{
 				ThisWeakPtr->SetLevelVisibility(SubLevel, false);
 			}
-		}, (SwitchInterval * ActiveLevelCount) + SwitchOffset, false);
-
-		return;
+		}, (LevelSwitchInterval * ActiveLevelCount) + ObstacleSpawnEffectDuration, false);
 	}
-
-	float TimeToUnload = 0.0f;
-
-	for (AActor* Actor : TActorRange<ASMObstacleBase>(World))
+	else
 	{
-		ASMObstacleBase* Obstacle = Cast<ASMObstacleBase>(Actor);
-		ULevel* ObstacleLevel = Obstacle ? Obstacle->GetLevel() : nullptr;
-		UObject* ObstacleOuter = ObstacleLevel ? ObstacleLevel->GetOuter() : nullptr;
-		FString ObstacleLevelName = GetNameSafe(ObstacleOuter);
-		if (Obstacle && ObstacleLevelName == GetNameSafe(SubLevel))
+		float TimeToUnload = 0.0f;
+
+		for (AActor* Actor : TActorRange<ASMObstacleBase>(World))
 		{
-			TimeToUnload = FMath::Max(TimeToUnload, Obstacle->GetDestroyEffectDuration());
-			Obstacle->UnloadObstacle();
+			ASMObstacleBase* Obstacle = Cast<ASMObstacleBase>(Actor);
+			ULevel* ObstacleLevel = Obstacle ? Obstacle->GetLevel() : nullptr;
+			UObject* ObstacleOuter = ObstacleLevel ? ObstacleLevel->GetOuter() : nullptr;
+			FString ObstacleLevelName = GetNameSafe(ObstacleOuter);
+			if (Obstacle && ObstacleLevelName == GetNameSafe(SubLevel))
+			{
+				TimeToUnload = FMath::Max(TimeToUnload, Obstacle->GetDestroyEffectDuration());
+				Obstacle->UnloadObstacle();
+			}
 		}
+
+		MulticastShowActiveEffect();
+
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, SubLevel] {
+			if (ThisWeakPtr.Get())
+			{
+				UGameplayStatics::UnloadStreamLevel(ThisWeakPtr.Get(), GetFNameSafe(SubLevel), FLatentActionInfo(), true);
+				ThisWeakPtr->ActiveSubLevels.Remove(SubLevel);
+			}
+		}, TimeToUnload, false);
 	}
-
-	MulticastShowActiveEffect();
-
-	FTimerHandle TimerHandle;
-	World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, SubLevel] {
-		if (ThisWeakPtr.Get())
-		{
-			UGameplayStatics::UnloadStreamLevel(ThisWeakPtr.Get(), GetFNameSafe(SubLevel), FLatentActionInfo(), true);
-			ThisWeakPtr->ActiveSubLevels.Remove(SubLevel);
-		}
-	}, TimeToUnload, false);
 }
