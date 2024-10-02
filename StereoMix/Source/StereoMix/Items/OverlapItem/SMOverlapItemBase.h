@@ -19,8 +19,6 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
-	virtual void ActivateItem(AActor* InActivator) override;
-
 protected:
 	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
 

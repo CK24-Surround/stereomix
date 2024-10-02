@@ -36,16 +36,10 @@ void ASMThrowItem::BeginPlay()
 	Super::BeginPlay();
 
 	UWorld* World = GetWorld();
-	
+
 	if (HasAuthority() && World)
 	{
-		TWeakObjectPtr<ASMThrowItem> ThisWeakPtr(this);
-		World->GetTimerManager().SetTimer(ThrowTimerHandle, [ThisWeakPtr] {
-			if (ThisWeakPtr.Get())
-			{
-				ThisWeakPtr->ThrowItem();
-			}
-		}, ThrowInterval, true);
+		World->GetTimerManager().SetTimer(ThrowTimerHandle, this, &ThisClass::ThrowItem, ThrowInterval, true);
 	}
 }
 
@@ -99,7 +93,7 @@ void ASMThrowItem::InternalThrowItem()
 		FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity);
 
 		TSubclassOf<ASMItemBase> RandomItem = ThrowingItems[FMath::RandRange(0, ThrowingItems.Num() - 1)];
-		
+
 		ThrowableItem->SetSpawnItem(RandomItem);
 		ThrowableItem->SetAttribute(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
 	}

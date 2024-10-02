@@ -26,32 +26,28 @@ void ASMOverlapItemBase::PostInitializeComponents()
 	UWorld* World = GetWorld();
 	if (HasAuthority() && World)
 	{
-		TWeakObjectPtr<ASMOverlapItemBase> ThisWeakPtr(this);
+		// 아이템이 즉시 먹어지는 것을 방지하고자 아이템 생성 후 0.5초뒤에 활성화 되도록합니다.
+		TWeakObjectPtr<USphereComponent> ColliderWeakPtr(ColliderComponent);
 		FTimerHandle TimerHandle;
-		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr] {
-			if (ThisWeakPtr.IsValid())
+		World->GetTimerManager().SetTimer(TimerHandle, [ColliderWeakPtr] {
+			if (ColliderWeakPtr.IsValid())
 			{
-				ThisWeakPtr->ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::OverlapItem);
+				ColliderWeakPtr->SetCollisionProfileName(SMCollisionProfileName::OverlapItem);
 			}
 		}, ActivateDelay, false);
 	}
-}
-
-void ASMOverlapItemBase::ActivateItem(AActor* InActivator)
-{
-	Super::ActivateItem(InActivator);
 }
 
 void ASMOverlapItemBase::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	UAbilitySystemComponent* SourceASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
-	if (!SourceASC || SourceASC->HasAnyMatchingGameplayTags(UnavailableTags))
+	UAbilitySystemComponent* ActivatorASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
+	if (!ActivatorASC || ActivatorASC->HasAnyMatchingGameplayTags(UnavailableTags))
 	{
 		return;
 	}
-	
+
 	NET_LOG(this, Warning, TEXT("%s가 아이템을 획득 했습니다."), *GetNameSafe(OtherActor));
 	ActivateItem(OtherActor);
 
