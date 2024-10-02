@@ -5,8 +5,8 @@
 
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Characters/SMPlayerCharacter.h"
 #include "GameplayEffectExtension.h"
+#include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
@@ -126,23 +126,6 @@ void USMCharacterAttributeSet::PostGameplayEffectExecute(const FGameplayEffectMo
 	if (!OwnerActor)
 	{
 		return;
-	}
-
-	if (Data.EvaluatedData.Attribute == GetMoveSpeedAttribute())
-	{
-		const UAbilitySystemComponent* ASC = GetOwningAbilitySystemComponent();
-		if (ASC)
-		{
-			ASMPlayerCharacter* StereoMixCharacter = Cast<ASMPlayerCharacter>(Data.Target.GetAvatarActor());
-			if (StereoMixCharacter)
-			{
-				StereoMixCharacter->SetMaxWalkSpeed(GetMoveSpeed());
-			}
-		}
-		else
-		{
-			NET_LOG(OwnerActor, Warning, TEXT("GAS와 호환되지 않는 액터입니다."));
-		}
 	}
 
 	if (Data.EvaluatedData.Attribute == GetDamageAttribute())

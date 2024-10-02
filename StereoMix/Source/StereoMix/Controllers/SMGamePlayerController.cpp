@@ -6,7 +6,6 @@
 #include "GameFramework/GameModeBase.h"
 #include "AbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
-#include "Characters/SMPlayerCharacter.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Games/SMGameMode.h"
 #include "StereoMixLog.h"

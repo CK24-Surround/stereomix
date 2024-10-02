@@ -3,11 +3,11 @@
 
 #include "SMAbilitySystemComponent.h"
 
+#include "GameFramework/Character.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "EngineUtils.h"
 #include "GameplayCueManager.h"
 #include "AttributeSets/SMCharacterAttributeSet.h"
-#include "Characters/SMPlayerCharacter.h"
 #include "GameplayEffect/SMGameplayEffect_DynamicTag.h"
 #include "Utilities/SMLog.h"
 

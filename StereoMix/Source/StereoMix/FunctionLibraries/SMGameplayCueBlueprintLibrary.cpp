@@ -3,7 +3,7 @@
 
 #include "SMGameplayCueBlueprintLibrary.h"
 
-#include "AbilitySystem/GameplayCues/SMGameplayCueNotify.h"
+#include "AbilitySystem/GameplayCues/SMGameplayCueNotifyActorBase.h"
 
 USceneComponent* USMGameplayCueBlueprintLibrary::GetTargetComponent(const FGameplayCueParameters& Parameters)
 {

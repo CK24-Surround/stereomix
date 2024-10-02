@@ -3,7 +3,8 @@
 
 #include "SMCatchInteractionComponent_CatchableItem.h"
 
-#include "Characters/SMPlayerCharacter.h"
+#include "Characters/Player/SMPlayerCharacterBase.h"
+
 
 void USMCatchInteractionComponent_CatchableItem::BeginPlay()
 {
@@ -40,14 +41,14 @@ void USMCatchInteractionComponent_CatchableItem::InternalOnCaught(AActor* Target
 		return;
 	}
 
-	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(TargetActor);
+	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
 	if (!ensureAlways(TargetActor))
 	{
 		return;
 	}
 
 	// 대상에게 어태치합니다.
-	const bool bAttachSuccess = SourceActor->AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, TargetCharacter->CatchSocket);
+	const bool bAttachSuccess = SourceActor->AttachToComponent(TargetCharacter->GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	if (!ensureAlways(bAttachSuccess))
 	{
 		return;

@@ -26,10 +26,6 @@ class STEREOMIX_API USMGameplayAbility : public UGameplayAbility
 public:
 	USMGameplayAbility();
 
-	USMAbilitySystemComponent* GetSMAbilitySystemComponentFromActorInfo() const;
-
-	ASMPlayerCharacter* GetSMPlayerCharacterFromActorInfo() const;
-
 	USMAbilitySystemComponent* GetASC() const;
 
 	template<typename T>
@@ -54,10 +50,6 @@ public:
 
 	template<typename T>
 	const T* GetDataAsset() const { return Cast<T>(GetDataAsset()); }
-
-	/** 리플리케이션을 활성화 한 경우에만 호출됩니다.*/
-	UFUNCTION(Client, Reliable)
-	void ClientRPCPlayMontage(UAnimMontage* InMontage, float InPlayRate = 1.0f, FName StartSection = NAME_None);
 
 protected:
 	UFUNCTION()

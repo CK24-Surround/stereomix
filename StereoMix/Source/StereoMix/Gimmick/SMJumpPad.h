@@ -8,7 +8,7 @@
 #include "SMJumpPad.generated.h"
 
 class UFMODEvent;
-class ASMPlayerCharacter;
+class ASMPlayerCharacterBase;
 class UBoxComponent;
 
 UCLASS()
@@ -26,17 +26,17 @@ protected:
 
 	void Jump(ACharacter* InCharacter, const FVector& TargetLocation);
 
-	void TargetLanded(ASMPlayerCharacter* LandedCharacter);
+	void TargetLanded(ASMPlayerCharacterBase* LandedCharacter);
 
 	/** 만약 점프대 사용 중 캐릭터가 파괴된 경우 예외처리를 위한 함수입니다. */
 	UFUNCTION()
 	void OnDestroyedUsingJumpPadCharacter(AActor* DestroyedActor);
 
 	UFUNCTION(NetMulticast, Unreliable)
-	void MulticastRPCPlayUseJumpPadFX(ASMPlayerCharacter* SourceCharacter);
+	void MulticastRPCPlayUseJumpPadFX(ASMPlayerCharacterBase* SourceCharacter);
 
 	UFUNCTION(NetMulticast, Unreliable)
-	void MulticastRPCPlayLandedFX(ASMPlayerCharacter* SourceCharacter);
+	void MulticastRPCPlayLandedFX(ASMPlayerCharacterBase* SourceCharacter);
 
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;

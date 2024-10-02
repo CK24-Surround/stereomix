@@ -8,10 +8,10 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "Characters/SMPlayerCharacter.h"
 #include "Components/BoxComponent.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "GameplayCueManager.h"
+#include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
@@ -47,137 +47,137 @@ void ASMJumpPad::PostInitializeComponents()
 
 void ASMJumpPad::NotifyActorBeginOverlap(AActor* OtherActor)
 {
-	Super::NotifyActorBeginOverlap(OtherActor);
-
-	ASMPlayerCharacter* TargetCharacter = Cast<ASMPlayerCharacter>(OtherActor);
-	if (!TargetCharacter)
-	{
-		return;
-	}
-
-	if (TargetCharacter->GetLocalRole() == ROLE_SimulatedProxy)
-	{
-		return;
-	}
-
-	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
-	if (!ensureAlways(TargetASC))
-	{
-		return;
-	}
-
-	if (TargetASC->HasAnyMatchingGameplayTags(DenineTags))
-	{
-		return;
-	}
-
-	Jump(TargetCharacter, JumpTarget->GetComponentLocation());
-	TargetCharacter->OnLanded.AddUObject(this, &ThisClass::TargetLanded);
-
-	// 점프대 사용 FX를 재생합니다. 로컬에서는 예측적으로 FX를 재생합니다.
-	FGameplayCueParameters GCParams;
-	GCParams.Location = GetActorLocation();
-	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::UseJumpPad, GCParams);
-
-	if (HasAuthority())
-	{
-		MulticastRPCPlayUseJumpPadFX(TargetCharacter);
-		TargetASC->AddTag(SMTags::Character::State::Jump);
-	}
+	// Super::NotifyActorBeginOverlap(OtherActor);
+	//
+	// ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(OtherActor);
+	// if (!TargetCharacter)
+	// {
+	// 	return;
+	// }
+	//
+	// if (TargetCharacter->GetLocalRole() == ROLE_SimulatedProxy)
+	// {
+	// 	return;
+	// }
+	//
+	// USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetCharacter));
+	// if (!ensureAlways(TargetASC))
+	// {
+	// 	return;
+	// }
+	//
+	// if (TargetASC->HasAnyMatchingGameplayTags(DenineTags))
+	// {
+	// 	return;
+	// }
+	//
+	// Jump(TargetCharacter, JumpTarget->GetComponentLocation());
+	// TargetCharacter->OnCharacterLanded.AddUObject(this, &ThisClass::TargetLanded);
+	//
+	// // 점프대 사용 FX를 재생합니다. 로컬에서는 예측적으로 FX를 재생합니다.
+	// FGameplayCueParameters GCParams;
+	// GCParams.Location = GetActorLocation();
+	// UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::UseJumpPad, GCParams);
+	//
+	// if (HasAuthority())
+	// {
+	// 	MulticastRPCPlayUseJumpPadFX(TargetCharacter);
+	// 	TargetASC->AddTag(SMTags::Character::State::Jump);
+	// }
 }
 
 void ASMJumpPad::Jump(ACharacter* InCharacter, const FVector& TargetLocation)
 {
-	const FVector StartLocation = InCharacter->GetActorLocation();
-	UCharacterMovementComponent* TargetMovement = InCharacter->GetCharacterMovement();
-	if (!ensureAlways(TargetMovement))
-	{
-		return;
-	}
-
-	OriginAirControl.Add(InCharacter, TargetMovement->AirControl);
-	TargetMovement->AirControl = 0.0f;
-
-	OriginGravityScale.Add(InCharacter, TargetMovement->GravityScale);
-	TargetMovement->GravityScale = GravityScale;
-	const float Gravity = TargetMovement->GetGravityZ();
-
-	const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight2(this, StartLocation, TargetLocation, ApexHeight, Gravity);
-
-	InCharacter->LaunchCharacter(LaunchVelocity, true, true);
-	InCharacter->OnDestroyed.AddDynamic(this, &ThisClass::OnDestroyedUsingJumpPadCharacter);
+	// const FVector StartLocation = InCharacter->GetActorLocation();
+	// UCharacterMovementComponent* TargetMovement = InCharacter->GetCharacterMovement();
+	// if (!ensureAlways(TargetMovement))
+	// {
+	// 	return;
+	// }
+	//
+	// OriginAirControl.Add(InCharacter, TargetMovement->AirControl);
+	// TargetMovement->AirControl = 0.0f;
+	//
+	// OriginGravityScale.Add(InCharacter, TargetMovement->GravityScale);
+	// TargetMovement->GravityScale = GravityScale;
+	// const float Gravity = TargetMovement->GetGravityZ();
+	//
+	// const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight2(this, StartLocation, TargetLocation, ApexHeight, Gravity);
+	//
+	// InCharacter->LaunchCharacter(LaunchVelocity, true, true);
+	// InCharacter->OnDestroyed.AddDynamic(this, &ThisClass::OnDestroyedUsingJumpPadCharacter);
 }
 
-void ASMJumpPad::TargetLanded(ASMPlayerCharacter* LandedCharacter)
+void ASMJumpPad::TargetLanded(ASMPlayerCharacterBase* LandedCharacter)
 {
-	if (!LandedCharacter)
-	{
-		NET_LOG(this, Warning, TEXT("착지하는 캐릭터가 유효하지 않습니다."));
-		return;
-	}
-
-	USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(LandedCharacter->GetAbilitySystemComponent());
-	if (!ensureAlways(TargetASC))
-	{
-		return;
-	}
-
-	UCharacterMovementComponent* TargetMovement = LandedCharacter->GetCharacterMovement();
-	if (!ensureAlways(TargetMovement))
-	{
-		return;
-	}
-
-	if (HasAuthority())
-	{
-		TargetASC->RemoveTag(SMTags::Character::State::Jump);
-	}
-
-	if (OriginGravityScale.Find(LandedCharacter))
-	{
-		TargetMovement->GravityScale = OriginGravityScale[LandedCharacter];
-	}
-
-	if (OriginAirControl.Find(LandedCharacter))
-	{
-		TargetMovement->AirControl = OriginAirControl[LandedCharacter];
-	}
-
-	LandedCharacter->OnDestroyed.RemoveAll(this);
-	LandedCharacter->OnLanded.RemoveAll(this);
-
-	// 착지 FX를 재생합니다. 로컬에서는 예측적으로 먼저 재생합니다.
-	FGameplayCueParameters GCParams;
-	GCParams.Location = LandedCharacter->GetActorLocation();
-	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
-
-	if (HasAuthority())
-	{
-		MulticastRPCPlayLandedFX(LandedCharacter);
-	}
+	// if (!LandedCharacter)
+	// {
+	// 	NET_LOG(this, Warning, TEXT("착지하는 캐릭터가 유효하지 않습니다."));
+	// 	return;
+	// }
+	//
+	// USMAbilitySystemComponent* TargetASC = Cast<USMAbilitySystemComponent>(LandedCharacter->GetAbilitySystemComponent());
+	// if (!ensureAlways(TargetASC))
+	// {
+	// 	return;
+	// }
+	//
+	// UCharacterMovementComponent* TargetMovement = LandedCharacter->GetCharacterMovement();
+	// if (!ensureAlways(TargetMovement))
+	// {
+	// 	return;
+	// }
+	//
+	// if (HasAuthority())
+	// {
+	// 	TargetASC->RemoveTag(SMTags::Character::State::Jump);
+	// }
+	//
+	// if (OriginGravityScale.Find(LandedCharacter))
+	// {
+	// 	TargetMovement->GravityScale = OriginGravityScale[LandedCharacter];
+	// }
+	//
+	// if (OriginAirControl.Find(LandedCharacter))
+	// {
+	// 	TargetMovement->AirControl = OriginAirControl[LandedCharacter];
+	// }
+	//
+	// LandedCharacter->OnDestroyed.RemoveAll(this);
+	// LandedCharacter->OnCharacterLanded.RemoveAll(this);
+	//
+	// // 착지 FX를 재생합니다. 로컬에서는 예측적으로 먼저 재생합니다.
+	// FGameplayCueParameters GCParams;
+	// GCParams.Location = LandedCharacter->GetActorLocation();
+	// UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
+	//
+	// if (HasAuthority())
+	// {
+	// 	MulticastRPCPlayLandedFX(LandedCharacter);
+	// }
 }
 
 void ASMJumpPad::OnDestroyedUsingJumpPadCharacter(AActor* DestroyedActor)
 {
-	DestroyedActor->OnDestroyed.RemoveAll(this);
+	// DestroyedActor->OnDestroyed.RemoveAll(this);
 }
 
-void ASMJumpPad::MulticastRPCPlayUseJumpPadFX_Implementation(ASMPlayerCharacter* SourceCharacter)
+void ASMJumpPad::MulticastRPCPlayUseJumpPadFX_Implementation(ASMPlayerCharacterBase* SourceCharacter)
 {
-	if (!HasAuthority() && !SourceCharacter->IsLocallyControlled())
-	{
-		FGameplayCueParameters GCParams;
-		GCParams.Location = GetActorLocation();
-		UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
-	}
+	// if (!HasAuthority() && !SourceCharacter->IsLocallyControlled())
+	// {
+	// 	FGameplayCueParameters GCParams;
+	// 	GCParams.Location = GetActorLocation();
+	// 	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
+	// }
 }
 
-void ASMJumpPad::MulticastRPCPlayLandedFX_Implementation(ASMPlayerCharacter* SourceCharacter)
+void ASMJumpPad::MulticastRPCPlayLandedFX_Implementation(ASMPlayerCharacterBase* SourceCharacter)
 {
-	if (!HasAuthority() && !SourceCharacter->IsLocallyControlled())
-	{
-		FGameplayCueParameters GCParams;
-		GCParams.Location = SourceCharacter->GetActorLocation();
-		UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
-	}
+	// if (!HasAuthority() && !SourceCharacter->IsLocallyControlled())
+	// {
+	// 	FGameplayCueParameters GCParams;
+	// 	GCParams.Location = SourceCharacter->GetActorLocation();
+	// 	UGameplayCueManager::ExecuteGameplayCue_NonReplicated(this, SMTags::GameplayCue::JumpPad::Land, GCParams);
+	// }
 }

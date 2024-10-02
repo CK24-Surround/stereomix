@@ -8,6 +8,7 @@
 
 #include "SMBoostZone.generated.h"
 
+class ASMPlayerCharacterBase;
 class UAbilitySystemComponent;
 class UGameplayEffect;
 class UBoxComponent;
@@ -55,5 +56,5 @@ protected:
 	float MoveSpeedToApplyMultiply = 1.5f;
 
 	/** 부스트 존 안에 들어온 플레이어의 ASC와 방향정보를 갖고 있는 맵입니다. */
-	TMap<TWeakObjectPtr<ASMPlayerCharacter>, FBoostZoneDirectionData> InZoneMap;
+	TMap<TWeakObjectPtr<ASMPlayerCharacterBase>, FBoostZoneDirectionData> InZoneMap;
 };
