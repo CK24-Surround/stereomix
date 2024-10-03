@@ -4,8 +4,8 @@
 #include "SMUserWidget_StartCountdown.h"
 
 #include "Components/ScaleBox.h"
+#include "Components/Core/SMRoundTimerComponent.h"
 #include "Games/SMGameState.h"
-#include "Games/Timer/SMRoundTimerComponent.h"
 #include "Utilities/SMLog.h"
 
 void USMUserWidget_StartCountdown::NativeOnInitialized()

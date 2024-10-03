@@ -3,9 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HoldInteraction/SMHoldInteractionComponent.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SMHoldInteractionBlueprintLibrary.generated.h"
+
+class USMHoldInteractionComponent;
 
 /**
  * 

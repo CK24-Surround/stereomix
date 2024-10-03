@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "HoldInteraction/SMHoldInteractionComponent.h"
+#include "Components/HoldInteraction/SMHoldInteractionComponent.h"
 #include "SMHIC_ItemBase.generated.h"
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))

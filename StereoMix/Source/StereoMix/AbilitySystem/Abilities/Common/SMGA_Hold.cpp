@@ -9,8 +9,8 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_WaitHoldResult.h"
-#include "Characters/Component/SMHIC_Character.h"
 #include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Components/Character/SMHIC_Character.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 
 USMGA_Hold::USMGA_Hold()

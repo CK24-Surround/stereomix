@@ -7,7 +7,7 @@
 #include "Components/TextBlock.h"
 #include "Games/SMGameState.h"
 #include "SMUserWidget_PhaseTimerBar.h"
-#include "Games/Timer/SMRoundTimerComponent.h"
+#include "Components/Core/SMRoundTimerComponent.h"
 
 USMUserWidget_Scoreboard::USMUserWidget_Scoreboard() {}
 

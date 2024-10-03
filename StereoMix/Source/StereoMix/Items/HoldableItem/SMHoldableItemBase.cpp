@@ -4,7 +4,7 @@
 #include "SMHoldableItemBase.h"
 
 #include "Components/SphereComponent.h"
-#include "HoldInteraction/SMHoldInteractionComponent.h"
+#include "Components/HoldInteraction/SMHoldInteractionComponent.h"
 #include "Utilities/SMCollision.h"
 
 

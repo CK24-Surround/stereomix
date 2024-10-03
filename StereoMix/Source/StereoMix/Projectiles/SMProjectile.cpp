@@ -4,11 +4,9 @@
 #include "SMProjectile.h"
 
 #include "GameFramework/ProjectileMovementComponent.h"
-#include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
-#include "Components/SMTeamComponent.h"
 #include "Components/SphereComponent.h"
 #include "NiagaraComponent.h"
+#include "Components/Common/SMTeamComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"
 

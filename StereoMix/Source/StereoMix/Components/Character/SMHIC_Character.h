@@ -3,8 +3,8 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/HoldInteraction/SMHoldInteractionComponent.h"
 #include "Data/SMNoiseBreakData.h"
-#include "HoldInteraction/SMHoldInteractionComponent.h"
 #include "SMHIC_Character.generated.h"
 
 class ASMPlayerCharacterBase;

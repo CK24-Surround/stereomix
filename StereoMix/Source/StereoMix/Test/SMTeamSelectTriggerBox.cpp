@@ -5,7 +5,7 @@
 
 #include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Components/BoxComponent.h"
-#include "Components/SMTeamComponent.h"
+#include "Components/Common/SMTeamComponent.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Games/SMGamePlayerState.h"
 #include "Utilities/SMCollision.h"

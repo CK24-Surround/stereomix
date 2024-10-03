@@ -4,9 +4,9 @@
 #include "SMTile.h"
 
 #include "Components/BoxComponent.h"
-#include "Components/SMTeamComponent.h"
 #include "Data/SMTileAssetData.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Components/Common/SMTeamComponent.h"
 #include "Utilities/SMAssetPath.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
