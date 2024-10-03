@@ -13,71 +13,71 @@ void USMAnimInstance::NativeInitializeAnimation()
 	Super::NativeInitializeAnimation();
 
 	SourceCharacter = Cast<ASMPlayerCharacterBase>(TryGetPawnOwner());
-	if (SourceCharacter.Get())
-	{
-		SourceMovement = SourceCharacter->GetCharacterMovement();
-	}
+	SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
 }
 
 void USMAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
-	UpdateMovementInfo();
-}
-
-void USMAnimInstance::UpdateMovementInfo()
-{
-	if (SourceCharacter)
+	if (SourceCharacter && SourceMovement)
 	{
-		if (ensure(SourceMovement))
-		{
-			const FVector Acceleration = SourceMovement->GetCurrentAcceleration();
-			Acceleration2D = FVector(Acceleration.X, Acceleration.Y, 0.0);
-			bHasAcceleration = !Acceleration2D.IsNearlyZero();
+		const FVector Acceleration = SourceMovement->GetCurrentAcceleration();
+		Acceleration2D = FVector(Acceleration.X, Acceleration.Y, 0.0);
+		bHasAcceleration = !Acceleration2D.IsNearlyZero();
 
-			const FVector Velocity = SourceMovement->Velocity;
-			Velocity2D = FVector(Velocity.X, Velocity.Y, 0.0);
-			bHasVeloicity = !Velocity2D.IsNearlyZero();
+		const FVector Velocity = SourceMovement->Velocity;
+		Velocity2D = FVector(Velocity.X, Velocity.Y, 0.0);
+		bHasVeloicity = !Velocity2D.IsNearlyZero();
 
-			const FVector CurrentLocation = SourceCharacter->GetActorLocation();
-			DisplacementSinceLastUpdate = (CurrentLocation - PreviousLocation).Size();
-			PreviousLocation = CurrentLocation;
+		const FVector CurrentLocation = SourceCharacter->GetActorLocation();
+		DisplacementSinceLastUpdate = (CurrentLocation - PreviousLocation).Size();
+		PreviousLocation = CurrentLocation;
 
-			const float DeltaSeconds = GetDeltaSeconds();
-			if (DeltaSeconds >= UE_KINDA_SMALL_NUMBER)
-			{
-				DisplacementSpeed = DisplacementSinceLastUpdate / DeltaSeconds;
-			}
-			else
-			{
-				DisplacementSpeed = 0.0f;
-			}
+		DisplacementSpeed = DeltaSeconds > UE_KINDA_SMALL_NUMBER ? DisplacementSinceLastUpdate / DeltaSeconds : 0.0f;
 
-			LocalVelocityDirectionAngle = UKismetAnimationLibrary::CalculateDirection(Velocity2D, SourceCharacter->GetActorRotation());
-			UpdateDirection();
+		LocalVelocityDirectionAngle = UKismetAnimationLibrary::CalculateDirection(Velocity2D, SourceCharacter->GetActorRotation());
+		Direction = VelocityDirectionAngleToDirection(LocalVelocityDirectionAngle);
 
-			// bAmICatching = SourceCharacter->bAmICatching();
-			// NET_VLOG(SourceCharacter, 1, 1.0f, TEXT("LocalVelocityDirectionAngle: %f"), LocalVelocityDirectionAngle);
-			// NET_VLOG(SourceCharacter, 2, 1.0f, TEXT("Velocity2D: %s"), *Velocity2D.ToString());
-		}
+		const FRotator CurrentRotation = SourceCharacter->GetActorRotation();
+		float DeltaYaw = CurrentRotation.Yaw - PreviousYaw;
+		DeltaYaw = FMath::IsNearlyZero(DeltaYaw, 0.01f) ? 0.0f : DeltaYaw;
+		PreviousYaw = CurrentRotation.Yaw;
+		DeltaYawDirection = DeltaYawToDirection(DeltaYaw);
+		DeltaYawSpeed = FMath::Abs(DeltaYaw);
 	}
 }
 
-void USMAnimInstance::UpdateDirection()
+EDirection USMAnimInstance::VelocityDirectionAngleToDirection(float InLocalVelocityDirectionAngle)
 {
-	if (FMath::Abs(LocalVelocityDirectionAngle) <= 60)
+	if (FMath::Abs(InLocalVelocityDirectionAngle) <= 60)
 	{
-		Direction = EDirection::Forward;
+		return EDirection::Forward;
 	}
-	else if (FMath::Abs(LocalVelocityDirectionAngle) >= 120)
+	else if (FMath::Abs(InLocalVelocityDirectionAngle) >= 120)
 	{
-		Direction = EDirection::Backward;
+		return EDirection::Backward;
 	}
-	else if (LocalVelocityDirectionAngle >= 0)
+	else if (InLocalVelocityDirectionAngle >= 0)
 	{
-		Direction = EDirection::Right;
+		return EDirection::Right;
 	}
 	else
 	{
-		Direction = EDirection::Left;
+		return EDirection::Left;
+	}
+}
+
+EDirection USMAnimInstance::DeltaYawToDirection(float DeltaYaw)
+{
+	if (DeltaYaw < 0)
+	{
+		return EDirection::Left;
+	}
+	else if (DeltaYaw > 0)
+	{
+		return EDirection::Right;
+	}
+	else
+	{
+		return EDirection::Forward;
 	}
 }

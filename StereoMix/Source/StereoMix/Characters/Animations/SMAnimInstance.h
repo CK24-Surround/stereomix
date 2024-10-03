@@ -19,6 +19,7 @@ enum class EDirection : uint8
 };
 
 class ASMPlayerCharacterBase;
+
 /**
  *
  */
@@ -33,15 +34,18 @@ public:
 	virtual void NativeUpdateAnimation(float DeltaSeconds) override;
 
 protected:
-	void UpdateMovementInfo();
+	static EDirection VelocityDirectionAngleToDirection(float InLocalVelocityDirectionAngle);
 
-	void UpdateDirection();
+	static EDirection DeltaYawToDirection(float DeltaYaw);
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
 	TObjectPtr<UAnimSequence> Idle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
-	TObjectPtr<UAnimSequence> CatchIdle;
+	TObjectPtr<UAnimSequence> RightTurnIdle;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|Idle")
+	TObjectPtr<UAnimSequence> LeftTurnIdle;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Animation|MoveCycle")
 	TObjectPtr<UAnimSequence> ForwardMove;
@@ -62,14 +66,16 @@ protected:
 	TObjectPtr<UCharacterMovementComponent> SourceMovement;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	uint32 bHasAcceleration : 1 = false;
+	uint32 bHasAcceleration:1 = false;
 
+	/** 입력에 의한 가속입니다. */
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector Acceleration2D;
 
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
-	uint32 bHasVeloicity : 1 = false;
+	uint32 bHasVeloicity:1 = false;
 
+	/** 해당 캐릭터의 속도입니다. */
 	UPROPERTY(BlueprintReadOnly, Category = "Movement")
 	FVector Velocity2D;
 
@@ -90,4 +96,12 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly, Category = "State")
 	uint32 bAmICatching:1 = false;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	EDirection DeltaYawDirection;
+
+	UPROPERTY(BlueprintReadOnly, Category = "Movement")
+	float DeltaYawSpeed = 0.0f;
+
+	float PreviousYaw = 0.0f;
 };
