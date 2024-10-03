@@ -7,7 +7,8 @@
 #include "Components/TextBlock.h"
 #include "Games/SMGameState.h"
 #include "SMUserWidget_PhaseTimerBar.h"
-#include "Components/Core/SMRoundTimerComponent.h"
+#include "Components/Core/SMRoundTimerManagerComponent.h"
+#include "Components/Core/SMTileManagerComponent.h"
 
 USMUserWidget_Scoreboard::USMUserWidget_Scoreboard() {}
 
@@ -57,18 +58,21 @@ void USMUserWidget_Scoreboard::BindToGameState()
 	ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
 	if (GameState)
 	{
-		if (USMRoundTimerComponent* RoundTimerComponent = GameState->GetComponentByClass<USMRoundTimerComponent>())
+		if (USMRoundTimerManagerComponent* RoundTimerComponent = GameState->GetComponentByClass<USMRoundTimerManagerComponent>())
 		{
 			RoundTimerComponent->OnRemainingRoundTimeChanged.AddDynamic(this, &ThisClass::OnRoundTimeChanged);
 			OnRoundTimeChanged(RoundTimerComponent->GetRemainingTime());
 		}
 
-		// SMGameState->OnChangeEDMTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMScore);
-		// OnChangeEDMScore(SMGameState->GetReplicatedEDMTeamScore());
-		//
-		// SMGameState->OnChangeFutureBassTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBaseScore);
-		// OnChangeFutureBaseScore(SMGameState->GetReplicatedFutureBaseTeamScore());
-		//
+		if (USMTileManagerComponent* TileManagerComponent = GameState->GetComponentByClass<USMTileManagerComponent>())
+		{
+			TileManagerComponent->OnEDMTileScoreChanged.AddDynamic(this, &ThisClass::OnEDMTileScoreChanged);
+			OnEDMTileScoreChanged(TileManagerComponent->GetEDMTileScore());
+
+			TileManagerComponent->OnFBTileScoreChanged.AddDynamic(this, &ThisClass::OnFBTileScoreChanged);
+			OnFBTileScoreChanged(TileManagerComponent->GetFBTileScore());
+		}
+
 		// SMGameState->OnChangePhaseTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhaseTime);
 		// OnChangePhaseTime(SMGameState->GetReplicatedRemainPhaseTime(), SMGameState->GetReplicatedPhaseTime());
 		//
@@ -96,13 +100,13 @@ void USMUserWidget_Scoreboard::OnRoundTimeChanged(int32 RoundTime)
 	RoundTimer->SetText(FText::FromString(RoundTimerString));
 }
 
-void USMUserWidget_Scoreboard::OnChangeEDMScore(int32 Score)
+void USMUserWidget_Scoreboard::OnEDMTileScoreChanged(int32 Score)
 {
 	const FString ScoreString = FString::Printf(TEXT("%03d"), Score);
 	EDMScore->SetText(FText::FromString(ScoreString));
 }
 
-void USMUserWidget_Scoreboard::OnChangeFutureBaseScore(int32 Score)
+void USMUserWidget_Scoreboard::OnFBTileScoreChanged(int32 Score)
 {
 	const FString ScoreString = FString::Printf(TEXT("%03d"), Score);
 	FutureBassScore->SetText(FText::FromString(ScoreString));

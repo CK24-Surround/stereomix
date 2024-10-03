@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
-#include "SMRoundTimerComponent.generated.h"
+#include "SMRoundTimerManagerComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRoundTimerTimeExpiredDelegate);
 
@@ -19,12 +19,12 @@ enum class ESMTimerState : uint8
 };
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class STEREOMIX_API USMRoundTimerComponent : public UActorComponent
+class STEREOMIX_API USMRoundTimerManagerComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
 public:
-	USMRoundTimerComponent();
+	USMRoundTimerManagerComponent();
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 

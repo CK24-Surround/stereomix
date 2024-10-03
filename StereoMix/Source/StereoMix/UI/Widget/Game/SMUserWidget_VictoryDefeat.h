@@ -35,7 +35,8 @@ public:
 protected:
 	void BindToGameState();
 
-	void OnEndRound(ESMTeam VictoryTeam);
+	UFUNCTION()
+	void OnVictoryTeamAnnouncedCallback(ESMTeam VictoryTeam);
 
 	void ShowResult(EVictoryDefeatResult InResult, ESMTeam InSourceTeam);
 

@@ -8,6 +8,8 @@
 #include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
+#include "Components/Core/SMTileManagerComponent.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Games/SMGameState.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMLog.h"
@@ -52,7 +54,11 @@ void USMUserWidget_VictoryDefeat::BindToGameState()
 	ASMGameState* SMGameState = GetWorld()->GetGameState<ASMGameState>();
 	if (SMGameState)
 	{
-		SMGameState->OnEndRound.AddUObject(this, &ThisClass::OnEndRound);
+		USMTileManagerComponent* TileManager = SMGameState->GetTileManager();
+		if (TileManager)
+		{
+			TileManager->OnVictoryTeamAnnounced.AddDynamic(this, &ThisClass::OnVictoryTeamAnnouncedCallback);
+		}
 	}
 	else
 	{
@@ -61,14 +67,14 @@ void USMUserWidget_VictoryDefeat::BindToGameState()
 	}
 }
 
-void USMUserWidget_VictoryDefeat::OnEndRound(ESMTeam VictoryTeam)
+void USMUserWidget_VictoryDefeat::OnVictoryTeamAnnouncedCallback(ESMTeam VictoryTeam)
 {
-	ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(ASC->GetAvatarActor());
-	if (!ensure(SourceTeamInterface))
+	if (!ASC.IsValid())
 	{
 		return;
 	}
-	const ESMTeam SourceTeam = SourceTeamInterface->GetTeam();
+
+	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(ASC->GetAvatarActor());
 
 	EVictoryDefeatResult VictoryDefeatResult;
 	if (VictoryTeam == ESMTeam::None)

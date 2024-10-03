@@ -1,19 +1,19 @@
 // Copyright Studio Surround. All Rights Reserved.
 
 
-#include "SMRoundTimerComponent.h"
+#include "SMRoundTimerManagerComponent.h"
 
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
 
-USMRoundTimerComponent::USMRoundTimerComponent()
+USMRoundTimerManagerComponent::USMRoundTimerManagerComponent()
 {
 	// PrimaryComponentTick.bCanEverTick = true;
 	SetIsReplicatedByDefault(true);
 }
 
-void USMRoundTimerComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+void USMRoundTimerManagerComponent::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
@@ -21,7 +21,7 @@ void USMRoundTimerComponent::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 	DOREPLIFETIME(ThisClass, RemainingTime);
 }
 
-void USMRoundTimerComponent::StartTimer()
+void USMRoundTimerManagerComponent::StartTimer()
 {
 	if (GetOwnerRole() != ROLE_Authority)
 	{
@@ -41,7 +41,7 @@ void USMRoundTimerComponent::StartTimer()
 	World->GetTimerManager().SetTimer(CountdownTimerHandle, this, &ThisClass::CountdownTime, OneSecond, true);
 }
 
-void USMRoundTimerComponent::CountdownTime()
+void USMRoundTimerManagerComponent::CountdownTime()
 {
 	SetRemainingTime(RemainingTime - 1);
 
@@ -79,14 +79,14 @@ void USMRoundTimerComponent::CountdownTime()
 	}
 }
 
-void USMRoundTimerComponent::SetRemainingTime(int32 NewTime)
+void USMRoundTimerManagerComponent::SetRemainingTime(int32 NewTime)
 {
 	RemainingTime = NewTime;
 
 	OnRep_RemainingTime();
 }
 
-void USMRoundTimerComponent::OnRep_RemainingTime()
+void USMRoundTimerManagerComponent::OnRep_RemainingTime()
 {
 	OnRemainingRoundTimeChanged.Broadcast(RemainingTime);
 }

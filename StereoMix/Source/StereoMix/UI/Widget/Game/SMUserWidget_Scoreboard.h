@@ -35,9 +35,11 @@ protected:
 	UFUNCTION()
 	void OnRoundTimeChanged(int32 RoundTime);
 
-	void OnChangeEDMScore(int32 Score);
+	UFUNCTION()
+	void OnEDMTileScoreChanged(int32 Score);
 
-	void OnChangeFutureBaseScore(int32 Score);
+	UFUNCTION()
+	void OnFBTileScoreChanged(int32 Score);
 
 	void OnChangePhaseTime(int32 RemainPhaseTime, int32 PhaseTime);
 

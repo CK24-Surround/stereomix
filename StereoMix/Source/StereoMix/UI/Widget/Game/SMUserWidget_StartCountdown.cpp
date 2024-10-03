@@ -4,7 +4,7 @@
 #include "SMUserWidget_StartCountdown.h"
 
 #include "Components/ScaleBox.h"
-#include "Components/Core/SMRoundTimerComponent.h"
+#include "Components/Core/SMRoundTimerManagerComponent.h"
 #include "Games/SMGameState.h"
 #include "Utilities/SMLog.h"
 
@@ -31,7 +31,7 @@ void USMUserWidget_StartCountdown::BindGameState()
 	ASMGameState* GameState = World->GetGameState<ASMGameState>();
 	if (GameState)
 	{
-		CachedTimerComponent = GameState->GetComponentByClass<USMRoundTimerComponent>();
+		CachedTimerComponent = GameState->GetComponentByClass<USMRoundTimerManagerComponent>();
 		if (CachedTimerComponent.IsValid() && CachedTimerComponent->GetTimerState() == ESMTimerState::PreRound)
 		{
 			CachedTimerComponent->OnRemainingRoundTimeChanged.AddDynamic(this, &ThisClass::OnRemainingTimeChangedCallback);

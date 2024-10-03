@@ -7,7 +7,7 @@
 
 #include "SMUserWidget_StartCountdown.generated.h"
 
-class USMRoundTimerComponent;
+class USMRoundTimerManagerComponent;
 class ASMGameState;
 class UScaleBox;
 /**
@@ -45,5 +45,5 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UScaleBox> CountdownGoBox;
 
-	TWeakObjectPtr<USMRoundTimerComponent> CachedTimerComponent;
+	TWeakObjectPtr<USMRoundTimerManagerComponent> CachedTimerComponent;
 };
