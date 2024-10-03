@@ -4,7 +4,7 @@
 #include "SMAT_WaitHoldResult.h"
 
 #include "Engine/OverlapResult.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/HoldInteraction/SMHoldInteractionComponent.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"

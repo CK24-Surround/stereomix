@@ -6,7 +6,7 @@
 #include "FMODBlueprintStatics.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Characters/Player/SMPianoCharacter.h"
+#include "Actors/Character/Player/SMPianoCharacter.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 
 

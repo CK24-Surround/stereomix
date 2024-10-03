@@ -6,7 +6,6 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "GameplayEffectExtension.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 

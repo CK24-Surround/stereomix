@@ -5,8 +5,8 @@
 
 #include "FMODBlueprintStatics.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Characters/Note/SMNoteBase.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Notes/SMNoteBase.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 

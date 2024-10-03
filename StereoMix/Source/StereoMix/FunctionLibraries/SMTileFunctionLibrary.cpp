@@ -4,9 +4,9 @@
 #include "SMTileFunctionLibrary.h"
 
 #include "Engine/OverlapResult.h"
+#include "Actors/Tiles/SMTile.h"
+#include "Components/Core/SMTileManagerComponent.h"
 #include "Games/SMGameState.h"
-#include "Tiles/SMTile.h"
-#include "Tiles/SMTileManagerComponent.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 

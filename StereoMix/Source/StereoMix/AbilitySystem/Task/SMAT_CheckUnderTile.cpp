@@ -3,8 +3,8 @@
 
 #include "SMAT_CheckUnderTile.h"
 
-#include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Tiles/SMTile.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 

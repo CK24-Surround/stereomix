@@ -4,8 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
-#include "Tiles/SMTile.h"
 #include "SMGA_Sampling.generated.h"
+
+class ASMTile;
 
 /**
  * 

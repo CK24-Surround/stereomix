@@ -4,7 +4,7 @@
 #include "SMGameplayAbility.h"
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Utilities/SMLog.h"
 
 USMGameplayAbility::USMGameplayAbility()

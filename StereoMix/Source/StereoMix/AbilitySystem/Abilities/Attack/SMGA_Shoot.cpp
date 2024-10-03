@@ -6,13 +6,13 @@
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Projectiles/SMProjectile.h"
+#include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Games/SMGameState.h"
-#include "Projectiles/SMProjectile.h"
-#include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 
 USMGA_Shoot::USMGA_Shoot()
 {

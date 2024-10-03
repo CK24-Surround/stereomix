@@ -12,7 +12,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_AdjustableDash.h"
 #include "AbilitySystem/Task/SMAT_WaitChargeBlocked.h"
-#include "Characters/Player/SMBassCharacter.h"
+#include "Actors/Character/Player/SMBassCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMBassCharacterDataAsset.h"

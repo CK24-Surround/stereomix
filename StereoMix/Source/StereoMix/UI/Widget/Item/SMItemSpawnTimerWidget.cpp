@@ -3,7 +3,7 @@
 
 #include "SMItemSpawnTimerWidget.h"
 
-#include "Items/SMItemSpawner.h"
+#include "Actors/Items/SMItemSpawner.h"
 
 
 void USMItemSpawnTimerWidget::SetItemSpawner(ASMItemSpawner* ItemSpawner)

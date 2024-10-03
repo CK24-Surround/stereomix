@@ -4,6 +4,7 @@
 #include "SMCharacterSelectPlayerController.h"
 
 #include "EngineUtils.h"
+#include "Actors/Character/SMPreviewCharacter.h"
 #include "Games/CharacterSelect/SMCharacterSelectMode.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "Subsystem/SMBackgroundMusicSubsystem.h"

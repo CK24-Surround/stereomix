@@ -3,7 +3,7 @@
 
 #include "SMCatchInteractionComponent_CatchableItem.h"
 
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 
 
 void USMCatchInteractionComponent_CatchableItem::BeginPlay()

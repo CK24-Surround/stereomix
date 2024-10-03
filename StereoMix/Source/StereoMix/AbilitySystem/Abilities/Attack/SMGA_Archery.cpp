@@ -7,14 +7,14 @@
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Characters/Weapon/SMWeaponBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Projectiles/SMProjectile.h"
+#include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
+#include "Actors/Weapons/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Games/SMGameState.h"
-#include "Projectiles/SMProjectile.h"
-#include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 
 USMGA_Archery::USMGA_Archery()
 {

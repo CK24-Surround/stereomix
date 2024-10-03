@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Characters/SMPreviewCharacter.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 #include "SMPlayerController.h"
 #include "UI/Widget/CharacterSelect/SMCharacterSelectWidget.h"
@@ -11,6 +10,7 @@
 
 #include "SMCharacterSelectPlayerController.generated.h"
 
+class ASMPreviewCharacter;
 class ASMCharacterSelectPlayerState;
 
 USTRUCT(BlueprintType)

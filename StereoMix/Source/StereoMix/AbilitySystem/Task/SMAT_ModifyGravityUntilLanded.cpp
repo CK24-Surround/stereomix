@@ -4,7 +4,7 @@
 #include "SMAT_ModifyGravityUntilLanded.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 
 USMAT_ModifyGravityUntilLanded* USMAT_ModifyGravityUntilLanded::ModifyGravityUntilLanded(UGameplayAbility* OwningAbility, bool bUseGravityModifier, float GravityModifierValue)
 {

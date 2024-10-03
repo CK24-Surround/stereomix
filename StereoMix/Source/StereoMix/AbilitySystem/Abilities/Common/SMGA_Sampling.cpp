@@ -6,7 +6,8 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_CheckUnderTile.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Tiles/SMTile.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 
 USMGA_Sampling::USMGA_Sampling()

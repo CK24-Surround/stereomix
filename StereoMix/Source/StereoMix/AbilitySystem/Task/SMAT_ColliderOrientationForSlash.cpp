@@ -6,7 +6,7 @@
 #include "Engine/OverlapResult.h"
 #include "AbilitySystemComponent.h"
 #include "AbilitySystem/Abilities/Attack/SMGA_Slash.h"
-#include "Characters/Player/SMBassCharacter.h"
+#include "Actors/Character/Player/SMBassCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"

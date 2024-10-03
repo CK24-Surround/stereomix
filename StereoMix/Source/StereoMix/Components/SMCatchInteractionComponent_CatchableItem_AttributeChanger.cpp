@@ -6,9 +6,9 @@
 #include "Engine/OverlapResult.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Actors/Items/SMCatchableItem_AttributeChanger.h"
+#include "Actors/Tiles/SMTile.h"
 #include "Components/BoxComponent.h"
-#include "Items/SMCatchableItem_AttributeChanger.h"
-#include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
 
 

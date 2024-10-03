@@ -8,14 +8,14 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Characters/Weapon/SMWeaponBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Projectiles/SMProjectile.h"
+#include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
+#include "Actors/Weapons/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Games/SMGameState.h"
-#include "Projectiles/Effect/Skill/SMEP_SlowBullet.h"
-#include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 
 USMGA_SlowBullet::USMGA_SlowBullet()
 {

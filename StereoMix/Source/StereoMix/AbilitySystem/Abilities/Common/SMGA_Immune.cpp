@@ -8,7 +8,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/Character/SMCharacterMovementComponent.h"
 #include "Utilities/SMLog.h"
 

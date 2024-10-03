@@ -5,8 +5,8 @@
 
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Characters/Weapon/SMWeaponBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Weapons/SMWeaponBase.h"
 #include "Utilities/SMLog.h"
 
 

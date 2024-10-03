@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "AbilitySystem/Abilities/SMGameplayAbility.h"
-#include "Tiles/SMTile.h"
 #include "SMGA_NoiseBreak.generated.h"
 
+class ASMTile;
 struct FSMCharacterNoiseBreakData;
+
 /**
  * 
  */

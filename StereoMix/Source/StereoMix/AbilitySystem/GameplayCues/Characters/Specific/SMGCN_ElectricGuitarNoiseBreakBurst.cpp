@@ -4,7 +4,7 @@
 #include "SMGCN_ElectricGuitarNoiseBreakBurst.h"
 
 #include "NiagaraFunctionLibrary.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "FunctionLibraries/SMGameplayCueBlueprintLibrary.h"
 
 bool USMGCN_ElectricGuitarNoiseBreakBurst::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const

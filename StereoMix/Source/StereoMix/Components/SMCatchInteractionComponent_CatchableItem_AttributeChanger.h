@@ -4,10 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "SMCatchInteractionComponent_CatchableItem.h"
-#include "Tiles/SMTile.h"
 
 #include "SMCatchInteractionComponent_CatchableItem_AttributeChanger.generated.h"
 
+class ASMTile;
 
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class STEREOMIX_API USMCatchInteractionComponent_CatchableItem_AttributeChanger : public USMCatchInteractionComponent_CatchableItem

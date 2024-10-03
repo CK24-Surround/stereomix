@@ -3,7 +3,7 @@
 
 #include "SMGA_StaminaControl.h"
 
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 
 USMGA_StaminaControl::USMGA_StaminaControl()

@@ -7,12 +7,11 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Tiles/SMTile.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Indicator/SMGA_NoiseBreakIndicator.h"
-#include "Tiles/SMTile.h"
 #include "Utilities/SMCollision.h"
 
 

@@ -6,8 +6,6 @@
 #include "Abilities/Tasks/AbilityTask.h"
 #include "SMAT_CheckTeamTileEntryExit.generated.h"
 
-class ASMPlayerCharacterBase;
-
 DECLARE_DELEGATE(FOnTeamTileInOutDelegate);
 
 /**
