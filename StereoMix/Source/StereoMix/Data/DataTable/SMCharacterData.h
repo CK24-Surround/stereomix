@@ -13,13 +13,13 @@ struct FSMCharacterStatsData : public FTableRowBase
 	float HP = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float MoveSpeed = -1.0f;;
+	float MoveSpeed = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float Stamina = -1.0f;;
+	float Stamina = -1.0f;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Data")
-	float SkillGauge = -1.0f;;
+	float SkillGauge = -1.0f;
 };
 
 USTRUCT(BlueprintType)

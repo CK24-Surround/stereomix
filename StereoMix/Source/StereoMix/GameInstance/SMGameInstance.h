@@ -54,6 +54,9 @@ public:
 	FSMCharacterNoiseBreakData* GetCharacterNoiseBreakData(ESMCharacterType CharacterType);
 
 protected:
+	template <typename DataType, typename FieldType>
+	void UpdateDataTable(TSharedPtr<FJsonObject> CharacterData, UDataTable* DataTable, const FString& CharacterName, const TMap<FString, FieldType DataType::*> & FieldMap);
+	
 	void ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 
 	FName CharacterTypeToName(ESMCharacterType CharacterType);
