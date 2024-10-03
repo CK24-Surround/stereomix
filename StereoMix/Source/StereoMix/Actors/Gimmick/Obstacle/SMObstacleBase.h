@@ -30,6 +30,9 @@ public:
 
 protected:
 	UFUNCTION(NetMulticast, Reliable)
+	void MulticastPushBack();
+
+	UFUNCTION(NetMulticast, Reliable)
 	void MulticastSetCollisionEnabled(bool bNewIsCollisionEnabled);
 
 	UFUNCTION(NetMulticast, Reliable)
@@ -46,6 +49,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	uint8 bSpawnImmediately:1 = true;
+
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
+	float SpawnPushBackMagnitude = 700.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
 	float SpawnDelay = 3.0f;
