@@ -7,10 +7,9 @@
 #include "Components/TextBlock.h"
 #include "Games/SMGameState.h"
 #include "SMUserWidget_PhaseTimerBar.h"
+#include "Games/Timer/SMRoundTimerComponent.h"
 
-USMUserWidget_Scoreboard::USMUserWidget_Scoreboard()
-{
-}
+USMUserWidget_Scoreboard::USMUserWidget_Scoreboard() {}
 
 bool USMUserWidget_Scoreboard::Initialize()
 {
@@ -54,29 +53,33 @@ void USMUserWidget_Scoreboard::SetASC(UAbilitySystemComponent* InASC)
 
 void USMUserWidget_Scoreboard::BindToGameState()
 {
-	ASMGameState* SMGameState = ASC->GetWorld()->GetGameState<ASMGameState>();
-	if (SMGameState)
+	UWorld* World = GetWorld();
+	ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
+	if (GameState)
 	{
-		SMGameState->OnChangeRoundTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeRoundTime);
-		OnChangeRoundTime(SMGameState->GetReplicatedRemainRoundTime());
+		if (USMRoundTimerComponent* RoundTimerComponent = GameState->GetComponentByClass<USMRoundTimerComponent>())
+		{
+			RoundTimerComponent->OnRemainingRoundTimeChanged.AddDynamic(this, &ThisClass::OnRoundTimeChanged);
+			OnRoundTimeChanged(RoundTimerComponent->GetRemainingTime());
+		}
 
-		SMGameState->OnChangeEDMTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMScore);
-		OnChangeEDMScore(SMGameState->GetReplicatedEDMTeamScore());
-
-		SMGameState->OnChangeFutureBassTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBaseScore);
-		OnChangeFutureBaseScore(SMGameState->GetReplicatedFutureBaseTeamScore());
-
-		SMGameState->OnChangePhaseTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhaseTime);
-		OnChangePhaseTime(SMGameState->GetReplicatedRemainPhaseTime(), SMGameState->GetReplicatedPhaseTime());
-
-		SMGameState->OnChangePhase.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhase);
-		OnChangePhase(SMGameState->GetReplicatedCurrentPhaseNumber());
-
-		SMGameState->OnChangeEDMTeamPhaseScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMPhaseScore);
-		OnChangeEDMPhaseScore(SMGameState->GetReplicatedEDMTeamPhaseScore());
-
-		SMGameState->OnChangeFutureBassTeamPhaseScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBassPhaseScore);
-		OnChangeFutureBassPhaseScore(SMGameState->GetReplicatedFutureBaseTeamPhaseScore());
+		// SMGameState->OnChangeEDMTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMScore);
+		// OnChangeEDMScore(SMGameState->GetReplicatedEDMTeamScore());
+		//
+		// SMGameState->OnChangeFutureBassTeamScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBaseScore);
+		// OnChangeFutureBaseScore(SMGameState->GetReplicatedFutureBaseTeamScore());
+		//
+		// SMGameState->OnChangePhaseTime.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhaseTime);
+		// OnChangePhaseTime(SMGameState->GetReplicatedRemainPhaseTime(), SMGameState->GetReplicatedPhaseTime());
+		//
+		// SMGameState->OnChangePhase.BindUObject(this, &USMUserWidget_Scoreboard::OnChangePhase);
+		// OnChangePhase(SMGameState->GetReplicatedCurrentPhaseNumber());
+		//
+		// SMGameState->OnChangeEDMTeamPhaseScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeEDMPhaseScore);
+		// OnChangeEDMPhaseScore(SMGameState->GetReplicatedEDMTeamPhaseScore());
+		//
+		// SMGameState->OnChangeFutureBassTeamPhaseScore.BindUObject(this, &USMUserWidget_Scoreboard::OnChangeFutureBassPhaseScore);
+		// OnChangeFutureBassPhaseScore(SMGameState->GetReplicatedFutureBaseTeamPhaseScore());
 	}
 	else
 	{
@@ -85,7 +88,7 @@ void USMUserWidget_Scoreboard::BindToGameState()
 	}
 }
 
-void USMUserWidget_Scoreboard::OnChangeRoundTime(int32 RoundTime)
+void USMUserWidget_Scoreboard::OnRoundTimeChanged(int32 RoundTime)
 {
 	const int32 Minutes = RoundTime / 60;
 	const int32 Seconds = RoundTime % 60;

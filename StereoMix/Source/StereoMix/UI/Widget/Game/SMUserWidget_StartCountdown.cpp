@@ -5,6 +5,7 @@
 
 #include "Components/ScaleBox.h"
 #include "Games/SMGameState.h"
+#include "Games/Timer/SMRoundTimerComponent.h"
 #include "Utilities/SMLog.h"
 
 void USMUserWidget_StartCountdown::NativeOnInitialized()
@@ -21,47 +22,95 @@ void USMUserWidget_StartCountdown::NativeOnInitialized()
 
 void USMUserWidget_StartCountdown::BindGameState()
 {
-	CachedGameState = GetWorld()->GetGameState<ASMGameState>();
-	if (CachedGameState.Get())
+	UWorld* World = GetWorld();
+	if (!World)
 	{
-		CachedGameState->OnChangeCountdownTime.BindUObject(this, &ThisClass::OnCountdownTimeChangeCallback);
+		return;
+	}
+
+	ASMGameState* GameState = World->GetGameState<ASMGameState>();
+	if (GameState)
+	{
+		CachedTimerComponent = GameState->GetComponentByClass<USMRoundTimerComponent>();
+		if (CachedTimerComponent.IsValid() && CachedTimerComponent->GetTimerState() == ESMTimerState::PreRound)
+		{
+			CachedTimerComponent->OnRemainingRoundTimeChanged.AddDynamic(this, &ThisClass::OnRemainingTimeChangedCallback);
+			OnRemainingTimeChangedCallback(CachedTimerComponent->GetRemainingTime());
+		}
 	}
 	else
 	{
-		// 만약 바인드에 실패하면 계속 시도합니다.`
-		GetWorld()->GetTimerManager().SetTimerForNextTick(this, &ThisClass::BindGameState);
+		World->GetTimerManager().SetTimerForNextTick(this, &ThisClass::BindGameState);
 	}
 }
 
-void USMUserWidget_StartCountdown::OnCountdownTimeChangeCallback(int32 CountdownNumber)
+void USMUserWidget_StartCountdown::OnRemainingTimeChangedCallback(int32 RemainingTime)
 {
+	if (RemainingTime == 3)
+	{
+		StartCountdown(RemainingTime);
+	}
+
+	if ((RemainingTime <= 3) && CachedTimerComponent.IsValid())
+	{
+		CachedTimerComponent->OnRemainingRoundTimeChanged.RemoveAll(this);
+	}
+}
+
+void USMUserWidget_StartCountdown::StartCountdown(int32 RemainingTime)
+{
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
 	SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-	ChangeCountdownNumber(CountdownNumber);
-}
 
-void USMUserWidget_StartCountdown::ChangeCountdownNumber(int32 CountdownNumber)
-{
-	for (const auto& CountdownBox : CountdownBoxes)
-	{
-		if (ensureAlways(CountdownBox.Value.Get()))
+	const TWeakObjectPtr<USMUserWidget_StartCountdown> ThisWeakPtr = MakeWeakObjectPtr(this);
+	auto ShowCountdown = [ThisWeakPtr](int32 CountdownNumber) {
+		if (ThisWeakPtr.IsValid())
 		{
-			CountdownBox.Value->SetVisibility(ESlateVisibility::Hidden);
+			for (const TTuple<int, TWeakObjectPtr<UWidget>>& CountdownBox : ThisWeakPtr->CountdownBoxes)
+			{
+				if (UWidget* CountdownBoxWidget = CountdownBox.Value.Get())
+				{
+					CountdownBoxWidget->SetVisibility(ESlateVisibility::Hidden);
+				}
+			}
+
+			TWeakObjectPtr<UWidget>* CountdownBoxPtr = ThisWeakPtr->CountdownBoxes.Find(CountdownNumber);
+			UWidget* CountdownBoxWidget = CountdownBoxPtr ? CountdownBoxPtr->Get() : nullptr;
+			if (CountdownBoxWidget)
+			{
+				CountdownBoxWidget->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+			}
 		}
-	}
+	};
 
-	if (ensureAlways(CountdownBoxes.Find(CountdownNumber)))
+	int32 CountdownInterval = 0;
+	const AWorldSettings* WorldSettings = World->GetWorldSettings();
+	const float OneSecond = WorldSettings ? WorldSettings->GetEffectiveTimeDilation() : 1.0f;
+	for (int32 CountdownNumber = RemainingTime; CountdownNumber >= 0; --CountdownNumber)
 	{
-		CountdownBoxes[CountdownNumber]->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+		if (CountdownInterval == 0)
+		{
+			ShowCountdown(CountdownNumber);
+		}
+		else
+		{
+			FTimerHandle ShowCountdownTimerHandle;
+			World->GetTimerManager().SetTimer(ShowCountdownTimerHandle, [ShowCountdown, CountdownNumber]() { ShowCountdown(CountdownNumber); }, OneSecond * CountdownInterval, false);
+		}
+
+		++CountdownInterval;
 	}
 
-	if (CountdownNumber == 0)
-	{
-		FTimerHandle TimerHandle;
-		GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::DisableCountdown, 1.0f);
-	}
-}
-
-void USMUserWidget_StartCountdown::DisableCountdown()
-{
-	SetVisibility(ESlateVisibility::Collapsed);
+	FTimerHandle TimerHandle;
+	World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr]() {
+		if (ThisWeakPtr.IsValid())
+		{
+			ThisWeakPtr->SetVisibility(ESlateVisibility::Collapsed);
+		}
+	}, OneSecond * CountdownInterval, false);
 }

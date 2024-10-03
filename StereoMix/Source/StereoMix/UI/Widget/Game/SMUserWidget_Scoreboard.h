@@ -32,7 +32,8 @@ public:
 protected:
 	void BindToGameState();
 
-	void OnChangeRoundTime(int32 RoundTime);
+	UFUNCTION()
+	void OnRoundTimeChanged(int32 RoundTime);
 
 	void OnChangeEDMScore(int32 Score);
 

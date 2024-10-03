@@ -10,10 +10,12 @@
 #include "Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Tiles/SMTile.h"
 #include "Tiles/SMTileManagerComponent.h"
+#include "Timer/SMRoundTimerComponent.h"
 #include "Utilities/SMLog.h"
 
 ASMGameState::ASMGameState()
 {
+	RoundTimer = CreateDefaultSubobject<USMRoundTimerComponent>(TEXT("RoundTimer"));
 	TileManager = CreateDefaultSubobject<USMTileManagerComponent>(TEXT("TileManager"));
 	ProjectilePoolManager = CreateDefaultSubobject<USMProjectilePoolManagerComponent>(TEXT("ProjectilePoolManager"));
 
@@ -23,6 +25,17 @@ ASMGameState::ASMGameState()
 	TeamPhaseScores.Add(ESMTeam::None, 0);
 	TeamPhaseScores.Add(ESMTeam::EDM, 0);
 	TeamPhaseScores.Add(ESMTeam::FutureBass, 0);
+}
+
+void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamScore);
+	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamScore);
+	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamPhaseScore);
+	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamPhaseScore);
+	DOREPLIFETIME(ASMGameState, ReplicatedCurrentMusicOwner)
 }
 
 void ASMGameState::PostInitializeComponents()
@@ -46,34 +59,6 @@ void ASMGameState::PostInitializeComponents()
 	}
 }
 
-void ASMGameState::HandleMatchIsWaitingToStart()
-{
-	Super::HandleMatchIsWaitingToStart();
-
-	// 클라이언트만 배경음악 재생
-	if (GetNetMode() == NM_Client)
-	{
-		NET_LOG(this, Verbose, TEXT("배경음악 재생"))
-		PlayBackgroundMusic();
-	}
-}
-
-void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ASMGameState, ReplicatedRemainRoundTime);
-	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamScore);
-	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamScore);
-	DOREPLIFETIME(ASMGameState, ReplicatedRemainPhaseTime);
-	DOREPLIFETIME(ASMGameState, ReplicatedPhaseTime);
-	DOREPLIFETIME(ASMGameState, ReplicatedCurrentPhaseNumber);
-	DOREPLIFETIME(ASMGameState, ReplicatedEDMTeamPhaseScore);
-	DOREPLIFETIME(ASMGameState, ReplicatedFutureBassTeamPhaseScore);
-	DOREPLIFETIME(ASMGameState, ReplicatedRemainCountdownTime)
-	DOREPLIFETIME(ASMGameState, ReplicatedCurrentMusicOwner)
-}
-
 void ASMGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
@@ -82,14 +67,24 @@ void ASMGameState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	UFMODBlueprintStatics::EventInstanceStop(BackgroundMusicEventInstance, true);
 }
 
-void ASMGameState::OnRep_MatchState()
+void ASMGameState::HandleMatchIsWaitingToStart()
 {
-	Super::OnRep_MatchState();
-}
+	Super::HandleMatchIsWaitingToStart();
 
-void ASMGameState::HandleMatchHasStarted()
-{
-	Super::HandleMatchHasStarted();
+	if (HasAuthority())
+	{
+		RoundTimer->OnPreRoundTimeExpired.AddDynamic(this, &ThisClass::OnPreRoundTimeExpiredCallback);
+		RoundTimer->OnRoundTimeExpired.AddDynamic(this, &ThisClass::OnRoundTimeExpiredCallback);
+		RoundTimer->OnPostRoundTimeExpired.AddDynamic(this, &ThisClass::OnPostRoundTimeExpiredCallback);
+		RoundTimer->StartTimer();
+	}
+
+	// 클라이언트만 배경음악 재생
+	if (GetNetMode() == NM_Client)
+	{
+		NET_LOG(this, Verbose, TEXT("배경음악 재생"))
+		PlayBackgroundMusic();
+	}
 }
 
 void ASMGameState::HandleMatchHasEnded()
@@ -104,14 +99,33 @@ void ASMGameState::HandleMatchHasEnded()
 #endif
 }
 
-void ASMGameState::OnRep_ReplicatedRemainCountdownTime()
+void ASMGameState::OnPreRoundTimeExpiredCallback()
 {
-	(void)OnChangeCountdownTime.ExecuteIfBound(ReplicatedRemainCountdownTime);
+	const UWorld* World = GetWorld();
+	if (AGameMode* GameMode = World ? World->GetAuthGameMode<AGameMode>() : nullptr)
+	{
+		GameMode->StartMatch();
+	}
 }
 
-void ASMGameState::OnRep_ReplicatedRemainRoundTime()
+void ASMGameState::OnRoundTimeExpiredCallback()
 {
-	(void)OnChangeRoundTime.ExecuteIfBound(ReplicatedRemainRoundTime);
+	const UWorld* World = GetWorld();
+	if (AGameMode* GameMode = World ? World->GetAuthGameMode<AGameMode>() : nullptr)
+	{
+		GameMode->EndMatch();
+	}
+
+	EndRoundVictoryDefeatResult();
+}
+
+void ASMGameState::OnPostRoundTimeExpiredCallback()
+{
+	const UWorld* World = GetWorld();
+	if (AGameMode* GameMode = World ? World->GetAuthGameMode<AGameMode>() : nullptr)
+	{
+		GameMode->StartToLeaveMap();
+	}
 }
 
 void ASMGameState::SetTeamScores(ESMTeam InTeam, int32 InScore)
@@ -213,27 +227,6 @@ void ASMGameState::OnRep_ReplicatedEDMTeamPhaseScore()
 void ASMGameState::OnRep_ReplicatedFutureBassTeamPhaseScore()
 {
 	(void)OnChangeFutureBassTeamPhaseScore.ExecuteIfBound(ReplicatedFutureBassTeamPhaseScore);
-}
-
-void ASMGameState::EndPhase()
-{
-#if WITH_SERVER_CODE
-	if (HasAuthority())
-	{
-		const ESMTeam VictoryTeam = CalculateVictoryTeam();
-		SetTeamPhaseScores(VictoryTeam, TeamPhaseScores[VictoryTeam] + 1);
-	}
-#endif
-}
-
-void ASMGameState::OnRep_ReplicatedRemainPhaseTime()
-{
-	(void)OnChangePhaseTime.ExecuteIfBound(ReplicatedRemainPhaseTime, ReplicatedPhaseTime);
-}
-
-void ASMGameState::OnRep_ReplicatedCurrentPhaseNumber()
-{
-	(void)OnChangePhase.ExecuteIfBound(ReplicatedCurrentPhaseNumber);
 }
 
 ESMTeam ASMGameState::CalculateVictoryTeam()
