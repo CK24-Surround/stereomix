@@ -10,27 +10,7 @@
 
 #include "SMGameMode.generated.h"
 
-class ASMProjectile;
-class USMProjectilePool;
 class ASMGameState;
-
-USTRUCT(BlueprintType)
-struct FProjectilePoolCreateData
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere)
-	TMap<ESMCharacterType, TSubclassOf<USMProjectilePool>> ClassMapByCharacterType;
-};
-
-USTRUCT()
-struct FProjectilePoolInstanceData
-{
-	GENERATED_BODY()
-
-	UPROPERTY()
-	TMap<ESMCharacterType, TObjectPtr<USMProjectilePool>> ProjectilePoolMap;
-};
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnStartMatchSignature);
 
@@ -160,21 +140,7 @@ protected:
 	int32 CurrentPhaseNumber = 0;
 	// ~Phase Section
 
-	// ~Object Pooling Section
-public:
-	/** 게임모드가 소유하고 있는 투사체 풀에서 투사체를 가져옵니다. */
-	ASMProjectile* GetProjectileFromProjectilePool(ESMTeam SourceTeam, ESMCharacterType SourceCharacterType);
-
 protected:
-	void InitProjectilePool();
-
-	UPROPERTY(EditAnywhere, Category = "Design|Pool")
-	TMap<ESMTeam, FProjectilePoolCreateData> ProjectilePoolCreateDataMap;
-
-	UPROPERTY()
-	TMap<ESMTeam, FProjectilePoolInstanceData> ProjectilePools;
-	// ~Object Pooling Section
-
 	UPROPERTY()
 	TWeakObjectPtr<ASMGameSession> RoomSession;
 };
