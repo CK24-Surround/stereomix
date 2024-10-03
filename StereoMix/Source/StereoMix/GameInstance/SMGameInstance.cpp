@@ -30,6 +30,7 @@ void USMGameInstance::Init()
         UE_LOG(LogStereoMix, Warning, TEXT("Demo mode on"));
     }
 
+	// TODO: 여기서 호출하면 안됨. 매칭 대기 화면에서 호출해야 함.
     RequestDataTableToServer();
 
     Super::Init();
