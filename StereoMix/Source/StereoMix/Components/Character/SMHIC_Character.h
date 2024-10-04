@@ -20,7 +20,7 @@ public:
 
 	virtual void BeginPlay() override;
 
-	void InitASC(USMAbilitySystemComponent* NewASC);
+	void SetASC(USMAbilitySystemComponent* NewASC);
 
 	virtual bool CanHolded(AActor* Instigator) const override;
 
@@ -51,10 +51,11 @@ public:
 	void EmptyHoldedMeCharacterList();
 
 	/**
-	* 타겟으로부터 잡기상태를 탈출합니다. 타겟이 null이면 타겟과 관련된 처리만 제외하고 모두 처리됩니다.
-	* 외부에서도 사용할 수 있습니다. 따로 추가적인 애니메이션 같은 비주얼적인 효과 없이 그저 디태치만 수행합니다.
-	*/
-	void HoldedReleased(AActor* TargetActor, bool bNeedLocationAdjust);
+	 * 타겟으로부터 풀려나야할때 호출합니다.
+	 * 외부에서도 사용할 수 있습니다. 따로 추가적인 애니메이션 같은 비주얼적인 효과 없이 그저 디태치만 수행합니다.
+	 * @param TargetOptionalLocation 타겟의 위치를 설정합니다. nullptr을 넘길경우 자동으로 지정합니다.
+	 */
+	void ReleasedFromBeingHeld(AActor* TargetActor, const TOptional<FVector>& TargetOptionalLocation = TOptional<FVector>());
 
 	/** 잡고 있는 대상이 파괴되는 경우 예외처리를 담는 함수입니다. */
 	UFUNCTION()
@@ -81,8 +82,8 @@ protected:
 	UPROPERTY(ReplicatedUsing = "OnRep_IAmHoldingActor")
 	TWeakObjectPtr<AActor> IAmHoldingActor;
 
-	/** 한 캐릭터에게 여러번 잡히지 않도록 자신을 잡았던 캐릭터들을 담아둡니다. 서버에서만 유효합니다. */
-	TArray<TWeakObjectPtr<ASMPlayerCharacterBase>> HoldedMeCharcters;
+	/** 한 캐릭터에게 여러번 잡히지 않도록 자신을 잡았던 액터들을 담아둡니다. 서버에서만 유효합니다. */
+	TArray<TWeakObjectPtr<AActor>> HoldedMeActors;
 
 	UPROPERTY()
 	TObjectPtr<ASMPlayerCharacterBase> SourceCharacter;

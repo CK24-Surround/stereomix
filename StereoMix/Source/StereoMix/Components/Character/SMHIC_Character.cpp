@@ -11,8 +11,10 @@
 #include "Actors/Character/Player/SMPianoCharacter.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/CapsuleComponent.h"
+#include "Controllers/SMGamePlayerController.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
@@ -31,37 +33,24 @@ void USMHIC_Character::BeginPlay()
 	SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
 }
 
-void USMHIC_Character::InitASC(USMAbilitySystemComponent* NewASC)
+void USMHIC_Character::SetASC(USMAbilitySystemComponent* NewASC)
 {
 	SourceASC = NewASC;
 }
 
 bool USMHIC_Character::CanHolded(AActor* Instigator) const
 {
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
+	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC || !Instigator)
 	{
 		return false;
 	}
 
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(Instigator);
-	if (!TargetCharacter)
+	if (USMTeamBlueprintLibrary::IsSameTeam(SourceCharacter, Instigator))
 	{
 		return false;
 	}
 
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	if (SourceTeam == ESMTeam::None)
-	{
-		return false;
-	}
-
-	const ESMTeam TargetTeam = TargetCharacter->GetTeam();
-	if (SourceTeam == TargetTeam)
-	{
-		return false;
-	}
-
-	if (HoldedMeCharcters.Find(TargetCharacter) != INDEX_NONE)
+	if (HoldedMeActors.Find(Instigator) != INDEX_NONE)
 	{
 		return false;
 	}
@@ -81,29 +70,21 @@ bool USMHIC_Character::CanHolded(AActor* Instigator) const
 
 void USMHIC_Character::OnHolded(AActor* Instigator)
 {
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority())
+	if (!SourceCharacter || !SourceCharacter->HasAuthority())
 	{
 		return;
 	}
 
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(Instigator);
-	if (!ensureAlways(Instigator))
-	{
-		return;
-	}
-
+	// 캐릭터를 숨기고 콜리전, 움직임을 비활성화합니다.
 	SourceCharacter->ServerSetActorHiddenInGame(true);
 	SourceCharacter->ServerSetCollisionEnabled(false);
 	SourceCharacter->ServerSetMovementEnabled(false);
 
-	SetActorHoldingMe(Instigator);
-
-	HoldedMeCharcters.Add(TargetCharacter);
-
-	APlayerController* SourcePlayerCharacter = SourceCharacter->GetController<APlayerController>();
-	if (ensureAlways(SourcePlayerCharacter))
+	if (Instigator)
 	{
-		SourcePlayerCharacter->SetViewTargetWithBlend(TargetCharacter, 1.0f, VTBlend_Cubic);
+		SourceCharacter->AttachToActor(Instigator, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		HoldedMeActors.Add(Instigator);
+		SetActorHoldingMe(Instigator);
 	}
 
 	// 잡혔으므로 잠시 잡기 인디케이터를 비활성화합니다.
@@ -112,7 +93,7 @@ void USMHIC_Character::OnHolded(AActor* Instigator)
 
 void USMHIC_Character::OnHoldedReleased(AActor* Instigator)
 {
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
+	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
 	{
 		return;
 	}
@@ -121,7 +102,7 @@ void USMHIC_Character::OnHoldedReleased(AActor* Instigator)
 	USMHIC_Character* TargetHIC = Cast<USMHIC_Character>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetCharacter));
 
 	// 잡기 상태에서 벗어납니다.
-	HoldedReleased(TargetCharacter, true);
+	ReleasedFromBeingHeld(TargetCharacter);
 
 	if (TargetHIC)
 	{
@@ -131,7 +112,7 @@ void USMHIC_Character::OnHoldedReleased(AActor* Instigator)
 
 void USMHIC_Character::OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator)
 {
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
+	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
 	{
 		return;
 	}
@@ -141,7 +122,7 @@ void USMHIC_Character::OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Ins
 
 void USMHIC_Character::OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator)
 {
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
+	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
 	{
 		return;
 	}
@@ -151,7 +132,7 @@ void USMHIC_Character::OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator)
 
 void USMHIC_Character::OnNoiseBreakActionStarted(ASMBassCharacter* Instigator)
 {
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get())
+	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
 	{
 		return;
 	}
@@ -162,15 +143,16 @@ void USMHIC_Character::OnNoiseBreakActionStarted(ASMBassCharacter* Instigator)
 void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !NoiseBreakData || !SourceCapsule)
+	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !NoiseBreakData || !SourceCapsule)
 	{
 		return;
 	}
 
 	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
-	SourceCharacter->MulticastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
+	const FVector NewLocation = NoiseBreakData->NoiseBreakLocation + Offset;
+	ReleasedFromBeingHeld(Instigator, NewLocation);
 
-	HoldedReleased(Instigator, false);
+	// SourceCharacter->MulticastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
 	NoiseBreaked();
@@ -185,9 +167,10 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator
 	}
 
 	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
-	SourceCharacter->MulticastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
+	const FVector NewLocation = NoiseBreakData->NoiseBreakLocation + Offset;
+	ReleasedFromBeingHeld(Instigator, NewLocation);
 
-	HoldedReleased(Instigator, false);
+	// SourceCharacter->MulticastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
 	NoiseBreaked();
@@ -200,7 +183,7 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator,
 		return;
 	}
 
-	HoldedReleased(Instigator, true);
+	ReleasedFromBeingHeld(Instigator);
 
 	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
 	NoiseBreaked();
@@ -236,56 +219,43 @@ void USMHIC_Character::SetActorIAmHolding(AActor* NewIAmHoldingActor)
 
 void USMHIC_Character::EmptyHoldedMeCharacterList()
 {
-	HoldedMeCharcters.Empty();
+	HoldedMeActors.Empty();
 }
 
-void USMHIC_Character::HoldedReleased(AActor* TargetActor, bool bNeedLocationAdjust)
+void USMHIC_Character::ReleasedFromBeingHeld(AActor* TargetActor, const TOptional<FVector>& TargetOptionalLocation)
 {
-	APlayerController* SourcePlayerController = SourceCharacter ? Cast<APlayerController>(SourceCharacter->Controller) : nullptr;
-	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !SourceASC.Get() || !ensureAlways(SourcePlayerController))
+	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
 	{
 		return;
 	}
 
-	SetActorHoldingMe(nullptr);
+	SourceCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
+	// 타겟 캐릭터가 있으면 타겟의 회전값을 사용하고, 없으면 소스 캐릭터의 현재 회전값을 사용하여 소스 캐릭터의 최종 회전을 설정합니다.
+	const float FinalSourceYaw = TargetActor ? TargetActor->GetActorRotation().Yaw : SourceCharacter->GetActorRotation().Yaw;
+	SourceCharacter->MulticastRPCSetYawRotation(FinalSourceYaw);
+
+	// 타겟의 앞으로 위치를 조정합니다. 만약 옵션 위치가 제공되었다면 이를 사용합니다.
+	const FVector TargetLocation = TargetActor ? TargetActor->GetActorLocation() : SourceCharacter->GetActorLocation();
+	const FVector FinalSourceLocation = TargetOptionalLocation.Get(TargetLocation);
+	SourceCharacter->MulticastRPCSetLocation(FinalSourceLocation);
+
+	// 자신을 잡았던 대상을 제외하고 다시 잡기 인디케이터를 활성화합니다.
+	SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
+	for (const auto& HoldedMeActor : HoldedMeActors)
+	{
+		if (ASMPlayerCharacterBase* HoldedMeCharacter = Cast<ASMPlayerCharacterBase>(HoldedMeActor))
+		{
+			HoldedMeCharacter->ClientRPCRemoveScreendIndicatorToSelf(SourceCharacter);
+		}
+	}
+
+	// 콜라이더와 움직임을 활성화하고 캐릭터가 보이도록 설정합니다.
 	SourceCharacter->ServerSetActorHiddenInGame(false);
 	SourceCharacter->ServerSetCollisionEnabled(true);
 	SourceCharacter->ServerSetMovementEnabled(true);
 
-	// 회전 및 위치를 재지정합니다.
-	FVector NewLocation;
-	float NewYaw;
-	if (TargetActor)
-	{
-		NewYaw = TargetActor->GetActorRotation().Yaw;
-		NewLocation = TargetActor->GetActorLocation();
-	}
-	else
-	{
-		NET_LOG(SourceCharacter, Warning, TEXT("타겟이 유효하지 않아 자신의 Yaw를 사용합니다."));
-		NewYaw = SourceCharacter->GetActorRotation().Yaw;
-		NewLocation = SourceCharacter->GetActorLocation();
-	}
-	const FVector Offset = FRotator(0.0, NewYaw, 0.0).Vector() * 100.0f;
-	SourceCharacter->MulticastRPCSetYawRotation(NewYaw);
-
-	if (bNeedLocationAdjust)
-	{
-		SourceCharacter->MulticastRPCSetLocation(NewLocation + Offset);
-	}
-
-	// SourceCharacter->ServerRPCPreventGroundEmbedding();
-
-	// 카메라 뷰를 원래대로 복구합니다.
-	SourcePlayerController->SetViewTargetWithBlend(SourceCharacter, 1.0f, VTBlend_Cubic);
-
-	// 자신을 잡았던 대상을 제외하고 다시 잡기 인디케이터를 활성화합니다.
-	SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
-	for (const auto& HoldedMeCharacter : HoldedMeCharcters)
-	{
-		HoldedMeCharacter->ClientRPCRemoveScreendIndicatorToSelf(SourceCharacter);
-	}
+	SetActorHoldingMe(nullptr); // nullptr를 매개변수로 넘겨 자신을 잡고 있는 액터를 떼어냅니다.
 }
 
 void USMHIC_Character::OnDestroyedIAmHoldingActor(AActor* DestroyedActor)

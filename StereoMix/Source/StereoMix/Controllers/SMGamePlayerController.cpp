@@ -7,7 +7,6 @@
 #include "AbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "Games/SMGameMode.h"
 #include "StereoMixLog.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Games/SMGamePlayerState.h"

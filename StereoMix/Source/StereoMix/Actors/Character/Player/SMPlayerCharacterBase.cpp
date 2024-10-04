@@ -634,7 +634,7 @@ void ASMPlayerCharacterBase::InitASC()
 		return;
 	}
 
-	HIC->InitASC(ASC.Get());
+	HIC->SetASC(ASC.Get());
 
 	if (HasAuthority())
 	{
