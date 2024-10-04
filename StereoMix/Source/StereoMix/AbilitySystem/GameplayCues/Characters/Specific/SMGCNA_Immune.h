@@ -20,7 +20,10 @@ protected:
 	virtual bool OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) override;
 
 	virtual bool OnRemove_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) override;
-	
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> VFXComponent;
+
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> ImmuneMaterial;
 
@@ -30,6 +33,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> EndVFX;
 
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ScreenFX;
+
 	UPROPERTY()
-	TObjectPtr<UNiagaraComponent> VFXComponent;
+	TObjectPtr<UNiagaraComponent> ScreenFXComponent;
 };

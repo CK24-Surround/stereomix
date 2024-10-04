@@ -7,6 +7,7 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
+#include "Camera/CameraComponent.h"
 #include "Utilities/SMLog.h"
 
 
@@ -16,6 +17,7 @@ ASMGCNA_Immune::ASMGCNA_Immune()
 	{
 		ESMTeam Key = static_cast<ESMTeam>(i);
 		EndVFX.Add(Key, nullptr);
+		ScreenFX.Add(Key, nullptr);
 	}
 }
 
@@ -53,6 +55,17 @@ bool ASMGCNA_Immune::OnActive_Implementation(AActor* MyTarget, const FGameplayCu
 		SourceWeaponMesh->SetOverlayMaterial(ImmuneOverlayMaterial[SourceTeam]);
 	}
 
+	if (SourceCharacter->IsLocallyControlled())
+	{
+		if (ScreenFX.Find(SourceTeam))
+		{
+			if (UCameraComponent* SourceCamera = SourceCharacter->GetComponentByClass<UCameraComponent>())
+			{
+				ScreenFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(ScreenFX[SourceTeam], SourceCamera, NAME_None, FVector(300.0, 0.0, 0.0), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
+			}
+		}
+	}
+
 	return true;
 }
 
@@ -65,6 +78,13 @@ bool ASMGCNA_Immune::OnRemove_Implementation(AActor* MyTarget, const FGameplayCu
 		VFXComponent->Deactivate();
 		VFXComponent->ReleaseToPool();
 		VFXComponent = nullptr;
+	}
+
+	if (ScreenFXComponent)
+	{
+		ScreenFXComponent->Deactivate();
+		ScreenFXComponent->ReleaseToPool();
+		ScreenFXComponent = nullptr;
 	}
 
 	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
