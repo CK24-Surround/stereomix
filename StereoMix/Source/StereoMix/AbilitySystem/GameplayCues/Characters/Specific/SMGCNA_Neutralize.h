@@ -6,6 +6,8 @@
 #include "AbilitySystem/GameplayCues/SMGameplayCueNotifyActorBase.h"
 #include "SMGCNA_Neutralize.generated.h"
 
+class UNiagaraComponent;
+
 UCLASS()
 class STEREOMIX_API ASMGCNA_Neutralize : public ASMGameplayCueNotifyActorBase
 {
@@ -24,4 +26,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UFMODEvent>> EndSFX;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ScreenFX;
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> ScreenFXComponent;
 };
