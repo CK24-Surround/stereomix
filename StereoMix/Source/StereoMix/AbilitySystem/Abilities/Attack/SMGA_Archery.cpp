@@ -20,7 +20,7 @@ USMGA_Archery::USMGA_Archery()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	ActivationBlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Piano::ImpactArrow);
 
 	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Piano))
 	{

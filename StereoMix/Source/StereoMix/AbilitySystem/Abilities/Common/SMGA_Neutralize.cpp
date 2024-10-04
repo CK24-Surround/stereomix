@@ -20,14 +20,14 @@ USMGA_Neutralize::USMGA_Neutralize()
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::Neutralize);
+	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::Common::Neutralized);
 
 	FAbilityTriggerData TriggerData;
 	TriggerData.TriggerTag = SMTags::Event::Character::Neutralize;
 	TriggerData.TriggerSource = EGameplayAbilityTriggerSource::GameplayEvent;
 	AbilityTriggers.Add(TriggerData);
 
-	NoiseBreakedTags.AddTag(SMTags::Character::State::NoiseBreaked);
+	NoiseBreakedTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
 }
 
 void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -72,13 +72,13 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		WaitNoiseBreakEndWaitTask->ReadyForActivation();
 
 		// 무언가를 잡고 있다면 잡은 대상을 놓습니다.
-		if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Hold))
+		if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::Hold))
 		{
 			AActor* TargetActor = SourceHIC->GetActorIAmHolding();
 			USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
 			if (TargetHIC)
 			{
-				TargetHIC->OnHoldedReleased(SourceCharacter);
+				TargetHIC->OnReleasedFromHold(SourceCharacter);
 			}
 
 			SourceHIC->SetActorIAmHolding(nullptr);
@@ -153,10 +153,10 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 			if (SourceASC)
 			{
 				// 면역상태로 진입합니다. 딜레이로 인해 데미지를 받을 수도 있으니 GA실행 전에 먼저 면역태그를 추가합니다.
-				SourceASC->AddTag(SMTags::Character::State::Immune);
+				SourceASC->AddTag(SMTags::Character::State::Common::Immune);
 				SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::Immune));
 
-				SourceASC->RemoveTag(SMTags::Character::State::Unholdable);
+				SourceASC->RemoveTag(SMTags::Character::State::Common::NonHoldable);
 			}
 		}
 	}
@@ -181,7 +181,7 @@ void USMGA_Neutralize::OnMinimalNeutralizeTimeEnded()
 		// 게임 종료 등의 이유로 자신을 잡고 있는 캐릭터가 노이즈 브레이크하다가 사라진 경우 예외처리입니다.
 		if (!SourceHIC->GetActorHoldingMe())
 		{
-			SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+			SourceASC->RemoveTag(SMTags::Character::State::Common::NoiseBreaked);
 			return;
 		}
 	}
@@ -223,7 +223,7 @@ void USMGA_Neutralize::OnNeutralizeTimeEnded()
 	}
 
 	// 잡을 수 없는 상태임을 명시하는 태그를 부착합니다. 시간 초과 이후의 잡기를 방지합니다.
-	SourceASC->AddTag(SMTags::Character::State::Unholdable);
+	SourceASC->AddTag(SMTags::Character::State::Common::NonHoldable);
 
 	if (SourceASC->HasAnyMatchingGameplayTags(NoiseBreakedTags)) // 노이즈 브레이크 당하는 중이라면 버저비터 대기로 진입합니다.
 	{
@@ -249,7 +249,7 @@ void USMGA_Neutralize::WaitUntilBuzzerBeaterEnd()
 	if (!SourceHIC->GetActorHoldingMe())
 	{
 		// 즉시 잡기 탈출 로직을 호출합니다.
-		SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+		SourceASC->RemoveTag(SMTags::Character::State::Common::NoiseBreaked);
 		NeutralizeExitSyncPoint();
 		return;
 	}
@@ -281,9 +281,9 @@ void USMGA_Neutralize::PrepareNeutralizeEnd()
 	}
 
 	// 만약 잡혀 있다면 잡히기 상태에서 탈출합니다.
-	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Holded))
+	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::Held))
 	{
-		SourceHIC->OnHoldedReleased(SourceHIC->GetActorHoldingMe());
+		SourceHIC->OnReleasedFromHold(SourceHIC->GetActorHoldingMe());
 	}
 
 	NeutralizeExitSyncPoint();

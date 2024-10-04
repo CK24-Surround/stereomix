@@ -112,31 +112,31 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	HIC->OnHoldStateEnrty.AddUObject(this, &ThisClass::OnHoldStateEntry);
 	HIC->OnHoldStateExit.AddUObject(this, &ThisClass::OnHoldStateExit);
 
-	IgnoreAttackTags.AddTag(SMTags::Character::State::Holded);
-	IgnoreAttackTags.AddTag(SMTags::Character::State::Neutralize);
-	IgnoreAttackTags.AddTag(SMTags::Character::State::Immune);
-	IgnoreAttackTags.AddTag(SMTags::Character::State::NoiseBreak);
-	IgnoreAttackTags.AddTag(SMTags::Character::State::NoiseBreaked);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::Held);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::Neutralized);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::Immune);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
 
-	LockAimTags.AddTag(SMTags::Character::State::Holded);
-	LockAimTags.AddTag(SMTags::Character::State::NoiseBreak);
-	LockAimTags.AddTag(SMTags::Character::State::NoiseBreaked);
-	LockAimTags.AddTag(SMTags::Character::State::Neutralize);
+	LockAimTags.AddTag(SMTags::Character::State::Common::Held);
+	LockAimTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+	LockAimTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
+	LockAimTags.AddTag(SMTags::Character::State::Common::Neutralized);
 
-	LockMovementTags.AddTag(SMTags::Character::State::Holded);
-	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreak);
-	LockMovementTags.AddTag(SMTags::Character::State::NoiseBreaked);
-	LockMovementTags.AddTag(SMTags::Character::State::Neutralize);
-	LockMovementTags.AddTag(SMTags::Character::State::Jump);
-	LockMovementTags.AddTag(SMTags::Character::State::Stun);
+	LockMovementTags.AddTag(SMTags::Character::State::Common::Held);
+	LockMovementTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+	LockMovementTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
+	LockMovementTags.AddTag(SMTags::Character::State::Common::Neutralized);
+	LockMovementTags.AddTag(SMTags::Character::State::Common::Jump);
+	LockMovementTags.AddTag(SMTags::Character::State::Common::Stun);
 
-	PushBackImmuneTags.AddTag(SMTags::Character::State::Holded);
-	PushBackImmuneTags.AddTag(SMTags::Character::State::NoiseBreak);
-	PushBackImmuneTags.AddTag(SMTags::Character::State::NoiseBreaked);
-	PushBackImmuneTags.AddTag(SMTags::Character::State::Neutralize);
-	PushBackImmuneTags.AddTag(SMTags::Character::State::Immune);
-	PushBackImmuneTags.AddTag(SMTags::Character::State::Jump);
-	PushBackImmuneTags.AddTag(SMTags::Character::State::Stun);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::Held);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::Neutralized);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::Immune);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::Jump);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::Stun);
 }
 
 void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const

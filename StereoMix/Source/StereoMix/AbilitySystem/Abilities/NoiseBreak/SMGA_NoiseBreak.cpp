@@ -17,10 +17,10 @@
 
 USMGA_NoiseBreak::USMGA_NoiseBreak()
 {
-	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::NoiseBreak);
-	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Hold);
+	ActivationOwnedTags = FGameplayTagContainer(SMTags::Character::State::Common::NoiseBreak);
+	ActivationRequiredTags = FGameplayTagContainer(SMTags::Character::State::Common::Hold);
 
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Stun);
 }
 
 bool USMGA_NoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const

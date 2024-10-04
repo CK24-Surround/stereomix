@@ -9,13 +9,13 @@
 USMGA_Skill::USMGA_Skill()
 {
 	ActivationBlockedTags.AddTag(SMTags::Ability::Activation::Hold);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Hold);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Holded);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreak);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreaked);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Neutralize);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Immune);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Hold);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Held);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Neutralized);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Immune);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Stun);
 }
 
 void USMGA_Skill::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

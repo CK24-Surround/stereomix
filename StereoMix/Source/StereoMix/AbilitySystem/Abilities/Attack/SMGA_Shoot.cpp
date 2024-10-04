@@ -18,7 +18,7 @@ USMGA_Shoot::USMGA_Shoot()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	ActivationBlockedTags.AddTag(SMTags::Character::State::SlowBullet);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::ElectricGuitar::SlowBullet);
 
 	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::ElectricGuitar))
 	{

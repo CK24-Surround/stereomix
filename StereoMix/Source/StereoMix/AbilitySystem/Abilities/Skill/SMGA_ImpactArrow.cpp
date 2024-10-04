@@ -26,7 +26,7 @@
 USMGA_ImpactArrow::USMGA_ImpactArrow()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
-	ActivationOwnedTags.AddTag(SMTags::Character::State::ImpactArrow);
+	ActivationOwnedTags.AddTag(SMTags::Character::State::Piano::ImpactArrow);
 
 	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Piano))
 	{

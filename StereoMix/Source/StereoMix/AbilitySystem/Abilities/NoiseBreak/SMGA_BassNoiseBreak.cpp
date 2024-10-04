@@ -101,7 +101,7 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
 		if (TargetHIC)
 		{
-			TargetHIC->OnNoiseBreakActionStarted(SourceCharacter);
+			TargetHIC->OnNoiseBreakStarted(SourceCharacter);
 		}
 	}
 }
@@ -161,7 +161,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 
 	// 노이즈 브레이크 종료 노티파이를 기다립니다.
 	// 몽타주 종료에 노이즈 브레이크 종료를 바인드 하지 않는 이유는 노이즈 브레이크 애니메이션이 끝나기 전에 움직일 수 있도록 하기 위함입니다.
-	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::NoiseBreakEnd);
+	UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Common::NoiseBreakEnd);
 	WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnNoiseBreakEnded);
 	WaitGameplayEventTask->ReadyForActivation();
 
@@ -171,7 +171,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
 		if (TargetHIC)
 		{
-			TargetHIC->OnNoiseBreakActionPerformed(SourceCharacter, MakeShared<FSMNoiseBreakData>());
+			TargetHIC->OnNoiseBreakApplied(SourceCharacter, MakeShared<FSMNoiseBreakData>());
 		}
 
 		SourceHIC->SetActorIAmHolding(nullptr);

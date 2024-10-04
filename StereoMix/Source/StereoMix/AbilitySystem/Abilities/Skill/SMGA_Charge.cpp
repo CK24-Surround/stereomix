@@ -24,7 +24,7 @@ USMGA_Charge::USMGA_Charge()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	ActivationOwnedTags.AddTag(SMTags::Character::State::Charge);
+	ActivationOwnedTags.AddTag(SMTags::Character::State::Bass::Charge);
 
 	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Bass))
 	{

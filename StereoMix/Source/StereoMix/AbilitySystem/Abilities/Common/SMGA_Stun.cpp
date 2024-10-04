@@ -17,7 +17,7 @@ USMGA_Stun::USMGA_Stun()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerInitiated;
 
-	ActivationOwnedTags.AddTag(SMTags::Character::State::Stun);
+	ActivationOwnedTags.AddTag(SMTags::Character::State::Common::Stun);
 
 	FAbilityTriggerData TriggerData;
 	TriggerData.TriggerTag = SMTags::Event::Character::Stun;

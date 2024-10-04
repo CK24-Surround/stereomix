@@ -20,7 +20,7 @@
 USMGA_SlowBullet::USMGA_SlowBullet()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
-	ActivationOwnedTags.AddTag(SMTags::Character::State::SlowBullet);
+	ActivationOwnedTags.AddTag(SMTags::Character::State::ElectricGuitar::SlowBullet);
 
 	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::ElectricGuitar))
 	{
@@ -54,7 +54,7 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	if (IsLocallyControlled())
 	{
-		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::SlowBulletShoot);
+		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::ElectricGuitar::SlowBulletShoot);
 		WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnEventReceived);
 		WaitEventTask->ReadyForActivation();
 

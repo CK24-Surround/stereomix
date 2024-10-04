@@ -59,7 +59,7 @@ void USMGA_Immune::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 		// 서버의 경우 태그를 제거해줍니다.
 		if (K2_HasAuthority())
 		{
-			SourceASC->RemoveTag(SMTags::Character::State::Immune);
+			SourceASC->RemoveTag(SMTags::Character::State::Common::Immune);
 		}
 
 		if (IsLocallyControlled())

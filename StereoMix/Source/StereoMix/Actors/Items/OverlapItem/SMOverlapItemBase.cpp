@@ -15,8 +15,8 @@ ASMOverlapItemBase::ASMOverlapItemBase()
 {
 	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 
-	UnavailableTags.AddTag(SMTags::Character::State::Immune);
-	UnavailableTags.AddTag(SMTags::Character::State::Neutralize);
+	UnavailableTags.AddTag(SMTags::Character::State::Common::Immune);
+	UnavailableTags.AddTag(SMTags::Character::State::Common::Neutralized);
 }
 
 void ASMOverlapItemBase::PostInitializeComponents()

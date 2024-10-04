@@ -24,14 +24,14 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 	InitMaxSkillGauge(100.0f);
 	InitSkillGauge(GetMaxSkillGauge());
 
-	InvincibleStateTags.AddTag(SMTags::Character::State::Invincible);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Neutralize);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Immune);
-	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreak);
-	InvincibleStateTags.AddTag(SMTags::Character::State::NoiseBreaked);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Charge);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Invincible);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Neutralized);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Immune);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Bass::Charge);
 
-	UnlimitStaminaTags.AddTag(SMTags::Character::State::UnlimitStamina);
+	UnlimitStaminaTags.AddTag(SMTags::Character::State::Common::UnlimitStamina);
 }
 
 void USMCharacterAttributeSet::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

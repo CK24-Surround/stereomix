@@ -22,9 +22,9 @@ USMGA_Slash::USMGA_Slash()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	ActivationOwnedTags.AddTag(SMTags::Character::State::SlashActivation);
+	ActivationOwnedTags.AddTag(SMTags::Ability::Activation::Slash);
 
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Charge);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Bass::Charge);
 
 	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Bass))
 	{

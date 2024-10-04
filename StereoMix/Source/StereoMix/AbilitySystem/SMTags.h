@@ -7,17 +7,10 @@ namespace SMTags
 	{
 		namespace Activation
 		{
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Catch);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
+			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Slash);
 		}
 
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Caught);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Holded);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smashed);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExit);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldedExit);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExitOnStunEnd);
-		UE_DECLARE_GAMEPLAY_TAG_EXTERN(HoldedExitOnStunEnd);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(CatchBuff);
 		UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakIndicator);
@@ -46,27 +39,35 @@ namespace SMTags
 
 		namespace State
 		{
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Invincible);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(UnlimitStamina);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlashActivation);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Slash);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Catch);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Caught);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Holded);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stun);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Neutralize);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smashing);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smashed);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreak);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreaked);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Uncatchable);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Unholdable);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Jump);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Charge);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrow);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBullet);
+			namespace Common
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Invincible);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(UnlimitStamina);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Held);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stun);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Neutralized);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreak);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreaked);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NonHoldable);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Jump);
+			}
+
+			namespace ElectricGuitar
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBullet);
+			}
+
+			namespace Piano
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(ImpactArrow);
+			}
+
+			namespace Bass
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Charge);
+			}
 		}
 	}
 
@@ -85,17 +86,21 @@ namespace SMTags
 	{
 		namespace AnimNotify
 		{
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Catch);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Smash);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SmashEnd);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(PianoNoiseBreakShoot);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakEnd);
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletShoot);
+			namespace Common
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakEnd);
+			}
 
 			namespace ElectricGuitar
 			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(SlowBulletShoot);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakFlash);
+			}
+
+			namespace Piano
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(PianoNoiseBreakShoot);
 			}
 
 			namespace Bass
@@ -106,7 +111,7 @@ namespace SMTags
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreakSlash);
 			}
 
-			namespace Attack
+			namespace Attack // 베이스쪽으로 옮겨야함
 			{
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(AttackStart);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(CanInput);
@@ -118,16 +123,10 @@ namespace SMTags
 
 		namespace Character
 		{
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(BuzzerBeaterSmashEnd);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(BuzzerBeaterEnd);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(CaughtExitEnd);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Stun);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Neutralize);
-		}
-
-		namespace Tile
-		{
-			UE_DECLARE_GAMEPLAY_TAG_EXTERN(TileTrigger);
 		}
 	}
 

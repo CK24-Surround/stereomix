@@ -31,12 +31,12 @@ ASMBassCharacter::ASMBassCharacter(const FObjectInitializer& ObjectInitializer)
 	ChargeColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Charge);
 	ChargeColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	LockAimTags.AddTag(SMTags::Character::State::Charge);
-	LockAimTags.AddTag(SMTags::Character::State::SlashActivation);
+	LockAimTags.AddTag(SMTags::Character::State::Bass::Charge);
+	LockAimTags.AddTag(SMTags::Ability::Activation::Slash);
 
-	LockMovementTags.AddTag(SMTags::Character::State::Charge);
+	LockMovementTags.AddTag(SMTags::Character::State::Bass::Charge);
 
-	PushBackImmuneTags.AddTag(SMTags::Character::State::Charge);
+	PushBackImmuneTags.AddTag(SMTags::Character::State::Bass::Charge);
 }
 
 void ASMBassCharacter::OnHoldStateEntry()

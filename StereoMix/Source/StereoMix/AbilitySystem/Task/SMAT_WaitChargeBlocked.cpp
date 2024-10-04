@@ -59,7 +59,7 @@ void USMAT_WaitChargeBlocked::OnChargeOverlappedCallback(UPrimitiveComponent* Ov
 
 	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
-		if (TargetASC->HasMatchingGameplayTag(SMTags::Character::State::Charge)) // 만약 상대도 돌진중이라면 그대로 지나갑니다.
+		if (TargetASC->HasMatchingGameplayTag(SMTags::Character::State::Bass::Charge)) // 만약 상대도 돌진중이라면 그대로 지나갑니다.
 		{
 			return;
 		}

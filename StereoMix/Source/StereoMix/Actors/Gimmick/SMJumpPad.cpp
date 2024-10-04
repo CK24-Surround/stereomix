@@ -33,8 +33,8 @@ ASMJumpPad::ASMJumpPad()
 	JumpTarget = CreateDefaultSubobject<USceneComponent>(TEXT("JumpTarget"));
 	JumpTarget->SetupAttachment(SceneComponent);
 
-	DenineTags.AddTag(SMTags::Character::State::Catch);
-	DenineTags.AddTag(SMTags::Character::State::Stun);
+	DenineTags.AddTag(SMTags::Character::State::Common::Hold);
+	DenineTags.AddTag(SMTags::Character::State::Common::Stun);
 }
 
 void ASMJumpPad::PostInitializeComponents()

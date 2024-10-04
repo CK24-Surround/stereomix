@@ -19,14 +19,14 @@ USMGA_Hold::USMGA_Hold()
 
 	ActivationOwnedTags.AddTag(SMTags::Ability::Activation::Hold);
 
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Hold);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Holded);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreaked);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::NoiseBreak);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Neutralize);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Immune);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Charge);
-	ActivationBlockedTags.AddTag(SMTags::Character::State::ImpactArrow);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Hold);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Held);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Neutralized);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Immune);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Bass::Charge);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Piano::ImpactArrow);
 }
 
 void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
@@ -60,7 +60,7 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		CursorLocation = SourceCharacter->GetLocationFromCursor();
 
 		// 애님 노티파이를 기다리고 노티파이가 호출되면 잡기를 요청합니다.
-		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Hold);
+		UAbilityTask_WaitGameplayEvent* WaitGameplayEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Common::Hold);
 		WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnHoldAnimNotifyTrigger);
 		WaitGameplayEventTask->ReadyForActivation();
 
@@ -135,7 +135,7 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 		bSuccess = true;
 
 		// 타겟의 잡히기 로직을 실행합니다.
-		TargetHIC->OnHolded(SourceCharacter);
+		TargetHIC->OnHeld(SourceCharacter);
 
 		// 잡은 대상을 저장하고 자신의 상태를 잡기로 변경합니다. 예외처리를 위해 잡은 액터의 파괴 시 수행해야할 이벤트를 바인드합니다.
 		SourceHIC->SetActorIAmHolding(TargetActor);

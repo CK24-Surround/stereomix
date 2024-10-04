@@ -58,7 +58,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	SourceMovement->SetMovementMode(MOVE_Flying);
 
 	// 발사 노티파이를 기다립니다.
-	UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::PianoNoiseBreakShoot, nullptr, true);
+	UAbilityTask_WaitGameplayEvent* EventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::Piano::PianoNoiseBreakShoot, nullptr, true);
 	EventTask->EventReceived.AddDynamic(this, &ThisClass::OnShoot);
 	EventTask->ReadyForActivation();
 
@@ -95,7 +95,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
 		if (TargetHIC)
 		{
-			TargetHIC->OnNoiseBreakActionStarted(SourceCharacter);
+			TargetHIC->OnNoiseBreakStarted(SourceCharacter);
 		}
 	}
 }
@@ -143,7 +143,7 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 		{
 			TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
 			NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation;
-			TargetHIC->OnNoiseBreakActionPerformed(SourceCharacter, NoiseBreakData);
+			TargetHIC->OnNoiseBreakApplied(SourceCharacter, NoiseBreakData);
 		}
 
 		TileCapture();

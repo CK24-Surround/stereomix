@@ -14,11 +14,11 @@ USMGA_Sampling::USMGA_Sampling()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
 
-	DeactivateTags.AddTag(SMTags::Character::State::Neutralize);
-	DeactivateTags.AddTag(SMTags::Character::State::Immune);
-	DeactivateTags.AddTag(SMTags::Character::State::NoiseBreak);
+	DeactivateTags.AddTag(SMTags::Character::State::Common::Neutralized);
+	DeactivateTags.AddTag(SMTags::Character::State::Common::Immune);
+	DeactivateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
 
-	ActivationBlockedTags.AddTag(SMTags::Character::State::Stun);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Stun);
 }
 
 void USMGA_Sampling::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)

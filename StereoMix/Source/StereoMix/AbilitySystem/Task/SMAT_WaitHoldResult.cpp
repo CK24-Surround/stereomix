@@ -61,7 +61,7 @@ AActor* USMAT_WaitHoldResult::GetOptimalHoldableActor(const TArray<FOverlapResul
 		}
 
 		// 유효한 각도내에 있는지, 잡을 수 있는 상태인지 체크합니다.
-		if (!IsValidateAngle(TargetActor) || !TargetHIC->CanHolded(SourceCharacter.Get()))
+		if (!IsValidateAngle(TargetActor) || !TargetHIC->CanBeHeld(SourceCharacter.Get()))
 		{
 			continue;
 		}

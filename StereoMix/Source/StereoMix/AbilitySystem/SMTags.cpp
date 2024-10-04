@@ -6,17 +6,10 @@ namespace SMTags
 	{
 		namespace Activation
 		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Ability.Activation.Catch", "Catch의 어빌리티 활성화 여부를 나타냅니다."); // TODO: Deprecated
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Ability.Activation.Hold", "Catch의 어빌리티 활성화 여부를 나타냅니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Slash, "Character.State.Slash", "베기 콤보 활성화 상태를 나타냅니다.");
 		}
 
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Caught, "Ability.Caught", "Caugh의 어빌리티 태그를 나타냅니다."); // TODO: Deprecated
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Holded, "Ability.Holded", "Holded의 어빌리티 태그를 나타냅니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Ability.Smashed", "Smashed의 어빌리티 태그를 나타냅니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExit, "Ability.CaughtExit", "CaughtExit의 어빌리티 태그를 나타냅니다."); // TODO: Deprecated
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldedExit, "Ability.HoldedExit", "HoldedExit의 어빌리티 태그를 나타냅니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExitOnStunEnd, "Ability.CaughtExitOnStunEnd", "CaughtExitOnStunEnd의 어빌리티 태그를 나타냅니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(HoldedExitOnStunEnd, "Ability.HoldedExitOnStunEnd", "HoldedExitOnStunEnd의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "Ability.Immune", "Immune의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CatchBuff, "Ability.CatchBuff", "CatchBuff의 어빌리티 태그를 나타냅니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakIndicator, "Ability.NoiseBreakIndicator", "노이즈 브레이크 인디케이터의 어빌리티 태그를 나타냅니다.");
@@ -45,27 +38,35 @@ namespace SMTags
 
 		namespace State
 		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Invincible, "Character.State.Invincible", "무적 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(UnlimitStamina, "Character.State.UnlimitStamina", "스태미나 소모가 없는 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlashActivation, "Character.State.SlashActivation", "베기 콤보 활성화 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Slash, "Character.State.SlashActivation", "베기 로직에서 휘두르고 있는 상태를 나타냅니다. ");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Character.State.Catch", "캐릭터를 잡고 있는 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Character.State.Hold", "캐릭터를 잡고 있는 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Caught, "Character.State.Caught", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Holded, "Character.State.Holded", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Character.State.Stun", "기절 상태를 나타냅니다."); // TODO: Deprecated
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "Character.State.Neutralize", "무력화 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashing, "Character.State.Smashing", "매치기 중인 상태를 나타냅니다."); // TODO: Deprecated
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreak, "Character.State.NoiseBreak", "매치기 중인 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smashed, "Character.State.Smashed", "상대 캐릭터에게 매치기 당하는 상태를 나타냅니다."); // TODO: Deprecated
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreaked, "Character.State.NoiseBreaked", "노이즈브레이크에 당하는 상태를 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncatchable, "Character.State.Uncatchable", "잡힐 수 없는 상태임을 나타냅니다."); // TODO: Deprecated
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Unholdable, "Character.State.Unholdable", "잡힐 수 없는 상태임을 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "Character.State.Immune", "모든 피격 판정이 발생하지 않는 면역 상태임을 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Character.State.Jump", "점프 상태임을 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Charge, "Character.State.Charge", "돌격 상태임을 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrow, "Character.State.ImpactArrow", "충격 화살 시전 상태임을 나타냅니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBullet, "Character.State.SlowBullet", "마비탄 시전 상태임을 나타냅니다.");
+			namespace Common
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Invincible, "Character.State.Common.Invincible", "무적 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(UnlimitStamina, "Character.State.Common.UnlimitStamina", "스태미나 소모가 없는 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Character.State.Common.Hold", "캐릭터를 잡고 있는 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Held, "Character.State.Common.Held", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Character.State.Common.Stun", "기절 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralized, "Character.State.Common.Neutralized", "무력화 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreak, "Character.State.Common.NoiseBreak", "매치기 중인 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreaked, "Character.State.Common.NoiseBreaked", "노이즈브레이크에 당하는 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NonHoldable, "Character.State.Common.NonHoldable", "잡을 수 없는 상태임을 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "Character.State.Common.Immune", "모든 피격 판정이 발생하지 않는 면역 상태임을 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Jump, "Character.State.Common.Jump", "점프 상태임을 나타냅니다.");
+			}
+
+			namespace ElectricGuitar
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBullet, "Character.State.ElectricGuitar.SlowBullet", "마비탄 시전 상태임을 나타냅니다.");
+			}
+
+			namespace Piano
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImpactArrow, "Character.State.Piano.ImpactArrow", "충격 화살 시전 상태임을 나타냅니다.");
+			}
+
+			namespace Bass
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Charge, "Character.State.Bass.Charge", "돌격 상태임을 나타냅니다.");
+			}
 		}
 	}
 
@@ -84,17 +85,21 @@ namespace SMTags
 	{
 		namespace AnimNotify
 		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "Event.AnimNotify.Catch", "잡기 애님 노티파이의 이벤트로 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Event.AnimNotify.Hold", "잡기 애님 노티파이의 이벤트로 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Smash, "Event.AnimNotify.Smash", "매치기 애님 노티파이의 이벤트로 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SmashEnd, "Event.AnimNotify.SmashEnd", "매치기 종료 애님 노티파이의 이벤트로 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(PianoNoiseBreakShoot, "Event.AnimNotify.PianoNoiseBreakShoot", "피아노의 노이즈 브레이크 발사 시점을 알리는 애님 노티파이의 이벤트로 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakEnd, "Event.AnimNotify.NoiseBreakEnd", "노이즈브레이크 종료 애님 노티파이의 이벤트로 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletShoot, "Event.AnimNotify.SlowBulletShoot", "마비탄 발사 애님 노티파이의 이벤트로 사용됩니다.");
+			namespace Common
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Event.AnimNotify.Common.Hold", "잡기 애님 노티파이의 이벤트로 사용됩니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakEnd, "Event.AnimNotify.Common.NoiseBreakEnd", "노이즈브레이크 종료 애님 노티파이의 이벤트로 사용됩니다.");
+			}
 
 			namespace ElectricGuitar
 			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletShoot, "Event.AnimNotify.ElectricGuitar.SlowBulletShoot", "마비탄 발사 애님 노티파이의 이벤트로 사용됩니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreakFlash, "Event.AnimNotify.ElectricGuitar.NoiseBreakFlash", "노이즈 브레이크 점멸 애님 노티파이의 이벤트로 사용됩니다.");
+			}
+
+			namespace Piano
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(PianoNoiseBreakShoot, "Event.AnimNotify.Piano.PianoNoiseBreakShoot", "피아노의 노이즈 브레이크 발사 시점을 알리는 애님 노티파이의 이벤트로 사용됩니다.");
 			}
 
 			namespace Bass
@@ -117,16 +122,10 @@ namespace SMTags
 
 		namespace Character
 		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(BuzzerBeaterSmashEnd, "Event.Character.BuzzerBeaterSmashEnd", "매치기가 종료되어 버저 비터가 끝났음을 알리는데 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(BuzzerBeaterEnd, "Event.Character.BuzzerBeaterEnd", "노이즈 브레이크가 종료되어 버저 비터가 끝났음을 알리는데 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExitEnd, "Event.Character.CaughtExitEnd", "잡힌 상태 탈출이 종료되었음을 알리는데 사용됩니다.");
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Event.Character.Stun", "체력이 모두 소모되어 기절상태에 들어가야함을 알리는데 사용됩니다."); // TODO: Deprecated
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Event.Character.Stun", "기절 상태에 들어가야함을 알리는데 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "Event.Character.Neutralize", "체력이 모두 소모되어 무력화상태에 들어가야함을 알리는데 사용됩니다.");
-		}
-
-		namespace Tile
-		{
-			UE_DEFINE_GAMEPLAY_TAG_COMMENT(TileTrigger, "Ability.TileTrigger", "TileTrigger의 어빌리티 태그를 나타냅니다.");
 		}
 	}
 
