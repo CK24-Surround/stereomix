@@ -5,6 +5,8 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Components/Character/SMHIC_Character.h"
+#include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
 USMGameplayAbility::USMGameplayAbility()
@@ -45,14 +47,14 @@ ASMPlayerCharacterBase* USMGameplayAbility::GetCharacter() const
 	return Cast<ASMPlayerCharacterBase>(CurrentActorInfo->AvatarActor.Get());
 }
 
-USMHoldInteractionComponent* USMGameplayAbility::GetHIC() const
+USMHIC_Character* USMGameplayAbility::GetHIC() const
 {
 	if (!ensureAlways(CurrentActorInfo))
 	{
 		return nullptr;
 	}
 
-	return USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(CurrentActorInfo->AvatarActor.Get());
+	return USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent<USMHIC_Character>(CurrentActorInfo->AvatarActor.Get());
 }
 
 const USMPlayerCharacterDataAsset* USMGameplayAbility::GetDataAsset() const

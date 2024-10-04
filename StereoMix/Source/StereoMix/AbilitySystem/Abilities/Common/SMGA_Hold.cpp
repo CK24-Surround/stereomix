@@ -12,6 +12,7 @@
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/Character/SMHIC_Character.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 
 USMGA_Hold::USMGA_Hold()
 {

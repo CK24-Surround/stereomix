@@ -19,6 +19,7 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Utilities/SMCollision.h"
 
@@ -40,9 +41,9 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	USMHIC_Character* SourceHIC = GetHIC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;

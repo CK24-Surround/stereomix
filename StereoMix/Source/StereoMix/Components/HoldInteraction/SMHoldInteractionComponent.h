@@ -33,37 +33,31 @@ public:
 	virtual void SetActorHoldingMe(AActor* Instigator);
 
 	/** 잡을 수 있는지 여부를 반환하도록 구현해야합니다. 서버에서만 유효합니다. */
-	virtual bool CanHolded(AActor* Instigator) const { return false; }
+	virtual bool CanBeHeld(AActor* Instigator) const { return false; }
 
 	/** 시전자에게 잡힐때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
-	virtual void OnHolded(AActor* Instigator) {}
+	virtual void OnHeld(AActor* Instigator) {}
 
 	/** 시전자로부터 잡히기가 풀릴때 필요한 로직을 구현해야합니다. 성공 여부를 반환합니다. 서버에서 호출됩니다. */
-	virtual void OnHoldedReleased(AActor* Instigator) {}
+	virtual void OnReleasedFromHold(AActor* Instigator) {}
 
-	/** 데미지를 발생시키는지 여부를 반환합니다. */
-	virtual bool CanGenerateDamage(AActor* Instigator) const { return false; }
+	/** 노이즈 브레이크 당했을때 데미지를 발생시키는지 여부를 반환합니다. */
+	virtual bool ShouldApplyDamageFromNoiseBreak(AActor* Instigator) const { return false; }
 
-	/** 타일 점령을 발생시키는지 여부를 반환합니다. */
-	virtual bool CanGenerateTileCapture(AActor* Instigator) const { return false; }
+	/** 노이즈 브레이크 당했을때 타일 점령을 발생시키는지 여부를 반환합니다. */
+	virtual bool ShouldCaptureTilesFromNoiseBreak(AActor* Instigator) const { return false; }
 
-	/** 일렉기타의 노이즈브레이크 시작 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) {}
+	/** 노이즈 브레이크 당하기 시작될 때 호출됩니다. 이 때 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
+	virtual void OnNoiseBreakStarted(AActor* Instigator) {}
 
-	/** 피아노의 노이즈브레이크 시작 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator) {}
+	/** 일렉기타에게 노이즈 브레이크를 적용당할 때 호출됩니다. 이때 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
+	virtual void OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
 
-	/** 베이스의 노이즈브레이크 시작 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionStarted(ASMBassCharacter* Instigator) {}
+	/** 피아노에게 노이즈 브레이크를 적용당할 때 호출됩니다. 이때 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
+	virtual void OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
 
-	/** 일렉기타의 노이즈브레이크의 타일 상호작용 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
-
-	/** 피아노의 노이즈브레이크의 타일 상호작용 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
-
-	/** 베이스의 노이즈브레이크의 타일 상호작용 시 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
-	virtual void OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
+	/** 베이스에게 노이즈 브레이크를 적용당할 때 호출됩니다. 이때 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
+	virtual void OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
 
 	/** 잡힐때 이벤트입니다. */
 	FOnHoldStateChangedDelegate OnHoldedStateEntry;

@@ -22,27 +22,23 @@ public:
 
 	void SetASC(USMAbilitySystemComponent* NewASC);
 
-	virtual bool CanHolded(AActor* Instigator) const override;
+	virtual bool CanBeHeld(AActor* Instigator) const override;
 
-	virtual void OnHolded(AActor* Instigator) override;
+	virtual void OnHeld(AActor* Instigator) override;
 
-	virtual void OnHoldedReleased(AActor* Instigator) override;
+	virtual void OnReleasedFromHold(AActor* Instigator) override;
 
-	virtual bool CanGenerateDamage(AActor* Instigator) const override { return true; }
+	virtual bool ShouldApplyDamageFromNoiseBreak(AActor* Instigator) const override { return true; }
 
-	virtual bool CanGenerateTileCapture(AActor* Instigator) const override { return true; }
+	virtual bool ShouldCaptureTilesFromNoiseBreak(AActor* Instigator) const override { return true; }
 
-	virtual void OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator) override;
+	virtual void OnNoiseBreakStarted(AActor* Instigator) override;
 
-	virtual void OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator) override;
+	virtual void OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
 
-	virtual void OnNoiseBreakActionStarted(ASMBassCharacter* Instigator) override;
+	virtual void OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
 
-	virtual void OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
-
-	virtual void OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
-
-	virtual void OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
+	virtual void OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
 
 	FORCEINLINE AActor* GetActorIAmHolding() const { return IAmHoldingActor.Get(); }
 
@@ -51,7 +47,7 @@ public:
 	void EmptyHoldedMeCharacterList();
 
 	/**
-	 * 타겟으로부터 풀려나야할때 호출합니다.
+	 * 잡힌 상태에서 풀려나야할때 호출합니다.
 	 * 외부에서도 사용할 수 있습니다. 따로 추가적인 애니메이션 같은 비주얼적인 효과 없이 그저 디태치만 수행합니다.
 	 * @param TargetOptionalLocation 타겟의 위치를 설정합니다. nullptr을 넘길경우 자동으로 지정합니다.
 	 */

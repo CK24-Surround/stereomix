@@ -5,7 +5,7 @@
 
 
 
-bool USMHIC_OverlapItem::CanHolded(AActor* Instigator) const
+bool USMHIC_OverlapItem::CanBeHeld(AActor* Instigator) const
 {
 	if (!ensureAlways(Instigator))
 	{
@@ -15,7 +15,7 @@ bool USMHIC_OverlapItem::CanHolded(AActor* Instigator) const
 	return true;
 }
 
-void USMHIC_OverlapItem::OnHolded(AActor* Instigator)
+void USMHIC_OverlapItem::OnHeld(AActor* Instigator)
 {
 	if (!ensureAlways(Instigator))
 	{

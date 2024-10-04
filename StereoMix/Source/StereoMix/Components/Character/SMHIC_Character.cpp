@@ -38,7 +38,7 @@ void USMHIC_Character::SetASC(USMAbilitySystemComponent* NewASC)
 	SourceASC = NewASC;
 }
 
-bool USMHIC_Character::CanHolded(AActor* Instigator) const
+bool USMHIC_Character::CanBeHeld(AActor* Instigator) const
 {
 	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC || !Instigator)
 	{
@@ -55,12 +55,12 @@ bool USMHIC_Character::CanHolded(AActor* Instigator) const
 		return false;
 	}
 
-	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Unholdable))
+	if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::NonHoldable))
 	{
 		return false;
 	}
 
-	if (!SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Neutralize))
+	if (!SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::Neutralized))
 	{
 		return false;
 	}
@@ -68,7 +68,7 @@ bool USMHIC_Character::CanHolded(AActor* Instigator) const
 	return true;
 }
 
-void USMHIC_Character::OnHolded(AActor* Instigator)
+void USMHIC_Character::OnHeld(AActor* Instigator)
 {
 	if (!SourceCharacter || !SourceCharacter->HasAuthority())
 	{
@@ -91,7 +91,7 @@ void USMHIC_Character::OnHolded(AActor* Instigator)
 	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
 }
 
-void USMHIC_Character::OnHoldedReleased(AActor* Instigator)
+void USMHIC_Character::OnReleasedFromHold(AActor* Instigator)
 {
 	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
 	{
@@ -110,37 +110,17 @@ void USMHIC_Character::OnHoldedReleased(AActor* Instigator)
 	}
 }
 
-void USMHIC_Character::OnNoiseBreakActionStarted(ASMElectricGuitarCharacter* Instigator)
+void USMHIC_Character::OnNoiseBreakStarted(AActor* Instigator)
 {
 	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
 	{
 		return;
 	}
 
-	SourceASC->AddTag(SMTags::Character::State::NoiseBreaked);
+	SourceASC->AddTag(SMTags::Character::State::Common::NoiseBreaked);
 }
 
-void USMHIC_Character::OnNoiseBreakActionStarted(ASMPianoCharacter* Instigator)
-{
-	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
-	{
-		return;
-	}
-
-	SourceASC->AddTag(SMTags::Character::State::NoiseBreaked);
-}
-
-void USMHIC_Character::OnNoiseBreakActionStarted(ASMBassCharacter* Instigator)
-{
-	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !SourceASC)
-	{
-		return;
-	}
-
-	SourceASC->AddTag(SMTags::Character::State::NoiseBreaked);
-}
-
-void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
+void USMHIC_Character::OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (!SourceCharacter || !SourceCharacter->HasAuthority() || !NoiseBreakData || !SourceCapsule)
@@ -154,11 +134,11 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMElectricGuitarCharacter* I
 
 	// SourceCharacter->MulticastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
 
-	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+	SourceASC->RemoveTag(SMTags::Character::State::Common::NoiseBreaked);
 	NoiseBreaked();
 }
 
-void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
+void USMHIC_Character::OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority() || !NoiseBreakData || !SourceCapsule)
@@ -172,11 +152,11 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMPianoCharacter* Instigator
 
 	// SourceCharacter->MulticastRPCSetLocation(NoiseBreakData->NoiseBreakLocation + Offset);
 
-	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+	SourceASC->RemoveTag(SMTags::Character::State::Common::NoiseBreaked);
 	NoiseBreaked();
 }
 
-void USMHIC_Character::OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
+void USMHIC_Character::OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
 	if (!SourceCharacter.Get() || !SourceCharacter->HasAuthority())
 	{
@@ -185,7 +165,7 @@ void USMHIC_Character::OnNoiseBreakActionPerformed(ASMBassCharacter* Instigator,
 
 	ReleasedFromBeingHeld(Instigator);
 
-	SourceASC->RemoveTag(SMTags::Character::State::NoiseBreaked);
+	SourceASC->RemoveTag(SMTags::Character::State::Common::NoiseBreaked);
 	NoiseBreaked();
 }
 
@@ -270,7 +250,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 	{
 		if (SourceASC.Get() && GetOwnerRole() == ROLE_Authority)
 		{
-			SourceASC->AddTag(SMTags::Character::State::Hold);
+			SourceASC->AddTag(SMTags::Character::State::Common::Hold);
 		}
 
 		// 로컬 컨트롤인 경우 노이즈 브레이크 인디케이터를 활성화합니다.
@@ -285,7 +265,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 	{
 		if (SourceASC.Get() && GetOwnerRole() == ROLE_Authority)
 		{
-			SourceASC->RemoveTag(SMTags::Character::State::Hold);
+			SourceASC->RemoveTag(SMTags::Character::State::Common::Hold);
 		}
 
 		/** 잡은 대상을 제거하면 잡기 풀기 델리게이트가 호출됩니다.*/

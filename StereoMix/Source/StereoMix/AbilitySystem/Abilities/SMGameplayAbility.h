@@ -4,16 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "Abilities/GameplayAbility.h"
-#include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "Utilities/SMLog.h"
 
 #include "SMGameplayAbility.generated.h"
 
 class ASMPlayerCharacter;
 class ASMPlayerCharacterBase;
-class USMHoldInteractionComponent;
 class USMAbilitySystemComponent;
 class USMPlayerCharacterDataAsset;
+class USMHIC_Character;
 
 /**
  *
@@ -41,7 +40,7 @@ public:
 	template<typename T>
 	T* GetCharacter() const { return Cast<T>(GetCharacter()); }
 
-	USMHoldInteractionComponent* GetHIC() const;
+	USMHIC_Character* GetHIC() const;
 
 	template<typename T>
 	T* GetHIC() const { return Cast<T>(GetHIC()); }

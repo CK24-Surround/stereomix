@@ -54,7 +54,7 @@ void USMHoldInteractionComponent::OnRep_HoldingMeActor()
 	{
 		if (SourceASC && GetOwnerRole() == ROLE_Authority)
 		{
-			SourceASC->AddTag(SMTags::Character::State::Holded);
+			SourceASC->AddTag(SMTags::Character::State::Common::Held);
 		}
 
 		OnHoldedStateEntry.Broadcast();
@@ -63,7 +63,7 @@ void USMHoldInteractionComponent::OnRep_HoldingMeActor()
 	{
 		if (SourceASC && GetOwnerRole() == ROLE_Authority)
 		{
-			SourceASC->RemoveTag(SMTags::Character::State::Holded);
+			SourceASC->RemoveTag(SMTags::Character::State::Common::Held);
 		}
 
 		OnHoldedStateExit.Broadcast();
