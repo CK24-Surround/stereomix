@@ -3,11 +3,11 @@
 
 #include "SMGameState.h"
 
-#include "GameFramework/GameMode.h"
 #include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Components/Core/SMRoundTimerManagerComponent.h"
 #include "Components/Core/SMScoreMusicManagerComponent.h"
 #include "Components/Core/SMTileManagerComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
 ASMGameState::ASMGameState()
@@ -21,51 +21,45 @@ ASMGameState::ASMGameState()
 void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, RoundState);
+}
+
+void ASMGameState::SetRoundState(ESMRoundState NewRoundState)
+{
+	RoundState = NewRoundState;
+	OnRep_RoundState();
 }
 
 void ASMGameState::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
 
-	if (HasAuthority())
-	{
-		RoundTimerManager->OnPreRoundTimeExpired.AddDynamic(this, &ThisClass::OnPreRoundTimeExpiredCallback);
-		RoundTimerManager->OnRoundTimeExpired.AddDynamic(this, &ThisClass::OnRoundTimeExpiredCallback);
-		RoundTimerManager->OnPostRoundTimeExpired.AddDynamic(this, &ThisClass::OnPostRoundTimeExpiredCallback);
-		RoundTimerManager->StartTimer();
-	}
-
-	if (GetNetMode() == NM_Client)
-	{
-		ScoreMusicManager->PlayScoreMusic();
-	}
+	SetRoundState(ESMRoundState::PreRound);
 }
 
-void ASMGameState::OnPreRoundTimeExpiredCallback()
+void ASMGameState::OnRep_RoundState()
 {
-	const UWorld* World = GetWorld();
-	if (AGameMode* GameMode = World ? World->GetAuthGameMode<AGameMode>() : nullptr)
+	switch (RoundState)
 	{
-		GameMode->StartMatch();
-	}
-}
-
-void ASMGameState::OnRoundTimeExpiredCallback()
-{
-	const UWorld* World = GetWorld();
-	if (AGameMode* GameMode = World ? World->GetAuthGameMode<AGameMode>() : nullptr)
-	{
-		GameMode->EndMatch();
-	}
-
-	TileManager->ShowGameResult();
-}
-
-void ASMGameState::OnPostRoundTimeExpiredCallback()
-{
-	const UWorld* World = GetWorld();
-	if (AGameMode* GameMode = World ? World->GetAuthGameMode<AGameMode>() : nullptr)
-	{
-		GameMode->StartToLeaveMap();
+		case ESMRoundState::PreRound:
+		{
+			OnPreRoundStart.Broadcast();
+			break;
+		}
+		case ESMRoundState::InRound:
+		{
+			OnInRoundStart.Broadcast();
+			break;
+		}
+		case ESMRoundState::PostRound:
+		{
+			OnPostRoundStart.Broadcast();
+			break;
+		}
+		default:
+		{
+			break;
+		}
 	}
 }

@@ -3,13 +3,17 @@
 
 #include "SMRoundTimerManagerComponent.h"
 
+#include "GameFramework/GameMode.h"
+#include "SMTileManagerComponent.h"
+#include "Games/SMGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
 
 USMRoundTimerManagerComponent::USMRoundTimerManagerComponent()
 {
-	// PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
+	bWantsInitializeComponent = true;
 	SetIsReplicatedByDefault(true);
 }
 
@@ -17,8 +21,20 @@ void USMRoundTimerManagerComponent::GetLifetimeReplicatedProps(TArray<class FLif
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(ThisClass, TimerState);
 	DOREPLIFETIME(ThisClass, RemainingTime);
+}
+
+void USMRoundTimerManagerComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	if (GetOwnerRole() == ROLE_Authority)
+	{
+		if (ASMGameState* GameState = GetOwner<ASMGameState>())
+		{
+			GameState->OnPreRoundStart.AddDynamic(this, &ThisClass::StartTimer);
+		}
+	}
 }
 
 void USMRoundTimerManagerComponent::StartTimer()
@@ -36,7 +52,7 @@ void USMRoundTimerManagerComponent::StartTimer()
 		return;
 	}
 
-	NET_LOG(GetOwner(), Log, TEXT("프리 라운드 시작"));
+	NET_LOG(GetOwner(), Warning, TEXT("프리 라운드 시작"));
 	SetRemainingTime(PreRoundTime);
 	World->GetTimerManager().SetTimer(CountdownTimerHandle, this, &ThisClass::CountdownTime, OneSecond, true);
 }
@@ -47,33 +63,67 @@ void USMRoundTimerManagerComponent::CountdownTime()
 
 	if (RemainingTime <= 0)
 	{
-		switch (TimerState)
+		const UWorld* World = GetWorld();
+		ASMGameState* GameState = GetOwner<ASMGameState>();
+		if (World && GameState)
 		{
-			case ESMTimerState::PreRound:
+			switch (GameState->GetRoundState())
 			{
-				NET_LOG(GetOwner(), Log, TEXT("라운드 시작"));
-				TimerState = ESMTimerState::InRound;
-				SetRemainingTime(RoundTime);
-				OnPreRoundTimeExpired.Broadcast();
-				break;
-			}
-			case ESMTimerState::InRound:
-			{
-				NET_LOG(GetOwner(), Log, TEXT("포스트 라운드 시작"));
-				TimerState = ESMTimerState::PostRound;
-				SetRemainingTime(PostRoundTime);
-				OnRoundTimeExpired.Broadcast();
-				break;
-			}
-			case ESMTimerState::PostRound:
-			{
-				if (const UWorld* World = GetWorld())
+				case ESMRoundState::PreRound:
 				{
-					World->GetTimerManager().ClearTimer(CountdownTimerHandle);
-				}
+					NET_LOG(GetOwner(), Log, TEXT("라운드 시작"));
+					GameState->SetRoundState(ESMRoundState::InRound);
+					SetRemainingTime(RoundTime);
 
-				OnPostRoundTimeExpired.Broadcast();
-				break;
+					if (AGameMode* GameMode = World->GetAuthGameMode<AGameMode>())
+					{
+						GameMode->StartMatch();
+					}
+
+					OnPreRoundTimeExpired.Broadcast();
+					break;
+				}
+				case ESMRoundState::InRound:
+				{
+					NET_LOG(GetOwner(), Log, TEXT("포스트 라운드 시작"));
+					GameState->SetRoundState(ESMRoundState::PostRound);
+					SetRemainingTime(PostRoundTime);
+
+					if (AGameMode* GameMode = World->GetAuthGameMode<AGameMode>())
+					{
+						GameMode->EndMatch();
+					}
+
+					if (USMTileManagerComponent* TileManager = GameState->GetComponentByClass<USMTileManagerComponent>())
+					{
+						TileManager->ShowGameResult();
+					}
+
+					OnRoundTimeExpired.Broadcast();
+					break;
+				}
+				case ESMRoundState::PostRound:
+				{
+					NET_LOG(GetOwner(), Log, TEXT("라운드 종료"));
+					GameState->SetRoundState(ESMRoundState::None);
+
+					if (World)
+					{
+						World->GetTimerManager().ClearTimer(CountdownTimerHandle);
+					}
+
+					if (AGameMode* GameMode = World->GetAuthGameMode<AGameMode>())
+					{
+						GameMode->StartToLeaveMap();
+					}
+
+					OnPostRoundTimeExpired.Broadcast();
+					break;
+				}
+				default:
+				{
+					break;
+				}
 			}
 		}
 	}

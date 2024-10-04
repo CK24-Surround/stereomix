@@ -32,7 +32,7 @@ void USMUserWidget_StartCountdown::BindGameState()
 	if (GameState)
 	{
 		CachedTimerComponent = GameState->GetComponentByClass<USMRoundTimerManagerComponent>();
-		if (CachedTimerComponent.IsValid() && CachedTimerComponent->GetTimerState() == ESMTimerState::PreRound)
+		if (CachedTimerComponent.IsValid() && GameState->GetRoundState() == ESMRoundState::PreRound)
 		{
 			CachedTimerComponent->OnRemainingRoundTimeChanged.AddDynamic(this, &ThisClass::OnRemainingTimeChangedCallback);
 			OnRemainingTimeChangedCallback(CachedTimerComponent->GetRemainingTime());

@@ -4,6 +4,7 @@
 #include "SMScoreMusicManagerComponent.h"
 
 #include "FMODBlueprintStatics.h"
+#include "Games/SMGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMLog.h"
 
@@ -12,6 +13,7 @@ const FName USMScoreMusicManagerComponent::ScoreMusicParameterName = TEXT("Winne
 USMScoreMusicManagerComponent::USMScoreMusicManagerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	bWantsInitializeComponent = true;
 
 	SetIsReplicatedByDefault(true);
 }
@@ -23,6 +25,19 @@ void USMScoreMusicManagerComponent::GetLifetimeReplicatedProps(TArray<class FLif
 	DOREPLIFETIME(ThisClass, ScoreMusicPlayingTeam);
 }
 
+void USMScoreMusicManagerComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	if (GetNetMode() == NM_Client)
+	{
+		if (ASMGameState* GameState = GetOwner<ASMGameState>())
+		{
+			GameState->OnPreRoundStart.AddDynamic(this, &ThisClass::PlayScoreMusic);
+		}
+	}
+}
+
 void USMScoreMusicManagerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
@@ -32,6 +47,7 @@ void USMScoreMusicManagerComponent::EndPlay(const EEndPlayReason::Type EndPlayRe
 
 void USMScoreMusicManagerComponent::PlayScoreMusic()
 {
+	NET_LOG(GetOwner(), Warning, TEXT("음악 재생 시작"));
 	ScoreMusicEventInstance = UFMODBlueprintStatics::PlayEvent2D(this, ScoreMusic, true);
 	UFMODBlueprintStatics::SetGlobalParameterByName(ScoreMusicParameterName, ScoreMusicParameterNone);
 }

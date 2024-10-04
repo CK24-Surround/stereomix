@@ -19,8 +19,11 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
+	virtual void InitializeComponent() override;
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
+	UFUNCTION(BlueprintCallable)
 	void PlayScoreMusic();
 
 	ESMTeam GetScoreMusicPlayingTeam() const { return ScoreMusicPlayingTeam; }

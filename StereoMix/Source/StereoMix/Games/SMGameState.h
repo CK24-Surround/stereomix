@@ -4,8 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/GameState.h"
-#include "Data/SMTeam.h"
-#include "FMODBlueprintStatics.h"
+#include "Data/Enum/SMRoundState.h"
 
 #include "SMGameState.generated.h"
 
@@ -13,12 +12,8 @@ class USMScoreMusicManagerComponent;
 class USMRoundTimerManagerComponent;
 class USMProjectilePoolManagerComponent;
 class USMTileManagerComponent;
-class UFMODEvent;
-class USMWidget_RoomId;
 
-DECLARE_DELEGATE_OneParam(FOnChangePhaseSignature, int32 /*PhaseNumber*/);
-DECLARE_DELEGATE_OneParam(FOnChangeTeamScoreSignature, int32 /*TeamScore*/);
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnEndRoundSignature, ESMTeam /*VictoryTeam*/);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRoundStateChangedDelegate);
 
 class USMDesignData;
 /**
@@ -34,21 +29,28 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	virtual void HandleMatchIsWaitingToStart() override;
-
 	USMTileManagerComponent* GetTileManager() const { return TileManager; }
 
 	USMProjectilePoolManagerComponent* GetProjectilePoolManager() const { return ProjectilePoolManager; }
 
+	ESMRoundState GetRoundState() const { return RoundState; }
+
+	void SetRoundState(ESMRoundState NewRoundState);
+
+	UPROPERTY(BlueprintAssignable)
+	FOnRoundStateChangedDelegate OnPreRoundStart;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnRoundStateChangedDelegate OnInRoundStart;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnRoundStateChangedDelegate OnPostRoundStart;
+
 protected:
-	UFUNCTION()
-	void OnPreRoundTimeExpiredCallback();
+	virtual void HandleMatchIsWaitingToStart() override;
 
 	UFUNCTION()
-	void OnRoundTimeExpiredCallback();
-
-	UFUNCTION()
-	void OnPostRoundTimeExpiredCallback();
+	void OnRep_RoundState();
 
 	UPROPERTY(VisibleAnywhere, Category = "Design")
 	TObjectPtr<USMRoundTimerManagerComponent> RoundTimerManager;
@@ -61,4 +63,7 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Design")
 	TObjectPtr<USMProjectilePoolManagerComponent> ProjectilePoolManager;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_RoundState")
+	ESMRoundState RoundState = ESMRoundState::None;
 };

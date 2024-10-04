@@ -6,17 +6,11 @@
 #include "Components/ActorComponent.h"
 #include "SMRoundTimerManagerComponent.generated.h"
 
+class USMTileManagerComponent;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FRoundTimerTimeExpiredDelegate);
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FRoundTimerRemainingTimeDelegate, int32, RemainTime);
-
-UENUM(BlueprintType)
-enum class ESMTimerState : uint8
-{
-	PreRound,
-	InRound,
-	PostRound
-};
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMRoundTimerManagerComponent : public UActorComponent
@@ -28,10 +22,10 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
 
+	virtual void InitializeComponent() override;
+
 	UFUNCTION(BlueprintCallable)
 	void StartTimer();
-
-	ESMTimerState GetTimerState() const { return TimerState; }
 
 	int32 GetRemainingTime() const { return RemainingTime; }
 
@@ -54,9 +48,6 @@ protected:
 
 	UFUNCTION()
 	void OnRep_RemainingTime();
-
-	UPROPERTY(Replicated)
-	ESMTimerState TimerState = ESMTimerState::PreRound;
 
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0"))
 	int32 PreRoundTime = 15;
