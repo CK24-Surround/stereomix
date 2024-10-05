@@ -10,6 +10,7 @@
 
 #include "SMGamePlayerController.generated.h"
 
+class USMUserWidget_StaminaSkillGaugeDummyBar;
 class USMUserWidget_HUD;
 class USMUserWidget_StartCountdown;
 class ASMPlayerCharacter;
@@ -119,6 +120,12 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMUserWidget_GameStatistics> GameStatisticsWidget;
+
+	UPROPERTY(EditAnywhere, Category = "Design|UI")
+	TSubclassOf<USMUserWidget_StaminaSkillGaugeDummyBar> DummyBarWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<USMUserWidget_StaminaSkillGaugeDummyBar> DummyBarWidget;
 
 private:
 	float GameStatisticsUpdateTime = 0.f;

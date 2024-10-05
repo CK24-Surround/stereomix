@@ -8,8 +8,10 @@
 #include "Blueprint/UserWidget.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "StereoMixLog.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Games/SMGamePlayerState.h"
+#include "UI/Widget/Dummy/SMUserWidget_StaminaSkillGaugeDummyBar.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"
 #include "UI/Widget/Game/SMUserWidget_ScreenIndicator.h"
@@ -90,6 +92,26 @@ void ASMGamePlayerController::OnRep_PlayerState()
 
 	GameStatisticsWidget = CreateWidget<USMUserWidget_GameStatistics>(this, GameStatisticsWidgetClass);
 	GameStatisticsWidget->AddToViewport(10);
+
+	DummyBarWidget = CreateWidget<USMUserWidget_StaminaSkillGaugeDummyBar>(this, DummyBarWidgetClass);
+	if (DummyBarWidget)
+	{
+		DummyBarWidget->AddToViewport(2);
+		if (UAbilitySystemComponent* ASC = SMPlayerState->GetAbilitySystemComponent())
+		{
+			const USMCharacterAttributeSet* AttributeSet = ASC->GetSet<USMCharacterAttributeSet>();
+			ASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetStaminaAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnStaminaChanged);
+			ASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetSkillGaugeAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnSkillGaugeChanged);
+
+			DummyBarWidget->Stamina = AttributeSet->GetStamina();
+			DummyBarWidget->MaxStamina = AttributeSet->GetMaxStamina();
+			DummyBarWidget->UpdateStaminaBar();
+
+			DummyBarWidget->SkillGauge = AttributeSet->GetSkillGauge();
+			DummyBarWidget->MaxSkillGauge = AttributeSet->GetMaxSkillGauge();
+			DummyBarWidget->UpdateSkillGaugeBar();
+		}
+	}
 }
 
 void ASMGamePlayerController::SpawnTimerCallback()
