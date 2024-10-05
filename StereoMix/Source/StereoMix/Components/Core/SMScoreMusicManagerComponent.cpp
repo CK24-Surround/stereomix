@@ -40,13 +40,22 @@ void USMScoreMusicManagerComponent::InitializeComponent()
 
 void USMScoreMusicManagerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::EndPlay(EndPlayReason);
+	if (ScoreMusicEventInstance.Instance)
+	{
+		NET_LOG(GetOwner(), Warning, TEXT("음악 종료 %p"), ScoreMusicEventInstance.Instance);
+		UFMODBlueprintStatics::EventInstanceStop(ScoreMusicEventInstance, true);
+	}
 
-	UFMODBlueprintStatics::EventInstanceStop(ScoreMusicEventInstance, true);
+	Super::EndPlay(EndPlayReason);
 }
 
 void USMScoreMusicManagerComponent::PlayScoreMusic()
 {
+	if (ASMGameState* GameState = GetOwner<ASMGameState>())
+	{
+		GameState->OnPreRoundStart.RemoveAll(this);
+	}
+
 	NET_LOG(GetOwner(), Warning, TEXT("음악 재생 시작"));
 	ScoreMusicEventInstance = UFMODBlueprintStatics::PlayEvent2D(this, ScoreMusic, true);
 	UFMODBlueprintStatics::SetGlobalParameterByName(ScoreMusicParameterName, ScoreMusicParameterNone);

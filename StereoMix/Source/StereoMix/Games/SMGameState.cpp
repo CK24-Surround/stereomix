@@ -27,6 +27,11 @@ void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLife
 
 void ASMGameState::SetRoundState(ESMRoundState NewRoundState)
 {
+	if (!HasAuthority())
+	{
+		return;
+	}
+
 	RoundState = NewRoundState;
 	OnRep_RoundState();
 }
@@ -35,7 +40,10 @@ void ASMGameState::HandleMatchIsWaitingToStart()
 {
 	Super::HandleMatchIsWaitingToStart();
 
-	SetRoundState(ESMRoundState::PreRound);
+	if (HasAuthority())
+	{
+		SetRoundState(ESMRoundState::PreRound);
+	}
 }
 
 void ASMGameState::OnRep_RoundState()
