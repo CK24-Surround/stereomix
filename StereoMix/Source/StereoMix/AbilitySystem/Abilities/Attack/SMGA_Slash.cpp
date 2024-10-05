@@ -26,7 +26,7 @@ USMGA_Slash::USMGA_Slash()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Bass::Charge);
 
-	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Bass))
+	if (const FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Bass))
 	{
 		Damage = AttackData->Damage;
 		MaxDistanceByTile = AttackData->DistanceByTile;

@@ -20,7 +20,7 @@ USMGA_Shoot::USMGA_Shoot()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::ElectricGuitar::SlowBullet);
 
-	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::ElectricGuitar))
+	if (const FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::ElectricGuitar))
 	{
 		Damage = AttackData->Damage;
 		MaxDistanceByTile = AttackData->DistanceByTile;
@@ -35,7 +35,7 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !SourceDataAsset)
 	{
@@ -55,7 +55,7 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 	if (IsLocallyControlled())
 	{
-		if (UWorld* World = GetWorld())
+		if (const UWorld* World = GetWorld())
 		{
 			World->GetTimerManager().SetTimer(ShootTimerHandle, this, &USMGA_Shoot::Shoot, 1.0f / AttackPerSecond, true);
 			Shoot();
@@ -65,7 +65,7 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	if (UWorld* World = GetWorld())
+	if (const UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(ShootTimerHandle);
 	}
@@ -76,9 +76,9 @@ void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const F
 void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	UWorld* World = GetWorld();
-	ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
-	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
+	const UWorld* World = GetWorld();
+	const ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
+	const USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
 	ASMProjectile* Projectile = ProjectilePoolManager ? ProjectilePoolManager->GetProjectileForElectricGuitar(SourceCharacter->GetTeam()) : nullptr;
 	if (!SourceCharacter || !ProjectilePoolManager || !Projectile)
 	{

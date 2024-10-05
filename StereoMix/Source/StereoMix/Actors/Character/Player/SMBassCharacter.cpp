@@ -22,7 +22,7 @@ ASMBassCharacter::ASMBassCharacter(const FObjectInitializer& ObjectInitializer)
 	SlashColliderComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SlashColliderComponent"));
 	SlashColliderComponent->SetupAttachment(SlashColliderRootComponent);
 	SlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-	const double HalfDistance = 250.0;
+	constexpr double HalfDistance = 250.0;
 	SlashColliderComponent->SetRelativeLocationAndRotation(FVector(HalfDistance, 0.0, 0.0), FRotator(-90.0, 0.0, 0.0));
 	SlashColliderComponent->InitCapsuleSize(50.0f, HalfDistance);
 

@@ -208,8 +208,7 @@ void ASMPlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	const USMControlData* ControlData = SMPlayerController->GetControlData();
-	if (ControlData)
+	if (const USMControlData* ControlData = SMPlayerController->GetControlData())
 	{
 		EnhancedInputComponent->BindAction(ControlData->MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
 		EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Attack);
@@ -260,10 +259,9 @@ void ASMPlayerCharacterBase::OnRep_Controller()
 {
 	Super::OnRep_Controller();
 
-	ASMGamePlayerController* CachedPlayerController = GetController<ASMGamePlayerController>();
-	if (ensureAlways(CachedPlayerController))
+	if (ASMGamePlayerController* CachedPlayerController = GetController<ASMGamePlayerController>())
 	{
-		SMPlayerController = GetController<ASMGamePlayerController>();
+		SMPlayerController = CachedPlayerController;
 		SMPlayerController->SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
 	}
 }
@@ -272,11 +270,7 @@ void ASMPlayerCharacterBase::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
 
-	ASMGamePlayerController* CachedPlayerController = GetController<ASMGamePlayerController>();
-	if (ensureAlways(CachedPlayerController))
-	{
-		SMPlayerController = GetController<ASMGamePlayerController>();
-	}
+	SMPlayerController = GetController<ASMGamePlayerController>();
 
 	InitASC();
 }
@@ -289,8 +283,7 @@ void ASMPlayerCharacterBase::OnRep_PlayerState()
 
 	const ESMTeam SourceTeam = GetTeam();
 
-	USMUserWidget_CharacterState* CharacterStateWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), DataAsset->CharacterStateWidget[SourceTeam]);
-	if (CharacterStateWidget)
+	if (USMUserWidget_CharacterState* CharacterStateWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), DataAsset->CharacterStateWidget[SourceTeam]))
 	{
 		CharacterStateWidgetComponent->SetWidget(CharacterStateWidget);
 		BindCharacterStateWidget(CharacterStateWidget);
@@ -340,7 +333,7 @@ USMHoldInteractionComponent* ASMPlayerCharacterBase::GetHoldInteractionComponent
 
 void ASMPlayerCharacterBase::PredictHPChange(float Amount)
 {
-	UAbilitySystemComponent* SourceASC = GetAbilitySystemComponent();
+	const UAbilitySystemComponent* SourceASC = GetAbilitySystemComponent();
 	if (!SourceASC)
 	{
 		return;
@@ -384,7 +377,7 @@ bool ASMPlayerCharacterBase::GetTileLocationFromCursor(FVector& OutTileLocation,
 {
 	OutTileLocation = FVector::ZeroVector;
 
-	if (ASMTile* Tile = USMTileFunctionLibrary::GetTileFromLocation(GetWorld(), GetLocationFromCursor(true, MaxDistance)))
+	if (const ASMTile* Tile = USMTileFunctionLibrary::GetTileFromLocation(GetWorld(), GetLocationFromCursor(true, MaxDistance)))
 	{
 		OutTileLocation = Tile->GetTileLocation();
 		return true;
@@ -425,8 +418,7 @@ void ASMPlayerCharacterBase::MulticastRPCAddScreenIndicatorToSelf_Implementation
 	}
 
 	// 자기 자신은 제외합니다.
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	if (TargetCharacter)
+	if (const ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor))
 	{
 		if (TargetCharacter->IsLocallyControlled())
 		{
@@ -435,8 +427,7 @@ void ASMPlayerCharacterBase::MulticastRPCAddScreenIndicatorToSelf_Implementation
 	}
 
 	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 추가해줍니다.
-	ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController());
-	if (LocalPlayerController)
+	if (ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController()))
 	{
 		LocalPlayerController->AddScreendIndicator(TargetActor);
 	}
@@ -450,8 +441,8 @@ void ASMPlayerCharacterBase::MulticastRPCRemoveScreenIndicatorToSelf_Implementat
 	}
 
 	// 자기 자신은 제외합니다.
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-	if (TargetCharacter->IsLocallyControlled())
+	const ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (!TargetCharacter || TargetCharacter->IsLocallyControlled())
 	{
 		return;
 	}
@@ -464,7 +455,7 @@ void ASMPlayerCharacterBase::MulticastRPCRemoveScreenIndicatorToSelf_Implementat
 	}
 }
 
-void ASMPlayerCharacterBase::ClientRPCRemoveScreendIndicatorToSelf_Implementation(AActor* TargetActor)
+void ASMPlayerCharacterBase::ClientRPCRemoveScreenIndicatorToSelf_Implementation(AActor* TargetActor)
 {
 	// ClientRPC로 무조건 오너십을 갖고 있어 CachedSMPlayerController가 유효하겠지만 만약을 위한 예외처리입니다.
 	if (ensureAlways(SMPlayerController.Get()))
@@ -500,7 +491,7 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 		return;
 	}
 
-	FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->DamageGE, 1.0f, ASC->MakeEffectContext());
+	const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->DamageGE, 1.0f, ASC->MakeEffectContext());
 	if (GESpecHandle.IsValid())
 	{
 		SetLastAttacker(NewAttacker);
@@ -701,7 +692,7 @@ void ASMPlayerCharacterBase::InitStat()
 		return;
 	}
 
-	if (FSMCharacterStatsData* CharacterStat = USMDataTableFunctionLibrary::GetCharacterStatData(CharacterType))
+	if (const FSMCharacterStatsData* CharacterStat = USMDataTableFunctionLibrary::GetCharacterStatData(CharacterType))
 	{
 		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::MaxHP, CharacterStat->HP);
 		GESpecHandle.Data->SetByCallerTagMagnitudes.FindOrAdd(SMTags::AttributeSet::HP, CharacterStat->HP);
@@ -722,8 +713,7 @@ void ASMPlayerCharacterBase::GAInputPressed(EActiveAbility InInputID)
 		return;
 	}
 
-	FGameplayAbilitySpec* GASpec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InInputID));
-	if (GASpec)
+	if (FGameplayAbilitySpec* GASpec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InInputID)))
 	{
 		if (GASpec->IsActive())
 		{
@@ -744,8 +734,7 @@ void ASMPlayerCharacterBase::GAInputReleased(EActiveAbility InInputID)
 		return;
 	}
 
-	FGameplayAbilitySpec* GASpec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InInputID));
-	if (GASpec)
+	if (FGameplayAbilitySpec* GASpec = ASC->FindAbilitySpecFromInputID(static_cast<int32>(InInputID)))
 	{
 		if (GASpec->IsActive())
 		{
@@ -757,8 +746,8 @@ void ASMPlayerCharacterBase::GAInputReleased(EActiveAbility InInputID)
 FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bUseZeroBasis)
 {
 	const FVector SourceLocation = GetActorLocation();
-	const float CapsuleHalfHeigh = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
-	const FVector CapsuleOffset(0.0, 0.0, -CapsuleHalfHeigh);
+	const float CapsuleHalfHeight = GetCapsuleComponent()->GetScaledCapsuleHalfHeight();
+	const FVector CapsuleOffset(0.0, 0.0, -CapsuleHalfHeight);
 	const FVector BasisLocation = bUseZeroBasis ? SourceLocation + CapsuleOffset : SourceLocation;
 
 	if (!SMPlayerController.Get())
@@ -799,21 +788,15 @@ void ASMPlayerCharacterBase::UpdateCameraLocation()
 		return;
 	}
 
-	UGameViewportClient* GameViewport = GEngine->GameViewport;
-	if (!GameViewport)
-	{
-		return;
-	}
-
 	const FVector SourceLocation = GetActorLocation();
 	const FVector MouseLocation = GetLocationFromCursor();
 	FVector TargetLocation = (SourceLocation + MouseLocation) * 0.5;
 
 	const FVector SourceToTargetVector = TargetLocation - SourceLocation;
-	float Distance = SourceToTargetVector.Size();
+	const float Distance = SourceToTargetVector.Size();
 
 	const float MaxMouseRange = CameraMoveMouseThreshold / 2.0f;
-	float MoveDistance = FMath::Clamp((Distance / MaxMouseRange) * CameraMoveMaxDistance, 0.0f, CameraMoveMaxDistance);
+	const float MoveDistance = FMath::Clamp((Distance / MaxMouseRange) * CameraMoveMaxDistance, 0.0f, CameraMoveMaxDistance);
 	if (MoveDistance > 0)
 	{
 		const FVector AdjustVector = SourceToTargetVector.GetSafeNormal() * MoveDistance;
@@ -829,8 +812,7 @@ void ASMPlayerCharacterBase::UpdateCameraLocation()
 
 void ASMPlayerCharacterBase::UpdateFocusToCursor()
 {
-	const USMAbilitySystemComponent* CachedASC = ASC.Get();
-	if (CachedASC)
+	if (const USMAbilitySystemComponent* CachedASC = ASC.Get())
 	{
 		if (CachedASC->HasAnyMatchingGameplayTags(LockAimTags))
 		{
@@ -853,8 +835,7 @@ void ASMPlayerCharacterBase::BindCharacterStateWidget(USMUserWidget_CharacterSta
 		return;
 	}
 
-	APlayerState* CachedPlayerState = GetPlayerState();
-	if (ensureAlways(CachedPlayerState))
+	if (const APlayerState* CachedPlayerState = GetPlayerState())
 	{
 		CharacterStateWidget->SetNickname(CachedPlayerState->GetPlayerName());
 
@@ -889,7 +870,7 @@ void ASMPlayerCharacterBase::OnRep_bIsMovementEnabled()
 		return;
 	}
 
-	EMovementMode MovementMode = bIsMovementEnabled ? MOVE_Walking : MOVE_None;
+	const EMovementMode MovementMode = bIsMovementEnabled ? MOVE_Walking : MOVE_None;
 	SourceMovementComponent->SetMovementMode(MovementMode);
 }
 
@@ -912,7 +893,7 @@ void ASMPlayerCharacterBase::OnRep_bIsNoteState()
 
 	CharacterMeshComponent->SetVisibility(!bIsNoteState);
 
-	// SetActorHidden을 하지않고 루트를 기준으로 자식들을 비활성화하는 이유는 Hold, Holded 될때 SetActorHidden을 사용하기 때문에 Holded 되었을때 무기가 보이게 됩니다. 이를 방지하고자 아예 컴포넌트들의 비지빌리티를 끕니다.
+	// SetActorHidden을 하지않고 루트를 기준으로 자식들을 비활성화하는 이유는 Hold, Held 될때 SetActorHidden을 사용하기 때문에 Held 되었을때 무기가 보이게 됩니다. 이를 방지하고자 아예 컴포넌트들의 비지빌리티를 끕니다.
 	WeaponRootComponent->SetVisibility(!bIsNoteState, true);
 	NoteRootComponent->SetVisibility(bIsNoteState, true);
 
@@ -931,16 +912,16 @@ void ASMPlayerCharacterBase::ServerRPCAddMoveSpeed_Implementation(float MoveSpee
 	AddMoveSpeed(MoveSpeedMultiplier, Duration);
 }
 
-void ASMPlayerCharacterBase::OnTilesCaptured(const AActor* CapturedInstigator, int CaputuredTileCount)
+void ASMPlayerCharacterBase::OnTilesCaptured(const AActor* CapturedInstigator, int CapturedTileCount)
 {
 	if (CapturedInstigator == this)
 	{
 		if (ASC.IsValid() && DataAsset)
 		{
-			FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->StaminaHealGE, 1.0f, ASC->MakeEffectContext());
+			const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->StaminaHealGE, 1.0f, ASC->MakeEffectContext());
 			if (GESpecHandle.IsValid())
 			{
-				GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::SkillGauge, StaminaHealAmountPerCapture * CaputuredTileCount);
+				GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::SkillGauge, StaminaHealAmountPerCapture * CapturedTileCount);
 				ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
 		}

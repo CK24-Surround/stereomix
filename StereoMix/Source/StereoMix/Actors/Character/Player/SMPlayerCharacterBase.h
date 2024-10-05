@@ -14,6 +14,7 @@
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
 
+class ASMPlayerCharacterBase;
 class ASMNoteBase;
 class ASMWeaponBase;
 class USMHIC_Character;
@@ -125,7 +126,7 @@ public:
 
 	/** 해당 클라이언트에서만 인디케이터를 제거합니다. */
 	UFUNCTION(Client, Reliable)
-	void ClientRPCRemoveScreendIndicatorToSelf(AActor* TargetActor);
+	void ClientRPCRemoveScreenIndicatorToSelf(AActor* TargetActor);
 
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 
@@ -231,7 +232,7 @@ protected:
 	virtual void OnHoldStateExit() {}
 
 	UFUNCTION()
-	void OnTilesCaptured(const AActor* CapturedInstigator, int CaputuredTileCount);
+	void OnTilesCaptured(const AActor* CapturedInstigator, int CapturedTileCount);
 
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;

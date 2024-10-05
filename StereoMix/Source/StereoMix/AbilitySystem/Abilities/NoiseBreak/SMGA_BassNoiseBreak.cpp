@@ -213,7 +213,7 @@ void USMGA_BassNoiseBreak::TileCapture()
 	}
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	USMTileFunctionLibrary::CaptureTilesInSqaure(GetWorld(), SourceLocation, SourceCharacter, CaptureSize);
+	USMTileFunctionLibrary::CaptureTilesInSquare(GetWorld(), SourceLocation, SourceCharacter, CaptureSize);
 }
 
 void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)

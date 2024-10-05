@@ -22,7 +22,7 @@ USMGA_Archery::USMGA_Archery()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Piano::ImpactArrow);
 
-	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Piano))
+	if (const FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Piano))
 	{
 		Damage = AttackData->Damage;
 		MaxDistanceByTile = AttackData->DistanceByTile;
@@ -61,7 +61,7 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 
 	if (IsLocallyControlled())
 	{
-		if (UWorld* World = GetWorld())
+		if (const UWorld* World = GetWorld())
 		{
 			TWeakObjectPtr<USMGA_Archery> ThisWeakPtr = MakeWeakObjectPtr(this);
 			auto OnCharged = [ThisWeakPtr](int32 Level) {
@@ -75,7 +75,7 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 			World->GetTimerManager().SetTimer(Level2ChargedTimerHandle, [OnCharged]() { OnCharged(2); }, TimeToChargeLevel2, false);
 		}
 
-		ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
+		const ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
 		UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
 
 		FGameplayCueParameters GCParams;
@@ -100,7 +100,7 @@ void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FG
 			SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::Archery, GCParams);
 		}
 
-		if (UWorld* World = GetWorld())
+		if (const UWorld* World = GetWorld())
 		{
 			World->GetTimerManager().ClearTimer(Level1ChargedTimerHandle);
 			World->GetTimerManager().ClearTimer(Level2ChargedTimerHandle);
@@ -146,9 +146,9 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 void USMGA_Archery::ServerLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargedLevel)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	UWorld* World = GetWorld();
-	ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
-	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
+	const UWorld* World = GetWorld();
+	const ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
+	const USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
 	if (!SourceCharacter || !ProjectilePoolManager)
 	{
 		EndAbilityByCancel();

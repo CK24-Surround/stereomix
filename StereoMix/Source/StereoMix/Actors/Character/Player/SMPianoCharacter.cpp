@@ -27,12 +27,10 @@ void ASMPianoCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	const USMPianoCharacterDataAsset* PianoDataAsset = Cast<USMPianoCharacterDataAsset>(DataAsset);
-	if (PianoDataAsset)
+	if (const USMPianoCharacterDataAsset* PianoDataAsset = Cast<USMPianoCharacterDataAsset>(DataAsset))
 	{
 		const TObjectPtr<UNiagaraSystem>* ImpactArrowIndicatorPtr = PianoDataAsset->ImpactArrowIndicator.Find(GetTeam());
-		UNiagaraSystem* ImpactArrowIndicator = ImpactArrowIndicatorPtr ? *ImpactArrowIndicatorPtr : nullptr;
-		if (ImpactArrowIndicator)
+		if (UNiagaraSystem* ImpactArrowIndicator = ImpactArrowIndicatorPtr ? *ImpactArrowIndicatorPtr : nullptr)
 		{
 			ImpactArrowIndicatorNiagaraComponent->SetAsset(ImpactArrowIndicator);
 		}

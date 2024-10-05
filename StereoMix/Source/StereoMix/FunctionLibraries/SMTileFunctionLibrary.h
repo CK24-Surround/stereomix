@@ -29,7 +29,7 @@ public:
 	static TArray<ASMTile*> GetTilesInBox(const UWorld* World, const FVector& CenterLocation, const FVector& BoxExtend);
 
 	/** 시작 지점에서 끝지점을 향하는 캡슐에 감지된 타일들을 가져옵니다. 시작과 끝 위치는 타일 중심으로 보정됩니다. */
-	static TArray<ASMTile*> GetTilesInCapsule(const UWorld* World, const FVector& StartLocation, const FVector& EndLocaiton, float Radius, bool bShowDebug = false);
+	static TArray<ASMTile*> GetTilesInCapsule(const UWorld* World, const FVector& StartLocation, const FVector& EndLocation, float Radius, bool bShowDebug = false);
 
 	/**
 	 * 지정된 타일들을 점령합니다.
@@ -43,14 +43,14 @@ public:
 	 * @param TileExpansionCount 중심을 기준으로 점령되는 사이즈입니다.
 	 * @param OverrideTeamOption 기본적으로 Instigator의 팀으로 점령이 수행되지만 다른 팀으로 덮어 씌워 수행해야하는 경우 여기에 값을 넣어주면 됩니다. (예시: 타일 중립화 ESMTeam::None)
 	 */
-	static void CaptureTilesInSqaure(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
+	static void CaptureTilesInSquare(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
 
 	/**
 	 * 해당 위치를 기준으로 타일을 사각형 모양으로 순차적으로 점령합니다.
 	 * @param TileExpansionCount 중심을 기준으로 점령되는 사이즈입니다.
 	 * @param OverrideTeamOption 기본적으로 Instigator의 팀으로 점령이 수행되지만 다른 팀으로 덮어 씌워 수행해야하는 경우 여기에 값을 넣어주면 됩니다. (예시: 타일 중립화 ESMTeam::None)
 	 */
-	static void CaptureTilesInSqaureWithDelay(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, float TotalCaptureTime, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
+	static void CaptureTilesInSquareWithDelay(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, float TotalCaptureTime, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
 
 	/** 기본적으로 사용되는 타일의 사이즈를 나타냅니다. */
 	static constexpr float DefaultTileSize = 150.0f;

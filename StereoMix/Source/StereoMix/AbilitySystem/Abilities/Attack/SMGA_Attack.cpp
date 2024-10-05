@@ -39,7 +39,7 @@ void USMGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 bool USMGA_Attack::CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags) const
 {
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (SourceASC && SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::Exhausted))
 	{
 		return false;

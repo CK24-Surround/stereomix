@@ -226,7 +226,7 @@ void USMHIC_Character::ReleasedFromBeingHeld(AActor* TargetActor, const TOptiona
 	{
 		if (ASMPlayerCharacterBase* HoldedMeCharacter = Cast<ASMPlayerCharacterBase>(HoldedMeActor))
 		{
-			HoldedMeCharacter->ClientRPCRemoveScreendIndicatorToSelf(SourceCharacter);
+			HoldedMeCharacter->ClientRPCRemoveScreenIndicatorToSelf(SourceCharacter);
 		}
 	}
 

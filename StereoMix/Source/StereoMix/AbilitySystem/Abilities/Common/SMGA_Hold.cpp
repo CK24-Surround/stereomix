@@ -149,7 +149,7 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 		}
 
 		// 로컬에서 타겟 인디케이터를 제거합니다.
-		SourceCharacter->ClientRPCRemoveScreendIndicatorToSelf(TargetActor);
+		SourceCharacter->ClientRPCRemoveScreenIndicatorToSelf(TargetActor);
 
 		if (USMAbilitySystemComponent* SourceASC = GetASC())
 		{
