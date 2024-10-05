@@ -935,6 +935,14 @@ void ASMPlayerCharacterBase::OnTilesCaptured(const AActor* CapturedInstigator, i
 {
 	if (CapturedInstigator == this)
 	{
-		NET_LOG(this, Warning, TEXT("%s가 %d개의 타일을 점령했습니다. "), *GetName(), CaputuredTileCount)
+		if (ASC.IsValid() && DataAsset)
+		{
+			FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->StaminaHealGE, 1.0f, ASC->MakeEffectContext());
+			if (GESpecHandle.IsValid())
+			{
+				GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::SkillGauge, StaminaHealAmountPerCapture * CaputuredTileCount);
+				ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+			}
+		}
 	}
 }

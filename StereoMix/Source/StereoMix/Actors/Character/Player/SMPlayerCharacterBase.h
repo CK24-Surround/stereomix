@@ -333,4 +333,7 @@ protected:
 
 	UPROPERTY(ReplicatedUsing = "OnRep_bIsNoteState")
 	uint32 bIsNoteState:1 = false;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float StaminaHealAmountPerCapture = 10.0f;
 };
