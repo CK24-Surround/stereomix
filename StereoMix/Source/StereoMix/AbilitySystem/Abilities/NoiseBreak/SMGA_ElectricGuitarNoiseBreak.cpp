@@ -36,6 +36,31 @@ USMGA_ElectricGuitarNoiseBreak::USMGA_ElectricGuitarNoiseBreak()
 	}
 }
 
+bool USMGA_ElectricGuitarNoiseBreak::CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	if (!Super::CanActivateAbility(Handle, ActorInfo, SourceTags, TargetTags, OptionalRelevantTags))
+	{
+		return false;
+	}
+
+	if (IsLocallyControlled())
+	{
+		const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+		if (!SourceCharacter)
+		{
+			return false;
+		}
+
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		if (!GetTileFromLocation(SourceLocation))
+		{
+			return false;
+		}
+	}
+	
+	return true;
+}
+
 void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
@@ -73,7 +98,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		}
 
 		UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::AnimNotify::ElectricGuitar::NoiseBreakFlash);
-		WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnReceivedFlashEvent);
+		WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnFlashEventReceived);
 		WaitEventTask->ReadyForActivation();
 
 		NoiseBreakStartLocation = StartTile->GetTileLocation();
@@ -121,7 +146,7 @@ void USMGA_ElectricGuitarNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
-void USMGA_ElectricGuitarNoiseBreak::OnReceivedFlashEvent(FGameplayEventData Payload)
+void USMGA_ElectricGuitarNoiseBreak::OnFlashEventReceived(FGameplayEventData Payload)
 {
 	ServerSendTargetLocation(NoiseBreakStartLocation, NoiseBreakTargetLocation);
 }

@@ -115,7 +115,7 @@ void USMGA_NoiseBreak::PerformBurstAttack(const FVector& TargetLocation, const F
 	}
 }
 
-ASMTile* USMGA_NoiseBreak::GetTileFromLocation(const FVector& Location)
+ASMTile* USMGA_NoiseBreak::GetTileFromLocation(const FVector& Location) const
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
 	if (!SourceCharacter)

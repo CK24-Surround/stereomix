@@ -36,7 +36,7 @@ protected:
 	virtual TArray<AActor*> GetBurstHitActors(const FVector& TargetLocation);
 
 	/** 해당 위치의 타일을 가져옵니다. */
-	ASMTile* GetTileFromLocation(const FVector& Location);
+	ASMTile* GetTileFromLocation(const FVector& Location) const;
 
 	/** 노이즈 브레이크의 데미지량 입니다.*/
 	float Damage = 0.0f;

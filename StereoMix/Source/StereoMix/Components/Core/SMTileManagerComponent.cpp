@@ -79,7 +79,7 @@ int32 USMTileManagerComponent::CaptureTiles(const TArray<ASMTile*>& TilesToBeCap
 
 		if (bShowDebug)
 		{
-			DrawDebugBox(GetWorld(), TileToBeCaptured->GetTileLocation(), FVector(USMTileFunctionLibrary::DefaultTileSize / 2.0), DebugColor, false, 3.0f);
+			DrawDebugBox(GetWorld(), TileToBeCaptured->GetTileLocation(), FVector(USMTileFunctionLibrary::DefaultTileSize / 2.0), DebugColor, false, 1.5f);
 		}
 	}
 
