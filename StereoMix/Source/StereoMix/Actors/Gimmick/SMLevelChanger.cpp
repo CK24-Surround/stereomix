@@ -27,6 +27,7 @@ ASMLevelChanger::ASMLevelChanger()
 	SubLevels.Add(nullptr);
 }
 
+#if WITH_EDITOR
 void ASMLevelChanger::PostEditChangeProperty(FPropertyChangedEvent& PropertyChangedEvent)
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
@@ -56,6 +57,7 @@ void ASMLevelChanger::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 		}
 	}
 }
+#endif
 
 void ASMLevelChanger::BeginPlay()
 {
