@@ -4,6 +4,7 @@
 #include "SMGA_Attack.h"
 
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 
 USMGA_Attack::USMGA_Attack()
@@ -34,6 +35,17 @@ void USMGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	UAbilityTask_WaitGameplayEvent* StunWaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::Stun);
 	StunWaitTask->EventReceived.AddDynamic(this, &ThisClass::OnCanceled);
 	StunWaitTask->ReadyForActivation();
+}
+
+bool USMGA_Attack::CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags) const
+{
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	if (SourceASC && SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::Exhausted))
+	{
+		return false;
+	}
+
+	return true;
 }
 
 void USMGA_Attack::OnCanceled(FGameplayEventData Payload)

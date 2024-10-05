@@ -90,7 +90,7 @@ void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Att
 
 	if (Attribute == GetStaminaAttribute())
 	{
-		if (GetStamina() <= 5.0f)
+		if (GetStamina() <= 0.0f)
 		{
 			if (UAbilitySystemComponent* SourceASC = GetOwningAbilitySystemComponent())
 			{
