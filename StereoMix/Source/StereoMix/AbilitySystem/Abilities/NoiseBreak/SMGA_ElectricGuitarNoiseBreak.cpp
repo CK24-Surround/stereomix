@@ -205,7 +205,7 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 	}
 
 	// 캡슐을 통해 시작 지점에서 끝지점까지 점령할 타일을 저장합니다.
-	TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesFromLocationByCapsule(World, NoiseBreakStartLocation, NoiseBreakTargetLocation, USMTileFunctionLibrary::DefaultTileSize);
+	TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesInCapsule(World, NoiseBreakStartLocation, NoiseBreakTargetLocation, USMTileFunctionLibrary::DefaultTileSize);
 
 	// 시작과 종료 지점 앞 뒤 타일을 제거합니다.
 	const FVector CachedNoiseBreakStartLocation = NoiseBreakStartLocation;
@@ -230,11 +230,7 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 		return DotProductFromStart < -Cos || DotProductFromEnd > Cos;
 	});
 
-	for (ASMTile* CaptureTile : CaptureTiles)
-	{
-		USMTileFunctionLibrary::CaptureTilesInSqaure(World, CaptureTile, SourceCharacter, 1);
-	}
-
+	USMTileFunctionLibrary::CaptureTiles(World, CaptureTiles, SourceCharacter);
 	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크로 점령 시도한 타일 개수: %d"), CaptureTiles.Num());
 }
 

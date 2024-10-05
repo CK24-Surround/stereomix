@@ -58,5 +58,5 @@ void USMGA_Sampling::OnUnderTileChanged(ASMTile* UnderTile)
 		return;
 	}
 
-	USMTileFunctionLibrary::CaptureTilesInSqaure(GetWorld(), UnderTile, SourceCharacter, 1);
+	USMTileFunctionLibrary::CaptureTiles(GetWorld(), TArray<ASMTile*>{UnderTile}, SourceCharacter);
 }

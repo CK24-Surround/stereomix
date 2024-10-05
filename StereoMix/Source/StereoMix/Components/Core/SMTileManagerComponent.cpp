@@ -3,15 +3,14 @@
 
 #include "SMTileManagerComponent.h"
 
-#include "Engine/OverlapResult.h"
 #include "GameFramework/GameMode.h"
 #include "EngineUtils.h"
 #include "SMScoreMusicManagerComponent.h"
 #include "Actors/Tiles/SMTile.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Games/SMGameState.h"
 #include "Net/UnrealNetwork.h"
-#include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
 
@@ -61,48 +60,34 @@ void USMTileManagerComponent::InitializeComponent()
 	CachedScoreMusicManager = CachedOwner ? CachedOwner->FindComponentByClass<USMScoreMusicManagerComponent>() : nullptr;
 }
 
-int32 USMTileManagerComponent::TileCapture(ASMTile* StartTile, const AActor* Instigator, float HalfHorizenSize, float HalfVerticalSize, const TOptional<ESMTeam>& OverrideTeamOption)
+int32 USMTileManagerComponent::CaptureTiles(const TArray<ASMTile*>& TilesToBeCaptured, const AActor* Instigator, const TOptional<ESMTeam>& OverrideTeamOption)
 {
-	if (!StartTile || !Instigator)
-	{
-		return 0;
-	}
-
-	TArray<FOverlapResult> OverlapResults;
-	const FVector StartLocation = StartTile->GetTileLocation();
-	const FVector HalfExtend(FVector(HalfHorizenSize, HalfVerticalSize, 50.0));
-	const FCollisionShape BoxCollision = FCollisionShape::MakeBox(HalfExtend);
-	const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, BoxCollision);
-
-	int32 SuccessCaptureTileCount = 0;
 	const ESMTeam InstigatorTeam = OverrideTeamOption.Get(USMTeamBlueprintLibrary::GetTeam(Instigator));
-	if (bSuccess)
+	int32 SuccessCaptureTileCount = 0;
+
+	const FColor DebugColor = FColor::MakeRandomColor();
+	for (ASMTile* TileToBeCaptured : TilesToBeCaptured)
 	{
-		for (const FOverlapResult& OverlapResult : OverlapResults)
+		const ESMTeam TileTeam = TileToBeCaptured ? TileToBeCaptured->GetTeam() : ESMTeam::None;
+		if (!TileToBeCaptured || InstigatorTeam == TileTeam)
 		{
-			ASMTile* Tile = Cast<ASMTile>(OverlapResult.GetActor());
-			if (!Tile)
-			{
-				continue;
-			}
+			continue;
+		}
 
-			const ESMTeam TileTeam = Tile->GetTeam();
-			if (InstigatorTeam == TileTeam)
-			{
-				continue;
-			}
+		TileToBeCaptured->TileTrigger(InstigatorTeam);
+		++SuccessCaptureTileCount;
 
-			Tile->TileTrigger(InstigatorTeam);
-			++SuccessCaptureTileCount;
+		if (bShowDebug)
+		{
+			DrawDebugBox(GetWorld(), TileToBeCaptured->GetTileLocation(), FVector(USMTileFunctionLibrary::DefaultTileSize / 2.0), DebugColor, false, 3.0f);
 		}
 	}
 
-	if (bShowDebug)
+	if (SuccessCaptureTileCount > 0)
 	{
-		DrawDebugBox(GetWorld(), StartLocation, HalfExtend, FColor::Turquoise, false, 2.0f);
+		OnTilesCaptured.Broadcast(Instigator, SuccessCaptureTileCount);
 	}
 
-	OnTilesCaptured.Broadcast(Instigator, SuccessCaptureTileCount);
 	return SuccessCaptureTileCount;
 }
 

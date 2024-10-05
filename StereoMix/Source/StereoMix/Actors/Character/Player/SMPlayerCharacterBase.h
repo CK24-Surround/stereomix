@@ -230,6 +230,9 @@ protected:
 
 	virtual void OnHoldStateExit() {}
 
+	UFUNCTION()
+	void OnTilesCaptured(const AActor* CapturedInstigator, int CaputuredTileCount);
+
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;
 

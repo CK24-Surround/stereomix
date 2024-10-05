@@ -20,6 +20,7 @@
 #include "Components/Character/SMCharacterMovementComponent.h"
 #include "Components/Character/SMHIC_Character.h"
 #include "Components/Common/SMTeamComponent.h"
+#include "Components/Core/SMTileManagerComponent.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -179,14 +180,22 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 
 	if (HasAuthority())
 	{
-		const ESMTeam SourceTeam = GetTeam();
-		if (DataAsset->NoteClass.Find(SourceTeam))
+		if (UWorld* World = GetWorld())
 		{
-			Note = GetWorld()->SpawnActor<ASMNoteBase>(DataAsset->NoteClass[SourceTeam]);
-			if (Note)
+			const ESMTeam SourceTeam = GetTeam();
+			if (DataAsset->NoteClass.Find(SourceTeam))
 			{
-				Note->AttachToComponent(NoteSlotComponent, FAttachmentTransformRules::KeepRelativeTransform);
-				Note->SetOwner(this);
+				Note = World->SpawnActor<ASMNoteBase>(DataAsset->NoteClass[SourceTeam]);
+				if (Note)
+				{
+					Note->AttachToComponent(NoteSlotComponent, FAttachmentTransformRules::KeepRelativeTransform);
+					Note->SetOwner(this);
+				}
+			}
+
+			if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(World))
+			{
+				TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
 			}
 		}
 	}
@@ -920,4 +929,12 @@ void ASMPlayerCharacterBase::OnRep_bIsNoteState()
 void ASMPlayerCharacterBase::ServerRPCAddMoveSpeed_Implementation(float MoveSpeedMultiplier, float Duration)
 {
 	AddMoveSpeed(MoveSpeedMultiplier, Duration);
+}
+
+void ASMPlayerCharacterBase::OnTilesCaptured(const AActor* CapturedInstigator, int CaputuredTileCount)
+{
+	if (CapturedInstigator == this)
+	{
+		NET_LOG(this, Warning, TEXT("%s가 %d개의 타일을 점령했습니다. "), *GetName(), CaputuredTileCount)
+	}
 }
