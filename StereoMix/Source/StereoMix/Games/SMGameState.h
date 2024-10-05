@@ -12,6 +12,7 @@ class USMScoreMusicManagerComponent;
 class USMRoundTimerManagerComponent;
 class USMProjectilePoolManagerComponent;
 class USMTileManagerComponent;
+class USMScoreManagerComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRoundStateChangedDelegate);
 
@@ -30,6 +31,8 @@ public:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	USMTileManagerComponent* GetTileManager() const { return TileManager; }
+
+	USMScoreManagerComponent* GetScoreManager() const { return ScoreManager; }
 
 	USMProjectilePoolManagerComponent* GetProjectilePoolManager() const { return ProjectilePoolManager; }
 
@@ -57,6 +60,9 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Design")
 	TObjectPtr<USMTileManagerComponent> TileManager;
+	
+	UPROPERTY(VisibleAnywhere, Category = "Design")
+	TObjectPtr<USMScoreManagerComponent> ScoreManager;
 
 	UPROPERTY(VisibleAnywhere, Category = "Design")
 	TObjectPtr<USMScoreMusicManagerComponent> ScoreMusicManager;

@@ -5,6 +5,7 @@
 
 #include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Components/Core/SMRoundTimerManagerComponent.h"
+#include "Components/Core/SMScoreManagerComponent.h"
 #include "Components/Core/SMScoreMusicManagerComponent.h"
 #include "Components/Core/SMTileManagerComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -14,6 +15,7 @@ ASMGameState::ASMGameState()
 {
 	RoundTimerManager = CreateDefaultSubobject<USMRoundTimerManagerComponent>(TEXT("RoundTimer"));
 	TileManager = CreateDefaultSubobject<USMTileManagerComponent>(TEXT("TileManager"));
+	ScoreManager = CreateDefaultSubobject<USMScoreManagerComponent>(TEXT("ScoreManager"));
 	ScoreMusicManager = CreateDefaultSubobject<USMScoreMusicManagerComponent>(TEXT("ScoreMusicManager"));
 	ProjectilePoolManager = CreateDefaultSubobject<USMProjectilePoolManagerComponent>(TEXT("ProjectilePoolManager"));
 }
