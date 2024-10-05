@@ -32,8 +32,6 @@ public:
 
 	USMTileManagerComponent* GetTileManager() const { return TileManager; }
 
-	USMScoreManagerComponent* GetScoreManager() const { return ScoreManager; }
-
 	USMProjectilePoolManagerComponent* GetProjectilePoolManager() const { return ProjectilePoolManager; }
 
 	ESMRoundState GetRoundState() const { return RoundState; }
