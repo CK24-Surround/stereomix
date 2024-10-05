@@ -4,6 +4,7 @@
 #include "SMGA_Shoot.h"
 
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
@@ -70,7 +71,12 @@ void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const F
 		World->GetTimerManager().ClearTimer(ShootTimerHandle);
 	}
 
-	K2_EndAbility();
+	K2_EndAbility(); // 마우스 클릭 속도 그대로 연발로 반영됨 ㅋ
+
+	// TODO: 릴리즈 빌드시 아래 로직으로 수행해야함 ㅋ.
+	// UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.5f / AttackPerSecond);
+	// WaitTask->OnFinish.AddDynamic(this, &ThisClass::K2_EndAbility);
+	// WaitTask->ReadyForActivation();
 }
 
 void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
