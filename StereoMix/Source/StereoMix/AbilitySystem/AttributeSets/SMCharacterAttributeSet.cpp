@@ -87,6 +87,17 @@ void USMCharacterAttributeSet::PostAttributeChange(const FGameplayAttribute& Att
 			}
 		}
 	}
+
+	if (Attribute == GetStaminaAttribute())
+	{
+		if (GetStamina() <= 5.0f)
+		{
+			if (UAbilitySystemComponent* SourceASC = GetOwningAbilitySystemComponent())
+			{
+				UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(SourceASC->GetAvatarActor(), SMTags::Event::Character::Exhausted, FGameplayEventData());
+			}
+		}
+	}
 }
 
 bool USMCharacterAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallbackData& Data)

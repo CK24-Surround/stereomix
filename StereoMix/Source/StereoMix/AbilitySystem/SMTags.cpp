@@ -46,6 +46,7 @@ namespace SMTags
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Held, "Character.State.Common.Held", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Character.State.Common.Stun", "기절 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralized, "Character.State.Common.Neutralized", "무력화 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Exhausted, "Character.State.Common.Exhausted", "탈진 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreak, "Character.State.Common.NoiseBreak", "매치기 중인 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreaked, "Character.State.Common.NoiseBreaked", "노이즈브레이크에 당하는 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(NonHoldable, "Character.State.Common.NonHoldable", "잡을 수 없는 상태임을 나타냅니다.");
@@ -126,6 +127,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(CaughtExitEnd, "Event.Character.CaughtExitEnd", "잡힌 상태 탈출이 종료되었음을 알리는데 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Event.Character.Stun", "기절 상태에 들어가야함을 알리는데 사용됩니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "Event.Character.Neutralize", "체력이 모두 소모되어 무력화상태에 들어가야함을 알리는데 사용됩니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Exhausted, "Event.Character.Exhausted", "스태미너가 모두 소모되어 탈진 상태에 들어가야함을 알리는데 사용됩니다.");
 		}
 	}
 

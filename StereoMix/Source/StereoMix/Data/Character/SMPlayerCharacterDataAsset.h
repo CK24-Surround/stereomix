@@ -39,6 +39,9 @@ public:
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TSubclassOf<UGameplayEffect> StaminaHealGE;
 
+	UPROPERTY(EditAnywhere, Category = "GAS|GE")
+	TSubclassOf<UGameplayEffect> ResetStaminaGE;
+
 	UPROPERTY(EditAnywhere, Category = "GAS|GA")
 	TMap<EActiveAbility, TSubclassOf<UGameplayAbility>> DefaultActiveAbilities;
 
