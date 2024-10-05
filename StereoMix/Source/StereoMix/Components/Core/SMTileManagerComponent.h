@@ -28,6 +28,8 @@ public:
 
 	virtual void InitializeComponent() override;
 
+	virtual void BeginPlay() override;
+
 	/**
 	 * 타일을 점령합니다.
 	 * @param TilesToBeCaptured 점령될 타일을 담은 배열입니다.
