@@ -4,24 +4,24 @@
 #include "SMTileFunctionLibrary.h"
 
 #include "Engine/OverlapResult.h"
+#include "GameFramework/GameStateBase.h"
 #include "Actors/Tiles/SMTile.h"
 #include "Components/Core/SMTileManagerComponent.h"
-#include "Games/SMGameState.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
 
-USMTileManagerComponent* USMTileFunctionLibrary::GetTileManagerComponent(UWorld* World)
+USMTileManagerComponent* USMTileFunctionLibrary::GetTileManagerComponent(const UWorld* World)
 {
-	ASMGameState* GameState = World->GetGameState<ASMGameState>();
+	AGameStateBase* GameState = World->GetGameState();
 	if (!World || !GameState)
 	{
 		return nullptr;
 	}
 
-	return GameState->GetTileManager();
+	return GameState->GetComponentByClass<USMTileManagerComponent>();
 }
 
-ASMTile* USMTileFunctionLibrary::GetTileFromLocation(UWorld* World, const FVector& Location)
+ASMTile* USMTileFunctionLibrary::GetTileFromLocation(const UWorld* World, const FVector& Location)
 {
 	if (!World)
 	{
@@ -35,7 +35,7 @@ ASMTile* USMTileFunctionLibrary::GetTileFromLocation(UWorld* World, const FVecto
 	return Cast<ASMTile>(HitResult.GetActor());
 }
 
-TArray<ASMTile*> USMTileFunctionLibrary::GetTilesFromLocationByCapsule(UWorld* World, const FVector& StartLocation, const FVector& EndLocaiton, float Radius, bool bShowDebug)
+TArray<ASMTile*> USMTileFunctionLibrary::GetTilesFromLocationByCapsule(const UWorld* World, const FVector& StartLocation, const FVector& EndLocaiton, float Radius, bool bShowDebug)
 {
 	TArray<ASMTile*> Result;
 
@@ -66,7 +66,7 @@ TArray<ASMTile*> USMTileFunctionLibrary::GetTilesFromLocationByCapsule(UWorld* W
 	return Result;
 }
 
-void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, bool bShowDebug)
+void USMTileFunctionLibrary::CaptureTilesInSqaure(const UWorld* World, const FVector& StartLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	ASMTile* StartTile = GetTileFromLocation(World, StartLocation);
@@ -76,11 +76,11 @@ void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, const FVe
 	}
 
 	const float Offset = 1.0f;
-	const float HalfSize = Offset + (DefaultTileSize * (CaptureSizeByTile - 1));
-	TileManager->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize, bShowDebug);
+	const float HalfSize = Offset + (DefaultTileSize * (TileExpansionCount - 1));
+	TileManager->TileCapture(StartTile, Instigator, HalfSize, HalfSize, OverrideTeamOption);
 }
 
-void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, ASMTile* StartTile, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, bool bShowDebug)
+void USMTileFunctionLibrary::CaptureTilesInSqaure(const UWorld* World, ASMTile* StartTile, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	if (!TileManager || !StartTile)
@@ -89,11 +89,11 @@ void USMTileFunctionLibrary::TileCaptureImmediateSqaure(UWorld* World, ASMTile* 
 	}
 
 	const float Offset = 1.0f;
-	const float HalfSize = Offset + (DefaultTileSize * (CaptureSizeByTile - 1));
-	TileManager->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize, bShowDebug);
+	const float HalfSize = Offset + (DefaultTileSize * (TileExpansionCount - 1));
+	TileManager->TileCapture(StartTile, Instigator, HalfSize, HalfSize, OverrideTeamOption);
 }
 
-void USMTileFunctionLibrary::TileCaptureDelayedSqaure(UWorld* World, const FVector& StartLocation, ESMTeam InstigatorTeam, int32 CaptureSizeByTile, float TotalTime, bool bShowDebug)
+void USMTileFunctionLibrary::CaptureTilesInSqaureWithDelay(const UWorld* World, const FVector& StartLocation, const AActor* Instigator, int32 TileExpansionCount, float TotalCaptureTime, const TOptional<ESMTeam>& OverrideTeamOption)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	ASMTile* StartTile = GetTileFromLocation(World, StartLocation);
@@ -103,16 +103,16 @@ void USMTileFunctionLibrary::TileCaptureDelayedSqaure(UWorld* World, const FVect
 	}
 
 	float OffSet = 1.0f;
-	const float DeltaTime = TotalTime / (CaptureSizeByTile - 1);
+	const float DeltaTime = TotalCaptureTime / (TileExpansionCount - 1);
 
 	TWeakObjectPtr<USMTileManagerComponent> TileManagerWeakPtr(TileManager);
-	for (int32 i = 0; i < CaptureSizeByTile; ++i)
+	for (int32 i = 0; i < TileExpansionCount; ++i)
 	{
 		float HalfSize = OffSet + DefaultTileSize * i;
-		auto Lambda = [TileManagerWeakPtr, StartTile, InstigatorTeam, HalfSize, bShowDebug]() {
+		auto Lambda = [TileManagerWeakPtr, StartTile, Instigator, HalfSize, OverrideTeamOption]() {
 			if (TileManagerWeakPtr.Get())
 			{
-				TileManagerWeakPtr->TileCapture(StartTile, InstigatorTeam, HalfSize, HalfSize, bShowDebug);
+				TileManagerWeakPtr->TileCapture(StartTile, Instigator, HalfSize, HalfSize, OverrideTeamOption);
 			}
 		};
 

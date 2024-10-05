@@ -8,6 +8,7 @@
 #include "EngineUtils.h"
 #include "SMScoreMusicManagerComponent.h"
 #include "Actors/Tiles/SMTile.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Games/SMGameState.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMCollision.h"
@@ -60,8 +61,13 @@ void USMTileManagerComponent::InitializeComponent()
 	CachedScoreMusicManager = CachedOwner ? CachedOwner->FindComponentByClass<USMScoreMusicManagerComponent>() : nullptr;
 }
 
-int32 USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam InstigatorTeam, float HalfHorizenSize, float HalfVerticalSize, bool bShowDebug)
+int32 USMTileManagerComponent::TileCapture(ASMTile* StartTile, const AActor* Instigator, float HalfHorizenSize, float HalfVerticalSize, const TOptional<ESMTeam>& OverrideTeamOption)
 {
+	if (!StartTile || !Instigator)
+	{
+		return 0;
+	}
+
 	TArray<FOverlapResult> OverlapResults;
 	const FVector StartLocation = StartTile->GetTileLocation();
 	const FVector HalfExtend(FVector(HalfHorizenSize, HalfVerticalSize, 50.0));
@@ -69,6 +75,7 @@ int32 USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam Instigato
 	const bool bSuccess = GetWorld()->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, BoxCollision);
 
 	int32 SuccessCaptureTileCount = 0;
+	const ESMTeam InstigatorTeam = OverrideTeamOption.Get(USMTeamBlueprintLibrary::GetTeam(Instigator));
 	if (bSuccess)
 	{
 		for (const FOverlapResult& OverlapResult : OverlapResults)
@@ -95,6 +102,7 @@ int32 USMTileManagerComponent::TileCapture(ASMTile* StartTile, ESMTeam Instigato
 		DrawDebugBox(GetWorld(), StartLocation, HalfExtend, FColor::Turquoise, false, 2.0f);
 	}
 
+	OnTilesCaptured.Broadcast(Instigator, SuccessCaptureTileCount);
 	return SuccessCaptureTileCount;
 }
 

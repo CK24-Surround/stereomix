@@ -64,9 +64,5 @@ protected:
 	/** 도약 정점의 높이입니다. */
 	float ApexHeight = 500.0f;
 
-	/** 중심으로부터 전파되듯이 타일이 점령되는데, 이때 소요시간을 의미합니다. */
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float TotalTriggerTime = 0.267f;
-
 	FName OriginalCollisionProfileName;
 };

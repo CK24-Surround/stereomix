@@ -230,10 +230,9 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 		return DotProductFromStart < -Cos || DotProductFromEnd > Cos;
 	});
 
-	ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	for (ASMTile* CaptureTile : CaptureTiles)
 	{
-		USMTileFunctionLibrary::TileCaptureImmediateSqaure(World, CaptureTile, SourceTeam, 1);
+		USMTileFunctionLibrary::CaptureTilesInSqaure(World, CaptureTile, SourceCharacter, 1);
 	}
 
 	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크로 점령 시도한 타일 개수: %d"), CaptureTiles.Num());

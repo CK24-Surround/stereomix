@@ -8,6 +8,7 @@
 #include "AbilitySystem/Task/SMAT_CheckUnderTile.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tiles/SMTile.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 
 USMGA_Sampling::USMGA_Sampling()
@@ -52,10 +53,10 @@ void USMGA_Sampling::OnUnderTileChanged(ASMTile* UnderTile)
 		return;
 	}
 
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	const ESMTeam TileTeam = UnderTile->GetTeam();
-	if (SourceTeam != TileTeam)
+	if (USMTeamBlueprintLibrary::IsSameTeam(SourceCharacter, UnderTile))
 	{
-		USMTileFunctionLibrary::TileCaptureImmediateSqaure(GetWorld(), UnderTile->GetTileLocation(), SourceTeam, 1);
+		return;
 	}
+
+	USMTileFunctionLibrary::CaptureTilesInSqaure(GetWorld(), UnderTile, SourceCharacter, 1);
 }

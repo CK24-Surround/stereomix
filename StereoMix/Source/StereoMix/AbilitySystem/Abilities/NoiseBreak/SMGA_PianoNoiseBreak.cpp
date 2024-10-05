@@ -178,5 +178,5 @@ void USMGA_PianoNoiseBreak::TileCapture()
 		return;
 	}
 
-	USMTileFunctionLibrary::TileCaptureImmediateSqaure(GetWorld(), NoiseBreakTargetLocation, SourceTeam, CaptureSize, true);
+	USMTileFunctionLibrary::CaptureTilesInSqaure(GetWorld(), NoiseBreakTargetLocation, SourceCharacter, CaptureSize);
 }
