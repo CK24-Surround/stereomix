@@ -33,6 +33,8 @@ class STEREOMIX_API ASMFragileObstacle : public ASMObstacleBase, public ISMDamag
 public:
 	ASMFragileObstacle();
 
+	virtual void PreInitializeComponents() override;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void PreSave(FObjectPreSaveContext SaveContext) override;

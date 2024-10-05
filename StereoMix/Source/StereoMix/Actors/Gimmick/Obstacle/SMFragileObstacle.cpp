@@ -14,9 +14,14 @@
 
 ASMFragileObstacle::ASMFragileObstacle()
 {
-	CurrentDurability = Durability;
-
 	DurabilityThresholds.Add({ 0.0f, nullptr });
+}
+
+void ASMFragileObstacle::PreInitializeComponents()
+{
+	Super::PreInitializeComponents();
+
+	CurrentDurability = Durability;
 }
 
 void ASMFragileObstacle::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
