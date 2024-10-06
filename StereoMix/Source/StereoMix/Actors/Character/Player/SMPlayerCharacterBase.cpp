@@ -495,6 +495,14 @@ void ASMPlayerCharacterBase::MulticastRPCSetLocation_Implementation(const FVecto
 	SetActorLocation(NewLocation);
 }
 
+void ASMPlayerCharacterBase::AddTotalNoiseBreakUsage(int32 InUsageCount) const
+{
+	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
+	{
+		ScoreManagerComponent->AddTotalNoiseBreakUsage(this, InUsageCount);
+	}
+}
+
 void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
 	if (!ASC.Get() || !DataAsset)

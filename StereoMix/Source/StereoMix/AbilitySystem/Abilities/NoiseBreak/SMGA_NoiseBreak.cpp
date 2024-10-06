@@ -48,8 +48,7 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	if (IsLocallyControlled())
 	{
-		UAbilitySystemComponent* SourceASC = GetASC();
-		if (SourceASC)
+		if (USMAbilitySystemComponent* SourceASC = GetASC())
 		{
 			FGameplayAbilitySpec* NoiseBreakIndicatorGASpec = SourceASC->FindAbilitySpecFromClass(USMGA_NoiseBreakIndicator::StaticClass());
 			if (NoiseBreakIndicatorGASpec)
@@ -57,6 +56,11 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 				SourceASC->CancelAbilityHandle(NoiseBreakIndicatorGASpec->Handle);
 			}
 		}
+	}
+
+	if (K2_HasAuthority())
+	{
+		GetCharacter()->AddTotalNoiseBreakUsage(1);
 	}
 }
 
