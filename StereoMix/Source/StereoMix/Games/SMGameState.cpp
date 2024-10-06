@@ -3,19 +3,10 @@
 
 #include "SMGameState.h"
 
-#include "Components/Core/SMProjectilePoolManagerComponent.h"
-#include "Components/Core/SMRoundTimerManagerComponent.h"
-#include "Components/Core/SMScoreMusicManagerComponent.h"
-#include "Components/Core/SMTileManagerComponent.h"
 #include "Net/UnrealNetwork.h"
-#include "Utilities/SMLog.h"
 
 ASMGameState::ASMGameState()
 {
-	RoundTimerManager = CreateDefaultSubobject<USMRoundTimerManagerComponent>(TEXT("RoundTimer"));
-	TileManager = CreateDefaultSubobject<USMTileManagerComponent>(TEXT("TileManager"));
-	ScoreMusicManager = CreateDefaultSubobject<USMScoreMusicManagerComponent>(TEXT("ScoreMusicManager"));
-	ProjectilePoolManager = CreateDefaultSubobject<USMProjectilePoolManagerComponent>(TEXT("ProjectilePoolManager"));
 }
 
 void ASMGameState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
