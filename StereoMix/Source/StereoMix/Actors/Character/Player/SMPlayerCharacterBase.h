@@ -199,6 +199,8 @@ protected:
 
 	void GAInputReleased(EActiveAbility InInputID);
 
+	void InitUI();
+
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
 	 * bIsZeroBasis가 true면 캐릭터의 바닥을 기준으로, false면 캐릭터의 중심을 기준으로 계산합니다. */
 	FVector GetCursorTargetingPoint(bool bUseZeroBasis = false);
@@ -206,8 +208,6 @@ protected:
 	void UpdateCameraLocation();
 
 	void UpdateFocusToCursor();
-
-	void BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget);
 
 	UFUNCTION()
 	void OnRep_bIsActorHidden();

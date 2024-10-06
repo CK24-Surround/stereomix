@@ -175,8 +175,8 @@ void ASMGamePlayerController::SpawnCharacter(const TOptional<FVector>& InLocatio
 
 	// 스폰 위치와 회전을 구합니다.
 	const AActor* PlayerStarter = GameMode->FindPlayerStart(this, TeamStarterTag);
-	const FVector SpawnLocation = InLocationOption.Get(PlayerStarter ? PlayerStarter->GetActorLocation() : FVector::ZeroVector);
-	const FRotator SpawnRotation = InRotationOption.Get(PlayerStarter ? PlayerStarter->GetActorRotation() : FRotator::ZeroRotator);
+	const FVector CharacterSpawnLocation = InLocationOption.Get(PlayerStarter ? PlayerStarter->GetActorLocation() : FVector::ZeroVector);
+	const FRotator CharacterSpawnRotation = InRotationOption.Get(PlayerStarter ? PlayerStarter->GetActorRotation() : FRotator::ZeroRotator);
 
 	// PlayerState에 캐릭터 타입이 지정되어있지 않다면 플레이어 컨트롤러에 설정된 기본 캐릭터 타입으로 덮어 씌웁니다. 테스트 환경을 위한 코드입니다.
 	CharacterType = (CharacterType == ESMCharacterType::None) ? DefaultType : CharacterType;
@@ -187,7 +187,7 @@ void ASMGamePlayerController::SpawnCharacter(const TOptional<FVector>& InLocatio
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	if (ASMPlayerCharacterBase* PlayerCharacter = World->SpawnActor<ASMPlayerCharacterBase>(CharacterClassToSpawn, SpawnLocation, SpawnRotation, SpawnParams))
+	if (ASMPlayerCharacterBase* PlayerCharacter = World->SpawnActor<ASMPlayerCharacterBase>(CharacterClassToSpawn, CharacterSpawnLocation, CharacterSpawnRotation, SpawnParams))
 	{
 		// 기존 캐릭터를 제거합니다.
 		if (APawn* PreviousPawn = GetPawn())
