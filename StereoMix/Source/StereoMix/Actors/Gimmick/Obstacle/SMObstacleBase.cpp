@@ -6,7 +6,7 @@
 #include "Engine/OverlapResult.h"
 #include "NiagaraComponent.h"
 #include "NiagaraSystem.h"
-#include "Characters/Player/SMPlayerCharacterBase.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/BoxComponent.h"
 #include "Utilities/SMCollision.h"
 #include "Utilities/SMLog.h"
