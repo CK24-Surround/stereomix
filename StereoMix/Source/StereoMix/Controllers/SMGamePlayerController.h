@@ -60,7 +60,7 @@ public:
 	 * 캐릭터를 스폰하고 빙의합니다. 이미 캐릭터가 존재하는 경우라면 해당 캐릭터를 제거하고 새로운 캐릭터를 스폰하고 빙의합니다. 이때 기존 캐릭터로부터 부여된 어빌리티들을 초기화합니다.
 	 * 위치 값을 넣어주지 않으면 내부 로직에 의해 적합한 스폰장소에 스폰합니다.
 	 */
-	void SpawnCharacter(const FVector* InLocation = nullptr, const FRotator* InRotation = nullptr);
+	void SpawnCharacter(const TOptional<FVector>& InLocationOption = TOptional<FVector>(), const TOptional<FRotator>& InRotationOption = TOptional<FRotator>());
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void RequestImmediateResetPosition();
@@ -72,7 +72,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Character|Class")
 	TMap<ESMCharacterType, FCharacterSpawnData> CharacterClass;
 
-	UPROPERTY(EditAnywhere, Category = "Design|Character")
+	UPROPERTY(EditAnywhere, Category = "Design")
 	ESMCharacterType DefaultType = ESMCharacterType::None;
 
 	UPROPERTY(EditAnywhere, Category = "Design|UI|HUD")

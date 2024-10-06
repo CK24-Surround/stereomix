@@ -140,109 +140,63 @@ void ASMGamePlayerController::UpdateGameStatistics()
 	}
 }
 
-void ASMGamePlayerController::SpawnCharacter(const FVector* InLocation, const FRotator* InRotation)
+void ASMGamePlayerController::SpawnCharacter(const TOptional<FVector>& InLocationOption, const TOptional<FRotator>& InRotationOption)
 {
-	if (!HasAuthority())
-	{
-		NET_LOG(this, Warning, TEXT("서버에서만 호출되어야합니다."));
-		return;
-	}
-
-	ASMGamePlayerState* SMPlayerState = Cast<ASMGamePlayerState>(PlayerState);
-	if (!ensureAlways(SMPlayerState))
-	{
-		return;
-	}
-
+	const ASMGamePlayerState* SMPlayerState = Cast<ASMGamePlayerState>(PlayerState);
 	UWorld* World = GetWorld();
-	if (!ensureAlways(World))
+	AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr;
+	if (!HasAuthority() || !SMPlayerState || !World || !GameMode)
 	{
 		return;
 	}
 
 	ESMCharacterType CharacterType = SMPlayerState->GetCharacterType();
-	ESMTeam Team = SMPlayerState->GetTeam();
+	const ESMTeam SourceTeam = SMPlayerState->GetTeam();
 
 	// 플레이어 스타트를 통해 알맞은 스폰 장소를 설정합니다.
-	FVector NewLocation;
-	FRotator NewRotation;
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	if (ensureAlways(GameMode))
+	FString TeamStarterTag;
+	switch (SourceTeam)
 	{
-		FString TeamStarterTag;
-		switch (Team)
+		case ESMTeam::EDM:
 		{
-			case ESMTeam::EDM:
-			{
-				TeamStarterTag = TEXT("Starter_EDM");
-				break;
-			}
-			case ESMTeam::FutureBass:
-			{
-				TeamStarterTag = TEXT("Starter_FB");
-				break;
-			}
-			default:
-			{
-				break;
-			}
+			TeamStarterTag = TEXT("Starter_EDM");
+			break;
 		}
-
-		AActor* PlayerStarter = GameMode->FindPlayerStart(this, TeamStarterTag);
-		if (ensureAlways(PlayerStarter))
+		case ESMTeam::FutureBass:
 		{
-			NewLocation = PlayerStarter->GetActorLocation();
-			NewRotation = PlayerStarter->GetActorRotation();
+			TeamStarterTag = TEXT("Starter_FB");
+			break;
+		}
+		default:
+		{
+			break;
 		}
 	}
 
-	// 만약 따로 위치나 회전 값이 매개변수로 주어졌다면 이 값으로 덮어 씌웁니다.
-	if (InLocation)
-	{
-		NewLocation = *InLocation;
-	}
-	if (InRotation)
-	{
-		NewRotation = *InRotation;
-	}
+	// 스폰 위치와 회전을 구합니다.
+	const AActor* PlayerStarter = GameMode->FindPlayerStart(this, TeamStarterTag);
+	const FVector SpawnLocation = InLocationOption.Get(PlayerStarter ? PlayerStarter->GetActorLocation() : FVector::ZeroVector);
+	const FRotator SpawnRotation = InRotationOption.Get(PlayerStarter ? PlayerStarter->GetActorRotation() : FRotator::ZeroRotator);
 
-	// 임시 코드
-	if (CharacterType == ESMCharacterType::None)
-	{
-		UE_LOG(LogStereoMix, Warning, TEXT("캐릭터 타입이 None으로 설정되어있습니다. 기본값으로 설정합니다."))
-		CharacterType = DefaultType;
-	}
+	// PlayerState에 캐릭터 타입이 지정되어있지 않다면 플레이어 컨트롤러에 설정된 기본 캐릭터 타입으로 덮어 씌웁니다. 테스트 환경을 위한 코드입니다.
+	CharacterType = (CharacterType == ESMCharacterType::None) ? DefaultType : CharacterType;
 
-	FCharacterSpawnData* CharacterSpawnData = CharacterClass.Find(CharacterType);
-	if (!ensureAlways(CharacterSpawnData))
-	{
-		return;
-	}
-
-	// TSubclassOf<ASMPlayerCharacter> CharacterSpawnClass = CharacterSpawnData->CharacterClassLegacy.FindOrAdd(Team, nullptr);
-	TSubclassOf<ASMPlayerCharacterBase> CharacterSpawnClass = CharacterSpawnData->CharacterClass.FindOrAdd(Team, nullptr);
-	if (!ensureAlways(CharacterSpawnClass))
-	{
-		return;
-	}
+	FCharacterSpawnData* CharacterSpawnDataPtr = CharacterClass.Find(CharacterType);
+	const TSubclassOf<ASMPlayerCharacterBase>* CharacterClassToSpawnPtr = CharacterSpawnDataPtr ? CharacterSpawnDataPtr->CharacterClass.Find(SourceTeam) : nullptr;
+	const TSubclassOf<ASMPlayerCharacterBase>& CharacterClassToSpawn = CharacterClassToSpawnPtr ? *CharacterClassToSpawnPtr : nullptr;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	// ASMPlayerCharacter* PlayerCharacter = World->SpawnActor<ASMPlayerCharacter>(CharacterSpawnClass, NewLocation, NewRotation, SpawnParams);
-	ASMPlayerCharacterBase* PlayerCharacter = World->SpawnActor<ASMPlayerCharacterBase>(CharacterSpawnClass, NewLocation, NewRotation, SpawnParams);
-	if (!ensureAlways(PlayerCharacter))
+	if (ASMPlayerCharacterBase* PlayerCharacter = World->SpawnActor<ASMPlayerCharacterBase>(CharacterClassToSpawn, SpawnLocation, SpawnRotation, SpawnParams))
 	{
-		return;
-	}
+		// 기존 캐릭터를 제거합니다.
+		if (APawn* PreviousPawn = GetPawn())
+		{
+			PreviousPawn->Destroy();
+		}
 
-	// 기존 캐릭터를 제거합니다.
-	// ASMPlayerCharacter* PreviousCharacter = GetPawn<ASMPlayerCharacter>();
-	if (ASMPlayerCharacterBase* PreviousCharacter = GetPawn<ASMPlayerCharacterBase>())
-	{
-		PreviousCharacter->Destroy();
+		Possess(PlayerCharacter);
 	}
-
-	Possess(PlayerCharacter);
 }
 
 void ASMGamePlayerController::RequestImmediateResetPosition_Implementation()
