@@ -9,10 +9,10 @@
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Projectiles/SMProjectile.h"
-#include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMProjectileFunctionLibrary.h"
 #include "Games/SMGameState.h"
 
 USMGA_Shoot::USMGA_Shoot()
@@ -82,11 +82,9 @@ void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const F
 void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	const UWorld* World = GetWorld();
-	const ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
-	const USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
-	ASMProjectile* Projectile = ProjectilePoolManager ? ProjectilePoolManager->GetProjectileForElectricGuitar(SourceCharacter->GetTeam()) : nullptr;
-	if (!SourceCharacter || !ProjectilePoolManager || !Projectile)
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	ASMProjectile* Projectile = USMProjectileFunctionLibrary::GetElectricGuitarProjectile(GetWorld(), SourceTeam);
+	if (!SourceCharacter || !Projectile)
 	{
 		EndAbilityByCancel();
 		return;

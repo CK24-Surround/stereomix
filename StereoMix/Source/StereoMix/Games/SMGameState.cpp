@@ -3,7 +3,7 @@
 
 #include "SMGameState.h"
 
-#include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
+#include "Components/Core/SMProjectilePoolManagerComponent.h"
 #include "Components/Core/SMRoundTimerManagerComponent.h"
 #include "Components/Core/SMScoreMusicManagerComponent.h"
 #include "Components/Core/SMTileManagerComponent.h"

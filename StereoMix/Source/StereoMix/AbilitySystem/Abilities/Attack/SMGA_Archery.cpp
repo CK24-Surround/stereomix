@@ -9,11 +9,11 @@
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Projectiles/SMProjectile.h"
-#include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMProjectileFunctionLibrary.h"
 #include "Games/SMGameState.h"
 
 USMGA_Archery::USMGA_Archery()
@@ -71,8 +71,8 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 				}
 			};
 
-			World->GetTimerManager().SetTimer(Level1ChargedTimerHandle, [OnCharged]() { OnCharged(1); }, TimeToChargeLevel1, false);
-			World->GetTimerManager().SetTimer(Level2ChargedTimerHandle, [OnCharged]() { OnCharged(2); }, TimeToChargeLevel2, false);
+			World->GetTimerManager().SetTimer(Level1ChargedTimerHandle, [OnCharged] { OnCharged(1); }, TimeToChargeLevel1, false);
+			World->GetTimerManager().SetTimer(Level2ChargedTimerHandle, [OnCharged] { OnCharged(2); }, TimeToChargeLevel2, false);
 		}
 
 		const ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
@@ -146,10 +146,9 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 void USMGA_Archery::ServerLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargedLevel)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	const UWorld* World = GetWorld();
-	const ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
-	const USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
-	if (!SourceCharacter || !ProjectilePoolManager)
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	ASMProjectile* Projectile = USMProjectileFunctionLibrary::GetPianoProjectile(GetWorld(), SourceTeam, InChargedLevel);
+	if (!SourceCharacter || !Projectile)
 	{
 		EndAbilityByCancel();
 		return;
@@ -160,25 +159,7 @@ void USMGA_Archery::ServerLaunchProjectile_Implementation(const FVector_NetQuant
 		K2_CommitAbilityCost();
 	}
 
-	float NewDamage;
-	ASMProjectile* Projectile;
-	if (InChargedLevel == 1)
-	{
-		NewDamage = Damage * Charge1DamageMultiply;
-		Projectile = ProjectilePoolManager->GetProjectileForPiano1(SourceCharacter->GetTeam());
-	}
-	else
-	{
-		NewDamage = Damage * Charge2DamageMultiply;
-		Projectile = ProjectilePoolManager->GetProjectileForPiano2(SourceCharacter->GetTeam());
-	}
-
-	if (!Projectile)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
+	const float NewDamage = InChargedLevel == 1 ? Damage * Charge1DamageMultiply : Damage * Charge2DamageMultiply;
 	const FVector LaunchDirection = (TargetLocation - SourceLocation).GetSafeNormal();
 
 	FSMProjectileParameters ProjectileParams;

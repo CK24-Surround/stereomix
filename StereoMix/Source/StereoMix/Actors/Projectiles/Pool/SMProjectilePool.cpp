@@ -6,17 +6,20 @@
 #include "Actors/Projectiles/SMProjectile.h"
 
 
-void USMProjectilePool::Init()
+void USMProjectilePool::Init(const TSubclassOf<ASMProjectile>& ProjectileClassToSpawn, int32 DefaultSize, int32 DefaultExpansionSize)
 {
-	if (!ensureAlways(ProjectileClass))
+	if (!ProjectileClassToSpawn)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("유효하지 않은 투사체 클래스입니다. 투사체풀 초기화에 실패했습니다. "));
 		return;
 	}
 
-	// 기본 풀 사이즈 만큼 투사체를 생성합니다.
-	for (int32 i = 0; i < InitPoolSize; ++i)
+	ProjectileClass = ProjectileClassToSpawn;
+	ExpandSize = DefaultExpansionSize;
+
+	for (int32 i = 0; i < DefaultSize; ++i) // 기본 풀 사이즈 만큼 투사체를 생성합니다.
 	{
-		SpawnProjectile();
+		SpawnAndBindProjectile();
 	}
 }
 
@@ -24,14 +27,11 @@ ASMProjectile* USMProjectilePool::GetProjectile()
 {
 	ASMProjectile* NewProjectile = nullptr;
 
-	// 풀이 비어 있다면 확장을 시도합니다.
-	if (Pool.IsEmpty())
+	if (Pool.IsEmpty()) // 풀이 비어 있다면 확장을 시도합니다.
 	{
 		Expand(ExpandSize);
 	}
-
-	// 풀이 비어 있지 않다면 투사체를 꺼냅니다.
-	if (!Pool.IsEmpty())
+	else // 풀이 비어 있지 않다면 투사체를 꺼냅니다.
 	{
 		NewProjectile = Pool.Pop();
 	}
@@ -51,19 +51,20 @@ void USMProjectilePool::Expand(int32 InExpandSize)
 	// 확장 사이즈 만큼 투사체를 생성합니다.
 	for (int32 i = 0; i < InExpandSize; ++i)
 	{
-		SpawnProjectile();
+		SpawnAndBindProjectile();
 	}
 }
 
-void USMProjectilePool::SpawnProjectile()
+void USMProjectilePool::SpawnAndBindProjectile()
 {
 	// 투사체를 생성하고 생명주기의 끝에 회수되도록 델리게이트를 바인드합니다.
 	FActorSpawnParameters Params;
 	Params.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	ASMProjectile* NewProjectile = GetWorld()->SpawnActor<ASMProjectile>(ProjectileClass, Params);
-	if (ensure(NewProjectile))
+
+	UWorld* World = GetWorld();
+	if (ASMProjectile* NewProjectile = World ? World->SpawnActor<ASMProjectile>(ProjectileClass, Params) : nullptr)
 	{
 		NewProjectile->OnEndLifeTime.BindUObject(this, &USMProjectilePool::ReturnProjectile);
-		Pool.Add(NewProjectile);
+		Pool.Push(NewProjectile);
 	}
 }

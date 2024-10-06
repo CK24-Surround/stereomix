@@ -29,8 +29,6 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	USMTileManagerComponent* GetTileManager() const { return TileManager; }
-
 	USMProjectilePoolManagerComponent* GetProjectilePoolManager() const { return ProjectilePoolManager; }
 
 	ESMRoundState GetRoundState() const { return RoundState; }

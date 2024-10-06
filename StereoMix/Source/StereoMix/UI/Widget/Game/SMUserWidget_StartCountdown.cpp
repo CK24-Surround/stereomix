@@ -22,14 +22,8 @@ void USMUserWidget_StartCountdown::NativeOnInitialized()
 
 void USMUserWidget_StartCountdown::BindGameState()
 {
-	UWorld* World = GetWorld();
-	if (!World)
-	{
-		return;
-	}
-
-	ASMGameState* GameState = World->GetGameState<ASMGameState>();
-	if (GameState)
+	const UWorld* World = GetWorld();
+	if (const ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr)
 	{
 		CachedTimerComponent = GameState->GetComponentByClass<USMRoundTimerManagerComponent>();
 		if (CachedTimerComponent.IsValid() && GameState->GetRoundState() == ESMRoundState::PreRound)
