@@ -12,13 +12,8 @@
 
 USMTileManagerComponent* USMTileFunctionLibrary::GetTileManagerComponent(const UWorld* World)
 {
-	const AGameStateBase* GameState = World->GetGameState();
-	if (!World || !GameState)
-	{
-		return nullptr;
-	}
-
-	return GameState->GetComponentByClass<USMTileManagerComponent>();
+	const AGameStateBase* GameState = World ? World->GetGameState() : nullptr;
+	return GameState ? GameState->GetComponentByClass<USMTileManagerComponent>() : nullptr;
 }
 
 ASMTile* USMTileFunctionLibrary::GetTileFromLocation(const UWorld* World, const FVector& Location)
