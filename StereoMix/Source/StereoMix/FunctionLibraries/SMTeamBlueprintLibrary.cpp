@@ -24,29 +24,19 @@ bool USMTeamBlueprintLibrary::IsSameTeam(const AActor* lhs, const AActor* rhs)
 	return GetTeam(lhs) == GetTeam(rhs);
 }
 
-ESMLocalTeam USMTeamBlueprintLibrary::GetLocalTeam(AActor* SourceActor)
+ESMLocalTeam USMTeamBlueprintLibrary::GetLocalTeam(AActor* TargetActor)
 {
-	ISMTeamInterface* SourceTeamInterface = Cast<ISMTeamInterface>(SourceActor);
-	if (!ensureAlways(SourceTeamInterface))
+	const ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(TargetActor);
+	const APlayerController* LocalPlayerController = UGameplayStatics::GetPlayerController(TargetActor, 0);
+	const ISMTeamInterface* LocalTeamInterface = LocalPlayerController ? Cast<ISMTeamInterface>(LocalPlayerController->GetPawn()) : nullptr;
+	if (!TargetTeamInterface || !LocalTeamInterface)
 	{
 		return ESMLocalTeam::Different;
 	}
 
-	APlayerController* LocalPlayerController = UGameplayStatics::GetPlayerController(SourceActor, 0);
-	if (!ensureAlways(LocalPlayerController))
-	{
-		return ESMLocalTeam::Different;
-	}
-
-	ISMTeamInterface* LocalTeamInterface = Cast<ISMTeamInterface>(LocalPlayerController->GetPawn());
-	if (!ensureAlways(LocalTeamInterface))
-	{
-		return ESMLocalTeam::Different;
-	}
-
-	ESMTeam SourceTeam = SourceTeamInterface->GetTeam();
-	ESMTeam LocalTeam = LocalTeamInterface->GetTeam();
-	if (SourceTeam != LocalTeam)
+	const ESMTeam TargetTeam = TargetTeamInterface->GetTeam();
+	const ESMTeam LocalTeam = LocalTeamInterface->GetTeam();
+	if (TargetTeam != LocalTeam)
 	{
 		return ESMLocalTeam::Different;
 	}
@@ -54,8 +44,8 @@ ESMLocalTeam USMTeamBlueprintLibrary::GetLocalTeam(AActor* SourceActor)
 	return ESMLocalTeam::Equal;
 }
 
-bool USMTeamBlueprintLibrary::IsSameLocalTeam(AActor* SourceActor)
+bool USMTeamBlueprintLibrary::IsSameLocalTeam(AActor* TargetActor)
 {
-	const ESMLocalTeam LocalTeam = GetLocalTeam(SourceActor);
+	const ESMLocalTeam LocalTeam = GetLocalTeam(TargetActor);
 	return LocalTeam == ESMLocalTeam::Equal;
 }
