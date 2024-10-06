@@ -4,6 +4,7 @@
 #include "SMPlayerCharacterBase.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/GameStateBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputComponent.h"
@@ -20,6 +21,7 @@
 #include "Components/Character/SMCharacterMovementComponent.h"
 #include "Components/Character/SMHIC_Character.h"
 #include "Components/Common/SMTeamComponent.h"
+#include "Components/Core/SMScoreManagerComponent.h"
 #include "Components/Core/SMTileManagerComponent.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
@@ -506,6 +508,22 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 		SetLastAttacker(NewAttacker);
 		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, InDamageAmount);
 		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+
+		FGameplayTagContainer InvincibleStateTags;
+		InvincibleStateTags.AddTag(SMTags::Character::State::Common::Invincible);
+		InvincibleStateTags.AddTag(SMTags::Character::State::Common::Neutralized);
+		InvincibleStateTags.AddTag(SMTags::Character::State::Common::Immune);
+		InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+		InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
+		InvincibleStateTags.AddTag(SMTags::Character::State::Bass::Charge);
+		if (!ASC->HasAnyMatchingGameplayTags(InvincibleStateTags))
+		{
+			if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
+			{
+				ScoreManagerComponent->AddTotalDamageReceived(this, InDamageAmount);
+				ScoreManagerComponent->AddTotalDamageDealt(NewAttacker, InDamageAmount);
+			}
+		}
 	}
 
 	FGameplayCueParameters GCParams;
@@ -752,6 +770,24 @@ void ASMPlayerCharacterBase::GAInputReleased(EActiveAbility InInputID)
 			ASC->AbilitySpecInputReleased(*GASpec);
 		}
 	}
+}
+
+USMScoreManagerComponent* ASMPlayerCharacterBase::GetScoreManagerComponent() const
+{
+	UWorld* World = GetWorld();
+	AGameStateBase* GameState = World->GetGameState();
+	if (!World || !GameState)
+	{
+		return nullptr;
+	}
+
+	USMScoreManagerComponent* ScoreManager = GameState->GetComponentByClass<USMScoreManagerComponent>();
+	if (!ScoreManager)
+	{
+		return nullptr;
+	}
+
+	return ScoreManager;
 }
 
 FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bUseZeroBasis)

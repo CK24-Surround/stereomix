@@ -14,6 +14,7 @@
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
 
+class USMScoreManagerComponent;
 class ASMNoteBase;
 class ASMWeaponBase;
 class USMHIC_Character;
@@ -197,6 +198,8 @@ protected:
 	void GAInputPressed(EActiveAbility InInputID);
 
 	void GAInputReleased(EActiveAbility InInputID);
+
+	USMScoreManagerComponent* GetScoreManagerComponent() const;
 
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
 	 * bIsZeroBasis가 true면 캐릭터의 바닥을 기준으로, false면 캐릭터의 중심을 기준으로 계산합니다. */
