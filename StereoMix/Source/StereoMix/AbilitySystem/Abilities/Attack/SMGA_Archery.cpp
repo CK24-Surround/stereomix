@@ -14,7 +14,6 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMProjectileFunctionLibrary.h"
-#include "Games/SMGameState.h"
 
 USMGA_Archery::USMGA_Archery()
 {
@@ -115,7 +114,7 @@ void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FG
 void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
@@ -139,8 +138,9 @@ void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const
 	{
 		const FName CancelSectionName = TEXT("Cancel");
 		MontageJumpToSection(CancelSectionName);
-		K2_EndAbility();
 	}
+
+	K2_EndAbility();
 }
 
 void USMGA_Archery::ServerLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation, int32 InChargedLevel)
@@ -170,6 +170,4 @@ void USMGA_Archery::ServerLaunchProjectile_Implementation(const FVector_NetQuant
 	ProjectileParams.Speed = ProjectileSpeed;
 	ProjectileParams.MaxDistance = MaxDistanceByTile * 150.0f;
 	Projectile->Launch(ProjectileParams);
-
-	K2_EndAbility();
 }
