@@ -98,7 +98,7 @@ void USMGA_Slash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 
 void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	if (!K2_CommitAbility())
+	if (!K2_CheckAbilityCost())
 	{
 		return;
 	}
@@ -150,6 +150,7 @@ void USMGA_Slash::OnNextActionProcced()
 
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
 	MontageJumpToSection(SectionName);
+
 	ServerRPCApplyCost();
 }
 
