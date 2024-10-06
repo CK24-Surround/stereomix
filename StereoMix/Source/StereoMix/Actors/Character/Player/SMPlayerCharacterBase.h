@@ -129,6 +129,8 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRemoveScreenIndicatorToSelf(AActor* TargetActor);
 
+	void AddTotalNoiseBreakUsage(int32 InUsageCount) const;
+
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 
 	virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttacker = NewAttacker; }
