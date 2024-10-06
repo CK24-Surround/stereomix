@@ -495,11 +495,42 @@ void ASMPlayerCharacterBase::MulticastRPCSetLocation_Implementation(const FVecto
 	SetActorLocation(NewLocation);
 }
 
-void ASMPlayerCharacterBase::AddTotalNoiseBreakUsage(int32 InUsageCount) const
+void ASMPlayerCharacterBase::AddTotalDamageReceived(const AActor* Attacker, float InDamageAmount) const
+{
+	FGameplayTagContainer InvincibleStateTags;
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Invincible);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Neutralized);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Immune);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
+	InvincibleStateTags.AddTag(SMTags::Character::State::Bass::Charge);
+
+	if (ASC->HasAnyMatchingGameplayTags(InvincibleStateTags))
+	{
+		return;
+	}
+
+	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
+	{
+		ScoreManagerComponent->AddTotalDamageReceived(this, InDamageAmount);
+		ScoreManagerComponent->AddTotalDamageDealt(Attacker, InDamageAmount);
+	}
+}
+
+void ASMPlayerCharacterBase::AddTotalNoiseBreakUsage() const
 {
 	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
 	{
-		ScoreManagerComponent->AddTotalNoiseBreakUsage(this, InUsageCount);
+		ScoreManagerComponent->AddTotalNoiseBreakUsage(this, 1);
+	}
+}
+
+void ASMPlayerCharacterBase::AddTotalDeathCount() const
+{
+	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
+	{
+		ScoreManagerComponent->AddTotalDeathCount(this, 1);
+		ScoreManagerComponent->AddTotalKillCount(GetLastAttacker(), 1);
 	}
 }
 
@@ -517,21 +548,7 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, InDamageAmount);
 		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 
-		FGameplayTagContainer InvincibleStateTags;
-		InvincibleStateTags.AddTag(SMTags::Character::State::Common::Invincible);
-		InvincibleStateTags.AddTag(SMTags::Character::State::Common::Neutralized);
-		InvincibleStateTags.AddTag(SMTags::Character::State::Common::Immune);
-		InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
-		InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
-		InvincibleStateTags.AddTag(SMTags::Character::State::Bass::Charge);
-		if (!ASC->HasAnyMatchingGameplayTags(InvincibleStateTags))
-		{
-			if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
-			{
-				ScoreManagerComponent->AddTotalDamageReceived(this, InDamageAmount);
-				ScoreManagerComponent->AddTotalDamageDealt(NewAttacker, InDamageAmount);
-			}
-		}
+		AddTotalDamageReceived(NewAttacker, InDamageAmount);
 	}
 
 	FGameplayCueParameters GCParams;
