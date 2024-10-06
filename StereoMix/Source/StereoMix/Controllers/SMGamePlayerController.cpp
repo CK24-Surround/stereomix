@@ -10,6 +10,7 @@
 #include "StereoMixLog.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Games/SMGamePlayerState.h"
 #include "UI/Widget/Dummy/SMUserWidget_StaminaSkillGaugeDummyBar.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
@@ -32,7 +33,13 @@ void ASMGamePlayerController::InitPlayerState()
 	if (HasAuthority() && GetWorld()->GetAuthGameMode())
 	{
 		// 오류를 방지하기위해 지연 스폰합니다.
-		GetWorldTimerManager().SetTimerForNextTick(this, &ThisClass::SpawnTimerCallback);
+		auto ThisWeakPtr = MakeWeakObjectPtr(this);
+		GetWorldTimerManager().SetTimerForNextTick([ThisWeakPtr] {
+			if (ThisWeakPtr.IsValid())
+			{
+				ThisWeakPtr->SpawnCharacter();
+			}
+		});
 	}
 }
 
@@ -41,6 +48,11 @@ void ASMGamePlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	InitControl();
+
+	if (IsLocalController())
+	{
+		InitUI();
+	}
 }
 
 void ASMGamePlayerController::Tick(float DeltaSeconds)
@@ -59,37 +71,48 @@ void ASMGamePlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
+	InitUI();
+}
+
+void ASMGamePlayerController::InitUI()
+{
 	const ASMGamePlayerState* SMPlayerState = GetPlayerState<ASMGamePlayerState>();
-	if (!SMPlayerState)
+	UAbilitySystemComponent* SourceASC = SMPlayerState ? SMPlayerState->GetAbilitySystemComponent() : nullptr;
+	if (!SourceASC)
 	{
 		return;
 	}
 
-	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, HUDWidgetClass);
-	HUDWidget->AddToViewport(0);
+	if (HUDWidget = CreateWidget<USMUserWidget_HUD>(this, HUDWidgetClass); HUDWidget)
+	{
+		HUDWidget->AddToViewport(0);
+		HUDWidget->SetASC(SourceASC);
+	}
 
-	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass);
-	VictoryDefeatWidget->AddToViewport(1);
+	if (VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass); VictoryDefeatWidget)
+	{
+		VictoryDefeatWidget->AddToViewport(1);
+		VictoryDefeatWidget->SetASC(SourceASC);
+	}
 
-	UAbilitySystemComponent* SourceASC = SMPlayerState->GetAbilitySystemComponent();
-	HUDWidget->SetASC(SourceASC);
-	VictoryDefeatWidget->SetASC(SourceASC);
+	if (StartCountdownWidget = CreateWidget<USMUserWidget_StartCountdown>(this, StartCountdownWidgetClass); StartCountdownWidget)
+	{
+		StartCountdownWidget->AddToViewport(1);
+	}
 
-	StartCountdownWidget = CreateWidget<USMUserWidget_StartCountdown>(this, StartCountdownWidgetClass);
-	StartCountdownWidget->AddToViewport(1);
+	if (GameStatisticsWidget = CreateWidget<USMUserWidget_GameStatistics>(this, GameStatisticsWidgetClass); GameStatisticsWidget)
+	{
+		GameStatisticsWidget->AddToViewport(10);
+	}
 
-	GameStatisticsWidget = CreateWidget<USMUserWidget_GameStatistics>(this, GameStatisticsWidgetClass);
-	GameStatisticsWidget->AddToViewport(10);
-
-	DummyBarWidget = CreateWidget<USMUserWidget_StaminaSkillGaugeDummyBar>(this, DummyBarWidgetClass);
-	if (DummyBarWidget)
+	if (DummyBarWidget = CreateWidget<USMUserWidget_StaminaSkillGaugeDummyBar>(this, DummyBarWidgetClass); DummyBarWidget)
 	{
 		DummyBarWidget->AddToViewport(2);
-		if (UAbilitySystemComponent* ASC = SMPlayerState->GetAbilitySystemComponent())
+
+		if (const USMCharacterAttributeSet* AttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>())
 		{
-			const USMCharacterAttributeSet* AttributeSet = ASC->GetSet<USMCharacterAttributeSet>();
-			ASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetStaminaAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnStaminaChanged);
-			ASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetSkillGaugeAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnSkillGaugeChanged);
+			SourceASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetStaminaAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnStaminaChanged);
+			SourceASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetSkillGaugeAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnSkillGaugeChanged);
 
 			DummyBarWidget->Stamina = AttributeSet->GetStamina();
 			DummyBarWidget->MaxStamina = AttributeSet->GetMaxStamina();
@@ -100,26 +123,6 @@ void ASMGamePlayerController::OnRep_PlayerState()
 			DummyBarWidget->UpdateSkillGaugeBar();
 		}
 	}
-}
-
-void ASMGamePlayerController::SpawnTimerCallback()
-{
-	const AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	if (!GameMode)
-	{
-		NET_LOG(this, Error, TEXT("게임모드가 유효하지 않습니다."));
-		return;
-	}
-
-	// 스폰 포인트를 구합니다. 여기서는 SpawnPoint라는 태그를 가진 플레이어 스타트를 활용하고 있습니다.
-	// AActor* PlayerStarter = GameMode->FindPlayerStart(this, TEXT("SpawnPoint"));
-	// if (!ensureAlways(PlayerStarter))
-	// {
-	// 	return;
-	// }
-	//
-	// const FVector NewLocation = PlayerStarter->GetActorLocation();
-	SpawnCharacter();
 }
 
 void ASMGamePlayerController::UpdateGameStatistics()

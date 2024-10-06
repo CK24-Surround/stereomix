@@ -51,10 +51,7 @@ protected:
 
 	virtual void OnRep_PlayerState() override;
 
-	/**
-	 * BeginPlay에서 생성할때 오류를 방지하고자 지연 스폰합니다.
-	 */
-	void SpawnTimerCallback();
+	void InitUI();
 
 	virtual void UpdateGameStatistics();
 
