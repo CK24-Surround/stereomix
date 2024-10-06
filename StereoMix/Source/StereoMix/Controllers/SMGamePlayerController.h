@@ -15,7 +15,6 @@ class USMUserWidget_HUD;
 class USMUserWidget_StartCountdown;
 class ASMPlayerCharacter;
 class ASMPlayerCharacterBase;
-class USMUserWidget_ScreenIndicator;
 class USMUserWidget_VictoryDefeat;
 class USMUserWidget_GameHUD;
 class USMUserWidget_GameStatistics;
@@ -50,8 +49,6 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 	virtual void OnRep_PlayerState() override;
 
 	/**
@@ -67,16 +64,6 @@ public:
 	 * 위치 값을 넣어주지 않으면 내부 로직에 의해 적합한 스폰장소에 스폰합니다.
 	 */
 	void SpawnCharacter(const FVector* InLocation = nullptr, const FRotator* InRotation = nullptr);
-
-	/** 타겟을 향하는 인디케이터를 추가합니다. */
-	void AddScreendIndicator(AActor* TargetActor);
-
-	/** 타겟을 향하는 인디케이터를 제거합니다. */
-	void RemoveScreenIndicator(AActor* TargetActor);
-
-	/** 인디케이터를 갖고 있는 타겟이 파괴되면 호출됩니다.*/
-	UFUNCTION()
-	void OnTargetDestroyedWithIndicator(AActor* DestroyedActor);
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void RequestImmediateResetPosition();
@@ -102,12 +89,6 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMUserWidget_VictoryDefeat> VictoryDefeatWidget;
-
-	UPROPERTY(EditAnywhere, Category = "Design|UI|OffScreenIndicator")
-	TSubclassOf<USMUserWidget_ScreenIndicator> OffScreenIndicatorClass;
-
-	UPROPERTY()
-	TMap<AActor*, TObjectPtr<USMUserWidget_ScreenIndicator>> OffScreenIndicators;
 
 	UPROPERTY(EditAnywhere, Category = "Design|UI|StartCountdown")
 	TSubclassOf<USMUserWidget_StartCountdown> StartCountdownWidgetClass;

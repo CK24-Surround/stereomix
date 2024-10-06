@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SMScreenIndicatorComponent.generated.h"
 
+class USMUserWidget_ScreenIndicator;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMScreenIndicatorComponent : public UActorComponent
@@ -13,14 +14,19 @@ class STEREOMIX_API USMScreenIndicatorComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this component's properties
 	USMScreenIndicatorComponent();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
+	/** 타겟을 향하는 인디케이터를 추가합니다. */
+	void AddScreenIndicator(AActor* TargetActor);
 
-public:
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	/** 타겟을 향하는 인디케이터를 제거합니다. */
+	void RemoveScreenIndicator(AActor* TargetActor);
+
+protected:
+	/** 인디케이터를 갖고 있는 타겟이 파괴되면 호출됩니다. */
+	UFUNCTION()
+	void OnTargetDestroyed(AActor* DestroyedActor);
+
+	UPROPERTY()
+	TMap<AActor*, TObjectPtr<USMUserWidget_ScreenIndicator>> ScreenIndicators;
 };

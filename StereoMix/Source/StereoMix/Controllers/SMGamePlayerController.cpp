@@ -14,7 +14,6 @@
 #include "UI/Widget/Dummy/SMUserWidget_StaminaSkillGaugeDummyBar.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"
-#include "UI/Widget/Game/SMUserWidget_ScreenIndicator.h"
 #include "UI/Widget/Game/SMUserWidget_StartCountdown.h"
 #include "UI/Widget/Game/SMUserWidget_VictoryDefeat.h"
 #include "Utilities/SMLog.h"
@@ -56,22 +55,11 @@ void ASMGamePlayerController::Tick(float DeltaSeconds)
 	}
 }
 
-void ASMGamePlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	if (HasAuthority())
-	{
-		FString EndPlayReasonString = UEnum::GetValueAsString(EndPlayReason);
-		NET_LOG(this, Log, TEXT("%s"), *EndPlayReasonString);
-	}
-
-	Super::EndPlay(EndPlayReason);
-}
-
 void ASMGamePlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	ASMGamePlayerState* SMPlayerState = GetPlayerState<ASMGamePlayerState>();
+	const ASMGamePlayerState* SMPlayerState = GetPlayerState<ASMGamePlayerState>();
 	if (!SMPlayerState)
 	{
 		return;
@@ -116,7 +104,7 @@ void ASMGamePlayerController::OnRep_PlayerState()
 
 void ASMGamePlayerController::SpawnTimerCallback()
 {
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
+	const AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
 	if (!GameMode)
 	{
 		NET_LOG(this, Error, TEXT("게임모드가 유효하지 않습니다."));
@@ -246,77 +234,12 @@ void ASMGamePlayerController::SpawnCharacter(const FVector* InLocation, const FR
 
 	// 기존 캐릭터를 제거합니다.
 	// ASMPlayerCharacter* PreviousCharacter = GetPawn<ASMPlayerCharacter>();
-	ASMPlayerCharacterBase* PreviousCharacter = GetPawn<ASMPlayerCharacterBase>();
-	if (PreviousCharacter)
+	if (ASMPlayerCharacterBase* PreviousCharacter = GetPawn<ASMPlayerCharacterBase>())
 	{
 		PreviousCharacter->Destroy();
 	}
 
 	Possess(PlayerCharacter);
-}
-
-void ASMGamePlayerController::AddScreendIndicator(AActor* TargetActor)
-{
-	if (HasAuthority())
-	{
-		return;
-	}
-
-	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 추가합니다.
-	if (!Cast<ASMPlayerCharacterBase>(GetPawn()))
-	{
-		return;
-	}
-
-	// 같은 팀인 경우 인디케이터를 생성하지 않습니다.
-	if (USMTeamBlueprintLibrary::IsSameLocalTeam(TargetActor))
-	{
-		return;
-	}
-
-	// 인디케이터를 생성하고 타겟을 지정합니다.
-	USMUserWidget_ScreenIndicator* OffScreendIndicator = CreateWidget<USMUserWidget_ScreenIndicator>(this, OffScreenIndicatorClass);
-	OffScreendIndicator->AddToViewport(-1);
-	OffScreendIndicator->SetTarget(TargetActor);
-	OffScreenIndicators.Add(TargetActor, OffScreendIndicator);
-
-	// 대상이 게임에서 나갔을 경우의 예외처리입니다.
-	TargetActor->OnDestroyed.AddDynamic(this, &ThisClass::OnTargetDestroyedWithIndicator);
-}
-
-void ASMGamePlayerController::RemoveScreenIndicator(AActor* TargetActor)
-{
-	if (HasAuthority())
-	{
-		return;
-	}
-
-	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 제거합니다.
-	if (!Cast<ASMPlayerCharacterBase>(GetPawn()))
-	{
-		return;
-	}
-
-	// 인디케이터를 제거합니다. 중복 제거되도 문제는 없습니다.
-	TObjectPtr<USMUserWidget_ScreenIndicator>* OffScreendIndicator = OffScreenIndicators.Find(TargetActor);
-	if (!OffScreendIndicator)
-	{
-		return;
-	}
-
-	(*OffScreendIndicator)->RemoveFromParent();
-	(*OffScreendIndicator)->ConditionalBeginDestroy();
-	OffScreenIndicators.Remove(TargetActor);
-
-	// 대상이 게임에서 나갔을 경우의 예외처리로 사용된 이벤트를 제거합니다.
-	TargetActor->OnDestroyed.RemoveAll(this);
-}
-
-void ASMGamePlayerController::OnTargetDestroyedWithIndicator(AActor* DestroyedActor)
-{
-	// 대상이 게임에서 나가거나 어떤 이유로 유효하지 않게된 경우 인디케이터를 제거해줍니다.
-	NET_LOG(this, Warning, TEXT("유효하지 않은 타겟의 인디케이터 제거"));
-	RemoveScreenIndicator(DestroyedActor);
 }
 
 void ASMGamePlayerController::RequestImmediateResetPosition_Implementation()

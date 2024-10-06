@@ -92,7 +92,7 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		SourceCharacter->MulticastSetCharacterStateVisibility(false);
 
 		// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 활성화하도록 합니다.
-		SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
+		SourceCharacter->MulticastAddScreenIndicatorToSelf(SourceCharacter);
 
 		// 캐릭터를 노트 상태로 변경합니다.
 		SourceCharacter->ServerSetNoteState(true);
@@ -311,7 +311,7 @@ void USMGA_Neutralize::NeutralizeEnd()
 	// 다른 클라이언트들에게 자신을 타겟하는 스크린 인디케이터를 제거하도록 합니다.
 	if (K2_HasAuthority())
 	{
-		SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
+		SourceCharacter->MulticastRemoveScreenIndicatorToSelf(SourceCharacter);
 	}
 
 	K2_EndAbility();

@@ -118,15 +118,15 @@ public:
 
 	/** 다른 클라이언트들에게 인디케이터를 추가합니다. */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCAddScreenIndicatorToSelf(AActor* TargetActor);
+	void MulticastAddScreenIndicatorToSelf(AActor* TargetActor);
 
 	/** 다른 클라이언트들에게서 인디케이터를 제거합니다. */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCRemoveScreenIndicatorToSelf(AActor* TargetActor);
+	void MulticastRemoveScreenIndicatorToSelf(AActor* TargetActor);
 
 	/** 해당 클라이언트에서만 인디케이터를 제거합니다. */
 	UFUNCTION(Client, Reliable)
-	void ClientRPCRemoveScreenIndicatorToSelf(AActor* TargetActor);
+	void ClientRemoveScreenIndicatorToSelf(AActor* TargetActor);
 
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 

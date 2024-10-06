@@ -21,6 +21,7 @@
 #include "Components/Character/SMHIC_Character.h"
 #include "Components/Common/SMTeamComponent.h"
 #include "Components/Core/SMTileManagerComponent.h"
+#include "Components/PlayerController/SMScreenIndicatorComponent.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -410,36 +411,8 @@ void ASMPlayerCharacterBase::ServerSetUseControllerRotation_Implementation(bool 
 	OnRep_bUseControllerRotation();
 }
 
-void ASMPlayerCharacterBase::MulticastRPCAddScreenIndicatorToSelf_Implementation(AActor* TargetActor)
+void ASMPlayerCharacterBase::MulticastAddScreenIndicatorToSelf_Implementation(AActor* TargetActor)
 {
-	if (HasAuthority())
-	{
-		return;
-	}
-
-	// 자기 자신은 제외합니다.
-	if (const ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor))
-	{
-		if (TargetCharacter->IsLocallyControlled())
-		{
-			return;
-		}
-	}
-
-	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 추가해줍니다.
-	if (ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController()))
-	{
-		LocalPlayerController->AddScreendIndicator(TargetActor);
-	}
-}
-
-void ASMPlayerCharacterBase::MulticastRPCRemoveScreenIndicatorToSelf_Implementation(AActor* TargetActor)
-{
-	if (HasAuthority())
-	{
-		return;
-	}
-
 	// 자기 자신은 제외합니다.
 	const ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
 	if (!TargetCharacter || TargetCharacter->IsLocallyControlled())
@@ -447,20 +420,38 @@ void ASMPlayerCharacterBase::MulticastRPCRemoveScreenIndicatorToSelf_Implementat
 		return;
 	}
 
-	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 제거합니다.
-	ASMGamePlayerController* LocalPlayerController = Cast<ASMGamePlayerController>(GetWorld()->GetFirstPlayerController());
-	if (ensureAlways(LocalPlayerController))
+	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 추가해줍니다.
+	const UWorld* World = GetWorld();
+	const APlayerController* LocalPlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (USMScreenIndicatorComponent* ScreenIndicatorComponent = LocalPlayerController ? LocalPlayerController->GetComponentByClass<USMScreenIndicatorComponent>() : nullptr)
 	{
-		LocalPlayerController->RemoveScreenIndicator(TargetActor);
+		ScreenIndicatorComponent->AddScreenIndicator(TargetActor);
 	}
 }
 
-void ASMPlayerCharacterBase::ClientRPCRemoveScreenIndicatorToSelf_Implementation(AActor* TargetActor)
+void ASMPlayerCharacterBase::MulticastRemoveScreenIndicatorToSelf_Implementation(AActor* TargetActor)
 {
-	// ClientRPC로 무조건 오너십을 갖고 있어 CachedSMPlayerController가 유효하겠지만 만약을 위한 예외처리입니다.
-	if (ensureAlways(SMPlayerController.Get()))
+	// 자기 자신은 인디케이터가 추가되지 않았으니 제외합니다.
+	const ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (!TargetCharacter || TargetCharacter->IsLocallyControlled())
 	{
-		SMPlayerController->RemoveScreenIndicator(TargetActor);
+		return;
+	}
+
+	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 제거합니다.
+	const UWorld* World = GetWorld();
+	const APlayerController* LocalPlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (USMScreenIndicatorComponent* ScreenIndicatorComponent = LocalPlayerController ? LocalPlayerController->GetComponentByClass<USMScreenIndicatorComponent>() : nullptr)
+	{
+		ScreenIndicatorComponent->RemoveScreenIndicator(TargetActor);
+	}
+}
+
+void ASMPlayerCharacterBase::ClientRemoveScreenIndicatorToSelf_Implementation(AActor* TargetActor)
+{
+	if (USMScreenIndicatorComponent* ScreenIndicatorComponent = Controller ? Controller->GetComponentByClass<USMScreenIndicatorComponent>() : nullptr)
+	{
+		ScreenIndicatorComponent->RemoveScreenIndicator(TargetActor);
 	}
 }
 
