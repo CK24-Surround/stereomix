@@ -4,6 +4,7 @@
 #include "SMPlayerCharacterBase.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/GameStateBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputComponent.h"
@@ -20,6 +21,7 @@
 #include "Components/Character/SMCharacterMovementComponent.h"
 #include "Components/Character/SMHIC_Character.h"
 #include "Components/Common/SMTeamComponent.h"
+#include "Components/Core/SMScoreManagerComponent.h"
 #include "Components/Core/SMTileManagerComponent.h"
 #include "Components/PlayerController/SMScreenIndicatorComponent.h"
 #include "Controllers/SMGamePlayerController.h"
@@ -490,7 +492,13 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 		SetLastAttacker(NewAttacker);
 		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, InDamageAmount);
 		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
-	}
+		
+			if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
+			{
+				ScoreManagerComponent->AddTotalDamageReceived(this, InDamageAmount);
+				ScoreManagerComponent->AddTotalDamageDealt(NewAttacker, InDamageAmount);
+			}
+		}
 
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = this;
@@ -760,6 +768,24 @@ void ASMPlayerCharacterBase::InitUI()
 		CharacterStateWidget->CurrentHealth = SourceAttributeSet->GetPostureGauge();
 		CharacterStateWidget->UpdateHPBar();
 	}
+}
+
+USMScoreManagerComponent* ASMPlayerCharacterBase::GetScoreManagerComponent() const
+{
+	const UWorld* World = GetWorld();
+	const AGameStateBase* GameState = World->GetGameState();
+	if (!World || !GameState)
+	{
+		return nullptr;
+	}
+
+	USMScoreManagerComponent* ScoreManager = GameState->GetComponentByClass<USMScoreManagerComponent>();
+	if (!ScoreManager)
+	{
+		return nullptr;
+	}
+
+	return ScoreManager;
 }
 
 FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bUseZeroBasis)

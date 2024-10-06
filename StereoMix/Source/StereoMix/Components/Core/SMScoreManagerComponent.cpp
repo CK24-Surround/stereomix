@@ -39,8 +39,14 @@ void USMScoreManagerComponent::AddTotalCapturedTiles(const AActor* CapturedInsti
 	if (PlayerScoreData.Contains(CapturedInstigator))
 	{
 		PlayerScoreData[CapturedInstigator].TotalCapturedTiles += CapturedTilesCount;
-		UE_LOG(LogStereoMix, Warning, TEXT("Tiles: %d, TotalScore: %d"),
+		UE_LOG(LogStereoMix, Warning, TEXT("[%s] Tiles: %d, DamageDealt: %f, DamageReceived: %f, Death: %d, Kill: %d, NoiseBreak: %d, TotalScore: %d"),
+			*GetNameSafe(CapturedInstigator),
 			PlayerScoreData[CapturedInstigator].TotalCapturedTiles,
+			PlayerScoreData[CapturedInstigator].TotalDamageDealt,
+			PlayerScoreData[CapturedInstigator].TotalDamageReceived,
+			PlayerScoreData[CapturedInstigator].TotalDeathCount,
+			PlayerScoreData[CapturedInstigator].TotalKillCount,
+			PlayerScoreData[CapturedInstigator].TotalNoiseBreakUsage,
 			PlayerScoreData[CapturedInstigator].TotalScore());
 		return;
 	}
@@ -60,6 +66,15 @@ void USMScoreManagerComponent::AddTotalDamageDealt(const AActor* TargetPlayer, f
 	if (PlayerScoreData.Contains(TargetPlayer))
 	{
 		PlayerScoreData[TargetPlayer].TotalDamageDealt += DamageDealt;
+		UE_LOG(LogStereoMix, Warning, TEXT("[%s] Tiles: %d, DamageDealt: %f, DamageReceived: %f, Death: %d, Kill: %d, NoiseBreak: %d, TotalScore: %d"),
+			*GetNameSafe(TargetPlayer),
+			PlayerScoreData[TargetPlayer].TotalCapturedTiles,
+			PlayerScoreData[TargetPlayer].TotalDamageDealt,
+			PlayerScoreData[TargetPlayer].TotalDamageReceived,
+			PlayerScoreData[TargetPlayer].TotalDeathCount,
+			PlayerScoreData[TargetPlayer].TotalKillCount,
+			PlayerScoreData[TargetPlayer].TotalNoiseBreakUsage,
+			PlayerScoreData[TargetPlayer].TotalScore());
 		return;
 	}
 
@@ -78,6 +93,15 @@ void USMScoreManagerComponent::AddTotalDamageReceived(const AActor* TargetPlayer
 	if (PlayerScoreData.Contains(TargetPlayer))
 	{
 		PlayerScoreData[TargetPlayer].TotalDamageReceived += DamageReceived;
+		UE_LOG(LogStereoMix, Warning, TEXT("[%s] Tiles: %d, DamageDealt: %f, DamageReceived: %f, Death: %d, Kill: %d, NoiseBreak: %d, TotalScore: %d"),
+			*GetNameSafe(TargetPlayer),
+			PlayerScoreData[TargetPlayer].TotalCapturedTiles,
+			PlayerScoreData[TargetPlayer].TotalDamageDealt,
+			PlayerScoreData[TargetPlayer].TotalDamageReceived,
+			PlayerScoreData[TargetPlayer].TotalDeathCount,
+			PlayerScoreData[TargetPlayer].TotalKillCount,
+			PlayerScoreData[TargetPlayer].TotalNoiseBreakUsage,
+			PlayerScoreData[TargetPlayer].TotalScore());
 		return;
 	}
 
@@ -96,6 +120,15 @@ void USMScoreManagerComponent::AddTotalDeathCount(const AActor* TargetPlayer, in
 	if (PlayerScoreData.Contains(TargetPlayer))
 	{
 		PlayerScoreData[TargetPlayer].TotalDeathCount += DeathCount;
+		UE_LOG(LogStereoMix, Warning, TEXT("[%s] Tiles: %d, DamageDealt: %f, DamageReceived: %f, Death: %d, Kill: %d, NoiseBreak: %d, TotalScore: %d"),
+			*GetNameSafe(TargetPlayer),
+			PlayerScoreData[TargetPlayer].TotalCapturedTiles,
+			PlayerScoreData[TargetPlayer].TotalDamageDealt,
+			PlayerScoreData[TargetPlayer].TotalDamageReceived,
+			PlayerScoreData[TargetPlayer].TotalDeathCount,
+			PlayerScoreData[TargetPlayer].TotalKillCount,
+			PlayerScoreData[TargetPlayer].TotalNoiseBreakUsage,
+			PlayerScoreData[TargetPlayer].TotalScore());
 		return;
 	}
 
@@ -114,6 +147,15 @@ void USMScoreManagerComponent::AddTotalKillCount(const AActor* TargetPlayer, int
 	if (PlayerScoreData.Contains(TargetPlayer))
 	{
 		PlayerScoreData[TargetPlayer].TotalKillCount += KillCount;
+		UE_LOG(LogStereoMix, Warning, TEXT("[%s] Tiles: %d, DamageDealt: %f, DamageReceived: %f, Death: %d, Kill: %d, NoiseBreak: %d, TotalScore: %d"),
+			*GetNameSafe(TargetPlayer),
+			PlayerScoreData[TargetPlayer].TotalCapturedTiles,
+			PlayerScoreData[TargetPlayer].TotalDamageDealt,
+			PlayerScoreData[TargetPlayer].TotalDamageReceived,
+			PlayerScoreData[TargetPlayer].TotalDeathCount,
+			PlayerScoreData[TargetPlayer].TotalKillCount,
+			PlayerScoreData[TargetPlayer].TotalNoiseBreakUsage,
+			PlayerScoreData[TargetPlayer].TotalScore());
 		return;
 	}
 
@@ -132,6 +174,15 @@ void USMScoreManagerComponent::AddTotalNoiseBreakUsage(const AActor* TargetPlaye
 	if (PlayerScoreData.Contains(TargetPlayer))
 	{
 		PlayerScoreData[TargetPlayer].TotalNoiseBreakUsage += NoiseBreakUsage;
+		UE_LOG(LogStereoMix, Warning, TEXT("[%s] Tiles: %d, DamageDealt: %f, DamageReceived: %f, Death: %d, Kill: %d, NoiseBreak: %d, TotalScore: %d"),
+			*GetNameSafe(TargetPlayer),
+			PlayerScoreData[TargetPlayer].TotalCapturedTiles,
+			PlayerScoreData[TargetPlayer].TotalDamageDealt,
+			PlayerScoreData[TargetPlayer].TotalDamageReceived,
+			PlayerScoreData[TargetPlayer].TotalDeathCount,
+			PlayerScoreData[TargetPlayer].TotalKillCount,
+			PlayerScoreData[TargetPlayer].TotalNoiseBreakUsage,
+			PlayerScoreData[TargetPlayer].TotalScore());
 		return;
 	}
 
