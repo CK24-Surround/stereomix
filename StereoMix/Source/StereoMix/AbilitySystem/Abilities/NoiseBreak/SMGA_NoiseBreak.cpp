@@ -61,7 +61,7 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	if (K2_HasAuthority())
 	{
-		GetCharacter()->AddTotalNoiseBreakUsage(1);
+		GetCharacter()->AddTotalNoiseBreakUsage();
 	}
 }
 

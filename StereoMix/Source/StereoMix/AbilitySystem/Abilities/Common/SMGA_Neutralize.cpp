@@ -56,6 +56,8 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 
 	if (K2_HasAuthority())
 	{
+		GetCharacter()->AddTotalDeathCount();
+		
 		// 무력화 시간동안 기다립니다.
 		WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, NeutralizedTime);
 		WaitTask->OnFinish.AddDynamic(this, &ThisClass::OnNeutralizeTimeEnded);

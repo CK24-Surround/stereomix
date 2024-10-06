@@ -129,7 +129,14 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRemoveScreenIndicatorToSelf(AActor* TargetActor);
 
-	void AddTotalNoiseBreakUsage(int32 InUsageCount) const;
+	/** 데미지를 받았을 때 상대와 함께 피해량을 기록합니다. */
+	void AddTotalDamageReceived(const AActor* Attacker, float InDamageAmount) const;
+
+	/** 노이즈브레이크 시전 횟수를 추가합니다. */
+	void AddTotalNoiseBreakUsage() const;
+
+	/** 노이즈브레이크 시전 횟수를 추가합니다. */
+	void AddTotalDeathCount() const;
 
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 
