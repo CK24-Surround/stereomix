@@ -26,7 +26,7 @@ USMGA_Charge::USMGA_Charge()
 
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Bass::Charge);
 
-	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Bass))
+	if (const FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Bass))
 	{
 		Damage = SkillData->Damage;
 		StunTime = SkillData->Duration;
@@ -91,7 +91,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 void USMGA_Charge::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
+	const ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
 
 	if (UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr)
 	{
@@ -120,10 +120,17 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 	const FName SectionName = TEXT("End");
 	MontageJumpToSection(SectionName);
 
-	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
+	const ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
 	if (TargetDamageInterface && !TargetDamageInterface->CanIgnoreAttack())
 	{
 		ServerRequestEffect(TargetActor);
+
+		APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr;
+		const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset();
+		if (PlayerController && SourceDataAsset)
+		{
+			PlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
+		}
 
 		FGameplayCueParameters ChargeHitGCParams;
 		ChargeHitGCParams.SourceObject = SourceCharacter;
@@ -133,7 +140,7 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 	}
 	else // 벽인 경우입니다.
 	{
-		if (UBoxComponent* ChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr)
+		if (const UBoxComponent* ChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr)
 		{
 			FGameplayCueParameters ChargeHitGCParams;
 			ChargeHitGCParams.SourceObject = SourceCharacter;
@@ -165,6 +172,14 @@ void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
 	}
 
 	TargetDamageInterface->ReceiveDamage(SourceCharacter, Damage);
+
+	const APawn* TargetPawn = Cast<APawn>(TargetActor);
+	APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
+	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
+	if (TargetPlayerController && SourceDataAsset)
+	{
+		TargetPlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
+	}
 
 	FGameplayEventData EventData;
 	EventData.Instigator = SourceCharacter;

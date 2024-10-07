@@ -25,7 +25,7 @@ USMGA_PianoNoiseBreak::USMGA_PianoNoiseBreak()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	if (FSMCharacterNoiseBreakData* NoiseBreakData = USMDataTableFunctionLibrary::GetCharacterNoiseBreakData(ESMCharacterType::Piano))
+	if (const FSMCharacterNoiseBreakData* NoiseBreakData = USMDataTableFunctionLibrary::GetCharacterNoiseBreakData(ESMCharacterType::Piano))
 	{
 		Damage = NoiseBreakData->Damage;
 		MaxDistanceByTile = NoiseBreakData->DistanceByTile;
@@ -40,7 +40,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPianoCharacterDataAsset* SourceDataAsset = GetDataAsset<USMPianoCharacterDataAsset>();
-	USMHIC_Character* SourceHIC = GetHIC();
+	const USMHIC_Character* SourceHIC = GetHIC();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
 	if (!SourceCharacter || !SourceDataAsset || !SourceHIC || !SourceCapsule || !SourceMovement)
@@ -81,7 +81,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
 		const FVector LaunchLocation(SourceLocation.X, SourceLocation.Y, SourceLocation.Z + 325.0);
 		const FVector LaunchPointToTargetDirection = (NoiseBreakTargetLocation - LaunchLocation).GetSafeNormal();
-		const float Offset = 250.0f;
+		constexpr float Offset = 250.0f;
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = LaunchLocation + (LaunchPointToTargetDirection * Offset);
@@ -93,8 +93,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	if (K2_HasAuthority())
 	{
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-		if (TargetHIC)
+		if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 		{
 			TargetHIC->OnNoiseBreakStarted(SourceCharacter);
 		}
@@ -103,7 +102,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 
 void USMGA_PianoNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
+	const ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
 	if (SourceCapsule)
@@ -139,10 +138,9 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 	if (K2_HasAuthority())
 	{
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-		if (TargetHIC)
+		if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 		{
-			TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
+			const TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
 			NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation;
 			TargetHIC->OnNoiseBreakApplied(SourceCharacter, NoiseBreakData);
 		}
@@ -150,7 +148,19 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 		TileCapture();
 		PerformBurstAttack(NoiseBreakTargetLocation, SMTags::GameplayCue::Piano::NoiseBreakBurstHit);
 
-		SourceHIC->SetActorIAmHolding(nullptr);
+		const APawn* TargetPawn = Cast<APawn>(TargetActor);
+		APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
+		APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr;
+		const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
+		if (PlayerController && SourceDataAsset)
+		{
+			PlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
+
+			if (TargetPlayerController)
+			{
+				TargetPlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
+			}
+		}
 
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
 		const FVector TargetToSourceDirection = (SourceLocation - NoiseBreakTargetLocation).GetSafeNormal();
@@ -159,6 +169,8 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 		GCParams.Location = NoiseBreakTargetLocation;
 		GCParams.Normal = TargetToSourceDirection;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::NoiseBreakBurst, GCParams);
+
+		SourceHIC->SetActorIAmHolding(nullptr);
 	}
 }
 
@@ -171,7 +183,7 @@ void USMGA_PianoNoiseBreak::OnNoiseBreakEnded()
 
 void USMGA_PianoNoiseBreak::TileCapture()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const ESMTeam SourceTeam = SourceCharacter ? SourceCharacter->GetTeam() : ESMTeam::None;
 	if (!SourceCharacter || SourceTeam == ESMTeam::None)
 	{

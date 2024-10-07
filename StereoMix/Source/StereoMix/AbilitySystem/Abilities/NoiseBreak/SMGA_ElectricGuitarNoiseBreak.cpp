@@ -28,7 +28,7 @@ USMGA_ElectricGuitarNoiseBreak::USMGA_ElectricGuitarNoiseBreak()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	if (FSMCharacterNoiseBreakData* NoiseBreakData = USMDataTableFunctionLibrary::GetCharacterNoiseBreakData(ESMCharacterType::ElectricGuitar))
+	if (const FSMCharacterNoiseBreakData* NoiseBreakData = USMDataTableFunctionLibrary::GetCharacterNoiseBreakData(ESMCharacterType::ElectricGuitar))
 	{
 		Damage = NoiseBreakData->Damage;
 		MaxDistanceByTile = NoiseBreakData->DistanceByTile;
@@ -57,7 +57,7 @@ bool USMGA_ElectricGuitarNoiseBreak::CanActivateAbility(const FGameplayAbilitySp
 			return false;
 		}
 	}
-	
+
 	return true;
 }
 
@@ -68,7 +68,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	USMHIC_Character* SourceHIC = GetHIC();
+	const USMHIC_Character* SourceHIC = GetHIC();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (!SourceCharacter || !SourceDataAsset || !SourceCapsule)
 	{
@@ -90,7 +90,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 
 	if (IsLocallyControlled())
 	{
-		ASMTile* StartTile = GetTileFromLocation(SourceCharacter->GetActorLocation());
+		const ASMTile* StartTile = GetTileFromLocation(SourceCharacter->GetActorLocation());
 		if (!StartTile)
 		{
 			K2_EndAbility();
@@ -126,8 +126,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	if (K2_HasAuthority())
 	{
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-		if (TargetHIC)
+		if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 		{
 			TargetHIC->OnNoiseBreakStarted(SourceCharacter);
 		}
@@ -136,9 +135,8 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 
 void USMGA_ElectricGuitarNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	ASMElectricGuitarCharacter* SourceCharacter = GetAvatarActor<ASMElectricGuitarCharacter>();
-	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
-	if (SourceCapsule)
+	const ASMElectricGuitarCharacter* SourceCharacter = GetAvatarActor<ASMElectricGuitarCharacter>();
+	if (UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr)
 	{
 		SourceCapsule->SetCollisionProfileName(OriginalCollisionProfileName);
 	}
@@ -162,7 +160,7 @@ void USMGA_ElectricGuitarNoiseBreak::ServerSendTargetLocation_Implementation(con
 void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	const UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (!SourceCharacter || !SourceCapsule)
 	{
 		K2_EndAbility();
@@ -196,11 +194,10 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	}
 
 	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-	if (TargetHIC)
+	if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 	{
 		const FVector TargetToStartDirection = (NoiseBreakStartLocation - NoiseBreakTargetLocation).GetSafeNormal();
-		TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
+		const TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
 		NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation + (TargetToStartDirection * 70.0f);
 		TargetHIC->OnNoiseBreakApplied(SourceCharacter, NoiseBreakData);
 	}
@@ -208,7 +205,19 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	TileCapture();
 	PerformElectricGuitarBurstAttack();
 
-	SourceHIC->SetActorIAmHolding(nullptr);
+	const APawn* TargetPawn = Cast<APawn>(TargetActor);
+	APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
+	APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr;
+	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
+	if (PlayerController && SourceDataAsset)
+	{
+		PlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
+
+		if (TargetPlayerController)
+		{
+			TargetPlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
+		}
+	}
 
 	const FVector StartToTarget = NoiseBreakTargetLocation - NoiseBreakStartLocation;
 
@@ -218,12 +227,14 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	GCParams.Normal = StartToTarget.GetSafeNormal();
 	GCParams.RawMagnitude = StartToTarget.Size();
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakBurst, GCParams);
+
+	SourceHIC->SetActorIAmHolding(nullptr);
 }
 
 void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	UWorld* World = GetWorld();
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const UWorld* World = GetWorld();
 	if (!SourceCharacter || !World)
 	{
 		return;
@@ -236,7 +247,7 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 	const FVector CachedNoiseBreakStartLocation = NoiseBreakStartLocation;
 	const FVector CachedNoiseBreakTargetLocation = NoiseBreakTargetLocation;
 	const FVector StartToTargetDirection = (NoiseBreakTargetLocation - NoiseBreakStartLocation).GetSafeNormal();
-	CaptureTiles.RemoveAll([CachedNoiseBreakStartLocation, CachedNoiseBreakTargetLocation, StartToTargetDirection](ASMTile* Tile) {
+	CaptureTiles.RemoveAll([CachedNoiseBreakStartLocation, CachedNoiseBreakTargetLocation, StartToTargetDirection](const ASMTile* Tile) {
 		const FVector TileLocation = Tile->GetTileLocation();
 
 		const FVector StartToTileDirection = (TileLocation - CachedNoiseBreakStartLocation).GetSafeNormal();
@@ -246,11 +257,11 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 			return false;
 		}
 
-		float DotProductFromStart = FVector::DotProduct(StartToTargetDirection, StartToTileDirection);
-		float DotProductFromEnd = FVector::DotProduct(StartToTargetDirection, EndToTileDirection);
+		const float DotProductFromStart = FVector::DotProduct(StartToTargetDirection, StartToTileDirection);
+		const float DotProductFromEnd = FVector::DotProduct(StartToTargetDirection, EndToTileDirection);
 
-		const float Degrees = 60.0f;
-		const float Radians = FMath::DegreesToRadians(Degrees);
+		constexpr float Degrees = 60.0f;
+		constexpr float Radians = FMath::DegreesToRadians(Degrees);
 		const float Cos = FMath::Cos(Radians);
 		return DotProductFromStart < -Cos || DotProductFromEnd > Cos;
 	});
@@ -304,7 +315,7 @@ TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetElectricGuitarBurstHitActors(
 	const FRotator CapsuleRotation = CapsuleDirection.Rotation() + FRotator(90.0, 0.0, 0.0);
 	const FQuat CapsuleQuat = CapsuleRotation.Quaternion();
 
-	const float Radius = USMTileFunctionLibrary::DefaultTileSize;
+	constexpr float Radius = USMTileFunctionLibrary::DefaultTileSize;
 	const float CapsuleHalfHeight = (FVector::Dist(NoiseBreakStartLocation, NoiseBreakTargetLocation) / 2.0f) + Radius;
 	const FCollisionShape CapsuleCollider = FCollisionShape::MakeCapsule(Radius, CapsuleHalfHeight);
 

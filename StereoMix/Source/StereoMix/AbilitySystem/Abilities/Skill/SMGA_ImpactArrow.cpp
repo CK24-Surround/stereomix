@@ -28,7 +28,7 @@ USMGA_ImpactArrow::USMGA_ImpactArrow()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Piano::ImpactArrow);
 
-	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Piano))
+	if (const FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Piano))
 	{
 		Damage = SkillData->Damage;
 		MaxDistanceByTile = SkillData->DistanceByTile;
@@ -64,9 +64,8 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, SourceCharacter->GetImpactArrowIndicator(), MaxDistance);
 		SkillIndicatorTask->ReadyForActivation();
 
-		ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
-		UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
-		if (SourceWeaponMesh)
+		const ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
+		if (UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr)
 		{
 			const FVector WeaponOffset(0.0, 0.0, 20.0);
 
@@ -87,7 +86,7 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	ASMGamePlayerController* SourcePC = SourceCharacter ? SourceCharacter->GetController<ASMGamePlayerController>() : nullptr;
 	if (SourcePC && InputComponent)
 	{
@@ -209,13 +208,24 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 				continue;
 			}
 
-			ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
-			if (TargetCharacter)
+			if (ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor))
 			{
 				const FVector Direction = (TargetCharacter->GetActorLocation() - NewTargetLocation).GetSafeNormal2D();
 				const FRotator Rotation = Direction.Rotation() + FRotator(15.0, 0.0, 0.0);
 				const FVector Velocity = Rotation.Vector() * KnockbackMagnitude;
 				TargetCharacter->ClientRPCCharacterPushBack(Velocity);
+
+				APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr;
+				APlayerController* TargetPlayerController = TargetCharacter ? TargetCharacter->GetController<APlayerController>() : nullptr;
+				if (PlayerController)
+				{
+					PlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
+
+					if (TargetPlayerController)
+					{
+						TargetPlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
+					}
+				}
 
 				// 방향에 맞게 이펙트를 재생합니다.
 				FGameplayCueParameters GCParams;
@@ -225,8 +235,7 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 				SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowHit, GCParams);
 			}
 
-			UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
-			if (TargetASC)
+			if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor))
 			{
 				FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
 				if (GESpecHandle.IsValid())

@@ -98,4 +98,13 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Note")
 	TMap<ESMTeam, TSubclassOf<ASMNoteBase>> NoteClass;
+
+	UPROPERTY(EditAnywhere, Category = "CameraShake")
+	TSubclassOf<UCameraShakeBase> HitCameraShake;
+
+	UPROPERTY(EditAnywhere, Category = "CameraShake")
+	TSubclassOf<UCameraShakeBase> SkillHitCameraShake;
+
+	UPROPERTY(EditAnywhere, Category = "CameraShake")
+	TSubclassOf<UCameraShakeBase> NoiseBreakCameraShake;
 };

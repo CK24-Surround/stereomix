@@ -75,10 +75,10 @@ public:
 	virtual ESMTeam GetTeam() const override;
 
 	UFUNCTION(BlueprintCallable)
-	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
+	const USMPlayerCharacterDataAsset* GetDataAsset() const { return DataAsset; }
 
 	template<typename T>
-	const T* GetDataAsset() { return Cast<T>(DataAsset); }
+	const T* GetDataAsset() const { return Cast<T>(DataAsset); }
 
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
 

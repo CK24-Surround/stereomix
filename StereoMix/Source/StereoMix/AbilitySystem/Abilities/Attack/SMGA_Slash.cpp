@@ -193,6 +193,20 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	const FVector TargetLocation = TargetActor->GetActorLocation();
 	const FVector SourceToTargetDirection = (TargetLocation - SourceLocation).GetSafeNormal();
 
+	const APawn* TargetPawn = Cast<APawn>(TargetActor);
+	APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
+	if (APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr)
+	{
+		if (const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset())
+		{
+			PlayerController->ClientStartCameraShake(SourceDataAsset->HitCameraShake);
+			if (TargetPlayerController)
+			{
+				TargetPlayerController->ClientStartCameraShake(SourceDataAsset->HitCameraShake);
+			}
+		}
+	}
+
 	FGameplayCueParameters CueParams;
 	CueParams.SourceObject = SourceCharacter;
 	CueParams.TargetAttachComponent = TargetActor->GetRootComponent();
