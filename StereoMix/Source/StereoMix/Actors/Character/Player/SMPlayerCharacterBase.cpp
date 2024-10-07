@@ -63,7 +63,7 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	CameraBoom->bInheritPitch = false;
 	CameraBoom->bInheritRoll = false;
 	CameraBoom->bInheritYaw = false;
-	CameraBoom->TargetArmLength = 1800.0f;
+	CameraBoom->TargetArmLength = 2000.0f;
 	CameraBoom->TargetOffset = FVector(-50.0, 0.0, 0.0);
 	CameraBoom->bDoCollisionTest = false;
 	CameraBoom->bEnableCameraLag = true;
