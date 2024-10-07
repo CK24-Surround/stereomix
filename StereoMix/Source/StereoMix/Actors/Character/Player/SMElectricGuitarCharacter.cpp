@@ -24,7 +24,6 @@ void ASMElectricGuitarCharacter::OnHoldStateEntry()
 		{
 			FGameplayCueParameters GCParams;
 			GCParams.SourceObject = this;
-			GCParams.TargetAttachComponent = Weapon ? Weapon->GetWeaponMeshComponent() : nullptr;
 			SourceASC->AddGameplayCue(SMTags::GameplayCue::ElectricGuitar::HoldWeapon, GCParams);
 		}
 	}

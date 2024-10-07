@@ -49,7 +49,6 @@ void ASMBassCharacter::OnHoldStateEntry()
 		{
 			FGameplayCueParameters GCParams;
 			GCParams.SourceObject = this;
-			GCParams.TargetAttachComponent = Weapon ? Weapon->GetWeaponMeshComponent() : nullptr;
 			SourceASC->AddGameplayCue(SMTags::GameplayCue::Bass::HoldWeapon, GCParams);
 		}
 	}

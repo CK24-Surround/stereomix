@@ -55,7 +55,6 @@ void ASMPianoCharacter::OnHoldStateEntry()
 		{
 			FGameplayCueParameters GCParams;
 			GCParams.SourceObject = this;
-			GCParams.TargetAttachComponent = Weapon ? Weapon->GetWeaponMeshComponent() : nullptr;
 			SourceASC->AddGameplayCue(SMTags::GameplayCue::Piano::HoldWeapon, GCParams);
 		}
 	}

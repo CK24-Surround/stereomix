@@ -23,9 +23,9 @@ public:
 	template<typename T>
 	T* GetWeaponMeshComponent() const { return Cast<T>(GetWeaponMeshComponent()); }
 
-	TArray<UMaterialInterface*> GetOriginalMaterials() { return OriginalMaterials; }
+	TArray<UMaterialInterface*> GetOriginalMaterials() const { return OriginalMaterials; }
 
-	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
+	UMaterialInterface* GetOriginalOverlayMaterial() const { return OriginalOverlayMaterial; }
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Component")
