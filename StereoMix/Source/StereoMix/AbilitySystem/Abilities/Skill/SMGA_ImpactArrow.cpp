@@ -86,13 +86,21 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 
 void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	ASMGamePlayerController* SourcePC = SourceCharacter ? SourceCharacter->GetController<ASMGamePlayerController>() : nullptr;
 	if (SourcePC && InputComponent)
 	{
 		SourcePC->PopInputComponent(InputComponent);
 		InputComponent = nullptr;
 	}
+
+	if (USMAbilitySystemComponent* const SourceASC = GetASC())
+	{
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowReady, GCParams);
+	}
+
 
 	if (SkillIndicatorTask)
 	{
@@ -112,6 +120,7 @@ void USMGA_ImpactArrow::InputPressed(const FGameplayAbilitySpecHandle Handle, co
 	if (USMAbilitySystemComponent* SourceASC = GetASC())
 	{
 		AActor* SourceActor = GetAvatarActor();
+
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceActor;
 		SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::Piano::ImpactArrowReady, GCParams);
