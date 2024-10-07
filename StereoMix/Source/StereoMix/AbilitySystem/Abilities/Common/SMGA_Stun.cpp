@@ -54,9 +54,9 @@ void USMGA_Stun::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	{
 		Instigator = const_cast<AActor*>(TriggerEventData->Instigator.Get());
 
-		class UCapsuleComponent* Capsulecomponent = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
-		const float CapsuleHalfHeight = Capsulecomponent ? Capsulecomponent->GetScaledCapsuleHalfHeight() : 0.0f;
-		const FVector Offset(0.0, 0.0, CapsuleHalfHeight + 15.0);
+		const UCapsuleComponent* CapsuleComponent = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+		const float CapsuleHalfHeight = CapsuleComponent ? CapsuleComponent->GetScaledCapsuleHalfHeight() : 0.0f;
+		const FVector Offset(0.0, 0.0, CapsuleHalfHeight -30.0);
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
