@@ -27,4 +27,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Dummy")
 	TObjectPtr<UCurveFloat> NoiseBreakCurve;
+
+	UPROPERTY(EditAnywhere, Category = "CameraShake")
+	TSubclassOf<UCameraShakeBase> FullChargeHitCameraShake;
 };

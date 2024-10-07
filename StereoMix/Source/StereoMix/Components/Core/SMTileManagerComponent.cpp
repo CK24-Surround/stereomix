@@ -55,6 +55,11 @@ void USMTileManagerComponent::InitializeComponent()
 
 		NET_LOG(GetOwner(), Warning, TEXT("현재 타일 개수: %d"), TotalTileCount)
 	}
+}
+
+void USMTileManagerComponent::BeginPlay()
+{
+	Super::BeginPlay();
 
 	const AActor* CachedOwner = GetOwner();
 	CachedScoreMusicManager = CachedOwner ? CachedOwner->FindComponentByClass<USMScoreMusicManagerComponent>() : nullptr;
@@ -133,7 +138,7 @@ void USMTileManagerComponent::OnTileChanged(ESMTeam PreviousTeam, ESMTeam NewTea
 void USMTileManagerComponent::ChangeScoreMusic()
 {
 	const UWorld* World = GetWorld();
-	ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
+	const ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
 	const FName MatchState = GameState ? GameState->GetMatchState() : NAME_None;
 	if (CachedScoreMusicManager.IsValid() && (MatchState == MatchState::InProgress))
 	{

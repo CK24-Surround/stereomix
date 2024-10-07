@@ -8,6 +8,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
 
 
@@ -22,8 +23,7 @@ void ASMEP_SlowBullet::PreLaunch(const FSMProjectileParameters& InParameters)
 void ASMEP_SlowBullet::AddProjectileFX()
 {
 	AActor* SourceActor = GetOwner();
-	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-	if (SourceASC)
+	if (USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.TargetAttachComponent = GetRootComponent();
@@ -34,8 +34,7 @@ void ASMEP_SlowBullet::AddProjectileFX()
 void ASMEP_SlowBullet::RemoveProjectileFX()
 {
 	AActor* SourceActor = GetOwner();
-	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-	if (SourceASC)
+	if (USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
 	{
 		SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::SlowBulletProjectile, FGameplayCueParameters());
 	}
@@ -53,19 +52,35 @@ void ASMEP_SlowBullet::PlayHitFX(AActor* InTarget)
 {
 	AActor* SourceActor = GetOwner();
 	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-	if (InTarget && SourceASC)
+	if (!InTarget || !SourceASC)
 	{
-		FGameplayCueParameters GCParams;
-		GCParams.TargetAttachComponent = InTarget->GetRootComponent();
-		SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::SlowBulletHit, GCParams);
+		return;
 	}
+
+	const ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
+	const APawn* TargetPawn = Cast<APawn>(InTarget);
+	APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
+	if (APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr)
+	{
+		if (const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset())
+		{
+			PlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
+			if (TargetPlayerController)
+			{
+				TargetPlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
+			}
+		}
+	}
+
+	FGameplayCueParameters GCParams;
+	GCParams.TargetAttachComponent = InTarget->GetRootComponent();
+	SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::SlowBulletHit, GCParams);
 }
 
 void ASMEP_SlowBullet::PlayWallHitFX(const FVector& HitLocation)
 {
 	AActor* SourceActor = GetOwner();
-	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-	if (SourceASC)
+	if (USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.Location = HitLocation;
@@ -82,8 +97,7 @@ void ASMEP_SlowBullet::ApplySlowEffect(AActor* TargetActor)
 
 		// 디버프 VFX를 적용합니다. 이 이펙트는 스스로 종료됩니다.
 		AActor* SourceActor = GetOwner();
-		USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-		if (SourceASC)
+		if (USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
 		{
 			FGameplayCueParameters GCParams;
 			GCParams.RawMagnitude = SlowDebuffDuration;

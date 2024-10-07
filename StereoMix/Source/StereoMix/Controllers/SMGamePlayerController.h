@@ -15,7 +15,6 @@ class USMUserWidget_HUD;
 class USMUserWidget_StartCountdown;
 class ASMPlayerCharacter;
 class ASMPlayerCharacterBase;
-class USMUserWidget_ScreenIndicator;
 class USMUserWidget_VictoryDefeat;
 class USMUserWidget_GameHUD;
 class USMUserWidget_GameStatistics;
@@ -50,14 +49,9 @@ protected:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
-
 	virtual void OnRep_PlayerState() override;
 
-	/**
-	 * BeginPlay에서 생성할때 오류를 방지하고자 지연 스폰합니다.
-	 */
-	void SpawnTimerCallback();
+	void InitUI();
 
 	virtual void UpdateGameStatistics();
 
@@ -66,17 +60,7 @@ public:
 	 * 캐릭터를 스폰하고 빙의합니다. 이미 캐릭터가 존재하는 경우라면 해당 캐릭터를 제거하고 새로운 캐릭터를 스폰하고 빙의합니다. 이때 기존 캐릭터로부터 부여된 어빌리티들을 초기화합니다.
 	 * 위치 값을 넣어주지 않으면 내부 로직에 의해 적합한 스폰장소에 스폰합니다.
 	 */
-	void SpawnCharacter(const FVector* InLocation = nullptr, const FRotator* InRotation = nullptr);
-
-	/** 타겟을 향하는 인디케이터를 추가합니다. */
-	void AddScreendIndicator(AActor* TargetActor);
-
-	/** 타겟을 향하는 인디케이터를 제거합니다. */
-	void RemoveScreenIndicator(AActor* TargetActor);
-
-	/** 인디케이터를 갖고 있는 타겟이 파괴되면 호출됩니다.*/
-	UFUNCTION()
-	void OnTargetDestroyedWithIndicator(AActor* DestroyedActor);
+	void SpawnCharacter(const TOptional<FVector>& InLocationOption = TOptional<FVector>(), const TOptional<FRotator>& InRotationOption = TOptional<FRotator>());
 
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void RequestImmediateResetPosition();
@@ -88,7 +72,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Character|Class")
 	TMap<ESMCharacterType, FCharacterSpawnData> CharacterClass;
 
-	UPROPERTY(EditAnywhere, Category = "Design|Character")
+	UPROPERTY(EditAnywhere, Category = "Design")
 	ESMCharacterType DefaultType = ESMCharacterType::None;
 
 	UPROPERTY(EditAnywhere, Category = "Design|UI|HUD")
@@ -102,12 +86,6 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMUserWidget_VictoryDefeat> VictoryDefeatWidget;
-
-	UPROPERTY(EditAnywhere, Category = "Design|UI|OffScreenIndicator")
-	TSubclassOf<USMUserWidget_ScreenIndicator> OffScreenIndicatorClass;
-
-	UPROPERTY()
-	TMap<AActor*, TObjectPtr<USMUserWidget_ScreenIndicator>> OffScreenIndicators;
 
 	UPROPERTY(EditAnywhere, Category = "Design|UI|StartCountdown")
 	TSubclassOf<USMUserWidget_StartCountdown> StartCountdownWidgetClass;

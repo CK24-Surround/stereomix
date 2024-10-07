@@ -15,6 +15,7 @@
 #include "SMPlayerCharacterBase.generated.h"
 
 class USMScoreManagerComponent;
+class ASMPlayerCharacterBase;
 class ASMNoteBase;
 class ASMWeaponBase;
 class USMHIC_Character;
@@ -75,10 +76,10 @@ public:
 	virtual ESMTeam GetTeam() const override;
 
 	UFUNCTION(BlueprintCallable)
-	const USMPlayerCharacterDataAsset* GetDataAsset() { return DataAsset; }
+	const USMPlayerCharacterDataAsset* GetDataAsset() const { return DataAsset; }
 
 	template<typename T>
-	const T* GetDataAsset() { return Cast<T>(DataAsset); }
+	const T* GetDataAsset() const { return Cast<T>(DataAsset); }
 
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
 
@@ -118,15 +119,15 @@ public:
 
 	/** 다른 클라이언트들에게 인디케이터를 추가합니다. */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCAddScreenIndicatorToSelf(AActor* TargetActor);
+	void MulticastAddScreenIndicatorToSelf(AActor* TargetActor);
 
 	/** 다른 클라이언트들에게서 인디케이터를 제거합니다. */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCRemoveScreenIndicatorToSelf(AActor* TargetActor);
+	void MulticastRemoveScreenIndicatorToSelf(AActor* TargetActor);
 
 	/** 해당 클라이언트에서만 인디케이터를 제거합니다. */
 	UFUNCTION(Client, Reliable)
-	void ClientRPCRemoveScreendIndicatorToSelf(AActor* TargetActor);
+	void ClientRemoveScreenIndicatorToSelf(AActor* TargetActor);
 
 	/** 데미지를 받았을 때 상대와 함께 피해량을 기록합니다. */
 	void AddTotalDamageReceived(const AActor* Attacker, float InDamageAmount) const;
@@ -210,6 +211,8 @@ protected:
 
 	USMScoreManagerComponent* GetScoreManagerComponent() const;
 
+	void InitUI();
+
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
 	 * bIsZeroBasis가 true면 캐릭터의 바닥을 기준으로, false면 캐릭터의 중심을 기준으로 계산합니다. */
 	FVector GetCursorTargetingPoint(bool bUseZeroBasis = false);
@@ -217,8 +220,6 @@ protected:
 	void UpdateCameraLocation();
 
 	void UpdateFocusToCursor();
-
-	void BindCharacterStateWidget(USMUserWidget_CharacterState* CharacterStateWidget);
 
 	UFUNCTION()
 	void OnRep_bIsActorHidden();
@@ -243,7 +244,7 @@ protected:
 	virtual void OnHoldStateExit() {}
 
 	UFUNCTION()
-	void OnTilesCaptured(const AActor* CapturedInstigator, int CaputuredTileCount);
+	void OnTilesCaptured(const AActor* CapturedInstigator, int CapturedTileCount);
 
 	UPROPERTY(EditAnywhere, Category = "Design|Data")
 	TObjectPtr<const USMPlayerCharacterDataAsset> DataAsset;
@@ -320,11 +321,11 @@ protected:
 
 	/** 카메라 이동에 사용될 마우스 인식 범위입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
-	float CameraMoveMouseThreshold = 1400.0f;
+	float CameraMoveMouseThreshold = 1150.0f;
 
 	/** 카메라의 최대 이동 거리입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Camera")
-	float CameraMoveMaxDistance = 500.0f;
+	float CameraMoveMaxDistance = 250.0f;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_bIsActorHidden")
 	uint32 bIsActorHidden:1 = false;

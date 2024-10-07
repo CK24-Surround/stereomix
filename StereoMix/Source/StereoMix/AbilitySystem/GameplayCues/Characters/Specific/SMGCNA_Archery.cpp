@@ -12,7 +12,7 @@
 
 ASMGCNA_Archery::ASMGCNA_Archery()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
 
 bool ASMGCNA_Archery::OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
@@ -64,13 +64,11 @@ bool ASMGCNA_Archery::OnRemove_Implementation(AActor* MyTarget, const FGameplayC
 		SFXComponent = nullptr;
 	}
 
-	if (ASMPianoCharacter* SourceCharacter = Cast<ASMPianoCharacter>(MyTarget))
+	// 노트 상태 즉 무력화 상태가 아닌 경우만 이펙트를 다시 활성화합니다.
+	ASMPianoCharacter* SourceCharacter = Cast<ASMPianoCharacter>(MyTarget);
+	if (SourceCharacter ? !SourceCharacter->IsNoteState() : false)
 	{
-		// 노트 상태 즉 무력화 상태가 아닌 경우만 이펙트를 다시 활성화합니다.
-		if (!SourceCharacter->IsNoteState())
-		{
-			SourceCharacter->SetWeaponVFXEnabled(true);
-		}
+		SourceCharacter->SetWeaponVFXEnabled(true);
 	}
 
 	return true;

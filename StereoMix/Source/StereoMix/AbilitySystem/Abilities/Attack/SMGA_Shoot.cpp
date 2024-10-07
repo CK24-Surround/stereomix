@@ -4,14 +4,15 @@
 #include "SMGA_Shoot.h"
 
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
+#include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Projectiles/SMProjectile.h"
-#include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMProjectileFunctionLibrary.h"
 #include "Games/SMGameState.h"
 
 USMGA_Shoot::USMGA_Shoot()
@@ -20,7 +21,7 @@ USMGA_Shoot::USMGA_Shoot()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::ElectricGuitar::SlowBullet);
 
-	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::ElectricGuitar))
+	if (const FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::ElectricGuitar))
 	{
 		Damage = AttackData->Damage;
 		MaxDistanceByTile = AttackData->DistanceByTile;
@@ -35,7 +36,7 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !SourceDataAsset)
 	{
@@ -55,7 +56,7 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 	if (IsLocallyControlled())
 	{
-		if (UWorld* World = GetWorld())
+		if (const UWorld* World = GetWorld())
 		{
 			World->GetTimerManager().SetTimer(ShootTimerHandle, this, &USMGA_Shoot::Shoot, 1.0f / AttackPerSecond, true);
 			Shoot();
@@ -65,22 +66,25 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 
 void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	if (UWorld* World = GetWorld())
+	if (const UWorld* World = GetWorld())
 	{
 		World->GetTimerManager().ClearTimer(ShootTimerHandle);
 	}
 
-	K2_EndAbility();
+	K2_EndAbility(); // 마우스 클릭 속도 그대로 연발로 반영됨 ㅋ
+
+	// TODO: 릴리즈 빌드시 아래 로직으로 수행해야함 ㅋ.
+	// UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.5f / AttackPerSecond);
+	// WaitTask->OnFinish.AddDynamic(this, &ThisClass::K2_EndAbility);
+	// WaitTask->ReadyForActivation();
 }
 
 void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	UWorld* World = GetWorld();
-	ASMGameState* GameState = World ? World->GetGameState<ASMGameState>() : nullptr;
-	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
-	ASMProjectile* Projectile = ProjectilePoolManager ? ProjectilePoolManager->GetProjectileForElectricGuitar(SourceCharacter->GetTeam()) : nullptr;
-	if (!SourceCharacter || !ProjectilePoolManager || !Projectile)
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	ASMProjectile* Projectile = USMProjectileFunctionLibrary::GetElectricGuitarProjectile(GetWorld(), SourceTeam);
+	if (!SourceCharacter || !Projectile)
 	{
 		EndAbilityByCancel();
 		return;

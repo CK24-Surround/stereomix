@@ -10,11 +10,11 @@
 #include "StereoMixLog.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Games/SMGamePlayerState.h"
 #include "UI/Widget/Dummy/SMUserWidget_StaminaSkillGaugeDummyBar.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
 #include "UI/Widget/Game/SMUserWidget_HUD.h"
-#include "UI/Widget/Game/SMUserWidget_ScreenIndicator.h"
 #include "UI/Widget/Game/SMUserWidget_StartCountdown.h"
 #include "UI/Widget/Game/SMUserWidget_VictoryDefeat.h"
 #include "Utilities/SMLog.h"
@@ -33,7 +33,13 @@ void ASMGamePlayerController::InitPlayerState()
 	if (HasAuthority() && GetWorld()->GetAuthGameMode())
 	{
 		// 오류를 방지하기위해 지연 스폰합니다.
-		GetWorldTimerManager().SetTimerForNextTick(this, &ThisClass::SpawnTimerCallback);
+		auto ThisWeakPtr = MakeWeakObjectPtr(this);
+		GetWorldTimerManager().SetTimerForNextTick([ThisWeakPtr] {
+			if (ThisWeakPtr.IsValid())
+			{
+				ThisWeakPtr->SpawnCharacter();
+			}
+		});
 	}
 }
 
@@ -42,6 +48,11 @@ void ASMGamePlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	InitControl();
+
+	if (IsLocalController())
+	{
+		InitUI();
+	}
 }
 
 void ASMGamePlayerController::Tick(float DeltaSeconds)
@@ -56,52 +67,52 @@ void ASMGamePlayerController::Tick(float DeltaSeconds)
 	}
 }
 
-void ASMGamePlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
-{
-	if (HasAuthority())
-	{
-		FString EndPlayReasonString = UEnum::GetValueAsString(EndPlayReason);
-		NET_LOG(this, Log, TEXT("%s"), *EndPlayReasonString);
-	}
-
-	Super::EndPlay(EndPlayReason);
-}
-
 void ASMGamePlayerController::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	ASMGamePlayerState* SMPlayerState = GetPlayerState<ASMGamePlayerState>();
-	if (!SMPlayerState)
+	InitUI();
+}
+
+void ASMGamePlayerController::InitUI()
+{
+	const ASMGamePlayerState* SMPlayerState = GetPlayerState<ASMGamePlayerState>();
+	UAbilitySystemComponent* SourceASC = SMPlayerState ? SMPlayerState->GetAbilitySystemComponent() : nullptr;
+	if (!SourceASC)
 	{
 		return;
 	}
 
-	HUDWidget = CreateWidget<USMUserWidget_HUD>(this, HUDWidgetClass);
-	HUDWidget->AddToViewport(0);
+	if (HUDWidget = CreateWidget<USMUserWidget_HUD>(this, HUDWidgetClass); HUDWidget)
+	{
+		HUDWidget->AddToViewport(0);
+		HUDWidget->SetASC(SourceASC);
+	}
 
-	VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass);
-	VictoryDefeatWidget->AddToViewport(1);
+	if (VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass); VictoryDefeatWidget)
+	{
+		VictoryDefeatWidget->AddToViewport(1);
+		VictoryDefeatWidget->SetASC(SourceASC);
+	}
 
-	UAbilitySystemComponent* SourceASC = SMPlayerState->GetAbilitySystemComponent();
-	HUDWidget->SetASC(SourceASC);
-	VictoryDefeatWidget->SetASC(SourceASC);
+	if (StartCountdownWidget = CreateWidget<USMUserWidget_StartCountdown>(this, StartCountdownWidgetClass); StartCountdownWidget)
+	{
+		StartCountdownWidget->AddToViewport(1);
+	}
 
-	StartCountdownWidget = CreateWidget<USMUserWidget_StartCountdown>(this, StartCountdownWidgetClass);
-	StartCountdownWidget->AddToViewport(1);
+	if (GameStatisticsWidget = CreateWidget<USMUserWidget_GameStatistics>(this, GameStatisticsWidgetClass); GameStatisticsWidget)
+	{
+		GameStatisticsWidget->AddToViewport(10);
+	}
 
-	GameStatisticsWidget = CreateWidget<USMUserWidget_GameStatistics>(this, GameStatisticsWidgetClass);
-	GameStatisticsWidget->AddToViewport(10);
-
-	DummyBarWidget = CreateWidget<USMUserWidget_StaminaSkillGaugeDummyBar>(this, DummyBarWidgetClass);
-	if (DummyBarWidget)
+	if (DummyBarWidget = CreateWidget<USMUserWidget_StaminaSkillGaugeDummyBar>(this, DummyBarWidgetClass); DummyBarWidget)
 	{
 		DummyBarWidget->AddToViewport(2);
-		if (UAbilitySystemComponent* ASC = SMPlayerState->GetAbilitySystemComponent())
+
+		if (const USMCharacterAttributeSet* AttributeSet = SourceASC->GetSet<USMCharacterAttributeSet>())
 		{
-			const USMCharacterAttributeSet* AttributeSet = ASC->GetSet<USMCharacterAttributeSet>();
-			ASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetStaminaAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnStaminaChanged);
-			ASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetSkillGaugeAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnSkillGaugeChanged);
+			SourceASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetStaminaAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnStaminaChanged);
+			SourceASC->GetGameplayAttributeValueChangeDelegate(AttributeSet->GetSkillGaugeAttribute()).AddUObject(DummyBarWidget, &USMUserWidget_StaminaSkillGaugeDummyBar::OnSkillGaugeChanged);
 
 			DummyBarWidget->Stamina = AttributeSet->GetStamina();
 			DummyBarWidget->MaxStamina = AttributeSet->GetMaxStamina();
@@ -112,26 +123,6 @@ void ASMGamePlayerController::OnRep_PlayerState()
 			DummyBarWidget->UpdateSkillGaugeBar();
 		}
 	}
-}
-
-void ASMGamePlayerController::SpawnTimerCallback()
-{
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	if (!GameMode)
-	{
-		NET_LOG(this, Error, TEXT("게임모드가 유효하지 않습니다."));
-		return;
-	}
-
-	// 스폰 포인트를 구합니다. 여기서는 SpawnPoint라는 태그를 가진 플레이어 스타트를 활용하고 있습니다.
-	// AActor* PlayerStarter = GameMode->FindPlayerStart(this, TEXT("SpawnPoint"));
-	// if (!ensureAlways(PlayerStarter))
-	// {
-	// 	return;
-	// }
-	//
-	// const FVector NewLocation = PlayerStarter->GetActorLocation();
-	SpawnCharacter();
 }
 
 void ASMGamePlayerController::UpdateGameStatistics()
@@ -149,174 +140,63 @@ void ASMGamePlayerController::UpdateGameStatistics()
 	}
 }
 
-void ASMGamePlayerController::SpawnCharacter(const FVector* InLocation, const FRotator* InRotation)
+void ASMGamePlayerController::SpawnCharacter(const TOptional<FVector>& InLocationOption, const TOptional<FRotator>& InRotationOption)
 {
-	if (!HasAuthority())
-	{
-		NET_LOG(this, Warning, TEXT("서버에서만 호출되어야합니다."));
-		return;
-	}
-
-	ASMGamePlayerState* SMPlayerState = Cast<ASMGamePlayerState>(PlayerState);
-	if (!ensureAlways(SMPlayerState))
-	{
-		return;
-	}
-
+	const ASMGamePlayerState* SMPlayerState = Cast<ASMGamePlayerState>(PlayerState);
 	UWorld* World = GetWorld();
-	if (!ensureAlways(World))
+	AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr;
+	if (!HasAuthority() || !SMPlayerState || !World || !GameMode)
 	{
 		return;
 	}
 
 	ESMCharacterType CharacterType = SMPlayerState->GetCharacterType();
-	ESMTeam Team = SMPlayerState->GetTeam();
+	const ESMTeam SourceTeam = SMPlayerState->GetTeam();
 
 	// 플레이어 스타트를 통해 알맞은 스폰 장소를 설정합니다.
-	FVector NewLocation;
-	FRotator NewRotation;
-	AGameModeBase* GameMode = GetWorld()->GetAuthGameMode();
-	if (ensureAlways(GameMode))
+	FString TeamStarterTag;
+	switch (SourceTeam)
 	{
-		FString TeamStarterTag;
-		switch (Team)
+		case ESMTeam::EDM:
 		{
-			case ESMTeam::EDM:
-			{
-				TeamStarterTag = TEXT("Starter_EDM");
-				break;
-			}
-			case ESMTeam::FutureBass:
-			{
-				TeamStarterTag = TEXT("Starter_FB");
-				break;
-			}
-			default:
-			{
-				break;
-			}
+			TeamStarterTag = TEXT("Starter_EDM");
+			break;
 		}
-
-		AActor* PlayerStarter = GameMode->FindPlayerStart(this, TeamStarterTag);
-		if (ensureAlways(PlayerStarter))
+		case ESMTeam::FutureBass:
 		{
-			NewLocation = PlayerStarter->GetActorLocation();
-			NewRotation = PlayerStarter->GetActorRotation();
+			TeamStarterTag = TEXT("Starter_FB");
+			break;
+		}
+		default:
+		{
+			break;
 		}
 	}
 
-	// 만약 따로 위치나 회전 값이 매개변수로 주어졌다면 이 값으로 덮어 씌웁니다.
-	if (InLocation)
-	{
-		NewLocation = *InLocation;
-	}
-	if (InRotation)
-	{
-		NewRotation = *InRotation;
-	}
+	// 스폰 위치와 회전을 구합니다.
+	const AActor* PlayerStarter = GameMode->FindPlayerStart(this, TeamStarterTag);
+	const FVector CharacterSpawnLocation = InLocationOption.Get(PlayerStarter ? PlayerStarter->GetActorLocation() : FVector::ZeroVector);
+	const FRotator CharacterSpawnRotation = InRotationOption.Get(PlayerStarter ? PlayerStarter->GetActorRotation() : FRotator::ZeroRotator);
 
-	// 임시 코드
-	if (CharacterType == ESMCharacterType::None)
-	{
-		UE_LOG(LogStereoMix, Warning, TEXT("캐릭터 타입이 None으로 설정되어있습니다. 기본값으로 설정합니다."))
-		CharacterType = DefaultType;
-	}
+	// PlayerState에 캐릭터 타입이 지정되어있지 않다면 플레이어 컨트롤러에 설정된 기본 캐릭터 타입으로 덮어 씌웁니다. 테스트 환경을 위한 코드입니다.
+	CharacterType = (CharacterType == ESMCharacterType::None) ? DefaultType : CharacterType;
 
-	FCharacterSpawnData* CharacterSpawnData = CharacterClass.Find(CharacterType);
-	if (!ensureAlways(CharacterSpawnData))
-	{
-		return;
-	}
-
-	// TSubclassOf<ASMPlayerCharacter> CharacterSpawnClass = CharacterSpawnData->CharacterClassLegacy.FindOrAdd(Team, nullptr);
-	TSubclassOf<ASMPlayerCharacterBase> CharacterSpawnClass = CharacterSpawnData->CharacterClass.FindOrAdd(Team, nullptr);
-	if (!ensureAlways(CharacterSpawnClass))
-	{
-		return;
-	}
+	FCharacterSpawnData* CharacterSpawnDataPtr = CharacterClass.Find(CharacterType);
+	const TSubclassOf<ASMPlayerCharacterBase>* CharacterClassToSpawnPtr = CharacterSpawnDataPtr ? CharacterSpawnDataPtr->CharacterClass.Find(SourceTeam) : nullptr;
+	const TSubclassOf<ASMPlayerCharacterBase>& CharacterClassToSpawn = CharacterClassToSpawnPtr ? *CharacterClassToSpawnPtr : nullptr;
 
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-	// ASMPlayerCharacter* PlayerCharacter = World->SpawnActor<ASMPlayerCharacter>(CharacterSpawnClass, NewLocation, NewRotation, SpawnParams);
-	ASMPlayerCharacterBase* PlayerCharacter = World->SpawnActor<ASMPlayerCharacterBase>(CharacterSpawnClass, NewLocation, NewRotation, SpawnParams);
-	if (!ensureAlways(PlayerCharacter))
+	if (ASMPlayerCharacterBase* PlayerCharacter = World->SpawnActor<ASMPlayerCharacterBase>(CharacterClassToSpawn, CharacterSpawnLocation, CharacterSpawnRotation, SpawnParams))
 	{
-		return;
+		// 기존 캐릭터를 제거합니다.
+		if (APawn* PreviousPawn = GetPawn())
+		{
+			PreviousPawn->Destroy();
+		}
+
+		Possess(PlayerCharacter);
 	}
-
-	// 기존 캐릭터를 제거합니다.
-	// ASMPlayerCharacter* PreviousCharacter = GetPawn<ASMPlayerCharacter>();
-	ASMPlayerCharacterBase* PreviousCharacter = GetPawn<ASMPlayerCharacterBase>();
-	if (PreviousCharacter)
-	{
-		PreviousCharacter->Destroy();
-	}
-
-	Possess(PlayerCharacter);
-}
-
-void ASMGamePlayerController::AddScreendIndicator(AActor* TargetActor)
-{
-	if (HasAuthority())
-	{
-		return;
-	}
-
-	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 추가합니다.
-	if (!Cast<ASMPlayerCharacterBase>(GetPawn()))
-	{
-		return;
-	}
-
-	// 같은 팀인 경우 인디케이터를 생성하지 않습니다.
-	if (USMTeamBlueprintLibrary::IsSameLocalTeam(TargetActor))
-	{
-		return;
-	}
-
-	// 인디케이터를 생성하고 타겟을 지정합니다.
-	USMUserWidget_ScreenIndicator* OffScreendIndicator = CreateWidget<USMUserWidget_ScreenIndicator>(this, OffScreenIndicatorClass);
-	OffScreendIndicator->AddToViewport(-1);
-	OffScreendIndicator->SetTarget(TargetActor);
-	OffScreenIndicators.Add(TargetActor, OffScreendIndicator);
-
-	// 대상이 게임에서 나갔을 경우의 예외처리입니다.
-	TargetActor->OnDestroyed.AddDynamic(this, &ThisClass::OnTargetDestroyedWithIndicator);
-}
-
-void ASMGamePlayerController::RemoveScreenIndicator(AActor* TargetActor)
-{
-	if (HasAuthority())
-	{
-		return;
-	}
-
-	// 플레이어 캐릭터를 가진 경우에만 스크린 인디케이터를 제거합니다.
-	if (!Cast<ASMPlayerCharacterBase>(GetPawn()))
-	{
-		return;
-	}
-
-	// 인디케이터를 제거합니다. 중복 제거되도 문제는 없습니다.
-	TObjectPtr<USMUserWidget_ScreenIndicator>* OffScreendIndicator = OffScreenIndicators.Find(TargetActor);
-	if (!OffScreendIndicator)
-	{
-		return;
-	}
-
-	(*OffScreendIndicator)->RemoveFromParent();
-	(*OffScreendIndicator)->ConditionalBeginDestroy();
-	OffScreenIndicators.Remove(TargetActor);
-
-	// 대상이 게임에서 나갔을 경우의 예외처리로 사용된 이벤트를 제거합니다.
-	TargetActor->OnDestroyed.RemoveAll(this);
-}
-
-void ASMGamePlayerController::OnTargetDestroyedWithIndicator(AActor* DestroyedActor)
-{
-	// 대상이 게임에서 나가거나 어떤 이유로 유효하지 않게된 경우 인디케이터를 제거해줍니다.
-	NET_LOG(this, Warning, TEXT("유효하지 않은 타겟의 인디케이터 제거"));
-	RemoveScreenIndicator(DestroyedActor);
 }
 
 void ASMGamePlayerController::RequestImmediateResetPosition_Implementation()

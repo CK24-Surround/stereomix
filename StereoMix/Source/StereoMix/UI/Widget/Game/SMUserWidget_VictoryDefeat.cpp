@@ -3,15 +3,12 @@
 
 #include "SMUserWidget_VictoryDefeat.h"
 
+#include "GameFramework/GameStateBase.h"
 #include "AbilitySystemComponent.h"
-// #include "Animation/WidgetAnimation.h"
-#include "Components/Button.h"
 #include "Components/CanvasPanel.h"
 #include "Components/Image.h"
 #include "Components/Core/SMTileManagerComponent.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "Games/SMGameState.h"
-#include "Interfaces/SMTeamInterface.h"
 #include "Utilities/SMLog.h"
 
 void USMUserWidget_VictoryDefeat::NativeConstruct()
@@ -51,11 +48,10 @@ void USMUserWidget_VictoryDefeat::SetASC(UAbilitySystemComponent* InASC)
 
 void USMUserWidget_VictoryDefeat::BindToGameState()
 {
-	ASMGameState* SMGameState = GetWorld()->GetGameState<ASMGameState>();
-	if (SMGameState)
+	const UWorld* World = GetWorld();
+	if (const AGameStateBase* SMGameState = World ? GetWorld()->GetGameState() : nullptr)
 	{
-		USMTileManagerComponent* TileManager = SMGameState->GetTileManager();
-		if (TileManager)
+		if (USMTileManagerComponent* TileManager = SMGameState->GetComponentByClass<USMTileManagerComponent>())
 		{
 			TileManager->OnVictoryTeamAnnounced.AddDynamic(this, &ThisClass::OnVictoryTeamAnnouncedCallback);
 		}

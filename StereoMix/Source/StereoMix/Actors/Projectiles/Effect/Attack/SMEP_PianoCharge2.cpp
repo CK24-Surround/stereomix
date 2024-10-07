@@ -6,13 +6,16 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Data/Character/SMPianoCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
+
+class ASMPlayerCharacterBase;
 
 void ASMEP_PianoCharge2::AddProjectileFX()
 {
 	AActor* SourceActor = GetOwner();
-	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-	if (SourceASC)
+	if (USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = this;
@@ -24,8 +27,7 @@ void ASMEP_PianoCharge2::AddProjectileFX()
 void ASMEP_PianoCharge2::RemoveProjectileFX()
 {
 	AActor* SourceActor = GetOwner();
-	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-	if (SourceASC)
+	if (USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = this;
@@ -40,6 +42,21 @@ void ASMEP_PianoCharge2::PlayHitFX(AActor* InTarget)
 	if (!InTarget || !SourceASC)
 	{
 		return;
+	}
+
+	const ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
+	const APawn* TargetPawn = Cast<APawn>(InTarget);
+	APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
+	APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr;
+	const USMPianoCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset<USMPianoCharacterDataAsset>() : nullptr;
+	if (PlayerController && SourceDataAsset)
+	{
+		PlayerController->ClientStartCameraShake(SourceDataAsset->FullChargeHitCameraShake);
+
+		if (TargetPlayerController)
+		{
+			TargetPlayerController->ClientStartCameraShake(SourceDataAsset->FullChargeHitCameraShake);
+		}
 	}
 
 	FGameplayCueParameters GCParams;

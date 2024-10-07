@@ -88,7 +88,7 @@ void USMHIC_Character::OnHeld(AActor* Instigator)
 	}
 
 	// 잡혔으므로 잠시 잡기 인디케이터를 비활성화합니다.
-	SourceCharacter->MulticastRPCRemoveScreenIndicatorToSelf(SourceCharacter);
+	SourceCharacter->MulticastRemoveScreenIndicatorToSelf(SourceCharacter);
 }
 
 void USMHIC_Character::OnReleasedFromHold(AActor* Instigator)
@@ -221,12 +221,12 @@ void USMHIC_Character::ReleasedFromBeingHeld(AActor* TargetActor, const TOptiona
 	SourceCharacter->MulticastRPCSetLocation(FinalSourceLocation);
 
 	// 자신을 잡았던 대상을 제외하고 다시 잡기 인디케이터를 활성화합니다.
-	SourceCharacter->MulticastRPCAddScreenIndicatorToSelf(SourceCharacter);
+	SourceCharacter->MulticastAddScreenIndicatorToSelf(SourceCharacter);
 	for (const auto& HoldedMeActor : HoldedMeActors)
 	{
 		if (ASMPlayerCharacterBase* HoldedMeCharacter = Cast<ASMPlayerCharacterBase>(HoldedMeActor))
 		{
-			HoldedMeCharacter->ClientRPCRemoveScreendIndicatorToSelf(SourceCharacter);
+			HoldedMeCharacter->ClientRemoveScreenIndicatorToSelf(SourceCharacter);
 		}
 	}
 

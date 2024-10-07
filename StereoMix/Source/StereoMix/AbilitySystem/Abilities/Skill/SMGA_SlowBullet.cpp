@@ -10,19 +10,18 @@
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Projectiles/SMProjectile.h"
-#include "Actors/Projectiles/Pool/SMProjectilePoolManagerComponent.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
-#include "Games/SMGameState.h"
+#include "FunctionLibraries/SMProjectileFunctionLibrary.h"
 
 USMGA_SlowBullet::USMGA_SlowBullet()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 	ActivationOwnedTags.AddTag(SMTags::Character::State::ElectricGuitar::SlowBullet);
 
-	if (FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::ElectricGuitar))
+	if (const FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::ElectricGuitar))
 	{
 		Damage = SkillData->Damage;
 		MaxDistanceByTile = SkillData->DistanceByTile;
@@ -58,9 +57,8 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		WaitEventTask->EventReceived.AddDynamic(this, &ThisClass::OnEventReceived);
 		WaitEventTask->ReadyForActivation();
 
-		ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
-		UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
-		if (SourceWeaponMesh)
+		const ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
+		if (UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr)
 		{
 			const FVector LocationOffset(5.0, -5.0, -50.0);
 			const FRotator RotationOffset(90.0, -90.0, 0.0);
@@ -94,17 +92,9 @@ void USMGA_SlowBullet::OnEventReceived(FGameplayEventData Payload)
 void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& InSourceLocation, const FVector_NetQuantize10& InTargetLocation)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	UWorld* World = GetWorld();
-	ASMGameState* GameState = World ? GetWorld()->GetGameState<ASMGameState>() : nullptr;
-	USMProjectilePoolManagerComponent* ProjectilePoolManager = GameState ? GameState->GetProjectilePoolManager() : nullptr;
-	if (!SourceCharacter || !ProjectilePoolManager)
-	{
-		EndAbilityByCancel();
-		return;
-	}
-
-	ASMProjectile* Projectile = ProjectilePoolManager->GetSlowBullet(SourceCharacter->GetTeam());
-	if (!Projectile)
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	ASMProjectile* Projectile = USMProjectileFunctionLibrary::GetSlowBulletProjectile(GetWorld(), SourceTeam);
+	if (!SourceCharacter || !Projectile)
 	{
 		EndAbilityByCancel();
 		return;

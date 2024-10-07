@@ -7,6 +7,7 @@
 
 #include "SMPlayerController.generated.h"
 
+class USMPlayerControllerDataAsset;
 class UInputMappingContext;
 class USMControlData;
 class ASMPlayerState;
@@ -65,6 +66,8 @@ public:
 	UFUNCTION(Reliable, Client)
 	void ClientReceiveTeamChat(const FString& Name, const FString& ChatMessage);
 
+	const USMPlayerControllerDataAsset* GetDataAsset() const { return DataAsset; }
+
 	FORCEINLINE const USMControlData* GetControlData() const { return ControlData; }
 
 	/** 채팅 매시지를 받았을 때 호출되는 델리게이트입니다. */
@@ -81,6 +84,9 @@ protected:
 	virtual void OnRep_PlayerState() override;
 
 	void InitControl();
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<const USMPlayerControllerDataAsset> DataAsset;
 
 private:
 	void BroadcastChat(const FString& SenderName, const FString& ChatMessage, bool bTeamChat);

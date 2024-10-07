@@ -12,13 +12,8 @@
 
 USMTileManagerComponent* USMTileFunctionLibrary::GetTileManagerComponent(const UWorld* World)
 {
-	AGameStateBase* GameState = World->GetGameState();
-	if (!World || !GameState)
-	{
-		return nullptr;
-	}
-
-	return GameState->GetComponentByClass<USMTileManagerComponent>();
+	const AGameStateBase* GameState = World ? World->GetGameState() : nullptr;
+	return GameState ? GameState->GetComponentByClass<USMTileManagerComponent>() : nullptr;
 }
 
 ASMTile* USMTileFunctionLibrary::GetTileFromLocation(const UWorld* World, const FVector& Location)
@@ -39,7 +34,7 @@ TArray<ASMTile*> USMTileFunctionLibrary::GetTilesInBox(const UWorld* World, cons
 {
 	TArray<ASMTile*> Result;
 
-	ASMTile* CenterTile = GetTileFromLocation(World, CenterLocation);
+	const ASMTile* CenterTile = GetTileFromLocation(World, CenterLocation);
 	if (!CenterTile)
 	{
 		return Result;
@@ -64,16 +59,16 @@ TArray<ASMTile*> USMTileFunctionLibrary::GetTilesInBox(const UWorld* World, cons
 	return Result;
 }
 
-TArray<ASMTile*> USMTileFunctionLibrary::GetTilesInCapsule(const UWorld* World, const FVector& StartLocation, const FVector& EndLocaiton, float Radius, bool bShowDebug)
+TArray<ASMTile*> USMTileFunctionLibrary::GetTilesInCapsule(const UWorld* World, const FVector& StartLocation, const FVector& EndLocation, float Radius, bool bShowDebug)
 {
 	TArray<ASMTile*> Result;
 
 	TArray<FOverlapResult> OverlapResults;
-	const FVector CapsuleLocation = (StartLocation + EndLocaiton) / 2.0f;
-	const FVector CapsuleDirection = (EndLocaiton - StartLocation).GetSafeNormal();
+	const FVector CapsuleLocation = (StartLocation + EndLocation) / 2.0f;
+	const FVector CapsuleDirection = (EndLocation - StartLocation).GetSafeNormal();
 	const FRotator CapsuleRotation = CapsuleDirection.Rotation() + FRotator(90.0, 0.0, 0.0);
 	const FQuat CapsuleQuat = CapsuleRotation.Quaternion();
-	const float CapsuleHalfHeight = (FVector::Dist(StartLocation, EndLocaiton) / 2.0f) + Radius;
+	const float CapsuleHalfHeight = (FVector::Dist(StartLocation, EndLocation) / 2.0f) + Radius;
 	const FCollisionShape CapsuleCollider = FCollisionShape::MakeCapsule(Radius, CapsuleHalfHeight);
 	if (World->OverlapMultiByChannel(OverlapResults, CapsuleLocation, CapsuleQuat, SMCollisionTraceChannel::TileAction, CapsuleCollider))
 	{
@@ -102,31 +97,31 @@ void USMTileFunctionLibrary::CaptureTiles(const UWorld* World, const TArray<ASMT
 	}
 }
 
-void USMTileFunctionLibrary::CaptureTilesInSqaure(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption)
+void USMTileFunctionLibrary::CaptureTilesInSquare(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
-	ASMTile* CenterTile = GetTileFromLocation(World, CenterLocation);
+	const ASMTile* CenterTile = GetTileFromLocation(World, CenterLocation);
 	if (!TileManager || !CenterTile)
 	{
 		return;
 	}
 
-	const float Offset = DefaultTileSize / 4.0f;
+	constexpr float Offset = DefaultTileSize / 4.0f;
 	const float HalfSize = Offset + (DefaultTileSize * (TileExpansionCount - 1));
 	const FVector BoxExtend(HalfSize);
 	TileManager->CaptureTiles(GetTilesInBox(World, CenterLocation, BoxExtend), Instigator, OverrideTeamOption);
 }
 
-void USMTileFunctionLibrary::CaptureTilesInSqaureWithDelay(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, float TotalCaptureTime, const TOptional<ESMTeam>& OverrideTeamOption)
+void USMTileFunctionLibrary::CaptureTilesInSquareWithDelay(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, float TotalCaptureTime, const TOptional<ESMTeam>& OverrideTeamOption)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
-	ASMTile* CenterTile = GetTileFromLocation(World, CenterLocation);
+	const ASMTile* CenterTile = GetTileFromLocation(World, CenterLocation);
 	if (!TileManager || !CenterTile)
 	{
 		return;
 	}
 
-	float OffSet = DefaultTileSize / 4.0f;
+	constexpr float OffSet = DefaultTileSize / 4.0f;
 	const float StepTime = TotalCaptureTime / (TileExpansionCount - 1);
 
 	TWeakObjectPtr<USMTileManagerComponent> TileManagerWeakPtr(TileManager);

@@ -8,8 +8,8 @@
 #include "SMUserWidget_StartCountdown.generated.h"
 
 class USMRoundTimerManagerComponent;
-class ASMGameState;
 class UScaleBox;
+
 /**
  *
  */

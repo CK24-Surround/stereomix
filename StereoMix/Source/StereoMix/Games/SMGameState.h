@@ -8,11 +8,6 @@
 
 #include "SMGameState.generated.h"
 
-class USMScoreMusicManagerComponent;
-class USMRoundTimerManagerComponent;
-class USMProjectilePoolManagerComponent;
-class USMTileManagerComponent;
-class USMScoreManagerComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnRoundStateChangedDelegate);
 
@@ -29,10 +24,6 @@ public:
 	ASMGameState();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	USMTileManagerComponent* GetTileManager() const { return TileManager; }
-
-	USMProjectilePoolManagerComponent* GetProjectilePoolManager() const { return ProjectilePoolManager; }
 
 	ESMRoundState GetRoundState() const { return RoundState; }
 
@@ -52,21 +43,6 @@ protected:
 
 	UFUNCTION()
 	void OnRep_RoundState();
-
-	UPROPERTY(VisibleAnywhere, Category = "Design")
-	TObjectPtr<USMRoundTimerManagerComponent> RoundTimerManager;
-
-	UPROPERTY(VisibleAnywhere, Category = "Design")
-	TObjectPtr<USMTileManagerComponent> TileManager;
-	
-	UPROPERTY(VisibleAnywhere, Category = "Design")
-	TObjectPtr<USMScoreManagerComponent> ScoreManager;
-
-	UPROPERTY(VisibleAnywhere, Category = "Design")
-	TObjectPtr<USMScoreMusicManagerComponent> ScoreMusicManager;
-
-	UPROPERTY(VisibleAnywhere, Category = "Design")
-	TObjectPtr<USMProjectilePoolManagerComponent> ProjectilePoolManager;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_RoundState")
 	ESMRoundState RoundState = ESMRoundState::None;

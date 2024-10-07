@@ -27,7 +27,7 @@ USMGA_BassNoiseBreak::USMGA_BassNoiseBreak()
 {
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
-	if (FSMCharacterNoiseBreakData* NoiseBreakData = USMDataTableFunctionLibrary::GetCharacterNoiseBreakData(ESMCharacterType::Bass))
+	if (const FSMCharacterNoiseBreakData* NoiseBreakData = USMDataTableFunctionLibrary::GetCharacterNoiseBreakData(ESMCharacterType::Bass))
 	{
 		Damage = NoiseBreakData->Damage;
 		MaxDistanceByTile = NoiseBreakData->DistanceByTile;
@@ -42,11 +42,11 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
-	USMHIC_Character* SourceHIC = GetHIC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMHIC_Character* SourceHIC = GetHIC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
-	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
+	const UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
 	if (!SourceCharacter || !SourceASC || !SourceHIC || !SourceDataAsset || !SourceCapsule || !SourceMovement)
 	{
 		EndAbilityByCancel();
@@ -66,7 +66,7 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 	// 몽타주를 재생합니다.
 	const FName MontageTaskName = TEXT("MontageTask");
-	ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	CachedNoiseBreakMontage = SourceDataAsset->NoiseBreakMontage[SourceTeam];
 	UAbilityTask_PlayMontageAndWait* PlayMontageAndWaitTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, MontageTaskName, CachedNoiseBreakMontage, 1.0f, NAME_None, false);
 	PlayMontageAndWaitTask->ReadyForActivation();
@@ -99,8 +99,7 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	if (K2_HasAuthority())
 	{
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-		if (TargetHIC)
+		if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 		{
 			TargetHIC->OnNoiseBreakStarted(SourceCharacter);
 		}
@@ -114,8 +113,8 @@ void USMGA_BassNoiseBreak::EndAbility(const FGameplayAbilitySpecHandle Handle, c
 
 void USMGA_BassNoiseBreak::ServerSendLocationData_Implementation(const FVector_NetQuantize10& NewSourceLocation, const FVector_NetQuantize10& NewTargetLocation)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
+	const ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	const UCharacterMovementComponent* SourceMovement = SourceCharacter ? SourceCharacter->GetCharacterMovement() : nullptr;
 	if (!SourceCharacter || !SourceMovement)
 	{
 		EndAbilityByCancel();
@@ -169,31 +168,42 @@ void USMGA_BassNoiseBreak::OnLanded()
 	if (K2_HasAuthority())
 	{
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-		if (TargetHIC)
+		if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 		{
 			TargetHIC->OnNoiseBreakApplied(SourceCharacter, MakeShared<FSMNoiseBreakData>());
 		}
 
-		SourceHIC->SetActorIAmHolding(nullptr);
+		const APawn* TargetPawn = Cast<APawn>(TargetActor);
+		APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
+		const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
+		if (TargetPlayerController && SourceDataAsset)
+		{
+			TargetPlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
+		}
 
 		TileCapture();
 		PerformBurstAttack(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
+
+		SourceHIC->SetActorIAmHolding(nullptr);
 	}
 
 	if (IsLocallyControlled())
 	{
-		FGameplayCueParameters GCParams;
-		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		ASMTile* Tile = (GetTileFromLocation(SourceLocation));
-		if (Tile)
+		APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr;
+		const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset();
+		if (PlayerController && SourceDataAsset)
 		{
-			GCParams.Location = Tile->GetTileLocation();
+			PlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
 		}
+
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		const ASMTile* Tile = GetTileFromLocation(SourceLocation);
+		const FVector TileLocation = Tile ? Tile->GetTileLocation() : FVector::ZeroVector;
+
+		FGameplayCueParameters GCParams;
+		GCParams.Location = TileLocation;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakBurst, GCParams);
 	}
-
-	// SourceASC->RemoveGameplayCue(SMTags::GameplayCue::SpecialAction::Smash);
 }
 
 void USMGA_BassNoiseBreak::OnNoiseBreakEnded(FGameplayEventData Payload)
@@ -205,7 +215,7 @@ void USMGA_BassNoiseBreak::OnNoiseBreakEnded(FGameplayEventData Payload)
 
 void USMGA_BassNoiseBreak::TileCapture()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const ESMTeam SourceTeam = SourceCharacter ? SourceCharacter->GetTeam() : ESMTeam::None;
 	if (!SourceCharacter || SourceTeam == ESMTeam::None)
 	{
@@ -213,14 +223,14 @@ void USMGA_BassNoiseBreak::TileCapture()
 	}
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	USMTileFunctionLibrary::CaptureTilesInSqaure(GetWorld(), SourceLocation, SourceCharacter, CaptureSize);
+	USMTileFunctionLibrary::CaptureTilesInSquare(GetWorld(), SourceLocation, SourceCharacter, CaptureSize);
 }
 
 void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	USMAbilitySystemComponent* SourceASC = GetASC();
-	ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
+	const ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
 	UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
 	if (!SourceCharacter || !SourceASC || !SourceWeaponMesh)
 	{

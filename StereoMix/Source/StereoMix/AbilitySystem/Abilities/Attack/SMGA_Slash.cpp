@@ -26,7 +26,7 @@ USMGA_Slash::USMGA_Slash()
 
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Bass::Charge);
 
-	if (FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Bass))
+	if (const FSMCharacterAttackData* AttackData = USMDataTableFunctionLibrary::GetCharacterAttackData(ESMCharacterType::Bass))
 	{
 		Damage = AttackData->Damage;
 		MaxDistanceByTile = AttackData->DistanceByTile;
@@ -98,7 +98,7 @@ void USMGA_Slash::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGam
 
 void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	if (!K2_CommitAbility())
+	if (!K2_CheckAbilityCost())
 	{
 		return;
 	}
@@ -150,6 +150,7 @@ void USMGA_Slash::OnNextActionProcced()
 
 	const FName SectionName = bIsLeftSlashNext ? TEXT("Left") : TEXT("Right");
 	MontageJumpToSection(SectionName);
+
 	ServerRPCApplyCost();
 }
 
@@ -191,6 +192,20 @@ void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	const FVector TargetLocation = TargetActor->GetActorLocation();
 	const FVector SourceToTargetDirection = (TargetLocation - SourceLocation).GetSafeNormal();
+
+	const APawn* TargetPawn = Cast<APawn>(TargetActor);
+	APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
+	if (APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr)
+	{
+		if (const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset())
+		{
+			PlayerController->ClientStartCameraShake(SourceDataAsset->HitCameraShake);
+			if (TargetPlayerController)
+			{
+				TargetPlayerController->ClientStartCameraShake(SourceDataAsset->HitCameraShake);
+			}
+		}
+	}
 
 	FGameplayCueParameters CueParams;
 	CueParams.SourceObject = SourceCharacter;
