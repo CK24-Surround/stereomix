@@ -16,4 +16,10 @@ public:
 	USMTutorialManagerComponent();
 
 	virtual void BeginPlay() override;
+
+	virtual void Activate(bool bReset) override;
+
+protected:
+	UFUNCTION()
+	void OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 };
