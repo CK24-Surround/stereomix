@@ -69,9 +69,6 @@ protected:
 	TObjectPtr<UNiagaraSystem> PreSpawnEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TObjectPtr<UNiagaraSystem> SpawnEffect;
-
-	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UNiagaraSystem> DestroyEffect;
 
 	UPROPERTY()

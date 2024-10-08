@@ -97,20 +97,13 @@ void ASMObstacleBase::BeginPlay()
 		SetVisual(nullptr, CachedPreSpawnEffect);
 	}, AccumulatedTime, false);
 
-	FTimerHandle SpawnEffectTimerHandle;
-	UNiagaraSystem* CachedSpawnEffect = SpawnEffect;
-	AccumulatedTime += SpawnEffectDuration;
-	World->GetTimerManager().SetTimer(SpawnEffectTimerHandle, [SetPushBack, SetVisualAndCollision, CachedSpawnEffect] {
-		SetPushBack();
-		SetVisualAndCollision(nullptr, CachedSpawnEffect);
-	}, AccumulatedTime, false);
-
 	FTimerHandle SpawnTimerHandle;
 	UStaticMesh* CachedOriginalMesh = OriginalMesh;
 	UNiagaraSystem* CachedOriginNiagaraSystem = OriginalNiagaraSystem;
 	AccumulatedTime += SpawnEffectDuration;
-	World->GetTimerManager().SetTimer(SpawnTimerHandle, [SetVisual, CachedOriginalMesh, CachedOriginNiagaraSystem] {
-		SetVisual(CachedOriginalMesh, CachedOriginNiagaraSystem);
+	World->GetTimerManager().SetTimer(SpawnTimerHandle, [SetPushBack, SetVisualAndCollision, CachedOriginalMesh, CachedOriginNiagaraSystem] {
+		SetPushBack();
+		SetVisualAndCollision(CachedOriginalMesh, CachedOriginNiagaraSystem);
 	}, AccumulatedTime, false);
 }
 
