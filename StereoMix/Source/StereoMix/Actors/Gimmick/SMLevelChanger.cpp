@@ -63,7 +63,7 @@ void ASMLevelChanger::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UWorld* World = GetWorld();
+	const UWorld* World = GetWorld();
 	if (!World)
 	{
 		return;
@@ -71,22 +71,47 @@ void ASMLevelChanger::BeginPlay()
 
 	if (HasAuthority() && SubLevels.Num() > 0)
 	{
-		SetRandomSubLevel();
-
-		FTimerHandle TimerHandle;
-		TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr(this);
-		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr] {
-			if (ThisWeakPtr.Get())
-			{
-				ThisWeakPtr->SetRandomSubLevel();
-			}
-		}, LevelSwitchInterval, true);
+		if (StartDelay > 0.0f)
+		{
+			FTimerHandle TimerHandle;
+			TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr(this);
+			World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr] {
+				if (ThisWeakPtr.Get())
+				{
+					ThisWeakPtr->StartLevelSwitchInterval();
+				}
+			}, StartDelay, false);
+		}
+		else
+		{
+			StartLevelSwitchInterval();
+		}
 	}
 }
 
 void ASMLevelChanger::MulticastShowActiveEffect_Implementation()
 {
 	NiagaraComponent->Activate(true);
+}
+
+void ASMLevelChanger::StartLevelSwitchInterval()
+{
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return;
+	}
+
+	SetRandomSubLevel();
+
+	FTimerHandle TimerHandle;
+	TWeakObjectPtr<ASMLevelChanger> ThisWeakPtr(this);
+	World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr] {
+		if (ThisWeakPtr.Get())
+		{
+			ThisWeakPtr->SetRandomSubLevel();
+		}
+	}, LevelSwitchInterval, true);
 }
 
 void ASMLevelChanger::SetRandomSubLevel()

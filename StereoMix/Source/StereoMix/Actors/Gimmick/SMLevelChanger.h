@@ -31,6 +31,10 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 
+	/** 레벨 전환 시작을 지연시키기 위한 시간입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
+	float StartDelay = 0.0f;
+	
 	/** 레벨 전환 주기입니다. */
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "1"))
 	float LevelSwitchInterval = 10.0f;
@@ -51,6 +55,8 @@ protected:
 private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastShowActiveEffect();
+
+	void StartLevelSwitchInterval();
 
 	void SetRandomSubLevel();
 
