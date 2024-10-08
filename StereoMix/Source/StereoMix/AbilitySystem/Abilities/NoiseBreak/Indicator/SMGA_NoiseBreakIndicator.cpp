@@ -40,7 +40,7 @@ void USMGA_NoiseBreakIndicator::ActivateAbility(const FGameplayAbilitySpecHandle
 	SkillIndicatorTask->ReadyForActivation();
 
 	// 무력화나 시간만료 등의 이유로 잡은 대상이 풀려나는 경우 즉시 취소합니다.
-	SourceHIC->OnHoldStateExit.AddUObject(this, &ThisClass::K2_EndAbility);
+	SourceHIC->OnHeldStateExit.AddUObject(this, &ThisClass::K2_EndAbility);
 }
 
 void USMGA_NoiseBreakIndicator::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -49,7 +49,7 @@ void USMGA_NoiseBreakIndicator::EndAbility(const FGameplayAbilitySpecHandle Hand
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (SourceHIC)
 	{
-		SourceHIC->OnHoldStateExit.RemoveAll(this);
+		SourceHIC->OnHeldStateExit.RemoveAll(this);
 	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);

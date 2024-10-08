@@ -21,6 +21,10 @@ public:
 
 	virtual void ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption) {}
 
+	virtual void OnHeldStateEntry() {}
+
+	virtual void OnHeldStateExit() {}
+	
 	const static FName HICName;
 
 protected:

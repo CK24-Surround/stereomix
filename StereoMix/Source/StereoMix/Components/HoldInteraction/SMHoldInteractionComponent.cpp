@@ -57,7 +57,7 @@ void USMHoldInteractionComponent::OnRep_HoldingMeActor()
 			SourceASC->AddTag(SMTags::Character::State::Common::Held);
 		}
 
-		OnHoldedStateEntry.Broadcast();
+		OnHeldStateEntry.Broadcast();
 	}
 	else
 	{
@@ -66,6 +66,6 @@ void USMHoldInteractionComponent::OnRep_HoldingMeActor()
 			SourceASC->RemoveTag(SMTags::Character::State::Common::Held);
 		}
 
-		OnHoldedStateExit.Broadcast();
+		OnHeldStateExit.Broadcast();
 	}
 }

@@ -60,10 +60,10 @@ public:
 	virtual void OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) {}
 
 	/** 잡힐때 이벤트입니다. */
-	FOnHoldStateChangedDelegate OnHoldedStateEntry;
+	FOnHoldStateChangedDelegate OnHeldStateEntry;
 
 	/** 풀릴때 이벤트입니다. */
-	FOnHoldStateChangedDelegate OnHoldedStateExit;
+	FOnHoldStateChangedDelegate OnHeldStateExit;
 
 protected:
 	UFUNCTION()

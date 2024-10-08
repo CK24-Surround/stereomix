@@ -16,7 +16,7 @@ public:
 
 	virtual void ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption) override;
 
-	void OnHeldStateEntry() const;
+	virtual void OnHeldStateEntry() override;
 
-	void OnHeldStateExit() const;
+	virtual void OnHeldStateExit() override;
 };

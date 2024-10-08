@@ -4,6 +4,7 @@
 #include "SMHoldableItem_Heal.h"
 
 #include "StereoMixLog.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/SphereComponent.h"
 #include "Components/Item/SMHIC_HealItem.h"
 #include "Utilities/SMCollision.h"
@@ -15,7 +16,6 @@ ASMHoldableItem_Heal::ASMHoldableItem_Heal(const FObjectInitializer& ObjectIniti
 	ColliderComponent->InitSphereRadius(65.0f);
 
 	HIC->OnHeldStateEntry.AddUObject(this, &ThisClass::OnHeldStateEntry);
-	HIC->OnHeldStateExit.AddUObject(this, &ThisClass::OnHeldStateExit);
 }
 
 void ASMHoldableItem_Heal::ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption)
@@ -25,16 +25,21 @@ void ASMHoldableItem_Heal::ActivateItemByNoiseBreak(const UWorld* World, const T
 	UE_LOG(LogStereoMix, Warning, TEXT("ASMHoldableItem_Heal::ActivateItemByNoiseBreak"));
 
 	ActivateItem(InActivator);
+	Destroy();
 }
 
-void ASMHoldableItem_Heal::OnHeldStateEntry() const
+void ASMHoldableItem_Heal::OnHeldStateEntry()
 {
 	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	MeshComponent->SetVisibility(false);
+	if (ASMPlayerCharacterBase* HoldingMePlayer = Cast<ASMPlayerCharacterBase>(HIC->GetActorHoldingMe()))
+	{
+		HoldingMePlayer->GetHoldInteractionComponent()->OnHeldStateExit.AddUObject(this, &ThisClass::OnHeldStateExit);
+	}
 }
 
-void ASMHoldableItem_Heal::OnHeldStateExit() const
+void ASMHoldableItem_Heal::OnHeldStateExit()
 {
-	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::HoldableItem);
-	MeshComponent->SetVisibility(true);
+	ActivateItem(nullptr);
+	Destroy();
 }

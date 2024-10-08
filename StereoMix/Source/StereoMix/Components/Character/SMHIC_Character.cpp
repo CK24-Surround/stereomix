@@ -259,7 +259,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 			SourceASC->TryActivateAbilitiesByTag(FGameplayTagContainer(SMTags::Ability::NoiseBreakIndicator));
 		}
 
-		OnHoldStateEnrty.Broadcast();
+		OnHeldStateEntry.Broadcast();
 	}
 	else
 	{
@@ -269,7 +269,7 @@ void USMHIC_Character::OnRep_IAmHoldingActor()
 		}
 
 		/** 잡은 대상을 제거하면 잡기 풀기 델리게이트가 호출됩니다.*/
-		OnHoldStateExit.Broadcast();
+		OnHeldStateExit.Broadcast();
 	}
 }
 

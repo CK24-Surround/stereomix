@@ -5,7 +5,6 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "Actors/Weapons/SMWeaponBase.h"
 
 
 ASMElectricGuitarCharacter::ASMElectricGuitarCharacter(const FObjectInitializer& ObjectInitializer)
