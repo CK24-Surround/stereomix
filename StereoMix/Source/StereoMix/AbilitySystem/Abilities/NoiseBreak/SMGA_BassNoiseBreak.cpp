@@ -11,10 +11,12 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_ModifyGravityUntilLanded.h"
 #include "Actors/Character/Player/SMBassCharacter.h"
+#include "Actors/Items/HoldableItem/SMHoldableItemBase.h"
 #include "Actors/Tiles/SMTile.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Character/SMHIC_Character.h"
+#include "Components/Core/SMTileManagerComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
@@ -180,9 +182,26 @@ void USMGA_BassNoiseBreak::OnLanded()
 		{
 			TargetPlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
 		}
+		
+		if (TargetActor->IsA<ASMHoldableItemBase>())
+		{
+			if (const UWorld* World = GetWorld())
+			{
+				const FVector SourceLocation = SourceCharacter->GetActorLocation();
+				constexpr float Offset = USMTileFunctionLibrary::DefaultTileSize / 4.0f;
+				const float HalfSize = Offset + (USMTileFunctionLibrary::DefaultTileSize * (CaptureSize - 1));
+				const FVector BoxExtend(HalfSize);
+				TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesInBox(World, SourceLocation, BoxExtend);
 
-		TileCapture();
-		PerformBurstAttack(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
+				ASMHoldableItemBase* HoldableItem = Cast<ASMHoldableItemBase>(TargetActor);
+				HoldableItem->ActivateItemByNoiseBreak(World, CaptureTiles, SourceCharacter, SourceCharacter->GetTeam());
+			}
+		}
+		else
+		{
+			TileCapture();
+			PerformBurstAttack(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
+		}
 
 		SourceHIC->SetActorIAmHolding(nullptr);
 	}
