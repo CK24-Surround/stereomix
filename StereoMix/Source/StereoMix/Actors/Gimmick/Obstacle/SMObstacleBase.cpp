@@ -97,6 +97,11 @@ void ASMObstacleBase::BeginPlay()
 		SetVisual(nullptr, CachedPreSpawnEffect);
 	}, AccumulatedTime, false);
 
+	FTimerHandle PushBackTimerHandle;
+	World->GetTimerManager().SetTimer(PushBackTimerHandle, [SetPushBack] {
+		SetPushBack();
+	}, AccumulatedTime + SpawnEffectDuration - 0.1f, false);
+
 	FTimerHandle SpawnTimerHandle;
 	UStaticMesh* CachedOriginalMesh = OriginalMesh;
 	UNiagaraSystem* CachedOriginNiagaraSystem = OriginalNiagaraSystem;
