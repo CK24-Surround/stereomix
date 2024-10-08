@@ -11,6 +11,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPianoCharacter.h"
+#include "Actors/Items/HoldableItem/SMHoldableItemBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Character/SMHIC_Character.h"
 #include "Data/Character/SMPianoCharacterDataAsset.h"
@@ -145,8 +146,24 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 			TargetHIC->OnNoiseBreakApplied(SourceCharacter, NoiseBreakData);
 		}
 
-		TileCapture();
-		PerformBurstAttack(NoiseBreakTargetLocation, SMTags::GameplayCue::Piano::NoiseBreakBurstHit);
+		if (TargetActor->IsA<ASMHoldableItemBase>())
+		{
+			if (const UWorld* World = GetWorld())
+			{
+				constexpr float Offset = USMTileFunctionLibrary::DefaultTileSize / 4.0f;
+				const float HalfSize = Offset + (USMTileFunctionLibrary::DefaultTileSize * (CaptureSize - 1));
+				const FVector BoxExtend(HalfSize);
+				TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesInBox(World, NoiseBreakTargetLocation, BoxExtend);
+
+				ASMHoldableItemBase* HoldableItem = Cast<ASMHoldableItemBase>(TargetActor);
+				HoldableItem->ActivateItemByNoiseBreak(World, CaptureTiles, SourceCharacter, SourceCharacter->GetTeam());
+			}
+		}
+		else
+		{
+			TileCapture();
+			PerformBurstAttack(NoiseBreakTargetLocation, SMTags::GameplayCue::Piano::NoiseBreakBurstHit);
+		}
 
 		const APawn* TargetPawn = Cast<APawn>(TargetActor);
 		APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
