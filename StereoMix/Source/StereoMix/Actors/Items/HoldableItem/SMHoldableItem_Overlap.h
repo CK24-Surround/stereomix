@@ -16,5 +16,5 @@ public:
 
 	virtual void ActivateItem(AActor* InActivator) override;
 
-	void OnHoldedStateEntry();
+	void OnHeldStateEntry();
 };

@@ -12,7 +12,7 @@ ASMHoldableItem_Overlap::ASMHoldableItem_Overlap(const FObjectInitializer& Objec
 {
 	ColliderComponent->InitSphereRadius(65.0f);
 
-	HIC->OnHoldedStateEntry.AddUObject(this, &ASMHoldableItem_Overlap::OnHoldedStateEntry);
+	HIC->OnHoldedStateEntry.AddUObject(this, &ASMHoldableItem_Overlap::OnHeldStateEntry);
 }
 
 void ASMHoldableItem_Overlap::ActivateItem(AActor* InActivator)
@@ -20,7 +20,7 @@ void ASMHoldableItem_Overlap::ActivateItem(AActor* InActivator)
 	Super::ActivateItem(InActivator);
 }
 
-void ASMHoldableItem_Overlap::OnHoldedStateEntry()
+void ASMHoldableItem_Overlap::OnHeldStateEntry()
 {
 	ActivateItem(HIC->GetActorHoldingMe());
 
