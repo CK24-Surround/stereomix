@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{61fcf8e2-0b7e-46d7-b860-d47bba385010}">
 		<property name="name">
-			<value>Skill_Hit</value>
+			<value>Skill-Crush</value>
 		</property>
 		<property name="outputFormat">
 			<value>2</value>
