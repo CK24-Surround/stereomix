@@ -172,17 +172,17 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetConfirmedActorsToApplyItem()
 	TArray<AActor*> ActorsOnTriggeredTiles = GetActorsOnTriggeredTiles(SMCollisionTraceChannel::Action);
 
 	TArray<AActor*> ConfirmedActorsToApplyItem;
-	for (const auto& ActorOnTriggeredTiles : ActorsOnTriggeredTiles)
+	for (const auto& ActorOnTriggeredTile : ActorsOnTriggeredTiles)
 	{
-		if (!ActorOnTriggeredTiles)
+		if (!ActorOnTriggeredTile || !ActorOnTriggeredTile->IsA<ASMPlayerCharacterBase>())
 		{
 			continue;
 		}
-
-		bool CheckSameTeamWithLocalTeam = IsSameTeamWithLocalTeam(ActorOnTriggeredTiles);
+		
+		bool CheckSameTeamWithLocalTeam = IsSameTeamWithLocalTeam(ActorOnTriggeredTile);
 		if (CheckSameTeamWithLocalTeam == (ApplyTeamType == ESMLocalTeam::Equal))
 		{
-			ConfirmedActorsToApplyItem.Add(ActorOnTriggeredTiles);
+			ConfirmedActorsToApplyItem.Add(ActorOnTriggeredTile);
 		}
 	}
 	UE_LOG(LogStereoMix, Warning, TEXT("ConfirmedActorsToApplyItem.Num() : %d"), ConfirmedActorsToApplyItem.Num());
