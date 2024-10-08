@@ -13,6 +13,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMElectricGuitarCharacter.h"
+#include "Actors/Items/HoldableItem/SMHoldableItemBase.h"
 #include "Actors/Tiles/SMTile.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Character/SMHIC_Character.h"
@@ -202,8 +203,20 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 		TargetHIC->OnNoiseBreakApplied(SourceCharacter, NoiseBreakData);
 	}
 
-	TileCapture();
-	PerformElectricGuitarBurstAttack();
+	if (TargetActor->IsA<ASMHoldableItemBase>())
+	{
+		if (const UWorld* World = GetWorld())
+		{
+			ASMHoldableItemBase* HoldableItem = Cast<ASMHoldableItemBase>(TargetActor);
+			TArray<ASMTile*> CaptureTiles = GetTilesToBeCaptured(World);
+			HoldableItem->ActivateItemByNoiseBreak(World, CaptureTiles, SourceCharacter, SourceCharacter->GetTeam());
+		}
+	}
+	else
+	{
+		TileCapture();
+		PerformElectricGuitarBurstAttack();
+	}
 
 	const APawn* TargetPawn = Cast<APawn>(TargetActor);
 	APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
@@ -231,15 +244,8 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	SourceHIC->SetActorIAmHolding(nullptr);
 }
 
-void USMGA_ElectricGuitarNoiseBreak::TileCapture()
+TArray<ASMTile*> USMGA_ElectricGuitarNoiseBreak::GetTilesToBeCaptured(const UWorld* World) const
 {
-	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	const UWorld* World = GetWorld();
-	if (!SourceCharacter || !World)
-	{
-		return;
-	}
-
 	// 캡슐을 통해 시작 지점에서 끝지점까지 점령할 타일을 저장합니다.
 	TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesInCapsule(World, NoiseBreakStartLocation, NoiseBreakTargetLocation, USMTileFunctionLibrary::DefaultTileSize);
 
@@ -265,6 +271,20 @@ void USMGA_ElectricGuitarNoiseBreak::TileCapture()
 		const float Cos = FMath::Cos(Radians);
 		return DotProductFromStart < -Cos || DotProductFromEnd > Cos;
 	});
+
+	return CaptureTiles;
+}
+
+void USMGA_ElectricGuitarNoiseBreak::TileCapture()
+{
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const UWorld* World = GetWorld();
+	if (!SourceCharacter || !World)
+	{
+		return;
+	}
+
+	TArray<ASMTile*> CaptureTiles = GetTilesToBeCaptured(World);
 
 	USMTileFunctionLibrary::CaptureTiles(World, CaptureTiles, SourceCharacter);
 	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크로 점령 시도한 타일 개수: %d"), CaptureTiles.Num());

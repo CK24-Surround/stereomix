@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Actors/Items/SMItemBase.h"
+#include "Actors/Tiles/SMTile.h"
+#include "Data/SMTeam.h"
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMHoldableItemBase.generated.h"
 
@@ -16,6 +18,8 @@ public:
 	ASMHoldableItemBase(const FObjectInitializer& ObjectInitializer);
 
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override { return HIC; }
+
+	virtual void ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption) {}
 
 	const static FName HICName;
 

@@ -14,7 +14,9 @@ class STEREOMIX_API ASMHoldableItem_Heal : public ASMHoldableItemBase
 public:
 	ASMHoldableItem_Heal(const FObjectInitializer& ObjectInitializer);
 
-	virtual void ActivateItem(AActor* InActivator) override;
+	virtual void ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption) override;
 
-	void OnHeldStateEntry();
+	void OnHeldStateEntry() const;
+
+	void OnHeldStateExit() const;
 };
