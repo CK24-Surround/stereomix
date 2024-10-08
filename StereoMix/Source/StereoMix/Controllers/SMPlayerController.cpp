@@ -54,8 +54,7 @@ void ASMPlayerController::InitControl()
 		return;
 	}
 
-	UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer());
-	if (Subsystem)
+	if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(GetLocalPlayer()))
 	{
 		Subsystem->ClearAllMappings();
 		for (auto [Context, Priority, bNotifyUserSettings] : InputMappingContexts)
@@ -121,8 +120,8 @@ void ASMPlayerController::BroadcastChat(const FString& SenderName, const FString
 
 	for (const TObjectPtr<APlayerState>& TargetPlayer : GameMode->GameState->PlayerArray)
 	{
-		ASMPlayerState* TargetPlayerState = CastChecked<ASMPlayerState>(TargetPlayer);
-		if (bTeamChat)
+		const ASMPlayerState* TargetPlayerState = Cast<ASMPlayerState>(TargetPlayer);
+		if (TargetPlayerState && bTeamChat)
 		{
 			if (TargetPlayerState->GetTeam() == Team)
 			{

@@ -7,6 +7,8 @@
 #include "SMTutorialManagerComponent.generated.h"
 
 
+class USMTutorialHUD;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMTutorialManagerComponent : public UActorComponent
 {
@@ -20,6 +22,7 @@ public:
 	virtual void Activate(bool bReset) override;
 
 protected:
+
 	UFUNCTION()
 	void OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 };
