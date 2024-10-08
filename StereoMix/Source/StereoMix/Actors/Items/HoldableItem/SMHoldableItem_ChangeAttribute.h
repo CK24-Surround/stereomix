@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameplayTagContainer.h"
 #include "SMHoldableItemBase.h"
+#include "Data/SMLocalTeam.h"
 #include "SMHoldableItem_ChangeAttribute.generated.h"
 
+class UNiagaraSystem;
 class UGameplayEffect;
 
 UCLASS()
@@ -23,10 +25,20 @@ public:
 
 	virtual void OnHeldStateExit() override;
 
-	virtual void BeginDestroy() override;
-
 protected:
 	void TriggerCountTimerCallback();
+
+	bool IsSameTeamWithLocalTeam(AActor* TargetActor) const;
+	
+	TArray<AActor*> GetConfirmedActorsToApplyItem();
+
+	TArray<AActor*> GetActorsOnTriggeredTiles(ECollisionChannel TraceChannel);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastPlayActivateTileFX(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTriggeredTiles);
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<UGameplayEffect> SelfGE;
@@ -44,6 +56,9 @@ protected:
 	FGameplayTag DataTag;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
+	ESMLocalTeam ApplyTeamType = ESMLocalTeam::Equal;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
 	float TotalMagnitude = 100.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0.0"))
@@ -52,11 +67,11 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "1"))
 	int32 TriggerCount = 1;
 
-	TArray<TObjectPtr<ASMTile>> CachedTiles = TArray<TObjectPtr<ASMTile>>();
+	TArray<TWeakObjectPtr<ASMTile>> CachedTriggeredTiles = TArray<TWeakObjectPtr<ASMTile>>();
 
 	FTimerHandle TriggerCountTimerHandle;
 
 	int32 CurrentTriggerCount = 0;
 
-	int8 bActivated:1 = false;
+	uint8 bActivated:1;
 };
