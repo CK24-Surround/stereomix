@@ -4,15 +4,15 @@
 
 #include "CoreMinimal.h"
 #include "SMHoldableItemBase.h"
-#include "SMHoldableItem_Heal.generated.h"
+#include "SMHoldableItem_ChangeAttribute.generated.h"
 
 UCLASS()
-class STEREOMIX_API ASMHoldableItem_Heal : public ASMHoldableItemBase
+class STEREOMIX_API ASMHoldableItem_ChangeAttribute : public ASMHoldableItemBase
 {
 	GENERATED_BODY()
 
 public:
-	ASMHoldableItem_Heal(const FObjectInitializer& ObjectInitializer);
+	ASMHoldableItem_ChangeAttribute(const FObjectInitializer& ObjectInitializer);
 
 	virtual void ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption) override;
 

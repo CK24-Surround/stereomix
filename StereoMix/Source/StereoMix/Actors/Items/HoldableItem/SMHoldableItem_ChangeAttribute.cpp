@@ -1,7 +1,7 @@
 ﻿// Copyright Studio Surround. All Rights Reserved.
 
 
-#include "SMHoldableItem_Heal.h"
+#include "SMHoldableItem_ChangeAttribute.h"
 
 #include "StereoMixLog.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
@@ -10,7 +10,7 @@
 #include "Utilities/SMCollision.h"
 
 
-ASMHoldableItem_Heal::ASMHoldableItem_Heal(const FObjectInitializer& ObjectInitializer)
+ASMHoldableItem_ChangeAttribute::ASMHoldableItem_ChangeAttribute(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<USMHIC_HealItem>(HICName))
 {
 	ColliderComponent->InitSphereRadius(65.0f);
@@ -18,7 +18,7 @@ ASMHoldableItem_Heal::ASMHoldableItem_Heal(const FObjectInitializer& ObjectIniti
 	HIC->OnHeldStateEntry.AddUObject(this, &ThisClass::OnHeldStateEntry);
 }
 
-void ASMHoldableItem_Heal::ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption)
+void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption)
 {
 	Super::ActivateItemByNoiseBreak(World, TilesToBeCaptured, InActivator, TeamOption);
 
@@ -28,7 +28,7 @@ void ASMHoldableItem_Heal::ActivateItemByNoiseBreak(const UWorld* World, const T
 	Destroy();
 }
 
-void ASMHoldableItem_Heal::OnHeldStateEntry()
+void ASMHoldableItem_ChangeAttribute::OnHeldStateEntry()
 {
 	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	MeshComponent->SetVisibility(false);
@@ -38,7 +38,7 @@ void ASMHoldableItem_Heal::OnHeldStateEntry()
 	}
 }
 
-void ASMHoldableItem_Heal::OnHeldStateExit()
+void ASMHoldableItem_ChangeAttribute::OnHeldStateExit()
 {
 	ActivateItem(nullptr);
 	Destroy();

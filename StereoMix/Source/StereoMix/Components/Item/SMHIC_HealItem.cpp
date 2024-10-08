@@ -3,7 +3,7 @@
 
 #include "SMHIC_HealItem.h"
 
-#include "Actors/Items/HoldableItem/SMHoldableItem_Heal.h"
+#include "Actors/Items/HoldableItem/SMHoldableItem_ChangeAttribute.h"
 
 
 bool USMHIC_HealItem::CanBeHeld(AActor* Instigator) const
