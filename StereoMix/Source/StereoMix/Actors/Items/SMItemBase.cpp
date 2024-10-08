@@ -29,5 +29,6 @@ ASMItemBase::ASMItemBase(const FObjectInitializer& ObjectInitializer)
 
 void ASMItemBase::ActivateItem(AActor* InActivator)
 {
+	Activator = InActivator;
 	(void)OnUsedItem.ExecuteIfBound();
 }

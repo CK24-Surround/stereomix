@@ -28,6 +28,9 @@ public:
 
 	FOnUsedItemSignature OnUsedItem;
 
+	UPROPERTY()
+	TObjectPtr<AActor> Activator;
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> SceneComponent;

@@ -127,7 +127,7 @@ void ASMHoldableItem_ChangeAttribute::TriggerCountTimerCallback()
 		}
 	}
 
-	MulticastPlayActivateTileFX(HIC->GetActorHoldingMe(), CachedTriggeredTiles);
+	MulticastPlayActivateTileFX(Activator, CachedTriggeredTiles);
 }
 
 bool ASMHoldableItem_ChangeAttribute::IsSameTeamWithLocalTeam(AActor* TargetActor) const
@@ -139,19 +139,19 @@ bool ASMHoldableItem_ChangeAttribute::IsSameTeamWithLocalTeam(AActor* TargetActo
 	}
 
 	ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(TargetActor);
-	if (!ensureAlways(TargetTeamInterface))
+	if (!TargetTeamInterface)
 	{
 		return false;
 	}
 
 	APlayerController* LocalPlayerController = UGameplayStatics::GetPlayerController(this, 0);
-	if (!ensureAlways(LocalPlayerController))
+	if (!LocalPlayerController)
 	{
 		return false;
 	}
 
 	ISMTeamInterface* LocalTeamInterface = Cast<ISMTeamInterface>(LocalPlayerController->GetPawn());
-	if (!ensureAlways(LocalTeamInterface))
+	if (!LocalTeamInterface)
 	{
 		return false;
 	}
@@ -185,7 +185,7 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetConfirmedActorsToApplyItem()
 			ConfirmedActorsToApplyItem.Add(ActorOnTriggeredTiles);
 		}
 	}
-
+	UE_LOG(LogStereoMix, Warning, TEXT("ConfirmedActorsToApplyItem.Num() : %d"), ConfirmedActorsToApplyItem.Num());
 	return ConfirmedActorsToApplyItem;
 }
 
