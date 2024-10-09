@@ -4,14 +4,16 @@
 #include "SMAICharacterBase.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/Common/SMTeamComponent.h"
 #include "Utilities/SMCollision.h"
 
 
 ASMAICharacterBase::ASMAICharacterBase()
 {
 	PrimaryActorTick.bCanEverTick = true;
-	
+
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 	CachedMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	CachedMeshComponent->SetRelativeRotation(FRotator(0.0, -90.0, 0.0));
@@ -28,12 +30,30 @@ ASMAICharacterBase::ASMAICharacterBase()
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
 	HitBox->InitCapsuleSize(125.0f, 125.0f);
+
+	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
+}
+
+void ASMAICharacterBase::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(WeaponClass);
+	if (Weapon)
+	{
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
+		Weapon->SetOwner(this);
+	}
+}
+
+ESMTeam ASMAICharacterBase::GetTeam() const
+{
+	return TeamComponent->GetTeam();
 }
 
 void ASMAICharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 AActor* ASMAICharacterBase::GetLastAttacker() const
