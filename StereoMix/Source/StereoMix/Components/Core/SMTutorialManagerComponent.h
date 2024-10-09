@@ -6,7 +6,8 @@
 #include "Components/ActorComponent.h"
 #include "SMTutorialManagerComponent.generated.h"
 
-
+class UEnhancedInputComponent;
+class UInputAction;
 class USMTutorialHUD;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -19,10 +20,18 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void Activate(bool bReset) override;
 
 protected:
-
 	UFUNCTION()
 	void OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	void OnNextInputReceived();
+
+	UPROPERTY(EditAnywhere, Category = "Design|IA")
+	TObjectPtr<UInputAction> NextInputAction;
+
+	TArray<FString> Scripts;
 };
