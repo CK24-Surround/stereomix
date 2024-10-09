@@ -204,18 +204,18 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 		for (const FOverlapResult& OverlapResult : OverlapResults)
 		{
 			AActor* TargetActor = OverlapResult.GetActor();
-			if (!TargetActor)
+			ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(TargetActor);
+			if (!TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
 			{
 				continue;
 			}
 
-			const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-			const ESMTeam TargetTeam = USMTeamBlueprintLibrary::GetTeam(TargetActor);
-
-			if (SourceTeam == TargetTeam)
+			if (USMTeamBlueprintLibrary::IsSameTeam(SourceCharacter, TargetActor))
 			{
 				continue;
 			}
+
+			TargetDamageInterface->ReceiveDamage(SourceCharacter, Damage);
 
 			if (ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor))
 			{
@@ -242,17 +242,6 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 				GCParams.TargetAttachComponent = TargetActor->GetRootComponent();
 				GCParams.Normal = Direction;
 				SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowHit, GCParams);
-			}
-
-			if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor))
-			{
-				FGameplayEffectSpecHandle GESpecHandle = MakeOutgoingGameplayEffectSpec(SourceDataAsset->DamageGE);
-				if (GESpecHandle.IsValid())
-				{
-					GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, Damage);
-				}
-
-				TargetASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 			}
 		}
 	}
