@@ -21,11 +21,11 @@ public:
 
 	USMTutorialHUD* GetTutorialHUD() const { return TutorialHUD; }
 
-	void SetScript(const FString& InString);
-
 	void ActivateDialogue();
-	
+
 	void DeactivateDialogue();
+
+	void SetScript(const FString& InString);
 
 protected:
 	UFUNCTION()

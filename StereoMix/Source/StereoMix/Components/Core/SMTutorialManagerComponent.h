@@ -34,4 +34,6 @@ protected:
 	TObjectPtr<UInputAction> NextInputAction;
 
 	TArray<FString> Scripts;
+
+	int32 ScriptIndex = 1;
 };

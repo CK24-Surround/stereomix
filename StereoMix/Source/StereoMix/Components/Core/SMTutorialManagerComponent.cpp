@@ -15,6 +15,7 @@ USMTutorialManagerComponent::USMTutorialManagerComponent()
 	PrimaryComponentTick.bCanEverTick = false;
 	bAutoActivate = true;
 
+	Scripts.Push(TEXT(""));
 	Scripts.Push(TEXT("따르릉! 따르릉! 뮤지션님! 지금 어디세요? 이러다가 공연에 늦겠어요! 뭣...작업하느라 아직 작업실이라고요? 지각하려고 작정하셨어요? 오른편에 벤 세워 뒀으니까, 빨리 뛰어오세요! WASD 로 이동할 수 있으니까 오른쪽으로 쭉 오세요! 서둘러요!"));
 	Scripts.Push(TEXT("뭣...작업하느라 아직 작업실이라고요? 지각하려고 작정하셨어요?"));
 	Scripts.Push(TEXT("오른편에 벤 세워 뒀으니까, 빨리 뛰어오세요!"));
@@ -35,7 +36,7 @@ void USMTutorialManagerComponent::BeginPlay()
 
 		if (USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>())
 		{
-			UITutorialControlComponent->SetScript(Scripts[0]);
+			UITutorialControlComponent->SetScript(Scripts[ScriptIndex++]);
 		}
 	}
 
@@ -64,25 +65,23 @@ void USMTutorialManagerComponent::OnProgressTriggerBeginOverlap(AActor* Overlapp
 		OverlappedActor->OnActorBeginOverlap.RemoveDynamic(this, &USMTutorialManagerComponent::OnProgressTriggerBeginOverlap);
 		OverlappedActor->Destroy();
 	}
-
-	const UWorld* World = GetWorld();
-	if (APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr)
-	{
-		if (USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>())
-		{
-			UITutorialControlComponent->DeactivateDialogue();
-
-			// TODO: 테스트
-			FTimerHandle TimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, [UITutorialControlComponent] { UITutorialControlComponent->ActivateDialogue(); }, 1.0f, false);
-		}
-	}
-
-	UE_LOG(LogTemp, Warning, TEXT("목표완료 시점 PlayerController: %p"), GetWorld()->GetFirstPlayerController());
-	NET_VLOG(GetOwner(), 3, 30.0f, TEXT("목표완료: 목표지점 도착"));
 }
 
 void USMTutorialManagerComponent::OnNextInputReceived()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Next 입력"));
+
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController ? PlayerController->GetComponentByClass<USMTutorialUIControlComponent>() : nullptr)
+	{
+		if (ScriptIndex > 0 && Scripts.IsValidIndex(ScriptIndex))
+		{
+			UITutorialControlComponent->SetScript(Scripts[ScriptIndex++]);
+		}
+		else
+		{
+			UITutorialControlComponent->DeactivateDialogue();
+		}
+	}
 }
