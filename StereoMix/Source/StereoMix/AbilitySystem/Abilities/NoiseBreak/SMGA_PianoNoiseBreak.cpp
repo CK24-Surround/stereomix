@@ -195,16 +195,14 @@ void USMGA_PianoNoiseBreak::OnNoiseBreakEnded()
 TArray<ASMTile*> USMGA_PianoNoiseBreak::GetTilesToBeCaptured()
 {
 	const UWorld* World = GetWorld();
-	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	if (!World || !SourceCharacter)
+	if (!World)
 	{
 		return TArray<ASMTile*>();
 	}
 
-	const FVector SourceLocation = SourceCharacter->GetActorLocation();
 	constexpr float Offset = USMTileFunctionLibrary::DefaultTileSize / 4.0f;
 	const float HalfSize = Offset + (USMTileFunctionLibrary::DefaultTileSize * (CaptureSize - 1));
 	const FVector BoxExtend(HalfSize);
 
-	return USMTileFunctionLibrary::GetTilesInBox(World, SourceLocation, BoxExtend);
+	return USMTileFunctionLibrary::GetTilesInBox(World, NoiseBreakTargetLocation, BoxExtend);
 }
