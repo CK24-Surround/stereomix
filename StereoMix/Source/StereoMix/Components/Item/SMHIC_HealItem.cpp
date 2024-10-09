@@ -39,6 +39,8 @@ void USMHIC_HealItem::OnHeld(AActor* Instigator)
 
 void USMHIC_HealItem::OnReleasedFromHold(AActor* Instigator)
 {
+	SetActorHoldingMe(nullptr);
+
 	if (SourceItem && !SourceItem->GetIsActivated())
 	{
 		SourceItem->Destroy();

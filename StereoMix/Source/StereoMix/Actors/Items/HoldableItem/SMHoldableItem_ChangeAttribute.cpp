@@ -14,11 +14,13 @@
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "Utilities/SMCollision.h"
+#include "Utilities/SMLog.h"
 
 
 ASMHoldableItem_ChangeAttribute::ASMHoldableItem_ChangeAttribute(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<USMHIC_HealItem>(HICName))
 {
+	bAlwaysRelevant = true;
 	ColliderComponent->InitSphereRadius(65.0f);
 }
 
@@ -122,7 +124,7 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetConfirmedActorsToApplyItem()
 		}
 	}
 
-	UE_LOG(LogStereoMix, Warning, TEXT("ConfirmedActorsToApplyItem.Num() : %d"), ConfirmedActorsToApplyItem.Num());
+	NET_LOG(this, Log, TEXT("ConfirmedActorsToApplyItem.Num() : %d"), ConfirmedActorsToApplyItem.Num());
 	return ConfirmedActorsToApplyItem;
 }
 
