@@ -4,17 +4,14 @@
 #include "SMHoldableItem_ChangeAttribute.h"
 
 #include "Engine/OverlapResult.h"
-#include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "StereoMixLog.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
-#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
-#include "Components/Common/SMTeamComponent.h"
 #include "Components/Item/SMHIC_HealItem.h"
 #include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
-#include "Kismet/GameplayStatics.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Utilities/SMCollision.h"
 
 
@@ -22,29 +19,30 @@ ASMHoldableItem_ChangeAttribute::ASMHoldableItem_ChangeAttribute(const FObjectIn
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<USMHIC_HealItem>(HICName))
 {
 	ColliderComponent->InitSphereRadius(65.0f);
-
-	HIC->OnHeldStateEntry.AddUObject(this, &ThisClass::OnHeldStateEntry);
 }
 
-void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption)
+void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& TilesToBeCaptured)
 {
-	Super::ActivateItemByNoiseBreak(World, TilesToBeCaptured, InActivator, TeamOption);
+	Super::ActivateItemByNoiseBreak(InActivator, TilesToBeCaptured);
 
-	bActivated = true;
-
-	ActivateItem(InActivator);
-
-	USMAbilitySystemComponent* ActivatorASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(InActivator);
-	if (!ActivatorASC)
+	const UWorld* World = GetWorld();
+	if (!World)
 	{
 		return;
 	}
 
-	FGameplayEffectSpecHandle GESpec = ActivatorASC->MakeOutgoingSpec(SelfGE, 1.0f, ActivatorASC->MakeEffectContext());
-	if (GESpec.IsValid())
+	bIsActivated = true;
+
+	ActivateItem(InActivator);
+
+	if (USMAbilitySystemComponent* ActivatorASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(InActivator))
 	{
-		GESpec.Data->SetSetByCallerMagnitude(SelfDataTag, SelfMagnitude);
-		ActivatorASC->BP_ApplyGameplayEffectSpecToSelf(GESpec);
+		const FGameplayEffectSpecHandle GESpec = ActivatorASC->MakeOutgoingSpec(GEForActivator, 1.0f, ActivatorASC->MakeEffectContext());
+		if (GESpec.IsValid())
+		{
+			GESpec.Data->SetSetByCallerMagnitude(DataTagForActivator, MagnitudeForActivator);
+			ActivatorASC->BP_ApplyGameplayEffectSpecToSelf(GESpec);
+		}
 	}
 
 	if (Duration <= 0.0f)
@@ -52,55 +50,24 @@ void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(const UWorld* Wor
 		return;
 	}
 
-	for (const auto& Tile : TilesToBeCaptured)
-	{
-		if (!Tile)
-		{
-			continue;
-		}
-
-		CachedTriggeredTiles.Add(MakeWeakObjectPtr(Tile));
-	}
+	CachedTriggeredTiles = TilesToBeCaptured;
 
 	TriggerCountTimerCallback();
 
 	TWeakObjectPtr<ASMHoldableItem_ChangeAttribute> ThisWeakPtr(this);
-	World->GetTimerManager().SetTimer(TriggerCountTimerHandle, [World, ThisWeakPtr] {
-		if (ThisWeakPtr.IsValid())
-		{
-			ThisWeakPtr->CurrentTriggerCount += 1;
-			if (ThisWeakPtr->CurrentTriggerCount < ThisWeakPtr->TriggerCount)
-			{
-				ThisWeakPtr->TriggerCountTimerCallback();
-			}
-			else
-			{
-				if (World)
-				{
-					World->GetTimerManager().ClearTimer(ThisWeakPtr->TriggerCountTimerHandle);
-				}
-				ThisWeakPtr->Destroy();
-			}
-		}
-	}, Duration / TriggerCount, true);
-}
-
-void ASMHoldableItem_ChangeAttribute::OnHeldStateEntry()
-{
-	MeshComponent->SetVisibility(false);
-	NiagaraComponent->SetVisibility(false);
-	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	if (ASMPlayerCharacterBase* HoldingMePlayer = Cast<ASMPlayerCharacterBase>(HIC->GetActorHoldingMe()))
+	const float Interval = Duration / (TriggerCount - 1);
+	for (int32 i = 1; i <= TriggerCount; ++i)
 	{
-		HoldingMePlayer->GetHoldInteractionComponent()->OnHeldStateExit.AddUObject(this, &ThisClass::OnHeldStateExit);
-	}
-}
+		const bool bIsEnd = i == TriggerCount;
+		auto ActivateEffect = [ThisWeakPtr, bIsEnd] {
+			if (ThisWeakPtr.IsValid())
+			{
+				bIsEnd ? ThisWeakPtr->Destroy() : ThisWeakPtr->TriggerCountTimerCallback();
+			}
+		};
 
-void ASMHoldableItem_ChangeAttribute::OnHeldStateExit()
-{
-	if (!bActivated)
-	{
-		Destroy();
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, ActivateEffect, Interval * i, false);
 	}
 }
 
@@ -108,63 +75,18 @@ void ASMHoldableItem_ChangeAttribute::TriggerCountTimerCallback()
 {
 	for (AActor* ConfirmedActor : GetConfirmedActorsToApplyItem())
 	{
-		if (!ConfirmedActor)
+		if (USMAbilitySystemComponent* ConfirmedActorASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(ConfirmedActor))
 		{
-			continue;
-		}
-
-		USMAbilitySystemComponent* ConfirmedActorASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(ConfirmedActor);
-		if (!ConfirmedActorASC)
-		{
-			continue;
-		}
-
-		FGameplayEffectSpecHandle GESpec = ConfirmedActorASC->MakeOutgoingSpec(GE, 1.0f, ConfirmedActorASC->MakeEffectContext());
-		if (GESpec.IsValid())
-		{
-			GESpec.Data->SetSetByCallerMagnitude(DataTag, TotalMagnitude / TriggerCount);
-			ConfirmedActorASC->BP_ApplyGameplayEffectSpecToSelf(GESpec);
+			FGameplayEffectSpecHandle GESpec = ConfirmedActorASC->MakeOutgoingSpec(GE, 1.0f, ConfirmedActorASC->MakeEffectContext());
+			if (GESpec.IsValid())
+			{
+				GESpec.Data->SetSetByCallerMagnitude(DataTag, TotalMagnitude / TriggerCount);
+				ConfirmedActorASC->BP_ApplyGameplayEffectSpecToSelf(GESpec);
+			}
 		}
 	}
 
 	MulticastPlayActivateTileFX(Activator, CachedTriggeredTiles);
-}
-
-bool ASMHoldableItem_ChangeAttribute::IsSameTeamWithLocalTeam(AActor* TargetActor) const
-{
-	if (!TargetActor)
-	{
-		UE_LOG(LogStereoMix, Warning, TEXT("시전자가 유효하지 않습니다."));
-		return false;
-	}
-
-	ISMTeamInterface* TargetTeamInterface = Cast<ISMTeamInterface>(TargetActor);
-	if (!TargetTeamInterface)
-	{
-		return false;
-	}
-
-	APlayerController* LocalPlayerController = UGameplayStatics::GetPlayerController(this, 0);
-	if (!LocalPlayerController)
-	{
-		return false;
-	}
-
-	ISMTeamInterface* LocalTeamInterface = Cast<ISMTeamInterface>(LocalPlayerController->GetPawn());
-	if (!LocalTeamInterface)
-	{
-		return false;
-	}
-
-	ESMTeam SourceTeam = TargetTeamInterface->GetTeam();
-	ESMTeam LocalTeam = LocalTeamInterface->GetTeam();
-
-	if (SourceTeam != LocalTeam)
-	{
-		return false;
-	}
-
-	return true;
 }
 
 TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetConfirmedActorsToApplyItem()
@@ -174,17 +96,18 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetConfirmedActorsToApplyItem()
 	TArray<AActor*> ConfirmedActorsToApplyItem;
 	for (const auto& ActorOnTriggeredTile : ActorsOnTriggeredTiles)
 	{
-		if (!ActorOnTriggeredTile || !ActorOnTriggeredTile->IsA<ASMPlayerCharacterBase>())
+		const USMAbilitySystemComponent* ActorOnTriggeredTileASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(ActorOnTriggeredTile);
+		if (!ActorOnTriggeredTile || !ActorOnTriggeredTileASC)
 		{
 			continue;
 		}
-		
-		bool CheckSameTeamWithLocalTeam = IsSameTeamWithLocalTeam(ActorOnTriggeredTile);
-		if (CheckSameTeamWithLocalTeam == (ApplyTeamType == ESMLocalTeam::Equal))
+
+		if (USMTeamBlueprintLibrary::IsSameLocalTeam(ActorOnTriggeredTile) == (TeamTypeToApply == ESMLocalTeam::Equal)) // 적용해야할 팀에 따라 필터링해줍니다.
 		{
 			ConfirmedActorsToApplyItem.Add(ActorOnTriggeredTile);
 		}
 	}
+
 	UE_LOG(LogStereoMix, Warning, TEXT("ConfirmedActorsToApplyItem.Num() : %d"), ConfirmedActorsToApplyItem.Num());
 	return ConfirmedActorsToApplyItem;
 }
@@ -202,8 +125,8 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetActorsOnTriggeredTiles(EColl
 		TArray<FOverlapResult> OverlapResults;
 		const FVector TileLocation = TriggeredTile->GetTileLocation();
 		FVector Start = TileLocation;
-		UBoxComponent* TileBoxComponent = TriggeredTile->GetBoxComponent();
-		float HalfTileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X;
+		const UBoxComponent* TileBoxComponent = TriggeredTile->GetBoxComponent();
+		const float HalfTileHorizonSize = TileBoxComponent->GetScaledBoxExtent().X;
 
 		FVector CollisionHalfExtend;
 		if (HalfTileHorizonSize > 0.0f)
@@ -236,27 +159,21 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetActorsOnTriggeredTiles(EColl
 
 void ASMHoldableItem_ChangeAttribute::MulticastPlayActivateTileFX_Implementation(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTriggeredTiles)
 {
-	if (HasAuthority())
+	if (GetNetMode() == NM_DedicatedServer)
 	{
 		return;
 	}
 
-	ESMLocalTeam LocalTeam = ESMLocalTeam::Different;
-	if (IsSameTeamWithLocalTeam(InActivator))
-	{
-		LocalTeam = ESMLocalTeam::Equal;
-	}
+	const ESMLocalTeam LocalTeam = USMTeamBlueprintLibrary::GetLocalTeam(InActivator);
 
-	if (ActivateEffect.Find(LocalTeam))
+	if (ActivateEffect.Contains(LocalTeam))
 	{
-		for (const auto& TriggeredTile : InTriggeredTiles)
+		for (const TWeakObjectPtr<ASMTile> TriggeredTile : InTriggeredTiles)
 		{
-			if (!ensureAlways(TriggeredTile.Get()))
+			if (TriggeredTile.IsValid())
 			{
-				continue;
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ActivateEffect[LocalTeam], TriggeredTile->GetTileLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
 			}
-
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ActivateEffect[LocalTeam], TriggeredTile->GetTileLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
 		}
 	}
 }

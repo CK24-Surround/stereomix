@@ -194,7 +194,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 				TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesInBox(World, SourceLocation, BoxExtend);
 
 				ASMHoldableItemBase* HoldableItem = Cast<ASMHoldableItemBase>(TargetActor);
-				HoldableItem->ActivateItemByNoiseBreak(World, CaptureTiles, SourceCharacter, SourceCharacter->GetTeam());
+				HoldableItem->ActivateItemByNoiseBreak(SourceCharacter, CaptureTiles);
 			}
 		}
 		else

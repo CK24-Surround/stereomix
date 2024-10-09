@@ -15,6 +15,4 @@ public:
 	ASMHoldableItem_Overlap(const FObjectInitializer& ObjectInitializer);
 
 	virtual void ActivateItem(AActor* InActivator) override;
-
-	void OnHeldStateEntry();
 };

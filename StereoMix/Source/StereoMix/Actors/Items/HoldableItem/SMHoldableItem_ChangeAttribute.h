@@ -19,17 +19,13 @@ class STEREOMIX_API ASMHoldableItem_ChangeAttribute : public ASMHoldableItemBase
 public:
 	ASMHoldableItem_ChangeAttribute(const FObjectInitializer& ObjectInitializer);
 
-	virtual void ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption) override;
+	virtual void ActivateItemByNoiseBreak(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& TilesToBeCaptured) override;
 
-	virtual void OnHeldStateEntry() override;
-
-	virtual void OnHeldStateExit() override;
+	bool GetIsActivated() const { return bIsActivated; }
 
 protected:
 	void TriggerCountTimerCallback();
 
-	bool IsSameTeamWithLocalTeam(AActor* TargetActor) const;
-	
 	TArray<AActor*> GetConfirmedActorsToApplyItem();
 
 	TArray<AActor*> GetActorsOnTriggeredTiles(ECollisionChannel TraceChannel);
@@ -41,13 +37,13 @@ protected:
 	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateEffect;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TSubclassOf<UGameplayEffect> SelfGE;
+	TSubclassOf<UGameplayEffect> GEForActivator;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	FGameplayTag SelfDataTag;
+	FGameplayTag DataTagForActivator;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float SelfMagnitude = 10.0f;
+	float MagnitudeForActivator = 10.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<UGameplayEffect> GE;
@@ -56,7 +52,7 @@ protected:
 	FGameplayTag DataTag;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	ESMLocalTeam ApplyTeamType = ESMLocalTeam::Equal;
+	ESMLocalTeam TeamTypeToApply = ESMLocalTeam::Equal;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float TotalMagnitude = 100.0f;
@@ -67,11 +63,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "1"))
 	int32 TriggerCount = 1;
 
-	TArray<TWeakObjectPtr<ASMTile>> CachedTriggeredTiles = TArray<TWeakObjectPtr<ASMTile>>();
+	TArray<TWeakObjectPtr<ASMTile>> CachedTriggeredTiles;
 
-	FTimerHandle TriggerCountTimerHandle;
-
-	int32 CurrentTriggerCount = 0;
-
-	uint8 bActivated:1;
+	uint8 bIsActivated:1 = false;
 };

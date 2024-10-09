@@ -19,12 +19,8 @@ public:
 
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override { return HIC; }
 
-	virtual void ActivateItemByNoiseBreak(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, AActor* InActivator, const TOptional<ESMTeam>& TeamOption) {}
+	virtual void ActivateItemByNoiseBreak(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& TilesToBeCaptured) {}
 
-	virtual void OnHeldStateEntry() {}
-
-	virtual void OnHeldStateExit() {}
-	
 	const static FName HICName;
 
 protected:

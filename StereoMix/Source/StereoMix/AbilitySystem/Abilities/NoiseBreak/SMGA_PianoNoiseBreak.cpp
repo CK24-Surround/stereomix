@@ -156,7 +156,7 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 				TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesInBox(World, NoiseBreakTargetLocation, BoxExtend);
 
 				ASMHoldableItemBase* HoldableItem = Cast<ASMHoldableItemBase>(TargetActor);
-				HoldableItem->ActivateItemByNoiseBreak(World, CaptureTiles, SourceCharacter, SourceCharacter->GetTeam());
+				HoldableItem->ActivateItemByNoiseBreak(SourceCharacter, CaptureTiles);
 			}
 		}
 		else

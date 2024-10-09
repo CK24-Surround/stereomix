@@ -209,7 +209,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 		{
 			ASMHoldableItemBase* HoldableItem = Cast<ASMHoldableItemBase>(TargetActor);
 			TArray<ASMTile*> CaptureTiles = GetTilesToBeCaptured(World);
-			HoldableItem->ActivateItemByNoiseBreak(World, CaptureTiles, SourceCharacter, SourceCharacter->GetTeam());
+			HoldableItem->ActivateItemByNoiseBreak(SourceCharacter, CaptureTiles);
 		}
 	}
 	else

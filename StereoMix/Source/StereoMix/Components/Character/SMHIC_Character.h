@@ -57,6 +57,12 @@ public:
 	UFUNCTION()
 	void OnDestroyedIAmHoldingActor(AActor* DestroyedActor);
 
+	/** 잡을때 이벤트입니다. */
+	FOnHoldStateChangedDelegate OnHoldStateEnrty;
+
+	/** 잡기를 놓을때 이벤트입니다.*/
+	FOnHoldStateChangedDelegate OnHoldStateExit;
+
 protected:
 	UFUNCTION()
 	void OnRep_IAmHoldingActor();
