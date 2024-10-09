@@ -5,7 +5,6 @@
 
 #include "Engine/OverlapResult.h"
 #include "NiagaraFunctionLibrary.h"
-#include "StereoMixLog.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
@@ -34,12 +33,6 @@ void ASMHoldableItem_ChangeAttribute::GetLifetimeReplicatedProps(TArray<class FL
 void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& TilesToBeCaptured)
 {
 	Super::ActivateItemByNoiseBreak(InActivator, TilesToBeCaptured);
-
-	const UWorld* World = GetWorld();
-	if (!World)
-	{
-		return;
-	}
 
 	bIsActivated = true;
 
@@ -76,8 +69,11 @@ void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(AActor* InActivat
 			}
 		};
 
-		FTimerHandle TimerHandle;
-		World->GetTimerManager().SetTimer(TimerHandle, ActivateEffect, Interval * i, false);
+		if (const UWorld* World = GetWorld())
+		{
+			FTimerHandle TimerHandle;
+			World->GetTimerManager().SetTimer(TimerHandle, ActivateEffect, Interval * i, false);
+		}
 	}
 }
 
@@ -133,7 +129,7 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetActorsOnTriggeredTiles(EColl
 	TArray<AActor*> Result;
 	for (const auto& TriggeredTile : CachedTriggeredTiles)
 	{
-		if (!ensureAlways(TriggeredTile.Get()))
+		if (!TriggeredTile.IsValid())
 		{
 			continue;
 		}

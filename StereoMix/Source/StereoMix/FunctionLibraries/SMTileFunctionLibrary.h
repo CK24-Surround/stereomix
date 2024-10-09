@@ -52,6 +52,7 @@ public:
 	 */
 	static void CaptureTilesInSquareWithDelay(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, float TotalCaptureTime, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
 
+	/** Tile 배열을 약참조 Tile 배열로 변환해 반환합니다. */
 	static TArray<TWeakObjectPtr<ASMTile>> ConvertToWeakPtrArray(const TArray<ASMTile*>& TilesToBeCaptured);
 
 	/** 기본적으로 사용되는 타일의 사이즈를 나타냅니다. */

@@ -31,10 +31,10 @@ struct FPlayerScoreData
 
 	int32 TotalScore() const
 	{
-		int32 KillScore = TotalKillCount == 0 ? 1 : TotalKillCount * CorrectionValue;
-		float DamageDealtScore = TotalDamageDealt == 0.0f ? KillScore : TotalDamageDealt + (KillScore * 1.5f);
-		int32 NoiseBreakUsageScore = TotalNoiseBreakUsage == 0 ? 1 : (TotalNoiseBreakUsage + (TotalNoiseBreakUsage * CorrectionValue)) * 10;
-		int32 CapturedTilesScore = TotalCapturedTiles + (TotalCapturedTiles * CorrectionValue);
+		const int32 KillScore = TotalKillCount == 0 ? 1 : TotalKillCount * CorrectionValue;
+		const float DamageDealtScore = TotalDamageDealt == 0.0f ? KillScore : TotalDamageDealt + (KillScore * 1.5f);
+		const int32 NoiseBreakUsageScore = TotalNoiseBreakUsage == 0 ? 1 : (TotalNoiseBreakUsage + (TotalNoiseBreakUsage * CorrectionValue)) * 10;
+		const int32 CapturedTilesScore = TotalCapturedTiles + (TotalCapturedTiles * CorrectionValue);
 		return CapturedTilesScore + DamageDealtScore + NoiseBreakUsageScore;
 	}
 };

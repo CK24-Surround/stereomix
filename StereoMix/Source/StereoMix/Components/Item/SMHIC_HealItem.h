@@ -18,7 +18,7 @@ class STEREOMIX_API USMHIC_HealItem : public USMHIC_ItemBase
 public:
 	virtual void BeginPlay() override;
 
-	virtual bool CanBeHeld(AActor* Instigator) const override;
+	virtual bool CanBeHeld(AActor* Instigator) const override { return true; }
 
 	virtual void OnHeld(AActor* Instigator) override;
 

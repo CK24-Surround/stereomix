@@ -32,9 +32,9 @@ void ASMLevelChanger::PostEditChangeProperty(FPropertyChangedEvent& PropertyChan
 {
 	Super::PostEditChangeProperty(PropertyChangedEvent);
 
-	if (FProperty* PropertyThatChanged = PropertyChangedEvent.Property)
+	if (const FProperty* PropertyThatChanged = PropertyChangedEvent.Property)
 	{
-		FName PropertyName = PropertyThatChanged->GetFName();
+		const FName PropertyName = PropertyThatChanged->GetFName();
 
 		if (PropertyName == GET_MEMBER_NAME_CHECKED(ThisClass, ActiveLevelCount))
 		{
@@ -173,8 +173,8 @@ void ASMLevelChanger::SetLevelVisibility(const UWorld* SubLevel, bool bVisibilit
 		for (AActor* Actor : TActorRange<ASMObstacleBase>(World))
 		{
 			ASMObstacleBase* Obstacle = Cast<ASMObstacleBase>(Actor);
-			ULevel* ObstacleLevel = Obstacle ? Obstacle->GetLevel() : nullptr;
-			UObject* ObstacleOuter = ObstacleLevel ? ObstacleLevel->GetOuter() : nullptr;
+			const ULevel* ObstacleLevel = Obstacle ? Obstacle->GetLevel() : nullptr;
+			const UObject* ObstacleOuter = ObstacleLevel ? ObstacleLevel->GetOuter() : nullptr;
 			FString ObstacleLevelName = GetNameSafe(ObstacleOuter);
 			if (Obstacle && ObstacleLevelName == GetNameSafe(SubLevel))
 			{

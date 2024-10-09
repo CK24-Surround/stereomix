@@ -11,7 +11,6 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPianoCharacter.h"
-#include "Actors/Items/HoldableItem/SMHoldableItemBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Character/SMHIC_Character.h"
 #include "Data/Character/SMPianoCharacterDataAsset.h"

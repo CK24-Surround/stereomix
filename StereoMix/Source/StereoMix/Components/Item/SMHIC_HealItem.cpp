@@ -17,23 +17,8 @@ void USMHIC_HealItem::BeginPlay()
 	OnHeldStateEntry.AddUObject(this, &ThisClass::OnHeldStateEntryCallback);
 }
 
-bool USMHIC_HealItem::CanBeHeld(AActor* Instigator) const
-{
-	if (!ensureAlways(Instigator))
-	{
-		return false;
-	}
-
-	return true;
-}
-
 void USMHIC_HealItem::OnHeld(AActor* Instigator)
 {
-	if (!ensureAlways(Instigator))
-	{
-		return;
-	}
-
 	SetActorHoldingMe(Instigator);
 }
 
@@ -67,12 +52,10 @@ void USMHIC_HealItem::OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedP
 
 void USMHIC_HealItem::InternalNoiseBreakApplied(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& TilesToBeCaptured)
 {
-	if (!SourceItem)
+	if (SourceItem)
 	{
-		return;
+		SourceItem->ActivateItemByNoiseBreak(InActivator, TilesToBeCaptured);
 	}
-
-	SourceItem->ActivateItemByNoiseBreak(InActivator, TilesToBeCaptured);
 }
 
 void USMHIC_HealItem::OnHeldStateEntryCallback()

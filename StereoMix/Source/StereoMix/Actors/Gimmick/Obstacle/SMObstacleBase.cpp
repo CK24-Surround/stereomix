@@ -55,7 +55,7 @@ void ASMObstacleBase::BeginPlay()
 {
 	Super::BeginPlay();
 
-	UWorld* World = GetWorld();
+	const UWorld* World = GetWorld();
 
 	if (!HasAuthority() || !World || bSpawnImmediately)
 	{
@@ -129,7 +129,7 @@ void ASMObstacleBase::UnloadObstacle()
 
 void ASMObstacleBase::MulticastPushBack_Implementation()
 {
-	UWorld* World = GetWorld();
+	const UWorld* World = GetWorld();
 	if (!HasAuthority() || !World)
 	{
 		return;

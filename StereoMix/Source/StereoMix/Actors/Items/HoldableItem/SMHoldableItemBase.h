@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "Actors/Items/SMItemBase.h"
 #include "Actors/Tiles/SMTile.h"
-#include "Data/SMTeam.h"
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMHoldableItemBase.generated.h"
 

@@ -13,7 +13,6 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMElectricGuitarCharacter.h"
-#include "Actors/Items/HoldableItem/SMHoldableItemBase.h"
 #include "Actors/Tiles/SMTile.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Character/SMHIC_Character.h"

@@ -72,7 +72,7 @@ protected:
 
 	TArray<TWeakObjectPtr<ASMTile>> CachedTriggeredTiles;
 
-	uint8 bIsActivated:1 = false;
+	uint32 bIsActivated:1 = false;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_bIsActorHidden")
 	uint32 bIsActorEnabled:1 = true;
