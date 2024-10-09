@@ -135,7 +135,7 @@ public:
 	/** 노이즈브레이크 시전 횟수를 추가합니다. */
 	void AddTotalNoiseBreakUsage() const;
 
-	/** 노이즈브레이크 시전 횟수를 추가합니다. */
+	/** 무력화 당한 횟수를 추가합니다. */
 	void AddTotalDeathCount() const;
 
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }

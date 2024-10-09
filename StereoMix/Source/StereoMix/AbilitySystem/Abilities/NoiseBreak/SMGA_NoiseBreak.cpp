@@ -59,9 +59,10 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		}
 	}
 
-	if (K2_HasAuthority())
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	if (K2_HasAuthority() && SourceCharacter)
 	{
-		GetCharacter()->AddTotalNoiseBreakUsage();
+		SourceCharacter->AddTotalNoiseBreakUsage();
 	}
 }
 

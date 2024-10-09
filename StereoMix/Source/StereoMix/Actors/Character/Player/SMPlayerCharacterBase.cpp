@@ -479,14 +479,6 @@ void ASMPlayerCharacterBase::MulticastRPCSetLocation_Implementation(const FVecto
 	SetActorLocation(NewLocation);
 }
 
-void ASMPlayerCharacterBase::AddTotalDamageReceived(const AActor* Attacker, float InDamageAmount) const
-{
-	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
-	{
-		ScoreManagerComponent->AddTotalNoiseBreakUsage(this, InUsageCount);
-	}
-}
-
 void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
 	if (!ASC.Get() || !DataAsset)
@@ -500,13 +492,18 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 		SetLastAttacker(NewAttacker);
 		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, InDamageAmount);
 		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
-		
-			if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
-			{
-				ScoreManagerComponent->AddTotalDamageReceived(this, InDamageAmount);
-				ScoreManagerComponent->AddTotalDamageDealt(NewAttacker, InDamageAmount);
-			}
-		}
+
+		AddTotalDamageReceived(NewAttacker, InDamageAmount);
+	}
+
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = this;
+	GCParams.TargetAttachComponent = GetMesh();
+	ASC->ExecuteGC(this, SMTags::GameplayCue::Common::HitFlash, GCParams);
+}
+
+void ASMPlayerCharacterBase::AddTotalDamageReceived(const AActor* Attacker, float InDamageAmount) const
+{
 	FGameplayTagContainer InvincibleStateTags;
 	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Invincible);
 	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Neutralized);
@@ -514,7 +511,6 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
 	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
 	InvincibleStateTags.AddTag(SMTags::Character::State::Bass::Charge);
-
 	if (ASC->HasAnyMatchingGameplayTags(InvincibleStateTags))
 	{
 		return;
@@ -542,29 +538,6 @@ void ASMPlayerCharacterBase::AddTotalDeathCount() const
 		ScoreManagerComponent->AddTotalDeathCount(this, 1);
 		ScoreManagerComponent->AddTotalKillCount(GetLastAttacker(), 1);
 	}
-}
-
-void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
-{
-	if (!ASC.Get() || !DataAsset)
-	{
-		return;
-	}
-
-	FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->DamageGE, 1.0f, ASC->MakeEffectContext());
-	if (GESpecHandle.IsValid())
-	{
-		SetLastAttacker(NewAttacker);
-		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, InDamageAmount);
-		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
-
-		AddTotalDamageReceived(NewAttacker, InDamageAmount);
-	}
-
-	FGameplayCueParameters GCParams;
-	GCParams.SourceObject = this;
-	GCParams.TargetAttachComponent = GetMesh();
-	ASC->ExecuteGC(this, SMTags::GameplayCue::Common::HitFlash, GCParams);
 }
 
 bool ASMPlayerCharacterBase::CanIgnoreAttack() const

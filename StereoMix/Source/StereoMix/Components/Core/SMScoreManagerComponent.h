@@ -65,7 +65,7 @@ public:
 	UFUNCTION()
 	void AddTotalNoiseBreakUsage(const AActor* TargetPlayer, int32 NoiseBreakUsage);
 
-	const AActor* GetMVPPlayer(ESMTeam team) const;
+	const AActor* GetMVPPlayer(ESMTeam Team) const;
 
 protected:
 	TMap<TObjectPtr<const AActor>, FPlayerScoreData> PlayerScoreData;
