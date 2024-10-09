@@ -30,8 +30,8 @@ protected:
 
 	UFUNCTION()
 	void OnNoiseBreakEnded();
-
-	void TileCapture();
+	
+	TArray<ASMTile*> GetTilesToBeCaptured();
 
 	FVector NoiseBreakTargetLocation;
 

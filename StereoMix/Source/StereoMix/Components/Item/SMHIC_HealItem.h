@@ -24,9 +24,9 @@ public:
 
 	virtual void OnReleasedFromHold(AActor* Instigator) override;
 
-	virtual bool ShouldApplyDamageFromNoiseBreak(AActor* Instigator) const override { return false; }
+	virtual bool ShouldApplyDamageFromNoiseBreak() const override { return false; }
 
-	virtual bool ShouldCaptureTilesFromNoiseBreak(AActor* Instigator) const override { return false; }
+	virtual bool ShouldCaptureTilesFromNoiseBreak() const override { return false; }
 
 	virtual void OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
 

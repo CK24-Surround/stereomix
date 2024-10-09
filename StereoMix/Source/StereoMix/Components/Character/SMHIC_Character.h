@@ -28,9 +28,9 @@ public:
 
 	virtual void OnReleasedFromHold(AActor* Instigator) override;
 
-	virtual bool ShouldApplyDamageFromNoiseBreak(AActor* Instigator) const override { return true; }
+	virtual bool ShouldApplyDamageFromNoiseBreak() const override { return true; }
 
-	virtual bool ShouldCaptureTilesFromNoiseBreak(AActor* Instigator) const override { return true; }
+	virtual bool ShouldCaptureTilesFromNoiseBreak() const override { return true; }
 
 	virtual void OnNoiseBreakStarted(AActor* Instigator) override;
 

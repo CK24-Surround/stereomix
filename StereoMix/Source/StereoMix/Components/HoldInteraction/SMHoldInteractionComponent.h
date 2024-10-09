@@ -42,10 +42,10 @@ public:
 	virtual void OnReleasedFromHold(AActor* Instigator) {}
 
 	/** 노이즈 브레이크 당했을때 데미지를 발생시키는지 여부를 반환합니다. */
-	virtual bool ShouldApplyDamageFromNoiseBreak(AActor* Instigator) const { return false; }
+	virtual bool ShouldApplyDamageFromNoiseBreak() const { return false; }
 
 	/** 노이즈 브레이크 당했을때 타일 점령을 발생시키는지 여부를 반환합니다. */
-	virtual bool ShouldCaptureTilesFromNoiseBreak(AActor* Instigator) const { return false; }
+	virtual bool ShouldCaptureTilesFromNoiseBreak() const { return false; }
 
 	/** 노이즈 브레이크 당하기 시작될 때 호출됩니다. 이 때 필요한 로직을 구현해야합니다. 서버에서 호출됩니다. */
 	virtual void OnNoiseBreakStarted(AActor* Instigator) {}

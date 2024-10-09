@@ -3,9 +3,10 @@
 
 #include "SMHIC_HealItem.h"
 
-#include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "Actors/Character/Player/SMBassCharacter.h"
+#include "Actors/Character/Player/SMElectricGuitarCharacter.h"
+#include "Actors/Character/Player/SMPianoCharacter.h"
 #include "Actors/Items/HoldableItem/SMHoldableItem_ChangeAttribute.h"
-#include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
 
 
 void USMHIC_HealItem::BeginPlay()
@@ -46,19 +47,19 @@ void USMHIC_HealItem::OnReleasedFromHold(AActor* Instigator)
 
 void USMHIC_HealItem::OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
-	TArray<TWeakObjectPtr<ASMTile>> TilesToBeCaptured = NoiseBreakData ? NoiseBreakData->TilesToBeTriggered : TArray<TWeakObjectPtr<ASMTile>>();
+	const TArray<TWeakObjectPtr<ASMTile>> TilesToBeCaptured = NoiseBreakData ? NoiseBreakData->TilesToBeTriggered : TArray<TWeakObjectPtr<ASMTile>>();
 	InternalNoiseBreakApplied(Instigator, TilesToBeCaptured);
 }
 
 void USMHIC_HealItem::OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
-	TArray<TWeakObjectPtr<ASMTile>> TilesToBeCaptured = NoiseBreakData ? NoiseBreakData->TilesToBeTriggered : TArray<TWeakObjectPtr<ASMTile>>();
+	const TArray<TWeakObjectPtr<ASMTile>> TilesToBeCaptured = NoiseBreakData ? NoiseBreakData->TilesToBeTriggered : TArray<TWeakObjectPtr<ASMTile>>();
 	InternalNoiseBreakApplied(Instigator, TilesToBeCaptured);
 }
 
 void USMHIC_HealItem::OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
-	TArray<TWeakObjectPtr<ASMTile>> TilesToBeCaptured = NoiseBreakData ? NoiseBreakData->TilesToBeTriggered : TArray<TWeakObjectPtr<ASMTile>>();
+	const TArray<TWeakObjectPtr<ASMTile>> TilesToBeCaptured = NoiseBreakData ? NoiseBreakData->TilesToBeTriggered : TArray<TWeakObjectPtr<ASMTile>>();
 	InternalNoiseBreakApplied(Instigator, TilesToBeCaptured);
 }
 

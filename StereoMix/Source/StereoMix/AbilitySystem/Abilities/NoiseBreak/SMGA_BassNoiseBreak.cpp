@@ -145,8 +145,8 @@ void USMGA_BassNoiseBreak::LeapCharacter(const FVector& InStartLocation, const F
 void USMGA_BassNoiseBreak::OnLanded()
 {
 	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	USMHIC_Character* SourceHIC = Cast<USMHIC_Character>(GetHIC());
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	USMHIC_Character* SourceHIC = GetHIC();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (!SourceCharacter || !SourceASC || !SourceHIC || !SourceCapsule)
 	{
@@ -170,9 +170,23 @@ void USMGA_BassNoiseBreak::OnLanded()
 	if (K2_HasAuthority())
 	{
 		AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+
 		if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 		{
-			TargetHIC->OnNoiseBreakApplied(SourceCharacter, MakeShared<FSMNoiseBreakData>());
+			const TArray<ASMTile*> TilesToBeCaptured = GetTilesToBeCaptured();
+			const TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
+			NoiseBreakData->TilesToBeTriggered = USMTileFunctionLibrary::ConvertToWeakPtrArray(TilesToBeCaptured);
+			TargetHIC->OnNoiseBreakApplied(SourceCharacter, NoiseBreakData);
+
+			if (TargetHIC->ShouldCaptureTilesFromNoiseBreak())
+			{
+				USMTileFunctionLibrary::CaptureTiles(GetWorld(), TilesToBeCaptured, SourceCharacter);
+			}
+
+			if (TargetHIC->ShouldApplyDamageFromNoiseBreak())
+			{
+				PerformBurstAttack(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
+			}
 		}
 
 		const APawn* TargetPawn = Cast<APawn>(TargetActor);
@@ -181,26 +195,6 @@ void USMGA_BassNoiseBreak::OnLanded()
 		if (TargetPlayerController && SourceDataAsset)
 		{
 			TargetPlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
-		}
-		
-		if (TargetActor->IsA<ASMHoldableItemBase>())
-		{
-			if (const UWorld* World = GetWorld())
-			{
-				const FVector SourceLocation = SourceCharacter->GetActorLocation();
-				constexpr float Offset = USMTileFunctionLibrary::DefaultTileSize / 4.0f;
-				const float HalfSize = Offset + (USMTileFunctionLibrary::DefaultTileSize * (CaptureSize - 1));
-				const FVector BoxExtend(HalfSize);
-				TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesInBox(World, SourceLocation, BoxExtend);
-
-				ASMHoldableItemBase* HoldableItem = Cast<ASMHoldableItemBase>(TargetActor);
-				HoldableItem->ActivateItemByNoiseBreak(SourceCharacter, CaptureTiles);
-			}
-		}
-		else
-		{
-			TileCapture();
-			PerformBurstAttack(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
 		}
 
 		SourceHIC->SetActorIAmHolding(nullptr);
@@ -232,17 +226,21 @@ void USMGA_BassNoiseBreak::OnNoiseBreakEnded(FGameplayEventData Payload)
 	SyncTask->ReadyForActivation();
 }
 
-void USMGA_BassNoiseBreak::TileCapture()
+TArray<ASMTile*> USMGA_BassNoiseBreak::GetTilesToBeCaptured()
 {
+	const UWorld* World = GetWorld();
 	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	const ESMTeam SourceTeam = SourceCharacter ? SourceCharacter->GetTeam() : ESMTeam::None;
-	if (!SourceCharacter || SourceTeam == ESMTeam::None)
+	if (!World || !SourceCharacter)
 	{
-		return;
+		return TArray<ASMTile*>();
 	}
 
 	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	USMTileFunctionLibrary::CaptureTilesInSquare(GetWorld(), SourceLocation, SourceCharacter, CaptureSize);
+	constexpr float Offset = USMTileFunctionLibrary::DefaultTileSize / 4.0f;
+	const float HalfSize = Offset + (USMTileFunctionLibrary::DefaultTileSize * (CaptureSize - 1));
+	const FVector BoxExtend(HalfSize);
+
+	return USMTileFunctionLibrary::GetTilesInBox(World, SourceLocation, BoxExtend);
 }
 
 void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)

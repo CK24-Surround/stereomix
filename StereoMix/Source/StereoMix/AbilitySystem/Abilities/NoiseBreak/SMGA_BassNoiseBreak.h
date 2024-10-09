@@ -39,8 +39,7 @@ protected:
 	UFUNCTION()
 	void OnNoiseBreakEnded(FGameplayEventData Payload);
 
-	/** 타일을 점령합니다. */
-	void TileCapture();
+	TArray<ASMTile*> GetTilesToBeCaptured();
 
 	UFUNCTION()
 	void OnWeaponTrailActivate(FGameplayEventData Payload);

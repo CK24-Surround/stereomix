@@ -148,3 +148,14 @@ void USMTileFunctionLibrary::CaptureTilesInSquareWithDelay(const UWorld* World, 
 		}
 	}
 }
+
+TArray<TWeakObjectPtr<ASMTile>> USMTileFunctionLibrary::ConvertToWeakPtrArray(const TArray<ASMTile*>& TilesToBeCaptured)
+{
+	TArray<TWeakObjectPtr<ASMTile>> Result;
+	for (ASMTile* TileToBeCaptured : TilesToBeCaptured)
+	{
+		Result.Add(TileToBeCaptured);
+	}
+
+	return Result;
+}

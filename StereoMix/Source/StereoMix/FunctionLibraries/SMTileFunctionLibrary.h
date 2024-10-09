@@ -52,6 +52,8 @@ public:
 	 */
 	static void CaptureTilesInSquareWithDelay(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, float TotalCaptureTime, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
 
+	static TArray<TWeakObjectPtr<ASMTile>> ConvertToWeakPtrArray(const TArray<ASMTile*>& TilesToBeCaptured);
+
 	/** 기본적으로 사용되는 타일의 사이즈를 나타냅니다. */
 	static constexpr float DefaultTileSize = 150.0f;
 };

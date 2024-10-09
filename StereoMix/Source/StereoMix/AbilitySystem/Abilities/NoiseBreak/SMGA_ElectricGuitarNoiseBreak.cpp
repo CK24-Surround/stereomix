@@ -187,7 +187,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 {
 	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
 	USMAbilitySystemComponent* SourceASC = GetASC();
-	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	USMHIC_Character* SourceHIC = GetHIC();
 	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
 		K2_EndAbility();
@@ -195,27 +195,25 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	}
 
 	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+
 	if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 	{
+		const TArray<ASMTile*> TilesToBeCaptured = GetTilesToBeCaptured();
 		const FVector TargetToStartDirection = (NoiseBreakStartLocation - NoiseBreakTargetLocation).GetSafeNormal();
 		const TSharedRef<FSMNoiseBreakData> NoiseBreakData = MakeShared<FSMNoiseBreakData>();
 		NoiseBreakData->NoiseBreakLocation = NoiseBreakTargetLocation + (TargetToStartDirection * 70.0f);
+		NoiseBreakData->TilesToBeTriggered = USMTileFunctionLibrary::ConvertToWeakPtrArray(TilesToBeCaptured);
 		TargetHIC->OnNoiseBreakApplied(SourceCharacter, NoiseBreakData);
-	}
 
-	if (TargetActor->IsA<ASMHoldableItemBase>())
-	{
-		if (const UWorld* World = GetWorld())
+		if (TargetHIC->ShouldCaptureTilesFromNoiseBreak())
 		{
-			ASMHoldableItemBase* HoldableItem = Cast<ASMHoldableItemBase>(TargetActor);
-			TArray<ASMTile*> CaptureTiles = GetTilesToBeCaptured(World);
-			HoldableItem->ActivateItemByNoiseBreak(SourceCharacter, CaptureTiles);
+			USMTileFunctionLibrary::CaptureTiles(GetWorld(), TilesToBeCaptured, SourceCharacter);
 		}
-	}
-	else
-	{
-		TileCapture();
-		PerformElectricGuitarBurstAttack();
+
+		if (TargetHIC->ShouldApplyDamageFromNoiseBreak())
+		{
+			PerformElectricGuitarBurstAttack();
+		}
 	}
 
 	const APawn* TargetPawn = Cast<APawn>(TargetActor);
@@ -244,16 +242,22 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	SourceHIC->SetActorIAmHolding(nullptr);
 }
 
-TArray<ASMTile*> USMGA_ElectricGuitarNoiseBreak::GetTilesToBeCaptured(const UWorld* World) const
+TArray<ASMTile*> USMGA_ElectricGuitarNoiseBreak::GetTilesToBeCaptured() const
 {
+	const UWorld* World = GetWorld();
+	if (!World)
+	{
+		return TArray<ASMTile*>();
+	}
+
 	// 캡슐을 통해 시작 지점에서 끝지점까지 점령할 타일을 저장합니다.
-	TArray<ASMTile*> CaptureTiles = USMTileFunctionLibrary::GetTilesInCapsule(World, NoiseBreakStartLocation, NoiseBreakTargetLocation, USMTileFunctionLibrary::DefaultTileSize);
+	TArray<ASMTile*> TilesToBeCaptured = USMTileFunctionLibrary::GetTilesInCapsule(World, NoiseBreakStartLocation, NoiseBreakTargetLocation, USMTileFunctionLibrary::DefaultTileSize);
 
 	// 시작과 종료 지점 앞 뒤 타일을 제거합니다.
 	const FVector CachedNoiseBreakStartLocation = NoiseBreakStartLocation;
 	const FVector CachedNoiseBreakTargetLocation = NoiseBreakTargetLocation;
 	const FVector StartToTargetDirection = (NoiseBreakTargetLocation - NoiseBreakStartLocation).GetSafeNormal();
-	CaptureTiles.RemoveAll([CachedNoiseBreakStartLocation, CachedNoiseBreakTargetLocation, StartToTargetDirection](const ASMTile* Tile) {
+	TilesToBeCaptured.RemoveAll([CachedNoiseBreakStartLocation, CachedNoiseBreakTargetLocation, StartToTargetDirection](const ASMTile* Tile) {
 		const FVector TileLocation = Tile->GetTileLocation();
 
 		const FVector StartToTileDirection = (TileLocation - CachedNoiseBreakStartLocation).GetSafeNormal();
@@ -272,22 +276,7 @@ TArray<ASMTile*> USMGA_ElectricGuitarNoiseBreak::GetTilesToBeCaptured(const UWor
 		return DotProductFromStart < -Cos || DotProductFromEnd > Cos;
 	});
 
-	return CaptureTiles;
-}
-
-void USMGA_ElectricGuitarNoiseBreak::TileCapture()
-{
-	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	const UWorld* World = GetWorld();
-	if (!SourceCharacter || !World)
-	{
-		return;
-	}
-
-	TArray<ASMTile*> CaptureTiles = GetTilesToBeCaptured(World);
-
-	USMTileFunctionLibrary::CaptureTiles(World, CaptureTiles, SourceCharacter);
-	NET_LOG(GetAvatarActor(), Log, TEXT("노이즈 브레이크로 점령 시도한 타일 개수: %d"), CaptureTiles.Num());
+	return TilesToBeCaptured;
 }
 
 void USMGA_ElectricGuitarNoiseBreak::PerformElectricGuitarBurstAttack()

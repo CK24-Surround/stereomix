@@ -35,9 +35,7 @@ protected:
 	UFUNCTION()
 	void OnNoiseBreakBurst();
 
-	TArray<ASMTile*> GetTilesToBeCaptured(const UWorld* World) const;
-
-	void TileCapture();
+	TArray<ASMTile*> GetTilesToBeCaptured() const;
 
 	/** 일렉기타용으로 커스텀한 버스트 공격 수행입니다. */
 	void PerformElectricGuitarBurstAttack();
