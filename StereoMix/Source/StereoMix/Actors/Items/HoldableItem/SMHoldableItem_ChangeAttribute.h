@@ -19,9 +19,13 @@ class STEREOMIX_API ASMHoldableItem_ChangeAttribute : public ASMHoldableItemBase
 public:
 	ASMHoldableItem_ChangeAttribute(const FObjectInitializer& ObjectInitializer);
 
+	virtual void GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const override;
+
 	virtual void ActivateItemByNoiseBreak(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& TilesToBeCaptured) override;
 
 	bool GetIsActivated() const { return bIsActivated; }
+
+	void SetIsActorEnabled(bool bNewIsActorEnabled);
 
 protected:
 	void TriggerCountTimerCallback();
@@ -32,6 +36,9 @@ protected:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastPlayActivateTileFX(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTriggeredTiles);
+
+	UFUNCTION()
+	void OnRep_bIsActorHidden();
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateVFX;
@@ -66,4 +73,7 @@ protected:
 	TArray<TWeakObjectPtr<ASMTile>> CachedTriggeredTiles;
 
 	uint8 bIsActivated:1 = false;
+
+	UPROPERTY(ReplicatedUsing = "OnRep_bIsActorHidden")
+	uint32 bIsActorEnabled:1 = true;
 };

@@ -77,7 +77,6 @@ void USMHIC_HealItem::OnHeldStateEntryCallback()
 {
 	if (SourceItem)
 	{
-		SourceItem->SetActorHiddenInGame(true);
-		SourceItem->SetActorEnableCollision(false);
+		SourceItem->SetIsActorEnabled(false);
 	}
 }

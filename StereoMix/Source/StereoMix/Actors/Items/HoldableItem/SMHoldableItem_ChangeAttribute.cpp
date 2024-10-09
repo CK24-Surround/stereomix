@@ -12,6 +12,7 @@
 #include "Components/Item/SMHIC_HealItem.h"
 #include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
+#include "Net/UnrealNetwork.h"
 #include "Utilities/SMCollision.h"
 
 
@@ -19,6 +20,13 @@ ASMHoldableItem_ChangeAttribute::ASMHoldableItem_ChangeAttribute(const FObjectIn
 	: Super(ObjectInitializer.SetDefaultSubobjectClass<USMHIC_HealItem>(HICName))
 {
 	ColliderComponent->InitSphereRadius(65.0f);
+}
+
+void ASMHoldableItem_ChangeAttribute::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ThisClass, bIsActorEnabled);
 }
 
 void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& TilesToBeCaptured)
@@ -69,6 +77,12 @@ void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(AActor* InActivat
 		FTimerHandle TimerHandle;
 		World->GetTimerManager().SetTimer(TimerHandle, ActivateEffect, Interval * i, false);
 	}
+}
+
+void ASMHoldableItem_ChangeAttribute::SetIsActorEnabled(bool bNewIsActorEnabled)
+{
+	bIsActorEnabled = bNewIsActorEnabled;
+	OnRep_bIsActorHidden();
 }
 
 void ASMHoldableItem_ChangeAttribute::TriggerCountTimerCallback()
@@ -155,6 +169,12 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetActorsOnTriggeredTiles(EColl
 	}
 
 	return Result;
+}
+
+void ASMHoldableItem_ChangeAttribute::OnRep_bIsActorHidden()
+{
+	SetActorHiddenInGame(!bIsActorEnabled);
+	SetActorEnableCollision(bIsActorEnabled);
 }
 
 void ASMHoldableItem_ChangeAttribute::MulticastPlayActivateTileFX_Implementation(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTriggeredTiles)
