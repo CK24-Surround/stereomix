@@ -25,11 +25,6 @@ USMCharacterAttributeSet::USMCharacterAttributeSet()
 	InitSkillGauge(GetMaxSkillGauge());
 
 	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Invincible);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Neutralized);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Immune);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Bass::Charge);
 
 	UnlimitStaminaTags.AddTag(SMTags::Character::State::Common::UnlimitStamina);
 }

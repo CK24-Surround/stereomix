@@ -25,6 +25,7 @@ USMGA_Charge::USMGA_Charge()
 	ReplicationPolicy = EGameplayAbilityReplicationPolicy::ReplicateYes;
 
 	ActivationOwnedTags.AddTag(SMTags::Character::State::Bass::Charge);
+	ActivationOwnedTags.AddTag(SMTags::Character::State::Common::Invincible);
 
 	if (const FSMCharacterSkillData* SkillData = USMDataTableFunctionLibrary::GetCharacterSkillData(ESMCharacterType::Bass))
 	{

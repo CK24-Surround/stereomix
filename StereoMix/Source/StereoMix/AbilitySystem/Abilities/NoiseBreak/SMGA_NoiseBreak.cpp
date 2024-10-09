@@ -10,6 +10,7 @@
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tiles/SMTile.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "FunctionLibraries/SMScoreFunctionLibrary.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Indicator/SMGA_NoiseBreakIndicator.h"
@@ -59,10 +60,9 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		}
 	}
 
-	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	if (K2_HasAuthority() && SourceCharacter)
+	if (K2_HasAuthority())
 	{
-		SourceCharacter->AddTotalNoiseBreakUsage();
+		USMScoreFunctionLibrary::RecordNoiseBreakUsage(GetCharacter());
 	}
 }
 

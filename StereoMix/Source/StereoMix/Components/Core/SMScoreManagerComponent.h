@@ -57,13 +57,13 @@ public:
 	void AddTotalDamageReceived(const AActor* TargetPlayer, float DamageReceived);
 
 	UFUNCTION()
-	void AddTotalDeathCount(const AActor* TargetPlayer, int32 DeathCount);
+	void AddTotalDeathCount(const AActor* TargetPlayer);
 
 	UFUNCTION()
-	void AddTotalKillCount(const AActor* TargetPlayer, int32 KillCount);
+	void AddTotalKillCount(const AActor* TargetPlayer);
 
 	UFUNCTION()
-	void AddTotalNoiseBreakUsage(const AActor* TargetPlayer, int32 NoiseBreakUsage);
+	void AddTotalNoiseBreakUsage(const AActor* TargetPlayer);
 
 	const AActor* GetMVPPlayer(ESMTeam Team) const;
 

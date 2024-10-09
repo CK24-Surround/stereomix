@@ -4,7 +4,6 @@
 #include "SMPlayerCharacterBase.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/GameStateBase.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "EnhancedInputComponent.h"
@@ -21,7 +20,6 @@
 #include "Components/Character/SMCharacterMovementComponent.h"
 #include "Components/Character/SMHIC_Character.h"
 #include "Components/Common/SMTeamComponent.h"
-#include "Components/Core/SMScoreManagerComponent.h"
 #include "Components/Core/SMTileManagerComponent.h"
 #include "Components/PlayerController/SMScreenIndicatorComponent.h"
 #include "Controllers/SMGamePlayerController.h"
@@ -29,6 +27,7 @@
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
+#include "FunctionLibraries/SMScoreFunctionLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Games/SMGamePlayerState.h"
 #include "Net/UnrealNetwork.h"
@@ -113,8 +112,8 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	ImmuneMoveTrailFXComponent->SetAutoActivate(false);
 
 	HIC = CreateDefaultSubobject<USMHIC_Character>(TEXT("HIC"));
-	HIC->OnHeldStateEntry.AddUObject(this, &ThisClass::OnHoldStateEntry);
-	HIC->OnHeldStateExit.AddUObject(this, &ThisClass::OnHoldStateExit);
+	HIC->OnHoldStateEnrty.AddUObject(this, &ThisClass::OnHoldStateEntry);
+	HIC->OnHoldStateExit.AddUObject(this, &ThisClass::OnHoldStateExit);
 
 	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::Held);
 	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::Neutralized);
@@ -493,51 +492,13 @@ void ASMPlayerCharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAm
 		GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, InDamageAmount);
 		ASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 
-		AddTotalDamageReceived(NewAttacker, InDamageAmount);
+		USMScoreFunctionLibrary::RecordDamage(this, NewAttacker, InDamageAmount);
 	}
 
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = this;
 	GCParams.TargetAttachComponent = GetMesh();
 	ASC->ExecuteGC(this, SMTags::GameplayCue::Common::HitFlash, GCParams);
-}
-
-void ASMPlayerCharacterBase::AddTotalDamageReceived(const AActor* Attacker, float InDamageAmount) const
-{
-	FGameplayTagContainer InvincibleStateTags;
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Invincible);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Neutralized);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::Immune);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
-	InvincibleStateTags.AddTag(SMTags::Character::State::Bass::Charge);
-	if (ASC->HasAnyMatchingGameplayTags(InvincibleStateTags))
-	{
-		return;
-	}
-
-	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
-	{
-		ScoreManagerComponent->AddTotalDamageReceived(this, InDamageAmount);
-		ScoreManagerComponent->AddTotalDamageDealt(Attacker, InDamageAmount);
-	}
-}
-
-void ASMPlayerCharacterBase::AddTotalNoiseBreakUsage() const
-{
-	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
-	{
-		ScoreManagerComponent->AddTotalNoiseBreakUsage(this, 1);
-	}
-}
-
-void ASMPlayerCharacterBase::AddTotalDeathCount() const
-{
-	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManagerComponent())
-	{
-		ScoreManagerComponent->AddTotalDeathCount(this, 1);
-		ScoreManagerComponent->AddTotalKillCount(GetLastAttacker(), 1);
-	}
 }
 
 bool ASMPlayerCharacterBase::CanIgnoreAttack() const
@@ -802,24 +763,6 @@ void ASMPlayerCharacterBase::InitUI()
 		CharacterStateWidget->CurrentHealth = SourceAttributeSet->GetPostureGauge();
 		CharacterStateWidget->UpdateHPBar();
 	}
-}
-
-USMScoreManagerComponent* ASMPlayerCharacterBase::GetScoreManagerComponent() const
-{
-	const UWorld* World = GetWorld();
-	const AGameStateBase* GameState = World->GetGameState();
-	if (!World || !GameState)
-	{
-		return nullptr;
-	}
-
-	USMScoreManagerComponent* ScoreManager = GameState->GetComponentByClass<USMScoreManagerComponent>();
-	if (!ScoreManager)
-	{
-		return nullptr;
-	}
-
-	return ScoreManager;
 }
 
 FVector ASMPlayerCharacterBase::GetCursorTargetingPoint(bool bUseZeroBasis)

@@ -15,7 +15,6 @@
 #include "SMPlayerCharacterBase.generated.h"
 
 class ASMPlayerCharacterBase;
-class USMScoreManagerComponent;
 class ASMNoteBase;
 class ASMWeaponBase;
 class USMHIC_Character;
@@ -129,15 +128,6 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRemoveScreenIndicatorToSelf(AActor* TargetActor);
 
-	/** 데미지를 받았을 때 상대와 함께 피해량을 기록합니다. */
-	void AddTotalDamageReceived(const AActor* Attacker, float InDamageAmount) const;
-
-	/** 노이즈브레이크 시전 횟수를 추가합니다. */
-	void AddTotalNoiseBreakUsage() const;
-
-	/** 무력화 당한 횟수를 추가합니다. */
-	void AddTotalDeathCount() const;
-
 	virtual AActor* GetLastAttacker() const override { return LastAttacker.Get(); }
 
 	virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttacker = NewAttacker; }
@@ -212,8 +202,6 @@ protected:
 	void GAInputReleased(EActiveAbility InInputID);
 
 	void InitUI();
-
-	USMScoreManagerComponent* GetScoreManagerComponent() const;
 
 	/** 현재 마우스커서가 위치한 곳의 좌표를 반환합니다.
 	 * bIsZeroBasis가 true면 캐릭터의 바닥을 기준으로, false면 캐릭터의 중심을 기준으로 계산합니다. */

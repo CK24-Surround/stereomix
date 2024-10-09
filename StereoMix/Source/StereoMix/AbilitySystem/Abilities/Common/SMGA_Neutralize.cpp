@@ -14,6 +14,7 @@
 #include "Components/Character/SMHIC_Character.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
+#include "FunctionLibraries/SMScoreFunctionLibrary.h"
 
 USMGA_Neutralize::USMGA_Neutralize()
 {
@@ -48,15 +49,14 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	K2_CommitAbility();
 
 	// 재생 중인 모든 애니메이션을 종료합니다.
-	UAnimInstance* SourceAnimInstance = ActorInfo->GetAnimInstance();
-	if (SourceAnimInstance)
+	if (UAnimInstance* SourceAnimInstance = ActorInfo->GetAnimInstance())
 	{
 		SourceAnimInstance->StopAllMontages(0.0f);
 	}
 
 	if (K2_HasAuthority())
 	{
-		SourceCharacter->AddTotalDeathCount();
+		USMScoreFunctionLibrary::RecordKillDeathCount(SourceCharacter->GetLastAttacker(), SourceCharacter);
 
 		// 무력화 시간동안 기다립니다.
 		WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, NeutralizedTime);
@@ -77,8 +77,7 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::Hold))
 		{
 			AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-			USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-			if (TargetHIC)
+			if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 			{
 				TargetHIC->OnReleasedFromHold(SourceCharacter);
 			}
@@ -136,8 +135,7 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 				}
 			}
 
-			USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-			if (SourceHIC)
+			if (USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>())
 			{
 				// 무력화가 종료되었기에 자신을 잡았던 캐릭터 리스트를 초기화합니다.
 				SourceHIC->EmptyHoldedMeCharacterList();
@@ -171,7 +169,7 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 void USMGA_Neutralize::OnMinimalNeutralizeTimeEnded()
 {
 	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	const USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (!SourceASC || !SourceHIC)
 	{
 		EndAbilityByCancel();
@@ -240,7 +238,7 @@ void USMGA_Neutralize::OnNeutralizeTimeEnded()
 void USMGA_Neutralize::WaitUntilBuzzerBeaterEnd()
 {
 	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	const USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (!SourceASC || !SourceHIC)
 	{
 		EndAbilityByCancel();
@@ -274,7 +272,7 @@ void USMGA_Neutralize::OnBuzzerBeaterEnded(FGameplayEventData Payload)
 
 void USMGA_Neutralize::PrepareNeutralizeEnd()
 {
-	UAbilitySystemComponent* SourceASC = GetASC();
+	const UAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
 	if (!SourceASC || !SourceHIC)
 	{
@@ -301,9 +299,9 @@ void USMGA_Neutralize::NeutralizeExitSyncPoint()
 void USMGA_Neutralize::NeutralizeEnd()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	const USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
 	const USMPlayerCharacterDataAsset* SourceCharacterDataAsset = GetDataAsset();
-	UAnimInstance* SourceAnimInstance = CurrentActorInfo ? CurrentActorInfo->GetAnimInstance() : nullptr;
+	const UAnimInstance* SourceAnimInstance = CurrentActorInfo ? CurrentActorInfo->GetAnimInstance() : nullptr;
 	if (!SourceCharacter || !SourceASC || !SourceCharacterDataAsset || !SourceAnimInstance)
 	{
 		EndAbilityByCancel();
