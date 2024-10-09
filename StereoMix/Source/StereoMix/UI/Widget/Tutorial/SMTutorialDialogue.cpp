@@ -4,7 +4,4 @@
 #include "SMTutorialDialogue.h"
 
 
-USMTutorialDialogue::USMTutorialDialogue()
-{
-	bAutoActivate = true;
-}
+USMTutorialDialogue::USMTutorialDialogue() {}

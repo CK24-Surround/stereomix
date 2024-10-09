@@ -23,6 +23,10 @@ public:
 
 	void SetScript(const FString& InString);
 
+	void ActivateDialogue();
+	
+	void DeactivateDialogue();
+
 protected:
 	UFUNCTION()
 	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);

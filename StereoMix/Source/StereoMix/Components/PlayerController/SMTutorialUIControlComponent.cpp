@@ -35,6 +35,26 @@ void USMTutorialUIControlComponent::SetScript(const FString& InString)
 	}
 }
 
+void USMTutorialUIControlComponent::ActivateDialogue()
+{
+	if (USMTutorialDialogue* TutorialDialogue = TutorialHUD ? TutorialHUD->GetTutorialDialogue() : nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("다이얼로그 활성화"));
+		TutorialDialogue->ActivateWidget();
+		TutorialDialogue->SetVisibility(ESlateVisibility::Visible);
+	}
+}
+
+void USMTutorialUIControlComponent::DeactivateDialogue()
+{
+	if (USMTutorialDialogue* TutorialDialogue = TutorialHUD ? TutorialHUD->GetTutorialDialogue() : nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("다이얼로그 비활성화"));
+		TutorialDialogue->DeactivateWidget();
+		TutorialDialogue->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void USMTutorialUIControlComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
 {
 	NET_LOG(GetOwner(), Warning, TEXT("폰 체인지"));
@@ -48,5 +68,6 @@ void USMTutorialUIControlComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn
 	if (TutorialHUD = PlayerController ? CreateWidget<USMTutorialHUD>(PlayerController, TutorialHUDClass) : nullptr; TutorialHUD)
 	{
 		TutorialHUD->AddToViewport();
+		ActivateDialogue();
 	}
 }

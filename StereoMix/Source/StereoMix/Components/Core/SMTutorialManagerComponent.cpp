@@ -65,6 +65,19 @@ void USMTutorialManagerComponent::OnProgressTriggerBeginOverlap(AActor* Overlapp
 		OverlappedActor->Destroy();
 	}
 
+	const UWorld* World = GetWorld();
+	if (APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr)
+	{
+		if (USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>())
+		{
+			UITutorialControlComponent->DeactivateDialogue();
+
+			// TODO: 테스트
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, [UITutorialControlComponent] { UITutorialControlComponent->ActivateDialogue(); }, 1.0f, false);
+		}
+	}
+
 	UE_LOG(LogTemp, Warning, TEXT("목표완료 시점 PlayerController: %p"), GetWorld()->GetFirstPlayerController());
 	NET_VLOG(GetOwner(), 3, 30.0f, TEXT("목표완료: 목표지점 도착"));
 }
