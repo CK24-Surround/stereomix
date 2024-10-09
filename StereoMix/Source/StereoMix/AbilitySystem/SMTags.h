@@ -41,6 +41,7 @@ namespace SMTags
 		{
 			namespace Common
 			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Uncontrollable);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Invincible);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(UnlimitStamina);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);

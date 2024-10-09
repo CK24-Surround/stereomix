@@ -120,11 +120,13 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
 	IgnoreAttackTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
 
+	LockAimTags.AddTag(SMTags::Character::State::Common::Uncontrollable);
 	LockAimTags.AddTag(SMTags::Character::State::Common::Held);
 	LockAimTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
 	LockAimTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);
 	LockAimTags.AddTag(SMTags::Character::State::Common::Neutralized);
 
+	LockMovementTags.AddTag(SMTags::Character::State::Common::Uncontrollable);
 	LockMovementTags.AddTag(SMTags::Character::State::Common::Held);
 	LockMovementTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
 	LockMovementTags.AddTag(SMTags::Character::State::Common::NoiseBreaked);

@@ -40,6 +40,7 @@ namespace SMTags
 		{
 			namespace Common
 			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncontrollable, "Character.State.Common.Jump", "조작 불가 상태임을 나타냅니다. ");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Invincible, "Character.State.Common.Invincible", "무적 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(UnlimitStamina, "Character.State.Common.UnlimitStamina", "스태미나 소모가 없는 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Character.State.Common.Hold", "캐릭터를 잡고 있는 상태를 나타냅니다.");

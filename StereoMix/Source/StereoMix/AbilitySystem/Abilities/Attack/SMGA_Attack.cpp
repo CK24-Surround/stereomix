@@ -10,6 +10,7 @@
 USMGA_Attack::USMGA_Attack()
 {
 	ActivationBlockedTags.AddTag(SMTags::Ability::Activation::Hold);
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Uncontrollable);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Hold);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Held);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::NoiseBreak);
@@ -40,6 +41,11 @@ void USMGA_Attack::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 bool USMGA_Attack::CheckCost(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, FGameplayTagContainer* OptionalRelevantTags) const
 {
 	const USMAbilitySystemComponent* SourceASC = GetASC();
+	if (SourceASC && SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::Uncontrollable))
+	{
+		return false;
+	}
+	
 	if (SourceASC && SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::UnlimitStamina))
 	{
 		return true;
