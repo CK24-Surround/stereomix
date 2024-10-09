@@ -184,6 +184,8 @@ public:
 
 	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
 
+	ESMCharacterType GetCharacterType() const { return CharacterType; }
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:

@@ -18,9 +18,9 @@ class STEREOMIX_API USMTutorialManagerComponent : public UActorComponent
 
 	struct FScriptData
 	{
-		ESMCharacterType PlayerCharacterType = ESMCharacterType::None;
 		FString Ko;
 		FString En;
+		FString Ja;
 	};
 
 public:
@@ -33,6 +33,9 @@ public:
 	virtual void Activate(bool bReset) override;
 
 protected:
+	UFUNCTION()
+	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
+
 	void TransformScriptsData();
 
 	void OnNextInputReceived();
@@ -40,21 +43,23 @@ protected:
 	UFUNCTION()
 	void OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
+	void PrintScript(int32 StepNumber, int32 ScriptsNumber);
+
+	void OnScriptsEnded();
+
 	UPROPERTY(EditAnywhere, Category = "Design|IA")
 	TObjectPtr<UInputAction> NextInputAction;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UDataTable> TutorialScriptDataTable;
 
-	/** Step, ScriptNumberInStep 순으로 접근하면 됩니다. */
-	TArray<TArray<FScriptData>> DialogueScripts;
+	/** Step, ScriptNumberInStep, 캐릭터 타입 순서로 접근하면 됩니다. */
+	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> DialogueScripts;
 
-	/** Step, ScriptNumberInStep 순으로 접근하면 됩니다. */
-	TArray<TArray<FScriptData>> UIScripts;
+	/** Step, ScriptNumberInStep, 캐릭터 타입 순서로 접근하면 됩니다. */
+	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> UIScripts;
 
-	TArray<FString> Scripts;
+	int32 CurrentStepNumber = 1;
 
-	int32 TutorialStep = 0;
-
-	int32 ScriptIndex = 1;
+	int32 CurrentScriptNumber = 1;
 };

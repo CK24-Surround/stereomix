@@ -5,6 +5,7 @@
 
 #include "EngineUtils.h"
 #include "EnhancedInputComponent.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tutorial/SMProgressTrigger.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
@@ -15,12 +16,6 @@ USMTutorialManagerComponent::USMTutorialManagerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
 	bAutoActivate = true;
-
-	Scripts.Push(TEXT(""));
-	Scripts.Push(TEXT("따르릉! 따르릉! 뮤지션님! 지금 어디세요? 이러다가 공연에 늦겠어요! 뭣...작업하느라 아직 작업실이라고요? 지각하려고 작정하셨어요? 오른편에 벤 세워 뒀으니까, 빨리 뛰어오세요! WASD 로 이동할 수 있으니까 오른쪽으로 쭉 오세요! 서둘러요!"));
-	Scripts.Push(TEXT("뭣...작업하느라 아직 작업실이라고요? 지각하려고 작정하셨어요?"));
-	Scripts.Push(TEXT("오른편에 벤 세워 뒀으니까, 빨리 뛰어오세요!"));
-	Scripts.Push(TEXT("WASD 로 이동할 수 있으니까 오른쪽으로 쭉 오세요! 서둘러요!"));
 }
 
 void USMTutorialManagerComponent::BeginPlay()
@@ -35,16 +30,13 @@ void USMTutorialManagerComponent::BeginPlay()
 		TutorialInputComponent->BindAction(NextInputAction, ETriggerEvent::Started, this, &ThisClass::OnNextInputReceived);
 		PlayerController->PushInputComponent(TutorialInputComponent);
 
-		if (USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>())
+		if (APawn* PlayerPawn = PlayerController->GetPawn()) // 빙의되지 않은 경우 UI가 작동하지 않습니다. 따라서 빙의할때까지 기다립니다. 만약 이미 빙의되었다면 바로 호출합니다.
 		{
-			// if (DialogueScriptMap.Contains(TutorialStep))
-			// {
-			// 	DialogueScriptMap[TutorialStep].
-			//
-			//
-			//
-			// }
-			UITutorialControlComponent->SetScript(Scripts[ScriptIndex++]);
+			OnPossessedPawnChanged(nullptr, PlayerPawn);
+		}
+		else
+		{
+			PlayerController->OnPossessedPawnChanged.AddDynamic(this, &ThisClass::USMTutorialManagerComponent::OnPossessedPawnChanged);
 		}
 	}
 
@@ -68,33 +60,44 @@ void USMTutorialManagerComponent::Activate(bool bReset)
 	TransformScriptsData();
 }
 
+void USMTutorialManagerComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
+{
+	if (!NewPawn)
+	{
+		return;
+	}
+
+	PrintScript(CurrentStepNumber, CurrentScriptNumber++);
+}
+
 void USMTutorialManagerComponent::TransformScriptsData()
 {
-	TMap<int32, TMap<int32, FScriptData>> DialogueScriptMap;
-	TMap<int32, TMap<int32, FScriptData>> UIScriptMap;
+	TMap<int32, TMap<int32, TMap<ESMCharacterType, FScriptData>>> DialogueScriptMap;
+	TMap<int32, TMap<int32, TMap<ESMCharacterType, FScriptData>>> UIScriptMap;
 	for (const FName& RowName : TutorialScriptDataTable->GetRowNames())
 	{
 		if (const FSMTutorialScript* Row = TutorialScriptDataTable->FindRow<FSMTutorialScript>(RowName, TEXT("")))
 		{
 			FScriptData DialogueScript;
-			DialogueScript.PlayerCharacterType = Row->PlayerCharacterType;
 			DialogueScript.Ko = Row->Ko;
 			DialogueScript.En = Row->En;
+			DialogueScript.Ja = Row->Ja;
 
 			if (Row->ScriptNumberInStep >= 0)
 			{
-				DialogueScriptMap.FindOrAdd(Row->Step).FindOrAdd(Row->ScriptNumberInStep, DialogueScript);
+				DialogueScriptMap.FindOrAdd(Row->Step).FindOrAdd(Row->ScriptNumberInStep).FindOrAdd(Row->PlayerCharacterType, DialogueScript);
 			}
 			else
 			{
-				UIScriptMap.FindOrAdd(Row->Step).FindOrAdd(FMath::Abs(Row->ScriptNumberInStep), DialogueScript);
+				UIScriptMap.FindOrAdd(Row->Step).FindOrAdd(FMath::Abs(Row->ScriptNumberInStep)).FindOrAdd(Row->PlayerCharacterType, DialogueScript);
 			}
 		}
 	}
 
-	auto ToArray = [](const TMap<int32, TMap<int32, FScriptData>>& Map, TArray<TArray<FScriptData>>& OutScripts) {
+	// 파싱한 데이터를 사용하기 쉽게 가공합니다.
+	auto Transform = [](const TMap<int32, TMap<int32, TMap<ESMCharacterType, FScriptData>>>& Map, TArray<TArray<TMap<ESMCharacterType, FScriptData>>>& OutScripts) {
 		OutScripts.Reset();
-		OutScripts.Push(TArray<FScriptData>());
+		OutScripts.Push(TArray<TMap<ESMCharacterType, FScriptData>>()); // 0번 인덱스는 사용하지 않습니다.
 
 		TArray<int> SortedSteps;
 		Map.GetKeys(SortedSteps);
@@ -102,8 +105,8 @@ void USMTutorialManagerComponent::TransformScriptsData()
 
 		for (const int32 SortedStep : SortedSteps)
 		{
-			TArray<FScriptData> StepScripts;
-			StepScripts.Push(FScriptData());
+			TArray<TMap<ESMCharacterType, FScriptData>> StepScripts;
+			StepScripts.Push(TMap<ESMCharacterType, FScriptData>()); // 0번 인덱스는 사용하지 않습니다.
 
 			TArray<int32> SortedScriptNumbers;
 			Map[SortedStep].GetKeys(SortedScriptNumbers);
@@ -118,24 +121,30 @@ void USMTutorialManagerComponent::TransformScriptsData()
 		}
 	};
 
-	ToArray(DialogueScriptMap, DialogueScripts);
-	ToArray(UIScriptMap, UIScripts);
+	Transform(DialogueScriptMap, DialogueScripts);
+	Transform(UIScriptMap, UIScripts);
 
-	for (int32 Step = 0; Step < DialogueScripts.Num(); ++Step)
+	for (int32 Step = 1; Step < DialogueScripts.Num(); ++Step)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("다이얼로그 스텝: %d"), Step);
-		for (int32 ScriptsNumber = 0; ScriptsNumber < DialogueScripts[Step].Num(); ++ScriptsNumber)
+		for (int32 ScriptsNumber = 1; ScriptsNumber < DialogueScripts[Step].Num(); ++ScriptsNumber)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%d: %s"), ScriptsNumber, *DialogueScripts[Step][ScriptsNumber].Ko);
+			for (const auto& [CharacterType, ScriptData] : DialogueScripts[Step][ScriptsNumber])
+			{
+				UE_LOG(LogTemp, Warning, TEXT("%d: %s [%s]"), ScriptsNumber, *DialogueScripts[Step][ScriptsNumber][CharacterType].Ko, *UEnum::GetValueAsString(CharacterType));
+			}
 		}
 	}
 
-	for (int32 Step = 0; Step < UIScripts.Num(); ++Step)
+	for (int32 Step = 1; Step < UIScripts.Num(); ++Step)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("UI 스텝: %d"), Step);
-		for (int32 ScriptsNumber = 0; ScriptsNumber < UIScripts[Step].Num(); ++ScriptsNumber)
+		for (int32 ScriptsNumber = 1; ScriptsNumber < UIScripts[Step].Num(); ++ScriptsNumber)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%d: %s"), ScriptsNumber, *UIScripts[Step][ScriptsNumber].Ko);
+			for (const auto& [CharacterType, ScriptData] : UIScripts[Step][ScriptsNumber])
+			{
+				UE_LOG(LogTemp, Warning, TEXT("%d: %s [%s]"), ScriptsNumber, *UIScripts[Step][ScriptsNumber][CharacterType].Ko, *UEnum::GetValueAsString(CharacterType));
+			}
 		}
 	}
 }
@@ -144,19 +153,7 @@ void USMTutorialManagerComponent::OnNextInputReceived()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Next 입력"));
 
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	if (USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController ? PlayerController->GetComponentByClass<USMTutorialUIControlComponent>() : nullptr)
-	{
-		if (ScriptIndex > 0 && Scripts.IsValidIndex(ScriptIndex))
-		{
-			UITutorialControlComponent->SetScript(Scripts[ScriptIndex++]);
-		}
-		else
-		{
-			UITutorialControlComponent->DeactivateDialogue();
-		}
-	}
+	PrintScript(CurrentStepNumber, CurrentScriptNumber++);
 }
 
 void USMTutorialManagerComponent::OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
@@ -166,4 +163,47 @@ void USMTutorialManagerComponent::OnProgressTriggerBeginOverlap(AActor* Overlapp
 		OverlappedActor->OnActorBeginOverlap.RemoveDynamic(this, &USMTutorialManagerComponent::OnProgressTriggerBeginOverlap);
 		OverlappedActor->Destroy();
 	}
+}
+
+void USMTutorialManagerComponent::PrintScript(int32 StepNumber, int32 ScriptsNumber)
+{
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController ? PlayerController->GetComponentByClass<USMTutorialUIControlComponent>() : nullptr;
+	if (!UITutorialControlComponent)
+	{
+		return;
+	}
+
+	if (!DialogueScripts.IsValidIndex(StepNumber) || !DialogueScripts[StepNumber].IsValidIndex(ScriptsNumber))
+	{
+		OnScriptsEnded();
+		return;
+	}
+
+	if (DialogueScripts[StepNumber][ScriptsNumber].Contains(ESMCharacterType::None))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *DialogueScripts[StepNumber][ScriptsNumber][ESMCharacterType::None].Ko);
+		UITutorialControlComponent->SetScript(DialogueScripts[StepNumber][ScriptsNumber][ESMCharacterType::None].Ko);
+	}
+	else
+	{
+		if (const ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
+		{
+			const ESMCharacterType CharacterType = SourceCharacter->GetCharacterType();
+			UITutorialControlComponent->SetScript(DialogueScripts[StepNumber][ScriptsNumber][CharacterType].Ko);
+		}
+	}
+}
+
+void USMTutorialManagerComponent::OnScriptsEnded()
+{
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController ? PlayerController->GetComponentByClass<USMTutorialUIControlComponent>() : nullptr)
+	{
+		UITutorialControlComponent->DeactivateDialogue();
+	}
+
+	++CurrentStepNumber;
 }

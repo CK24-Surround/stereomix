@@ -27,4 +27,7 @@ struct FSMTutorialScript : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString En;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FString Ja;
 };
