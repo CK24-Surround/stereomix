@@ -34,7 +34,7 @@ protected:
 	void MulticastPlayActivateTileFX(AActor* InActivator, const TArray<TWeakObjectPtr<ASMTile>>& InTriggeredTiles);
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateEffect;
+	TMap<ESMLocalTeam, TObjectPtr<UNiagaraSystem>> ActivateVFX;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<UGameplayEffect> GEForActivator;

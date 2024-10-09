@@ -62,7 +62,7 @@ void ASMHoldableItem_ChangeAttribute::ActivateItemByNoiseBreak(AActor* InActivat
 		auto ActivateEffect = [ThisWeakPtr, bIsEnd] {
 			if (ThisWeakPtr.IsValid())
 			{
-				bIsEnd ? ThisWeakPtr->Destroy() : ThisWeakPtr->TriggerCountTimerCallback();
+				bIsEnd ? (void)ThisWeakPtr->Destroy() : ThisWeakPtr->TriggerCountTimerCallback();
 			}
 		};
 
@@ -166,13 +166,13 @@ void ASMHoldableItem_ChangeAttribute::MulticastPlayActivateTileFX_Implementation
 
 	const ESMLocalTeam LocalTeam = USMTeamBlueprintLibrary::GetLocalTeam(InActivator);
 
-	if (ActivateEffect.Contains(LocalTeam))
+	if (ActivateVFX.Contains(LocalTeam))
 	{
 		for (const TWeakObjectPtr<ASMTile> TriggeredTile : InTriggeredTiles)
 		{
 			if (TriggeredTile.IsValid())
 			{
-				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ActivateEffect[LocalTeam], TriggeredTile->GetTileLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
+				UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ActivateVFX[LocalTeam], TriggeredTile->GetTileLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
 			}
 		}
 	}
