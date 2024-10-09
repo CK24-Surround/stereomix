@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "Actors/Tutorial/SMProgressTrigger.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
+#include "Data/DataTable/Tutorial/SMTutorialScript.h"
 #include "Utilities/SMLog.h"
 
 
@@ -36,6 +37,13 @@ void USMTutorialManagerComponent::BeginPlay()
 
 		if (USMTutorialUIControlComponent* UITutorialControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>())
 		{
+			// if (DialogueScriptMap.Contains(TutorialStep))
+			// {
+			// 	DialogueScriptMap[TutorialStep].
+			//
+			//
+			//
+			// }
 			UITutorialControlComponent->SetScript(Scripts[ScriptIndex++]);
 		}
 	}
@@ -56,14 +64,79 @@ void USMTutorialManagerComponent::Activate(bool bReset)
 	{
 		ProgressTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnProgressTriggerBeginOverlap);
 	}
+
+	TransformScriptsData();
 }
 
-void USMTutorialManagerComponent::OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+void USMTutorialManagerComponent::TransformScriptsData()
 {
-	if (OverlappedActor)
+	TMap<int32, TMap<int32, FScriptData>> DialogueScriptMap;
+	TMap<int32, TMap<int32, FScriptData>> UIScriptMap;
+	for (const FName& RowName : TutorialScriptDataTable->GetRowNames())
 	{
-		OverlappedActor->OnActorBeginOverlap.RemoveDynamic(this, &USMTutorialManagerComponent::OnProgressTriggerBeginOverlap);
-		OverlappedActor->Destroy();
+		if (const FSMTutorialScript* Row = TutorialScriptDataTable->FindRow<FSMTutorialScript>(RowName, TEXT("")))
+		{
+			FScriptData DialogueScript;
+			DialogueScript.PlayerCharacterType = Row->PlayerCharacterType;
+			DialogueScript.Ko = Row->Ko;
+			DialogueScript.En = Row->En;
+
+			if (Row->ScriptNumberInStep >= 0)
+			{
+				DialogueScriptMap.FindOrAdd(Row->Step).FindOrAdd(Row->ScriptNumberInStep, DialogueScript);
+			}
+			else
+			{
+				UIScriptMap.FindOrAdd(Row->Step).FindOrAdd(FMath::Abs(Row->ScriptNumberInStep), DialogueScript);
+			}
+		}
+	}
+
+	auto ToArray = [](const TMap<int32, TMap<int32, FScriptData>>& Map, TArray<TArray<FScriptData>>& OutScripts) {
+		OutScripts.Reset();
+		OutScripts.Push(TArray<FScriptData>());
+
+		TArray<int> SortedSteps;
+		Map.GetKeys(SortedSteps);
+		SortedSteps.Sort();
+
+		for (const int32 SortedStep : SortedSteps)
+		{
+			TArray<FScriptData> StepScripts;
+			StepScripts.Push(FScriptData());
+
+			TArray<int32> SortedScriptNumbers;
+			Map[SortedStep].GetKeys(SortedScriptNumbers);
+			SortedScriptNumbers.Sort();
+
+			for (const int32 SortedScriptNumber : SortedScriptNumbers)
+			{
+				StepScripts.Add(Map[SortedStep][SortedScriptNumber]);
+			}
+
+			OutScripts.Add(StepScripts);
+		}
+	};
+
+	ToArray(DialogueScriptMap, DialogueScripts);
+	ToArray(UIScriptMap, UIScripts);
+
+	for (int32 Step = 0; Step < DialogueScripts.Num(); ++Step)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("다이얼로그 스텝: %d"), Step);
+		for (int32 ScriptsNumber = 0; ScriptsNumber < DialogueScripts[Step].Num(); ++ScriptsNumber)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%d: %s"), ScriptsNumber, *DialogueScripts[Step][ScriptsNumber].Ko);
+		}
+	}
+
+	for (int32 Step = 0; Step < UIScripts.Num(); ++Step)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("UI 스텝: %d"), Step);
+		for (int32 ScriptsNumber = 0; ScriptsNumber < UIScripts[Step].Num(); ++ScriptsNumber)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%d: %s"), ScriptsNumber, *UIScripts[Step][ScriptsNumber].Ko);
+		}
 	}
 }
 
@@ -83,5 +156,14 @@ void USMTutorialManagerComponent::OnNextInputReceived()
 		{
 			UITutorialControlComponent->DeactivateDialogue();
 		}
+	}
+}
+
+void USMTutorialManagerComponent::OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+{
+	if (OverlappedActor)
+	{
+		OverlappedActor->OnActorBeginOverlap.RemoveDynamic(this, &USMTutorialManagerComponent::OnProgressTriggerBeginOverlap);
+		OverlappedActor->Destroy();
 	}
 }

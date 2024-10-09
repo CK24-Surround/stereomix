@@ -17,10 +17,10 @@ struct FSMTutorialScript : public FTableRowBase
 	int32 Step = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESMCharacterType PlayerCharacterType = ESMCharacterType::None;
+	int32 ScriptNumberInStep = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ScriptNumberInStep = 0;
+	ESMCharacterType PlayerCharacterType = ESMCharacterType::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FString Ko;
