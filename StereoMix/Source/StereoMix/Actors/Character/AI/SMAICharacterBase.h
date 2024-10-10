@@ -24,6 +24,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaTime) override;
+
 	virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
 	virtual ESMTeam GetTeam() const override;
@@ -38,7 +40,8 @@ public:
 
 	virtual bool IsObstacle() override { return false; }
 
-	virtual void Tick(float DeltaTime) override;
+	UFUNCTION(BlueprintCallable, Category = "Note")
+	bool IsNoteState() const { return bIsNoteState; }
 
 protected:
 	void SetNoteState(bool bNewIsNote);
@@ -54,10 +57,10 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design|Weapon")
 	TSubclassOf<ASMWeaponBase> WeaponClass;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Design|Weapon")
 	FName WeaponSocketName;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Design|Note")
 	TSubclassOf<ASMNoteBase> NoteClass;
 

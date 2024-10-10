@@ -74,6 +74,11 @@ void ASMAICharacterBase::BeginPlay()
 
 void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 {
+	if (bIsNoteState == bNewIsNote)
+	{
+		return;
+	}
+
 	bIsNoteState = bNewIsNote;
 
 	USkeletalMeshComponent* CharacterMeshComponent = GetMesh();
@@ -84,6 +89,8 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 		return;
 	}
 
+	HitBox->SetCollisionProfileName(bIsNoteState ? SMCollisionProfileName::HoldableItem : SMCollisionProfileName::Player);
+	
 	CharacterMeshComponent->SetVisibility(!bIsNoteState);
 
 	WeaponRootComponent->SetVisibility(!bIsNoteState, true);
