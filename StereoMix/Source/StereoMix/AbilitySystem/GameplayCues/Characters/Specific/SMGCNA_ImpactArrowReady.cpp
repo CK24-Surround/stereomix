@@ -7,7 +7,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Actors/Character/Player/SMPianoCharacter.h"
-#include "FunctionLibraries/SMGameplayCueBlueprintLibrary.h"
+#include "Actors/Weapons/SMWeaponBase.h"
 
 
 ASMGCNA_ImpactArrowReady::ASMGCNA_ImpactArrowReady()
@@ -18,26 +18,24 @@ ASMGCNA_ImpactArrowReady::ASMGCNA_ImpactArrowReady()
 bool ASMGCNA_ImpactArrowReady::OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
 	ASMPianoCharacter* SourceCharacter = Cast<ASMPianoCharacter>(MyTarget);
-	USceneComponent* BowMesh = Parameters.TargetAttachComponent.Get();
+	const ASMWeaponBase* sourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
+	UMeshComponent* BowMesh = sourceWeapon ? sourceWeapon->GetWeaponMeshComponent() : nullptr;
 	if (!SourceCharacter || !BowMesh)
 	{
 		return false;
 	}
 
-	FVector SourceLocation;
-	FRotator SourceRotation;
-	USMGameplayCueBlueprintLibrary::GetLocationAndRotation(Parameters, SourceLocation, SourceRotation);
-
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	const FVector WeaponOffset(0.0, 0.0, 20.0);
 
 	if (VFX.Find(SourceTeam))
 	{
-		VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], BowMesh, NAME_None, SourceLocation, SourceRotation, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
+		VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], BowMesh, NAME_None, WeaponOffset, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
 	}
 
 	if (SFX.Find(SourceTeam))
 	{
-		SFXComponent = UFMODBlueprintStatics::PlayEventAttached(SFX[SourceTeam], BowMesh, NAME_None, SourceLocation, EAttachLocation::KeepRelativeOffset, false, true, true);
+		SFXComponent = UFMODBlueprintStatics::PlayEventAttached(SFX[SourceTeam], BowMesh, NAME_None, WeaponOffset, EAttachLocation::KeepRelativeOffset, false, true, true);
 	}
 
 	SourceCharacter->SetWeaponVFXEnabled(false);
@@ -49,11 +47,22 @@ bool ASMGCNA_ImpactArrowReady::OnRemove_Implementation(AActor* MyTarget, const F
 {
 	(void)Super::OnRemove_Implementation(MyTarget, Parameters);
 
+	const bool bIsSuccess = FMath::IsNearlyEqual(Parameters.RawMagnitude, 1.0f);
+
 	if (VFXComponent)
 	{
 		VFXComponent->Deactivate();
 		VFXComponent->ReleaseToPool();
 		VFXComponent = nullptr;
+	}
+
+	if (SFXComponent)
+	{
+		const FName ParameterName = TEXT("ShotSuccess");
+		const float ParameterValue = bIsSuccess ? 0.0f : 1.0f;
+		SFXComponent->SetParameter(ParameterName, ParameterValue);
+		SFXComponent->Stop();
+		SFXComponent = nullptr;
 	}
 
 	// 노트 상태 즉 무력화 상태가 아닌 경우만 이펙트를 다시 활성화합니다.

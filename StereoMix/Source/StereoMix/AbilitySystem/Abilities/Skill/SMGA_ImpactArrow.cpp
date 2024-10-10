@@ -64,17 +64,9 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, SourceCharacter->GetImpactArrowIndicator(), MaxDistance);
 		SkillIndicatorTask->ReadyForActivation();
 
-		const ASMWeaponBase* SourceWeapon = SourceCharacter->GetWeapon();
-		if (UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr)
-		{
-			const FVector WeaponOffset(0.0, 0.0, 20.0);
-
-			FGameplayCueParameters GCParams;
-			GCParams.SourceObject = SourceCharacter;
-			GCParams.TargetAttachComponent = SourceWeaponMesh;
-			GCParams.Location = WeaponOffset;
-			SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowReady, GCParams);
-		}
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowReady, GCParams);
 	}
 
 	const FName TaskName = TEXT("MontageTask");
@@ -98,6 +90,7 @@ void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
+		GCParams.RawMagnitude = 0.0f;
 		SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowReady, GCParams);
 	}
 
@@ -123,6 +116,7 @@ void USMGA_ImpactArrow::InputPressed(const FGameplayAbilitySpecHandle Handle, co
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceActor;
+		GCParams.RawMagnitude = 0.0f;
 		SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::Piano::ImpactArrowReady, GCParams);
 	}
 
@@ -164,14 +158,15 @@ void USMGA_ImpactArrow::Shoot()
 
 	FGameplayCueParameters ReadyEndGCParams;
 	ReadyEndGCParams.SourceObject = SourceCharacter;
+	ReadyEndGCParams.RawMagnitude = 1.0f;
 	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowReady, ReadyEndGCParams);
 
-	const FVector Direciton = FRotator(60.0, 0.0, 0.0).Vector();
-	const FVector OffsetLocation = Direciton * 300.0;
+	const FVector Direction = FRotator(60.0, 0.0, 0.0).Vector();
+	const FVector OffsetLocation = Direction * 300.0;
 	FGameplayCueParameters ShootGCParams;
 	ShootGCParams.SourceObject = SourceCharacter;
 	ShootGCParams.Location = OffsetLocation;
-	ShootGCParams.Normal = Direciton;
+	ShootGCParams.Normal = Direction;
 	ShootGCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrow, ShootGCParams);
 
