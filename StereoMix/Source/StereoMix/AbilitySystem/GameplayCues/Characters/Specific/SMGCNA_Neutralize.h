@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FMODAudioComponent.h"
 #include "AbilitySystem/GameplayCues/SMGameplayCueNotifyActorBase.h"
 #include "SMGCNA_Neutralize.generated.h"
 
@@ -24,12 +25,18 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> EndVFX;
 
+	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ScreenVFX;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UFMODEvent>> StartSFX;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UFMODEvent>> EndSFX;
 
-	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ScreenFX;
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> ScreenVFXComponent;
 
 	UPROPERTY()
-	TObjectPtr<UNiagaraComponent> ScreenFXComponent;
+	TObjectPtr<UFMODAudioComponent> SFXComponent;
 };

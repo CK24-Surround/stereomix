@@ -18,43 +18,48 @@ ASMGCNA_Neutralize::ASMGCNA_Neutralize()
 	{
 		ESMTeam Key = static_cast<ESMTeam>(i);
 		EndVFX.Add(Key, nullptr);
+		ScreenVFX.Add(Key, nullptr);
+		StartSFX.Add(Key, nullptr);
 		EndSFX.Add(Key, nullptr);
-		ScreenFX.Add(Key, nullptr);
 	}
 }
 
 bool ASMGCNA_Neutralize::OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
 	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
-	UWorld* World = SourceCharacter ? SourceCharacter->GetWorld() : nullptr;
 	USceneComponent* SourceRoot = SourceCharacter ? SourceCharacter->GetRootComponent() : nullptr;
 	ASMNoteBase* SourceNote = SourceCharacter ? SourceCharacter->GetNote() : nullptr;
-	USkeletalMeshComponent* SourceNoteMesh = SourceNote ? SourceNote->GetMesh() : nullptr;
-	if (!SourceCharacter || !World || !SourceRoot || !SourceNoteMesh)
+	const USkeletalMeshComponent* SourceNoteMesh = SourceNote ? SourceNote->GetMesh() : nullptr;
+	if (!SourceCharacter || !SourceRoot || !SourceNoteMesh)
 	{
 		return false;
 	}
 
-	ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(MyTarget);
+	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(MyTarget);
 
-	if (VFX.Find(SourceTeam))
+	if (VFX.Contains(SourceTeam))
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], SourceRoot, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::AutoRelease);
 	}
 
-	if (SFX.Find(SourceTeam))
+	if (StartSFX.Contains(SourceTeam))
 	{
-		UFMODBlueprintStatics::PlayEventAttached(SFX[SourceTeam], SourceRoot, NAME_None, FVector::ZeroVector, EAttachLocation::KeepRelativeOffset, false, true, true);
+		UFMODBlueprintStatics::PlayEventAttached(StartSFX[SourceTeam], SourceRoot, NAME_None, FVector::ZeroVector, EAttachLocation::KeepRelativeOffset, false, true, true);
 	}
 
 	if (SourceCharacter->IsLocallyControlled())
 	{
-		if (ScreenFX.Find(SourceTeam))
+		if (ScreenVFX.Contains(SourceTeam))
 		{
 			if (UCameraComponent* SourceCamera = SourceCharacter->GetComponentByClass<UCameraComponent>())
 			{
-				ScreenFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(ScreenFX[SourceTeam], SourceCamera, NAME_None, FVector(300.0, 0.0, 0.0), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
+				ScreenVFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(ScreenVFX[SourceTeam], SourceCamera, NAME_None, FVector(300.0, 0.0, 0.0), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
 			}
+		}
+
+		if (SFX.Contains(SourceTeam))
+		{
+			SFXComponent = UFMODBlueprintStatics::PlayEventAttached(SFX[SourceTeam], SourceRoot, NAME_None, FVector::ZeroVector, EAttachLocation::KeepRelativeOffset, false, true, true);
 		}
 	}
 
@@ -65,24 +70,29 @@ bool ASMGCNA_Neutralize::OnRemove_Implementation(AActor* MyTarget, const FGamepl
 {
 	(void)Super::OnRemove_Implementation(MyTarget, Parameters);
 
-	if (ScreenFXComponent)
+	if (ScreenVFXComponent)
 	{
-		ScreenFXComponent->Deactivate();
-		ScreenFXComponent->ReleaseToPool();
-		ScreenFXComponent = nullptr;
+		ScreenVFXComponent->Deactivate();
+		ScreenVFXComponent->ReleaseToPool();
+		ScreenVFXComponent = nullptr;
+	}
+
+	if (SFXComponent)
+	{
+		SFXComponent->Deactivate();
+		SFXComponent = nullptr;
 	}
 
 	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
-	UWorld* World = SourceCharacter ? SourceCharacter->GetWorld() : nullptr;
 	USceneComponent* SourceRoot = SourceCharacter ? SourceCharacter->GetRootComponent() : nullptr;
 	ASMNoteBase* SourceNote = SourceCharacter ? SourceCharacter->GetNote() : nullptr;
-	USkeletalMeshComponent* SourceNoteMesh = SourceNote ? SourceNote->GetMesh() : nullptr;
-	if (!SourceCharacter || !World || !SourceRoot || !SourceNoteMesh)
+	const USkeletalMeshComponent* SourceNoteMesh = SourceNote ? SourceNote->GetMesh() : nullptr;
+	if (!SourceCharacter || !SourceRoot || !SourceNoteMesh)
 	{
 		return false;
 	}
 
-	ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(MyTarget);
+	const ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(MyTarget);
 
 	if (EndVFX.Find(SourceTeam))
 	{
