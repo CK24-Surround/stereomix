@@ -7,6 +7,8 @@
 #include "SMHIC_TrainingDummy.generated.h"
 
 
+class ASMPlayerCharacterBase;
+
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class STEREOMIX_API USMHIC_TrainingDummy : public USMHoldInteractionComponent
 {
@@ -15,9 +17,26 @@ class STEREOMIX_API USMHIC_TrainingDummy : public USMHoldInteractionComponent
 public:
 	USMHIC_TrainingDummy();
 
-protected:
-	virtual void BeginPlay() override;
+	virtual bool CanBeHeld(AActor* Instigator) const override;
 
-public:
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	virtual void OnHeld(AActor* Instigator) override;
+
+	virtual void OnReleasedFromHold(AActor* Instigator) override;
+
+	virtual bool ShouldApplyDamageFromNoiseBreak() const override { return false; }
+
+	virtual bool ShouldCaptureTilesFromNoiseBreak() const override { return true; }
+
+	virtual void OnNoiseBreakStarted(AActor* Instigator) override;
+
+	virtual void OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
+
+	virtual void OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
+
+	virtual void OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
+
+protected:
+	void ReleasedFromHold();
+
+	void InternalOnNoiseBreakApplied(ASMPlayerCharacterBase* Instigator, const TSharedPtr<FSMNoiseBreakData>& NoiseBreakData);
 };

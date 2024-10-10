@@ -38,11 +38,15 @@ public:
 
 	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
 
-	virtual bool CanIgnoreAttack() const override { return false; }
+	virtual bool CanIgnoreAttack() const override;
 
 	virtual bool IsObstacle() override { return false; }
 
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
+
+	bool IsNeutralized() const { return bIsNeutralized; }
+
+	void Revival();
 
 	FOnTrainingDummyStateChanged OnHalfHPReached;
 
@@ -65,4 +69,6 @@ protected:
 	float MaxHP = 100.0f;
 
 	float HP = 0.0f;
+
+	uint32 bIsNeutralized:1 = false;
 };

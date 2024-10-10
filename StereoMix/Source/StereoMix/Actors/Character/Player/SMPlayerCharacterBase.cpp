@@ -162,10 +162,13 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	if (!DataAsset)
+	UWorld* World = GetWorld();
+	if (!DataAsset || !World)
 	{
 		return;
 	}
+
+	const ESMTeam SourceTeam = GetTeam();
 
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 
@@ -182,25 +185,25 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 	OriginalMaterials = CachedMeshComponent->GetMaterials();
 	OriginalOverlayMaterial = CachedMeshComponent->GetOverlayMaterial();
 
+	if (GetNetMode() != NM_DedicatedServer) // 노이즈 브레이크 인디케이터 에셋을 설정해줍니다.
+	{
+		NoiseBreakIndicatorComponent->SetAsset(DataAsset->NoiseBreakIndicatorFX[SourceTeam]);
+	}
+
 	if (HasAuthority())
 	{
-		if (UWorld* World = GetWorld())
+		if (DataAsset->NoteClass.Contains(SourceTeam))
 		{
-			const ESMTeam SourceTeam = GetTeam();
-			if (DataAsset->NoteClass.Find(SourceTeam))
+			if (Note = World->SpawnActor<ASMNoteBase>(DataAsset->NoteClass[SourceTeam]); Note)
 			{
-				Note = World->SpawnActor<ASMNoteBase>(DataAsset->NoteClass[SourceTeam]);
-				if (Note)
-				{
-					Note->AttachToComponent(NoteSlotComponent, FAttachmentTransformRules::KeepRelativeTransform);
-					Note->SetOwner(this);
-				}
+				Note->AttachToComponent(NoteSlotComponent, FAttachmentTransformRules::KeepRelativeTransform);
+				Note->SetOwner(this);
 			}
+		}
 
-			if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(World))
-			{
-				TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
-			}
+		if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(World))
+		{
+			TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
 		}
 	}
 
@@ -301,8 +304,6 @@ void ASMPlayerCharacterBase::OnRep_PlayerState()
 
 	ImmuneMoveTrailFXComponent->SetAsset(DataAsset->ImmuneMoveTrailFX[SourceTeam]);
 	ImmuneMoveTrailFXComponent->Deactivate();
-
-	NoiseBreakIndicatorComponent->SetAsset(DataAsset->NoiseBreakIndicatorFX[SourceTeam]);
 }
 
 void ASMPlayerCharacterBase::SetActorHiddenInGame(bool bNewHidden)

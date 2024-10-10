@@ -20,9 +20,9 @@ ASMTrainingDummy::ASMTrainingDummy()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	
+
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
-	
+
 	HIC = CreateDefaultSubobject<USMHIC_TrainingDummy>(TEXT("HIC"));
 }
 
@@ -59,11 +59,28 @@ void ASMTrainingDummy::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 
 	if (HP <= 0.0f)
 	{
+		bIsNeutralized = true;
 		(void)OnNeutralized.ExecuteIfBound();
 	}
+}
+
+bool ASMTrainingDummy::CanIgnoreAttack() const
+{
+	if (bIsNeutralized)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 USMHoldInteractionComponent* ASMTrainingDummy::GetHoldInteractionComponent() const
 {
 	return HIC;
+}
+
+void ASMTrainingDummy::Revival()
+{
+	HP = MaxHP;
+	bIsNeutralized = false;
 }
