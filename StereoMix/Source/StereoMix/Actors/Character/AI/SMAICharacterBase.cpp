@@ -4,6 +4,7 @@
 #include "SMAICharacterBase.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Actors/Notes/SMNoteBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Common/SMTeamComponent.h"
@@ -26,6 +27,11 @@ ASMAICharacterBase::ASMAICharacterBase()
 	CachedMovementComponent->SetWalkableFloorAngle(5.0f);
 	CachedMovementComponent->bCanWalkOffLedges = false;
 
+	NoteSlotComponent = CreateDefaultSubobject<USceneComponent>(TEXT("NoteSlotComponent"));
+	NoteSlotComponent->SetupAttachment(CachedMeshComponent);
+	NoteSlotComponent->SetAbsolute(false, true, false);
+
+	NoteSlotComponent->SetAbsolute(false, true, false);
 	HitBox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
@@ -38,11 +44,21 @@ void ASMAICharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(WeaponClass);
-	if (Weapon)
+	if (UWorld* World = GetWorld())
 	{
-		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
-		Weapon->SetOwner(this);
+		Weapon = World->SpawnActor<ASMWeaponBase>(WeaponClass);
+		if (Weapon)
+		{
+			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
+			Weapon->SetOwner(this);
+		}
+
+		Note = World->SpawnActor<ASMNoteBase>(NoteClass);
+		if (Note)
+		{
+			Note->AttachToComponent(NoteSlotComponent, FAttachmentTransformRules::KeepRelativeTransform);
+			Note->SetOwner(this);
+		}
 	}
 }
 
@@ -56,6 +72,33 @@ void ASMAICharacterBase::BeginPlay()
 	Super::BeginPlay();
 }
 
+void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
+{
+	bIsNoteState = bNewIsNote;
+
+	USkeletalMeshComponent* CharacterMeshComponent = GetMesh();
+	USceneComponent* WeaponRootComponent = Weapon ? Weapon->GetRootComponent() : nullptr;
+	USceneComponent* NoteRootComponent = Note ? Note->GetRootComponent() : nullptr;
+	if (!CharacterMeshComponent || !WeaponRootComponent || !NoteRootComponent)
+	{
+		return;
+	}
+
+	CharacterMeshComponent->SetVisibility(!bIsNoteState);
+
+	WeaponRootComponent->SetVisibility(!bIsNoteState, true);
+	NoteRootComponent->SetVisibility(bIsNoteState, true);
+
+	if (bIsNoteState)
+	{
+		Note->PlayAnimation();
+	}
+	else
+	{
+		Note->StopAnimation();
+	}
+}
+
 AActor* ASMAICharacterBase::GetLastAttacker() const
 {
 	return nullptr;
@@ -67,6 +110,9 @@ void ASMAICharacterBase::SetLastAttacker(AActor* NewAttacker)
 
 void ASMAICharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
+	UE_LOG(LogTemp, Warning, TEXT("ASMAICharacterBase::ReceiveDamage"));
+
+	SetNoteState(true);
 }
 
 void ASMAICharacterBase::Tick(float DeltaTime)

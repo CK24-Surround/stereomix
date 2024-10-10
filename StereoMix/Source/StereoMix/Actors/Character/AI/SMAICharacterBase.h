@@ -8,6 +8,7 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMAICharacterBase.generated.h"
 
+class ASMNoteBase;
 class USMPlayerCharacterDataAsset;
 class ASMWeaponBase;
 
@@ -21,29 +22,12 @@ public:
 
 	virtual void PostInitializeComponents() override;
 
+	virtual void BeginPlay() override;
+
 	virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
 	virtual ESMTeam GetTeam() const override;
 
-protected:
-	virtual void BeginPlay() override;
-
-	UPROPERTY(VisibleAnywhere, Category = "HitBox")
-	TObjectPtr<UCapsuleComponent> HitBox;
-
-	UPROPERTY(VisibleAnywhere, Category = "Team")
-	TObjectPtr<USMTeamComponent> TeamComponent;
-
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	TSubclassOf<ASMWeaponBase> WeaponClass;
-	
-	UPROPERTY(EditAnywhere, Category = "Weapon")
-	FName WeaponSocketName;
-
-	UPROPERTY()
-	TObjectPtr<ASMWeaponBase> Weapon;
-
-public:
 	virtual AActor* GetLastAttacker() const override;
 
 	virtual void SetLastAttacker(AActor* NewAttacker) override;
@@ -55,4 +39,33 @@ public:
 	virtual bool IsObstacle() override { return false; }
 
 	virtual void Tick(float DeltaTime) override;
+
+protected:
+	void SetNoteState(bool bNewIsNote);
+
+	UPROPERTY(VisibleAnywhere, Category = "HitBox")
+	TObjectPtr<UCapsuleComponent> HitBox;
+
+	UPROPERTY(VisibleAnywhere, Category = "Team")
+	TObjectPtr<USMTeamComponent> TeamComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Note")
+	TObjectPtr<USceneComponent> NoteSlotComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Design|Weapon")
+	TSubclassOf<ASMWeaponBase> WeaponClass;
+	
+	UPROPERTY(EditAnywhere, Category = "Design|Weapon")
+	FName WeaponSocketName;
+	
+	UPROPERTY(EditAnywhere, Category = "Design|Note")
+	TSubclassOf<ASMNoteBase> NoteClass;
+
+	UPROPERTY()
+	TObjectPtr<ASMWeaponBase> Weapon;
+
+	UPROPERTY()
+	TObjectPtr<ASMNoteBase> Note;
+
+	uint32 bIsNoteState:1 = false;
 };
