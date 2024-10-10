@@ -75,7 +75,7 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 
 	ListenerComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ListenerComponent"));
 	ListenerComponent->SetAbsolute(false, true);
-	ListenerComponent->SetupAttachment(CameraBoom);
+	ListenerComponent->SetupAttachment(RootComponent);
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
 
