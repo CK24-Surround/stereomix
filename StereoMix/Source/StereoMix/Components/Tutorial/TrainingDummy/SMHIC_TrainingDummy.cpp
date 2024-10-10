@@ -62,8 +62,6 @@ void USMHIC_TrainingDummy::ReleasedFromHold()
 	{
 		SourceCharacter->SetActorHiddenInGame(false);
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("놓기"));
 }
 
 void USMHIC_TrainingDummy::InternalOnNoiseBreakApplied(ASMPlayerCharacterBase* Instigator, const TSharedPtr<FSMNoiseBreakData>& NoiseBreakData)
