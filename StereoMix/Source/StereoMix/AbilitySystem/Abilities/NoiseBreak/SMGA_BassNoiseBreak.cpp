@@ -93,6 +93,11 @@ void USMGA_BassNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 
 		ServerSendLocationData(NoiseBreakStartLocation, NoiseBreakTargetLocation);
 		LeapCharacter(NoiseBreakStartLocation, NoiseBreakTargetLocation, SourceMovement->GetGravityZ());
+
+		FGameplayCueParameters GCParams;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreak, GCParams);
 	}
 
 	// 노이즈 브레이크 시작을 타겟에게 알립니다.
@@ -143,7 +148,7 @@ void USMGA_BassNoiseBreak::LeapCharacter(const FVector& InStartLocation, const F
 void USMGA_BassNoiseBreak::OnLanded()
 {
 	ASMBassCharacter* SourceCharacter = GetAvatarActor<ASMBassCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	if (!SourceCharacter || !SourceASC || !SourceHIC || !SourceCapsule)
@@ -210,9 +215,11 @@ void USMGA_BassNoiseBreak::OnLanded()
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
 		const ASMTile* Tile = GetTileFromLocation(SourceLocation);
 		const FVector TileLocation = Tile ? Tile->GetTileLocation() : FVector::ZeroVector;
+		const FVector Offset(0.0, 0.0, 10.0); // 타일과 겹치게 되면 현재 이펙트가 잘 안 보이는데 이를 방지하는 오프셋입니다.
 
 		FGameplayCueParameters GCParams;
-		GCParams.Location = TileLocation;
+		GCParams.SourceObject = SourceCharacter;
+		GCParams.Location = TileLocation + Offset;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakBurst, GCParams);
 	}
 }
@@ -244,7 +251,7 @@ TArray<ASMTile*> USMGA_BassNoiseBreak::GetTilesToBeCaptured()
 void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
 	UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
 	if (!SourceCharacter || !SourceASC || !SourceWeaponMesh)
@@ -263,7 +270,7 @@ void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
 void USMGA_BassNoiseBreak::OnWeaponTrailDeactivate(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
@@ -277,7 +284,7 @@ void USMGA_BassNoiseBreak::OnWeaponTrailDeactivate(FGameplayEventData Payload)
 void USMGA_BassNoiseBreak::OnSlash(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
