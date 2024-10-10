@@ -13,7 +13,6 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMProjectileFunctionLibrary.h"
-#include "Games/SMGameState.h"
 
 USMGA_Shoot::USMGA_Shoot()
 {
@@ -117,6 +116,7 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+		GCParams.Location = FVector(150.0, 0.0, 0.0);
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::Shoot, GCParams);
 	}
 }

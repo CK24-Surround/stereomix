@@ -57,7 +57,7 @@ bool USMGCN_OneShot::OnExecute_Implementation(AActor* MyTarget, const FGameplayC
 		}
 		else
 		{
-			FTransform TargetTransform(TargetRotation, TargetLocation);
+			const FTransform TargetTransform(TargetRotation, TargetLocation);
 			UFMODBlueprintStatics::PlayEventAtLocation(SourceCharacter, SFX[SourceTeam], TargetTransform, true);
 		}
 	}

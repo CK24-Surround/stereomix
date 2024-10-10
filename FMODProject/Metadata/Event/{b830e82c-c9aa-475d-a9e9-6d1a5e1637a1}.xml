@@ -197,6 +197,9 @@
 		<property name="timelockedOffset">
 			<value>0.0050000000000000001</value>
 		</property>
+		<property name="volume">
+			<value>-80</value>
+		</property>
 		<property name="looping">
 			<value>true</value>
 		</property>
