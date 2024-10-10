@@ -3,6 +3,7 @@
 
 #include "SMGCNA_Immune.h"
 
+#include "FMODBlueprintStatics.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
@@ -17,15 +18,15 @@ ASMGCNA_Immune::ASMGCNA_Immune()
 	{
 		ESMTeam Key = static_cast<ESMTeam>(i);
 		EndVFX.Add(Key, nullptr);
-		ScreenFX.Add(Key, nullptr);
+		ScreenVFX.Add(Key, nullptr);
 	}
 }
 
 bool ASMGCNA_Immune::OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters)
 {
-	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
+	const ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
 	USkeletalMeshComponent* SourceMesh = SourceCharacter ? SourceCharacter->GetMesh() : nullptr;
-	ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
+	const ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
 	UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
 	if (!SourceMesh || !SourceWeaponMesh)
 	{
@@ -34,12 +35,12 @@ bool ASMGCNA_Immune::OnActive_Implementation(AActor* MyTarget, const FGameplayCu
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
-	if (VFX.Find(SourceTeam))
+	if (VFX.Contains(SourceTeam))
 	{
 		VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], SourceCharacter->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
 	}
 
-	if (ImmuneMaterial.Find(SourceTeam) && ImmuneOverlayMaterial.Find(SourceTeam))
+	if (ImmuneMaterial.Contains(SourceTeam) && ImmuneOverlayMaterial.Find(SourceTeam))
 	{
 		for (int32 i = 0; i < SourceMesh->GetNumMaterials(); ++i)
 		{
@@ -57,12 +58,17 @@ bool ASMGCNA_Immune::OnActive_Implementation(AActor* MyTarget, const FGameplayCu
 
 	if (SourceCharacter->IsLocallyControlled())
 	{
-		if (ScreenFX.Find(SourceTeam))
+		if (ScreenVFX.Contains(SourceTeam))
 		{
 			if (UCameraComponent* SourceCamera = SourceCharacter->GetComponentByClass<UCameraComponent>())
 			{
-				ScreenFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(ScreenFX[SourceTeam], SourceCamera, NAME_None, FVector(300.0, 0.0, 0.0), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
+				ScreenVFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(ScreenVFX[SourceTeam], SourceCamera, NAME_None, FVector(300.0, 0.0, 0.0), FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
 			}
+		}
+
+		if (SFX.Contains(SourceTeam))
+		{
+			SFXComponent = UFMODBlueprintStatics::PlayEventAttached(SFX[SourceTeam], SourceCharacter->GetRootComponent(), NAME_None, FVector::ZeroVector, EAttachLocation::KeepRelativeOffset, false, true, true);
 		}
 	}
 
@@ -80,16 +86,22 @@ bool ASMGCNA_Immune::OnRemove_Implementation(AActor* MyTarget, const FGameplayCu
 		VFXComponent = nullptr;
 	}
 
-	if (ScreenFXComponent)
+	if (ScreenVFXComponent)
 	{
-		ScreenFXComponent->Deactivate();
-		ScreenFXComponent->ReleaseToPool();
-		ScreenFXComponent = nullptr;
+		ScreenVFXComponent->Deactivate();
+		ScreenVFXComponent->ReleaseToPool();
+		ScreenVFXComponent = nullptr;
+	}
+
+	if (SFXComponent)
+	{
+		SFXComponent->Stop();
+		SFXComponent = nullptr;
 	}
 
 	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
 	USkeletalMeshComponent* SourceMesh = SourceCharacter ? SourceCharacter->GetMesh() : nullptr;
-	ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
+	const ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
 	UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
 	if (!SourceMesh || !SourceWeaponMesh)
 	{
@@ -116,7 +128,7 @@ bool ASMGCNA_Immune::OnRemove_Implementation(AActor* MyTarget, const FGameplayCu
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
-	if (EndVFX.Find(SourceTeam))
+	if (EndVFX.Contains(SourceTeam))
 	{
 		UNiagaraFunctionLibrary::SpawnSystemAttached(EndVFX[SourceTeam], SourceCharacter->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::AutoRelease);
 	}

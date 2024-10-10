@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FMODAudioComponent.h"
 #include "AbilitySystem/GameplayCues/SMGameplayCueNotifyActorBase.h"
 #include "SMGCNA_Immune.generated.h"
 
@@ -34,8 +35,11 @@ protected:
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> EndVFX;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ScreenFX;
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ScreenVFX;
 
 	UPROPERTY()
-	TObjectPtr<UNiagaraComponent> ScreenFXComponent;
+	TObjectPtr<UNiagaraComponent> ScreenVFXComponent;
+
+	UPROPERTY()
+	TObjectPtr<UFMODAudioComponent> SFXComponent;
 };
