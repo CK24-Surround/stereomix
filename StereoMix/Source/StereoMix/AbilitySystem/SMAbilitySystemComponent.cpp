@@ -45,9 +45,9 @@ void USMAbilitySystemComponent::RemoveTag(const FGameplayTag& InGameplayTag)
 	RemoveActiveEffects(GEQuery);
 }
 
-void USMAbilitySystemComponent::AddGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
+void USMAbilitySystemComponent::AddGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters) const
 {
-	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
+	const ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
 	if (!SourceCharacter)
 	{
 		return;
@@ -68,9 +68,9 @@ void USMAbilitySystemComponent::AddGC(AActor* TargetActor, const FGameplayTag& G
 	}
 }
 
-void USMAbilitySystemComponent::RemoveGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
+void USMAbilitySystemComponent::RemoveGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters) const
 {
-	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
+	const ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
 	if (!SourceCharacter)
 	{
 		return;
@@ -91,9 +91,9 @@ void USMAbilitySystemComponent::RemoveGC(AActor* TargetActor, const FGameplayTag
 	}
 }
 
-void USMAbilitySystemComponent::ExecuteGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters)
+void USMAbilitySystemComponent::ExecuteGC(AActor* TargetActor, const FGameplayTag& GameplayCueTag, const FGameplayCueParameters& Parameters) const
 {
-	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
+	const ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
 	if (!SourceCharacter)
 	{
 		return;
@@ -132,9 +132,9 @@ void USMAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagEx
 	OnChangedTag.Broadcast(Tag, TagExists);
 }
 
-void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, EGameplayCueEvent::Type CueEvent, const FGameplayCueParameters& Parameters, bool bExcludeSelf)
+void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, EGameplayCueEvent::Type CueEvent, const FGameplayCueParameters& Parameters, bool bExcludeSelf) const
 {
-	ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
+	const ACharacter* SourceCharacter = Cast<ACharacter>(GetAvatarActor());
 	if (!SourceCharacter)
 	{
 		return;
@@ -148,7 +148,7 @@ void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetAct
 		}
 
 		ACharacter* PendingCharacter = PC->GetCharacter();
-		USMAbilitySystemComponent* PendingASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(PendingCharacter));
+		const USMAbilitySystemComponent* PendingASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(PendingCharacter));
 		if (!PendingASC)
 		{
 			continue;
@@ -158,7 +158,7 @@ void USMAbilitySystemComponent::ServerRequestGC_Implementation(AActor* TargetAct
 	}
 }
 
-void USMAbilitySystemComponent::ClientExecuteGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, EGameplayCueEvent::Type CueEvent, const FGameplayCueParameters& Parameters)
+void USMAbilitySystemComponent::ClientExecuteGC_Implementation(AActor* TargetActor, const FGameplayTag& GameplayCueTag, EGameplayCueEvent::Type CueEvent, const FGameplayCueParameters& Parameters) const
 {
 	switch (CueEvent)
 	{
