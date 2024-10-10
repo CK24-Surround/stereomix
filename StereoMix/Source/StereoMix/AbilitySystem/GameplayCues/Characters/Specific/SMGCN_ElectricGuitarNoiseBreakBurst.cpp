@@ -20,7 +20,7 @@ bool USMGCN_ElectricGuitarNoiseBreakBurst::OnExecute_Implementation(AActor* MyTa
 	USMGameplayCueBlueprintLibrary::GetLocationAndRotation(Parameters, SourceLocation, SourceToTargetRotation);
 
 	const float TotalDistance = Parameters.RawMagnitude;
-	const float MinStepDistance = 200.0f;
+	constexpr float MinStepDistance = 200.0f;
 	const int StepCount = FMath::Max(1, TotalDistance / MinStepDistance); // 제로 디비전 방지
 	const float DistancePerStep = TotalDistance / StepCount;
 	const float InitialOffset = DistancePerStep / 2.0f;
