@@ -24,20 +24,8 @@ class STEREOMIX_API ASMTile : public AActor, public ISMTeamInterface
 public:
 	ASMTile();
 
-protected:
-	virtual void PostInitializeComponents() override;
-
-public:
 	void TileTrigger(ESMTeam InTeam);
 
-protected:
-	/** 머티리얼로 타일 애니메이션을 넣기 위해 필요한 머티리얼을 다이나믹 머티리얼로 변경합니다. 그리고 저장합니다. */
-	void ChangeMaterialInstanceDynamic();
-
-	UFUNCTION()
-	void OnChangeTeamCallback();
-
-public:
 	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
 	virtual ESMTeam GetTeam() const override;
@@ -46,28 +34,28 @@ public:
 
 	FVector GetTileLocation() const;
 
+	FOnChangeTileWithTeamInformationSignature OnChangeTileWithTeamInformation;
+
+	/** 타일이 변경될 때를 알리는 델리게이트 입니다. 서버, 클라이언트 모두 호출됩니다. */
+	UPROPERTY(BlueprintAssignable)
+	FOnChangeTileSignature OnChangeTile;
+
 protected:
+	UFUNCTION()
+	void OnChangeTeamCallback();
+
 	UPROPERTY(VisibleAnywhere, Category = "Root")
-	TObjectPtr<USceneComponent> SceneComponent;
+	TObjectPtr<USceneComponent> RootSceneComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<UBoxComponent> BoxComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Mesh")
-	TObjectPtr<UStaticMeshComponent> TileMesh;
+	TObjectPtr<UStaticMeshComponent> TileMeshComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
 
-	UPROPERTY()
-	TObjectPtr<USMTileAssetData> AssetData;
-
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Design")
-	TArray<TObjectPtr<UMaterialInstanceDynamic>> MeshMIDs;
-
-public:
-	FOnChangeTileWithTeamInformationSignature OnChangeTileWithTeamInformation;
-
-	UPROPERTY(BlueprintAssignable)
-	FOnChangeTileSignature OnChangeTile;
+	UPROPERTY(EditDefaultsOnly, Category = "Design")
+	TObjectPtr<USMTileAssetData> DataAsset;
 };
