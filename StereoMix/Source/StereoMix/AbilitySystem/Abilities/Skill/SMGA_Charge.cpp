@@ -154,6 +154,11 @@ void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 	FGameplayCueParameters ChargeGCParams;
 	ChargeGCParams.SourceObject = SourceCharacter;
 	SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Bass::Charge, ChargeGCParams);
+
+	FGameplayCueParameters ChargeCrushGCParams;
+	ChargeCrushGCParams.SourceObject = SourceCharacter;
+	ChargeCrushGCParams.Location = SourceCharacter->GetActorLocation();
+	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::ChargeCrush, ChargeCrushGCParams);
 }
 
 
