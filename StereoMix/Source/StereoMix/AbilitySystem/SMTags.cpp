@@ -181,6 +181,7 @@ namespace SMTags
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Shoot, "GameplayCue.ElectricGuitar.Shoot", "기본공격 발사 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ShootProjectile, "GameplayCue.ElectricGuitar.ShootProjectile", "기본공격 투사체 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ShootHit, "GameplayCue.ElectricGuitar.ShootHit", "기본공격 투사체 적중 게임플레이 큐 태그입니다.");
+			UE_DEFINE_GAMEPLAY_TAG_COMMENT(ShootWallHit, "GameplayCue.ElectricGuitar.ShootWallHit", "기본공격 투사체 벽 적중 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBullet, "GameplayCue.ElectricGuitar.SlowBullet", "마비탄 발사 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletCharge, "GameplayCue.ElectricGuitar.SlowBulletCharge", "마비탄 발사 게임플레이 큐 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(SlowBulletProjectile, "GameplayCue.ElectricGuitar.SlowBulletProjectile", "마비탄 투사체 게임플레이 큐 태그입니다.");

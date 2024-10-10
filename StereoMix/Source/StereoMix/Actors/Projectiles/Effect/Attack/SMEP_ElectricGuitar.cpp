@@ -77,6 +77,6 @@ void ASMEP_ElectricGuitar::PlayWallHitFX(const FVector& HitLocation)
 		FGameplayCueParameters GCParams;
 		GCParams.Location = HitLocation;
 		GCParams.Normal = GetActorRotation().Vector();
-		SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::ShootHit, GCParams);
+		SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::ShootWallHit, GCParams);
 	}
 }
