@@ -41,7 +41,7 @@ void USMGA_Sampling::ActivateAbility(const FGameplayAbilitySpecHandle Handle, co
 void USMGA_Sampling::OnUnderTileChanged(ASMTile* UnderTile)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!UnderTile || !SourceCharacter || !SourceASC)
 	{
 		return;
@@ -58,5 +58,10 @@ void USMGA_Sampling::OnUnderTileChanged(ASMTile* UnderTile)
 		return;
 	}
 
-	USMTileFunctionLibrary::CaptureTiles(GetWorld(), TArray<ASMTile*>{UnderTile}, SourceCharacter);
+	USMTileFunctionLibrary::CaptureTiles(GetWorld(), TArray{ UnderTile }, SourceCharacter);
+
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = SourceCharacter;
+	GCParams.Location = UnderTile->GetTileLocation();
+	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Common::Sampling, GCParams);
 }
