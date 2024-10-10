@@ -11,7 +11,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FTileScoreDelegate, int32, TileScore
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FVictoryTeamDelegate, ESMTeam, VictoryTeam);
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTileCapturedDelegate, const AActor*, CapturedInstigator, int32, CaputuredTileCount);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTileCapturedDelegate, const AActor*, CapturedInstigator, int32, CapturedTileCount);
 
 class USMScoreMusicManagerComponent;
 class ASMTile;

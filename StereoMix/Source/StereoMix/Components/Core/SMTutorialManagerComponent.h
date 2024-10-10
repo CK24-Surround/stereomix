@@ -7,6 +7,7 @@
 #include "Data/SMCharacterType.h"
 #include "SMTutorialManagerComponent.generated.h"
 
+class USMTutorialUIControlComponent;
 class UEnhancedInputComponent;
 class UInputAction;
 class USMTutorialHUD;
@@ -47,11 +48,27 @@ protected:
 
 	void OnScriptsEnded();
 
+	void OnStep1Ended();
+
+	void OnStep2Ended();
+
+	void OnStep3Ended();
+
+	void OnStep4Ended();
+
+	void OnStep5Ended();
+
+	UFUNCTION()
+	void OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount);
+
 	UPROPERTY(EditAnywhere, Category = "Design|IA")
 	TObjectPtr<UInputAction> NextInputAction;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UDataTable> TutorialScriptDataTable;
+
+	UPROPERTY()
+	TObjectPtr<USMTutorialUIControlComponent> CachedTutorialUIControlComponent;
 
 	/** Step, ScriptNumberInStep, 캐릭터 타입 순서로 접근하면 됩니다. */
 	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> DialogueScripts;
@@ -62,4 +79,6 @@ protected:
 	int32 CurrentStepNumber = 1;
 
 	int32 CurrentScriptNumber = 1;
+
+	int32 TilesCaptureCount = 0;
 };
