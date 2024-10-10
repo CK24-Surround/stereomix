@@ -2,6 +2,7 @@
 
 #include "AbilitySystemGlobals.h"
 #include "Engine/GameInstance.h"
+#include "ConsoleVariablesAsset.h"
 #include "Framework/Application/SlateApplication.h"
 #include "Framework/MultiBox/MultiBoxBuilder.h"
 #include "GameplayAbilitiesEditorModule.h"
@@ -11,13 +12,14 @@
 #include "GameplayCueNotify_BurstLatent.h"
 #include "GameplayCueNotify_Looping.h"
 #include "UnrealEdGlobals.h"
-#include "Development/SMDeveloperSettings.h"
+#include "Development/SMEditorSettings.h"
 #include "Editor/UnrealEdEngine.h"
 #include "Misc/DataValidation.h"
 #include "ToolMenu.h"
 #include "ToolMenus.h"
 #include "UObject/UObjectIterator.h"
 #include "GameEditorStyle.h"
+#include "Interfaces/IMainFrameModule.h"
 #include "Validation/EditorValidator.h"
 
 class SWidget;
@@ -177,14 +179,14 @@ void FStereoMixEditorModule::OpenCommonMap(const FString MapPath)
 
 bool FStereoMixEditorModule::CanShowCommonMaps()
 {
-	return HasNoPlayWorld() && !GetDefault<USMDeveloperSettings>()->CommonEditorMaps.IsEmpty();
+	return HasNoPlayWorld() && !GetDefault<USMEditorSettings>()->CommonEditorMaps.IsEmpty();
 }
 
 TSharedRef<SWidget> FStereoMixEditorModule::GetCommonMapsDropdown()
 {
 	FMenuBuilder MenuBuilder(true, nullptr);
 
-	for (const FSoftObjectPath& Path : GetDefault<USMDeveloperSettings>()->CommonEditorMaps)
+	for (const FSoftObjectPath& Path : GetDefault<USMEditorSettings>()->CommonEditorMaps)
 	{
 		if (!Path.IsValid())
 		{
