@@ -5,15 +5,17 @@
 #include "CoreMinimal.h"
 #include "Actors/Character/SMCharacterBase.h"
 #include "Interfaces/SMDamageInterface.h"
+#include "Interfaces/SMHoldInteractionInterface.h"
 #include "Interfaces/SMTeamInterface.h"
 #include "SMAICharacterBase.generated.h"
 
+class USMHIC_TutorialAI;
 class ASMNoteBase;
 class USMPlayerCharacterDataAsset;
 class ASMWeaponBase;
 
 UCLASS()
-class STEREOMIX_API ASMAICharacterBase : public ASMCharacterBase, public ISMTeamInterface, public ISMDamageInterface
+class STEREOMIX_API ASMAICharacterBase : public ASMCharacterBase, public ISMTeamInterface, public ISMHoldInteractionInterface, public ISMDamageInterface
 {
 	GENERATED_BODY()
 
@@ -26,6 +28,8 @@ public:
 
 	virtual void Tick(float DeltaTime) override;
 
+	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
+	
 	virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
 	virtual ESMTeam GetTeam() const override;
@@ -69,6 +73,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<ASMNoteBase> Note;
+
+	UPROPERTY()
+	TObjectPtr<USMHIC_TutorialAI> HIC;
 
 	uint32 bIsNoteState:1 = false;
 };

@@ -7,6 +7,7 @@
 #include "Actors/Notes/SMNoteBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/Character/SMHIC_TutorialAI.h"
 #include "Components/Common/SMTeamComponent.h"
 #include "Utilities/SMCollision.h"
 
@@ -27,6 +28,8 @@ ASMAICharacterBase::ASMAICharacterBase()
 	CachedMovementComponent->SetWalkableFloorAngle(5.0f);
 	CachedMovementComponent->bCanWalkOffLedges = false;
 
+	HIC = CreateDefaultSubobject<USMHIC_TutorialAI>(TEXT("HIC"));
+	
 	NoteSlotComponent = CreateDefaultSubobject<USceneComponent>(TEXT("NoteSlotComponent"));
 	NoteSlotComponent->SetupAttachment(CachedMeshComponent);
 	NoteSlotComponent->SetAbsolute(false, true, false);
@@ -125,4 +128,9 @@ void ASMAICharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount
 void ASMAICharacterBase::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+USMHoldInteractionComponent* ASMAICharacterBase::GetHoldInteractionComponent() const
+{
+	return HIC;
 }
