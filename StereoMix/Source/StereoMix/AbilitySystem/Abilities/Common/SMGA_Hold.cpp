@@ -36,7 +36,7 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !ensureAlways(SourceASC) || !ensureAlways(SourceDataAsset))
 	{
@@ -69,7 +69,7 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
 		const FVector SourceToCursorDirection = (CursorLocation - SourceLocation).GetSafeNormal();
 
-		// 잡기 시전 시 이펙트 입니다.
+		// 잡기 시전 시 이펙트 입니다. Execute가 아닌 Add인 이유는 잡기 성공시 즉시 이펙트를 끄기 위함입니다.
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
@@ -84,7 +84,7 @@ void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 
 	if (K2_HasAuthority())
 	{
-		if (USMAbilitySystemComponent* SourceASC = GetASC())
+		if (const USMAbilitySystemComponent* SourceASC = GetASC())
 		{
 			AActor* SourceActor = GetAvatarActor();
 
@@ -99,7 +99,7 @@ void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGame
 
 void USMGA_Hold::OnHoldAnimNotifyTrigger(FGameplayEventData Payload)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
+	const ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	if (!SourceCharacter)
 	{
 		EndAbilityByCancel();
@@ -122,19 +122,20 @@ void USMGA_Hold::ServerRPCRequestHold_Implementation(const FVector_NetQuantize10
 
 void USMGA_Hold::OnHold(AActor* TargetActor)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
-	if (!SourceCharacter || !ensureAlways(SourceHIC))
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	USMHIC_Character* SourceHIC = GetHIC();
+	if (!SourceCharacter || !SourceHIC)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
 	bool bSuccess = false;
-	USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor);
-	if (TargetHIC)
+	if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 	{
 		bSuccess = true;
+
+		const FVector PreHeldLocation = TargetActor->GetActorLocation(); // 잡히기 이전 위치를 저장합니다. 이펙트에 사용됩니다.
 
 		// 타겟의 잡히기 로직을 실행합니다.
 		TargetHIC->OnHeld(SourceCharacter);
@@ -152,11 +153,10 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 		// 로컬에서 타겟 인디케이터를 제거합니다.
 		SourceCharacter->ClientRemoveScreenIndicatorToSelf(TargetActor);
 
-		if (USMAbilitySystemComponent* SourceASC = GetASC())
+		if (const USMAbilitySystemComponent* SourceASC = GetASC())
 		{
 			const FVector SourceLocation = SourceCharacter->GetActorLocation();
-			const FVector TargetLocation = TargetActor->GetActorLocation();
-			const FVector SourceToTargetDirection = (TargetLocation - SourceLocation).GetSafeNormal();
+			const FVector SourceToTargetDirection = (PreHeldLocation - SourceLocation).GetSafeNormal();
 
 			// 잡기 적중에 성공하여 성공 이펙트를 재생합니다.
 			FGameplayCueParameters SuccessGCParams;
@@ -168,7 +168,7 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 			// 대상위치에 적중 이펙트를 재생합니다.
 			FGameplayCueParameters HitGCParams;
 			HitGCParams.SourceObject = SourceCharacter;
-			HitGCParams.Location = TargetLocation;
+			HitGCParams.Location = PreHeldLocation;
 			HitGCParams.Normal = SourceToTargetDirection;
 			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Common::HoldHit, HitGCParams);
 
