@@ -118,8 +118,8 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
-		GCParams.Location = InSourceLocation + (LaunchDirection * 100.0f);
-		GCParams.Normal = LaunchDirection;
+		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
+		GCParams.Location = FVector(100.0, 0.0, 0.0);
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::SlowBullet, GCParams);
 	}
 
