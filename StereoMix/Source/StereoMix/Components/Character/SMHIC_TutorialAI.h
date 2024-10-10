@@ -22,6 +22,12 @@ public:
 
 	virtual void OnHeld(AActor* Instigator) override;
 
+	virtual void OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
+
+	virtual void OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
+
+	virtual void OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
+
 	virtual void OnReleasedFromHold(AActor* Instigator) override;
 
 	void ReleasedFromBeingHeld(AActor* TargetActor, const TOptional<FVector>& TargetOptionalLocation = TOptional<FVector>());

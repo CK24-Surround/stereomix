@@ -5,7 +5,12 @@
 
 #include "SMHIC_Character.h"
 #include "Actors/Character/AI/SMAICharacterBase.h"
+#include "Actors/Character/Player/SMBassCharacter.h"
+#include "Actors/Character/Player/SMElectricGuitarCharacter.h"
+#include "Actors/Character/Player/SMPianoCharacter.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Notes/SMNoteBase.h"
+#include "Components/CapsuleComponent.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 
 
@@ -44,10 +49,54 @@ void USMHIC_TutorialAI::OnHeld(AActor* Instigator)
 
 	SourceCharacter->SetActorHiddenInGame(true);
 	SourceCharacter->SetActorEnableCollision(false);
+	SourceCharacter->GetNote()->SetActorHiddenInGame(true);
 
 	SourceCharacter->AttachToActor(Instigator, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
 	HeldMeActorsHistory.Add(Instigator);
 	SetActorHoldingMe(Instigator);
+}
+
+void USMHIC_TutorialAI::OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
+{
+	UE_LOG(LogTemp, Warning, TEXT("USMHIC_TutorialAI::OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)"));
+	
+	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	if (!SourceCharacter || !NoiseBreakData || !SourceCapsule)
+	{
+		return;
+	}
+
+	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
+	const FVector NewLocation = NoiseBreakData->NoiseBreakLocation + Offset;
+	ReleasedFromBeingHeld(Instigator, NewLocation);
+}
+
+void USMHIC_TutorialAI::OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
+{
+	UE_LOG(LogTemp, Warning, TEXT("USMHIC_TutorialAI::OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)"));
+	
+	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
+	if (!SourceCharacter.Get() || !NoiseBreakData || !SourceCapsule)
+	{
+		return;
+	}
+
+	const FVector Offset(0.0, 0.0, SourceCapsule->GetScaledCapsuleHalfHeight());
+	const FVector NewLocation = NoiseBreakData->NoiseBreakLocation + Offset;
+	ReleasedFromBeingHeld(Instigator, NewLocation);
+}
+
+void USMHIC_TutorialAI::OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
+{
+	UE_LOG(LogTemp, Warning, TEXT("USMHIC_TutorialAI::OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)"));
+	
+	if (!SourceCharacter.Get())
+	{
+		return;
+	}
+
+	ReleasedFromBeingHeld(Instigator);
+
 }
 
 void USMHIC_TutorialAI::OnReleasedFromHold(AActor* Instigator)
@@ -71,6 +120,10 @@ void USMHIC_TutorialAI::ReleasedFromBeingHeld(AActor* TargetActor, const TOption
 		return;
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("USMHIC_TutorialAI::ReleasedFromBeingHeld"));
+
+	SourceCharacter->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
+	
 	// 타겟 캐릭터가 있으면 타겟의 회전값을 사용하고, 없으면 소스 캐릭터의 현재 회전값을 사용하여 소스 캐릭터의 최종 회전을 설정합니다.
 	const float FinalSourceYaw = TargetActor ? TargetActor->GetActorRotation().Yaw : SourceCharacter->GetActorRotation().Yaw;
 	SourceCharacter->SetActorRotation(FRotator(0.0, FinalSourceYaw, 0.0));
@@ -82,6 +135,9 @@ void USMHIC_TutorialAI::ReleasedFromBeingHeld(AActor* TargetActor, const TOption
 
 	SourceCharacter->SetActorHiddenInGame(false);
 	SourceCharacter->SetActorEnableCollision(true);
+	SourceCharacter->GetNote()->SetActorHiddenInGame(false);
+	SourceCharacter->SetNoteState(false);
+	ClearHeldMeActorsHistory();
 
 	SetActorHoldingMe(nullptr);
 }

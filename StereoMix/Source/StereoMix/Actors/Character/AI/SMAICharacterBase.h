@@ -47,9 +47,11 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Note")
 	bool IsNoteState() const { return bIsNoteState; }
 
-protected:
 	void SetNoteState(bool bNewIsNote);
 
+	ASMNoteBase* GetNote() const { return Note; }
+	
+protected:
 	UPROPERTY(VisibleAnywhere, Category = "HitBox")
 	TObjectPtr<UCapsuleComponent> HitBox;
 
