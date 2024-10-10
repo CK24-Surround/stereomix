@@ -134,19 +134,7 @@ namespace SMTags
 
 	namespace GameplayCue
 	{
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(PlayNiagara, "GameplayCue.PlayNiagara", "파라미터의 위치와 소스 오브젝트를 통해 나이아가라 시스템을 재생시키는 게임플레이 큐 태그입니다. 소스 오브젝트에 나이아가라 시스템을 담아 사용합니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileLaunch, "GameplayCue.ProjectileLaunch", "투사체 발사시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileHit, "GameplayCue.ProjectileHit", "투사체 적중시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ProjectileWallHit, "GameplayCue.ProjectileWallHit", "투사체가 벽에 적중시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Catch, "GameplayCue.Catch", "잡기 시전시 재생되는 게임플레이 큐의 태그입니다."); // TODO: Deprecated
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "GameplayCue.Hold", "잡기 시전시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(CatchHit, "GameplayCue.CatchHit", "잡기 적중시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "GameplayCue.Stun", "스턴시 재생되는 게임플레이 큐의 태그입니다."); // TODO: Deprecated
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "GameplayCue.Neutralize", "무력화 시 재생되는 게임플레이 큐의 태그입니다.");
 		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ApplyHeal, "GameplayCue.ApplyHeal", "힐 적용시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneEnd, "GameplayCue.ImmuneEnd", "면역 종료시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialApply_ElectricGuitar, "GameplayCue.ImmuneMaterialApply_ElectricGuitar", "일렉기타의 면역 머티리얼 적용시 재생되는 게임플레이 큐의 태그입니다.");
-		UE_DEFINE_GAMEPLAY_TAG_COMMENT(ImmuneMaterialReset, "GameplayCue.ImmuneMaterialReset", "면역 머티리얼 리셋시 재생되는 게임플레이 큐의 태그입니다.");
 
 		namespace Common
 		{
