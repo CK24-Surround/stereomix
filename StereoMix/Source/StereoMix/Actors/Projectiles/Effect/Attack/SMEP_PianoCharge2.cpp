@@ -77,5 +77,5 @@ void ASMEP_PianoCharge2::PlayWallHitFX(const FVector& HitLocation)
 	FGameplayCueParameters GCParams;
 	GCParams.Location = HitLocation;
 	GCParams.Normal = GetActorRotation().Vector();
-	SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryHitCharge2, GCParams);
+	SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::Piano::ArcheryWallHitCharge2, GCParams);
 }
