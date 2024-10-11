@@ -63,6 +63,7 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	if (K2_HasAuthority())
 	{
 		USMScoreFunctionLibrary::RecordNoiseBreakUsage(GetCharacter());
+		OnNoiseBreakCast.Broadcast();
 	}
 }
 
@@ -87,7 +88,7 @@ bool USMGA_NoiseBreak::IsValidTarget() const
 void USMGA_NoiseBreak::PerformBurstAttack(const FVector& TargetLocation, const FGameplayTag& GCTag)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const ASMTile* Tile = GetTileFromLocation(TargetLocation);
 	if (!SourceCharacter || !SourceASC || !Tile)
 	{

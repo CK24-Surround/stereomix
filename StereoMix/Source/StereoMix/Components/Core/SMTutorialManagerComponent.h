@@ -33,6 +33,9 @@ public:
 
 	virtual void Activate(bool bReset) override;
 
+	// 필요에 따라 다이얼로그를 활성화 혹은 비활성화하며 스크립트를 출력해줍니다.
+	void ProcessTutorialDialogue();
+
 protected:
 	UFUNCTION()
 	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
@@ -42,24 +45,24 @@ protected:
 	void OnNextInputReceived();
 
 	UFUNCTION()
-	void OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
-
-	void PrintScript(int32 StepNumber, int32 ScriptsNumber);
-
-	void OnScriptsEnded();
-
-	void OnStep1Ended();
-
-	void OnStep2Ended();
-
-	void OnStep3Ended();
-
-	void OnStep4Ended();
-
-	void OnStep5Ended();
+	void OnStep1Completed(AActor* OverlappedActor, AActor* OtherActor);
 
 	UFUNCTION()
 	void OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount);
+
+	void OnStep2Completed();
+
+	void OnStep3Completed();
+
+	void OnStep4Completed();
+
+	void OnStep5Completed();
+
+	UFUNCTION()
+	void OnStep6Completed();
+
+	UFUNCTION()
+	void OnStep7Completed();
 
 	UPROPERTY(EditAnywhere, Category = "Design|IA")
 	TObjectPtr<UInputAction> NextInputAction;
@@ -78,7 +81,9 @@ protected:
 
 	int32 CurrentStepNumber = 1;
 
-	int32 CurrentScriptNumber = 1;
+	int32 CurrentScriptNumber = 0;
 
 	int32 TilesCaptureCount = 0;
+
+	int32 TargetTilesCaptureCount = 9;
 };

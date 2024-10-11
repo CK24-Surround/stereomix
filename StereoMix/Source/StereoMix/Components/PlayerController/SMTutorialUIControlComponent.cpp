@@ -29,6 +29,12 @@ void USMTutorialUIControlComponent::Activate(bool bReset)
 	}
 }
 
+bool USMTutorialUIControlComponent::IsDialogueActivated()
+{
+	const USMTutorialDialogue* TutorialDialogue = TutorialHUD ? TutorialHUD->GetTutorialDialogue() : nullptr;
+	return TutorialDialogue ? TutorialDialogue->IsActivated() : false;
+}
+
 void USMTutorialUIControlComponent::ActivateDialogue()
 {
 	const APlayerController* OwnerController = GetOwner<APlayerController>();

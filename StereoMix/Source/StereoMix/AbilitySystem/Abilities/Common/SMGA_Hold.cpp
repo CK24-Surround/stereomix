@@ -76,6 +76,8 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		GCParams.Normal = SourceToCursorDirection;
 		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Hold, GCParams);
 	}
+
+	OnHoldCast.Broadcast();
 }
 
 void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)

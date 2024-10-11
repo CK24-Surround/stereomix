@@ -7,6 +7,9 @@
 #include "SMGA_Hold.generated.h"
 
 class USMAT_SkillIndicator;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHoldCastDelegate);
+
 /**
  * 
  */
@@ -17,6 +20,8 @@ class STEREOMIX_API USMGA_Hold : public USMGameplayAbility
 
 public:
 	USMGA_Hold();
+
+	FOnHoldCastDelegate OnHoldCast;
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

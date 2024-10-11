@@ -114,19 +114,6 @@ void USMAbilitySystemComponent::ExecuteGC(AActor* TargetActor, const FGameplayTa
 	}
 }
 
-const FGameplayAbilitySpec* USMAbilitySystemComponent::FindGASpecFromClass(const TSubclassOf<UGameplayAbility>& InAbilityClass) const
-{
-	for (const FGameplayAbilitySpec& GASpec : GetActivatableAbilities())
-	{
-		if (GASpec.Ability && GASpec.Ability.IsA(InAbilityClass))
-		{
-			return &GASpec;
-		}
-	}
-
-	return nullptr;
-}
-
 void USMAbilitySystemComponent::OnTagUpdated(const FGameplayTag& Tag, bool TagExists)
 {
 	OnChangedTag.Broadcast(Tag, TagExists);
@@ -182,4 +169,20 @@ void USMAbilitySystemComponent::ClientExecuteGC_Implementation(AActor* TargetAct
 			break;
 		}
 	}
+}
+
+UGameplayAbility* USMAbilitySystemComponent::InternalGetGAInstanceFromClass(const TSubclassOf<UGameplayAbility>& InAbilityClass) const
+{
+	for (const FGameplayAbilitySpec& GASpec : GetActivatableAbilities())
+	{
+		if (GASpec.Ability && GASpec.Ability.IsA(InAbilityClass))
+		{
+			for (UGameplayAbility* AbilityInstance : GASpec.GetAbilityInstances())
+			{
+				return AbilityInstance;
+			}
+		}
+	}
+
+	return nullptr;
 }

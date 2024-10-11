@@ -21,6 +21,8 @@ public:
 
 	USMTutorialHUD* GetTutorialHUD() const { return TutorialHUD; }
 
+	bool IsDialogueActivated();
+
 	void ActivateDialogue();
 
 	void DeactivateDialogue();

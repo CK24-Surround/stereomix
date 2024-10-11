@@ -6,11 +6,15 @@
 #include "EngineUtils.h"
 #include "EnhancedInputComponent.h"
 #include "SMTileManagerComponent.h"
+#include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/Abilities/Common/SMGA_Hold.h"
+#include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tutorial/SMProgressTrigger.h"
 #include "Actors/Tutorial/SMTrainingDummy.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
+#include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Utilities/SMLog.h"
 
@@ -55,12 +59,53 @@ void USMTutorialManagerComponent::Activate(bool bReset)
 {
 	Super::Activate(bReset);
 
+	TransformScriptsData();
+
 	for (ASMProgressTrigger* ProgressTrigger : TActorRange<ASMProgressTrigger>(GetWorld()))
 	{
-		ProgressTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnProgressTriggerBeginOverlap);
+		ProgressTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep1Completed);
+	}
+}
+
+void USMTutorialManagerComponent::ProcessTutorialDialogue()
+{
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (!CachedTutorialUIControlComponent || !PlayerController)
+	{
+		return;
 	}
 
-	TransformScriptsData();
+	// 다이얼로그가 꺼져있다면 다시 다이얼로그를 활성화합니다.
+	if (!CachedTutorialUIControlComponent->IsDialogueActivated())
+	{
+		CachedTutorialUIControlComponent->ActivateDialogue();
+	}
+
+	++CurrentScriptNumber; // 다음 스크립트를 읽기 위해 1을 더해줍니다.
+
+	// 다이얼로그에 출력되야할 스크립트로 바꿔줍니다.
+	if (DialogueScripts.IsValidIndex(CurrentStepNumber) && DialogueScripts[CurrentStepNumber].IsValidIndex(CurrentScriptNumber))
+	{
+		if (DialogueScripts[CurrentStepNumber][CurrentScriptNumber].Contains(ESMCharacterType::None))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *DialogueScripts[CurrentStepNumber][CurrentScriptNumber][ESMCharacterType::None].Ko);
+			CachedTutorialUIControlComponent->SetScript(DialogueScripts[CurrentStepNumber][CurrentScriptNumber][ESMCharacterType::None].Ko);
+		}
+		else
+		{
+			if (const ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
+			{
+				const ESMCharacterType CharacterType = SourceCharacter->GetCharacterType();
+				CachedTutorialUIControlComponent->SetScript(DialogueScripts[CurrentStepNumber][CurrentScriptNumber][CharacterType].Ko);
+			}
+		}
+	}
+	else // 만약 스크립트 넘버가 마지막이라면 다이얼로그를 종료하고 스크립트 넘버를 1로 초기화해줍니다.
+	{
+		CachedTutorialUIControlComponent->DeactivateDialogue();
+		CurrentScriptNumber = 0;
+	}
 }
 
 void USMTutorialManagerComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
@@ -74,7 +119,7 @@ void USMTutorialManagerComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn* 
 	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
 	CachedTutorialUIControlComponent = PlayerController ? PlayerController->GetComponentByClass<USMTutorialUIControlComponent>() : nullptr;
 
-	PrintScript(CurrentStepNumber, CurrentScriptNumber++);
+	ProcessTutorialDialogue();
 }
 
 void USMTutorialManagerComponent::TransformScriptsData()
@@ -158,127 +203,71 @@ void USMTutorialManagerComponent::TransformScriptsData()
 
 void USMTutorialManagerComponent::OnNextInputReceived()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Next 입력"));
-
-	PrintScript(CurrentStepNumber, CurrentScriptNumber++);
+	ProcessTutorialDialogue();
 }
 
-void USMTutorialManagerComponent::OnProgressTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor)
+void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AActor* OtherActor)
 {
 	if (OverlappedActor)
 	{
-		OverlappedActor->OnActorBeginOverlap.RemoveDynamic(this, &USMTutorialManagerComponent::OnProgressTriggerBeginOverlap);
+		OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
 		OverlappedActor->Destroy();
 	}
 
-	OnStep1Ended();
-}
-
-void USMTutorialManagerComponent::PrintScript(int32 StepNumber, int32 ScriptsNumber)
-{
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	if (!CachedTutorialUIControlComponent || !PlayerController)
-	{
-		return;
-	}
-
-	if (!DialogueScripts.IsValidIndex(StepNumber) || !DialogueScripts[StepNumber].IsValidIndex(ScriptsNumber))
-	{
-		OnScriptsEnded();
-		return;
-	}
-
-	if (DialogueScripts[StepNumber][ScriptsNumber].Contains(ESMCharacterType::None))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *DialogueScripts[StepNumber][ScriptsNumber][ESMCharacterType::None].Ko);
-		CachedTutorialUIControlComponent->SetScript(DialogueScripts[StepNumber][ScriptsNumber][ESMCharacterType::None].Ko);
-	}
-	else
-	{
-		if (const ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
-		{
-			const ESMCharacterType CharacterType = SourceCharacter->GetCharacterType();
-			CachedTutorialUIControlComponent->SetScript(DialogueScripts[StepNumber][ScriptsNumber][CharacterType].Ko);
-		}
-	}
-}
-
-void USMTutorialManagerComponent::OnScriptsEnded()
-{
-	if (CachedTutorialUIControlComponent)
-	{
-		CachedTutorialUIControlComponent->DeactivateDialogue();
-	}
-
-	CurrentScriptNumber = 1;
-}
-
-void USMTutorialManagerComponent::OnStep1Ended()
-{
 	CurrentStepNumber = 2;
-
-	if (CachedTutorialUIControlComponent)
-	{
-		CachedTutorialUIControlComponent->ActivateDialogue();
-		PrintScript(CurrentStepNumber, CurrentScriptNumber++);
-	}
+	ProcessTutorialDialogue();
 
 	if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
 	{
 		TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
+		TilesCaptureCount = 0;
 	}
 }
 
-void USMTutorialManagerComponent::OnStep2Ended()
+void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount)
+{
+	if (++TilesCaptureCount >= TargetTilesCaptureCount)
+	{
+		OnStep2Completed();
+
+		if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
+		{
+			TileManager->OnTilesCaptured.RemoveAll(this);
+		}
+	}
+}
+
+void USMTutorialManagerComponent::OnStep2Completed()
 {
 	CurrentStepNumber = 3;
-
-	if (CachedTutorialUIControlComponent)
-	{
-		CachedTutorialUIControlComponent->ActivateDialogue();
-		PrintScript(CurrentStepNumber, CurrentScriptNumber++);
-	}
+	ProcessTutorialDialogue();
 
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
 	{
-		TrainingDummy->OnHalfHPReached.BindUObject(this, &ThisClass::OnStep3Ended);
+		TrainingDummy->OnHalfHPReached.BindUObject(this, &ThisClass::OnStep3Completed);
 	}
 }
 
-void USMTutorialManagerComponent::OnStep3Ended()
+void USMTutorialManagerComponent::OnStep3Completed()
 {
-	CurrentStepNumber = 4;
-
-	if (CachedTutorialUIControlComponent)
-	{
-		CachedTutorialUIControlComponent->ActivateDialogue();
-		PrintScript(CurrentStepNumber, CurrentScriptNumber++);
-	}
-
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
 	{
 		TrainingDummy->OnHalfHPReached.Unbind();
 	}
 
+	CurrentStepNumber = 4;
+	ProcessTutorialDialogue();
+
 	const UWorld* World = GetWorld();
 	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
 	if (ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
 	{
-		SourceCharacter->OnSkillHitSucceed.AddUObject(this, &ThisClass::OnStep4Ended);
+		SourceCharacter->OnSkillHitSucceed.AddUObject(this, &ThisClass::OnStep4Completed);
 	}
 }
 
-void USMTutorialManagerComponent::OnStep4Ended()
+void USMTutorialManagerComponent::OnStep4Completed()
 {
-	CurrentStepNumber = 5;
-
-	if (CachedTutorialUIControlComponent)
-	{
-		CachedTutorialUIControlComponent->ActivateDialogue();
-		PrintScript(CurrentStepNumber, CurrentScriptNumber++);
-	}
-
 	const UWorld* World = GetWorld();
 	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
 	if (ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
@@ -286,39 +275,66 @@ void USMTutorialManagerComponent::OnStep4Ended()
 		SourceCharacter->OnSkillHitSucceed.RemoveAll(this);
 	}
 
+	CurrentStepNumber = 5;
+	ProcessTutorialDialogue();
+
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
 	{
-		TrainingDummy->OnNeutralized.BindUObject(this, &ThisClass::OnStep5Ended);
+		TrainingDummy->OnNeutralized.BindUObject(this, &ThisClass::OnStep5Completed);
 	}
 }
 
-void USMTutorialManagerComponent::OnStep5Ended()
+void USMTutorialManagerComponent::OnStep5Completed()
 {
-	CurrentStepNumber = 6;
-
-	if (CachedTutorialUIControlComponent)
-	{
-		CachedTutorialUIControlComponent->ActivateDialogue();
-		PrintScript(CurrentStepNumber, CurrentScriptNumber++);
-	}
-
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
 	{
 		TrainingDummy->OnNeutralized.Unbind();
 	}
+
+	CurrentStepNumber = 6;
+	ProcessTutorialDialogue();
+
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Pawn);
+	if (USMGA_Hold* HoldInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Hold>() : nullptr)
+	{
+		HoldInstance->OnHoldCast.AddDynamic(this, &ThisClass::OnStep6Completed);
+	}
 }
 
-void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount)
+void USMTutorialManagerComponent::OnStep6Completed()
 {
-	++TilesCaptureCount;
-
-	if (TilesCaptureCount >= 9)
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Pawn);
+	if (USMGA_Hold* HoldInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Hold>() : nullptr)
 	{
-		if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
-		{
-			TileManager->OnTilesCaptured.RemoveDynamic(this, &ThisClass::USMTutorialManagerComponent::OnTilesCaptured);
-		}
-
-		OnStep2Ended();
+		HoldInstance->OnHoldCast.RemoveAll(this);
 	}
+
+	CurrentStepNumber = 7;
+	ProcessTutorialDialogue();
+
+	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
+	{
+		NoiseBreakInstance->OnNoiseBreakCast.AddDynamic(this, &ThisClass::OnStep7Completed);
+	}
+}
+
+void USMTutorialManagerComponent::OnStep7Completed()
+{
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Pawn);
+	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
+	{
+		NoiseBreakInstance->OnNoiseBreakCast.RemoveAll(this);
+	}
+
+	CurrentStepNumber = 8;
+	ProcessTutorialDialogue();
 }
