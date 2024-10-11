@@ -7,15 +7,16 @@
 #include "Actors/Notes/SMNoteBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Components/Character/SMHIC_TutorialAI.h"
 #include "Components/Common/SMTeamComponent.h"
+#include "Components/PlayerController/SMScreenIndicatorComponent.h"
+#include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMCollision.h"
 
 
 ASMAICharacterBase::ASMAICharacterBase()
 {
-	PrimaryActorTick.bCanEverTick = true;
-
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 	CachedMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	CachedMeshComponent->SetRelativeRotation(FRotator(0.0, -90.0, 0.0));
@@ -29,12 +30,17 @@ ASMAICharacterBase::ASMAICharacterBase()
 	CachedMovementComponent->bCanWalkOffLedges = false;
 
 	HIC = CreateDefaultSubobject<USMHIC_TutorialAI>(TEXT("HIC"));
-	
+
+	CharacterStateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("CharacterStateWidgetComponent"));
+	CharacterStateWidgetComponent->SetupAttachment(CachedMeshComponent);
+	CharacterStateWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
+	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 300.0));
+	CharacterStateWidgetComponent->SetDrawAtDesiredSize(true);
+
 	NoteSlotComponent = CreateDefaultSubobject<USceneComponent>(TEXT("NoteSlotComponent"));
 	NoteSlotComponent->SetupAttachment(CachedMeshComponent);
 	NoteSlotComponent->SetAbsolute(false, true, false);
 
-	NoteSlotComponent->SetAbsolute(false, true, false);
 	HitBox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
 	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
@@ -75,6 +81,24 @@ ESMTeam ASMAICharacterBase::GetTeam() const
 void ASMAICharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	OnChangeHP();
+}
+
+void ASMAICharacterBase::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+
+	if (USMUserWidget_CharacterState* CharacterStateWidget = CreateWidget<USMUserWidget_CharacterState>(GetWorld(), CharacterStateWidgetClass))
+	{
+		CharacterStateWidgetComponent->SetWidget(CharacterStateWidget);
+
+		CharacterStateWidget->SetNickname(TEXT("AI"));
+
+		CharacterStateWidget->MaxHealth = HP;
+		CharacterStateWidget->CurrentHealth = CurrentHP;
+		CharacterStateWidget->UpdateHPBar();
+	}
 }
 
 void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
@@ -95,7 +119,7 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 	}
 
 	HitBox->SetCollisionProfileName(bIsNoteState ? SMCollisionProfileName::HoldableItem : SMCollisionProfileName::Player);
-	
+
 	CharacterMeshComponent->SetVisibility(!bIsNoteState);
 
 	WeaponRootComponent->SetVisibility(!bIsNoteState, true);
@@ -107,35 +131,69 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 	}
 	else
 	{
-		Note->StopAnimation();
 		CurrentHP = HP;
+		Note->StopAnimation();
+		OnChangeHP();
 	}
-}
-
-AActor* ASMAICharacterBase::GetLastAttacker() const
-{
-	return nullptr;
-}
-
-void ASMAICharacterBase::SetLastAttacker(AActor* NewAttacker)
-{
 }
 
 void ASMAICharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
 	UE_LOG(LogTemp, Warning, TEXT("ASMAICharacterBase::ReceiveDamage %f"), InDamageAmount);
 
-	CurrentHP -= InDamageAmount;
-	if (CurrentHP <= 0.0f)
+	CurrentHP = FMath::Clamp(CurrentHP - InDamageAmount, 0.0f, HP);
+	OnChangeHP();
+}
+
+void ASMAICharacterBase::AddScreenIndicatorToSelf(AActor* TargetActor)
+{
+	const ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (!TargetCharacter || TargetCharacter->IsLocallyControlled())
 	{
-		CurrentHP = 0.0f;
-		SetNoteState(true);
+		return;
+	}
+
+	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 추가해줍니다.
+	const UWorld* World = GetWorld();
+	const APlayerController* LocalPlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (USMScreenIndicatorComponent* ScreenIndicatorComponent = LocalPlayerController ? LocalPlayerController->GetComponentByClass<USMScreenIndicatorComponent>() : nullptr)
+	{
+		ScreenIndicatorComponent->AddScreenIndicator(TargetActor);
 	}
 }
 
-void ASMAICharacterBase::Tick(float DeltaTime)
+void ASMAICharacterBase::RemoveScreenIndicatorFromSelf(AActor* TargetActor)
 {
-	Super::Tick(DeltaTime);
+	const ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	if (!TargetCharacter || TargetCharacter->IsLocallyControlled())
+	{
+		return;
+	}
+
+	// 로컬 컨트롤러를 찾고 스크린 인디케이터를 제거합니다.
+	const UWorld* World = GetWorld();
+	const APlayerController* LocalPlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	if (USMScreenIndicatorComponent* ScreenIndicatorComponent = LocalPlayerController ? LocalPlayerController->GetComponentByClass<USMScreenIndicatorComponent>() : nullptr)
+	{
+		ScreenIndicatorComponent->RemoveScreenIndicator(TargetActor);
+	}
+}
+
+void ASMAICharacterBase::OnChangeHP()
+{
+	if (USMUserWidget_CharacterState* CharacterStateWidget = Cast<USMUserWidget_CharacterState>(CharacterStateWidgetComponent->GetUserWidgetObject()))
+	{
+		CharacterStateWidget->CurrentHealth = CurrentHP;
+		CharacterStateWidget->UpdateHPBar();
+	}
+
+	CharacterStateWidgetComponent->SetVisibility(true);
+	if (CurrentHP <= 0.0f)
+	{
+		CharacterStateWidgetComponent->SetVisibility(false);
+		AddScreenIndicatorToSelf(this);
+		SetNoteState(true);
+	}
 }
 
 USMHoldInteractionComponent* ASMAICharacterBase::GetHoldInteractionComponent() const
