@@ -64,6 +64,14 @@ protected:
 	UFUNCTION()
 	void OnStep7Completed();
 
+	UFUNCTION()
+	void OnStep8Completed();
+
+	void OnStep9Completed();
+
+	UFUNCTION()
+	void OnStep10Completed(AActor* OverlappedActor, AActor* OtherActor);
+
 	UPROPERTY(EditAnywhere, Category = "Design|IA")
 	TObjectPtr<UInputAction> NextInputAction;
 
@@ -85,5 +93,7 @@ protected:
 
 	int32 TilesCaptureCount = 0;
 
-	int32 TargetTilesCaptureCount = 9;
+	int32 TargetTilesCaptureCountForStep2 = 9;
+
+	int32 TargetTilesCaptureCountForStep9 = 100;
 };

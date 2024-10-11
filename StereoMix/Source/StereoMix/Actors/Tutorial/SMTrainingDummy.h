@@ -44,6 +44,8 @@ public:
 
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
 
+	void SetInvincible(uint32 bNewIsInvincible) { bIsInvincible = bNewIsInvincible; }
+
 	bool IsNeutralized() const { return bIsNeutralized; }
 
 	void Revival();
@@ -70,5 +72,7 @@ protected:
 
 	float HP = 0.0f;
 
+	uint32 bIsInvincible:1 = false;
+	
 	uint32 bIsNeutralized:1 = false;
 };

@@ -38,13 +38,13 @@ protected:
 
 	virtual void NotifyActorEndOverlap(AActor* OtherActor) override;
 
-	void PerformBoostZone(ASMPlayerCharacter* TargetCharacter);
+	void PerformBoostZone(ASMPlayerCharacterBase* TargetCharacter);
 
-	void ApplyBoostZone(ASMPlayerCharacter* TargetCharacter);
+	void ApplyBoostZone(ASMPlayerCharacterBase* TargetCharacter);
 
-	void RemoveBoostZone(ASMPlayerCharacter* TargetCharacter);
+	void RemoveBoostZone(ASMPlayerCharacterBase* TargetCharacter);
 
-	void AddMoveSpeed(ASMPlayerCharacter* TargetCharacter, float MoveSpeedToAdd);
+	void AddMoveSpeed(ASMPlayerCharacterBase* TargetCharacter, float MoveSpeedToAdd);
 
 	UPROPERTY(VisibleAnywhere, Category = "Scene")
 	TObjectPtr<USceneComponent> SceneComponent;

@@ -8,7 +8,6 @@
 
 #include "SMGameplayAbility.generated.h"
 
-class ASMPlayerCharacter;
 class ASMPlayerCharacterBase;
 class USMAbilitySystemComponent;
 class USMPlayerCharacterDataAsset;

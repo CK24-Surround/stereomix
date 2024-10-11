@@ -20,6 +20,7 @@ ASMTrainingDummy::ASMTrainingDummy()
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	MeshComponent->bReceivesDecals = false;
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
 
@@ -50,6 +51,11 @@ ESMTeam ASMTrainingDummy::GetTeam() const
 
 void ASMTrainingDummy::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
+	if (bIsInvincible)
+	{
+		return;
+	}
+
 	HP = FMath::Clamp(HP - InDamageAmount, 0.0f, MaxHP);
 
 	if (HP <= 50.0f)

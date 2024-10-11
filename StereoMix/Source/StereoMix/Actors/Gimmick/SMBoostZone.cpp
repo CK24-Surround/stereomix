@@ -93,7 +93,7 @@ void ASMBoostZone::NotifyActorEndOverlap(AActor* OtherActor)
 	// }
 }
 
-void ASMBoostZone::PerformBoostZone(ASMPlayerCharacter* TargetCharacter)
+void ASMBoostZone::PerformBoostZone(ASMPlayerCharacterBase* TargetCharacter)
 {
 	// if (!TargetCharacter)
 	// {
@@ -132,7 +132,7 @@ void ASMBoostZone::PerformBoostZone(ASMPlayerCharacter* TargetCharacter)
 	// }
 }
 
-void ASMBoostZone::ApplyBoostZone(ASMPlayerCharacter* TargetCharacter)
+void ASMBoostZone::ApplyBoostZone(ASMPlayerCharacterBase* TargetCharacter)
 {
 	// if (!TargetCharacter)
 	// {
@@ -156,7 +156,7 @@ void ASMBoostZone::ApplyBoostZone(ASMPlayerCharacter* TargetCharacter)
 	// AddMoveSpeed(TargetCharacter, MoveSpeedToAdd);
 }
 
-void ASMBoostZone::RemoveBoostZone(ASMPlayerCharacter* TargetCharacter)
+void ASMBoostZone::RemoveBoostZone(ASMPlayerCharacterBase* TargetCharacter)
 {
 	// if (!TargetCharacter)
 	// {
@@ -180,7 +180,7 @@ void ASMBoostZone::RemoveBoostZone(ASMPlayerCharacter* TargetCharacter)
 	// AddMoveSpeed(TargetCharacter, -MoveSpeedToAdd);
 }
 
-void ASMBoostZone::AddMoveSpeed(ASMPlayerCharacter* TargetCharacter, float MoveSpeedToAdd)
+void ASMBoostZone::AddMoveSpeed(ASMPlayerCharacterBase* TargetCharacter, float MoveSpeedToAdd)
 {
 	// if (!TargetCharacter)
 	// {

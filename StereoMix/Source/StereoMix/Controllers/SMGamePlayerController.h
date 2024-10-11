@@ -13,7 +13,6 @@
 class USMUserWidget_StaminaSkillGaugeDummyBar;
 class USMUserWidget_HUD;
 class USMUserWidget_StartCountdown;
-class ASMPlayerCharacter;
 class ASMPlayerCharacterBase;
 class USMUserWidget_VictoryDefeat;
 class USMUserWidget_GameHUD;

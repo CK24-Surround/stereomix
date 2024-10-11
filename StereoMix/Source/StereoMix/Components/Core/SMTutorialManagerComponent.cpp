@@ -7,12 +7,14 @@
 #include "EnhancedInputComponent.h"
 #include "SMTileManagerComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
+#include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/Common/SMGA_Hold.h"
 #include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tutorial/SMProgressTrigger.h"
 #include "Actors/Tutorial/SMTrainingDummy.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
+#include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
 #include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
@@ -63,7 +65,14 @@ void USMTutorialManagerComponent::Activate(bool bReset)
 
 	for (ASMProgressTrigger* ProgressTrigger : TActorRange<ASMProgressTrigger>(GetWorld()))
 	{
-		ProgressTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep1Completed);
+		if (ProgressTrigger->ActorHasTag(TEXT("MovePractice")))
+		{
+			ProgressTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep1Completed);
+		}
+		else if (ProgressTrigger->ActorHasTag(TEXT("End")))
+		{
+			ProgressTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep10Completed);
+		}
 	}
 }
 
@@ -226,13 +235,21 @@ void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AAct
 
 void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount)
 {
-	if (++TilesCaptureCount >= TargetTilesCaptureCount)
-	{
-		OnStep2Completed();
+	TilesCaptureCount += CapturedTileCount;
 
-		if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
+	if (CurrentStepNumber == 2)
+	{
+		if (TilesCaptureCount >= TargetTilesCaptureCountForStep2)
 		{
-			TileManager->OnTilesCaptured.RemoveAll(this);
+			OnStep2Completed();
+		}
+	}
+
+	if (CurrentStepNumber == 9)
+	{
+		if (TilesCaptureCount >= TargetTilesCaptureCountForStep9)
+		{
+			OnStep9Completed();
 		}
 	}
 }
@@ -253,6 +270,7 @@ void USMTutorialManagerComponent::OnStep3Completed()
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
 	{
 		TrainingDummy->OnHalfHPReached.Unbind();
+		TrainingDummy->SetInvincible(true);
 	}
 
 	CurrentStepNumber = 4;
@@ -273,6 +291,11 @@ void USMTutorialManagerComponent::OnStep4Completed()
 	if (ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
 	{
 		SourceCharacter->OnSkillHitSucceed.RemoveAll(this);
+	}
+
+	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
+	{
+		TrainingDummy->SetInvincible(false);
 	}
 
 	CurrentStepNumber = 5;
@@ -328,8 +351,8 @@ void USMTutorialManagerComponent::OnStep7Completed()
 {
 	const UWorld* World = GetWorld();
 	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
-	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Pawn);
+	ASMPlayerCharacterBase* Character = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr;
+	USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Character);
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
 		NoiseBreakInstance->OnNoiseBreakCast.RemoveAll(this);
@@ -337,4 +360,58 @@ void USMTutorialManagerComponent::OnStep7Completed()
 
 	CurrentStepNumber = 8;
 	ProcessTutorialDialogue();
+
+	const USMPlayerCharacterDataAsset* DataAsset = Character->GetDataAsset();
+	if (SourceASC && DataAsset)
+	{
+		const FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DataAsset->DamageGE, 1.0f, SourceASC->MakeEffectContext());
+		if (GESpecHandle.IsValid())
+		{
+			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, 50.0f);
+			SourceASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+		}
+	}
+
+	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
+	{
+		NoiseBreakInstance->OnNoiseBreakCast.AddDynamic(this, &ThisClass::OnStep8Completed);
+	}
+}
+
+void USMTutorialManagerComponent::OnStep8Completed()
+{
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Pawn);
+	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
+	{
+		NoiseBreakInstance->OnNoiseBreakCast.RemoveAll(this);
+	}
+
+	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
+	{
+		const FVector DummyLocation = TrainingDummy->GetActorLocation();
+		TrainingDummy->SetActorLocation(FVector(-1800.0, -2780.0, DummyLocation.Z));
+	}
+
+	CurrentStepNumber = 9;
+	ProcessTutorialDialogue();
+
+	TilesCaptureCount = 0;
+}
+
+void USMTutorialManagerComponent::OnStep9Completed()
+{
+	CurrentStepNumber = 10;
+	ProcessTutorialDialogue();
+}
+
+void USMTutorialManagerComponent::OnStep10Completed(AActor* OverlappedActor, AActor* OtherActor)
+{
+	if (CurrentStepNumber == 10)
+	{
+		OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
+		OverlappedActor->Destroy();
+	}
 }

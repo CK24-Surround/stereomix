@@ -9,8 +9,6 @@
 
 DECLARE_MULTICAST_DELEGATE_TwoParams(FOnChangedTagSignature, const FGameplayTag& /*Tag*/, bool /*TagExists*/);
 
-class ASMPlayerCharacter;
-
 UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
 class STEREOMIX_API USMAbilitySystemComponent : public UAbilitySystemComponent
 {
