@@ -30,6 +30,11 @@ bool USMHIC_TutorialAI::CanBeHeld(AActor* Instigator) const
 		return false;
 	}
 
+	if (!SourceCharacter->IsNoteState())
+	{
+		return false;
+	}
+
 	return true;
 }
 

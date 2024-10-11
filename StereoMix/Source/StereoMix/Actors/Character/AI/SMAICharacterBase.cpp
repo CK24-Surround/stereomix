@@ -63,6 +63,8 @@ void ASMAICharacterBase::PostInitializeComponents()
 			Note->SetOwner(this);
 		}
 	}
+
+	CurrentHP = HP;
 }
 
 ESMTeam ASMAICharacterBase::GetTeam() const
@@ -106,6 +108,7 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 	else
 	{
 		Note->StopAnimation();
+		CurrentHP = HP;
 	}
 }
 
@@ -120,9 +123,14 @@ void ASMAICharacterBase::SetLastAttacker(AActor* NewAttacker)
 
 void ASMAICharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ASMAICharacterBase::ReceiveDamage"));
+	UE_LOG(LogTemp, Warning, TEXT("ASMAICharacterBase::ReceiveDamage %f"), InDamageAmount);
 
-	SetNoteState(true);
+	CurrentHP -= InDamageAmount;
+	if (CurrentHP <= 0.0f)
+	{
+		CurrentHP = 0.0f;
+		SetNoteState(true);
+	}
 }
 
 void ASMAICharacterBase::Tick(float DeltaTime)

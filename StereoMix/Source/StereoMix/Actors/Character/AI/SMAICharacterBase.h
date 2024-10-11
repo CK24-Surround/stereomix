@@ -70,6 +70,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|Note")
 	TSubclassOf<ASMNoteBase> NoteClass;
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float HP = 100.0f;
+	
 	UPROPERTY()
 	TObjectPtr<ASMWeaponBase> Weapon;
 
@@ -79,5 +82,7 @@ protected:
 	UPROPERTY()
 	TObjectPtr<USMHIC_TutorialAI> HIC;
 
+	float CurrentHP;
+	
 	uint32 bIsNoteState:1 = false;
 };

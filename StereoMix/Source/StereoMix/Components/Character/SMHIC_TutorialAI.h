@@ -17,7 +17,9 @@ class STEREOMIX_API USMHIC_TutorialAI : public USMHoldInteractionComponent
 
 public:
 	USMHIC_TutorialAI();
-
+	
+	virtual bool ShouldCaptureTilesFromNoiseBreak() const override { return true; }
+	
 	virtual bool CanBeHeld(AActor* Instigator) const override;
 
 	virtual void OnHeld(AActor* Instigator) override;
