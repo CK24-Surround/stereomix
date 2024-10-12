@@ -21,6 +21,7 @@ ASMTrainingDummy::ASMTrainingDummy()
 	ColliderComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ColliderComponent"));
 	ColliderComponent->SetupAttachment(RootComponent);
 	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Player);
+	ColliderComponent->InitSphereRadius(150.0f);
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);
