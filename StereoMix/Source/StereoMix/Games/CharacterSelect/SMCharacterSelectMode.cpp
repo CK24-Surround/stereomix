@@ -8,6 +8,7 @@
 #include "SMCharacterSelectState.h"
 #include "Session/SMGameSession.h"
 #include "StereoMixLog.h"
+#include "GameInstance/SMGameInstance.h"
 #include "Games/SMCountdownTimerComponent.h"
 
 ASMCharacterSelectMode::ASMCharacterSelectMode()
@@ -123,8 +124,11 @@ void ASMCharacterSelectMode::OnCharacterSelectCountdownFinished()
 
 void ASMCharacterSelectMode::StartGame()
 {
-	if (GetWorld())
+	const UWorld* World = GetWorld();
+	const USMGameInstance* GameInstance = World ? World->GetGameInstance<USMGameInstance>() : nullptr;
+	const TArray<FSoftObjectPath>& StageLevels = GameInstance ? GameInstance->GetStageLevels() : TArray<FSoftObjectPath>();
+	if (StageLevels.IsValidIndex(0))
 	{
-		ProcessServerTravel("/Game/StereoMix/Levels/Gameplay/IdolCity/L_IdolCity");
+		ProcessServerTravel(StageLevels[0].GetLongPackageName());
 	}
 }

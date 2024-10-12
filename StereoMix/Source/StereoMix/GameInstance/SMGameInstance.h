@@ -53,6 +53,8 @@ public:
 
 	FSMCharacterNoiseBreakData* GetCharacterNoiseBreakData(ESMCharacterType CharacterType);
 
+	const TArray<FSoftObjectPath>& GetStageLevels() const { return StageLevels; }
+
 protected:
 	void ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 
@@ -71,6 +73,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UDataTable> CharacterNoiseBreakDataTable;
+
+	UPROPERTY(EditAnywhere, Category = "Design|Level", meta = (MetaClass = "/Script/Engine.World"))
+	TArray<FSoftObjectPath> StageLevels;
 
 private:
 	bool bDemoGame = false;
