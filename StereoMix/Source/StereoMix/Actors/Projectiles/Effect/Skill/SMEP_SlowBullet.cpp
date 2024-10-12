@@ -34,16 +34,6 @@ void ASMEP_SlowBullet::RemoveProjectileFX()
 	}
 }
 
-void ASMEP_SlowBullet::HandleHitEffect(AActor* InTarget)
-{
-	Super::HandleHitEffect(InTarget);
-
-	if (ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>())
-	{
-		SourceCharacter->OnSkillHitSuccess();
-	}
-}
-
 void ASMEP_SlowBullet::PlayHitFX(AActor* InTarget)
 {
 	AActor* SourceActor = GetOwner();

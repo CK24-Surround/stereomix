@@ -30,6 +30,7 @@ protected:
 	UFUNCTION(Server, Reliable)
 	void ServerSendTargetLocation(const FVector_NetQuantize10& StartLocation, const FVector_NetQuantize10& TargetLocation);
 
+	/** 점멸 시 호출됩니다. 서버에서 호출됩니다. */
 	void OnFlash();
 
 	UFUNCTION()

@@ -66,7 +66,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	const USMHIC_Character* SourceHIC = GetHIC();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
@@ -185,7 +185,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnFlash()
 void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 {
 	ASMElectricGuitarCharacter* SourceCharacter = GetCharacter<ASMElectricGuitarCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC();
 	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
@@ -215,15 +215,15 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 		}
 	}
 
-	const APawn* TargetPawn = Cast<APawn>(TargetActor);
-	APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr;
-	APlayerController* PlayerController = SourceCharacter ? SourceCharacter->GetController<APlayerController>() : nullptr;
-	const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr;
-	if (PlayerController && SourceDataAsset)
+	if (const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset() : nullptr)
 	{
-		PlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
+		if (APlayerController* PlayerController = CurrentActorInfo ? CurrentActorInfo->PlayerController.Get() : nullptr)
+		{
+			PlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
+		}
 
-		if (TargetPlayerController)
+		const APawn* TargetPawn = Cast<APawn>(TargetActor);
+		if (APlayerController* TargetPlayerController = TargetPawn ? TargetPawn->GetController<APlayerController>() : nullptr)
 		{
 			TargetPlayerController->ClientStartCameraShake(SourceDataAsset->NoiseBreakCameraShake);
 		}
@@ -239,6 +239,8 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakBurst, GCParams);
 
 	SourceHIC->SetActorIAmHolding(nullptr);
+
+	OnNoiseBreakSucceed.Broadcast();
 }
 
 TArray<ASMTile*> USMGA_ElectricGuitarNoiseBreak::GetTilesToBeCaptured() const
@@ -281,7 +283,7 @@ TArray<ASMTile*> USMGA_ElectricGuitarNoiseBreak::GetTilesToBeCaptured() const
 void USMGA_ElectricGuitarNoiseBreak::PerformElectricGuitarBurstAttack()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;

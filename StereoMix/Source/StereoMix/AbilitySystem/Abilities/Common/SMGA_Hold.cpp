@@ -76,8 +76,6 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		GCParams.Normal = SourceToCursorDirection;
 		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Hold, GCParams);
 	}
-
-	OnHoldCast.Broadcast();
 }
 
 void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
@@ -135,8 +133,6 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 	bool bSuccess = false;
 	if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 	{
-		bSuccess = true;
-
 		const FVector PreHeldLocation = TargetActor->GetActorLocation(); // 잡히기 이전 위치를 저장합니다. 이펙트에 사용됩니다.
 
 		// 타겟의 잡히기 로직을 실행합니다.
@@ -179,6 +175,9 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 			HoldCancelGCParams.SourceObject = SourceCharacter;
 			SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Common::Hold, HoldCancelGCParams);
 		}
+
+		bSuccess = true;
+		OnHoldSucceed.Broadcast();
 	}
 
 	bSuccessHold = bSuccess;

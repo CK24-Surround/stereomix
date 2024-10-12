@@ -63,7 +63,6 @@ void USMGA_NoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	if (K2_HasAuthority())
 	{
 		USMScoreFunctionLibrary::RecordNoiseBreakUsage(GetCharacter());
-		OnNoiseBreakCast.Broadcast();
 	}
 }
 

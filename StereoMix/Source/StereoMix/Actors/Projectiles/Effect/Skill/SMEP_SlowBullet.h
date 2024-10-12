@@ -16,8 +16,6 @@ protected:
 
 	virtual void RemoveProjectileFX() override;
 
-	virtual void HandleHitEffect(AActor* InTarget) override;
-
 	virtual void PlayHitFX(AActor* InTarget) override;
 
 	virtual void PlayWallHitFX(const FVector& HitLocation) override;

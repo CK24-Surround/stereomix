@@ -596,11 +596,6 @@ void ASMPlayerCharacterBase::ServerSetNoteState_Implementation(bool bNewIsNote)
 	}
 }
 
-void ASMPlayerCharacterBase::OnSkillHitSuccess()
-{
-	OnSkillHitSucceed.Broadcast();
-}
-
 void ASMPlayerCharacterBase::Move(const FInputActionValue& InputActionValue)
 {
 	if (!ASC.Get())

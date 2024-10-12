@@ -28,7 +28,6 @@ class UNiagaraComponent;
 class USMUserWidget_CharacterState;
 
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnCharacterLandedSignature, ASMPlayerCharacterBase* /*LandedCharacter*/);
-DECLARE_MULTICAST_DELEGATE(FOnSomethingSuccess);
 
 UENUM(BlueprintType)
 enum class EMoveTrailState : uint8
@@ -187,11 +186,7 @@ public:
 
 	ESMCharacterType GetCharacterType() const { return CharacterType; }
 
-	void OnSkillHitSuccess();
-
 	FOnCharacterLandedSignature OnCharacterLanded;
-
-	FOnSomethingSuccess OnSkillHitSucceed;
 
 protected:
 	void Move(const FInputActionValue& InputActionValue);

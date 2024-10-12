@@ -9,7 +9,7 @@
 class ASMTile;
 struct FSMCharacterNoiseBreakData;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnNoiseBreakCastDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnNoiseBreakSucceedDelegate);
 
 /**
  * 
@@ -22,7 +22,7 @@ class STEREOMIX_API USMGA_NoiseBreak : public USMGameplayAbility
 public:
 	USMGA_NoiseBreak();
 
-	FOnNoiseBreakCastDelegate OnNoiseBreakCast;
+	FOnNoiseBreakSucceedDelegate OnNoiseBreakSucceed;
 
 protected:
 	virtual bool CanActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayTagContainer* SourceTags, const FGameplayTagContainer* TargetTags, FGameplayTagContainer* OptionalRelevantTags) const override;

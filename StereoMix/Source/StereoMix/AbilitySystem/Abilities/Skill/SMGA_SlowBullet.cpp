@@ -183,5 +183,5 @@ void USMGA_SlowBullet::OnProjectileHit(AActor* HitActor)
 		}
 	}
 
-	OnSkillSucceed.Broadcast();
+	OnSkillHit.Broadcast();
 }

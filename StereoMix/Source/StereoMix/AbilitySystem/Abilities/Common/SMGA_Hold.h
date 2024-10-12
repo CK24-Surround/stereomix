@@ -8,7 +8,7 @@
 
 class USMAT_SkillIndicator;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHoldCastDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnHoldSucceedDelegate);
 
 /**
  * 
@@ -21,7 +21,7 @@ class STEREOMIX_API USMGA_Hold : public USMGameplayAbility
 public:
 	USMGA_Hold();
 
-	FOnHoldCastDelegate OnHoldCast;
+	FOnHoldSucceedDelegate OnHoldSucceed;
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
