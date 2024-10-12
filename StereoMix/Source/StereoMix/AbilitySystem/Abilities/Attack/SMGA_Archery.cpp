@@ -34,7 +34,7 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
 	{
@@ -67,6 +67,15 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 				if (ThisWeakPtr.Get())
 				{
 					ThisWeakPtr->ChargedLevel = Level;
+					ASMPlayerCharacterBase* Character = ThisWeakPtr->GetCharacter();
+					const USMAbilitySystemComponent* ASC = ThisWeakPtr->GetASC();
+					if (Character && ASC)
+					{
+						const FGameplayTag GCTag = Level == 1 ? SMTags::GameplayCue::Piano::ArcheryCharge1 : SMTags::GameplayCue::Piano::ArcheryCharge2;
+						FGameplayCueParameters GCParams;
+						GCParams.SourceObject = Character;
+						ASC->ExecuteGC(Character, GCTag, GCParams);
+					}
 				}
 			};
 
@@ -89,7 +98,7 @@ void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FG
 	if (IsLocallyControlled())
 	{
 		ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-		USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+		const USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
 		if (SourceCharacter && SourceASC)
 		{
 			// 만약에 쏘지못하고 끊기게 되는 경우의 예외처리입니다.
@@ -114,7 +123,7 @@ void USMGA_Archery::EndAbility(const FGameplayAbilitySpecHandle Handle, const FG
 void USMGA_Archery::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;

@@ -57,7 +57,7 @@ bool ASMGCNA_Archery::OnRemove_Implementation(AActor* MyTarget, const FGameplayC
 	if (SFXComponent)
 	{
 		const FName ParameterName = TEXT("ArrowCharge");
-		const float ParameterValue = ChargedLevel >= 0 ? ChargedLevel : 0.0f;
+		const float ParameterValue = FMath::Clamp(ChargedLevel + 1, 0.0f, 2.0f);
 		SFXComponent->SetParameter(ParameterName, ParameterValue);
 
 		SFXComponent->Stop();
