@@ -17,6 +17,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Data/Character/SMBassCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
+#include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "Utilities/SMCollision.h"
 
@@ -39,7 +40,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	UBoxComponent* SourceChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr;
 	const USMBassCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset<USMBassCharacterDataAsset>() : nullptr;
@@ -110,7 +111,7 @@ void USMGA_Charge::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGa
 void USMGA_Charge::OnChargeBlocked(AActor* TargetActor)
 {
 	ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
@@ -187,16 +188,22 @@ void USMGA_Charge::ServerRequestEffect_Implementation(AActor* TargetActor)
 		TargetPlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
 	}
 
-	FGameplayEventData EventData;
-	EventData.Instigator = SourceCharacter;
-	EventData.EventMagnitude = StunTime;
-	UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, SMTags::Event::Character::Stun, EventData);
+
+	if (const USMAbilitySystemComponent* TargetASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(TargetActor); IsValid(TargetASC))
+	{
+		FGameplayEventData EventData;
+		EventData.Instigator = SourceCharacter;
+		EventData.EventMagnitude = StunTime;
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(TargetActor, SMTags::Event::Character::Stun, EventData);
+	}
+
+	OnSkillHit.Broadcast();
 }
 
 void USMGA_Charge::OnChargeFailed(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;

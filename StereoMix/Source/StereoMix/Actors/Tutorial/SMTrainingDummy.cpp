@@ -4,6 +4,7 @@
 #include "SMTrainingDummy.h"
 
 #include "Components/CapsuleComponent.h"
+#include "Components/SphereComponent.h"
 #include "Components/Common/SMTeamComponent.h"
 #include "Components/Tutorial/TrainingDummy/SMHIC_TrainingDummy.h"
 #include "Utilities/SMCollision.h"
@@ -15,7 +16,11 @@ ASMTrainingDummy::ASMTrainingDummy()
 
 	RootCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RootCapsuleComponent"));
 	RootComponent = RootCapsuleComponent;
-	RootCapsuleComponent->SetCollisionProfileName(SMCollisionProfileName::Player);
+	RootCapsuleComponent->SetCollisionProfileName(SMCollisionProfileName::Pawn);
+
+	ColliderComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ColliderComponent"));
+	ColliderComponent->SetupAttachment(RootComponent);
+	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Player);
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
 	MeshComponent->SetupAttachment(RootComponent);

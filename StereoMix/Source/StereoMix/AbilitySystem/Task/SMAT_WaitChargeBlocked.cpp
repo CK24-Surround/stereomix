@@ -51,13 +51,13 @@ void USMAT_WaitChargeBlocked::OnChargeOverlappedCallback(UPrimitiveComponent* Ov
 		return;
 	}
 
-	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(OtherActor);
+	const ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(OtherActor);
 	if (!TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
 	{
 		return;
 	}
 
-	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+	if (const UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
 		if (TargetASC->HasMatchingGameplayTag(SMTags::Character::State::Bass::Charge)) // 만약 상대도 돌진중이라면 그대로 지나갑니다.
 		{

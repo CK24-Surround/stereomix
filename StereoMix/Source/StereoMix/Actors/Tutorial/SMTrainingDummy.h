@@ -9,6 +9,7 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMTrainingDummy.generated.h"
 
+class USphereComponent;
 class USMHIC_TrainingDummy;
 DECLARE_DELEGATE(FOnTrainingDummyStateChanged);
 
@@ -55,16 +56,19 @@ public:
 	FOnTrainingDummyStateChanged OnNeutralized;
 
 protected:
-	UPROPERTY(EditAnywhere, Category = "Root")
+	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<UCapsuleComponent> RootCapsuleComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Visual")
+	UPROPERTY(VisibleAnywhere, Category = "Collider")
+	TObjectPtr<USphereComponent> ColliderComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
-	UPROPERTY(EditAnywhere, Category = "Team")
+	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
 
-	UPROPERTY(EditAnywhere, Category = "HIC")
+	UPROPERTY(VisibleAnywhere, Category = "HIC")
 	TObjectPtr<USMHIC_TrainingDummy> HIC;
 
 	UPROPERTY(EditAnywhere, Category = "Stat")
@@ -73,6 +77,6 @@ protected:
 	float HP = 0.0f;
 
 	uint32 bIsInvincible:1 = false;
-	
+
 	uint32 bIsNeutralized:1 = false;
 };
