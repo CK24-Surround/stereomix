@@ -110,7 +110,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{c73e6c73-a3b2-4f24-8778-98d67219f5a3}">
 		<property name="volume">
-			<value>1.5</value>
+			<value>-2.5</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{d441f42c-652b-4947-be13-33f595b5caba}</destination>
@@ -203,7 +203,7 @@
 	</object>
 	<object class="EventMixerGroup" id="{2c47ae14-67eb-4a58-a1f5-65113f9c8fbc}">
 		<property name="volume">
-			<value>4.5</value>
+			<value>5</value>
 		</property>
 		<property name="name">
 			<value>Audio 5</value>
@@ -248,6 +248,7 @@
 	</object>
 	<object class="MixerBusEffectChain" id="{d441f42c-652b-4947-be13-33f595b5caba}">
 		<relationship name="effects">
+			<destination>{d30d2595-41f3-4c5b-b5e2-0085a79874f1}</destination>
 			<destination>{f6119e10-a180-4ec4-bfc1-9f7e13db8a56}</destination>
 			<destination>{aec79e8a-c800-4368-8c17-5d5a7a1ebd94}</destination>
 		</relationship>
@@ -313,6 +314,11 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{cb6df0d6-0708-4f23-9e36-4ea7dbda11b3}" />
+	<object class="ThreeEQEffect" id="{d30d2595-41f3-4c5b-b5e2-0085a79874f1}">
+		<property name="highGain">
+			<value>-11</value>
+		</property>
+	</object>
 	<object class="MixerBusFader" id="{f6119e10-a180-4ec4-bfc1-9f7e13db8a56}" />
 	<object class="SpatialiserEffect" id="{aec79e8a-c800-4368-8c17-5d5a7a1ebd94}" />
 	<object class="SFXReverbEffect" id="{1d306cce-11ad-4607-b946-6e3c2c88d8f8}">
