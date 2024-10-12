@@ -74,6 +74,7 @@ void USMGA_Archery::ActivateAbility(const FGameplayAbilitySpecHandle Handle, con
 						const FGameplayTag GCTag = Level == 1 ? SMTags::GameplayCue::Piano::ArcheryCharge1 : SMTags::GameplayCue::Piano::ArcheryCharge2;
 						FGameplayCueParameters GCParams;
 						GCParams.SourceObject = Character;
+						GCParams.Location = Character->GetActorLocation();
 						ASC->ExecuteGC(Character, GCTag, GCParams);
 					}
 				}
