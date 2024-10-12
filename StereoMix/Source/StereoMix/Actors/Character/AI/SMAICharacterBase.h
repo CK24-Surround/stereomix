@@ -55,6 +55,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Note")
 	virtual bool IsNoteState() const { return bIsNoteState; }
 
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	virtual void Attack(AActor* AttackTarget, float Accuracy, float Damage) {}
+	
 	virtual void SetNoteState(bool bNewIsNote);
 
 	virtual ASMNoteBase* GetNote() const { return Note; }
