@@ -3,6 +3,7 @@
 
 #include "SMTutorialManagerComponent.h"
 
+#include "GameFramework/GameModeBase.h"
 #include "EngineUtils.h"
 #include "EnhancedInputComponent.h"
 #include "SMTileManagerComponent.h"
@@ -48,8 +49,6 @@ void USMTutorialManagerComponent::BeginPlay()
 			PlayerController->OnPossessedPawnChanged.AddDynamic(this, &ThisClass::USMTutorialManagerComponent::OnPossessedPawnChanged);
 		}
 	}
-
-	NET_VLOG(GetOwner(), 2, 30.0f, TEXT("목표: 목표지점으로 이동"));
 }
 
 void USMTutorialManagerComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -98,7 +97,7 @@ void USMTutorialManagerComponent::ProcessTutorialDialogue()
 	{
 		if (DialogueScripts[CurrentStepNumber][CurrentScriptNumber].Contains(ESMCharacterType::None))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *DialogueScripts[CurrentStepNumber][CurrentScriptNumber][ESMCharacterType::None].Ko);
+			UE_LOG(LogTemp, Verbose, TEXT("%s"), *DialogueScripts[CurrentStepNumber][CurrentScriptNumber][ESMCharacterType::None].Ko);
 			CachedTutorialUIControlComponent->SetScript(DialogueScripts[CurrentStepNumber][CurrentScriptNumber][ESMCharacterType::None].Ko);
 		}
 		else
@@ -413,5 +412,11 @@ void USMTutorialManagerComponent::OnStep10Completed(AActor* OverlappedActor, AAc
 	{
 		OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
 		OverlappedActor->Destroy();
+	}
+
+	const UWorld* World = GetWorld();
+	if (AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr)
+	{
+		GameMode->ReturnToMainMenuHost();
 	}
 }
