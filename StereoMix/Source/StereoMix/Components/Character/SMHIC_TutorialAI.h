@@ -3,7 +3,6 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/HoldInteraction/SMHoldInteractionComponent.h"
 #include "SMHIC_TutorialAI.generated.h"
 
@@ -22,6 +21,8 @@ public:
 
 	virtual void OnHeld(AActor* Instigator) override;
 
+	virtual void OnNoiseBreakStarted(AActor* Instigator) override;
+	
 	virtual void OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
 
 	virtual void OnNoiseBreakApplied(ASMPianoCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
@@ -41,4 +42,6 @@ protected:
 	TObjectPtr<ASMAICharacterBase> SourceCharacter;
 	
 	TArray<TWeakObjectPtr<AActor>> HeldMeActorsHistory;
+
+	uint32 bIsNoiseBreakStarted:1;
 };

@@ -59,6 +59,12 @@ void USMHIC_TutorialAI::OnHeld(AActor* Instigator)
 	SetActorHoldingMe(Instigator);
 }
 
+void USMHIC_TutorialAI::OnNoiseBreakStarted(AActor* Instigator)
+{
+	bIsNoiseBreakStarted = true;
+	SourceCharacter->DestroyNoteStateEndTimer();
+}
+
 void USMHIC_TutorialAI::OnNoiseBreakApplied(ASMElectricGuitarCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData)
 {
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
@@ -129,23 +135,29 @@ void USMHIC_TutorialAI::ReleasedFromBeingHeld(AActor* TargetActor, const TOption
 	const FVector FinalSourceLocation = TargetOptionalLocation.Get(TargetLocation);
 	SourceCharacter->SetActorLocation(FinalSourceLocation);
 
+	SetActorHoldingMe(nullptr);
 	SourceCharacter->SetActorHiddenInGame(false);
 	SourceCharacter->SetActorEnableCollision(true);
 	SourceCharacter->GetNote()->SetActorHiddenInGame(false);
 
+	if (!bIsNoiseBreakStarted)
+	{
+		SourceCharacter->SetNoteState(false);
+		SourceCharacter->SetGhostMaterial(1.0f);
+		ClearHeldMeActorsHistory();
+		return;
+	}
+
+	bIsNoiseBreakStarted = false;
 	if (const UWorld* World = GetWorld())
 	{
 		FTimerHandle TimerHandle;
 		TWeakObjectPtr<USMHIC_TutorialAI> ThisWeakPtr = TWeakObjectPtr<USMHIC_TutorialAI>(this);
 		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr] {
 			ThisWeakPtr->SourceCharacter->SetNoteState(false);
-
-			ThisWeakPtr->SourceCharacter->SetGhostMaterial(3.0f);
-
-			ThisWeakPtr->SetActorHoldingMe(nullptr);
-
+			ThisWeakPtr->SourceCharacter->SetGhostMaterial(1.0f);
 			ThisWeakPtr->ClearHeldMeActorsHistory();
-		}, 2.0f, false);
+		}, 3.0f, false);
 	}
 }
 

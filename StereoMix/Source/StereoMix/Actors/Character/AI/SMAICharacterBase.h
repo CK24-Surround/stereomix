@@ -61,6 +61,10 @@ public:
 
 	virtual void RemoveScreenIndicatorFromSelf(AActor* TargetActor);
 
+	virtual void DestroyNoteStateEndTimer();
+
+	virtual void RegisterNoteStateEndTimer(float Duration);
+
 	virtual void SetNoteState(bool bNewIsNote);
 
 	ASMNoteBase* GetNote() const { return Note; }
@@ -135,11 +139,13 @@ protected:
 	UPROPERTY()
 	TObjectPtr<UNiagaraComponent> VFXComponent;
 
-	float CurrentHP;
+	FTimerHandle NoteStateEndTimerHandle;
 
 	TWeakObjectPtr<AActor> LastAttacker;
 
+	float CurrentHP;
+
 	uint32 bIsNoteState:1 = false;
-	
+
 	uint32 bCanAttack:1 = true;
 };

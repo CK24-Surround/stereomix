@@ -7,13 +7,16 @@
 #include "NiagaraComponent.h"
 #include "NiagaraComponentPoolMethodEnum.h"
 #include "NiagaraFunctionLibrary.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Notes/SMNoteBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/Character/SMHIC_Character.h"
 #include "Components/Character/SMHIC_TutorialAI.h"
 #include "Components/Common/SMTeamComponent.h"
 #include "Components/PlayerController/SMScreenIndicatorComponent.h"
+#include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMCollision.h"
 
@@ -126,11 +129,6 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 		return;
 	}
 
-	if (bIsNoteState)
-	{
-		HitBox->SetCollisionProfileName(SMCollisionProfileName::HoldableItem);
-	}
-
 	CharacterMeshComponent->SetVisibility(!bIsNoteState);
 
 	WeaponRootComponent->SetVisibility(!bIsNoteState, true);
@@ -138,7 +136,9 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 
 	if (bIsNoteState)
 	{
+		HitBox->SetCollisionProfileName(SMCollisionProfileName::HoldableItem);
 		Note->PlayAnimation();
+		RegisterNoteStateEndTimer(3.0f);
 	}
 	else
 	{
@@ -185,6 +185,40 @@ void ASMAICharacterBase::RemoveScreenIndicatorFromSelf(AActor* TargetActor)
 	if (USMScreenIndicatorComponent* ScreenIndicatorComponent = LocalPlayerController ? LocalPlayerController->GetComponentByClass<USMScreenIndicatorComponent>() : nullptr)
 	{
 		ScreenIndicatorComponent->RemoveScreenIndicator(TargetActor);
+	}
+}
+
+void ASMAICharacterBase::DestroyNoteStateEndTimer()
+{
+	if (const UWorld* World = GetWorld())
+	{
+		World->GetTimerManager().ClearTimer(NoteStateEndTimerHandle);
+	}
+	NoteStateEndTimerHandle.Invalidate();
+}
+
+void ASMAICharacterBase::RegisterNoteStateEndTimer(float Duration)
+{
+	DestroyNoteStateEndTimer();
+
+	if (const UWorld* World = GetWorld())
+	{
+		TWeakObjectPtr<ASMAICharacterBase> ThisWeakPtr = TWeakObjectPtr<ASMAICharacterBase>(this);
+		World->GetTimerManager().SetTimer(NoteStateEndTimerHandle, [ThisWeakPtr] {
+			USMHoldInteractionComponent* HIC = ThisWeakPtr->GetHoldInteractionComponent();
+			ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(HIC->GetActorHoldingMe());
+			USMHIC_Character* TargetHIC = Cast<USMHIC_Character>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetCharacter));
+
+			if (USMHIC_TutorialAI* TutorialAI = Cast<USMHIC_TutorialAI>(HIC))
+			{
+				TutorialAI->ReleasedFromBeingHeld(TargetCharacter);
+			}
+
+			if (TargetHIC)
+			{
+				TargetHIC->SetActorIAmHolding(nullptr);
+			}
+		}, Duration, false);
 	}
 }
 
