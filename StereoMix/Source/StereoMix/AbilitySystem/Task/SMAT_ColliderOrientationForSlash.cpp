@@ -22,8 +22,7 @@ USMAT_ColliderOrientationForSlash* USMAT_ColliderOrientationForSlash::ColliderOr
 	NewObj->SourceAbility = Cast<USMGA_Slash>(OwningAbility);
 	NewObj->SourceCharacter = Cast<ASMBassCharacter>(OwningAbility->GetAvatarActorFromActorInfo());
 
-	ASMBassCharacter* CachedSourceCharacter = NewObj->SourceCharacter.Get();
-	if (CachedSourceCharacter)
+	if (const ASMBassCharacter* CachedSourceCharacter = NewObj->SourceCharacter.Get())
 	{
 		NewObj->SourceSlashColliderRootComponent = CachedSourceCharacter->GetSlashColliderRootComponent();
 		NewObj->SourceSlashColliderComponent = CachedSourceCharacter->GetSlashColliderComponent();
@@ -55,7 +54,7 @@ void USMAT_ColliderOrientationForSlash::Activate()
 	SourceSlashColliderComponent->SetCapsuleHalfHeight(HalfRange);
 	SourceSlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	SourceSlashColliderComponent->SetRelativeLocation(FVector(HalfRange, 0.0, 0.0));
-	SourceSlashColliderComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::BeginOnOverlaped);
+	SourceSlashColliderComponent->OnComponentBeginOverlap.AddDynamic(this, &ThisClass::BeginOnOverlapped);
 
 	const double Yaw = SourceAbility->bIsLeftSlashNext ? StartYaw : -StartYaw;
 	TargetYaw = -Yaw;
@@ -128,8 +127,7 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	}
 
 	// 타겟 Yaw에 도달했다면 끝냅니다.
-	const bool bHasReachedTargetYaw = TargetYaw >= 0 ? TargetYaw <= NewYaw : TargetYaw >= NewYaw;
-	if (bHasReachedTargetYaw)
+	if ((TargetYaw >= 0) ? (TargetYaw <= NewYaw) : (TargetYaw >= NewYaw))
 	{
 		EndTask();
 	}
@@ -149,14 +147,14 @@ void USMAT_ColliderOrientationForSlash::OnDestroy(bool bInOwnerFinished)
 	Super::OnDestroy(bInOwnerFinished);
 }
 
-void USMAT_ColliderOrientationForSlash::BeginOnOverlaped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+void USMAT_ColliderOrientationForSlash::BeginOnOverlapped(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	HandleHit(OtherActor);
 }
 
 void USMAT_ColliderOrientationForSlash::HandleHit(AActor* OtherActor)
 {
-	ISMDamageInterface* OtherActorDamageInterface = Cast<ISMDamageInterface>(OtherActor);
+	const ISMDamageInterface* OtherActorDamageInterface = Cast<ISMDamageInterface>(OtherActor);
 	if (!OtherActorDamageInterface || OtherActorDamageInterface->CanIgnoreAttack())
 	{
 		return;

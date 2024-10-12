@@ -41,10 +41,9 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
 	const USMAbilitySystemComponent* SourceASC = GetASC();
-	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
 	UBoxComponent* SourceChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr;
 	const USMBassCharacterDataAsset* SourceDataAsset = SourceCharacter ? SourceCharacter->GetDataAsset<USMBassCharacterDataAsset>() : nullptr;
-	if (!SourceCharacter || !SourceASC || !SourceCapsule || !SourceChargeCollider || !SourceDataAsset)
+	if (!SourceCharacter || !SourceASC || !SourceChargeCollider || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -60,9 +59,6 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 	MontageTask->OnBlendOut.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
 	MontageTask->ReadyForActivation();
-
-	OriginalCapsuleCollisionProfileName = SourceCapsule->GetCollisionProfileName();
-	SourceCapsule->SetCollisionProfileName(SMCollisionProfileName::Ghost);
 
 	OriginalChargeCollisionProfileName = SourceChargeCollider->GetCollisionProfileName();
 	SourceChargeCollider->SetCollisionProfileName(SMCollisionProfileName::Charge);
@@ -94,11 +90,6 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 void USMGA_Charge::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	const ASMBassCharacter* SourceCharacter = GetCharacter<ASMBassCharacter>();
-
-	if (UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr)
-	{
-		SourceCapsule->SetCollisionProfileName(OriginalCapsuleCollisionProfileName);
-	}
 
 	if (UBoxComponent* SourceChargeCollider = SourceCharacter ? SourceCharacter->GetChargeColliderComponent() : nullptr)
 	{

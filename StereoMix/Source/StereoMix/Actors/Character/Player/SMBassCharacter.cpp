@@ -5,7 +5,6 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
-#include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/BoxComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Utilities/SMCollision.h"
@@ -21,6 +20,7 @@ ASMBassCharacter::ASMBassCharacter(const FObjectInitializer& ObjectInitializer)
 
 	SlashColliderComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("SlashColliderComponent"));
 	SlashColliderComponent->SetupAttachment(SlashColliderRootComponent);
+	SlashColliderComponent->SetCollisionProfileName(SMCollisionProfileName::SlashCollider);
 	SlashColliderComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	constexpr double HalfDistance = 250.0;
 	SlashColliderComponent->SetRelativeLocationAndRotation(FVector(HalfDistance, 0.0, 0.0), FRotator(-90.0, 0.0, 0.0));

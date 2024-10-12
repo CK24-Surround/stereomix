@@ -41,6 +41,9 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	PrimaryActorTick.bCanEverTick = true;
 	bAlwaysRelevant = true;
 
+	UCapsuleComponent* CachedCapsuleComponent = GetCapsuleComponent();
+	CachedCapsuleComponent->SetCollisionProfileName(SMCollisionProfileName::Player);
+
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 	CachedMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	CachedMeshComponent->SetRelativeRotation(FRotator(0.0, -90.0, 0.0));
@@ -55,7 +58,7 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 
 	HitBox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
-	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
+	HitBox->SetCollisionProfileName(SMCollisionProfileName::PlayerProjectileHitbox);
 	HitBox->InitCapsuleSize(125.0f, 125.0f);
 
 	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));

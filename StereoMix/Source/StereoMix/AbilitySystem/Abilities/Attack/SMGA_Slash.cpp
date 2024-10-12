@@ -113,7 +113,7 @@ void USMGA_Slash::InputPressed(const FGameplayAbilitySpecHandle Handle, const FG
 void USMGA_Slash::OnSlashJudgeStartCallback(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
@@ -170,7 +170,7 @@ void USMGA_Slash::OnSlashHit(AActor* TargetActor)
 void USMGA_Slash::ServerRPCSlashHit_Implementation(AActor* TargetActor)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;

@@ -7,6 +7,7 @@ namespace SMCollisionProfileName
 	static FName Trigger = TEXT("Trigger");
 	static FName Pawn = TEXT("Pawn");
 	static FName Player = TEXT("Player");
+	static FName PlayerProjectileHitbox = TEXT("PlayerProjectileHitbox");
 	static FName Projectile = TEXT("Projectile");
 	static FName Tile = TEXT("Tile");
 	static FName HealPack = TEXT("HealPack");
@@ -17,7 +18,7 @@ namespace SMCollisionProfileName
 	static FName CatchableItem = TEXT("CatchableItem");
 	static FName Charge = TEXT("Charge");
 	static FName NoiseBreak = TEXT("NoiseBreak");
-	static FName Ghost = TEXT("Ghost");
+	static FName SlashCollider = TEXT("SlashCollider");
 }
 
 namespace SMCollisionObjectChannel

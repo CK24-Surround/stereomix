@@ -29,7 +29,7 @@ ASMTeamSelectTriggerBox::ASMTeamSelectTriggerBox()
 	TriggerBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	TriggerBox->SetCollisionObjectType(ECC_WorldDynamic);
 	TriggerBox->SetCollisionResponseToAllChannels(ECR_Ignore);
-	TriggerBox->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	TriggerBox->SetCollisionResponseToChannel(SMCollisionObjectChannel::Player, ECR_Overlap);
 	TriggerBox->SetRelativeLocation(FVector(75.0, 75.0, 100.0));
 	TriggerBox->InitBoxExtent(FVector(75.0, 75.0, 100.0));
 
@@ -55,7 +55,7 @@ void ASMTeamSelectTriggerBox::NotifyActorBeginOverlap(AActor* OtherActor)
 
 void ASMTeamSelectTriggerBox::RespawnCharacter(AActor* TargetActor)
 {
-	ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
+	const ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(TargetActor);
 	if (!ensureAlways(TargetCharacter))
 	{
 		return;
