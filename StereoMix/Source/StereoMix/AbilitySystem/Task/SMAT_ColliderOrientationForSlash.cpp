@@ -61,11 +61,18 @@ void USMAT_ColliderOrientationForSlash::Activate()
 	SourceSlashColliderRootComponent->SetRelativeRotation(FRotator(0.0, Yaw, 0.0));
 
 	// 현재 캡슐의 중심과 끝점을 저장합니다.
-	Locations.AddZeroed(2);
+	Locations.AddZeroed(CorrectionLineCount);
+	bCorrectionFirstStep = true;
 	const FVector RootLocation = SourceSlashColliderRootComponent->GetComponentLocation();
 	const FVector Direction = SourceSlashColliderRootComponent->GetComponentRotation().Vector();
-	Locations[0] = RootLocation + Direction * Range / 2.0f;
-	Locations[1] = RootLocation + Direction * Range;
+	const float Step = Range / CorrectionLineCount;
+	for (int32 i = 0; i < (CorrectionLineCount + 1); ++i)
+	{
+		if (i > 0)
+		{
+			Locations[i - 1] = RootLocation + (Direction * Step * i);
+		}
+	}
 }
 
 void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
@@ -84,46 +91,46 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 	TArray<FVector> PreviousLocations = Locations;
 	const FVector RootLocation = SourceSlashColliderRootComponent->GetComponentLocation();
 	const FVector Direction = SourceSlashColliderRootComponent->GetComponentRotation().Vector();
-	Locations[0] = RootLocation + Direction * Range / 2.0f;
-	Locations[1] = RootLocation + Direction * Range;
-
-	FCollisionQueryParams Params(TEXT("SlashTrace"), false, SourceCharacter.Get());
-	for (int32 i = 0; i < Locations.Num(); ++i)
+	const float Step = Range / CorrectionLineCount;
+	for (int32 i = 0; i < (CorrectionLineCount + 1); ++i)
 	{
-		TArray<FOverlapResult> OverlapResults;
-		const FVector CenterLocation = (PreviousLocations[i] + Locations[i]) / 2.0;
-		const FVector PreviousToCurrent = Locations[i] - PreviousLocations[i];
-		const FVector PreviousToCurrentDirection = PreviousToCurrent.GetSafeNormal();
-		const FQuat PreviousToCurrentRotation = (PreviousToCurrentDirection.Rotation() + FRotator(90.0, 0.0, 0.0)).Quaternion();
-		const FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(10.0f, PreviousToCurrent.Size());
-		if (GetWorld()->OverlapMultiByChannel(OverlapResults, CenterLocation, PreviousToCurrentRotation, SMCollisionTraceChannel::ActionTC, CollisionShape, Params))
+		if (i > 0)
 		{
-			for (const FOverlapResult& OverlapResult : OverlapResults)
+			Locations[i - 1] = RootLocation + (Direction * Step * i);
+		}
+	}
+
+	if (!bCorrectionFirstStep)
+	{
+		FCollisionQueryParams Params(TEXT("SlashTrace"), false, SourceCharacter.Get());
+		for (int32 i = 0; i < Locations.Num(); ++i)
+		{
+			TArray<FOverlapResult> OverlapResults;
+			const FVector CenterLocation = (PreviousLocations[i] + Locations[i]) / 2.0;
+			const FVector PreviousToCurrent = Locations[i] - PreviousLocations[i];
+			const FVector PreviousToCurrentDirection = PreviousToCurrent.GetSafeNormal();
+			const FQuat PreviousToCurrentRotation = (PreviousToCurrentDirection.Rotation() + FRotator(90.0, 0.0, 0.0)).Quaternion();
+			const FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(10.0f, PreviousToCurrent.Size());
+			if (GetWorld()->OverlapMultiByChannel(OverlapResults, CenterLocation, PreviousToCurrentRotation, SMCollisionTraceChannel::ActionTC, CollisionShape, Params))
 			{
-				HandleHit(OverlapResult.GetActor());
+				for (const FOverlapResult& OverlapResult : OverlapResults)
+				{
+					HandleHit(OverlapResult.GetActor());
+				}
+			}
+
+			if (bShowDebug)
+			{
+				DrawDebugCapsule(GetWorld(), CenterLocation, PreviousToCurrent.Size(), 10.0f, PreviousToCurrentRotation, FColor::Cyan, false, 0.5f);
 			}
 		}
 	}
 
+	bCorrectionFirstStep = false;
+
 	if (bShowDebug)
 	{
 		DrawDebugCapsule(GetWorld(), SourceSlashColliderComponent->GetComponentLocation(), SourceSlashColliderComponent->GetScaledCapsuleHalfHeight(), SourceSlashColliderComponent->GetScaledCapsuleRadius(), SourceSlashColliderComponent->GetComponentRotation().Quaternion(), FColor::Red, false, 0.5f);
-
-		{
-			const FVector CenterLocation = (PreviousLocations[0] + Locations[0]) / 2.0;
-			const FVector PreviousToCurrent = Locations[0] - PreviousLocations[0];
-			const FVector PreviousToCurrentDirection = PreviousToCurrent.GetSafeNormal();
-			const FQuat PreviousToCurrentRotation = (PreviousToCurrentDirection.Rotation() + FRotator(90.0, 0.0, 0.0)).Quaternion();
-			DrawDebugCapsule(GetWorld(), CenterLocation, PreviousToCurrent.Size(), 10.0f, PreviousToCurrentRotation, FColor::Cyan, false, 0.5f);
-		}
-
-		{
-			const FVector CenterLocation = (PreviousLocations[1] + Locations[1]) / 2.0;
-			const FVector PreviousToCurrent = Locations[1] - PreviousLocations[1];
-			const FVector PreviousToCurrentDirection = PreviousToCurrent.GetSafeNormal();
-			const FQuat PreviousToCurrentRotation = (PreviousToCurrentDirection.Rotation() + FRotator(90.0, 0.0, 0.0)).Quaternion();
-			DrawDebugCapsule(GetWorld(), CenterLocation, PreviousToCurrent.Size(), 10.0f, PreviousToCurrentRotation, FColor::Cyan, false, 0.5f);
-		}
 	}
 
 	// 타겟 Yaw에 도달했다면 끝냅니다.

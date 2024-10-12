@@ -16,11 +16,11 @@ ASMTrainingDummy::ASMTrainingDummy()
 
 	RootCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RootCapsuleComponent"));
 	RootComponent = RootCapsuleComponent;
-	RootCapsuleComponent->SetCollisionProfileName(SMCollisionProfileName::Pawn);
+	RootCapsuleComponent->SetCollisionProfileName(SMCollisionProfileName::Player);
 
 	ColliderComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ColliderComponent"));
 	ColliderComponent->SetupAttachment(RootComponent);
-	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Player);
+	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::PlayerProjectileHitbox);
 	ColliderComponent->InitSphereRadius(150.0f);
 
 	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));

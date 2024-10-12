@@ -63,6 +63,11 @@ protected:
 
 	float TargetYaw = 0.0f;
 
+	int32 CorrectionLineCount = 4;
+
+	/** 첫 틱에는 제자리에 점이 2개 찍히는데 이는 무시되어야하는데 이에 사용됩니다. */
+	uint32 bCorrectionFirstStep:1 = false;
+
 	// 캡슐 컴포넌트의 중심과 끝점을 저장해둡니다. 움직인 캡슐 사이의 빈공간도 라인 트레이스로 체크하기 위해 사용합니다.
 	TArray<FVector> Locations;
 };
