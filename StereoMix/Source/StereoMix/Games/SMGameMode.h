@@ -41,9 +41,9 @@ protected:
 
 	virtual void HandleLeavingMap() override;
 
-	/** 게임이 끝나면 다시 룸으로 이동할지 여부입니다. 테스트용으로 사용됩니다. */
+	/** 게임이 끝나면 다시 기본맵(아마도 Room 맵)으로 이동할지 여부입니다. 테스트용으로 사용됩니다. */
 	UPROPERTY(EditAnywhere, Category = "Design|Test")
-	uint32 bReturnToRoomWhenGameEnds:1 = true;
+	uint32 bReturnToDefaultMapWhenGameEnds:1 = true;
 
 	UPROPERTY()
 	TWeakObjectPtr<ASMGameSession> RoomSession;

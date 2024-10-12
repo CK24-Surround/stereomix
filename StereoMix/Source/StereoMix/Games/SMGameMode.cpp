@@ -4,6 +4,7 @@
 #include "SMGameMode.h"
 
 #include "GameFramework/PlayerState.h"
+#include "GameMapsSettings.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "SMGameState.h"
@@ -28,7 +29,7 @@ void ASMGameMode::InitGame(const FString& MapName, const FString& Options, FStri
 void ASMGameMode::OnPostLogin(AController* NewPlayer)
 {
 	Super::OnPostLogin(NewPlayer);
-	for (auto TargetPlayerState : GameState->PlayerArray)
+	for (const APlayerState* TargetPlayerState : GameState->PlayerArray)
 	{
 		ASMPlayerController* TargetPlayerController = Cast<ASMPlayerController>(TargetPlayerState->GetOwner());
 		TargetPlayerController->ClientReceiveChat(TEXT("시스템"), FString::Printf(TEXT("%s 님이 입장했습니다."), *NewPlayer->PlayerState->GetPlayerName()));
@@ -38,7 +39,7 @@ void ASMGameMode::OnPostLogin(AController* NewPlayer)
 void ASMGameMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
-	for (auto TargetPlayerState : GameState->PlayerArray)
+	for (const APlayerState* TargetPlayerState : GameState->PlayerArray)
 	{
 		ASMPlayerController* TargetPlayerController = Cast<ASMPlayerController>(TargetPlayerState->GetOwner());
 		TargetPlayerController->ClientReceiveChat(TEXT("시스템"), FString::Printf(TEXT("%s 님이 나갔습니다."), *Exiting->PlayerState->GetPlayerName()));
@@ -72,13 +73,13 @@ void ASMGameMode::HandleLeavingMap()
 {
 	Super::HandleLeavingMap();
 
-	if (bReturnToRoomWhenGameEnds)
+	if (bReturnToDefaultMapWhenGameEnds)
 	{
-		ProcessServerTravel("/Game/StereoMix/Levels/Room/L_Room");
+		ProcessServerTravel(UGameMapsSettings::GetGameDefaultMap());
 		return;
 	}
 
-	USMGameInstance* GameInstance = GetGameInstance<USMGameInstance>();
+	const USMGameInstance* GameInstance = GetGameInstance<USMGameInstance>();
 	if (GameInstance->IsCustomGame())
 	{
 		ProcessServerTravel("/Game/StereoMix/Levels/Room/L_Room");

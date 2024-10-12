@@ -15,6 +15,7 @@ public class StereoMix : ModuleRules
 			"Core",
 			"CoreUObject",
 			"Engine", 
+			"EngineSettings",
 			"InputCore",
 			"EnhancedInput",
 			"UMG",
