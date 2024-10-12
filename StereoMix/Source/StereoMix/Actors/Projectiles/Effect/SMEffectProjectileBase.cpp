@@ -98,12 +98,11 @@ void ASMEffectProjectileBase::HandleWallHitEffect(const FVector& HitLocation)
 
 void ASMEffectProjectileBase::ApplyDamage(AActor* InTarget)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetOwner<ASMPlayerCharacterBase>();
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
-	if (!SourceCharacter || !TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
+	if (!TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
 	{
 		return;
 	}
 
-	TargetDamageInterface->ReceiveDamage(SourceCharacter, Damage);
+	TargetDamageInterface->ReceiveDamage(GetOwner(), Damage);
 }
