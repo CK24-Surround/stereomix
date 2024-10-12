@@ -162,7 +162,7 @@ TArray<AActor*> USMGA_NoiseBreak::GetBurstHitActors(const FVector& TargetLocatio
 
 	FCollisionObjectQueryParams CollisionParams;
 	CollisionParams.AddObjectTypesToQuery(ECC_Pawn); // 플레이어의 히트박스는 플레이어의 생김새보다 훨씬 크기때문에 캡슐 콜라이더만 트리거되도록합니다.
-	CollisionParams.AddObjectTypesToQuery(SMCollisionObjectChannel::Obstacle);
+	CollisionParams.AddObjectTypesToQuery(SMCollisionObjectChannel::Destructible);
 
 	constexpr float TileSize = USMTileFunctionLibrary::DefaultTileSize;
 	const float Size = (CaptureSize * TileSize) - (TileSize / 2.0f);

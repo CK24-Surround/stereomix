@@ -23,7 +23,7 @@ namespace SMCollisionProfileName
 namespace SMCollisionObjectChannel
 {
 	static ECollisionChannel Player = ECC_GameTraceChannel1;
-	static ECollisionChannel Obstacle = ECC_GameTraceChannel8;
+	static ECollisionChannel Destructible = ECC_Destructible;
 }
 
 namespace SMCollisionTraceChannel
