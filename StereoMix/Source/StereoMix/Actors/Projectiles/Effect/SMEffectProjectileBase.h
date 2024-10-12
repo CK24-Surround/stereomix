@@ -6,13 +6,21 @@
 #include "Actors/Projectiles/SMProjectile.h"
 #include "SMEffectProjectileBase.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnProjectileHitDelegate, AActor*, HitActor);
+
 UCLASS(Abstract)
 class STEREOMIX_API ASMEffectProjectileBase : public ASMProjectile
 {
 	GENERATED_BODY()
 
+public:
+	// 투사체가 적중할때 호출됩니다. 투사체 라이프 타임이 끝나면 이 델리게이트에 바인드된 함수가 자동으로 정리됩니다.
+	FOnProjectileHitDelegate OnProjectileHitDelegate;
+
 protected:
 	virtual void PreLaunch(const FSMProjectileParameters& InParameters) override;
+
+	virtual void MulticastEndLifeTimeInternal_Implementation() override;
 
 	virtual bool IsValidTarget(AActor* InTarget) override;
 

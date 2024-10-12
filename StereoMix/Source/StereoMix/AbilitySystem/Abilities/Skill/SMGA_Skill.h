@@ -8,6 +8,8 @@
 
 struct FSMCharacterSkillData;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSkillSucceedDelegate);
+
 /**
  * 
  */
@@ -18,6 +20,8 @@ class STEREOMIX_API USMGA_Skill : public USMGameplayAbility
 
 public:
 	USMGA_Skill();
+
+	FOnSkillSucceedDelegate OnSkillSucceed;
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;

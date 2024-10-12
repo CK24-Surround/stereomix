@@ -10,6 +10,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Projectiles/SMProjectile.h"
+#include "Actors/Projectiles/Effect/SMEffectProjectileBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
@@ -36,7 +37,7 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
 	{
@@ -93,15 +94,17 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	ASMProjectile* Projectile = USMProjectileFunctionLibrary::GetSlowBulletProjectile(GetWorld(), SourceTeam);
+	ASMEffectProjectileBase* Projectile = Cast<ASMEffectProjectileBase>(USMProjectileFunctionLibrary::GetSlowBulletProjectile(GetWorld(), SourceTeam));
 	if (!SourceCharacter || !Projectile)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	const FVector LaunchDirection = (InTargetLocation - InSourceLocation).GetSafeNormal();
+	const FVector LaunchDirection = (InTargetLocation - InSourceLocation).GetSafeNormal(UE_SMALL_NUMBER, FVector::ForwardVector);
 	const float MaxDistance = MaxDistanceByTile * 150.0f;
+
+	Projectile->OnProjectileHitDelegate.AddDynamic(this, &ThisClass::OnProjectileHit);
 
 	FSMProjectileParameters ProjectileParams;
 	ProjectileParams.Owner = SourceCharacter;
@@ -114,7 +117,7 @@ void USMGA_SlowBullet::ServerRPCLaunchProjectile_Implementation(const FVector_Ne
 	ProjectileParams.Duration = SlowDebuffDuration;
 	Projectile->Launch(ProjectileParams);
 
-	if (USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
+	if (const USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>())
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
@@ -131,4 +134,54 @@ void USMGA_SlowBullet::SyncPointEndAbility()
 	UAbilityTask_NetworkSyncPoint* SyncTask = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
 	SyncTask->OnSync.AddDynamic(this, &ThisClass::K2_EndAbility);
 	SyncTask->ReadyForActivation();
+}
+
+void USMGA_SlowBullet::OnProjectileHit(AActor* HitActor)
+{
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	if (!CurrentActorInfo || !SourceCharacter)
+	{
+		return;
+	}
+
+	// 대상이 캐릭터면 디버프를 적용합니다.
+	if (ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(HitActor))
+	{
+		TargetCharacter->ClientRPCAddMoveSpeed(SlowDebuffMultiplier, SlowDebuffDuration);
+
+		// 디버프 VFX를 적용합니다. 이 이펙트는 스스로 종료됩니다.
+		if (const USMAbilitySystemComponent* SourceASC = GetASC())
+		{
+			FGameplayCueParameters GCParams;
+			GCParams.RawMagnitude = SlowDebuffDuration;
+			GCParams.TargetAttachComponent = HitActor->GetRootComponent();
+			SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::SlowBulletDebuff, GCParams);
+		}
+
+		NET_LOG(SourceCharacter, Log, TEXT("%s에게 %f초간 슬로우 적용"), *GetNameSafe(HitActor), SlowDebuffDuration);
+	}
+
+	// 데미지를 적용합니다.
+	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(HitActor);
+	if (TargetDamageInterface && !TargetDamageInterface->CanIgnoreAttack())
+	{
+		TargetDamageInterface->ReceiveDamage(SourceCharacter, Damage);
+
+		// 카메라셰이크를 적용합니다.
+		if (const USMPlayerCharacterDataAsset* SourceDataAsset = SourceCharacter->GetDataAsset())
+		{
+			if (APlayerController* PlayerController = CurrentActorInfo->PlayerController.Get())
+			{
+				PlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
+			}
+
+			const APawn* HitPawn = Cast<APawn>(HitActor);
+			if (APlayerController* HitPlayerController = HitPawn ? HitPawn->GetController<APlayerController>() : nullptr)
+			{
+				HitPlayerController->ClientStartCameraShake(SourceDataAsset->SkillHitCameraShake);
+			}
+		}
+	}
+
+	OnSkillSucceed.Broadcast();
 }

@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "Data/SMTeam.h"
-#include "GameplayTagContainer.h"
 #include "Data/SMProjectileParameters.h"
 #include "Interfaces/SMTeamInterface.h"
 

@@ -6,11 +6,18 @@
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "Interfaces/SMDamageInterface.h"
+#include "Utilities/SMLog.h"
 
 
 void ASMEffectProjectileBase::PreLaunch(const FSMProjectileParameters& InParameters)
 {
 	Damage = InParameters.Damage;
+}
+
+void ASMEffectProjectileBase::MulticastEndLifeTimeInternal_Implementation()
+{
+	OnProjectileHitDelegate.Clear();
+	Super::MulticastEndLifeTimeInternal_Implementation();
 }
 
 bool ASMEffectProjectileBase::IsValidTarget(AActor* InTarget)
@@ -20,7 +27,7 @@ bool ASMEffectProjectileBase::IsValidTarget(AActor* InTarget)
 		return false;
 	}
 
-	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
+	const ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
 	if (!TargetDamageInterface || TargetDamageInterface->CanIgnoreAttack())
 	{
 		return false;
@@ -47,6 +54,7 @@ void ASMEffectProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
 		}
 
 		HandleHitEffect(OtherActor);
+		OnProjectileHitDelegate.Broadcast(OtherActor);
 
 		// 투사체로서 할일을 다 했기에 투사체 풀로 돌아갑니다.
 		EndLifeTime();
@@ -56,8 +64,7 @@ void ASMEffectProjectileBase::NotifyActorBeginOverlap(AActor* OtherActor)
 void ASMEffectProjectileBase::HandleHitEffect(AActor* InTarget)
 {
 	ISMDamageInterface* TargetDamageInterface = Cast<ISMDamageInterface>(InTarget);
-	const bool IsObstacle = TargetDamageInterface ? TargetDamageInterface->IsObstacle() : true;
-	if (IsObstacle)
+	if (TargetDamageInterface ? TargetDamageInterface->IsObstacle() : true) // 데미지 인터페이스를 갖고 있지 않다면 장애물로 처리합니다.
 	{
 		PlayWallHitFX(GetActorLocation());
 	}

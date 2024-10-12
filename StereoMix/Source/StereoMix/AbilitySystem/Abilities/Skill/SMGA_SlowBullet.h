@@ -29,6 +29,9 @@ protected:
 	UFUNCTION()
 	void SyncPointEndAbility();
 
+	UFUNCTION()
+	void OnProjectileHit(AActor* HitActor);
+
 	float ProjectileSpeed = 0.0f;
 
 	/** 대상에게 적용할 이동속도 디버프 배율입니다. 0.3이면 0.3의 이동속도 즉, 70%의 이동속도가 감소합니다. */
