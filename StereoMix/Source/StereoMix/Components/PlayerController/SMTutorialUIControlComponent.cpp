@@ -94,6 +94,8 @@ void USMTutorialUIControlComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn
 	ASMGamePlayerController* PlayerController = GetOwner<ASMGamePlayerController>();
 	if (TutorialHUD = PlayerController ? CreateWidget<USMTutorialHUD>(PlayerController, TutorialHUDClass) : nullptr; TutorialHUD) // 할당된 폰이 있는 경우에만 CreateWidget이 가능해 이 이벤트에서 처리해줍니다.
 	{
+		PlayerController->OnPossessedPawnChanged.RemoveAll(this);
+
 		TutorialHUD->AddToViewport();
 		ActivateDialogue();
 	}

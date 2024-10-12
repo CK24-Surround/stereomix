@@ -135,10 +135,13 @@ void USMTutorialManagerComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn* 
 	}
 
 	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	CachedTutorialUIControlComponent = PlayerController ? PlayerController->GetComponentByClass<USMTutorialUIControlComponent>() : nullptr;
+	if (APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr)
+	{
+		PlayerController->OnPossessedPawnChanged.RemoveAll(this);
 
-	ProcessTutorialDialogue();
+		CachedTutorialUIControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>();
+		ProcessTutorialDialogue();
+	}
 }
 
 void USMTutorialManagerComponent::TransformScriptsData()
