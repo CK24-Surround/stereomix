@@ -47,7 +47,10 @@ public:
 	virtual bool IsObstacle() override { return false; }
 
 	UFUNCTION(BlueprintCallable, Category = "Note")
-	virtual bool IsNoteState() const { return bIsNoteState; }
+	bool IsNoteState() const { return bIsNoteState; }
+
+	UFUNCTION(BlueprintCallable, Category = "Attack")
+	bool CanAttack() const { return bCanAttack; }
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	virtual void Attack(AActor* AttackTarget) {}
@@ -137,4 +140,6 @@ protected:
 	TWeakObjectPtr<AActor> LastAttacker;
 
 	uint32 bIsNoteState:1 = false;
+	
+	uint32 bCanAttack:1 = true;
 };

@@ -132,12 +132,21 @@ void USMHIC_TutorialAI::ReleasedFromBeingHeld(AActor* TargetActor, const TOption
 	SourceCharacter->SetActorHiddenInGame(false);
 	SourceCharacter->SetActorEnableCollision(true);
 	SourceCharacter->GetNote()->SetActorHiddenInGame(false);
-	SourceCharacter->SetNoteState(false);
-	ClearHeldMeActorsHistory();
 
-	SourceCharacter->SetGhostMaterial(5.0f);
-	
-	SetActorHoldingMe(nullptr);
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		TWeakObjectPtr<USMHIC_TutorialAI> ThisWeakPtr = TWeakObjectPtr<USMHIC_TutorialAI>(this);
+		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr] {
+			ThisWeakPtr->SourceCharacter->SetNoteState(false);
+
+			ThisWeakPtr->SourceCharacter->SetGhostMaterial(3.0f);
+
+			ThisWeakPtr->SetActorHoldingMe(nullptr);
+
+			ThisWeakPtr->ClearHeldMeActorsHistory();
+		}, 2.0f, false);
+	}
 }
 
 void USMHIC_TutorialAI::ClearHeldMeActorsHistory()

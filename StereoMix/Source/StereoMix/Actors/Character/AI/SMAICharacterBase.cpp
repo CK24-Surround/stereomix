@@ -126,7 +126,10 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 		return;
 	}
 
-	HitBox->SetCollisionProfileName(bIsNoteState ? SMCollisionProfileName::HoldableItem : SMCollisionProfileName::Player);
+	if (bIsNoteState)
+	{
+		HitBox->SetCollisionProfileName(SMCollisionProfileName::HoldableItem);
+	}
 
 	CharacterMeshComponent->SetVisibility(!bIsNoteState);
 
@@ -196,6 +199,7 @@ void ASMAICharacterBase::OnChangeHP()
 	CharacterStateWidgetComponent->SetVisibility(true);
 	if (CurrentHP <= 0.0f)
 	{
+		bCanAttack = false;
 		CharacterStateWidgetComponent->SetVisibility(false);
 		AddScreenIndicatorToSelf(this);
 		SetNoteState(true);
@@ -234,6 +238,9 @@ void ASMAICharacterBase::SetGhostMaterial(float Duration)
 		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, SourceMesh, SourceWeaponMesh] {
 			if (ThisWeakPtr.IsValid())
 			{
+				ThisWeakPtr->bCanAttack = true;
+				ThisWeakPtr->HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
+
 				if (ThisWeakPtr->VFXComponent)
 				{
 					ThisWeakPtr->VFXComponent->Deactivate();
