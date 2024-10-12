@@ -136,7 +136,7 @@ void ASMObstacleBase::MulticastPushBack_Implementation()
 	}
 
 	TArray<FOverlapResult> OverlapResults;
-	if (World->OverlapMultiByChannel(OverlapResults, GetActorLocation(), FQuat::Identity, SMCollisionTraceChannel::Action, FCollisionShape::MakeBox(ColliderComponent->GetScaledBoxExtent())))
+	if (World->OverlapMultiByChannel(OverlapResults, GetActorLocation(), FQuat::Identity, SMCollisionTraceChannel::ActionTC, FCollisionShape::MakeBox(ColliderComponent->GetScaledBoxExtent())))
 	{
 		for (const FOverlapResult& OverlapResult : OverlapResults)
 		{

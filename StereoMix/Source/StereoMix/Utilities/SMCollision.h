@@ -24,10 +24,11 @@ namespace SMCollisionObjectChannel
 {
 	static ECollisionChannel Player = ECC_GameTraceChannel1;
 	static ECollisionChannel Destructible = ECC_Destructible;
+	static ECollisionChannel ActionOC = ECC_GameTraceChannel5;
 }
 
 namespace SMCollisionTraceChannel
 {
-	static ECollisionChannel Action = ECC_GameTraceChannel2;
+	static ECollisionChannel ActionTC = ECC_GameTraceChannel2;
 	static ECollisionChannel TileAction = ECC_GameTraceChannel4;
 }

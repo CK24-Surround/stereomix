@@ -103,7 +103,7 @@ void ASMHoldableItem_ChangeAttribute::TriggerCountTimerCallback()
 
 TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetConfirmedActorsToApplyItem()
 {
-	TArray<AActor*> ActorsOnTriggeredTiles = GetActorsOnTriggeredTiles(SMCollisionTraceChannel::Action);
+	TArray<AActor*> ActorsOnTriggeredTiles = GetActorsOnTriggeredTiles(SMCollisionTraceChannel::ActionTC);
 
 	TArray<AActor*> ConfirmedActorsToApplyItem;
 	for (const auto& ActorOnTriggeredTile : ActorsOnTriggeredTiles)

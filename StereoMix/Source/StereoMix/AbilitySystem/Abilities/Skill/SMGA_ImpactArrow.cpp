@@ -193,7 +193,7 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 	}
 
 	TArray<FOverlapResult> OverlapResults;
-	if (GetWorld()->OverlapMultiByChannel(OverlapResults, NewTargetLocation, FQuat::Identity, SMCollisionTraceChannel::Action, FCollisionShape::MakeSphere(Radius)))
+	if (GetWorld()->OverlapMultiByChannel(OverlapResults, NewTargetLocation, FQuat::Identity, SMCollisionTraceChannel::ActionTC, FCollisionShape::MakeSphere(Radius)))
 	{
 		for (const FOverlapResult& OverlapResult : OverlapResults)
 		{

@@ -181,7 +181,7 @@ void ASMCatchableItem_AttributeChanger::ApplyItemByWhile(TArray<AActor*> ActorsT
 
 TArray<AActor*> ASMCatchableItem_AttributeChanger::GetConfirmedActorsToApplyItem()
 {
-	TArray<AActor*> ActorsOnTriggeredTiles = GetActorsOnTriggeredTiles(SMCollisionTraceChannel::Action);
+	TArray<AActor*> ActorsOnTriggeredTiles = GetActorsOnTriggeredTiles(SMCollisionTraceChannel::ActionTC);
 
 	TArray<AActor*> ConfirmedActorsToApplyItem;
 	for (const auto& ActorOnTriggeredTiles : ActorsOnTriggeredTiles)

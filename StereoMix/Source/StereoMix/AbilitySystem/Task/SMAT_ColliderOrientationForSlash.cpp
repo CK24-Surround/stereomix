@@ -97,7 +97,7 @@ void USMAT_ColliderOrientationForSlash::TickTask(float DeltaTime)
 		const FVector PreviousToCurrentDirection = PreviousToCurrent.GetSafeNormal();
 		const FQuat PreviousToCurrentRotation = (PreviousToCurrentDirection.Rotation() + FRotator(90.0, 0.0, 0.0)).Quaternion();
 		const FCollisionShape CollisionShape = FCollisionShape::MakeCapsule(10.0f, PreviousToCurrent.Size());
-		if (GetWorld()->OverlapMultiByChannel(OverlapResults, CenterLocation, PreviousToCurrentRotation, SMCollisionTraceChannel::Action, CollisionShape, Params))
+		if (GetWorld()->OverlapMultiByChannel(OverlapResults, CenterLocation, PreviousToCurrentRotation, SMCollisionTraceChannel::ActionTC, CollisionShape, Params))
 		{
 			for (const FOverlapResult& OverlapResult : OverlapResults)
 			{

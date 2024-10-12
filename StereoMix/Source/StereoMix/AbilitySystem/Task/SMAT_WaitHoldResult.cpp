@@ -30,7 +30,7 @@ void USMAT_WaitHoldResult::Activate()
 	TArray<FOverlapResult> OverlapResults;
 	const FCollisionShape CollisionShape = FCollisionShape::MakeSphere(MaxDistance);
 	const FCollisionQueryParams Params(SCENE_QUERY_STAT(Hold), false, SourceCharacter.Get());
-	if (GetWorld()->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::Action, CollisionShape, Params))
+	if (GetWorld()->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::ActionTC, CollisionShape, Params))
 	{
 		HoldedActor = GetOptimalHoldableActor(OverlapResults);
 	}

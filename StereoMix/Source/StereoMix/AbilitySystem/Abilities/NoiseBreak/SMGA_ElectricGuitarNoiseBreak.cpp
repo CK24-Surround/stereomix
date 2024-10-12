@@ -329,7 +329,7 @@ TArray<AActor*> USMGA_ElectricGuitarNoiseBreak::GetElectricGuitarBurstHitActors(
 	const float CapsuleHalfHeight = (FVector::Dist(NoiseBreakStartLocation, NoiseBreakTargetLocation) / 2.0f) + Radius;
 	const FCollisionShape CapsuleCollider = FCollisionShape::MakeCapsule(Radius, CapsuleHalfHeight);
 
-	if (!GetWorld()->OverlapMultiByChannel(OverlapResults, CapsuleCenterLocation, CapsuleQuat, SMCollisionTraceChannel::Action, CapsuleCollider))
+	if (!GetWorld()->OverlapMultiByChannel(OverlapResults, CapsuleCenterLocation, CapsuleQuat, SMCollisionTraceChannel::ActionTC, CapsuleCollider))
 	{
 		return Results;
 	}
