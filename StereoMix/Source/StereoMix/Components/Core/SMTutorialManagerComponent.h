@@ -36,6 +36,8 @@ public:
 	// 필요에 따라 다이얼로그를 활성화 혹은 비활성화하며 스크립트를 출력해줍니다.
 	void ProcessTutorialDialogue();
 
+	APawn* GetLocalPlayerPawn();
+
 protected:
 	UFUNCTION()
 	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
@@ -54,6 +56,7 @@ protected:
 
 	void OnStep3Completed();
 
+	UFUNCTION()
 	void OnStep4Completed();
 
 	void OnStep5Completed();

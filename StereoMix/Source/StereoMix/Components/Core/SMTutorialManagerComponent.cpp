@@ -11,6 +11,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/Common/SMGA_Hold.h"
 #include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
+#include "AbilitySystem/Abilities/Skill/SMGA_Skill.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tutorial/SMProgressTrigger.h"
 #include "Actors/Tutorial/SMTrainingDummy.h"
@@ -113,7 +114,17 @@ void USMTutorialManagerComponent::ProcessTutorialDialogue()
 	{
 		CachedTutorialUIControlComponent->DeactivateDialogue();
 		CurrentScriptNumber = 0;
+
+		// 점령 상태 진척도도 초기화합니다.
+		TilesCaptureCount = 0;
 	}
+}
+
+APawn* USMTutorialManagerComponent::GetLocalPlayerPawn()
+{
+	const UWorld* World = GetWorld();
+	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
+	return PlayerController ? PlayerController->GetPawn() : nullptr;
 }
 
 void USMTutorialManagerComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
@@ -228,7 +239,6 @@ void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AAct
 	if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
 	{
 		TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
-		TilesCaptureCount = 0;
 	}
 }
 
@@ -275,21 +285,19 @@ void USMTutorialManagerComponent::OnStep3Completed()
 	CurrentStepNumber = 4;
 	ProcessTutorialDialogue();
 
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	if (ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
+	if (USMGA_Skill* SkillInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Skill>() : nullptr)
 	{
-		SourceCharacter->OnSkillHitSucceed.AddUObject(this, &ThisClass::OnStep4Completed);
+		SkillInstance->OnSkillHit.AddDynamic(this, &ThisClass::OnStep4Completed);
 	}
 }
 
 void USMTutorialManagerComponent::OnStep4Completed()
 {
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	if (ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
+	if (USMGA_Skill* SkillInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Skill>() : nullptr)
 	{
-		SourceCharacter->OnSkillHitSucceed.RemoveAll(this);
+		SkillInstance->OnSkillHit.RemoveAll(this);
 	}
 
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
@@ -316,25 +324,19 @@ void USMTutorialManagerComponent::OnStep5Completed()
 	CurrentStepNumber = 6;
 	ProcessTutorialDialogue();
 
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
-	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Pawn);
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_Hold* HoldInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Hold>() : nullptr)
 	{
-		HoldInstance->OnHoldCast.AddDynamic(this, &ThisClass::OnStep6Completed);
+		HoldInstance->OnHoldSucceed.AddDynamic(this, &ThisClass::OnStep6Completed);
 	}
 }
 
 void USMTutorialManagerComponent::OnStep6Completed()
 {
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
-	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Pawn);
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_Hold* HoldInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Hold>() : nullptr)
 	{
-		HoldInstance->OnHoldCast.RemoveAll(this);
+		HoldInstance->OnHoldSucceed.RemoveAll(this);
 	}
 
 	CurrentStepNumber = 7;
@@ -342,25 +344,23 @@ void USMTutorialManagerComponent::OnStep6Completed()
 
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
-		NoiseBreakInstance->OnNoiseBreakCast.AddDynamic(this, &ThisClass::OnStep7Completed);
+		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep7Completed);
 	}
 }
 
 void USMTutorialManagerComponent::OnStep7Completed()
 {
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	ASMPlayerCharacterBase* Character = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr;
-	USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Character);
+	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(GetLocalPlayerPawn());
+	USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(SourceCharacter);
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
-		NoiseBreakInstance->OnNoiseBreakCast.RemoveAll(this);
+		NoiseBreakInstance->OnNoiseBreakSucceed.RemoveAll(this);
 	}
 
 	CurrentStepNumber = 8;
 	ProcessTutorialDialogue();
 
-	const USMPlayerCharacterDataAsset* DataAsset = Character->GetDataAsset();
+	const USMPlayerCharacterDataAsset* DataAsset = SourceCharacter->GetDataAsset();
 	if (SourceASC && DataAsset)
 	{
 		const FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DataAsset->DamageGE, 1.0f, SourceASC->MakeEffectContext());
@@ -373,19 +373,16 @@ void USMTutorialManagerComponent::OnStep7Completed()
 
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
-		NoiseBreakInstance->OnNoiseBreakCast.AddDynamic(this, &ThisClass::OnStep8Completed);
+		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep8Completed);
 	}
 }
 
 void USMTutorialManagerComponent::OnStep8Completed()
 {
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	APawn* Pawn = PlayerController ? PlayerController->GetPawn() : nullptr;
-	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Pawn);
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
-		NoiseBreakInstance->OnNoiseBreakCast.RemoveAll(this);
+		NoiseBreakInstance->OnNoiseBreakSucceed.RemoveAll(this);
 	}
 
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
@@ -408,15 +405,23 @@ void USMTutorialManagerComponent::OnStep9Completed()
 
 void USMTutorialManagerComponent::OnStep10Completed(AActor* OverlappedActor, AActor* OtherActor)
 {
-	if (CurrentStepNumber == 10)
+	if (CurrentStepNumber == 10) // 만약 Step이 10이 아닌데 End존 진입시 무효입니다.
 	{
-		OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
-		OverlappedActor->Destroy();
-	}
+		if (OverlappedActor)
+		{
+			OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
+			OverlappedActor->Destroy();
+		}
 
-	const UWorld* World = GetWorld();
-	if (AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr)
-	{
-		GameMode->ReturnToMainMenuHost();
+		if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
+		{
+			TileManager->OnTilesCaptured.RemoveAll(this);
+		}
+
+		const UWorld* World = GetWorld();
+		if (AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr)
+		{
+			GameMode->ReturnToMainMenuHost();
+		}
 	}
 }
