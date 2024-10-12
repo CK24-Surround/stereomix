@@ -4,6 +4,9 @@
 #include "SMAICharacterBase.h"
 
 #include "GameFramework/CharacterMovementComponent.h"
+#include "NiagaraComponent.h"
+#include "NiagaraComponentPoolMethodEnum.h"
+#include "NiagaraFunctionLibrary.h"
 #include "Actors/Notes/SMNoteBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
@@ -52,6 +55,11 @@ ASMAICharacterBase::ASMAICharacterBase()
 void ASMAICharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
+
+	OriginalMaterials = CachedMeshComponent->GetMaterials();
+	OriginalOverlayMaterial = CachedMeshComponent->GetOverlayMaterial();
 
 	if (UWorld* World = GetWorld())
 	{
@@ -139,8 +147,6 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 
 void ASMAICharacterBase::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 {
-	UE_LOG(LogTemp, Warning, TEXT("ASMAICharacterBase::ReceiveDamage %f"), InDamageAmount);
-
 	CurrentHP = FMath::Clamp(CurrentHP - InDamageAmount, 0.0f, HP);
 	OnChangeHP();
 }
@@ -193,6 +199,64 @@ void ASMAICharacterBase::OnChangeHP()
 		CharacterStateWidgetComponent->SetVisibility(false);
 		AddScreenIndicatorToSelf(this);
 		SetNoteState(true);
+	}
+}
+
+void ASMAICharacterBase::SetGhostMaterial(float Duration)
+{
+	USkeletalMeshComponent* SourceMesh = GetMesh();
+	const ASMWeaponBase* SourceWeapon = GetWeapon();
+	UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
+	if (!SourceMesh || !SourceWeaponMesh)
+	{
+		return;
+	}
+
+	VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(ImmuneStartVFX, GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
+
+	for (int32 i = 0; i < SourceMesh->GetNumMaterials(); ++i)
+	{
+		SourceMesh->SetMaterial(i, ImmuneMaterial);
+	}
+
+	for (int32 i = 0; i < SourceWeaponMesh->GetNumMaterials(); ++i)
+	{
+		SourceWeaponMesh->SetMaterial(i, ImmuneMaterial);
+	}
+
+	SourceMesh->SetOverlayMaterial(ImmuneOverlayMaterial);
+	SourceWeaponMesh->SetOverlayMaterial(ImmuneOverlayMaterial);
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		TWeakObjectPtr<ASMAICharacterBase> ThisWeakPtr = TWeakObjectPtr<ASMAICharacterBase>(this);
+		World->GetTimerManager().SetTimer(TimerHandle, [ThisWeakPtr, SourceMesh, SourceWeaponMesh] {
+			if (ThisWeakPtr.IsValid())
+			{
+				if (ThisWeakPtr->VFXComponent)
+				{
+					ThisWeakPtr->VFXComponent->Deactivate();
+					ThisWeakPtr->VFXComponent->ReleaseToPool();
+					ThisWeakPtr->VFXComponent = nullptr;
+				}
+
+				for (int32 i = 0; i < SourceMesh->GetNumMaterials(); ++i)
+				{
+					SourceMesh->SetMaterial(i, ThisWeakPtr->OriginalMaterials[i]);
+				}
+
+				for (int32 i = 0; i < SourceWeaponMesh->GetNumMaterials(); ++i)
+				{
+					SourceWeaponMesh->SetMaterial(i, ThisWeakPtr->OriginalMaterials[i]);
+				}
+
+				SourceMesh->SetOverlayMaterial(ThisWeakPtr->OriginalOverlayMaterial);
+				SourceWeaponMesh->SetOverlayMaterial(ThisWeakPtr->OriginalOverlayMaterial);
+
+				UNiagaraFunctionLibrary::SpawnSystemAttached(ThisWeakPtr->ImmuneEndVFX, ThisWeakPtr->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::AutoRelease);
+			}
+		}, Duration, false);
 	}
 }
 

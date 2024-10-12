@@ -9,6 +9,8 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMAICharacterBase.generated.h"
 
+class UNiagaraSystem;
+class UNiagaraComponent;
 class USMUserWidget_CharacterState;
 class UWidgetComponent;
 class USMHIC_TutorialAI;
@@ -40,29 +42,45 @@ public:
 
 	virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttacker = NewAttacker; }
 
-	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
-
 	virtual bool CanIgnoreAttack() const override { return false; }
 
 	virtual bool IsObstacle() override { return false; }
-
-	virtual void AddScreenIndicatorToSelf(AActor* TargetActor);
-
-	virtual void RemoveScreenIndicatorFromSelf(AActor* TargetActor);
-
-	virtual void OnChangeHP();
 
 	UFUNCTION(BlueprintCallable, Category = "Note")
 	virtual bool IsNoteState() const { return bIsNoteState; }
 
 	UFUNCTION(BlueprintCallable, Category = "Attack")
 	virtual void Attack(AActor* AttackTarget) {}
-	
+
+	virtual void SetGhostMaterial(float Duration);
+
+	virtual void AddScreenIndicatorToSelf(AActor* TargetActor);
+
+	virtual void RemoveScreenIndicatorFromSelf(AActor* TargetActor);
+
 	virtual void SetNoteState(bool bNewIsNote);
 
-	virtual ASMNoteBase* GetNote() const { return Note; }
+	ASMNoteBase* GetNote() const { return Note; }
+
+	ASMWeaponBase* GetWeapon() const { return Weapon; }
+
+	TArray<UMaterialInterface*> GetOriginalMaterials() { return OriginalMaterials; }
+
+	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
 
 protected:
+	virtual void ReceiveDamage(AActor* NewAttacker, float InDamageAmount) override;
+
+	virtual void OnChangeHP();
+
+	/** 캐릭터의 원본 머티리얼입니다. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Design|Material")
+	TArray<TObjectPtr<UMaterialInterface>> OriginalMaterials;
+
+	/** 캐릭터의 원본 오버레이 머티리얼입니다. */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Design|Material")
+	TObjectPtr<UMaterialInterface> OriginalOverlayMaterial;
+
 	UPROPERTY(VisibleAnywhere, Category = "HitBox")
 	TObjectPtr<UCapsuleComponent> HitBox;
 
@@ -77,7 +95,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design|Widget")
 	TSubclassOf<USMUserWidget_CharacterState> CharacterStateWidgetClass;
-	
+
 	UPROPERTY(EditAnywhere, Category = "Design|Weapon")
 	TSubclassOf<ASMWeaponBase> WeaponClass;
 
@@ -90,6 +108,18 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float HP = 100.0f;
 
+	UPROPERTY(EditAnywhere, Category = "Design|VFX")
+	TObjectPtr<UNiagaraSystem> ImmuneStartVFX;
+
+	UPROPERTY(EditAnywhere, Category = "Design|VFX")
+	TObjectPtr<UNiagaraSystem> ImmuneEndVFX;
+
+	UPROPERTY(EditAnywhere, Category = "Design|VFX")
+	TObjectPtr<UMaterialInterface> ImmuneMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "Design|VFX")
+	TObjectPtr<UMaterialInterface> ImmuneOverlayMaterial;
+
 	UPROPERTY()
 	TObjectPtr<ASMWeaponBase> Weapon;
 
@@ -98,6 +128,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<USMHIC_TutorialAI> HIC;
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> VFXComponent;
 
 	float CurrentHP;
 

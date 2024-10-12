@@ -14,10 +14,6 @@
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 
 
-USMHIC_TutorialAI::USMHIC_TutorialAI()
-{
-}
-
 bool USMHIC_TutorialAI::CanBeHeld(AActor* Instigator) const
 {
 	if (!SourceCharacter)
@@ -139,6 +135,8 @@ void USMHIC_TutorialAI::ReleasedFromBeingHeld(AActor* TargetActor, const TOption
 	SourceCharacter->SetNoteState(false);
 	ClearHeldMeActorsHistory();
 
+	SourceCharacter->SetGhostMaterial(5.0f);
+	
 	SetActorHoldingMe(nullptr);
 }
 
