@@ -285,6 +285,11 @@ void ASMPlayerCharacterBase::PossessedBy(AController* NewController)
 
 	SMPlayerController = GetController<ASMGamePlayerController>();
 
+	if (IsLocallyControlled())
+	{
+		SMPlayerController->SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
+	}
+
 	InitASC();
 
 	if (GetNetMode() != NM_DedicatedServer)
