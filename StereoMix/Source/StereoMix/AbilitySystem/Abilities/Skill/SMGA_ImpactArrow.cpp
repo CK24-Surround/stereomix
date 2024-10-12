@@ -13,7 +13,6 @@
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Actors/Character/Player/SMPianoCharacter.h"
-#include "Actors/Weapons/SMWeaponBase.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
@@ -43,7 +42,7 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPianoCharacter* SourceCharacter = GetCharacter<ASMPianoCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	ASMGamePlayerController* SourcePC = SourceCharacter ? SourceCharacter->GetController<ASMGamePlayerController>() : nullptr;
 	const USMControlData* ControlData = SourcePC ? SourcePC->GetControlData() : nullptr;
@@ -86,7 +85,7 @@ void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 		InputComponent = nullptr;
 	}
 
-	if (USMAbilitySystemComponent* const SourceASC = GetASC())
+	if (const USMAbilitySystemComponent* SourceASC = GetASC())
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
@@ -110,7 +109,7 @@ void USMGA_ImpactArrow::InputPressed(const FGameplayAbilitySpecHandle Handle, co
 	const FName SectionName = TEXT("Cancel");
 	MontageJumpToSection(SectionName);
 
-	if (USMAbilitySystemComponent* SourceASC = GetASC())
+	if (const USMAbilitySystemComponent* SourceASC = GetASC())
 	{
 		AActor* SourceActor = GetAvatarActor();
 
@@ -126,7 +125,7 @@ void USMGA_ImpactArrow::InputPressed(const FGameplayAbilitySpecHandle Handle, co
 void USMGA_ImpactArrow::Shoot()
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceCharacter || !SourceASC)
 	{
 		return;
@@ -185,8 +184,8 @@ void USMGA_ImpactArrow::OnImpact()
 
 void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuantize10& NewTargetLocation)
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
 	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
 	{
@@ -237,6 +236,8 @@ void USMGA_ImpactArrow::ServerRPCOnImpact_Implementation(const FVector_NetQuanti
 				GCParams.TargetAttachComponent = TargetActor->GetRootComponent();
 				GCParams.Normal = Direction;
 				SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::ImpactArrowHit, GCParams);
+
+				OnSkillHit.Broadcast();
 			}
 		}
 	}

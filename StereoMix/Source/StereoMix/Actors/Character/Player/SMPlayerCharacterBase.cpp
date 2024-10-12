@@ -187,7 +187,10 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 
 	if (GetNetMode() != NM_DedicatedServer) // 노이즈 브레이크 인디케이터 에셋을 설정해줍니다.
 	{
-		NoiseBreakIndicatorComponent->SetAsset(DataAsset->NoiseBreakIndicatorFX[SourceTeam]);
+		if (DataAsset->NoiseBreakIndicatorFX.Contains(SourceTeam))
+		{
+			NoiseBreakIndicatorComponent->SetAsset(DataAsset->NoiseBreakIndicatorFX[SourceTeam]);
+		}
 	}
 
 	if (HasAuthority())
