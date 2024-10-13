@@ -13,8 +13,9 @@
 #include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "AbilitySystem/Abilities/Skill/SMGA_Skill.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
-#include "Actors/Tutorial/SMProgressTrigger.h"
+#include "Actors/Tutorial/SMProgressTriggerBase.h"
 #include "Actors/Tutorial/SMTrainingDummy.h"
+#include "Actors/Tutorial/SMTutorialInvisibleWallBase.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
 #include "Data/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
@@ -26,7 +27,36 @@
 USMTutorialManagerComponent::USMTutorialManagerComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false;
+	bWantsInitializeComponent = true;
 	bAutoActivate = true;
+}
+
+void USMTutorialManagerComponent::InitializeComponent()
+{
+	Super::InitializeComponent();
+
+	for (ASMTutorialInvisibleWallBase* TutorialInvisibleWall : TActorRange<ASMTutorialInvisibleWallBase>(GetWorld()))
+	{
+		if (!TutorialInvisibleWall)
+		{
+			continue;
+		}
+
+		if (TutorialInvisibleWall->ActorHasTag(TEXT("Sampling")))
+		{
+			SamplingEventWall = TutorialInvisibleWall;
+		}
+
+		if (TutorialInvisibleWall->ActorHasTag(TEXT("Neutralize")))
+		{
+			NeutralizeEventWall = TutorialInvisibleWall;
+		}
+
+		if (TutorialInvisibleWall->ActorHasTag(TEXT("NoiseBreak")))
+		{
+			NoiseBreakEventWall = TutorialInvisibleWall;
+		}
+	}
 }
 
 void USMTutorialManagerComponent::BeginPlay()
@@ -63,7 +93,7 @@ void USMTutorialManagerComponent::Activate(bool bReset)
 
 	TransformScriptsData();
 
-	for (ASMProgressTrigger* ProgressTrigger : TActorRange<ASMProgressTrigger>(GetWorld()))
+	for (ASMProgressTriggerBase* ProgressTrigger : TActorRange<ASMProgressTriggerBase>(GetWorld()))
 	{
 		if (ProgressTrigger->ActorHasTag(TEXT("MovePractice")))
 		{

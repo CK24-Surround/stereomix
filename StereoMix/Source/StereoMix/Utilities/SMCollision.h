@@ -4,6 +4,7 @@ namespace SMCollisionProfileName
 {
 	static FName NoCollision = TEXT("NoCollision");
 	static FName BlockAll = TEXT("BlockAll");
+	static FName InvisibleWallDynamic = TEXT("InvisibleWallDynamic");
 	static FName Trigger = TEXT("Trigger");
 	static FName Pawn = TEXT("Pawn");
 	static FName Player = TEXT("Player");

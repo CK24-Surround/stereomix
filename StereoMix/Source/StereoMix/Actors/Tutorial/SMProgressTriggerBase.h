@@ -4,25 +4,29 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "SMProgressTrigger.generated.h"
+#include "SMProgressTriggerBase.generated.h"
 
+class UBoxComponent;
 class UNiagaraComponent;
 class USphereComponent;
 
 UCLASS()
-class STEREOMIX_API ASMProgressTrigger : public AActor
+class STEREOMIX_API ASMProgressTriggerBase : public AActor
 {
 	GENERATED_BODY()
 
 public:
-	ASMProgressTrigger();
+	ASMProgressTriggerBase();
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> RootSceneComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Collision")
-	TObjectPtr<USphereComponent> ColliderComponent;
+	TObjectPtr<USphereComponent> SphereComponent;
+
+	UPROPERTY(VisibleAnywhere, Category = "Collision")
+	TObjectPtr<UBoxComponent> BoxComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UNiagaraComponent> VFXComponent;

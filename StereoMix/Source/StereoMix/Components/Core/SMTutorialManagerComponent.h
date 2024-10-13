@@ -7,6 +7,7 @@
 #include "Data/SMCharacterType.h"
 #include "SMTutorialManagerComponent.generated.h"
 
+class ASMTutorialInvisibleWallBase;
 class USMTutorialUIControlComponent;
 class UEnhancedInputComponent;
 class UInputAction;
@@ -26,6 +27,8 @@ class STEREOMIX_API USMTutorialManagerComponent : public UActorComponent
 
 public:
 	USMTutorialManagerComponent();
+
+	virtual void InitializeComponent() override;
 
 	virtual void BeginPlay() override;
 
@@ -99,4 +102,10 @@ protected:
 	int32 TargetTilesCaptureCountForStep2 = 9;
 
 	int32 TargetTilesCaptureCountForStep9 = 100;
+
+	TWeakObjectPtr<ASMTutorialInvisibleWallBase> SamplingEventWall;
+
+	TWeakObjectPtr<ASMTutorialInvisibleWallBase> NeutralizeEventWall;
+
+	TWeakObjectPtr<ASMTutorialInvisibleWallBase> NoiseBreakEventWall;
 };
