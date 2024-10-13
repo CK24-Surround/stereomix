@@ -114,7 +114,7 @@ TArray<AActor*> ASMHoldableItem_ChangeAttribute::GetConfirmedActorsToApplyItem()
 			continue;
 		}
 
-		if (USMTeamBlueprintLibrary::IsSameLocalTeam(ActorOnTriggeredTile) == (TeamTypeToApply == ESMLocalTeam::Equal)) // 적용해야할 팀에 따라 필터링해줍니다.
+		if (USMTeamBlueprintLibrary::IsSameTeam(ActorOnTriggeredTile, Activator) == (TeamTypeToApply == ESMLocalTeam::Equal)) // 적용해야할 팀에 따라 필터링해줍니다.
 		{
 			ConfirmedActorsToApplyItem.Add(ActorOnTriggeredTile);
 		}
