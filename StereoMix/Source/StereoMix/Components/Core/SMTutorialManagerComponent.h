@@ -7,6 +7,7 @@
 #include "Data/SMCharacterType.h"
 #include "SMTutorialManagerComponent.generated.h"
 
+class ASMProgressTriggerBase;
 class ASMTutorialInvisibleWallBase;
 class USMTutorialUIControlComponent;
 class UEnhancedInputComponent;
@@ -108,4 +109,14 @@ protected:
 	TWeakObjectPtr<ASMTutorialInvisibleWallBase> NeutralizeEventWall;
 
 	TWeakObjectPtr<ASMTutorialInvisibleWallBase> NoiseBreakEventWall;
+
+	TWeakObjectPtr<ASMTutorialInvisibleWallBase> BattleStartEventWall;
+
+	TWeakObjectPtr<ASMTutorialInvisibleWallBase> BattleEndEventWall;
+
+	TWeakObjectPtr<ASMProgressTriggerBase> MovePracticeTrigger;
+
+	TWeakObjectPtr<ASMProgressTriggerBase> NextTrigger;
+
+	TWeakObjectPtr<ASMProgressTriggerBase> EndTrigger;
 };

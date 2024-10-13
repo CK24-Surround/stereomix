@@ -56,6 +56,39 @@ void USMTutorialManagerComponent::InitializeComponent()
 		{
 			NoiseBreakEventWall = TutorialInvisibleWall;
 		}
+
+		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleStart")))
+		{
+			BattleStartEventWall = TutorialInvisibleWall;
+		}
+		
+		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleEnd")))
+		{
+			BattleEndEventWall = TutorialInvisibleWall;
+		}
+	}
+
+	for (ASMProgressTriggerBase* ProgressTrigger : TActorRange<ASMProgressTriggerBase>(GetWorld()))
+	{
+		if (!ProgressTrigger)
+		{
+			continue;
+		}
+
+		if (ProgressTrigger->ActorHasTag(TEXT("MovePractice")))
+		{
+			MovePracticeTrigger = ProgressTrigger;
+		}
+
+		if (ProgressTrigger->ActorHasTag(TEXT("Next")))
+		{
+			NextTrigger = ProgressTrigger;
+		}
+
+		if (ProgressTrigger->ActorHasTag(TEXT("End")))
+		{
+			EndTrigger = ProgressTrigger;
+		}
 	}
 }
 
