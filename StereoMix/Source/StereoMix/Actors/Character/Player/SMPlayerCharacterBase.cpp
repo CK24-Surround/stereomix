@@ -921,7 +921,7 @@ void ASMPlayerCharacterBase::OnTilesCaptured(const AActor* CapturedInstigator, i
 {
 	if (CapturedInstigator == this)
 	{
-		if (ASC.IsValid() && DataAsset)
+		if (ASC.IsValid() && !ASC->HasMatchingGameplayTag(SMTags::Character::State::Bass::Charge) && DataAsset) // 임시로 돌진중에 회복을 막습니다.
 		{
 			const FGameplayEffectSpecHandle GESpecHandle = ASC->MakeOutgoingSpec(DataAsset->StaminaHealGE, 1.0f, ASC->MakeEffectContext());
 			if (GESpecHandle.IsValid())
