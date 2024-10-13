@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
+#include "Data/SMCharacterType.h"
 #include "Data/SMTeam.h"
 #include "SMScoreManagerComponent.generated.h"
 
@@ -14,6 +15,12 @@ USTRUCT(BlueprintType)
 struct FPlayerScoreData
 {
 	GENERATED_BODY()
+
+	ESMTeam PlayerTeam = ESMTeam::None;
+
+	ESMCharacterType CharacterType = ESMCharacterType::None;
+
+	FString PlayerName;
 
 	int32 TotalCapturedTiles = 0;
 
@@ -65,8 +72,15 @@ public:
 	UFUNCTION()
 	void AddTotalNoiseBreakUsage(const AActor* TargetPlayer);
 
-	const AActor* GetMVPPlayer(ESMTeam Team) const;
+	TWeakObjectPtr<const AActor> GetMVPPlayer(ESMTeam Team) const;
+
+	UFUNCTION()
+	void LogAllPlayerData();
 
 protected:
-	TMap<TObjectPtr<const AActor>, FPlayerScoreData> PlayerScoreData;
+	static FPlayerScoreData GetDefaultPlayerScoreData(const TWeakObjectPtr<const AActor>& TargetPlayer);
+
+	void LogPlayerData(const TWeakObjectPtr<const AActor>& TargetPlayer) const;
+	
+	TMap<TWeakObjectPtr<const AActor>, FPlayerScoreData> PlayerScoreData;
 };
