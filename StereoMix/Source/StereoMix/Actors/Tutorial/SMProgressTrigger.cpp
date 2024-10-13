@@ -17,7 +17,7 @@ ASMProgressTrigger::ASMProgressTrigger()
 
 	ColliderComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ColliderComponent"));
 	ColliderComponent->SetupAttachment(RootSceneComponent);
-	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::Trigger);
+	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::PlayerTrigger);
 
 	VFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("VFXComponent"));
 	VFXComponent->SetupAttachment(RootSceneComponent);

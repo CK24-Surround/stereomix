@@ -3,6 +3,7 @@
 
 #include "SMTrainingDummy.h"
 
+#include "Actors/Notes/SMNoteBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/Common/SMTeamComponent.h"
@@ -28,6 +29,10 @@ ASMTrainingDummy::ASMTrainingDummy()
 	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	MeshComponent->bReceivesDecals = false;
 
+	NoteRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("NoteRootComponent"));
+	NoteRootComponent->SetAbsolute(false, true, true);
+	NoteRootComponent->SetupAttachment(MeshComponent);
+
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
 
 	HIC = CreateDefaultSubobject<USMHIC_TrainingDummy>(TEXT("HIC"));
@@ -36,6 +41,16 @@ ASMTrainingDummy::ASMTrainingDummy()
 void ASMTrainingDummy::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
+
+	UWorld* World = GetWorld();
+	if (Note = World ? World->SpawnActor<ASMNoteBase>(NoteClass) : nullptr; Note)
+	{
+		Note->AttachToComponent(NoteRootComponent, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+		if (USceneComponent* NoteComponent = Note->GetRootComponent())
+		{
+			NoteComponent->SetVisibility(false, true);
+		}
+	}
 
 	HP = MaxHP;
 }
@@ -48,6 +63,16 @@ void ASMTrainingDummy::BeginPlay()
 void ASMTrainingDummy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ASMTrainingDummy::SetActorHiddenInGame(bool bNewHidden)
+{
+	Super::SetActorHiddenInGame(bNewHidden);
+
+	if (Note)
+	{
+		Note->SetActorHiddenInGame(bNewHidden);
+	}
 }
 
 ESMTeam ASMTrainingDummy::GetTeam() const
@@ -71,7 +96,9 @@ void ASMTrainingDummy::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 
 	if (HP <= 0.0f)
 	{
+		SetNoteState(true);
 		bIsNeutralized = true;
+
 		(void)OnNeutralized.ExecuteIfBound();
 	}
 }
@@ -93,6 +120,20 @@ USMHoldInteractionComponent* ASMTrainingDummy::GetHoldInteractionComponent() con
 
 void ASMTrainingDummy::Revival()
 {
+	SetNoteState(false);
+
 	HP = MaxHP;
 	bIsNeutralized = false;
+}
+
+void ASMTrainingDummy::SetNoteState(bool bNewIsNoteState)
+{
+	if (USceneComponent* NoteComponent = Note ? Note->GetRootComponent() : nullptr)
+	{
+		NoteComponent->SetVisibility(bNewIsNoteState, true);
+	}
+
+	MeshComponent->SetVisibility(!bNewIsNoteState);
+
+	bNewIsNoteState ? Note->PlayAnimation() : Note->StopAnimation();
 }

@@ -8,6 +8,7 @@ namespace SMCollisionProfileName
 	static FName Pawn = TEXT("Pawn");
 	static FName Player = TEXT("Player");
 	static FName PlayerProjectileHitbox = TEXT("PlayerProjectileHitbox");
+	static FName PlayerTrigger = TEXT("PlayerTrigger");
 	static FName Projectile = TEXT("Projectile");
 	static FName Tile = TEXT("Tile");
 	static FName HealPack = TEXT("HealPack");

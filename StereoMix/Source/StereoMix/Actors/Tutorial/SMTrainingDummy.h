@@ -9,6 +9,7 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMTrainingDummy.generated.h"
 
+class ASMNoteBase;
 class USphereComponent;
 class USMHIC_TrainingDummy;
 DECLARE_DELEGATE(FOnTrainingDummyStateChanged);
@@ -28,6 +29,8 @@ public:
 	virtual void BeginPlay() override;
 
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void SetActorHiddenInGame(bool bNewHidden) override;
 
 	virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
 
@@ -51,6 +54,8 @@ public:
 
 	void Revival();
 
+	void SetNoteState(bool bNewIsNoteState);
+
 	FOnTrainingDummyStateChanged OnHalfHPReached;
 
 	FOnTrainingDummyStateChanged OnNeutralized;
@@ -65,11 +70,20 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Visual")
 	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Note")
+	TObjectPtr<USceneComponent> NoteRootComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "HIC")
 	TObjectPtr<USMHIC_TrainingDummy> HIC;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TSubclassOf<ASMNoteBase> NoteClass;
+
+	UPROPERTY()
+	TObjectPtr<ASMNoteBase> Note;
 
 	UPROPERTY(EditAnywhere, Category = "Stat")
 	float MaxHP = 100.0f;
