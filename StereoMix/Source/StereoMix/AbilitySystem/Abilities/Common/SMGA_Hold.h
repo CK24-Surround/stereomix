@@ -39,11 +39,6 @@ protected:
 	UFUNCTION(Client, Reliable)
 	void ClientRPCSendHoldResult(bool bNewSuccessHold);
 
-	void SyncPointHoldResult();
-
-	UFUNCTION()
-	void PlayResultMontage();
-
 	/** 시전 위치입니다. */
 	FVector StartLocation;
 

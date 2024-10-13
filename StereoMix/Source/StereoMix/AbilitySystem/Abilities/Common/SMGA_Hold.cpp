@@ -182,7 +182,6 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 
 	bSuccessHold = bSuccess;
 	ClientRPCSendHoldResult(bSuccessHold);
-	SyncPointHoldResult();
 
 	if (bShowDebug)
 	{
@@ -195,18 +194,4 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 void USMGA_Hold::ClientRPCSendHoldResult_Implementation(bool bNewSuccessHold)
 {
 	bSuccessHold = bNewSuccessHold;
-	SyncPointHoldResult();
-}
-
-void USMGA_Hold::SyncPointHoldResult()
-{
-	UAbilityTask_NetworkSyncPoint* SyncPoint = UAbilityTask_NetworkSyncPoint::WaitNetSync(this, EAbilityTaskNetSyncType::BothWait);
-	SyncPoint->OnSync.AddDynamic(this, &ThisClass::PlayResultMontage);
-	SyncPoint->ReadyForActivation();
-}
-
-void USMGA_Hold::PlayResultMontage()
-{
-	// const FName SectionName = bSuccessHold ? TEXT("Success") : TEXT("Fail");
-	// MontageJumpToSection(SectionName);
 }
