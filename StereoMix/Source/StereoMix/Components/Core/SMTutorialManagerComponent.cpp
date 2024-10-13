@@ -44,26 +44,31 @@ void USMTutorialManagerComponent::InitializeComponent()
 
 		if (TutorialInvisibleWall->ActorHasTag(TEXT("Sampling")))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
 			SamplingEventWall = TutorialInvisibleWall;
 		}
 
 		if (TutorialInvisibleWall->ActorHasTag(TEXT("Neutralize")))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
 			NeutralizeEventWall = TutorialInvisibleWall;
 		}
 
 		if (TutorialInvisibleWall->ActorHasTag(TEXT("NoiseBreak")))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
 			NoiseBreakEventWall = TutorialInvisibleWall;
 		}
 
 		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleStart")))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
 			BattleStartEventWall = TutorialInvisibleWall;
 		}
 		
 		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleEnd")))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
 			BattleEndEventWall = TutorialInvisibleWall;
 		}
 	}
@@ -77,16 +82,19 @@ void USMTutorialManagerComponent::InitializeComponent()
 
 		if (ProgressTrigger->ActorHasTag(TEXT("MovePractice")))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(ProgressTrigger));
 			MovePracticeTrigger = ProgressTrigger;
 		}
 
 		if (ProgressTrigger->ActorHasTag(TEXT("Next")))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(ProgressTrigger));
 			NextTrigger = ProgressTrigger;
 		}
 
 		if (ProgressTrigger->ActorHasTag(TEXT("End")))
 		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(ProgressTrigger));
 			EndTrigger = ProgressTrigger;
 		}
 	}
@@ -263,24 +271,24 @@ void USMTutorialManagerComponent::TransformScriptsData()
 
 	for (int32 Step = 1; Step < DialogueScripts.Num(); ++Step)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("다이얼로그 스텝: %d"), Step);
+		UE_LOG(LogTemp, Verbose, TEXT("다이얼로그 스텝: %d"), Step);
 		for (int32 ScriptsNumber = 1; ScriptsNumber < DialogueScripts[Step].Num(); ++ScriptsNumber)
 		{
 			for (const auto& [CharacterType, ScriptData] : DialogueScripts[Step][ScriptsNumber])
 			{
-				UE_LOG(LogTemp, Warning, TEXT("%d: %s [%s]"), ScriptsNumber, *DialogueScripts[Step][ScriptsNumber][CharacterType].Ko, *UEnum::GetValueAsString(CharacterType));
+				UE_LOG(LogTemp, Verbose, TEXT("%d: %s [%s]"), ScriptsNumber, *DialogueScripts[Step][ScriptsNumber][CharacterType].Ko, *UEnum::GetValueAsString(CharacterType));
 			}
 		}
 	}
 
 	for (int32 Step = 1; Step < UIScripts.Num(); ++Step)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("UI 스텝: %d"), Step);
+		UE_LOG(LogTemp, Verbose, TEXT("UI 스텝: %d"), Step);
 		for (int32 ScriptsNumber = 1; ScriptsNumber < UIScripts[Step].Num(); ++ScriptsNumber)
 		{
 			for (const auto& [CharacterType, ScriptData] : UIScripts[Step][ScriptsNumber])
 			{
-				UE_LOG(LogTemp, Warning, TEXT("%d: %s [%s]"), ScriptsNumber, *UIScripts[Step][ScriptsNumber][CharacterType].Ko, *UEnum::GetValueAsString(CharacterType));
+				UE_LOG(LogTemp, Verbose, TEXT("%d: %s [%s]"), ScriptsNumber, *UIScripts[Step][ScriptsNumber][CharacterType].Ko, *UEnum::GetValueAsString(CharacterType));
 			}
 		}
 	}
