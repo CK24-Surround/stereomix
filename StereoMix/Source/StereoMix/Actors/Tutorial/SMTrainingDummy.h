@@ -9,12 +9,15 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMTrainingDummy.generated.h"
 
+class USMUserWidget_TrainingDummyState;
+class UWidgetComponent;
 class ASMNoteBase;
+class UCapsuleComponent;
 class USphereComponent;
 class USMHIC_TrainingDummy;
-DECLARE_DELEGATE(FOnTrainingDummyStateChanged);
 
-class UCapsuleComponent;
+DECLARE_DELEGATE(FOnTrainingDummyStateChanged);
+DECLARE_DELEGATE_TwoParams(FOnTrainingDummyStatChanged, float /*Current*/, float /*Max*/);
 
 UCLASS()
 class STEREOMIX_API ASMTrainingDummy : public AActor, public ISMTeamInterface, public ISMDamageInterface, public ISMHoldInteractionInterface
@@ -48,6 +51,8 @@ public:
 
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
 
+	void SetCurrentHP(float InCurrentHP);
+
 	void SetInvincible(uint32 bNewIsInvincible) { bIsInvincible = bNewIsInvincible; }
 
 	bool IsNeutralized() const { return bIsNeutralized; }
@@ -59,6 +64,8 @@ public:
 	FOnTrainingDummyStateChanged OnHalfHPReached;
 
 	FOnTrainingDummyStateChanged OnNeutralized;
+
+	FOnTrainingDummyStatChanged OnHPChanged;
 
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
@@ -73,6 +80,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, Category = "Note")
 	TObjectPtr<USceneComponent> NoteRootComponent;
 
+	UPROPERTY(VisibleAnywhere, Category = "Widget")
+	TObjectPtr<UWidgetComponent> StateWidgetComponent;
+
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
 
@@ -84,6 +94,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<ASMNoteBase> Note;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TSubclassOf<USMUserWidget_TrainingDummyState> TrainingDummyStateWidgetClass;
 
 	UPROPERTY(EditAnywhere, Category = "Stat")
 	float MaxHP = 100.0f;

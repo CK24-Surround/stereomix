@@ -6,8 +6,10 @@
 #include "Actors/Notes/SMNoteBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
+#include "Components/WidgetComponent.h"
 #include "Components/Common/SMTeamComponent.h"
 #include "Components/Tutorial/TrainingDummy/SMHIC_TrainingDummy.h"
+#include "UI/Widget/Game/SMUserWidget_TrainingDummyState.h"
 #include "Utilities/SMCollision.h"
 
 
@@ -32,6 +34,10 @@ ASMTrainingDummy::ASMTrainingDummy()
 	NoteRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("NoteRootComponent"));
 	NoteRootComponent->SetAbsolute(false, true, true);
 	NoteRootComponent->SetupAttachment(MeshComponent);
+
+	StateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidgetComponent"));
+	StateWidgetComponent->SetupAttachment(RootComponent);
+	StateWidgetComponent->SetWidgetSpace(EWidgetSpace::Screen);
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
 
@@ -58,6 +64,13 @@ void ASMTrainingDummy::PostInitializeComponents()
 void ASMTrainingDummy::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (USMUserWidget_TrainingDummyState* TrainingDummyStateWidget = CreateWidget<USMUserWidget_TrainingDummyState>(GetWorld(), TrainingDummyStateWidgetClass))
+	{
+		StateWidgetComponent->SetWidget(TrainingDummyStateWidget);
+		OnHPChanged.BindUObject(TrainingDummyStateWidget, &USMUserWidget_TrainingDummyState::SetHP);
+		TrainingDummyStateWidget->SetHP(HP, MaxHP);
+	}
 }
 
 void ASMTrainingDummy::Tick(float DeltaTime)
@@ -87,7 +100,7 @@ void ASMTrainingDummy::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 		return;
 	}
 
-	HP = FMath::Clamp(HP - InDamageAmount, 0.0f, MaxHP);
+	SetCurrentHP(FMath::Clamp(HP - InDamageAmount, 0.0f, MaxHP));
 
 	if (HP <= 50.0f)
 	{
@@ -118,11 +131,18 @@ USMHoldInteractionComponent* ASMTrainingDummy::GetHoldInteractionComponent() con
 	return HIC;
 }
 
+void ASMTrainingDummy::SetCurrentHP(float InCurrentHP)
+{
+	HP = InCurrentHP;
+
+	(void)OnHPChanged.ExecuteIfBound(HP, MaxHP);
+}
+
 void ASMTrainingDummy::Revival()
 {
 	SetNoteState(false);
 
-	HP = MaxHP;
+	SetCurrentHP(MaxHP);
 	bIsNeutralized = false;
 }
 
@@ -133,6 +153,7 @@ void ASMTrainingDummy::SetNoteState(bool bNewIsNoteState)
 		NoteComponent->SetVisibility(bNewIsNoteState, true);
 	}
 
+	StateWidgetComponent->SetVisibility(!bNewIsNoteState);
 	MeshComponent->SetVisibility(!bNewIsNoteState);
 
 	bNewIsNoteState ? Note->PlayAnimation() : Note->StopAnimation();
