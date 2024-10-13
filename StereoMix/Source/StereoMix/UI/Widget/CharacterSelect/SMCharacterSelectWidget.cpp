@@ -38,7 +38,7 @@ void USMCharacterSelectWidget::InitWidget(ASMCharacterSelectState* CharacterSele
 
 	UpdatePlayerList();
 	OnCountdownTick();
-	CharacterPreview->SetPreviewImage(ESMTeam::None, ESMCharacterType::None);
+	// CharacterPreview->SetPreviewImage(ESMTeam::None, ESMCharacterType::None);
 
 	OwningPlayerState->OnCharacterChangeResponse.AddDynamic(this, &USMCharacterSelectWidget::OnLocalPlayerCharacterChangeResponse);
 
@@ -96,7 +96,7 @@ void USMCharacterSelectWidget::OnLocalPlayerCharacterChangeResponse(bool bSucces
 		return;
 	}
 
-	CharacterPreview->SetPreviewImage(GetOwningPlayerState()->GetTeam(), NewCharacterType);
+	// CharacterPreview->SetPreviewImage(GetOwningPlayerState()->GetTeam(), NewCharacterType);
 }
 
 void USMCharacterSelectWidget::OnPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter)

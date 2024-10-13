@@ -54,7 +54,7 @@ public:
 
 	ASMCharacterSelectPlayerState* GetOwningPlayerState() const { return OwningPlayerState.Get(); }
 
-	USMCharacterPreviewWidget* GetCharacterPreview() const { return CharacterPreview.Get(); }
+	// USMCharacterPreviewWidget* GetCharacterPreview() const { return CharacterPreview.Get(); }
 
 protected:
 	virtual void NativeConstruct() override;
@@ -102,8 +102,8 @@ private:
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<UCommonListView> PlayerListView;
 
-	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
-	TObjectPtr<USMCharacterPreviewWidget> CharacterPreview;
+	// UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
+	// TObjectPtr<USMCharacterPreviewWidget> CharacterPreview;
 
 	UPROPERTY(Transient, BlueprintReadOnly, Category = "Components", meta = (BindWidget, AllowPrivateAccess))
 	TObjectPtr<USMCharacterSelectButton> ElectricGuitarSelectButton;
