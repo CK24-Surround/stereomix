@@ -41,6 +41,15 @@ namespace SMTags
 		{
 			namespace Common
 			{
+				namespace Blocking
+				{
+					UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);
+					UE_DECLARE_GAMEPLAY_TAG_EXTERN(Attack);
+					UE_DECLARE_GAMEPLAY_TAG_EXTERN(Skill);
+					UE_DECLARE_GAMEPLAY_TAG_EXTERN(NoiseBreak);
+					UE_DECLARE_GAMEPLAY_TAG_EXTERN(Sampling);
+				}
+
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Uncontrollable);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Invincible);
 				UE_DECLARE_GAMEPLAY_TAG_EXTERN(UnlimitStamina);

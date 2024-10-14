@@ -6,7 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SMTutorialUIControlComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnWidgetTransitionEnded);
+DECLARE_DELEGATE(FOnWidgetTransitionEnded);
 
 class USMTutorialSuccess;
 class USMTutorialMission;
@@ -45,9 +45,9 @@ public:
 
 	void TransitionToGuide();
 
-	FOnWidgetTransitionEnded OnTransitionToSuccessEnded;
+	void TransitionAndSetText(const FString& InGuideText, const FString& InMissionText, float CompletionDisplayTime);
 
-	FOnWidgetTransitionEnded OnTransitionToGuideEnded;
+	FOnWidgetTransitionEnded OnTransitionAndSetTextEnded;
 
 protected:
 	void InternalTransitionToSuccess();
@@ -71,6 +71,18 @@ protected:
 
 	UFUNCTION()
 	void OnShowMissionAnimationEnded();
+
+	void InternalTransitionAndSetText(const FString& InGuideText, const FString& InMissionText, float CompletionDisplayTime);
+
+	void OnTransitionAndSetTextEndedCallback();
+
+	FOnWidgetTransitionEnded OnTransitionToSuccessEnded;
+
+	FOnWidgetTransitionEnded OnTransitionToGuideEnded;
+
+	FString GuideText;
+
+	FString MissionText;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<USMTutorialHUD> TutorialHUDClass;

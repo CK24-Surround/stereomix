@@ -34,13 +34,15 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void TickComponent(float DeltaTime, enum ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void Activate(bool bReset) override;
 
+protected:
 	APawn* GetLocalPlayerPawn();
 
-protected:
 	void TransformScriptsData();
 
 	UFUNCTION()
@@ -81,6 +83,11 @@ protected:
 	UFUNCTION()
 	void OnStep8Completed();
 
+	UFUNCTION()
+	void OnNextTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
+
+	void OnArrivedBattleZone();
+
 	void OnStep9Started();
 
 	void OnStep9Completed();
@@ -96,6 +103,9 @@ protected:
 	UPROPERTY()
 	TObjectPtr<USMTutorialUIControlComponent> CachedTutorialUIControlComponent;
 
+	UPROPERTY()
+	TObjectPtr<ACharacter> CachedCharacter;
+
 	/** Step, ScriptNumberInStep, 캐릭터 타입 순서로 접근하면 됩니다. */
 	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> DialogueScripts;
 
@@ -103,7 +113,7 @@ protected:
 	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> UIScripts;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float CompleteShowingTime = 2.0f;
+	float CompletionDisplayTime = 1.0f;
 
 	int32 CurrentStepNumber = 1;
 

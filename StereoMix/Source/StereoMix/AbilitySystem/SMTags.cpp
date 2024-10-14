@@ -40,6 +40,15 @@ namespace SMTags
 		{
 			namespace Common
 			{
+				namespace Blocking
+				{
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Character.State.Common.Blocking.Hold", "잡기 시전 불가 상태임을 나타냅니다.");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Attack, "Character.State.Common.Blocking.Attack", "공격 시전 불가 상태임을 나타냅니다.");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Skill, "Character.State.Common.Blocking.Skill", "스킬 시전 불가 상태임을 나타냅니다.");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(NoiseBreak, "Character.State.Common.Blocking.NoiseBreak", "노이즈브레이크 시전 불가 상태임을 나타냅니다.");
+					UE_DEFINE_GAMEPLAY_TAG_COMMENT(Sampling, "Character.State.Common.Blocking.Sampling", "샘플링 시전 불가 상태임을 나타냅니다.");
+				}
+
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncontrollable, "Character.State.Common.Uncontrollable", "조작 불가 상태임을 나타냅니다. ");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Invincible, "Character.State.Common.Invincible", "무적 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(UnlimitStamina, "Character.State.Common.UnlimitStamina", "스태미나 소모가 없는 상태를 나타냅니다.");

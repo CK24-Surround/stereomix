@@ -20,6 +20,7 @@ USMGA_Hold::USMGA_Hold()
 
 	ActivationOwnedTags.AddTag(SMTags::Ability::Activation::Hold);
 
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Blocking::Hold);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Uncontrollable);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Hold);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Held);

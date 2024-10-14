@@ -9,6 +9,7 @@
 
 USMGA_Attack::USMGA_Attack()
 {
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Blocking::Attack);
 	ActivationBlockedTags.AddTag(SMTags::Ability::Activation::Hold);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Uncontrollable);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Hold);

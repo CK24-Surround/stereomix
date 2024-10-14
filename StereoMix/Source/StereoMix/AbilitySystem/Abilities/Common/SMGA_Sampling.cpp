@@ -15,6 +15,7 @@ USMGA_Sampling::USMGA_Sampling()
 {
 	NetExecutionPolicy = EGameplayAbilityNetExecutionPolicy::ServerOnly;
 
+	DeactivateTags.AddTag(SMTags::Character::State::Common::Blocking::Sampling);
 	DeactivateTags.AddTag(SMTags::Character::State::Common::Neutralized);
 	DeactivateTags.AddTag(SMTags::Character::State::Common::Immune);
 	DeactivateTags.AddTag(SMTags::Character::State::Common::NoiseBreak);

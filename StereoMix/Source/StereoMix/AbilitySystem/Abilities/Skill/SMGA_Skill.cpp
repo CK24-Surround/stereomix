@@ -8,6 +8,7 @@
 
 USMGA_Skill::USMGA_Skill()
 {
+	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Blocking::Skill);
 	ActivationBlockedTags.AddTag(SMTags::Ability::Activation::Hold);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Hold);
 	ActivationBlockedTags.AddTag(SMTags::Character::State::Common::Held);

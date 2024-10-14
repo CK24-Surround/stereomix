@@ -102,6 +102,11 @@ void USMTutorialUIControlComponent::TransitionToGuide()
 	InternalTransitionToGuide();
 }
 
+void USMTutorialUIControlComponent::TransitionAndSetText(const FString& InGuideText, const FString& InMissionText, float CompletionDisplayTime)
+{
+	InternalTransitionAndSetText(InGuideText, InMissionText, CompletionDisplayTime);
+}
+
 void USMTutorialUIControlComponent::InternalTransitionToSuccess()
 {
 	if (USMTutorialGuide* TutorialGuide = GetTutorialGuide())
@@ -188,7 +193,7 @@ void USMTutorialUIControlComponent::OnHideGuideAnimationEnded()
 
 void USMTutorialUIControlComponent::OnShowSuccessAnimationEnded()
 {
-	OnTransitionToSuccessEnded.Broadcast();
+	(void)OnTransitionToSuccessEnded.ExecuteIfBound();
 }
 
 void USMTutorialUIControlComponent::InternalTransitionToGuide()
@@ -274,5 +279,55 @@ void USMTutorialUIControlComponent::OnShowGuideAnimationEnded()
 
 void USMTutorialUIControlComponent::OnShowMissionAnimationEnded()
 {
-	OnTransitionToGuideEnded.Broadcast();
+	(void)OnTransitionToGuideEnded.ExecuteIfBound();
+}
+
+void USMTutorialUIControlComponent::InternalTransitionAndSetText(const FString& InGuideText, const FString& InMissionText, float CompletionDisplayTime)
+{
+	OnTransitionToSuccessEnded.Unbind();
+	OnTransitionToGuideEnded.Unbind();
+
+	TWeakObjectPtr<USMTutorialUIControlComponent> ThisWeakPtr = MakeWeakObjectPtr(this);
+
+	auto BindTransitionToSuccessEnded = [ThisWeakPtr] {
+		if (ThisWeakPtr.IsValid())
+		{
+			ThisWeakPtr->OnTransitionToGuideEnded.BindUObject(ThisWeakPtr.Get(), &ThisClass::OnTransitionAndSetTextEndedCallback);
+			ThisWeakPtr->TransitionToGuide();
+		}
+	};
+
+	auto CompletionTimer = [ThisWeakPtr, CompletionDisplayTime, BindTransitionToSuccessEnded] {
+		if (ThisWeakPtr.IsValid())
+		{
+			if (const UWorld* World = ThisWeakPtr->GetWorld())
+			{
+				FTimerHandle TimerHandle;
+				World->GetTimerManager().SetTimer(TimerHandle, BindTransitionToSuccessEnded, CompletionDisplayTime, false);
+			}
+		}
+	};
+
+	GuideText = InGuideText;
+	MissionText = InMissionText;
+	auto OnTransitionToSuccessEndedCallback = [ThisWeakPtr, CompletionTimer] {
+		if (ThisWeakPtr.IsValid())
+		{
+			ThisWeakPtr->OnTransitionToSuccessEnded.Unbind();
+
+			ThisWeakPtr->SetGuideText(ThisWeakPtr->GuideText);
+			ThisWeakPtr->SetMissionText(ThisWeakPtr->MissionText);
+
+			CompletionTimer();
+		}
+	};
+
+	OnTransitionToSuccessEnded.BindLambda(OnTransitionToSuccessEndedCallback);
+	TransitionToSuccess();
+}
+
+void USMTutorialUIControlComponent::OnTransitionAndSetTextEndedCallback()
+{
+	OnTransitionToGuideEnded.Unbind();
+	(void)OnTransitionAndSetTextEnded.ExecuteIfBound();
 }
