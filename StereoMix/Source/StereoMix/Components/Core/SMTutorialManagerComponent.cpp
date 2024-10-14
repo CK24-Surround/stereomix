@@ -147,50 +147,6 @@ void USMTutorialManagerComponent::Activate(bool bReset)
 	}
 }
 
-void USMTutorialManagerComponent::ProcessTutorialDialogue()
-{
-	const UWorld* World = GetWorld();
-	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
-	if (!CachedTutorialUIControlComponent || !PlayerController)
-	{
-		return;
-	}
-
-	// 다이얼로그가 꺼져있다면 다시 다이얼로그를 활성화합니다.
-	if (!CachedTutorialUIControlComponent->IsDialogueActivated())
-	{
-		CachedTutorialUIControlComponent->ActivateDialogue();
-	}
-
-	++CurrentScriptNumber; // 다음 스크립트를 읽기 위해 1을 더해줍니다.
-
-	// 다이얼로그에 출력되야할 스크립트로 바꿔줍니다.
-	if (DialogueScripts.IsValidIndex(CurrentStepNumber) && DialogueScripts[CurrentStepNumber].IsValidIndex(CurrentScriptNumber))
-	{
-		if (DialogueScripts[CurrentStepNumber][CurrentScriptNumber].Contains(ESMCharacterType::None))
-		{
-			UE_LOG(LogTemp, Verbose, TEXT("%s"), *DialogueScripts[CurrentStepNumber][CurrentScriptNumber][ESMCharacterType::None].Ko);
-			CachedTutorialUIControlComponent->SetScript(DialogueScripts[CurrentStepNumber][CurrentScriptNumber][ESMCharacterType::None].Ko);
-		}
-		else
-		{
-			if (const ASMPlayerCharacterBase* SourceCharacter = PlayerController ? PlayerController->GetPawn<ASMPlayerCharacterBase>() : nullptr)
-			{
-				const ESMCharacterType CharacterType = SourceCharacter->GetCharacterType();
-				CachedTutorialUIControlComponent->SetScript(DialogueScripts[CurrentStepNumber][CurrentScriptNumber][CharacterType].Ko);
-			}
-		}
-	}
-	else // 만약 스크립트 넘버가 마지막이라면 다이얼로그를 종료하고 스크립트 넘버를 1로 초기화해줍니다.
-	{
-		CachedTutorialUIControlComponent->DeactivateDialogue();
-		CurrentScriptNumber = 0;
-
-		// 점령 상태 진척도도 초기화합니다.
-		TilesCaptureCount = 0;
-	}
-}
-
 APawn* USMTutorialManagerComponent::GetLocalPlayerPawn()
 {
 	const UWorld* World = GetWorld();
@@ -211,7 +167,6 @@ void USMTutorialManagerComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn* 
 		PlayerController->OnPossessedPawnChanged.RemoveAll(this);
 
 		CachedTutorialUIControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>();
-		ProcessTutorialDialogue();
 	}
 }
 
@@ -295,9 +250,7 @@ void USMTutorialManagerComponent::TransformScriptsData()
 }
 
 void USMTutorialManagerComponent::OnNextInputReceived()
-{
-	ProcessTutorialDialogue();
-}
+{}
 
 void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AActor* OtherActor)
 {
@@ -308,7 +261,6 @@ void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AAct
 	}
 
 	CurrentStepNumber = 2;
-	ProcessTutorialDialogue();
 
 	if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
 	{
@@ -340,7 +292,6 @@ void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigat
 void USMTutorialManagerComponent::OnStep2Completed()
 {
 	CurrentStepNumber = 3;
-	ProcessTutorialDialogue();
 
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
 	{
@@ -357,7 +308,6 @@ void USMTutorialManagerComponent::OnStep3Completed()
 	}
 
 	CurrentStepNumber = 4;
-	ProcessTutorialDialogue();
 
 	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_Skill* SkillInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Skill>() : nullptr)
@@ -380,7 +330,6 @@ void USMTutorialManagerComponent::OnStep4Completed()
 	}
 
 	CurrentStepNumber = 5;
-	ProcessTutorialDialogue();
 
 	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
 	{
@@ -396,7 +345,6 @@ void USMTutorialManagerComponent::OnStep5Completed()
 	}
 
 	CurrentStepNumber = 6;
-	ProcessTutorialDialogue();
 
 	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_Hold* HoldInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Hold>() : nullptr)
@@ -414,7 +362,6 @@ void USMTutorialManagerComponent::OnStep6Completed()
 	}
 
 	CurrentStepNumber = 7;
-	ProcessTutorialDialogue();
 
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
@@ -432,7 +379,6 @@ void USMTutorialManagerComponent::OnStep7Completed()
 	}
 
 	CurrentStepNumber = 8;
-	ProcessTutorialDialogue();
 
 	const USMPlayerCharacterDataAsset* DataAsset = SourceCharacter->GetDataAsset();
 	if (SourceASC && DataAsset)
@@ -466,7 +412,6 @@ void USMTutorialManagerComponent::OnStep8Completed()
 	}
 
 	CurrentStepNumber = 9;
-	ProcessTutorialDialogue();
 
 	TilesCaptureCount = 0;
 }
@@ -474,7 +419,6 @@ void USMTutorialManagerComponent::OnStep8Completed()
 void USMTutorialManagerComponent::OnStep9Completed()
 {
 	CurrentStepNumber = 10;
-	ProcessTutorialDialogue();
 }
 
 void USMTutorialManagerComponent::OnStep10Completed(AActor* OverlappedActor, AActor* OtherActor)

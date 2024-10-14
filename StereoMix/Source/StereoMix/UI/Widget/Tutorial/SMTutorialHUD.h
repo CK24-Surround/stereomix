@@ -6,7 +6,9 @@
 #include "CommonActivatableWidget.h"
 #include "SMTutorialHUD.generated.h"
 
-class USMTutorialDialogue;
+class USMTutorialMission;
+class USMTutorialSuccess;
+class USMTutorialGuide;
 /**
  * 
  */
@@ -16,9 +18,12 @@ class STEREOMIX_API USMTutorialHUD : public UCommonActivatableWidget
 	GENERATED_BODY()
 
 public:
-	USMTutorialDialogue* GetTutorialDialogue() const { return TutorialDialogue; }
-
-protected:
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<USMTutorialDialogue> TutorialDialogue;
+	TObjectPtr<USMTutorialGuide> TutorialGuide;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USMTutorialSuccess> TutorialSuccess;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USMTutorialMission> TutorialMission;
 };

@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "SMTutorialUIControlComponent.generated.h"
 
-
 class USMTutorialHUD;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -20,14 +19,6 @@ public:
 	virtual void Activate(bool bReset) override;
 
 	USMTutorialHUD* GetTutorialHUD() const { return TutorialHUD; }
-
-	bool IsDialogueActivated();
-
-	void ActivateDialogue();
-
-	void DeactivateDialogue();
-
-	void SetScript(const FString& InString);
 
 protected:
 	UFUNCTION()
