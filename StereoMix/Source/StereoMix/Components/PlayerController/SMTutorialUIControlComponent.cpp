@@ -104,8 +104,6 @@ void USMTutorialUIControlComponent::TransitionToGuide()
 
 void USMTutorialUIControlComponent::InternalTransitionToSuccess()
 {
-	UE_LOG(LogTemp, Warning, TEXT("목표 달성으로 전환 시작"));
-
 	if (USMTutorialGuide* TutorialGuide = GetTutorialGuide())
 	{
 		TutorialGuide->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
@@ -140,8 +138,6 @@ void USMTutorialUIControlComponent::InternalTransitionToSuccess()
 
 void USMTutorialUIControlComponent::OnHideMissionAnimationEnded()
 {
-	UE_LOG(LogTemp, Warning, TEXT("미션 창 숨기기 애니메이션 종료"));
-
 	if (USMTutorialMission* TutorialMission = GetTutorialMission())
 	{
 		TutorialMission->SetVisibility(ESlateVisibility::Hidden);
@@ -166,8 +162,6 @@ void USMTutorialUIControlComponent::OnHideMissionAnimationEnded()
 
 void USMTutorialUIControlComponent::OnHideGuideAnimationEnded()
 {
-	UE_LOG(LogTemp, Warning, TEXT("가이드 창 숨기기 애니메이션 종료"));
-
 	if (USMTutorialGuide* TutorialGuide = GetTutorialGuide())
 	{
 		TutorialGuide->SetVisibility(ESlateVisibility::Hidden);
@@ -179,15 +173,26 @@ void USMTutorialUIControlComponent::OnHideGuideAnimationEnded()
 
 		if (TutorialSuccess->ShowSuccessAnimation)
 		{
+			FWidgetAnimationDynamicEvent EndDelegate;
+			EndDelegate.BindDynamic(this, &ThisClass::OnShowSuccessAnimationEnded);
+			TutorialSuccess->UnbindAllFromAnimationFinished(TutorialSuccess->ShowSuccessAnimation);
+			TutorialSuccess->BindToAnimationFinished(TutorialSuccess->ShowSuccessAnimation, EndDelegate);
 			TutorialSuccess->PlayAnimation(TutorialSuccess->ShowSuccessAnimation);
+		}
+		else
+		{
+			OnShowSuccessAnimationEnded();
 		}
 	}
 }
 
+void USMTutorialUIControlComponent::OnShowSuccessAnimationEnded()
+{
+	OnTransitionToSuccessEnded.Broadcast();
+}
+
 void USMTutorialUIControlComponent::InternalTransitionToGuide()
 {
-	UE_LOG(LogTemp, Warning, TEXT("가이드로 전환 시작"));
-
 	if (USMTutorialGuide* TutorialGuide = GetTutorialGuide())
 	{
 		TutorialGuide->SetVisibility(ESlateVisibility::Hidden);
@@ -222,8 +227,6 @@ void USMTutorialUIControlComponent::InternalTransitionToGuide()
 
 void USMTutorialUIControlComponent::OnHideSuccessAnimationEnded()
 {
-	UE_LOG(LogTemp, Warning, TEXT("목표 완료 숨기기 애니메이션 종료"));
-
 	if (USMTutorialSuccess* TutorialSuccess = GetTutorialSuccess())
 	{
 		TutorialSuccess->SetVisibility(ESlateVisibility::Hidden);
@@ -250,15 +253,26 @@ void USMTutorialUIControlComponent::OnHideSuccessAnimationEnded()
 
 void USMTutorialUIControlComponent::OnShowGuideAnimationEnded()
 {
-	UE_LOG(LogTemp, Warning, TEXT("가이드 보이기 애니메이션 종료"));
-
 	if (USMTutorialMission* TutorialMission = GetTutorialMission())
 	{
 		TutorialMission->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 
 		if (TutorialMission->ShowMissionAnimation)
 		{
+			FWidgetAnimationDynamicEvent EndDelegate;
+			EndDelegate.BindDynamic(this, &ThisClass::OnShowMissionAnimationEnded);
+			TutorialMission->UnbindAllFromAnimationFinished(TutorialMission->ShowMissionAnimation);
+			TutorialMission->BindToAnimationFinished(TutorialMission->ShowMissionAnimation, EndDelegate);
 			TutorialMission->PlayAnimation(TutorialMission->ShowMissionAnimation);
 		}
+		else
+		{
+			OnShowMissionAnimationEnded();
+		}
 	}
+}
+
+void USMTutorialUIControlComponent::OnShowMissionAnimationEnded()
+{
+	OnTransitionToGuideEnded.Broadcast();
 }

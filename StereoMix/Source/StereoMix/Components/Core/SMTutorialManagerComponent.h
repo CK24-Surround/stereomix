@@ -103,7 +103,7 @@ protected:
 	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> UIScripts;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
-	float CompleteShowingTime = 3.0f;
+	float CompleteShowingTime = 2.0f;
 
 	int32 CurrentStepNumber = 1;
 

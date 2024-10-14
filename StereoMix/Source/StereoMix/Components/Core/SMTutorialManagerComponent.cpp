@@ -233,6 +233,8 @@ void USMTutorialManagerComponent::TransformScriptsData()
 
 void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AActor* OtherActor)
 {
+	CurrentStepNumber = 2;
+
 	if (OverlappedActor)
 	{
 		OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
@@ -258,7 +260,7 @@ void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AAct
 
 void USMTutorialManagerComponent::OnStep2Started()
 {
-	CurrentStepNumber = 2;
+	TilesCaptureCount = 0;
 
 	if (CachedTutorialUIControlComponent)
 	{
@@ -266,8 +268,6 @@ void USMTutorialManagerComponent::OnStep2Started()
 		CachedTutorialUIControlComponent->SetGuideText(TEXT("목표영역에 타일 9개 점령하기"));
 		CachedTutorialUIControlComponent->SetMissionText(TEXT("이동 시 타일을 점령할 수 있습니다. 목표구역의 타일을 모두 점령해보세요."));
 	}
-
-	TilesCaptureCount = 0;
 }
 
 void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount)
@@ -293,6 +293,8 @@ void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigat
 
 void USMTutorialManagerComponent::OnStep2Completed()
 {
+	CurrentStepNumber = 3;
+
 	if (CachedTutorialUIControlComponent)
 	{
 		CachedTutorialUIControlComponent->TransitionToSuccess();
@@ -312,8 +314,6 @@ void USMTutorialManagerComponent::OnStep2Completed()
 
 void USMTutorialManagerComponent::OnStep3Started()
 {
-	CurrentStepNumber = 3;
-
 	if (CachedTutorialUIControlComponent)
 	{
 		CachedTutorialUIControlComponent->TransitionToGuide();
