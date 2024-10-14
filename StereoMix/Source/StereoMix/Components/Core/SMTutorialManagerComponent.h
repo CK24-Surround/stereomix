@@ -131,9 +131,12 @@ protected:
 
 	TWeakObjectPtr<ASMTutorialInvisibleWallBase> NoiseBreakEventWall;
 
+	TWeakObjectPtr<ASMTutorialInvisibleWallBase> HealPackEventWall;
+
 	TWeakObjectPtr<ASMTutorialInvisibleWallBase> BattleStartEventWall;
 
 	TWeakObjectPtr<ASMTutorialInvisibleWallBase> BattleEndEventWall;
+
 
 	TWeakObjectPtr<ASMProgressTriggerBase> MovePracticeTrigger;
 

@@ -60,6 +60,12 @@ void USMTutorialManagerComponent::InitializeComponent()
 			NoiseBreakEventWall = TutorialInvisibleWall;
 		}
 
+		if (TutorialInvisibleWall->ActorHasTag(TEXT("HealPack")))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
+			HealPackEventWall = TutorialInvisibleWall;
+		}
+
 		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleStart")))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
@@ -481,6 +487,7 @@ void USMTutorialManagerComponent::OnStep7Completed()
 	{
 		const FVector DummyLocation = TrainingDummy->GetActorLocation();
 		TrainingDummy->SetActorLocation(FVector(-1800.0, -2780.0, DummyLocation.Z));
+		TrainingDummy->SetInvincible(false);
 	}
 
 	const USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
@@ -533,6 +540,11 @@ void USMTutorialManagerComponent::OnStep8Completed()
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
 		NoiseBreakInstance->OnNoiseBreakSucceed.RemoveAll(this);
+	}
+
+	if (HealPackEventWall.IsValid())
+	{
+		HealPackEventWall->Destroy();
 	}
 
 	if (NextTrigger.IsValid())
