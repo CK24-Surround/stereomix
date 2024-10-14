@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "SMTutorialUIControlComponent.generated.h"
 
+class USMTutorialSuccess;
+class USMTutorialMission;
+class USMTutorialGuide;
 class USMTutorialHUD;
 
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -20,9 +23,42 @@ public:
 
 	USMTutorialHUD* GetTutorialHUD() const { return TutorialHUD; }
 
+	USMTutorialGuide* GetTutorialGuide() const;
+
+	USMTutorialSuccess* GetTutorialSuccess() const;
+
+	USMTutorialMission* GetTutorialMission() const;
+
+	void SetGuideText(const FString& InString);
+
+	void SetMissionText(const FString& InString);
+
+	void ShowGuide();
+
+	void ShowMission();
+
+	void ShowSuccess();
+
+	void TransitionToSuccess();
+
+	void TransitionToGuide();
+
 protected:
+	void InternalTransitionToSuccess();
+
 	UFUNCTION()
-	void OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn);
+	void OnHideMissionAnimationEnded();
+
+	UFUNCTION()
+	void OnHideGuideAnimationEnded();
+
+	void InternalTransitionToGuide();
+
+	UFUNCTION()
+	void OnHideSuccessAnimationEnded();
+
+	UFUNCTION()
+	void OnShowGuideAnimationEnded();
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<USMTutorialHUD> TutorialHUDClass;

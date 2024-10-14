@@ -65,7 +65,7 @@ void USMTutorialManagerComponent::InitializeComponent()
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
 			BattleStartEventWall = TutorialInvisibleWall;
 		}
-		
+
 		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleEnd")))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
@@ -98,6 +98,12 @@ void USMTutorialManagerComponent::InitializeComponent()
 			EndTrigger = ProgressTrigger;
 		}
 	}
+
+	for (ASMTrainingDummy* TrainingDummyActor : TActorRange<ASMTrainingDummy>(GetWorld()))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TrainingDummyActor));
+		TrainingDummy = TrainingDummyActor;
+	}
 }
 
 void USMTutorialManagerComponent::BeginPlay()
@@ -105,21 +111,21 @@ void USMTutorialManagerComponent::BeginPlay()
 	Super::BeginPlay();
 
 	const UWorld* World = GetWorld();
-	if (APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr)
+	if (const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr)
 	{
-		UEnhancedInputComponent* TutorialInputComponent = NewObject<UEnhancedInputComponent>(PlayerController);
-		TutorialInputComponent->RegisterComponent();
-		TutorialInputComponent->BindAction(NextInputAction, ETriggerEvent::Started, this, &ThisClass::OnNextInputReceived);
-		PlayerController->PushInputComponent(TutorialInputComponent);
+		CachedTutorialUIControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("목표 지점으로 이동하기"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("WASD로 캐릭터를 움직일 수 있습니다. 목표지점으로 이동해보세요."));
+	}
 
-		if (APawn* PlayerPawn = PlayerController->GetPawn()) // 빙의되지 않은 경우 UI가 작동하지 않습니다. 따라서 빙의할때까지 기다립니다. 만약 이미 빙의되었다면 바로 호출합니다.
-		{
-			OnPossessedPawnChanged(nullptr, PlayerPawn);
-		}
-		else
-		{
-			PlayerController->OnPossessedPawnChanged.AddDynamic(this, &ThisClass::USMTutorialManagerComponent::OnPossessedPawnChanged);
-		}
+	if (MovePracticeTrigger.IsValid())
+	{
+		MovePracticeTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep1Completed);
+	}
+
+	if (EndTrigger.IsValid())
+	{
+		EndTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep10Completed);
 	}
 }
 
@@ -133,18 +139,6 @@ void USMTutorialManagerComponent::Activate(bool bReset)
 	Super::Activate(bReset);
 
 	TransformScriptsData();
-
-	for (ASMProgressTriggerBase* ProgressTrigger : TActorRange<ASMProgressTriggerBase>(GetWorld()))
-	{
-		if (ProgressTrigger->ActorHasTag(TEXT("MovePractice")))
-		{
-			ProgressTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep1Completed);
-		}
-		else if (ProgressTrigger->ActorHasTag(TEXT("End")))
-		{
-			ProgressTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep10Completed);
-		}
-	}
 }
 
 APawn* USMTutorialManagerComponent::GetLocalPlayerPawn()
@@ -152,22 +146,6 @@ APawn* USMTutorialManagerComponent::GetLocalPlayerPawn()
 	const UWorld* World = GetWorld();
 	const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr;
 	return PlayerController ? PlayerController->GetPawn() : nullptr;
-}
-
-void USMTutorialManagerComponent::OnPossessedPawnChanged(APawn* OldPawn, APawn* NewPawn)
-{
-	if (!NewPawn)
-	{
-		return;
-	}
-
-	const UWorld* World = GetWorld();
-	if (APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr)
-	{
-		PlayerController->OnPossessedPawnChanged.RemoveAll(this);
-
-		CachedTutorialUIControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>();
-	}
 }
 
 void USMTutorialManagerComponent::TransformScriptsData()
@@ -249,9 +227,6 @@ void USMTutorialManagerComponent::TransformScriptsData()
 	}
 }
 
-void USMTutorialManagerComponent::OnNextInputReceived()
-{}
-
 void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AActor* OtherActor)
 {
 	if (OverlappedActor)
@@ -260,12 +235,35 @@ void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AAct
 		OverlappedActor->Destroy();
 	}
 
-	CurrentStepNumber = 2;
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep2Started, CompleteShowingTime);
+	}
 
 	if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
 	{
 		TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
 	}
+}
+
+void USMTutorialManagerComponent::OnStep2Started()
+{
+	CurrentStepNumber = 2;
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToGuide();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("목표영역에 타일 9개 점령하기"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("이동 시 타일을 점령할 수 있습니다. 목표구역의 타일을 모두 점령해보세요."));
+	}
+
+	TilesCaptureCount = 0;
 }
 
 void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount)
@@ -291,28 +289,75 @@ void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigat
 
 void USMTutorialManagerComponent::OnStep2Completed()
 {
-	CurrentStepNumber = 3;
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
 
-	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep3Started, CompleteShowingTime);
+	}
+
+	if (TrainingDummy.IsValid())
 	{
 		TrainingDummy->OnHalfHPReached.BindUObject(this, &ThisClass::OnStep3Completed);
 	}
 }
 
+void USMTutorialManagerComponent::OnStep3Started()
+{
+	CurrentStepNumber = 3;
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToGuide();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("적 캐릭터 체력 50 깎기"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("일렉기타의 일반 공격은 전방에 총알을 난사합니다. 좌클릭을 눌러 앞의 적을 공격해보세요."));
+	}
+
+	if (SamplingEventWall.IsValid())
+	{
+		SamplingEventWall->Destroy();
+	}
+}
+
 void USMTutorialManagerComponent::OnStep3Completed()
 {
-	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
+	if (TrainingDummy.IsValid())
 	{
 		TrainingDummy->OnHalfHPReached.Unbind();
 		TrainingDummy->SetInvincible(true);
 	}
 
-	CurrentStepNumber = 4;
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep4Started, CompleteShowingTime);
+	}
 
 	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_Skill* SkillInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Skill>() : nullptr)
 	{
 		SkillInstance->OnSkillHit.AddDynamic(this, &ThisClass::OnStep4Completed);
+	}
+}
+
+void USMTutorialManagerComponent::OnStep4Started()
+{
+	CurrentStepNumber = 4;
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToGuide();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("적 캐릭터에게 일렉기타 스킬 맞추기"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("E 스킬을 누르면 스킬을 사용할 수 있습니다. 스킬을 다시 사용하려면 타일을 점령하여 스킬게이지를 채워야합니다. 적에게 \"마비탄\"을 적중시켜보세요"));
 	}
 }
 
@@ -324,32 +369,79 @@ void USMTutorialManagerComponent::OnStep4Completed()
 		SkillInstance->OnSkillHit.RemoveAll(this);
 	}
 
-	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
+	if (TrainingDummy.IsValid())
 	{
 		TrainingDummy->SetInvincible(false);
 	}
 
-	CurrentStepNumber = 5;
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
 
-	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep5Started, CompleteShowingTime);
+	}
+
+	if (TrainingDummy.IsValid())
 	{
 		TrainingDummy->OnNeutralized.BindUObject(this, &ThisClass::OnStep5Completed);
 	}
 }
 
+void USMTutorialManagerComponent::OnStep5Started()
+{
+	CurrentStepNumber = 5;
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToGuide();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("적 캐릭터 무력화"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("적의 체력을 모두 깎으면 적을 무력화 시킬 수 있습니다. 공격과 스킬을 이용해 적을 무력화 시키세요."));
+	}
+}
+
 void USMTutorialManagerComponent::OnStep5Completed()
 {
-	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
+	if (TrainingDummy.IsValid())
 	{
 		TrainingDummy->OnNeutralized.Unbind();
 	}
 
-	CurrentStepNumber = 6;
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep6Started, CompleteShowingTime);
+	}
 
 	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_Hold* HoldInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Hold>() : nullptr)
 	{
 		HoldInstance->OnHoldSucceed.AddDynamic(this, &ThisClass::OnStep6Completed);
+	}
+
+	if (NeutralizeEventWall.IsValid())
+	{
+		NeutralizeEventWall->Destroy();
+	}
+}
+
+void USMTutorialManagerComponent::OnStep6Started()
+{
+	CurrentStepNumber = 6;
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToGuide();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("적 캐릭터 잡기"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("우클릭을 눌러 무력화 된 적을 잡을 수 있습니다. 앞의 적을 잡아보세요."));
 	}
 }
 
@@ -361,7 +453,16 @@ void USMTutorialManagerComponent::OnStep6Completed()
 		HoldInstance->OnHoldSucceed.RemoveAll(this);
 	}
 
-	CurrentStepNumber = 7;
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep7Started, CompleteShowingTime);
+	}
 
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
@@ -369,17 +470,61 @@ void USMTutorialManagerComponent::OnStep6Completed()
 	}
 }
 
+void USMTutorialManagerComponent::OnStep7Started()
+{
+	CurrentStepNumber = 7;
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToGuide();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("-목표지점(5X5) 50%이상 점령\n-노이즈브레이크를 사용하여 점령"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("적을 잡은 상태에서, 좌클릭을 눌러 노이즈 브레이크를 발동할 수 있습니다. 노이즈 브레이크는 한번에 많은 타일을 점령할 수 있습니다. 노이즈 브레이크를 사용해 목표지점의 타일을 점령해보세요!"));
+	}
+}
+
 void USMTutorialManagerComponent::OnStep7Completed()
 {
-	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(GetLocalPlayerPawn());
-	USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(SourceCharacter);
+	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
 		NoiseBreakInstance->OnNoiseBreakSucceed.RemoveAll(this);
 	}
 
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep8Started, CompleteShowingTime);
+	}
+
+	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
+	{
+		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep8Completed);
+	}
+
+	if (NoiseBreakEventWall.IsValid())
+	{
+		NoiseBreakEventWall->Destroy();
+	}
+}
+
+void USMTutorialManagerComponent::OnStep8Started()
+{
 	CurrentStepNumber = 8;
 
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToGuide();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("힐팩 아이템 사용 후 체력 모두회복"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("힐팩을 사용해 체력을 회복해보세요. 힐팩 또한 잡은 상태에서 좌클릭으로 사용할 수 있습니다. 시전범위에는 치유장판을 생성해 팀원을 치료할 수도 있습니다."));
+	}
+
+	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(GetLocalPlayerPawn());
+	USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(SourceCharacter);
 	const USMPlayerCharacterDataAsset* DataAsset = SourceCharacter->GetDataAsset();
 	if (SourceASC && DataAsset)
 	{
@@ -389,11 +534,6 @@ void USMTutorialManagerComponent::OnStep7Completed()
 			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, 50.0f);
 			SourceASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
-	}
-
-	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
-	{
-		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep8Completed);
 	}
 }
 
@@ -405,19 +545,45 @@ void USMTutorialManagerComponent::OnStep8Completed()
 		NoiseBreakInstance->OnNoiseBreakSucceed.RemoveAll(this);
 	}
 
-	for (ASMTrainingDummy* TrainingDummy : TActorRange<ASMTrainingDummy>(GetWorld()))
+	if (TrainingDummy.IsValid())
 	{
 		const FVector DummyLocation = TrainingDummy->GetActorLocation();
 		TrainingDummy->SetActorLocation(FVector(-1800.0, -2780.0, DummyLocation.Z));
 	}
 
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep9Started, CompleteShowingTime);
+	}
+}
+
+void USMTutorialManagerComponent::OnStep9Started()
+{
 	CurrentStepNumber = 9;
 
-	TilesCaptureCount = 0;
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToGuide();
+		CachedTutorialUIControlComponent->SetGuideText(TEXT("적과 전투해서 100점 달성"));
+		CachedTutorialUIControlComponent->SetMissionText(TEXT("훈련장에서 적과 전투하세요. 시간내에 적보다 많은 타일을 점령하면 승리합니다."));
+	}
 }
 
 void USMTutorialManagerComponent::OnStep9Completed()
 {
+	OnStep10Started();
+}
+
+void USMTutorialManagerComponent::OnStep10Started()
+{
+	TilesCaptureCount = 0;
+
 	CurrentStepNumber = 10;
 }
 

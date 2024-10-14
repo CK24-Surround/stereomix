@@ -23,5 +23,5 @@ public:
 	TObjectPtr<UWidgetAnimation> ShowGuideAnimation;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnimOptional))
-	TObjectPtr<UWidgetAnimation> HideGuideEndAnimation;
+	TObjectPtr<UWidgetAnimation> HideGuideAnimation;
 };
