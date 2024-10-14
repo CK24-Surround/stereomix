@@ -64,6 +64,10 @@ void USMTutorialManagerComponent::InitializeComponent()
 		{
 			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
 			BattleStartEventWall = TutorialInvisibleWall;
+			if (BattleStartEventWall.IsValid())
+			{
+				BattleStartEventWall->SetActorEnableCollision(false);
+			}
 		}
 
 		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleEnd")))
@@ -577,6 +581,16 @@ void USMTutorialManagerComponent::OnStep9Started()
 
 void USMTutorialManagerComponent::OnStep9Completed()
 {
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->TransitionToSuccess();
+	}
+
+	if (BattleEndEventWall.IsValid())
+	{
+		BattleEndEventWall->Destroy();
+	}
+
 	OnStep10Started();
 }
 
