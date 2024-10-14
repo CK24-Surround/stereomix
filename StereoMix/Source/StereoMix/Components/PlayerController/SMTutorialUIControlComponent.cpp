@@ -223,6 +223,7 @@ void USMTutorialUIControlComponent::InternalTransitionToGuide()
 void USMTutorialUIControlComponent::OnHideSuccessAnimationEnded()
 {
 	UE_LOG(LogTemp, Warning, TEXT("목표 완료 숨기기 애니메이션 종료"));
+
 	if (USMTutorialSuccess* TutorialSuccess = GetTutorialSuccess())
 	{
 		TutorialSuccess->SetVisibility(ESlateVisibility::Hidden);
