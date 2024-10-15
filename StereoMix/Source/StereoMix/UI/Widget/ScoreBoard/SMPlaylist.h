@@ -19,8 +19,13 @@ class STEREOMIX_API USMPlaylist : public UCommonActivatableWidget
 	GENERATED_BODY()
 
 public:
+	void ResetTeamInfo() const;
+	
 	void SetVictoryTeam(ESMTeam WinTeam);
 
+	UFUNCTION(BlueprintCallable)
+	void ChangePlaylist(ESMTeam WinTeam);
+	
 	UFUNCTION(BlueprintCallable)
 	void ChangeOverview();
 

@@ -9,26 +9,15 @@
 #include "Data/SMTeam.h"
 
 
-void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
+void USMPlaylist::ResetTeamInfo() const
 {
-	EDMWinTeamBackground->SetVisibility(WinTeam == ESMTeam::EDM ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-	FBWinTeamBackground->SetVisibility(WinTeam == ESMTeam::FutureBass ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
-
-	WinTeamType->SetText(WinTeam == ESMTeam::EDM ? FText::FromString("Inferno Beat") : FText::FromString("Chewing Cats"));
-
-	TMap<ESMCharacterType, FString> PlayerTypeMap = {
-		{ ESMCharacterType::None, "None" },
-		{ ESMCharacterType::ElectricGuitar, "ElectricGuitar" },
-		{ ESMCharacterType::Piano, "Piano" },
-		{ ESMCharacterType::Bass, "Bass" }
-	};
-
 	WinTeamScore->SetText(FText::FromString("0"));
+	LoseTeamScore->SetText(FText::FromString("0"));
+
 	WinTeamPlayerName1->SetText(FText::FromString(""));
 	WinTeamPlayerName2->SetText(FText::FromString(""));
 	WinTeamPlayerName3->SetText(FText::FromString(""));
-	
-	LoseTeamScore->SetText(FText::FromString("0"));
+
 	LoseTeamPlayerName1->SetText(FText::FromString(""));
 	LoseTeamPlayerName2->SetText(FText::FromString(""));
 	LoseTeamPlayerName3->SetText(FText::FromString(""));
@@ -40,7 +29,30 @@ void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
 	FBRowName1->SetText(FText::FromString(""));
 	FBRowName2->SetText(FText::FromString(""));
 	FBRowName3->SetText(FText::FromString(""));
+}
 
+void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
+{
+	EDMWinTeamBackground->SetVisibility(WinTeam == ESMTeam::EDM ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	FBWinTeamBackground->SetVisibility(WinTeam == ESMTeam::FutureBass ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+
+	WinTeamType->SetText(WinTeam == ESMTeam::EDM ? FText::FromString("Inferno Beat") : FText::FromString("Chewing Cats"));
+	LoseTeamType->SetText(WinTeam == ESMTeam::EDM ? FText::FromString("Chewing Cats") : FText::FromString("Inferno Beat"));
+
+	TMap<ESMCharacterType, FString> PlayerTypeMap = {
+		{ ESMCharacterType::None, "None" },
+		{ ESMCharacterType::ElectricGuitar, "ElectricGuitar" },
+		{ ESMCharacterType::Piano, "Piano" },
+		{ ESMCharacterType::Bass, "Bass" }
+	};
+
+	ResetTeamInfo();
+
+	ChangePlaylist(WinTeam);
+}
+
+void USMPlaylist::ChangePlaylist(ESMTeam WinTeam)
+{
 	TObjectPtr<UCommonTextBlock> EDMTeamScore = LoseTeamScore;
 	TObjectPtr<UCommonTextBlock> EDMPlayerName1 = LoseTeamPlayerName1;
 	TObjectPtr<UCommonTextBlock> EDMPlayerName2 = LoseTeamPlayerName2;

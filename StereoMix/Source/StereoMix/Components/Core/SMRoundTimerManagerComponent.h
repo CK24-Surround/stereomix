@@ -56,7 +56,7 @@ protected:
 	int32 RoundTime = 150;
 
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0"))
-	int32 PostRoundTime = 10;
+	int32 PostRoundTime = 60;
 
 	UPROPERTY(ReplicatedUsing = "OnRep_RemainingTime")
 	int32 RemainingTime = 0;

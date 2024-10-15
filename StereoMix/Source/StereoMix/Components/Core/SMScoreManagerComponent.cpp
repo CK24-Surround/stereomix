@@ -40,11 +40,6 @@ void USMScoreManagerComponent::BeginPlay()
 	{
 		TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::AddTotalCapturedTiles);
 		TileManager->OnVictoryTeamAnnounced.AddDynamic(this, &ThisClass::OnVictoryTeamAnnouncedCallback);
-
-		FTimerHandle TimerHandle;
-		World->GetTimerManager().SetTimer(TimerHandle, [this]() {
-			MulticastShowPlaylist(ESMTeam::EDM, GetTeamScoreData(ESMTeam::EDM), GetTeamScoreData(ESMTeam::FutureBass));
-		}, 10.0f, false);
 	}
 }
 
