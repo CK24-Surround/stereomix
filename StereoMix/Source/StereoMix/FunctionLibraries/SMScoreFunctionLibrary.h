@@ -4,7 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "SMFunctionLibraryBase.h"
+#include "Components/Core/SMScoreManagerComponent.h"
 #include "SMScoreFunctionLibrary.generated.h"
+
 
 class USMScoreManagerComponent;
 /**
@@ -17,6 +19,8 @@ class STEREOMIX_API USMScoreFunctionLibrary : public USMFunctionLibraryBase
 
 public:
 	static USMScoreManagerComponent* GetScoreManager(const UWorld* World);
+
+	static TArray<FPlayerScoreData> GetTeamScoreData(const UWorld* World, ESMTeam Team);
 
 	static void RecordDamage(AActor* Self, const AActor* Attacker, float InDamageAmount);
 

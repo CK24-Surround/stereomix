@@ -9,6 +9,7 @@
 #include "SMScoreManagerComponent.generated.h"
 
 
+class USMPlaylist;
 class ASMPlayerCharacterBase;
 
 USTRUCT(BlueprintType)
@@ -16,24 +17,34 @@ struct FPlayerScoreData
 {
 	GENERATED_BODY()
 
+	UPROPERTY()
 	ESMTeam PlayerTeam = ESMTeam::None;
 
+	UPROPERTY()
 	ESMCharacterType CharacterType = ESMCharacterType::None;
 
+	UPROPERTY()
 	FString PlayerName;
 
+	UPROPERTY()
 	int32 TotalCapturedTiles = 0;
 
+	UPROPERTY()
 	float TotalDamageDealt = 0.0f;
-
+	
+	UPROPERTY()
 	float TotalDamageReceived = 0.0f;
 
-	int32 TotalDeathCount = 0;
-
+	UPROPERTY()
 	int32 TotalKillCount = 0;
 
+	UPROPERTY()
+	int32 TotalDeathCount = 0;
+
+	UPROPERTY()
 	int32 TotalNoiseBreakUsage = 0;
 
+	UPROPERTY()
 	float CorrectionValue = 0.4f;
 
 	int32 TotalScore() const
@@ -52,6 +63,8 @@ class STEREOMIX_API USMScoreManagerComponent : public UActorComponent
 	GENERATED_BODY()
 
 public:
+	USMScoreManagerComponent();
+
 	virtual void BeginPlay() override;
 
 	UFUNCTION()
@@ -73,14 +86,28 @@ public:
 	void AddTotalNoiseBreakUsage(const AActor* TargetPlayer);
 
 	TWeakObjectPtr<const AActor> GetMVPPlayer(ESMTeam Team) const;
+	
+	TArray<FPlayerScoreData> GetTeamScoreData(ESMTeam Team);
 
 	UFUNCTION()
 	void LogAllPlayerData();
 
+	UFUNCTION()
+	void OnVictoryTeamAnnouncedCallback(ESMTeam VictoryTeam);
+	
 protected:
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastShowPlaylist(ESMTeam WinTeam, const TArray<FPlayerScoreData>& EDMPlayerData, const TArray<FPlayerScoreData>& FBPlayerData);
+	
+	UPROPERTY(EditAnywhere, Category = "Design|UI|HUD")
+	TSubclassOf<USMPlaylist> PlaylistWidgetClass;
+
+	UPROPERTY()
+	TObjectPtr<USMPlaylist> PlaylistWidget;
+	
 	static FPlayerScoreData GetDefaultPlayerScoreData(const TWeakObjectPtr<const AActor>& TargetPlayer);
 
 	void LogPlayerData(const TWeakObjectPtr<const AActor>& TargetPlayer) const;
-	
+
 	TMap<TWeakObjectPtr<const AActor>, FPlayerScoreData> PlayerScoreData;
 };

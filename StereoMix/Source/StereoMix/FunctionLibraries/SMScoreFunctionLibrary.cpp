@@ -16,6 +16,16 @@ USMScoreManagerComponent* USMScoreFunctionLibrary::GetScoreManager(const UWorld*
 	return GameState ? GameState->GetComponentByClass<USMScoreManagerComponent>() : nullptr;
 }
 
+TArray<FPlayerScoreData> USMScoreFunctionLibrary::GetTeamScoreData(const UWorld* World, ESMTeam Team)
+{
+	if (USMScoreManagerComponent* ScoreManagerComponent = GetScoreManager(World))
+	{
+		return ScoreManagerComponent->GetTeamScoreData(Team);
+	}
+
+	return TArray<FPlayerScoreData>();
+}
+
 void USMScoreFunctionLibrary::RecordDamage(AActor* Self, const AActor* Attacker, float InDamageAmount)
 {
 	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(Self);

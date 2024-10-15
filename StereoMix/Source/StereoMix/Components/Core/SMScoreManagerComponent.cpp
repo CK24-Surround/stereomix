@@ -9,7 +9,14 @@
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Games/SMGameState.h"
 #include "Games/SMPlayerState.h"
+#include "UI/Widget/Lobby/SMLobbyCreateRoomWidget.h"
+#include "UI/Widget/ScoreBoard/SMPlaylist.h"
 
+
+USMScoreManagerComponent::USMScoreManagerComponent()
+{
+	SetIsReplicatedByDefault(true);
+}
 
 void USMScoreManagerComponent::BeginPlay()
 {
@@ -23,9 +30,21 @@ void USMScoreManagerComponent::BeginPlay()
 		SMGameState->OnPostRoundStart.AddDynamic(this, &ThisClass::LogAllPlayerData);
 	}
 
+	ULocalPlayer* LocalPlayer = World->GetFirstLocalPlayerFromController();
+	if (APlayerController* PlayerController = LocalPlayer ? LocalPlayer->GetPlayerController(World) : nullptr)
+	{
+		PlaylistWidget = CreateWidget<USMPlaylist>(PlayerController, PlaylistWidgetClass);
+	}
+	
 	if (USMTileManagerComponent* TileManager = GameState ? GameState->GetComponentByClass<USMTileManagerComponent>() : nullptr)
 	{
 		TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::AddTotalCapturedTiles);
+		TileManager->OnVictoryTeamAnnounced.AddDynamic(this, &ThisClass::OnVictoryTeamAnnouncedCallback);
+
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, [this]() {
+			MulticastShowPlaylist(ESMTeam::EDM, GetTeamScoreData(ESMTeam::EDM), GetTeamScoreData(ESMTeam::FutureBass));
+		}, 10.0f, false);
 	}
 }
 
@@ -130,11 +149,52 @@ TWeakObjectPtr<const AActor> USMScoreManagerComponent::GetMVPPlayer(ESMTeam Team
 	return MVPPlayer;
 }
 
+TArray<FPlayerScoreData> USMScoreManagerComponent::GetTeamScoreData(ESMTeam Team)
+{
+	TArray<FPlayerScoreData> SortedPlayerScores;
+
+	for (const auto& Entry : PlayerScoreData)
+	{
+		const FPlayerScoreData& ScoreData = Entry.Value;
+		if (ScoreData.PlayerTeam == Team)
+		{
+			SortedPlayerScores.Add(ScoreData);
+		}
+	}
+
+	SortedPlayerScores.Sort([](const FPlayerScoreData& A, const FPlayerScoreData& B) {
+		return A.TotalScore() > B.TotalScore(); // 점수 높은 순으로 정렬
+	});
+
+	if (SortedPlayerScores.Num() > 3)
+	{
+		SortedPlayerScores.SetNum(3);
+	}
+
+	return SortedPlayerScores;
+}
+
 void USMScoreManagerComponent::LogAllPlayerData()
 {
 	for (auto& [PlayerActor, ScoreData] : PlayerScoreData)
 	{
 		LogPlayerData(PlayerActor);
+	}
+}
+
+void USMScoreManagerComponent::OnVictoryTeamAnnouncedCallback(ESMTeam VictoryTeam)
+{
+	MulticastShowPlaylist(VictoryTeam, GetTeamScoreData(ESMTeam::EDM), GetTeamScoreData(ESMTeam::FutureBass));
+}
+
+void USMScoreManagerComponent::MulticastShowPlaylist_Implementation(ESMTeam WinTeam, const TArray<FPlayerScoreData>& EDMPlayerData, const TArray<FPlayerScoreData>& FBPlayerData)
+{
+	if (EDMPlayerData.Num() > 0 || FBPlayerData.Num() > 0)
+	{
+		if (PlaylistWidget)
+		{
+			PlaylistWidget->MulticastShowPlaylist(WinTeam, EDMPlayerData, FBPlayerData);
+		}
 	}
 }
 
