@@ -118,6 +118,7 @@ void ASMTrainingDummy::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 
 bool ASMTrainingDummy::CanIgnoreAttack() const
 {
+	UE_LOG(LogTemp, Warning, TEXT("bIsNeutralized: %d"), bIsNeutralized);
 	if (bIsNeutralized)
 	{
 		return true;
