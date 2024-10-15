@@ -35,17 +35,13 @@ public:
 
 	void SetMissionText(const FString& InString);
 
-	void ShowGuide();
-
-	void ShowMission();
-
-	void ShowSuccess();
+	void PlayShowGuideAnimation();
 
 	void TransitionToSuccess();
 
 	void TransitionToGuide();
 
-	void TransitionAndSetText(const FString& InGuideText, const FString& InMissionText, float CompletionDisplayTime);
+	void TransitionAndSetText(const FString& InGuideText, const FString& InMissionText);
 
 	FOnWidgetTransitionEnded OnTransitionAndSetTextEnded;
 
@@ -72,9 +68,17 @@ protected:
 	UFUNCTION()
 	void OnShowMissionAnimationEnded();
 
-	void InternalTransitionAndSetText(const FString& InGuideText, const FString& InMissionText, float CompletionDisplayTime);
+	void InternalTransitionAndSetText(const FString& InGuideText, const FString& InMissionText);
+
+	void OnTransitionToSuccessEndedCallback();
+
+	void SetupGuideTransition();
 
 	void OnTransitionAndSetTextEndedCallback();
+
+	/** 목표 달성을 보여주는 시간입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float CompletionDisplayTime = 1.0f;
 
 	FOnWidgetTransitionEnded OnTransitionToSuccessEnded;
 

@@ -112,9 +112,6 @@ protected:
 	/** Step, ScriptNumberInStep, 캐릭터 타입 순서로 접근하면 됩니다. */
 	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> UIScripts;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
-	float CompletionDisplayTime = 1.0f;
-
 	int32 CurrentStepNumber = 1;
 
 	int32 CurrentScriptNumber = 0;
@@ -136,7 +133,6 @@ protected:
 	TWeakObjectPtr<ASMTutorialInvisibleWallBase> BattleStartEventWall;
 
 	TWeakObjectPtr<ASMTutorialInvisibleWallBase> BattleEndEventWall;
-
 
 	TWeakObjectPtr<ASMProgressTriggerBase> MovePracticeTrigger;
 

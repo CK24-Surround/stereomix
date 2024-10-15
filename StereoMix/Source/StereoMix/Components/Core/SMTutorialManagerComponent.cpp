@@ -128,6 +128,7 @@ void USMTutorialManagerComponent::BeginPlay()
 		CachedTutorialUIControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>();
 		CachedTutorialUIControlComponent->SetGuideText(TEXT("목표 지점으로 이동하기"));
 		CachedTutorialUIControlComponent->SetMissionText(TEXT("WASD로 캐릭터를 움직일 수 있습니다. 목표지점으로 이동해보세요."));
+		CachedTutorialUIControlComponent->PlayShowGuideAnimation();
 
 		// 캐릭터의 능력들을 일단 모두 잠그고 튜토리얼 진행에 따라 하나씩 풀어줍니다.
 		const ASMGamePlayerState* PlayerState = PlayerController->GetPlayerState<ASMGamePlayerState>();
@@ -284,7 +285,7 @@ void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AAct
 	{
 		const FString GuideText = TEXT("목표영역에 타일 9개 점령하기");
 		const FString MissionText = TEXT("이동 시 타일을 점령할 수 있습니다. 목표구역의 타일을 모두 점령해보세요.");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText, CompletionDisplayTime);
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep2Started);
 	}
 }
@@ -336,7 +337,7 @@ void USMTutorialManagerComponent::OnStep2Completed()
 	{
 		const FString GuideText = TEXT("적 캐릭터 체력 50 깎기");
 		const FString MissionText = TEXT("일렉기타의 일반 공격은 전방에 총알을 난사합니다. 좌클릭을 눌러 앞의 적을 공격해보세요.");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText, CompletionDisplayTime);
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep3Started);
 	}
 }
@@ -374,7 +375,7 @@ void USMTutorialManagerComponent::OnStep3Completed()
 	{
 		const FString GuideText = TEXT("적 캐릭터에게 일렉기타 스킬 맞추기");
 		const FString MissionText = TEXT("E 스킬을 누르면 스킬을 사용할 수 있습니다. 스킬을 다시 사용하려면 타일을 점령하여 스킬게이지를 채워야합니다. 적에게 \"마비탄\"을 적중시켜보세요");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText, CompletionDisplayTime);
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep4Started);
 	}
 }
@@ -403,7 +404,7 @@ void USMTutorialManagerComponent::OnStep4Completed()
 	{
 		const FString GuideText = TEXT("적 캐릭터 무력화");
 		const FString MissionText = TEXT("적의 체력을 모두 깎으면 적을 무력화 시킬 수 있습니다. 공격과 스킬을 이용해 적을 무력화 시키세요.");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText, CompletionDisplayTime);
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep5Started);
 	}
 }
@@ -430,7 +431,7 @@ void USMTutorialManagerComponent::OnStep5Completed()
 	{
 		const FString GuideText = TEXT("적 캐릭터 잡기");
 		const FString MissionText = TEXT("우클릭을 눌러 무력화 된 적을 잡을 수 있습니다. 앞의 적을 잡아보세요.");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText, CompletionDisplayTime);
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep6Started);
 	}
 }
@@ -464,7 +465,7 @@ void USMTutorialManagerComponent::OnStep6Completed()
 	{
 		const FString GuideText = TEXT("노이즈브레이크를 사용하여 점령");
 		const FString MissionText = TEXT("적을 잡은 상태에서, 좌클릭을 눌러 노이즈 브레이크를 발동할 수 있습니다. 노이즈 브레이크는 한번에 많은 타일을 점령할 수 있습니다. 노이즈 브레이크를 사용해 목표지점의 타일을 점령해보세요!");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText, CompletionDisplayTime);
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep7Started);
 	}
 }
@@ -490,17 +491,18 @@ void USMTutorialManagerComponent::OnStep7Completed()
 		TrainingDummy->SetInvincible(false);
 	}
 
-	const USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
+	USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_NoiseBreak* NoiseBreakInstance = ASC ? ASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
+		ASC->AddLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
 		NoiseBreakInstance->OnNoiseBreakSucceed.RemoveAll(this);
 	}
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("힐팩 아이템 사용 후 체력 모두회복");
+		const FString GuideText = TEXT("힐팩 아이템을 사용해 체력 모두회복 이후 오른쪽으로 이동");
 		const FString MissionText = TEXT("힐팩을 사용해 체력을 회복해보세요. 힐팩 또한 잡은 상태에서 좌클릭으로 사용할 수 있습니다. 시전범위에는 치유장판을 생성해 팀원을 치료할 수도 있습니다. 회복을 완료했다면 오른쪽으로 이동해주세요.");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText, CompletionDisplayTime);
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep8Started);
 	}
 }
@@ -520,10 +522,11 @@ void USMTutorialManagerComponent::OnStep8Started()
 		}
 	}
 
-	const USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
+	USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_NoiseBreak* NoiseBreakInstance = ASC ? ASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
 		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep8Completed);
+		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
 	}
 
 	if (NoiseBreakEventWall.IsValid())
@@ -587,7 +590,7 @@ void USMTutorialManagerComponent::OnArrivedBattleZone()
 	{
 		const FString GuideText = TEXT("적과 전투해서 100점 달성");
 		const FString MissionText = TEXT("훈련장에서 적과 전투하세요. 시간내에 적보다 많은 타일을 점령하면 승리합니다.");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText, CompletionDisplayTime);
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep9Started);
 	}
 }

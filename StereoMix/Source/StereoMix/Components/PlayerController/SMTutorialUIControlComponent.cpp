@@ -4,6 +4,7 @@
 #include "SMTutorialUIControlComponent.h"
 
 #include "CommonTextBlock.h"
+#include "GenericPlatform/GenericPlatformCrashContext.h"
 #include "UI/Widget/Tutorial/SMTutorialGuide.h"
 #include "UI/Widget/Tutorial/SMTutorialHUD.h"
 #include "UI/Widget/Tutorial/SMTutorialMission.h"
@@ -43,52 +44,42 @@ USMTutorialSuccess* USMTutorialUIControlComponent::GetTutorialSuccess() const
 
 USMTutorialMission* USMTutorialUIControlComponent::GetTutorialMission() const
 {
-	return TutorialHUD ? TutorialHUD->TutorialMission : nullptr;;
+	return TutorialHUD ? TutorialHUD->TutorialMission : nullptr;
 }
 
 void USMTutorialUIControlComponent::SetGuideText(const FString& InString)
 {
-	USMTutorialGuide* TutorialGuide = GetTutorialGuide();
+	const USMTutorialGuide* TutorialGuide = GetTutorialGuide();
 	if (UCommonTextBlock* GuideTextBlock = TutorialGuide ? TutorialGuide->GuideTextBlock : nullptr)
 	{
-		TutorialGuide->PlayAnimation(TutorialGuide->ShowGuideAnimation);
 		GuideTextBlock->SetText(FText::FromString(InString));
 	}
 }
 
 void USMTutorialUIControlComponent::SetMissionText(const FString& InString)
 {
-	USMTutorialMission* TutorialMission = GetTutorialMission();
+	const USMTutorialMission* TutorialMission = GetTutorialMission();
 	if (UCommonTextBlock* DetailTextBlock = TutorialMission ? TutorialMission->DetailTextBlock : nullptr)
 	{
-		TutorialMission->PlayAnimation(TutorialMission->ShowMissionAnimation);
 		DetailTextBlock->SetText(FText::FromString(InString));
 	}
 }
 
-void USMTutorialUIControlComponent::ShowGuide()
+void USMTutorialUIControlComponent::PlayShowGuideAnimation()
 {
+	if (!TutorialHUD)
+	{
+		return;
+	}
+
 	if (USMTutorialGuide* TutorialGuide = GetTutorialGuide())
 	{
-		TutorialGuide->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 		TutorialGuide->PlayAnimation(TutorialGuide->ShowGuideAnimation);
 	}
-}
 
-void USMTutorialUIControlComponent::ShowMission()
-{
 	if (USMTutorialMission* TutorialMission = GetTutorialMission())
 	{
-		TutorialMission->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
-		TutorialMission->PlayAnimation(TutorialMission->ShowMissionAnimation);
-	}
-}
-
-void USMTutorialUIControlComponent::ShowSuccess()
-{
-	if (USMTutorialSuccess* TutorialSuccess = GetTutorialSuccess())
-	{
-		TutorialSuccess->PlayAnimation(TutorialSuccess->ShowSuccessAnimation);
+		TutorialMission->QueuePlayAnimation(TutorialMission->ShowMissionAnimation);
 	}
 }
 
@@ -102,9 +93,9 @@ void USMTutorialUIControlComponent::TransitionToGuide()
 	InternalTransitionToGuide();
 }
 
-void USMTutorialUIControlComponent::TransitionAndSetText(const FString& InGuideText, const FString& InMissionText, float CompletionDisplayTime)
+void USMTutorialUIControlComponent::TransitionAndSetText(const FString& InGuideText, const FString& InMissionText)
 {
-	InternalTransitionAndSetText(InGuideText, InMissionText, CompletionDisplayTime);
+	InternalTransitionAndSetText(InGuideText, InMissionText);
 }
 
 void USMTutorialUIControlComponent::InternalTransitionToSuccess()
@@ -282,48 +273,35 @@ void USMTutorialUIControlComponent::OnShowMissionAnimationEnded()
 	(void)OnTransitionToGuideEnded.ExecuteIfBound();
 }
 
-void USMTutorialUIControlComponent::InternalTransitionAndSetText(const FString& InGuideText, const FString& InMissionText, float CompletionDisplayTime)
+void USMTutorialUIControlComponent::InternalTransitionAndSetText(const FString& InGuideText, const FString& InMissionText)
 {
 	OnTransitionToSuccessEnded.Unbind();
 	OnTransitionToGuideEnded.Unbind();
 
-	TWeakObjectPtr<USMTutorialUIControlComponent> ThisWeakPtr = MakeWeakObjectPtr(this);
-
-	auto BindTransitionToSuccessEnded = [ThisWeakPtr] {
-		if (ThisWeakPtr.IsValid())
-		{
-			ThisWeakPtr->OnTransitionToGuideEnded.BindUObject(ThisWeakPtr.Get(), &ThisClass::OnTransitionAndSetTextEndedCallback);
-			ThisWeakPtr->TransitionToGuide();
-		}
-	};
-
-	auto CompletionTimer = [ThisWeakPtr, CompletionDisplayTime, BindTransitionToSuccessEnded] {
-		if (ThisWeakPtr.IsValid())
-		{
-			if (const UWorld* World = ThisWeakPtr->GetWorld())
-			{
-				FTimerHandle TimerHandle;
-				World->GetTimerManager().SetTimer(TimerHandle, BindTransitionToSuccessEnded, CompletionDisplayTime, false);
-			}
-		}
-	};
-
 	GuideText = InGuideText;
 	MissionText = InMissionText;
-	auto OnTransitionToSuccessEndedCallback = [ThisWeakPtr, CompletionTimer] {
-		if (ThisWeakPtr.IsValid())
-		{
-			ThisWeakPtr->OnTransitionToSuccessEnded.Unbind();
 
-			ThisWeakPtr->SetGuideText(ThisWeakPtr->GuideText);
-			ThisWeakPtr->SetMissionText(ThisWeakPtr->MissionText);
-
-			CompletionTimer();
-		}
-	};
-
-	OnTransitionToSuccessEnded.BindLambda(OnTransitionToSuccessEndedCallback);
+	OnTransitionToSuccessEnded.BindUObject(this, &ThisClass::OnTransitionToSuccessEndedCallback);
 	TransitionToSuccess();
+}
+
+void USMTutorialUIControlComponent::OnTransitionToSuccessEndedCallback()
+{
+	OnTransitionToSuccessEnded.Unbind();
+	SetGuideText(GuideText);
+	SetMissionText(MissionText);
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::SetupGuideTransition, CompletionDisplayTime, false);
+	}
+}
+
+void USMTutorialUIControlComponent::SetupGuideTransition()
+{
+	OnTransitionToGuideEnded.BindUObject(this, &ThisClass::OnTransitionAndSetTextEndedCallback);
+	TransitionToGuide();
 }
 
 void USMTutorialUIControlComponent::OnTransitionAndSetTextEndedCallback()

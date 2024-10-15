@@ -110,7 +110,6 @@ void ASMTrainingDummy::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 	if (HP <= 0.0f)
 	{
 		SetNoteState(true);
-		bIsNeutralized = true;
 
 		(void)OnNeutralized.ExecuteIfBound();
 	}
@@ -118,7 +117,6 @@ void ASMTrainingDummy::ReceiveDamage(AActor* NewAttacker, float InDamageAmount)
 
 bool ASMTrainingDummy::CanIgnoreAttack() const
 {
-	UE_LOG(LogTemp, Warning, TEXT("bIsNeutralized: %d"), bIsNeutralized);
 	if (bIsNeutralized)
 	{
 		return true;
@@ -142,9 +140,7 @@ void ASMTrainingDummy::SetCurrentHP(float InCurrentHP)
 void ASMTrainingDummy::Revival()
 {
 	SetNoteState(false);
-
 	SetCurrentHP(MaxHP);
-	bIsNeutralized = false;
 }
 
 void ASMTrainingDummy::SetNoteState(bool bNewIsNoteState)
@@ -153,6 +149,8 @@ void ASMTrainingDummy::SetNoteState(bool bNewIsNoteState)
 	{
 		NoteComponent->SetVisibility(bNewIsNoteState, true);
 	}
+
+	bIsNeutralized = bNewIsNoteState;
 
 	StateWidgetComponent->SetVisibility(!bNewIsNoteState);
 	MeshComponent->SetVisibility(!bNewIsNoteState);
