@@ -22,19 +22,10 @@ bool USMGCN_NoiseBreakSlash_Bass::OnExecute_Implementation(AActor* MyTarget, con
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
-	if (FMath::IsNearlyZero(Parameters.RawMagnitude)) // 0이면 캐릭터 아니면 아이템입니다.
+	// 0이면 캐릭터 아니면 아이템입니다.
+	if (UNiagaraSystem* CachedVFX = FMath::IsNearlyZero(Parameters.RawMagnitude) ? (VFX.Contains(SourceTeam) ? VFX[SourceTeam] : nullptr) : HealPackVFX)
 	{
-		if (VFX.Contains(SourceTeam))
-		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacter, VFX[SourceTeam], StartLocation, StartRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease);
-		}
-	}
-	else
-	{
-		if (HealPackVFX)
-		{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacter, HealPackVFX, StartLocation, StartRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease);
-		}
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacter, CachedVFX, StartLocation, StartRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease);
 	}
 
 	if (SFX.Contains(SourceTeam))

@@ -25,19 +25,10 @@ bool ASMGCNA_NoiseBreakWeaponTrail_Bass::OnActive_Implementation(AActor* MyTarge
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
-	if (FMath::IsNearlyZero(Parameters.RawMagnitude)) // 0이면 캐릭터 아니면 아이템입니다.
+	// 0이면 캐릭터 아니면 아이템입니다.
+	if (UNiagaraSystem* CachedVFX = FMath::IsNearlyZero(Parameters.RawMagnitude) ? (VFX.Contains(SourceTeam) ? VFX[SourceTeam] : nullptr) : HealPackVFX)
 	{
-		if (VFX.Find(SourceTeam))
-		{
-			VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], OwnerWeaponMesh, NAME_None, FXOffsetLocation, FXOffsetRotation, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
-		}
-	}
-	else
-	{
-		if (HealPackVFX)
-		{
-			VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(HealPackVFX, OwnerWeaponMesh, NAME_None, FXOffsetLocation, FXOffsetRotation, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
-		}
+		VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(CachedVFX, OwnerWeaponMesh, NAME_None, FXOffsetLocation, FXOffsetRotation, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
 	}
 
 	// if (SFX.Find(SourceTeam))
