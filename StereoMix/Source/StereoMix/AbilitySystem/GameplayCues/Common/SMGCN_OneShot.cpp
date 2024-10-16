@@ -6,13 +6,12 @@
 #include "FMODBlueprintStatics.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "FunctionLibraries/SMGameplayCueBlueprintLibrary.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 
 bool USMGCN_OneShot::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
 {
-	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
-	if (!SourceCharacter)
+	if (!MyTarget)
 	{
 		return false;
 	}
@@ -22,11 +21,12 @@ bool USMGCN_OneShot::OnExecute_Implementation(AActor* MyTarget, const FGameplayC
 	USMGameplayCueBlueprintLibrary::GetLocationAndRotation(Parameters, TargetLocation, TargetRotation);
 	USceneComponent* TargetComponent = Parameters.TargetAttachComponent.Get();
 
-	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
+	ESMTeam SourceTeam = USMTeamBlueprintLibrary::GetTeam(MyTarget);
+	SourceTeam = SourceTeam != ESMTeam::None ? SourceTeam : ESMTeam::FutureBass; 
 	if (VFX.Find(SourceTeam))
 	{
 		FFXSystemSpawnParameters NiagaraParams;
-		NiagaraParams.WorldContextObject = SourceCharacter;
+		NiagaraParams.WorldContextObject = MyTarget;
 		NiagaraParams.SystemTemplate = VFX[SourceTeam];
 		NiagaraParams.AttachToComponent = TargetComponent;
 		NiagaraParams.Location = TargetLocation;
@@ -58,7 +58,7 @@ bool USMGCN_OneShot::OnExecute_Implementation(AActor* MyTarget, const FGameplayC
 		else
 		{
 			const FTransform TargetTransform(TargetRotation, TargetLocation);
-			UFMODBlueprintStatics::PlayEventAtLocation(SourceCharacter, SFX[SourceTeam], TargetTransform, true);
+			UFMODBlueprintStatics::PlayEventAtLocation(MyTarget, SFX[SourceTeam], TargetTransform, true);
 		}
 	}
 

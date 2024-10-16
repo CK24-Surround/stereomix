@@ -4,6 +4,7 @@
 #include "SMEP_ElectricGuitar.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
+#include "GameplayCueManager.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
@@ -19,31 +20,45 @@ void ASMEP_ElectricGuitar::HandleHitEffect(AActor* InTarget)
 void ASMEP_ElectricGuitar::AddProjectileFX()
 {
 	AActor* SourceActor = GetOwner();
-	if (USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
+
+	const FGameplayTag GCTag = SMTags::GameplayCue::ElectricGuitar::ShootProjectile;
+
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = this;
+	GCParams.TargetAttachComponent = GetRootComponent();
+
+	if (const USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
 	{
-		FGameplayCueParameters GCParams;
-		GCParams.SourceObject = this;
-		GCParams.TargetAttachComponent = GetRootComponent();
-		SourceASC->AddGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::ShootProjectile, GCParams);
+		SourceASC->AddGC(SourceActor, GCTag, GCParams);
+	}
+	else
+	{
+		UGameplayCueManager::AddGameplayCue_NonReplicated(SourceActor, GCTag, GCParams);
 	}
 }
 
 void ASMEP_ElectricGuitar::RemoveProjectileFX()
 {
 	AActor* SourceActor = GetOwner();
-	if (USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
+
+	const FGameplayTag GCTag = SMTags::GameplayCue::ElectricGuitar::ShootProjectile;
+
+	FGameplayCueParameters GCParams;
+	GCParams.SourceObject = this;
+	if (const USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
 	{
-		FGameplayCueParameters GCParams;
-		GCParams.SourceObject = this;
-		SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::ShootProjectile, GCParams);
+		SourceASC->RemoveGC(SourceActor, GCTag, GCParams);
+	}
+	else
+	{
+		UGameplayCueManager::RemoveGameplayCue_NonReplicated(SourceActor, GCTag, GCParams);
 	}
 }
 
 void ASMEP_ElectricGuitar::PlayHitFX(AActor* InTarget)
 {
 	AActor* SourceActor = GetOwner();
-	USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor));
-	if (!InTarget || !SourceASC)
+	if (!InTarget)
 	{
 		return;
 	}
@@ -63,10 +78,19 @@ void ASMEP_ElectricGuitar::PlayHitFX(AActor* InTarget)
 		}
 	}
 
+	const FGameplayTag GCTag = SMTags::GameplayCue::ElectricGuitar::ShootHit;
+
 	FGameplayCueParameters GCParams;
 	GCParams.Normal = GetActorRotation().Vector();
 	GCParams.TargetAttachComponent = InTarget->GetRootComponent();
-	SourceASC->ExecuteGC(SourceActor, SMTags::GameplayCue::ElectricGuitar::ShootHit, GCParams);
+	if (const USMAbilitySystemComponent* SourceASC = Cast<USMAbilitySystemComponent>(UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(SourceActor)))
+	{
+		SourceASC->ExecuteGC(SourceActor, GCTag, GCParams);
+	}
+	else
+	{
+		UGameplayCueManager::ExecuteGameplayCue_NonReplicated(SourceActor, GCTag, GCParams);
+	}
 }
 
 void ASMEP_ElectricGuitar::PlayWallHitFX(const FVector& HitLocation)
