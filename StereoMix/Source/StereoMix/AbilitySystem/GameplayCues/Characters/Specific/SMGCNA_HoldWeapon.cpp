@@ -7,7 +7,6 @@
 #include "NiagaraFunctionLibrary.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
-#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 
 
 ASMGCNA_HoldWeapon::ASMGCNA_HoldWeapon()
@@ -27,14 +26,31 @@ bool ASMGCNA_HoldWeapon::OnActive_Implementation(AActor* MyTarget, const FGamepl
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
+	const bool IsHoldingCharacter = Parameters.RawMagnitude == 0; // 0이면 캐릭터 아니면 아이템입니다.
+	const int32 ParameterValue = IsHoldingCharacter ? (static_cast<int32>(SourceTeam) - 1) : 2;
+
 	if (VFX.Contains(SourceTeam))
 	{
-		VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], WeaponMesh, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease);
+		if (VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(VFX[SourceTeam], WeaponMesh, NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::ManualRelease); VFXComponent)
+		{
+			const FName TeamParameterName = TEXT("Team");
+			VFXComponent->SetIntParameter(TeamParameterName, ParameterValue);
+		}
 	}
 
-	if (OverlayMaterial.Contains(SourceTeam))
+	if (IsHoldingCharacter)
 	{
-		WeaponMesh->SetOverlayMaterial(OverlayMaterial[SourceTeam]);
+		if (OverlayMaterial.Contains(SourceTeam))
+		{
+			WeaponMesh->SetOverlayMaterial(OverlayMaterial[SourceTeam]);
+		}
+	}
+	else
+	{
+		if (HealPackOverlayMaterial)
+		{
+			WeaponMesh->SetOverlayMaterial(HealPackOverlayMaterial);
+		}
 	}
 
 	return true;

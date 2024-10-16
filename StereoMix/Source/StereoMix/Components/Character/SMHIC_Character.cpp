@@ -50,7 +50,7 @@ bool USMHIC_Character::CanBeHeld(AActor* Instigator) const
 		return false;
 	}
 
-	if (HoldedMeActors.Find(Instigator) != INDEX_NONE)
+	if (HeldMeActors.Find(Instigator) != INDEX_NONE)
 	{
 		return false;
 	}
@@ -83,7 +83,7 @@ void USMHIC_Character::OnHeld(AActor* Instigator)
 	if (Instigator)
 	{
 		SourceCharacter->AttachToActor(Instigator, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-		HoldedMeActors.Add(Instigator);
+		HeldMeActors.Add(Instigator);
 		SetActorHoldingMe(Instigator);
 	}
 
@@ -197,9 +197,9 @@ void USMHIC_Character::SetActorIAmHolding(AActor* NewIAmHoldingActor)
 	}
 }
 
-void USMHIC_Character::EmptyHoldedMeCharacterList()
+void USMHIC_Character::EmptyHeldMeCharacterList()
 {
-	HoldedMeActors.Empty();
+	HeldMeActors.Empty();
 }
 
 void USMHIC_Character::ReleasedFromBeingHeld(AActor* TargetActor, const TOptional<FVector>& TargetOptionalLocation)
@@ -222,7 +222,7 @@ void USMHIC_Character::ReleasedFromBeingHeld(AActor* TargetActor, const TOptiona
 
 	// 자신을 잡았던 대상을 제외하고 다시 잡기 인디케이터를 활성화합니다.
 	SourceCharacter->MulticastAddScreenIndicatorToSelf(SourceCharacter);
-	for (const auto& HoldedMeActor : HoldedMeActors)
+	for (const auto& HoldedMeActor : HeldMeActors)
 	{
 		if (ASMPlayerCharacterBase* HoldedMeCharacter = Cast<ASMPlayerCharacterBase>(HoldedMeActor))
 		{

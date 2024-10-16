@@ -25,6 +25,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> OverlayMaterial;
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UMaterialInterface> HealPackOverlayMaterial;
+
 	UPROPERTY()
 	TObjectPtr<UNiagaraComponent> VFXComponent;
 };

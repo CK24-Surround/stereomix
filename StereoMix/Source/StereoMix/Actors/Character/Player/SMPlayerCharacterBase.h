@@ -83,7 +83,7 @@ public:
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;
 
 	template<typename T>
-	T* GetHoldInteractionComponent() { return Cast<T>(HIC); }
+	T* GetHoldInteractionComponent() const { return Cast<T>(HIC); }
 
 	/** 예측적으로 데미지를 먼저 UI에 반영해야할 때 사용합니다.*/
 	void PredictHPChange(float Amount);

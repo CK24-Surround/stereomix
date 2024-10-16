@@ -138,7 +138,7 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 			if (USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>())
 			{
 				// 무력화가 종료되었기에 자신을 잡았던 캐릭터 리스트를 초기화합니다.
-				SourceHIC->EmptyHoldedMeCharacterList();
+				SourceHIC->EmptyHeldMeCharacterList();
 			}
 
 			// 스턴 종료 시 적용해야할 GE들을 적용합니다.

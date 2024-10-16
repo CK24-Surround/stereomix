@@ -40,11 +40,12 @@ public:
 
 	virtual void OnNoiseBreakApplied(ASMBassCharacter* Instigator, TSharedPtr<FSMNoiseBreakData> NoiseBreakData) override;
 
+	/** 오너가 잡고 있는 대상을 반환합니다. */
 	FORCEINLINE AActor* GetActorIAmHolding() const { return IAmHoldingActor.Get(); }
 
 	void SetActorIAmHolding(AActor* NewIAmHoldingActor);
 
-	void EmptyHoldedMeCharacterList();
+	void EmptyHeldMeCharacterList();
 
 	/**
 	 * 잡힌 상태에서 풀려나야할때 호출합니다.
@@ -79,7 +80,7 @@ protected:
 	TWeakObjectPtr<AActor> IAmHoldingActor;
 
 	/** 한 캐릭터에게 여러번 잡히지 않도록 자신을 잡았던 액터들을 담아둡니다. 서버에서만 유효합니다. */
-	TArray<TWeakObjectPtr<AActor>> HoldedMeActors;
+	TArray<TWeakObjectPtr<AActor>> HeldMeActors;
 
 	UPROPERTY()
 	TObjectPtr<ASMPlayerCharacterBase> SourceCharacter;

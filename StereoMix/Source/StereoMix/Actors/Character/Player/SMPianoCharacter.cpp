@@ -7,6 +7,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Weapons/SMBow.h"
+#include "Components/Character/SMHIC_Character.h"
 #include "Data/Character/SMPianoCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
 
@@ -55,6 +56,7 @@ void ASMPianoCharacter::OnHoldStateEntry()
 		{
 			FGameplayCueParameters GCParams;
 			GCParams.SourceObject = this;
+			GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(HIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
 			SourceASC->AddGameplayCue(SMTags::GameplayCue::Piano::HoldWeapon, GCParams);
 		}
 	}

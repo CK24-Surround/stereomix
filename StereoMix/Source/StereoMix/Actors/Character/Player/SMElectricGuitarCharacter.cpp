@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "Components/Character/SMHIC_Character.h"
 
 
 ASMElectricGuitarCharacter::ASMElectricGuitarCharacter(const FObjectInitializer& ObjectInitializer)
@@ -23,6 +24,7 @@ void ASMElectricGuitarCharacter::OnHoldStateEntry()
 		{
 			FGameplayCueParameters GCParams;
 			GCParams.SourceObject = this;
+			GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(HIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
 			SourceASC->AddGameplayCue(SMTags::GameplayCue::ElectricGuitar::HoldWeapon, GCParams);
 		}
 	}
