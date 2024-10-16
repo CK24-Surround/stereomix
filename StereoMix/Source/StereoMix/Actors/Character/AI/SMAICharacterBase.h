@@ -42,7 +42,7 @@ public:
 
 	virtual void SetLastAttacker(AActor* NewAttacker) override { LastAttacker = NewAttacker; }
 
-	virtual bool CanIgnoreAttack() const override { return false; }
+	virtual bool CanIgnoreAttack() const override;
 
 	virtual bool IsObstacle() override { return false; }
 

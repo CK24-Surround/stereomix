@@ -175,7 +175,7 @@ public:
 
 	/** 노트 상태인지 여부를 반환합니다. */
 	UFUNCTION(BlueprintCallable)
-	bool IsNoteState() { return bIsNoteState; }
+	bool IsNoteState() const { return bIsNoteState; }
 
 	/** True면 음표 상태로, False면 기본 상태로 설정합니다. 서버에서 호출해야합니다.*/
 	UFUNCTION(Server, Reliable)

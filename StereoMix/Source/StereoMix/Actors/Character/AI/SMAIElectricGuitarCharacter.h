@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "SMAICharacterBase.h"
-#include "Data/DataTable/SMCharacterData.h"
 #include "SMAIElectricGuitarCharacter.generated.h"
 
 UCLASS()

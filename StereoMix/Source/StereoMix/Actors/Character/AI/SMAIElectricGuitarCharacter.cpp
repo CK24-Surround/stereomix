@@ -24,7 +24,6 @@ ASMAIElectricGuitarCharacter::ASMAIElectricGuitarCharacter()
 
 void ASMAIElectricGuitarCharacter::Attack(AActor* AttackTarget)
 {
-	const ESMTeam SourceTeam = GetTeam();
 	ASMProjectile* Projectile = USMProjectileFunctionLibrary::GetElectricGuitarProjectile(GetWorld(), ESMTeam::FutureBass);
 	if (!Projectile)
 	{

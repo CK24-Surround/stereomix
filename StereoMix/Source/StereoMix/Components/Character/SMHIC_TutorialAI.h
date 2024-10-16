@@ -31,7 +31,7 @@ public:
 
 	virtual void OnReleasedFromHold(AActor* Instigator) override;
 
-	void ReleasedFromBeingHeld(AActor* TargetActor, const TOptional<FVector>& TargetOptionalLocation = TOptional<FVector>());
+	void ReleasedFromBeingHeld(const AActor* TargetActor, const TOptional<FVector>& TargetOptionalLocation = TOptional<FVector>());
 	
 	void ClearHeldMeActorsHistory();
 	

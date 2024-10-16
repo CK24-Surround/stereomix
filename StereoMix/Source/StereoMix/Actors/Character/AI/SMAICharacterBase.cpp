@@ -59,22 +59,20 @@ void ASMAICharacterBase::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
+	const USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 
 	OriginalMaterials = CachedMeshComponent->GetMaterials();
 	OriginalOverlayMaterial = CachedMeshComponent->GetOverlayMaterial();
 
 	if (UWorld* World = GetWorld())
 	{
-		Weapon = World->SpawnActor<ASMWeaponBase>(WeaponClass);
-		if (Weapon)
+		if (Weapon = World->SpawnActor<ASMWeaponBase>(WeaponClass); Weapon)
 		{
 			Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponSocketName);
 			Weapon->SetOwner(this);
 		}
 
-		Note = World->SpawnActor<ASMNoteBase>(NoteClass);
-		if (Note)
+		if (Note = World->SpawnActor<ASMNoteBase>(NoteClass); Note)
 		{
 			Note->AttachToComponent(NoteSlotComponent, FAttachmentTransformRules::KeepRelativeTransform);
 			Note->SetOwner(this);
@@ -87,6 +85,16 @@ void ASMAICharacterBase::PostInitializeComponents()
 ESMTeam ASMAICharacterBase::GetTeam() const
 {
 	return TeamComponent->GetTeam();
+}
+
+bool ASMAICharacterBase::CanIgnoreAttack() const
+{
+	if (bCanAttack)
+	{
+		return true;
+	}
+
+	return false;
 }
 
 void ASMAICharacterBase::BeginPlay()
@@ -136,7 +144,6 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 
 	if (bIsNoteState)
 	{
-		HitBox->SetCollisionProfileName(SMCollisionProfileName::HoldableItem);
 		Note->PlayAnimation();
 		RegisterNoteStateEndTimer(3.0f);
 	}
@@ -194,7 +201,6 @@ void ASMAICharacterBase::DestroyNoteStateEndTimer()
 	{
 		World->GetTimerManager().ClearTimer(NoteStateEndTimerHandle);
 	}
-	NoteStateEndTimerHandle.Invalidate();
 }
 
 void ASMAICharacterBase::RegisterNoteStateEndTimer(float Duration)
@@ -273,7 +279,6 @@ void ASMAICharacterBase::SetGhostMaterial(float Duration)
 			if (ThisWeakPtr.IsValid())
 			{
 				ThisWeakPtr->bCanAttack = true;
-				ThisWeakPtr->HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
 
 				if (ThisWeakPtr->VFXComponent)
 				{
