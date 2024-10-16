@@ -3,24 +3,45 @@
 
 #include "SMGCN_NoiseBreakBurst_Piano.h"
 
+#include "FMODBlueprintStatics.h"
+#include "NiagaraFunctionLibrary.h"
+#include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "FunctionLibraries/SMGameplayCueBlueprintLibrary.h"
 
-// Sets default values
-ASMGCN_NoiseBreakBurst_Piano::ASMGCN_NoiseBreakBurst_Piano()
+
+bool USMGCN_NoiseBreakBurst_Piano::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-}
+	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(MyTarget);
+	if (!SourceCharacter)
+	{
+		return false;
+	}
 
-// Called when the game starts or when spawned
-void ASMGCN_NoiseBreakBurst_Piano::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
+	FVector FXLocation;
+	FRotator FXRotation;
+	USMGameplayCueBlueprintLibrary::GetLocationAndRotation(Parameters, FXLocation, FXRotation);
 
-// Called every frame
-void ASMGCN_NoiseBreakBurst_Piano::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
+	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
+	if (FMath::IsNearlyZero(Parameters.RawMagnitude)) // 0이면 캐릭터 아니면 아이템입니다.
+	{
+		if (VFX.Contains(SourceTeam))
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacter, VFX[SourceTeam], FXLocation, FXRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease);
+		}
+	}
+	else
+	{
+		if (HealPackVFX)
+		{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacter, HealPackVFX, FXLocation, FXRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease);
+		}
+	}
+
+	if (SFX.Contains(SourceTeam))
+	{
+		UFMODBlueprintStatics::PlayEventAtLocation(SourceCharacter, SFX[SourceTeam], FTransform(FXLocation), true);
+	}
+
+	return true;
+}

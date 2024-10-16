@@ -3,23 +3,20 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "AbilitySystem/GameplayCues/SMGameplayCueNotifyActorBase.h"
+#include "AbilitySystem/GameplayCues/SMGameplayCueNotifyBase.h"
 #include "SMGCN_NoiseBreakBurst_Piano.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class STEREOMIX_API ASMGCN_NoiseBreakBurst_Piano : public ASMGameplayCueNotifyActorBase
+class STEREOMIX_API USMGCN_NoiseBreakBurst_Piano : public USMGameplayCueNotifyBase
 {
 	GENERATED_BODY()
 
-public:
-	// Sets default values for this actor's properties
-	ASMGCN_NoiseBreakBurst_Piano();
-
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	virtual bool OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const override;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	UPROPERTY(EditAnywhere, Category = "VFX")
+	TObjectPtr<UNiagaraSystem> HealPackVFX;
 };

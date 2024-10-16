@@ -26,7 +26,7 @@ bool ASMGCNA_HoldWeapon::OnActive_Implementation(AActor* MyTarget, const FGamepl
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
-	const bool IsHoldingCharacter = Parameters.RawMagnitude == 0; // 0이면 캐릭터 아니면 아이템입니다.
+	const bool IsHoldingCharacter = FMath::IsNearlyZero(Parameters.RawMagnitude); // 0이면 캐릭터 아니면 아이템입니다.
 	const int32 ParameterValue = IsHoldingCharacter ? (static_cast<int32>(SourceTeam) - 1) : 2;
 
 	if (VFX.Contains(SourceTeam))

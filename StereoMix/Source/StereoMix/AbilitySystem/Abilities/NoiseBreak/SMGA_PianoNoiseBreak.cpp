@@ -38,7 +38,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPianoCharacterDataAsset* SourceDataAsset = GetDataAsset<USMPianoCharacterDataAsset>();
 	const USMHIC_Character* SourceHIC = GetHIC();
 	UCapsuleComponent* SourceCapsule = SourceCharacter ? SourceCharacter->GetCapsuleComponent() : nullptr;
@@ -82,10 +82,12 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		const FVector LaunchLocation(SourceLocation.X, SourceLocation.Y, SourceLocation.Z + 325.0);
 		const FVector LaunchPointToTargetDirection = (NoiseBreakTargetLocation - LaunchLocation).GetSafeNormal();
 		constexpr float Offset = 250.0f;
+
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = LaunchLocation + (LaunchPointToTargetDirection * Offset);
 		GCParams.Normal = LaunchPointToTargetDirection;
+		GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::NoiseBreak, GCParams);
 	}
 
@@ -127,7 +129,7 @@ void USMGA_PianoNoiseBreak::ServerSendLocationData_Implementation(const FVector_
 void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 {
 	ASMPianoCharacter* SourceCharacter = GetAvatarActor<ASMPianoCharacter>();
-	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	USMHIC_Character* SourceHIC = GetHIC();
 	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
@@ -178,6 +180,7 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = NoiseBreakTargetLocation;
 		GCParams.Normal = TargetToSourceDirection;
+		GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::NoiseBreakBurst, GCParams);
 
 		SourceHIC->SetActorIAmHolding(nullptr);
