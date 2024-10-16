@@ -56,12 +56,15 @@ public:
 	const TArray<FSoftObjectPath>& GetStageLevels() const { return StageLevels; }
 
 protected:
-	template <typename DataType, typename FieldType>
-	void UpdateDataTable(TSharedPtr<FJsonObject> CharacterData, UDataTable* DataTable, const FString& CharacterName, const TMap<FString, FieldType DataType::*> & FieldMap);
-	
+	template<typename DataType, typename FieldType>
+	void UpdateDataTable(TSharedPtr<FJsonObject> CharacterData, UDataTable* DataTable, const FString& CharacterName, const TMap<FString, FieldType DataType::*>& FieldMap);
+
 	void ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttpResponsePtr Response, bool bConnectedSuccessfully);
 
 	FName CharacterTypeToName(ESMCharacterType CharacterType);
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 bUseServerDataTable:1;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UDataTable> CharacterStatsDataTable;

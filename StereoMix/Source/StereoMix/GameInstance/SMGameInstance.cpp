@@ -68,6 +68,11 @@ bool USMGameInstance::IsDemoGame() const
 
 void USMGameInstance::RequestDataTableToServer()
 {
+	if (!bUseServerDataTable)
+	{
+		return;
+	}
+
 	TSharedRef<IHttpRequest> Request = FHttpModule::Get().CreateRequest();
 
 	Request->OnProcessRequestComplete().BindUObject(this, &ThisClass::ReceivedDataTableFromServer);

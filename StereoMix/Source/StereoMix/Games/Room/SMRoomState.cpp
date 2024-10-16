@@ -23,12 +23,10 @@ void ASMRoomState::PostInitializeComponents()
 {
 	Super::PostInitializeComponents();
 
-#if UE_BUILD_SHIPPING
 	if (USMGameInstance* GameInstance = GetGameInstance<USMGameInstance>())
 	{
 		GameInstance->RequestDataTableToServer();
 	}
-#endif
 }
 
 void ASMRoomState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
