@@ -3,7 +3,6 @@
 
 #include "SMGA_Hold.h"
 
-#include "Abilities/Tasks/AbilityTask_NetworkSyncPoint.h"
 #include "Abilities/Tasks/AbilityTask_PlayMontageAndWait.h"
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
@@ -39,7 +38,7 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceDataAsset = GetDataAsset();
-	if (!SourceCharacter || !ensureAlways(SourceASC) || !ensureAlways(SourceDataAsset))
+	if (!SourceCharacter || !SourceASC || !SourceDataAsset)
 	{
 		EndAbilityByCancel();
 		return;
@@ -67,33 +66,17 @@ void USMGA_Hold::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const 
 		WaitGameplayEventTask->EventReceived.AddDynamic(this, &ThisClass::OnHoldAnimNotifyTrigger);
 		WaitGameplayEventTask->ReadyForActivation();
 
-		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		const FVector SourceToCursorDirection = (CursorLocation - SourceLocation).GetSafeNormal();
-
-		// 잡기 시전 시 이펙트 입니다. Execute가 아닌 Add인 이유는 잡기 성공시 즉시 이펙트를 끄기 위함입니다.
+		// 잡기 시전 시 이펙트입니다.
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
-		GCParams.Normal = SourceToCursorDirection;
-		SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Common::Hold, GCParams);
+		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Common::Hold, GCParams);
 	}
 }
 
 void USMGA_Hold::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	bSuccessHold = false;
-
-	if (K2_HasAuthority())
-	{
-		if (const USMAbilitySystemComponent* SourceASC = GetASC())
-		{
-			AActor* SourceActor = GetAvatarActor();
-
-			FGameplayCueParameters GCParams;
-			GCParams.SourceObject = SourceActor;
-			SourceASC->RemoveGC(SourceActor, SMTags::GameplayCue::Common::Hold, GCParams);
-		}
-	}
 
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
@@ -170,11 +153,6 @@ void USMGA_Hold::OnHold(AActor* TargetActor)
 			HitGCParams.Location = PreHeldLocation;
 			HitGCParams.Normal = SourceToTargetDirection;
 			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Common::HoldHit, HitGCParams);
-
-			// 잡기 시전 이펙트는 제거합니다.
-			FGameplayCueParameters HoldCancelGCParams;
-			HoldCancelGCParams.SourceObject = SourceCharacter;
-			SourceASC->RemoveGC(SourceCharacter, SMTags::GameplayCue::Common::Hold, HoldCancelGCParams);
 		}
 
 		bSuccess = true;
