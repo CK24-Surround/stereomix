@@ -9,26 +9,66 @@
 #include "Data/SMTeam.h"
 
 
+void USMPlaylist::NativeConstruct()
+{
+	Super::NativeConstruct();
+
+	WinTeamPlayerNames.Add(WinTeamPlayerName1);
+	WinTeamPlayerNames.Add(WinTeamPlayerName2);
+	WinTeamPlayerNames.Add(WinTeamPlayerName3);
+
+	LoseTeamPlayerNames.Add(LoseTeamPlayerName1);
+	LoseTeamPlayerNames.Add(LoseTeamPlayerName2);
+	LoseTeamPlayerNames.Add(LoseTeamPlayerName3);
+
+	EDMRowNames.Add(EDMRowName1);
+	EDMRowNames.Add(EDMRowName2);
+	EDMRowNames.Add(EDMRowName3);
+
+	FBRowNames.Add(FBRowName1);
+	FBRowNames.Add(FBRowName2);
+	FBRowNames.Add(FBRowName3);
+
+	OverviewColumnTitles.Add(OverviewColumn1_Title);
+	OverviewColumnTitles.Add(OverviewColumn2_Title);
+	OverviewColumnTitles.Add(OverviewColumn3_Title);
+	OverviewColumnTitles.Add(OverviewColumn4_Title);
+	OverviewColumnTitles.Add(OverviewColumn5_Title);
+	OverviewColumnTitles.Add(OverviewColumn6_Title);
+	OverviewColumnTitles.Add(OverviewColumn7_Title);
+
+	OverviewRows.Add({ OverviewColumn1_1, OverviewColumn2_1, OverviewColumn3_1, OverviewColumn4_1, OverviewColumn5_1, OverviewColumn6_1, OverviewColumn7_1 });
+	OverviewRows.Add({ OverviewColumn1_2, OverviewColumn2_2, OverviewColumn3_2, OverviewColumn4_2, OverviewColumn5_2, OverviewColumn6_2, OverviewColumn7_2 });
+	OverviewRows.Add({ OverviewColumn1_3, OverviewColumn2_3, OverviewColumn3_3, OverviewColumn4_3, OverviewColumn5_3, OverviewColumn6_3, OverviewColumn7_3 });
+	OverviewRows.Add({ OverviewColumn1_4, OverviewColumn2_4, OverviewColumn3_4, OverviewColumn4_4, OverviewColumn5_4, OverviewColumn6_4, OverviewColumn7_4 });
+	OverviewRows.Add({ OverviewColumn1_5, OverviewColumn2_5, OverviewColumn3_5, OverviewColumn4_5, OverviewColumn5_5, OverviewColumn6_5, OverviewColumn7_5 });
+	OverviewRows.Add({ OverviewColumn1_6, OverviewColumn2_6, OverviewColumn3_6, OverviewColumn4_6, OverviewColumn5_6, OverviewColumn6_6, OverviewColumn7_6 });
+}
+
 void USMPlaylist::ResetTeamInfo() const
 {
 	WinTeamScore->SetText(FText::FromString("0"));
 	LoseTeamScore->SetText(FText::FromString("0"));
 
-	WinTeamPlayerName1->SetText(FText::FromString(""));
-	WinTeamPlayerName2->SetText(FText::FromString(""));
-	WinTeamPlayerName3->SetText(FText::FromString(""));
+	for (auto& PlayerName : WinTeamPlayerNames)
+	{
+		PlayerName->SetText(FText::FromString(""));
+	}
 
-	LoseTeamPlayerName1->SetText(FText::FromString(""));
-	LoseTeamPlayerName2->SetText(FText::FromString(""));
-	LoseTeamPlayerName3->SetText(FText::FromString(""));
+	for (auto& PlayerName : LoseTeamPlayerNames)
+	{
+		PlayerName->SetText(FText::FromString(""));
+	}
 
-	EDMRowName1->SetText(FText::FromString(""));
-	EDMRowName2->SetText(FText::FromString(""));
-	EDMRowName3->SetText(FText::FromString(""));
+	for (auto& RowName : EDMRowNames)
+	{
+		RowName->SetText(FText::FromString(""));
+	}
 
-	FBRowName1->SetText(FText::FromString(""));
-	FBRowName2->SetText(FText::FromString(""));
-	FBRowName3->SetText(FText::FromString(""));
+	for (auto& RowName : FBRowNames)
+	{
+		RowName->SetText(FText::FromString(""));
+	}
 }
 
 void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
@@ -39,13 +79,6 @@ void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
 	WinTeamType->SetText(WinTeam == ESMTeam::EDM ? FText::FromString("Inferno Beat") : FText::FromString("Chewing Cats"));
 	LoseTeamType->SetText(WinTeam == ESMTeam::EDM ? FText::FromString("Chewing Cats") : FText::FromString("Inferno Beat"));
 
-	TMap<ESMCharacterType, FString> PlayerTypeMap = {
-		{ ESMCharacterType::None, "None" },
-		{ ESMCharacterType::ElectricGuitar, "ElectricGuitar" },
-		{ ESMCharacterType::Piano, "Piano" },
-		{ ESMCharacterType::Bass, "Bass" }
-	};
-
 	ResetTeamInfo();
 
 	ChangePlaylist(WinTeam);
@@ -54,198 +87,129 @@ void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
 void USMPlaylist::ChangePlaylist(ESMTeam WinTeam)
 {
 	TObjectPtr<UCommonTextBlock> EDMTeamScore = LoseTeamScore;
-	TObjectPtr<UCommonTextBlock> EDMPlayerName1 = LoseTeamPlayerName1;
-	TObjectPtr<UCommonTextBlock> EDMPlayerName2 = LoseTeamPlayerName2;
-	TObjectPtr<UCommonTextBlock> EDMPlayerName3 = LoseTeamPlayerName3;
+	TArray<TObjectPtr<UCommonTextBlock>> EDMPlayerNames = LoseTeamPlayerNames;
 
 	TObjectPtr<UCommonTextBlock> FBTeamScore = LoseTeamScore;
-	TObjectPtr<UCommonTextBlock> FBPlayerName1 = LoseTeamPlayerName1;
-	TObjectPtr<UCommonTextBlock> FBPlayerName2 = LoseTeamPlayerName2;
-	TObjectPtr<UCommonTextBlock> FBPlayerName3 = LoseTeamPlayerName3;
+	TArray<TObjectPtr<UCommonTextBlock>> FBPlayerNames = LoseTeamPlayerNames;
 
 	switch (WinTeam)
 	{
 		case ESMTeam::EDM:
 			EDMTeamScore = WinTeamScore;
-			EDMPlayerName1 = WinTeamPlayerName1;
-			EDMPlayerName2 = WinTeamPlayerName2;
-			EDMPlayerName3 = WinTeamPlayerName3;
+			EDMPlayerNames = WinTeamPlayerNames;
 			break;
 		case ESMTeam::FutureBass:
 			FBTeamScore = WinTeamScore;
-			FBPlayerName1 = WinTeamPlayerName1;
-			FBPlayerName2 = WinTeamPlayerName2;
-			FBPlayerName3 = WinTeamPlayerName3;
+			FBPlayerNames = WinTeamPlayerNames;
 			break;
 		default:
 			break;
 	}
 
 	int TotalEDMTeamScore = 0;
-	if (EDMAnalysisData.Num() > 0)
+	for (int i = 0; i < EDMAnalysisData.Num(); i++)
 	{
-		TotalEDMTeamScore += EDMAnalysisData[0].TotalScore();
-		EDMPlayerName1->SetText(FText::FromString(EDMAnalysisData[0].PlayerName));
-		EDMRowName1->SetText(FText::FromString(EDMAnalysisData[0].PlayerName));
-	}
-	if (EDMAnalysisData.Num() > 1)
-	{
-		TotalEDMTeamScore += EDMAnalysisData[1].TotalScore();
-		EDMPlayerName2->SetText(FText::FromString(EDMAnalysisData[1].PlayerName));
-		EDMRowName2->SetText(FText::FromString(EDMAnalysisData[1].PlayerName));
-	}
-	if (EDMAnalysisData.Num() > 2)
-	{
-		TotalEDMTeamScore += EDMAnalysisData[2].TotalScore();
-		EDMPlayerName3->SetText(FText::FromString(EDMAnalysisData[2].PlayerName));
-		EDMRowName3->SetText(FText::FromString(EDMAnalysisData[2].PlayerName));
+		TotalEDMTeamScore += EDMAnalysisData[i].TotalScore();
+		EDMPlayerNames[i]->SetText(FText::FromString(EDMAnalysisData[i].PlayerName));
+		EDMRowNames[i]->SetText(FText::FromString(EDMAnalysisData[i].PlayerName));
 	}
 	EDMTeamScore->SetText(FText::FromString(FString::FromInt(TotalEDMTeamScore)));
 
 	int TotalFBTeamScore = 0;
-	if (FBAnalysisData.Num() > 0)
+	for (int i = 0; i < FBAnalysisData.Num(); i++)
 	{
-		TotalFBTeamScore += FBAnalysisData[0].TotalScore();
-		FBPlayerName1->SetText(FText::FromString(FBAnalysisData[0].PlayerName));
-		FBRowName1->SetText(FText::FromString(FBAnalysisData[0].PlayerName));
-	}
-	if (FBAnalysisData.Num() > 1)
-	{
-		TotalFBTeamScore += FBAnalysisData[1].TotalScore();
-		FBPlayerName2->SetText(FText::FromString(FBAnalysisData[1].PlayerName));
-		FBRowName2->SetText(FText::FromString(FBAnalysisData[1].PlayerName));
-	}
-	if (FBAnalysisData.Num() > 2)
-	{
-		TotalFBTeamScore += FBAnalysisData[2].TotalScore();
-		FBPlayerName3->SetText(FText::FromString(FBAnalysisData[2].PlayerName));
-		FBRowName3->SetText(FText::FromString(FBAnalysisData[2].PlayerName));
+		TotalFBTeamScore += FBAnalysisData[i].TotalScore();
+		FBPlayerNames[i]->SetText(FText::FromString(FBAnalysisData[i].PlayerName));
+		FBRowNames[i]->SetText(FText::FromString(FBAnalysisData[i].PlayerName));
 	}
 	FBTeamScore->SetText(FText::FromString(FString::FromInt(TotalFBTeamScore)));
 }
 
 void USMPlaylist::ChangeOverview()
 {
-	OverviewColumn4_Title->SetText(FText::FromString(TEXT("점수")));
-	OverviewColumn5_Title->SetText(FText::FromString(TEXT("점령한 타일 수")));
-	OverviewColumn6_Title->SetText(FText::FromString(TEXT("가한 피해량")));
-	OverviewColumn7_Title->SetText(FText::FromString(TEXT("무력화 시킨 수")));
+	SetOverviewColumnTitles({
+		TEXT(""), TEXT(""), TEXT(""),
+		TEXT("점수"),
+		TEXT("점령한 타일 수"),
+		TEXT("가한 피해량"),
+		TEXT("무력화 시킨 수"),
+	});
 
-	if (EDMAnalysisData.Num() > 0)
+	for (int i = 0; i < EDMAnalysisData.Num(); i++)
 	{
-		OverviewColumn4_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalScore())));
-		OverviewColumn5_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalCapturedTiles)));
-		OverviewColumn6_1->SetText(FText::FromString(FString::SanitizeFloat(EDMAnalysisData[0].TotalDamageDealt)));
-		OverviewColumn7_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalKillCount)));
-	}
-	if (EDMAnalysisData.Num() > 1)
-	{
-		OverviewColumn4_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalScore())));
-		OverviewColumn5_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalCapturedTiles)));
-		OverviewColumn6_2->SetText(FText::FromString(FString::SanitizeFloat(EDMAnalysisData[1].TotalDamageDealt)));
-		OverviewColumn7_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalKillCount)));
-	}
-	if (EDMAnalysisData.Num() > 2)
-	{
-		OverviewColumn4_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalScore())));
-		OverviewColumn5_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalCapturedTiles)));
-		OverviewColumn6_3->SetText(FText::FromString(FString::SanitizeFloat(EDMAnalysisData[2].TotalDamageDealt)));
-		OverviewColumn7_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalKillCount)));
+		SetOverviewRowNames(OverviewRows[i], {
+			TEXT(""), TEXT(""), TEXT(""),
+			FString::FromInt(EDMAnalysisData[i].TotalScore()),
+			FString::FromInt(EDMAnalysisData[i].TotalCapturedTiles),
+			FString::SanitizeFloat(EDMAnalysisData[i].TotalDamageDealt),
+			FString::FromInt(EDMAnalysisData[i].TotalKillCount)
+		});
 	}
 
-	if (FBAnalysisData.Num() > 0)
+	for (int i = 0; i < FBAnalysisData.Num(); i++)
 	{
-		OverviewColumn4_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalScore())));
-		OverviewColumn5_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalCapturedTiles)));
-		OverviewColumn6_4->SetText(FText::FromString(FString::SanitizeFloat(FBAnalysisData[0].TotalDamageDealt)));
-		OverviewColumn7_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalKillCount)));
-	}
-	if (FBAnalysisData.Num() > 1)
-	{
-		OverviewColumn4_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalScore())));
-		OverviewColumn5_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalCapturedTiles)));
-		OverviewColumn6_5->SetText(FText::FromString(FString::SanitizeFloat(FBAnalysisData[1].TotalDamageDealt)));
-		OverviewColumn7_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalKillCount)));
-	}
-	if (FBAnalysisData.Num() > 2)
-	{
-		OverviewColumn4_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalScore())));
-		OverviewColumn5_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalCapturedTiles)));
-		OverviewColumn6_6->SetText(FText::FromString(FString::SanitizeFloat(FBAnalysisData[2].TotalDamageDealt)));
-		OverviewColumn7_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalKillCount)));
+		SetOverviewRowNames(OverviewRows[i + 3], {
+			TEXT(""), TEXT(""), TEXT(""),
+			FString::FromInt(FBAnalysisData[i].TotalScore()),
+			FString::FromInt(FBAnalysisData[i].TotalCapturedTiles),
+			FString::SanitizeFloat(FBAnalysisData[i].TotalDamageDealt),
+			FString::FromInt(FBAnalysisData[i].TotalKillCount)
+		});
 	}
 }
 
 void USMPlaylist::ChangeAnalytics()
 {
-	OverviewColumn1_Title->SetText(FText::FromString(TEXT("")));
-	OverviewColumn2_Title->SetText(FText::FromString(TEXT("점령한 타일 수")));
-	OverviewColumn3_Title->SetText(FText::FromString(TEXT("가한 피해량")));
-	OverviewColumn4_Title->SetText(FText::FromString(TEXT("무력화 시킨 수")));
-	OverviewColumn5_Title->SetText(FText::FromString(TEXT("받은 피해량")));
-	OverviewColumn6_Title->SetText(FText::FromString(TEXT("무력화 된 수")));
-	OverviewColumn7_Title->SetText(FText::FromString(TEXT("노브 시전 횟수")));
+	SetOverviewColumnTitles({
+		TEXT(""),
+		TEXT("점령한 타일 수"),
+		TEXT("가한 피해량"),
+		TEXT("무력화 시킨 수"),
+		TEXT("받은 피해량"),
+		TEXT("무력화 된 수"),
+		TEXT("노브 시전 횟수")
+	});
 
-	if (EDMAnalysisData.Num() > 0)
+	for (int i = 0; i < EDMAnalysisData.Num(); i++)
 	{
-		OverviewColumn1_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalScore())));
-		OverviewColumn2_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalCapturedTiles)));
-		OverviewColumn3_1->SetText(FText::FromString(FString::SanitizeFloat(EDMAnalysisData[0].TotalDamageDealt)));
-		OverviewColumn4_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalKillCount)));
-		OverviewColumn5_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalDamageReceived)));
-		OverviewColumn6_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalDeathCount)));
-		OverviewColumn7_1->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[0].TotalNoiseBreakUsage)));
-	}
-	if (EDMAnalysisData.Num() > 1)
-	{
-		OverviewColumn1_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalScore())));
-		OverviewColumn2_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalCapturedTiles)));
-		OverviewColumn3_2->SetText(FText::FromString(FString::SanitizeFloat(EDMAnalysisData[1].TotalDamageDealt)));
-		OverviewColumn4_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalKillCount)));
-		OverviewColumn5_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalDamageReceived)));
-		OverviewColumn6_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalDeathCount)));
-		OverviewColumn7_2->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[1].TotalNoiseBreakUsage)));
-	}
-	if (EDMAnalysisData.Num() > 2)
-	{
-		OverviewColumn1_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalScore())));
-		OverviewColumn2_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalCapturedTiles)));
-		OverviewColumn3_3->SetText(FText::FromString(FString::SanitizeFloat(EDMAnalysisData[2].TotalDamageDealt)));
-		OverviewColumn4_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalKillCount)));
-		OverviewColumn5_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalDamageReceived)));
-		OverviewColumn6_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalDeathCount)));
-		OverviewColumn7_3->SetText(FText::FromString(FString::FromInt(EDMAnalysisData[2].TotalNoiseBreakUsage)));
+		SetOverviewRowNames(OverviewRows[i], {
+			FString::FromInt(EDMAnalysisData[i].TotalScore()),
+			FString::FromInt(EDMAnalysisData[i].TotalCapturedTiles),
+			FString::SanitizeFloat(EDMAnalysisData[i].TotalDamageDealt),
+			FString::FromInt(EDMAnalysisData[i].TotalKillCount),
+			FString::SanitizeFloat(EDMAnalysisData[i].TotalDamageReceived),
+			FString::FromInt(EDMAnalysisData[i].TotalDeathCount),
+			FString::FromInt(EDMAnalysisData[i].TotalNoiseBreakUsage)
+		});
 	}
 
-	if (FBAnalysisData.Num() > 0)
+	for (int i = 0; i < FBAnalysisData.Num(); i++)
 	{
-		OverviewColumn1_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalScore())));
-		OverviewColumn2_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalCapturedTiles)));
-		OverviewColumn3_4->SetText(FText::FromString(FString::SanitizeFloat(FBAnalysisData[0].TotalDamageDealt)));
-		OverviewColumn4_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalKillCount)));
-		OverviewColumn5_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalDamageReceived)));
-		OverviewColumn6_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalDeathCount)));
-		OverviewColumn7_4->SetText(FText::FromString(FString::FromInt(FBAnalysisData[0].TotalNoiseBreakUsage)));
+		SetOverviewRowNames(OverviewRows[i + 3], {
+			FString::FromInt(FBAnalysisData[i].TotalScore()),
+			FString::FromInt(FBAnalysisData[i].TotalCapturedTiles),
+			FString::SanitizeFloat(FBAnalysisData[i].TotalDamageDealt),
+			FString::FromInt(FBAnalysisData[i].TotalKillCount),
+			FString::SanitizeFloat(FBAnalysisData[i].TotalDamageReceived),
+			FString::FromInt(FBAnalysisData[i].TotalDeathCount),
+			FString::FromInt(FBAnalysisData[i].TotalNoiseBreakUsage)
+		});
 	}
-	if (FBAnalysisData.Num() > 1)
+}
+
+void USMPlaylist::SetOverviewColumnTitles(const TArray<FString>& Titles) const
+{
+	for (int i = 0; i < Titles.Num(); i++)
 	{
-		OverviewColumn1_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalScore())));
-		OverviewColumn2_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalCapturedTiles)));
-		OverviewColumn3_5->SetText(FText::FromString(FString::SanitizeFloat(FBAnalysisData[1].TotalDamageDealt)));
-		OverviewColumn4_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalKillCount)));
-		OverviewColumn5_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalDamageReceived)));
-		OverviewColumn6_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalDeathCount)));
-		OverviewColumn7_5->SetText(FText::FromString(FString::FromInt(FBAnalysisData[1].TotalNoiseBreakUsage)));
+		OverviewColumnTitles[i]->SetText(FText::FromString(Titles[i]));
 	}
-	if (FBAnalysisData.Num() > 2)
+}
+
+void USMPlaylist::SetOverviewRowNames(TArray<TObjectPtr<UCommonTextBlock>>& Row, const TArray<FString>& Names)
+{
+	for (int i = 0; i < Names.Num(); i++)
 	{
-		OverviewColumn1_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalScore())));
-		OverviewColumn2_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalCapturedTiles)));
-		OverviewColumn3_6->SetText(FText::FromString(FString::SanitizeFloat(FBAnalysisData[2].TotalDamageDealt)));
-		OverviewColumn4_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalKillCount)));
-		OverviewColumn5_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalDamageReceived)));
-		OverviewColumn6_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalDeathCount)));
-		OverviewColumn7_6->SetText(FText::FromString(FString::FromInt(FBAnalysisData[2].TotalNoiseBreakUsage)));
+		Row[i]->SetText(FText::FromString(Names[i]));
 	}
 }
 

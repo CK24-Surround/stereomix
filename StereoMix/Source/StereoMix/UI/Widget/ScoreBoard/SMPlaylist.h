@@ -19,13 +19,15 @@ class STEREOMIX_API USMPlaylist : public UCommonActivatableWidget
 	GENERATED_BODY()
 
 public:
+	virtual void NativeConstruct() override;
+
 	void ResetTeamInfo() const;
-	
+
 	void SetVictoryTeam(ESMTeam WinTeam);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangePlaylist(ESMTeam WinTeam);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void ChangeOverview();
 
@@ -36,6 +38,26 @@ public:
 	void MulticastShowPlaylist(ESMTeam WinTeam, const TArray<FPlayerScoreData>& EDMPlayerData, const TArray<FPlayerScoreData>& FBPlayerData);
 
 protected:
+	void SetOverviewColumnTitles(const TArray<FString>& Titles) const;
+
+	static void SetOverviewRowNames(TArray<TObjectPtr<UCommonTextBlock>>& Row, const TArray<FString>& Names);
+
+	TArray<FPlayerScoreData> EDMAnalysisData;
+
+	TArray<FPlayerScoreData> FBAnalysisData;
+
+	TArray<TObjectPtr<UCommonTextBlock>> WinTeamPlayerNames;
+
+	TArray<TObjectPtr<UCommonTextBlock>> LoseTeamPlayerNames;
+
+	TArray<TObjectPtr<UCommonTextBlock>> EDMRowNames;
+
+	TArray<TObjectPtr<UCommonTextBlock>> FBRowNames;
+
+	TArray<TObjectPtr<UCommonTextBlock>> OverviewColumnTitles;
+
+	TArray<TArray<TObjectPtr<UCommonTextBlock>>> OverviewRows;
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> EDMWinTeamBackground;
 
@@ -278,8 +300,4 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> OverviewColumn7_6;
-
-	TArray<FPlayerScoreData> EDMAnalysisData;
-
-	TArray<FPlayerScoreData> FBAnalysisData;
 };
