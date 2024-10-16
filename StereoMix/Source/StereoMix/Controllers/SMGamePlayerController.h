@@ -80,12 +80,6 @@ protected:
 	UPROPERTY()
 	TObjectPtr<USMUserWidget_HUD> HUDWidget;
 
-	UPROPERTY(EditAnywhere, Category = "Design|UI|HUD")
-	TSubclassOf<USMUserWidget_VictoryDefeat> VictoryDefeatWidgetClass;
-
-	UPROPERTY()
-	TObjectPtr<USMUserWidget_VictoryDefeat> VictoryDefeatWidget;
-
 	UPROPERTY(EditAnywhere, Category = "Design|UI|StartCountdown")
 	TSubclassOf<USMUserWidget_StartCountdown> StartCountdownWidgetClass;
 

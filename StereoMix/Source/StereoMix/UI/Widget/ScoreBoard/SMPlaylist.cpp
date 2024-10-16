@@ -94,11 +94,11 @@ void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
 
 void USMPlaylist::ChangePlaylist(ESMTeam WinTeam)
 {
-	TObjectPtr<UCommonTextBlock> EDMTeamScore = LoseTeamScore;
-	TArray<TObjectPtr<UCommonTextBlock>> EDMPlayerNames = LoseTeamPlayerNames;
+	UCommonTextBlock* EDMTeamScore = LoseTeamScore;
+	TArray<UCommonTextBlock*> EDMPlayerNames = LoseTeamPlayerNames;
 
-	TObjectPtr<UCommonTextBlock> FBTeamScore = LoseTeamScore;
-	TArray<TObjectPtr<UCommonTextBlock>> FBPlayerNames = LoseTeamPlayerNames;
+	UCommonTextBlock* FBTeamScore = LoseTeamScore;
+	TArray<UCommonTextBlock*> FBPlayerNames = LoseTeamPlayerNames;
 
 	switch (WinTeam)
 	{
@@ -145,6 +145,7 @@ void USMPlaylist::ChangeOverview()
 
 	for (int i = 0; i < EDMAnalysisData.Num(); i++)
 	{
+		// 점수를 좌측정렬합니다
 		OverviewRows[i][0]->SetJustification(ETextJustify::Center);
 		OverviewRows[i][3]->SetJustification(ETextJustify::Left);
 

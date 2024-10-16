@@ -7,10 +7,8 @@
 #include "AbilitySystemComponent.h"
 #include "Blueprint/UserWidget.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
-#include "StereoMixLog.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
-#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Games/SMGamePlayerState.h"
 #include "UI/Widget/Dummy/SMUserWidget_StaminaSkillGaugeDummyBar.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
@@ -87,12 +85,6 @@ void ASMGamePlayerController::InitUI()
 	{
 		HUDWidget->AddToViewport(0);
 		HUDWidget->SetASC(SourceASC);
-	}
-
-	if (VictoryDefeatWidget = CreateWidget<USMUserWidget_VictoryDefeat>(this, VictoryDefeatWidgetClass); VictoryDefeatWidget)
-	{
-		VictoryDefeatWidget->AddToViewport(1);
-		VictoryDefeatWidget->SetASC(SourceASC);
 	}
 
 	if (StartCountdownWidget = CreateWidget<USMUserWidget_StartCountdown>(this, StartCountdownWidgetClass); StartCountdownWidget)
