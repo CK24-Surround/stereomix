@@ -72,7 +72,7 @@ void USMGameInstance::RequestDataTableToServer()
 
 	Request->OnProcessRequestComplete().BindUObject(this, &ThisClass::ReceivedDataTableFromServer);
 
-	UE_LOG(LogStereoMix, Warning, TEXT("Requesting DataTable from Server"));
+	UE_LOG(LogStereoMix, Log, TEXT("Requesting DataTable from Server"));
 	const FString RequestURL = "https://stereomix-502920527569.asia-northeast3.run.app/stats/character";
 	if (!RequestURL.IsEmpty())
 	{
@@ -131,7 +131,7 @@ void USMGameInstance::ReceivedDataTableFromServer(FHttpRequestPtr Request, FHttp
 
 	if (FJsonSerializer::Deserialize(Reader, JsonObject))
 	{
-		NET_LOG(GetPrimaryPlayerController(), Warning, TEXT("DataTable Received"));
+		UE_LOG(LogStereoMix, Log, TEXT("DataTable received from Server"));
 
 		for (auto& CharacterItem : JsonObject->Values)
 		{

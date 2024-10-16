@@ -52,8 +52,6 @@ void USMScoreManagerComponent::AddTotalCapturedTiles(const AActor* CapturedInsti
 
 	TWeakObjectPtr<const AActor> TargetWeakPtr = MakeWeakObjectPtr(CapturedInstigator);
 	PlayerScoreData.FindOrAdd(TargetWeakPtr, GetDefaultPlayerScoreData(TargetWeakPtr)).TotalCapturedTiles += CapturedTilesCount;
-
-	LogPlayerData(TargetWeakPtr);
 }
 
 void USMScoreManagerComponent::AddTotalDamageDealt(const AActor* TargetPlayer, float DamageDealt)
@@ -65,8 +63,6 @@ void USMScoreManagerComponent::AddTotalDamageDealt(const AActor* TargetPlayer, f
 
 	TWeakObjectPtr<const AActor> TargetWeakPtr = MakeWeakObjectPtr(TargetPlayer);
 	PlayerScoreData.FindOrAdd(TargetWeakPtr, GetDefaultPlayerScoreData(TargetWeakPtr)).TotalDamageDealt += DamageDealt;
-
-	LogPlayerData(TargetWeakPtr);
 }
 
 void USMScoreManagerComponent::AddTotalDamageReceived(const AActor* TargetPlayer, float DamageReceived)
@@ -78,8 +74,6 @@ void USMScoreManagerComponent::AddTotalDamageReceived(const AActor* TargetPlayer
 
 	TWeakObjectPtr<const AActor> TargetWeakPtr = MakeWeakObjectPtr(TargetPlayer);
 	PlayerScoreData.FindOrAdd(TargetWeakPtr, GetDefaultPlayerScoreData(TargetWeakPtr)).TotalDamageReceived += DamageReceived;
-
-	LogPlayerData(TargetWeakPtr);
 }
 
 void USMScoreManagerComponent::AddTotalDeathCount(const AActor* TargetPlayer)
@@ -91,8 +85,6 @@ void USMScoreManagerComponent::AddTotalDeathCount(const AActor* TargetPlayer)
 
 	TWeakObjectPtr<const AActor> TargetWeakPtr = MakeWeakObjectPtr(TargetPlayer);
 	PlayerScoreData.FindOrAdd(TargetWeakPtr, GetDefaultPlayerScoreData(TargetWeakPtr)).TotalDeathCount += 1;
-
-	LogPlayerData(TargetWeakPtr);
 }
 
 void USMScoreManagerComponent::AddTotalKillCount(const AActor* TargetPlayer)
@@ -104,8 +96,6 @@ void USMScoreManagerComponent::AddTotalKillCount(const AActor* TargetPlayer)
 
 	TWeakObjectPtr<const AActor> TargetWeakPtr = MakeWeakObjectPtr(TargetPlayer);
 	PlayerScoreData.FindOrAdd(TargetWeakPtr, GetDefaultPlayerScoreData(TargetWeakPtr)).TotalKillCount += 1;
-
-	LogPlayerData(TargetWeakPtr);
 }
 
 void USMScoreManagerComponent::AddTotalNoiseBreakUsage(const AActor* TargetPlayer)
@@ -117,8 +107,6 @@ void USMScoreManagerComponent::AddTotalNoiseBreakUsage(const AActor* TargetPlaye
 
 	TWeakObjectPtr<const AActor> TargetWeakPtr = MakeWeakObjectPtr(TargetPlayer);
 	PlayerScoreData.FindOrAdd(TargetWeakPtr, GetDefaultPlayerScoreData(TargetWeakPtr)).TotalNoiseBreakUsage += 1;
-
-	LogPlayerData(TargetWeakPtr);
 }
 
 TWeakObjectPtr<const AActor> USMScoreManagerComponent::GetMVPPlayer(ESMTeam Team) const
@@ -238,15 +226,15 @@ void USMScoreManagerComponent::LogPlayerData(const TWeakObjectPtr<const AActor>&
 
 	FString TargetPlayerName = PlayerScoreData[TargetPlayer].PlayerName;
 
-	UE_LOG(LogStereoMix, Warning, TEXT("[%s : %s] %s\nTiles: %d, DamageDealt: %f, DamageReceived: %f, Death: %d, Kill: %d, NoiseBreak: %d, TotalScore: %d"),
+	UE_LOG(LogStereoMix, Warning, TEXT("[%s : %s] %s\nTiles: %d, DamageDealt: %f, DamageReceived: %f, Kill: %d, Death: %d, NoiseBreak: %d, TotalScore: %d"),
 		**TargetPlayerTeam,
 		**TargetPlayerType,
 		*TargetPlayerName,
 		PlayerScoreData[TargetPlayer].TotalCapturedTiles,
 		PlayerScoreData[TargetPlayer].TotalDamageDealt,
 		PlayerScoreData[TargetPlayer].TotalDamageReceived,
-		PlayerScoreData[TargetPlayer].TotalDeathCount,
 		PlayerScoreData[TargetPlayer].TotalKillCount,
+		PlayerScoreData[TargetPlayer].TotalDeathCount,
 		PlayerScoreData[TargetPlayer].TotalNoiseBreakUsage,
 		PlayerScoreData[TargetPlayer].TotalScore());
 }
