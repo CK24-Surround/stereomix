@@ -217,10 +217,13 @@ void USMGA_BassNoiseBreak::OnLanded()
 		const FVector TileLocation = Tile ? Tile->GetTileLocation() : FVector::ZeroVector;
 		const FVector Offset(0.0, 0.0, 10.0); // 타일과 겹치게 되면 현재 이펙트가 잘 안 보이는데 이를 방지하는 오프셋입니다.
 
+		const AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+		const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = TileLocation + Offset;
-		GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
+		GCParams.RawMagnitude = HoldingType;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakBurst, GCParams);
 	}
 }
@@ -262,11 +265,15 @@ void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
 	}
 
 	const FVector WeaponOffset(30.0, 0.0, -145.0);
+
+	const auto TargetActor = SourceHIC->GetActorIAmHolding();
+	const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
 	GCParams.TargetAttachComponent = SourceWeaponMesh;
 	GCParams.Location = WeaponOffset;
-	GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
+	GCParams.RawMagnitude = HoldingType;
 	SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakWeaponTrail, GCParams);
 }
 
@@ -295,10 +302,13 @@ void USMGA_BassNoiseBreak::OnSlash(FGameplayEventData Payload)
 		return;
 	}
 
+	const auto TargetActor = SourceHIC->GetActorIAmHolding();
+	const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
 	GCParams.Location = NoiseBreakTargetLocation;
 	GCParams.Normal = SourceCharacter->GetActorRotation().Vector();
-	GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
+	GCParams.RawMagnitude = HoldingType;
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakSlash, GCParams);
 }

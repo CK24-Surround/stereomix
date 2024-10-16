@@ -114,11 +114,15 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		const FVector SourceToTarget = NoiseBreakTargetLocation - SourceLocation;
 		const FVector SourceToTargetDirection = SourceToTarget.GetSafeNormal();
 
+		const AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+		const int32 HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0 : 1) : 0; // 0이면 캐릭터, 1이면 아이템입니다.
+
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = SourceLocation;
 		GCParams.Normal = SourceToTargetDirection;
 		GCParams.RawMagnitude = SourceToTarget.Size();
+		GCParams.AbilityLevel = HoldingType;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakFlash, GCParams);
 	}
 
@@ -231,11 +235,14 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 
 	const FVector StartToTarget = NoiseBreakTargetLocation - NoiseBreakStartLocation;
 
+	const int32 HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0 : 1) : 0; // 0이면 캐릭터, 1이면 아이템입니다.
+
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
 	GCParams.Location = NoiseBreakStartLocation;
 	GCParams.Normal = StartToTarget.GetSafeNormal();
 	GCParams.RawMagnitude = StartToTarget.Size();
+	GCParams.AbilityLevel = HoldingType;
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::NoiseBreakBurst, GCParams);
 
 	SourceHIC->SetActorIAmHolding(nullptr);

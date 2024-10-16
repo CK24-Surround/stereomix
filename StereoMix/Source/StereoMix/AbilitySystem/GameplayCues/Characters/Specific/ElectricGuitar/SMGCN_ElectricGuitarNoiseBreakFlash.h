@@ -16,4 +16,7 @@ class STEREOMIX_API USMGCN_ElectricGuitarNoiseBreakFlash : public USMGameplayCue
 
 protected:
 	virtual bool OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const override;
+
+	UPROPERTY(EditAnywhere, Category = "VFX")
+	TObjectPtr<UNiagaraSystem> HealPackVFX;
 };

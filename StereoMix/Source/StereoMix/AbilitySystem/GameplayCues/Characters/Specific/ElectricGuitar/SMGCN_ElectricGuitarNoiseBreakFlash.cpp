@@ -23,9 +23,10 @@ bool USMGCN_ElectricGuitarNoiseBreakFlash::OnExecute_Implementation(AActor* MyTa
 
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 
-	if (VFX.Contains(SourceTeam))
+	// 어빌리티 레벨로 캐릭터인지 구별합니다. 0이면 캐릭터 1이면 아이템입니다.
+	if (UNiagaraSystem* CachedVFX = Parameters.AbilityLevel == 0 ? (VFX.Contains(SourceTeam) ? VFX[SourceTeam] : nullptr) : HealPackVFX)
 	{
-		if (UNiagaraComponent* VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacter, VFX[SourceTeam], StartLocation, StartRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease))
+		if (UNiagaraComponent* VFXComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacter, CachedVFX, StartLocation, StartRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease))
 		{
 			const FName LengthParameterName = TEXT("Length");
 			const float LengthParameterValue = Parameters.RawMagnitude;

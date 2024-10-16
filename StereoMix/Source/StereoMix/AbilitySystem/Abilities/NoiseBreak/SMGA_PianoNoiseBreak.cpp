@@ -83,11 +83,14 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		const FVector LaunchPointToTargetDirection = (NoiseBreakTargetLocation - LaunchLocation).GetSafeNormal();
 		constexpr float Offset = 250.0f;
 
+		const AActor* TargetActor = SourceHIC->GetActorIAmHolding();
+		const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = LaunchLocation + (LaunchPointToTargetDirection * Offset);
 		GCParams.Normal = LaunchPointToTargetDirection;
-		GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
+		GCParams.RawMagnitude = HoldingType;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::NoiseBreak, GCParams);
 	}
 
@@ -174,13 +177,15 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 			}
 		}
 
+		const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
 		const FVector TargetToSourceDirection = (SourceLocation - NoiseBreakTargetLocation).GetSafeNormal();
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = NoiseBreakTargetLocation;
 		GCParams.Normal = TargetToSourceDirection;
-		GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f;
+		GCParams.RawMagnitude = HoldingType;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Piano::NoiseBreakBurst, GCParams);
 
 		SourceHIC->SetActorIAmHolding(nullptr);

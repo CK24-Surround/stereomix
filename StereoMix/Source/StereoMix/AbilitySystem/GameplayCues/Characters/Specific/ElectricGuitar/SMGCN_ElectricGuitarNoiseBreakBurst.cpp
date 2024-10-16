@@ -27,14 +27,14 @@ bool USMGCN_ElectricGuitarNoiseBreakBurst::OnExecute_Implementation(AActor* MyTa
 
 	TWeakObjectPtr<ASMPlayerCharacterBase> SourceCharacterWeakPtr = MakeWeakObjectPtr(SourceCharacter);
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
-	UNiagaraSystem* CachedVFX = VFX[SourceTeam];
+	UNiagaraSystem* CachedVFX = Parameters.AbilityLevel == 0 ? (VFX.Contains(SourceTeam) ? VFX[SourceTeam] : nullptr) : HealPackVFX;
 	for (int32 i = 0; i < StepCount; ++i)
 	{
 		const float CurrentStepDistance = InitialOffset + (DistancePerStep * i);
 		const FVector CurrentStepLocation = SourceLocation + (SourceToTargetRotation.Vector() * CurrentStepDistance);
 
 		auto SpawnFX = [SourceCharacterWeakPtr, CachedVFX, CurrentStepLocation, SourceToTargetRotation]() {
-			if (SourceCharacterWeakPtr.Get() && CachedVFX)
+			if (SourceCharacterWeakPtr.IsValid() && CachedVFX)
 			{
 				UNiagaraFunctionLibrary::SpawnSystemAtLocation(SourceCharacterWeakPtr.Get(), CachedVFX, CurrentStepLocation, SourceToTargetRotation, FVector(1), false, true, ENCPoolMethod::AutoRelease);
 			}
