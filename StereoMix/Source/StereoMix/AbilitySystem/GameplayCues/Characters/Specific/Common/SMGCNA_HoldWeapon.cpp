@@ -38,19 +38,9 @@ bool ASMGCNA_HoldWeapon::OnActive_Implementation(AActor* MyTarget, const FGamepl
 		}
 	}
 
-	if (IsHoldingCharacter)
+	if (UMaterialInterface* CachedOverlayMaterial = IsHoldingCharacter ? (OverlayMaterial.Contains(SourceTeam) ? OverlayMaterial[SourceTeam] : nullptr) : HealPackOverlayMaterial)
 	{
-		if (OverlayMaterial.Contains(SourceTeam))
-		{
-			WeaponMesh->SetOverlayMaterial(OverlayMaterial[SourceTeam]);
-		}
-	}
-	else
-	{
-		if (HealPackOverlayMaterial)
-		{
-			WeaponMesh->SetOverlayMaterial(HealPackOverlayMaterial);
-		}
+		WeaponMesh->SetOverlayMaterial(CachedOverlayMaterial);
 	}
 
 	return true;
