@@ -226,7 +226,7 @@ void USMScoreManagerComponent::LogPlayerData(const TWeakObjectPtr<const AActor>&
 
 	FString TargetPlayerName = PlayerScoreData[TargetPlayer].PlayerName;
 
-	UE_LOG(LogStereoMix, Warning, TEXT("[%s : %s] %s\nTiles: %d, DamageDealt: %f, DamageReceived: %f, Kill: %d, Death: %d, NoiseBreak: %d, TotalScore: %d"),
+	UE_LOG(LogStereoMix, Log, TEXT("[%s : %s] %s\nTiles: %d, DamageDealt: %f, DamageReceived: %f, Kill: %d, Death: %d, NoiseBreak: %d, TotalScore: %d"),
 		**TargetPlayerTeam,
 		**TargetPlayerType,
 		*TargetPlayerName,
