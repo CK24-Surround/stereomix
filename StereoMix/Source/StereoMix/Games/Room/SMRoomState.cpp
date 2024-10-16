@@ -7,7 +7,9 @@
 #include "Games/SMCountdownTimerComponent.h"
 #include "Net/UnrealNetwork.h"
 #include "SMRoomPlayerState.h"
+#include "StereoMixLog.h"
 #include "Controllers/SMPlayerController.h"
+#include "GameInstance/SMGameInstance.h"
 #include "Utilities/SMLog.h"
 
 
@@ -15,6 +17,18 @@ ASMRoomState::ASMRoomState()
 {
 	CountdownTime = 5;
 	CountdownTimer = CreateDefaultSubobject<USMCountdownTimerComponent>(TEXT("RoomCountdownTimer"));
+}
+
+void ASMRoomState::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+#if UE_BUILD_SHIPPING
+	if (USMGameInstance* GameInstance = GetGameInstance<USMGameInstance>())
+	{
+		GameInstance->RequestDataTableToServer();
+	}
+#endif
 }
 
 void ASMRoomState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const

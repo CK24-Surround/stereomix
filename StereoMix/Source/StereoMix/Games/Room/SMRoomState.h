@@ -26,6 +26,8 @@ class STEREOMIX_API ASMRoomState : public AGameStateBase, public ISMGameStateNot
 public:
 	ASMRoomState();
 
+	virtual void PostInitializeComponents() override;
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	virtual void AddPlayerState(APlayerState* PlayerState) override;

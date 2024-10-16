@@ -63,8 +63,6 @@ protected:
 
 	FName CharacterTypeToName(ESMCharacterType CharacterType);
 
-	FHttpModule* Http;
-
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UDataTable> CharacterStatsDataTable;
 
