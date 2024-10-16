@@ -220,6 +220,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
 		GCParams.Location = TileLocation + Offset;
+		GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakBurst, GCParams);
 	}
 }
@@ -252,9 +253,10 @@ void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMHIC_Character* SourceHIC = GetHIC();
 	const ASMWeaponBase* SourceWeapon = SourceCharacter ? SourceCharacter->GetWeapon() : nullptr;
 	UMeshComponent* SourceWeaponMesh = SourceWeapon ? SourceWeapon->GetWeaponMeshComponent() : nullptr;
-	if (!SourceCharacter || !SourceASC || !SourceWeaponMesh)
+	if (!SourceCharacter || !SourceASC || !SourceHIC || !SourceWeaponMesh)
 	{
 		return;
 	}
@@ -264,6 +266,7 @@ void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
 	GCParams.SourceObject = SourceCharacter;
 	GCParams.TargetAttachComponent = SourceWeaponMesh;
 	GCParams.Location = WeaponOffset;
+	GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
 	SourceASC->AddGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakWeaponTrail, GCParams);
 }
 
@@ -271,7 +274,8 @@ void USMGA_BassNoiseBreak::OnWeaponTrailDeactivate(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMAbilitySystemComponent* SourceASC = GetASC();
-	if (!SourceCharacter || !SourceASC)
+	const USMHIC_Character* SourceHIC = GetHIC();
+	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
 		return;
 	}
@@ -285,7 +289,8 @@ void USMGA_BassNoiseBreak::OnSlash(FGameplayEventData Payload)
 {
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const USMAbilitySystemComponent* SourceASC = GetASC();
-	if (!SourceCharacter || !SourceASC)
+	const USMHIC_Character* SourceHIC = GetHIC();
+	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
 		return;
 	}
@@ -294,5 +299,6 @@ void USMGA_BassNoiseBreak::OnSlash(FGameplayEventData Payload)
 	GCParams.SourceObject = SourceCharacter;
 	GCParams.Location = NoiseBreakTargetLocation;
 	GCParams.Normal = SourceCharacter->GetActorRotation().Vector();
+	GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(SourceHIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
 	SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::Bass::NoiseBreakSlash, GCParams);
 }
