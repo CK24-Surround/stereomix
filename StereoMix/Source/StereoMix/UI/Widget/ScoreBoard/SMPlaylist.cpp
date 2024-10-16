@@ -69,6 +69,14 @@ void USMPlaylist::ResetTeamInfo() const
 	{
 		RowName->SetText(FText::FromString(""));
 	}
+
+	for (auto& OverviewRow : OverviewRows)
+	{
+		for (auto& Column : OverviewRow)
+		{
+			Column->SetText(FText::FromString(""));
+		}
+	}
 }
 
 void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
@@ -137,6 +145,9 @@ void USMPlaylist::ChangeOverview()
 
 	for (int i = 0; i < EDMAnalysisData.Num(); i++)
 	{
+		OverviewRows[i][0]->SetJustification(ETextJustify::Center);
+		OverviewRows[i][3]->SetJustification(ETextJustify::Left);
+
 		SetOverviewRowNames(OverviewRows[i], {
 			TEXT(""), TEXT(""), TEXT(""),
 			FString::FromInt(EDMAnalysisData[i].TotalScore()),
@@ -148,6 +159,9 @@ void USMPlaylist::ChangeOverview()
 
 	for (int i = 0; i < FBAnalysisData.Num(); i++)
 	{
+		OverviewRows[i + 3][0]->SetJustification(ETextJustify::Center);
+		OverviewRows[i + 3][3]->SetJustification(ETextJustify::Left);
+
 		SetOverviewRowNames(OverviewRows[i + 3], {
 			TEXT(""), TEXT(""), TEXT(""),
 			FString::FromInt(FBAnalysisData[i].TotalScore()),
@@ -172,6 +186,9 @@ void USMPlaylist::ChangeAnalytics()
 
 	for (int i = 0; i < EDMAnalysisData.Num(); i++)
 	{
+		OverviewRows[i][0]->SetJustification(ETextJustify::Left);
+		OverviewRows[i][3]->SetJustification(ETextJustify::Center);
+
 		SetOverviewRowNames(OverviewRows[i], {
 			FString::FromInt(EDMAnalysisData[i].TotalScore()),
 			FString::FromInt(EDMAnalysisData[i].TotalCapturedTiles),
@@ -185,6 +202,9 @@ void USMPlaylist::ChangeAnalytics()
 
 	for (int i = 0; i < FBAnalysisData.Num(); i++)
 	{
+		OverviewRows[i + 3][0]->SetJustification(ETextJustify::Left);
+		OverviewRows[i + 3][3]->SetJustification(ETextJustify::Center);
+
 		SetOverviewRowNames(OverviewRows[i + 3], {
 			FString::FromInt(FBAnalysisData[i].TotalScore()),
 			FString::FromInt(FBAnalysisData[i].TotalCapturedTiles),
