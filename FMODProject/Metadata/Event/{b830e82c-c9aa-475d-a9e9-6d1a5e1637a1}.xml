@@ -70,11 +70,8 @@
 		<property name="priority">
 			<value>4</value>
 		</property>
-		<property name="minimumDistance">
-			<value>4</value>
-		</property>
 		<property name="maximumDistance">
-			<value>80</value>
+			<value>50</value>
 		</property>
 	</object>
 	<object class="MarkerTrack" id="{77c722f8-8b1f-4215-9226-c5adcf7091e2}" />
@@ -102,7 +99,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{7c3f0ea4-2f91-4a37-86fe-f517af67255d}">
 		<property name="volume">
-			<value>7</value>
+			<value>6.5</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{0bfdcd79-46ab-41ad-b72a-351121433361}</destination>
@@ -137,7 +134,7 @@
 	</object>
 	<object class="EventMixerGroup" id="{9fdf4265-e9b1-45fc-b973-0eceff6956ae}">
 		<property name="volume">
-			<value>-10</value>
+			<value>-6.5</value>
 		</property>
 		<property name="name">
 			<value>Audio 1</value>
@@ -171,7 +168,7 @@
 	</object>
 	<object class="EventMixerGroup" id="{238f2475-9cbe-4ca6-9c7c-d5cd1e3721db}">
 		<property name="volume">
-			<value>-4.5</value>
+			<value>-9.5</value>
 		</property>
 		<property name="name">
 			<value>Audio 2</value>
@@ -209,7 +206,7 @@
 			<value>pitch</value>
 		</property>
 		<property name="amount">
-			<value>3</value>
+			<value>4</value>
 		</property>
 	</object>
 	<object class="FadeCurve" id="{4888585b-8541-488c-a3af-b580bff16bf2}">
