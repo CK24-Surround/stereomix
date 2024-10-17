@@ -45,6 +45,7 @@ protected:
 
 	EIndicatorAlignment IndicatorAlignment = EIndicatorAlignment::CharacterCenter;
 
+	const FName MaxRangeParameterName = TEXT("MaxRange");
 	const FName CurrentRangeParameterName = TEXT("CurrentRange");
 	const FName TeamParameterName = TEXT("Team");
 };

@@ -117,6 +117,13 @@ void USMAT_SkillIndicator::TickTask(float DeltaTime)
 	const FVector OwnerToTarget = TargetLocation - OwnerLocation;
 	const float OwnerToTargetDistance = OwnerToTarget.Size2D();
 
+	if (MaxDistance.IsSet())
+	{
+		const float MaxRangeParameterValue = MaxDistance.GetValue() > OwnerToTargetDistance ? MaxDistance.GetValue() : OwnerToTargetDistance;
+		IndicatorVFXComponent->SetFloatParameter(MaxRangeParameterName, MaxRangeParameterValue);
+	}
+
 	IndicatorVFXComponent->SetFloatParameter(CurrentRangeParameterName, OwnerToTargetDistance);
+
 	IndicatorVFXComponent->SetRelativeRotation(OwnerToTarget.GetSafeNormal2D().ToOrientationRotator());
 }
