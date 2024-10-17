@@ -8,7 +8,6 @@
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Weapons/SMBow.h"
 #include "Components/Character/SMHIC_Character.h"
-#include "Data/DataAsset/Character/SMPianoCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
 
 
@@ -18,24 +17,6 @@ ASMPianoCharacter::ASMPianoCharacter(const FObjectInitializer& ObjectInitializer
 	PrimaryActorTick.bCanEverTick = true;
 
 	CharacterType = ESMCharacterType::Piano;
-
-	ImpactArrowIndicatorNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ImpactArrowIndicatorNiagaraComponent"));
-	ImpactArrowIndicatorNiagaraComponent->SetAbsolute(true, true, true);
-	ImpactArrowIndicatorNiagaraComponent->SetAutoActivate(false);
-}
-
-void ASMPianoCharacter::OnRep_PlayerState()
-{
-	Super::OnRep_PlayerState();
-
-	// if (const USMPianoCharacterDataAsset* PianoDataAsset = Cast<USMPianoCharacterDataAsset>(DataAsset))
-	// {
-	// 	const TObjectPtr<UNiagaraSystem>* ImpactArrowIndicatorPtr = PianoDataAsset->ImpactArrowIndicator.Find(GetTeam());
-	// 	if (UNiagaraSystem* ImpactArrowIndicator = ImpactArrowIndicatorPtr ? *ImpactArrowIndicatorPtr : nullptr)
-	// 	{
-	// 		ImpactArrowIndicatorNiagaraComponent->SetAsset(ImpactArrowIndicator);
-	// 	}
-	// }
 }
 
 void ASMPianoCharacter::SetWeaponVFXEnabled(bool bNewIsEnabled)

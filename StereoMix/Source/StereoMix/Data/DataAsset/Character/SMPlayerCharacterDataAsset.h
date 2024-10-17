@@ -58,7 +58,7 @@ public:
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> NoiseBreakIndicatorFX;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> SkillIndicatorFX;
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> SkillIndicatorVFX;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> DefaultMoveTrailFX;

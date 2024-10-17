@@ -59,9 +59,14 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		InputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Started, this, &ThisClass::Shoot);
 		SourcePC->PushInputComponent(InputComponent);
 
-		// const float MaxDistance = MaxDistanceByTile * 150.0f;
-		// SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, SourceCharacter->GetImpactArrowIndicator(), MaxDistance);
-		// SkillIndicatorTask->ReadyForActivation();
+		const float MaxDistance = MaxDistanceByTile * 150.0f;
+
+		const TMap<ESMTeam, TObjectPtr<UNiagaraSystem>>& CachedVFX = SourceDataAsset->SkillIndicatorVFX;
+		const ESMTeam OwnerTeam = SourceCharacter->GetTeam();
+		UNiagaraSystem* ImpactArrowIndicatorVFX = CachedVFX.Contains(OwnerTeam) ? CachedVFX[OwnerTeam] : nullptr;
+
+		SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, ImpactArrowIndicatorVFX, USMAT_SkillIndicator::EIndicatorAlignment::Ground, MaxDistance);
+		SkillIndicatorTask->ReadyForActivation();
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
@@ -97,6 +102,7 @@ void USMGA_ImpactArrow::EndAbility(const FGameplayAbilitySpecHandle Handle, cons
 	if (SkillIndicatorTask)
 	{
 		SkillIndicatorTask->EndTask();
+		SkillIndicatorTask = nullptr;
 	}
 
 	bHasClicked = false;
@@ -149,6 +155,7 @@ void USMGA_ImpactArrow::Shoot()
 	if (SkillIndicatorTask)
 	{
 		SkillIndicatorTask->EndTask();
+		SkillIndicatorTask = nullptr;
 	}
 
 	UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, StartUpTime);
