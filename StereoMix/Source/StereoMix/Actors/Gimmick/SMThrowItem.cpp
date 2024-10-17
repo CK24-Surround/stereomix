@@ -29,22 +29,20 @@ void ASMThrowItem::BeginPlay()
 
     if (HasAuthority())
     {
-        InitializeAvailableSpawnLocations();
+        UpdateAvailableSpawnLocations();
     	UE_LOG(LogStereoMix, Log, TEXT("Available Throwable Item Spawn Locations: %d"), AvailableSpawnLocations.Num());
 
-        if (AvailableSpawnLocations.Num() > 0)
-        {
-            ScheduleThrowItem();
-        }
+		ScheduleThrowItem();
     }
 }
 
-void ASMThrowItem::InitializeAvailableSpawnLocations()
+void ASMThrowItem::UpdateAvailableSpawnLocations()
 {
 	const UWorld* World = GetWorld();
     const FVector HalfExtent = CalculateHalfExtent(MaxThrowTilesColumn, MaxThrowTilesRow, ParabolaHeight);
     const FVector BoxCenter = GetActorLocation();
 
+	AvailableSpawnLocations.Empty();
 	for (TArray<ASMTile*> TilesInSpawnArea = USMTileFunctionLibrary::GetTilesInBox(World, BoxCenter, HalfExtent); const ASMTile* Tile : TilesInSpawnArea)
     {
 	    if (FVector SpawnLocation = CalculateSpawnLocation(Tile->GetActorLocation(), BoxCenter.Z); IsLocationAvailableForSpawn(SpawnLocation))
@@ -104,6 +102,11 @@ void ASMThrowItem::ScheduleThrowItem()
 
 void ASMThrowItem::ThrowItem()
 {
+	if (AvailableSpawnLocations.Num() == 0)
+	{
+		return;
+	}
+	
     const int32 ValidThrowCount = FMath::Min(ThrowCount, AvailableSpawnLocations.Num());
     TArray<FVector> SelectedLocations = AvailableSpawnLocations;
 
