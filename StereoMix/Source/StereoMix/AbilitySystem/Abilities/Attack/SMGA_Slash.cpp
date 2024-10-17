@@ -12,7 +12,7 @@
 #include "AbilitySystem/Task/SMAT_ColliderOrientationForSlash.h"
 #include "AbilitySystem/Task/SMAT_NextActionProccedCheck.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"

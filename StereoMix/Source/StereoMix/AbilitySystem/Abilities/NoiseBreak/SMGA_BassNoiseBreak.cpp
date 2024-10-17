@@ -15,7 +15,7 @@
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Character/SMHIC_Character.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"

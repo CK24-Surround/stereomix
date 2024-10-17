@@ -5,7 +5,7 @@
 
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMTags.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 
 USMGA_Exhausted::USMGA_Exhausted()
 {

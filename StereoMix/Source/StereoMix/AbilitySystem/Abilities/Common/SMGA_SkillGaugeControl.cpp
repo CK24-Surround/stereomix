@@ -5,7 +5,7 @@
 
 #include "AbilitySystem/Task/SMAT_CheckTeamTileEntryExit.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 
 USMGA_SkillGaugeControl::USMGA_SkillGaugeControl()
 {

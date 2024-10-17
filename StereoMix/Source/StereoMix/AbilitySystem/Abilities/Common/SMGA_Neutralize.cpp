@@ -12,7 +12,7 @@
 #include "AbilitySystem/Abilities/NoiseBreak/Indicator/SMGA_NoiseBreakIndicator.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/Character/SMHIC_Character.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
 #include "FunctionLibraries/SMScoreFunctionLibrary.h"
 

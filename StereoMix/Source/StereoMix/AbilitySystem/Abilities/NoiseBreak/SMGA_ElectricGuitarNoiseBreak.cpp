@@ -16,7 +16,7 @@
 #include "Actors/Tiles/SMTile.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/Character/SMHIC_Character.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"

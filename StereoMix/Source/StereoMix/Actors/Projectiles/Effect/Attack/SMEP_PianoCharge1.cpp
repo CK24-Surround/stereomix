@@ -7,7 +7,7 @@
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
 
 

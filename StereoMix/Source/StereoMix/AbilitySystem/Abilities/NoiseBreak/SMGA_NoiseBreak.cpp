@@ -9,7 +9,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tiles/SMTile.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "FunctionLibraries/SMScoreFunctionLibrary.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"

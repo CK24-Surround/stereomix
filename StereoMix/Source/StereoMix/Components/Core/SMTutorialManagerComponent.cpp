@@ -16,7 +16,7 @@
 #include "Actors/Tutorial/SMTrainingDummy.h"
 #include "Actors/Tutorial/SMTutorialInvisibleWallBase.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
 #include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"

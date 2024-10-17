@@ -12,7 +12,7 @@
 #include "Actors/Projectiles/SMProjectile.h"
 #include "Actors/Projectiles/Effect/SMEffectProjectileBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMProjectileFunctionLibrary.h"

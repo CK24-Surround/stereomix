@@ -10,7 +10,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Components/CapsuleComponent.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 
 
 USMGA_Stun::USMGA_Stun()

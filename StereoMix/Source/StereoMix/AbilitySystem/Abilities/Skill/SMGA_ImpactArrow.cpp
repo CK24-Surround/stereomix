@@ -15,7 +15,7 @@
 #include "Actors/Character/Player/SMPianoCharacter.h"
 #include "Controllers/SMGamePlayerController.h"
 #include "Data/SMControlData.h"
-#include "Data/Character/SMPlayerCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"

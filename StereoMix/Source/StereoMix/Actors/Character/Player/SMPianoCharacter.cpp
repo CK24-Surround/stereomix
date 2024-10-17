@@ -8,7 +8,7 @@
 #include "AbilitySystem/SMTags.h"
 #include "Actors/Weapons/SMBow.h"
 #include "Components/Character/SMHIC_Character.h"
-#include "Data/Character/SMPianoCharacterDataAsset.h"
+#include "Data/DataAsset/Character/SMPianoCharacterDataAsset.h"
 #include "Utilities/SMLog.h"
 
 
