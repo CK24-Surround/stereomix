@@ -43,8 +43,7 @@ void ASMChangeAttributeItem::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
 
-	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor);
-	if (ensure(TargetASC))
+	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 	{
 		TargetASC->BP_ApplyGameplayEffectToSelf(GE, 1.0f, TargetASC->MakeEffectContext());
 		MulticastRPCSetHidden(true);
