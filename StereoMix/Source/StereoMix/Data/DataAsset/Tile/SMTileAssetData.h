@@ -31,6 +31,9 @@ public:
 	}
 
 	UPROPERTY(EditAnywhere, Category = "Material")
+	TObjectPtr<UMaterialInterface> DefaultTileMaterial;
+
+	UPROPERTY(EditAnywhere, Category = "Material")
 	TMap<ESMTeam, TObjectPtr<UMaterialInterface>> CapturedTileMaterial;
 
 	UPROPERTY(EditAnywhere, Category = "Material")

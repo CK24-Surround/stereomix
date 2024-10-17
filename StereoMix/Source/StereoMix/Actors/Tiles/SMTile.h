@@ -24,6 +24,8 @@ class STEREOMIX_API ASMTile : public AActor, public ISMTeamInterface
 public:
 	ASMTile();
 
+	virtual void PostInitializeComponents() override;
+
 	void TileTrigger(ESMTeam InTeam);
 
 	FORCEINLINE virtual USMTeamComponent* GetTeamComponent() const override { return TeamComponent; }
@@ -58,4 +60,8 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category = "Design")
 	TObjectPtr<USMTileAssetData> DataAsset;
+
+	/** 데이터에셋의 타일 머티리얼을 적용할지 여부입니다. */
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 bUseDataAssetTileMaterial:1 = true;
 };

@@ -24,18 +24,35 @@ ASMTile::ASMTile()
 	BoxComponent->Mobility = EComponentMobility::Static;
 	BoxComponent->SetComponentTickEnabled(false);
 	BoxComponent->SetCollisionProfileName(SMCollisionProfileName::Tile);
-	BoxComponent->SetRelativeLocation(FVector(75.0, 75.0, 50.0));
-	BoxComponent->InitBoxExtent(FVector(75.0, 75.0, 50.0));
+	BoxComponent->SetRelativeLocation(FVector(75.0, 75.0, -7.5));
+	BoxComponent->InitBoxExtent(FVector(75.0, 75.0, 7.5));
 
 	TileMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("TileMeshComponent"));
 	TileMeshComponent->SetupAttachment(BoxComponent);
 	TileMeshComponent->Mobility = EComponentMobility::Static;
 	TileMeshComponent->SetComponentTickEnabled(false);
 	TileMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	TileMeshComponent->SetRelativeLocation(FVector(0.0, 0.0, 100.0 - BoxComponent->GetScaledBoxExtent().Z));
+	TileMeshComponent->SetRelativeLocation(FVector(0.0, 0.0, BoxComponent->GetScaledBoxExtent().Z));
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("TeamComponent"));
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ASMTile::OnChangeTeamCallback);
+}
+
+void ASMTile::PostInitializeComponents()
+{
+	Super::PostInitializeComponents();
+
+	const UWorld* World = GetWorld();
+	if (World ? World->IsGameWorld() : false)
+	{
+		if (bUseDataAssetTileMaterial)
+		{
+			for (int32 MaterialIndex = 0; MaterialIndex < TileMeshComponent->GetNumMaterials(); ++MaterialIndex)
+			{
+				TileMeshComponent->SetMaterial(MaterialIndex, DataAsset->DefaultTileMaterial);
+			}
+		}
+	}
 }
 
 void ASMTile::TileTrigger(ESMTeam InTeam)
