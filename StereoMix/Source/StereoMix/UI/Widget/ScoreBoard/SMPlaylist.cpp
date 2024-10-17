@@ -5,6 +5,7 @@
 
 #include "CommonTextBlock.h"
 #include "Components/Image.h"
+#include "Components/Overlay.h"
 #include "Components/Core/SMScoreManagerComponent.h"
 #include "Data/SMTeam.h"
 
@@ -82,10 +83,18 @@ void USMPlaylist::ResetTeamInfo() const
 void USMPlaylist::SetVictoryTeam(ESMTeam WinTeam)
 {
 	EDMWinTeamBackground->SetVisibility(WinTeam == ESMTeam::EDM ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	EDMWinAlbum->SetVisibility(WinTeam == ESMTeam::EDM ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 	FBWinTeamBackground->SetVisibility(WinTeam == ESMTeam::FutureBass ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	FBWinAlbum->SetVisibility(WinTeam == ESMTeam::FutureBass ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 
 	WinTeamType->SetText(WinTeam == ESMTeam::EDM ? FText::FromString("Inferno Beat") : FText::FromString("Chewing Cats"));
 	LoseTeamType->SetText(WinTeam == ESMTeam::EDM ? FText::FromString("Chewing Cats") : FText::FromString("Inferno Beat"));
+
+	OverviewEDMTeamResult->SetText(WinTeam == ESMTeam::EDM ? FText::FromString(TEXT("승리")) : FText::FromString(TEXT("패배")));
+	OverviewFBTeamResult->SetText(WinTeam == ESMTeam::FutureBass ? FText::FromString(TEXT("승리")) : FText::FromString(TEXT("패배")));
+
+	EDMWinCD->SetVisibility(WinTeam == ESMTeam::EDM ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
+	FBWinCD->SetVisibility(WinTeam == ESMTeam::FutureBass ? ESlateVisibility::Visible : ESlateVisibility::Hidden);
 
 	ResetTeamInfo();
 
@@ -105,10 +114,14 @@ void USMPlaylist::ChangePlaylist(ESMTeam WinTeam)
 		case ESMTeam::EDM:
 			EDMTeamScore = WinTeamScore;
 			EDMPlayerNames = WinTeamPlayerNames;
+			PlaylistWinTeamResult->SetColorAndOpacity(FLinearColor(0.124772f, 1.0f, 0.630757f));
+			PlaylistLoseTeamResult->SetColorAndOpacity(FLinearColor(1.0f, 0.191202f, 0.187821f));
 			break;
 		case ESMTeam::FutureBass:
 			FBTeamScore = WinTeamScore;
 			FBPlayerNames = WinTeamPlayerNames;
+			PlaylistWinTeamResult->SetColorAndOpacity(FLinearColor(1.0f, 0.191202f, 0.187821f));
+			PlaylistLoseTeamResult->SetColorAndOpacity(FLinearColor(0.124772f, 1.0f, 0.630757f));
 			break;
 		default:
 			break;

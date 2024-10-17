@@ -8,6 +8,7 @@
 #include "SMPlaylist.generated.h"
 
 
+class UOverlay;
 class UCommonTextBlock;
 class UImage;
 /**
@@ -59,13 +60,22 @@ protected:
 	TArray<TArray<TObjectPtr<UCommonTextBlock>>> OverviewRows;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UOverlay> EDMWinAlbum;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UOverlay> FBWinAlbum;
+	
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCommonTextBlock> PlaylistWinTeamResult;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCommonTextBlock> PlaylistLoseTeamResult;
+	
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> EDMWinTeamBackground;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> FBWinTeamBackground;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> WinTeamAlbum;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> WinTeamType;
@@ -92,9 +102,6 @@ protected:
 	TObjectPtr<UCommonTextBlock> WinTeamScore;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> LoseTeamAlbum;
-
-	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> LoseTeamType;
 
 	UPROPERTY(meta = (BindWidget))
@@ -117,6 +124,18 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> LoseTeamScore;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> EDMWinCD;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> FBWinCD;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCommonTextBlock> OverviewEDMTeamResult;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCommonTextBlock> OverviewFBTeamResult;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> EDMRowProfile1;
