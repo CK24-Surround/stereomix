@@ -22,12 +22,6 @@ public:
 		WeaponSocketName = TEXT("WeaponPointL");
 	}
 
-	UPROPERTY(EditAnywhere, Category = "FX")
-	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> ImpactArrowIndicator;
-
-	UPROPERTY(EditAnywhere, Category = "Dummy")
-	TObjectPtr<UCurveFloat> NoiseBreakCurve;
-
 	UPROPERTY(EditAnywhere, Category = "CameraShake")
 	TSubclassOf<UCameraShakeBase> FullChargeHitCameraShake;
 };

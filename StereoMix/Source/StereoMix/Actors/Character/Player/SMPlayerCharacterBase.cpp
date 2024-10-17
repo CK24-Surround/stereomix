@@ -92,10 +92,6 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	CharacterStateWidgetComponent->SetRelativeLocation(FVector(0.0, 0.0, 300.0));
 	CharacterStateWidgetComponent->SetDrawAtDesiredSize(true);
 
-	NoiseBreakIndicatorComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NoiseBreakIndicatorComponent"));
-	NoiseBreakIndicatorComponent->SetAbsolute(true, true, true);
-	NoiseBreakIndicatorComponent->SetAutoActivate(false);
-
 	DefaultMoveTrailFXComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("DefaultMoveTrailFXComponent"));
 	DefaultMoveTrailFXComponent->SetupAttachment(CachedMeshComponent);
 	DefaultMoveTrailFXComponent->SetAbsolute(false, true, true);
@@ -176,7 +172,6 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 
 	UCharacterMovementComponent* CachedMovementComponent = GetCharacterMovement();
-	CachedMovementComponent->MaxWalkSpeed = DataAsset->MoveSpeed;
 	CachedMovementComponent->GravityScale = 2.0f;
 
 	// 트레일 위치를 교정하기 위해 재어태치합니다. 재어태치하는 이유는 생성자에서는 메시가 null이므로 소켓을 찾을 수 없기 때문입니다.
@@ -187,14 +182,6 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 	// 원본 머티리얼을 저장해둡니다. 플레이 도중 시시각각 머티리얼이 변하게 되는데 이때 기존 머티리얼로 돌아오기 위해 사용됩니다.
 	OriginalMaterials = CachedMeshComponent->GetMaterials();
 	OriginalOverlayMaterial = CachedMeshComponent->GetOverlayMaterial();
-
-	if (GetNetMode() != NM_DedicatedServer) // 노이즈 브레이크 인디케이터 에셋을 설정해줍니다.
-	{
-		if (DataAsset->NoiseBreakIndicatorFX.Contains(SourceTeam))
-		{
-			NoiseBreakIndicatorComponent->SetAsset(DataAsset->NoiseBreakIndicatorFX[SourceTeam]);
-		}
-	}
 
 	if (HasAuthority())
 	{

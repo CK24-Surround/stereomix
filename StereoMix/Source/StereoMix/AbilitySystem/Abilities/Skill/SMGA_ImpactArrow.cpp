@@ -59,9 +59,9 @@ void USMGA_ImpactArrow::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
 		InputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Started, this, &ThisClass::Shoot);
 		SourcePC->PushInputComponent(InputComponent);
 
-		const float MaxDistance = MaxDistanceByTile * 150.0f;
-		SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, SourceCharacter->GetImpactArrowIndicator(), MaxDistance);
-		SkillIndicatorTask->ReadyForActivation();
+		// const float MaxDistance = MaxDistanceByTile * 150.0f;
+		// SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, SourceCharacter->GetImpactArrowIndicator(), MaxDistance);
+		// SkillIndicatorTask->ReadyForActivation();
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;

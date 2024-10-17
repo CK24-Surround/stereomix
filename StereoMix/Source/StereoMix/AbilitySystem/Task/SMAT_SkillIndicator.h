@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraSystem.h"
 #include "Abilities/Tasks/AbilityTask.h"
 #include "SMAT_SkillIndicator.generated.h"
 
@@ -18,28 +19,34 @@ class STEREOMIX_API USMAT_SkillIndicator : public UAbilityTask
 	GENERATED_BODY()
 
 public:
+	enum class EIndicatorAlignment : uint8
+	{
+		CharacterCenter, // 캐릭터의 중심으로 인디케이터를 생성합니다.
+		Ground,          // 캐릭터의 바닥위치를 중심으로 인디케이터를 생성합니다.
+		Tile             // 캐릭터의 바닥위치를 중심으로 인디케이터를 생성하고 타일로 스냅합니다.
+	};
+
 	USMAT_SkillIndicator();
 
-	UFUNCTION(BlueprintCallable, Category = "Ability|Tasks", meta = (HidePin = "OwningAbility", DefaultToSelf = "OwningAbility", BlueprintInternalUseOnly = "TRUE"))
-	static USMAT_SkillIndicator* SkillIndicator(UGameplayAbility* OwningAbility, UNiagaraComponent* NewIndicator, float NewMaxDistance, bool bNewUseTileLocation = false);
+	static USMAT_SkillIndicator* SkillIndicator(UGameplayAbility* OwningAbility, UNiagaraSystem* IndicatorVFX, EIndicatorAlignment NewIndicatorAlignment, const TOptional<float>& OptionalMaxDistance = TOptional<float>());
 
 protected:
 	virtual void Activate() override;
 
-	virtual void TickTask(float DeltaTime) override;
-
 	virtual void OnDestroy(bool bInOwnerFinished) override;
 
-	TWeakObjectPtr<ASMPlayerCharacterBase> SourceCharacter;
+	virtual void TickTask(float DeltaTime) override;
 
-	TWeakObjectPtr<UNiagaraComponent> Indicator;
+	TWeakObjectPtr<ASMPlayerCharacterBase> OwnerCharacter;
 
-	float MaxDistance = 0.0f;
+	TObjectPtr<UNiagaraComponent> IndicatorVFXComponent;
+
+	TOptional<float> MaxDistance = TOptional<float>();
 
 	uint32 bHasMaxDistance:1 = false;
 
-	FVector CapsuleOffset;
+	EIndicatorAlignment IndicatorAlignment = EIndicatorAlignment::CharacterCenter;
 
-	/** 타일 로케이션을 사용할지 여부 */
-	uint32 bUseTileLocation:1 = false;
+	const FName CurrentRangeParameterName = TEXT("CurrentRange");
+	const FName TeamParameterName = TEXT("Team");
 };

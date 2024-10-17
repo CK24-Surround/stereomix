@@ -58,6 +58,9 @@ public:
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> NoiseBreakIndicatorFX;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
+	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> SkillIndicatorFX;
+
+	UPROPERTY(EditAnywhere, Category = "FX")
 	TMap<ESMTeam, TObjectPtr<UNiagaraSystem>> DefaultMoveTrailFX;
 
 	UPROPERTY(EditAnywhere, Category = "FX")
@@ -83,12 +86,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Montage")
 	TMap<ESMTeam, TObjectPtr<UAnimMontage>> StunMontage;
-
-	UPROPERTY(EditAnywhere, Category = "Data")
-	float MoveSpeed = 600.0f;
-
-	UPROPERTY(EditAnywhere, Category = "Data")
-	float MaxHP = 100.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Weapon")
 	TMap<ESMTeam, TSubclassOf<ASMWeaponBase>> WeaponClass;

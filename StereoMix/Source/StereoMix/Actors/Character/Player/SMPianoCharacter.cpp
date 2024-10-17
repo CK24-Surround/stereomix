@@ -28,14 +28,14 @@ void ASMPianoCharacter::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
 
-	if (const USMPianoCharacterDataAsset* PianoDataAsset = Cast<USMPianoCharacterDataAsset>(DataAsset))
-	{
-		const TObjectPtr<UNiagaraSystem>* ImpactArrowIndicatorPtr = PianoDataAsset->ImpactArrowIndicator.Find(GetTeam());
-		if (UNiagaraSystem* ImpactArrowIndicator = ImpactArrowIndicatorPtr ? *ImpactArrowIndicatorPtr : nullptr)
-		{
-			ImpactArrowIndicatorNiagaraComponent->SetAsset(ImpactArrowIndicator);
-		}
-	}
+	// if (const USMPianoCharacterDataAsset* PianoDataAsset = Cast<USMPianoCharacterDataAsset>(DataAsset))
+	// {
+	// 	const TObjectPtr<UNiagaraSystem>* ImpactArrowIndicatorPtr = PianoDataAsset->ImpactArrowIndicator.Find(GetTeam());
+	// 	if (UNiagaraSystem* ImpactArrowIndicator = ImpactArrowIndicatorPtr ? *ImpactArrowIndicatorPtr : nullptr)
+	// 	{
+	// 		ImpactArrowIndicatorNiagaraComponent->SetAsset(ImpactArrowIndicator);
+	// 	}
+	// }
 }
 
 void ASMPianoCharacter::SetWeaponVFXEnabled(bool bNewIsEnabled)
