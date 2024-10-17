@@ -43,8 +43,6 @@ protected:
 
 	TOptional<float> MaxDistance = TOptional<float>();
 
-	uint32 bHasMaxDistance:1 = false;
-
 	EIndicatorAlignment IndicatorAlignment = EIndicatorAlignment::CharacterCenter;
 
 	const FName CurrentRangeParameterName = TEXT("CurrentRange");
