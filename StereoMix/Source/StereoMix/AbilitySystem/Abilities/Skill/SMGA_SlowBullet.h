@@ -6,6 +6,7 @@
 #include "SMGA_Skill.h"
 #include "SMGA_SlowBullet.generated.h"
 
+class USMAT_SkillIndicator;
 /**
  * 
  */
@@ -19,6 +20,8 @@ public:
 
 protected:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
+
+	virtual void EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled) override;
 
 	UFUNCTION()
 	void OnEventReceived(FGameplayEventData Payload);
@@ -43,4 +46,7 @@ protected:
 	FVector SourceLocation;
 
 	FVector TargetLocation;
+
+	UPROPERTY()
+	TObjectPtr<USMAT_SkillIndicator> SkillIndicatorTask;
 };

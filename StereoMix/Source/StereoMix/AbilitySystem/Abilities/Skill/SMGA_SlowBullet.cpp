@@ -8,6 +8,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitGameplayEvent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/Task/SMAT_SkillIndicator.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Projectiles/SMProjectile.h"
 #include "Actors/Projectiles/Effect/SMEffectProjectileBase.h"
@@ -71,6 +72,26 @@ void USMGA_SlowBullet::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 			GCParams.Normal = RotationOffset.Vector();
 			SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::SlowBulletCharge, GCParams);
 		}
+
+		const float MaxDistance = MaxDistanceByTile * 150.0f;
+
+		const TMap<ESMTeam, TObjectPtr<UNiagaraSystem>>& CachedVFX = SourceDataAsset->SkillIndicatorVFX;
+		const ESMTeam OwnerTeam = SourceCharacter->GetTeam();
+		UNiagaraSystem* ImpactArrowIndicatorVFX = CachedVFX.Contains(OwnerTeam) ? CachedVFX[OwnerTeam] : nullptr;
+
+		SkillIndicatorTask = USMAT_SkillIndicator::SkillIndicator(this, ImpactArrowIndicatorVFX, USMAT_SkillIndicator::EIndicatorAlignment::CharacterCenter, MaxDistance);
+		SkillIndicatorTask->ReadyForActivation();
+	}
+}
+
+void USMGA_SlowBullet::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+
+	if (SkillIndicatorTask)
+	{
+		SkillIndicatorTask->EndTask();
+		SkillIndicatorTask = nullptr;
 	}
 }
 
@@ -86,6 +107,12 @@ void USMGA_SlowBullet::OnEventReceived(FGameplayEventData Payload)
 	SourceLocation = SourceCharacter->GetActorLocation();
 	TargetLocation = SourceCharacter->GetLocationFromCursor();
 	ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
+
+	if (SkillIndicatorTask)
+	{
+		SkillIndicatorTask->EndTask();
+		SkillIndicatorTask = nullptr;
+	}
 
 	SyncPointEndAbility();
 }
