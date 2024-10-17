@@ -16,6 +16,8 @@ class STEREOMIX_API ASMThrowItem : public AActor
 public:
 	ASMThrowItem();
 
+	virtual void PostInitializeComponents() override;
+
 	/** 아이템을 생성할 수 있는 위치를 초기화 후 다시 찾습니다. */
 	void UpdateAvailableSpawnLocations();
 
@@ -27,8 +29,6 @@ protected:
 	static FVector CalculateHalfExtent(int32 Columns, int32 Rows, float Height);
 
 	static FVector GetBoxCenter(const FVector& ActorLocation, float ZOffset);
-
-	static FVector CalculateSpawnLocation(const FVector& TileLocation, float Z);
 
 	bool IsLocationAvailableForSpawn(const FVector& Location) const;
 
