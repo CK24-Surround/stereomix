@@ -1,100 +1,137 @@
 ﻿#include "SMThrowItem.h"
-
+#include "StereoMixLog.h"
 #include "Actors/Items/SMThrowableItem.h"
+#include "Actors/Tiles/SMTile.h"
 #include "FunctionLibraries/SMCalculateBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
-#include "Utilities/SMLog.h"
 
 ASMThrowItem::ASMThrowItem()
 {
-	PrimaryActorTick.bCanEverTick = true;
+    PrimaryActorTick.bCanEverTick = true;
 
-	SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
-	RootComponent = SceneComponent;
+    SceneComponent = CreateDefaultSubobject<USceneComponent>(TEXT("SceneComponent"));
+    RootComponent = SceneComponent;
 }
 
 void ASMThrowItem::OnConstruction(const FTransform& Transform)
 {
-	Super::OnConstruction(Transform);
+    Super::OnConstruction(Transform);
 
-	const float TileSize = USMTileFunctionLibrary::DefaultTileSize;
-	const float CenterOffset = TileSize / 2.0f;
+    const FVector HalfExtent = CalculateHalfExtent(MaxThrowTilesColumn, MaxThrowTilesRow, ParabolaHeight);
+    const FVector BoxCenter = GetBoxCenter(GetActorLocation(), HalfExtent.Z);
 
-	FVector HalfExtent;
-	HalfExtent.X = (MaxThrowTilesColumn * TileSize) + CenterOffset;
-	HalfExtent.Y = (MaxThrowTilesRow * TileSize) + CenterOffset;
-	HalfExtent.Z = ParabolaHeight / 2.0f;
-
-	const FVector SourceLocation = GetActorLocation();
-	const FVector BoxCenter = FVector(SourceLocation.X, SourceLocation.Y, SourceLocation.Z + HalfExtent.Z);
-
-	DrawDebugBox(GetWorld(), BoxCenter, HalfExtent, FQuat::Identity, FColor::Red, false, -1, 0, 5.0f);
+    DrawDebugBox(GetWorld(), BoxCenter, HalfExtent, FQuat::Identity, FColor::Red, false, 0.1f, 0, 5.0f);
 }
 
 void ASMThrowItem::BeginPlay()
 {
-	Super::BeginPlay();
+    Super::BeginPlay();
 
-	UWorld* World = GetWorld();
+    if (HasAuthority())
+    {
+        InitializeAvailableSpawnLocations();
+    	UE_LOG(LogStereoMix, Log, TEXT("Available Throwable Item Spawn Locations: %d"), AvailableSpawnLocations.Num());
 
-	if (HasAuthority() && World)
+        if (AvailableSpawnLocations.Num() > 0)
+        {
+            ScheduleThrowItem();
+        }
+    }
+}
+
+void ASMThrowItem::InitializeAvailableSpawnLocations()
+{
+	const UWorld* World = GetWorld();
+    const FVector HalfExtent = CalculateHalfExtent(MaxThrowTilesColumn, MaxThrowTilesRow, ParabolaHeight);
+    const FVector BoxCenter = GetActorLocation();
+
+	for (TArray<ASMTile*> TilesInSpawnArea = USMTileFunctionLibrary::GetTilesInBox(World, BoxCenter, HalfExtent); const ASMTile* Tile : TilesInSpawnArea)
+    {
+	    if (FVector SpawnLocation = CalculateSpawnLocation(Tile->GetActorLocation(), BoxCenter.Z); IsLocationAvailableForSpawn(SpawnLocation))
+        {
+            AvailableSpawnLocations.Add(SpawnLocation);
+        }
+    }
+}
+
+FVector ASMThrowItem::CalculateHalfExtent(const int32 Columns, const int32 Rows, const float Height)
+{
+	constexpr float TileSize = USMTileFunctionLibrary::DefaultTileSize;
+    return FVector(Columns * TileSize, Rows * TileSize, Height / 2.0f);
+}
+
+FVector ASMThrowItem::GetBoxCenter(const FVector& ActorLocation, const float ZOffset)
+{
+    return FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z + ZOffset);
+}
+
+FVector ASMThrowItem::CalculateSpawnLocation(const FVector& TileLocation, const float Z)
+{
+	constexpr float TileSize = USMTileFunctionLibrary::DefaultTileSize;
+    return FVector(
+        FMath::GridSnap(TileLocation.X, TileSize) + TileSize / 2.0f,
+        FMath::GridSnap(TileLocation.Y, TileSize) + TileSize / 2.0f,
+        Z
+    );
+}
+
+bool ASMThrowItem::IsLocationAvailableForSpawn(const FVector& Location) const
+{
+	constexpr float ObstacleHeightThreshold = 1000.0f;
+    const FVector Start = Location + FVector(0.0f, 0.0f, ObstacleHeightThreshold);
+    const FVector End = Location;
+
+    FHitResult HitResult;
+    FCollisionQueryParams CollisionParams;
+    CollisionParams.AddIgnoredActor(this);
+
+    return !GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
+}
+
+void ASMThrowItem::ScheduleThrowItem()
+{
+	if (const UWorld* World = GetWorld())
 	{
-		World->GetTimerManager().SetTimer(ThrowTimerHandle, this, &ThisClass::ThrowItem, ThrowInterval, true);
+	    FTimerHandle ThrowTimerHandle;
+	    World->GetTimerManager().SetTimer(ThrowTimerHandle, [ThisWeakPtr = MakeWeakObjectPtr(this)] {
+	        if (ThisWeakPtr.IsValid())
+	        {
+	            ThisWeakPtr->ThrowItem();
+	        }
+	    }, ThrowInterval, true);
 	}
 }
 
 void ASMThrowItem::ThrowItem()
 {
-	for (int i = 0; i < ThrowCount; ++i)
-	{
-		InternalThrowItem();
-	}
+    const int32 ValidThrowCount = FMath::Min(ThrowCount, AvailableSpawnLocations.Num());
+    TArray<FVector> SelectedLocations = AvailableSpawnLocations;
+
+    for (int32 i = 0; i < ValidThrowCount; ++i)
+    {
+        const int32 RandomIndex = FMath::RandRange(0, SelectedLocations.Num() - 1);
+        FVector TargetLocation = SelectedLocations[RandomIndex];
+        SelectedLocations.RemoveAt(RandomIndex);
+
+        InternalThrowItem(TargetLocation);
+    }
 }
 
-void ASMThrowItem::InternalThrowItem()
+void ASMThrowItem::InternalThrowItem(const FVector& TargetLocation)
 {
-	constexpr float TileSize = USMTileFunctionLibrary::DefaultTileSize;
-	constexpr float CenterOffset = TileSize / 2.0f;
+    const FVector SpawnLocation = GetActorLocation();
+    const FRotator SpawnRotation = GetActorRotation();
 
-	const float XRange = (MaxThrowTilesColumn * TileSize) + CenterOffset;
-	const float RandomX = FMath::RandRange(-XRange, XRange - TileSize);
+    if (ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ThrowableItemClass, SpawnLocation, SpawnRotation))
+    {
+        const float RandomGravity = FMath::RandRange(-2000.0f, -500.0f);
+        const FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(
+            this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity
+        );
 
-	const float YRange = (MaxThrowTilesRow * TileSize) + CenterOffset;
-	const float RandomY = FMath::RandRange(-YRange, YRange - TileSize);
+        const TSubclassOf<ASMItemBase> RandomItem = ThrowingItems[FMath::RandRange(0, ThrowingItems.Num() - 1)];
 
-	const FVector SpawnLocation = GetActorLocation();
-
-	FVector TargetLocation;
-	TargetLocation.X = FMath::GridSnap(SpawnLocation.X + RandomX, TileSize) + (TileSize / 2.0f);
-	TargetLocation.Y = FMath::GridSnap(SpawnLocation.Y + RandomY, TileSize) + (TileSize / 2.0f);
-	TargetLocation.Z = SpawnLocation.Z;
-
-	FHitResult HitResult;
-
-	constexpr float ObstacleHeightThreshold = 1000.0f;
-	const FVector Offset(0.0f, 0.0f, ObstacleHeightThreshold);
-	const FVector Start = TargetLocation + Offset;
-	const FVector End = TargetLocation;
-
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams))
-	{
-		return InternalThrowItem();
-	}
-
-	const FRotator SpawnRotation = GetActorRotation();
-
-	ASMThrowableItem* ThrowableItem = GetWorld()->SpawnActor<ASMThrowableItem>(ThrowableItemClass, SpawnLocation, SpawnRotation);
-	if (ThrowableItem)
-	{
-		float RandomGravity = FMath::RandRange(-2000.0f, -500.0f);
-		FVector LaunchVelocity = USMCalculateBlueprintLibrary::SuggestProjectileVelocity_CustomApexHeight(this, SpawnLocation, TargetLocation, ParabolaHeight, RandomGravity);
-
-		TSubclassOf<ASMItemBase> RandomItem = ThrowingItems[FMath::RandRange(0, ThrowingItems.Num() - 1)];
-
-		ThrowableItem->SetSpawnItem(RandomItem);
-		ThrowableItem->SetAttribute(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
-	}
+        ThrowableItem->SetSpawnItem(RandomItem);
+        ThrowableItem->SetAttribute(LaunchVelocity, SpawnLocation, TargetLocation, RandomGravity);
+    }
 }

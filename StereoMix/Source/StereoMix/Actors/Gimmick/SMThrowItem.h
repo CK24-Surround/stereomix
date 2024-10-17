@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "SMThrowItem.generated.h"
 
+class ASMTile;
 class ASMItemBase;
 class ASMThrowableItem;
 
@@ -20,9 +21,21 @@ protected:
 
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	void InitializeAvailableSpawnLocations();
+
+	static FVector CalculateHalfExtent(int32 Columns, int32 Rows, float Height);
+
+	static FVector GetBoxCenter(const FVector& ActorLocation, float ZOffset);
+
+	static FVector CalculateSpawnLocation(const FVector& TileLocation, float Z);
+
+	bool IsLocationAvailableForSpawn(const FVector& Location) const;
+
+	void ScheduleThrowItem();
+
 	void ThrowItem();
 
-	void InternalThrowItem();
+	void InternalThrowItem(const FVector& TargetLocation);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Design")
 	TArray<TSubclassOf<ASMItemBase>> ThrowingItems;
@@ -49,5 +62,5 @@ protected:
 	TObjectPtr<USceneComponent> SceneComponent;
 
 private:
-	FTimerHandle ThrowTimerHandle;
+	TArray<FVector> AvailableSpawnLocations;
 };
