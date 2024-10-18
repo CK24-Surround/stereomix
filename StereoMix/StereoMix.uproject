@@ -75,6 +75,14 @@
 		{
 			"Name": "StudioTelemetry",
 			"Enabled": true
+		},
+		{
+			"Name": "StructUtils",
+			"Enabled": true
+		},
+		{
+			"Name": "ConsoleVariables",
+			"Enabled": true
 		}
 	],
 	"TargetPlatforms": [
