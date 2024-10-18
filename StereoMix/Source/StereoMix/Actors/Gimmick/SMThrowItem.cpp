@@ -49,7 +49,7 @@ void ASMThrowItem::UpdateAvailableSpawnLocations()
 	AvailableSpawnLocations.Empty();
 	for (TArray<ASMTile*> TilesInSpawnArea = USMTileFunctionLibrary::GetTilesInBox(World, BoxCenter, HalfExtent); const ASMTile* Tile : TilesInSpawnArea)
 	{
-		if (FVector SpawnLocation = Tile->GetTileLocation(); IsLocationAvailableForSpawn(SpawnLocation))
+		if (FVector SpawnLocation = Tile->GetTileLocation(); IsLocationAvailableForSpawn(Tile, SpawnLocation))
 		{
 			AvailableSpawnLocations.Add(SpawnLocation);
 		}
@@ -69,7 +69,7 @@ FVector ASMThrowItem::GetBoxCenter(const FVector& ActorLocation, const float ZOf
 	return FVector(ActorLocation.X, ActorLocation.Y, ActorLocation.Z + ZOffset);
 }
 
-bool ASMThrowItem::IsLocationAvailableForSpawn(const FVector& Location) const
+bool ASMThrowItem::IsLocationAvailableForSpawn(const ASMTile* Tile, const FVector& Location) const
 {
 	constexpr float ObstacleHeightThreshold = 1000.0f;
 	const FVector Start = Location + FVector(0.0f, 0.0f, ObstacleHeightThreshold);
@@ -78,6 +78,7 @@ bool ASMThrowItem::IsLocationAvailableForSpawn(const FVector& Location) const
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
+	CollisionParams.AddIgnoredActor(Tile);
 
 	return !GetWorld()->LineTraceSingleByChannel(HitResult, Start, End, ECC_Visibility, CollisionParams);
 }

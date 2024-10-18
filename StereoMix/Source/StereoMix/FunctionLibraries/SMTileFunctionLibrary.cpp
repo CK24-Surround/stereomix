@@ -35,13 +35,9 @@ TArray<ASMTile*> USMTileFunctionLibrary::GetTilesInBox(const UWorld* World, cons
 	TArray<ASMTile*> Result;
 
 	const ASMTile* CenterTile = GetTileFromLocation(World, CenterLocation);
-	if (!CenterTile)
-	{
-		return Result;
-	}
 
 	TArray<FOverlapResult> OverlapResults;
-	const FVector StartLocation = CenterTile->GetTileLocation();
+	const FVector StartLocation = CenterTile ? CenterTile->GetTileLocation() : CenterLocation; // 타일이 무효하다면 매개변수로 주어진 위치를 사용합니다.
 	const FCollisionShape BoxCollision = FCollisionShape::MakeBox(FVector(BoxExtend.X, BoxExtend.Y, 50.0));
 	if (!World->OverlapMultiByChannel(OverlapResults, StartLocation, FQuat::Identity, SMCollisionTraceChannel::TileAction, BoxCollision))
 	{

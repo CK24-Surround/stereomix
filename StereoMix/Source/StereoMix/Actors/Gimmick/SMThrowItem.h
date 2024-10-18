@@ -30,7 +30,7 @@ protected:
 
 	static FVector GetBoxCenter(const FVector& ActorLocation, float ZOffset);
 
-	bool IsLocationAvailableForSpawn(const FVector& Location) const;
+	bool IsLocationAvailableForSpawn(const ASMTile* Tile, const FVector& Location) const;
 
 	void ScheduleThrowItem();
 
