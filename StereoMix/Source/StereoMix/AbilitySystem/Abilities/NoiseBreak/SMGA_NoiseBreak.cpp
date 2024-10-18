@@ -162,7 +162,7 @@ TArray<AActor*> USMGA_NoiseBreak::GetBurstHitActors(const FVector& TargetLocatio
 	TArray<FOverlapResult> OverlapResults;
 
 	FCollisionObjectQueryParams CollisionParams;
-	CollisionParams.AddObjectTypesToQuery(ECC_Pawn); // 플레이어의 히트박스는 플레이어의 생김새보다 훨씬 크기때문에 캡슐 콜라이더만 트리거되도록합니다.
+	CollisionParams.AddObjectTypesToQuery(SMCollisionObjectChannel::Player); // 플레이어의 히트박스는 플레이어의 생김새보다 훨씬 크기때문에 캡슐 콜라이더만 트리거되도록합니다.
 	CollisionParams.AddObjectTypesToQuery(SMCollisionObjectChannel::Destructible);
 
 	constexpr float TileSize = USMTileFunctionLibrary::DefaultTileSize;
@@ -172,20 +172,18 @@ TArray<AActor*> USMGA_NoiseBreak::GetBurstHitActors(const FVector& TargetLocatio
 	const FCollisionShape BoxCollider = FCollisionShape::MakeBox(BoxHalfExtend);
 	const FCollisionQueryParams Params(TEXT("NoiseBreakSplash"), false, GetAvatarActor());
 
-	if (!GetWorld()->OverlapMultiByObjectType(OverlapResults, TargetLocation, FQuat::Identity, CollisionParams, BoxCollider, Params))
+	if (GetWorld()->OverlapMultiByObjectType(OverlapResults, TargetLocation, FQuat::Identity, CollisionParams, BoxCollider, Params))
 	{
-		return TargetActors;
+		for (const FOverlapResult& OverlapResult : OverlapResults)
+		{
+			if (AActor* OverlapActor = OverlapResult.GetActor())
+			{
+				TargetActors.AddUnique(OverlapActor);
+			}
+		}
 	}
 
 	DrawDebugBox(GetWorld(), TargetLocation, BoxHalfExtend, FColor::Red, false, 3.0f);
-
-	for (const FOverlapResult& OverlapResult : OverlapResults)
-	{
-		if (AActor* OverlapActor = OverlapResult.GetActor())
-		{
-			TargetActors.Add(OverlapActor);
-		}
-	}
 
 	return TargetActors;
 }
