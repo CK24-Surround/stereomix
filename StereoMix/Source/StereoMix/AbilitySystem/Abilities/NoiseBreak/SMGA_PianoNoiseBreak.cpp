@@ -160,7 +160,7 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 
 			if (TargetHIC->ShouldApplyDamageFromNoiseBreak())
 			{
-				PerformBurstAttack(SourceCharacter->GetActorLocation(), SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
+				PerformBurstAttack(NoiseBreakTargetLocation, SMTags::GameplayCue::Bass::NoiseBreakBurstHit);
 			}
 		}
 
