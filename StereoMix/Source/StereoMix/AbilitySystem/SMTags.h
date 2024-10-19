@@ -148,6 +148,13 @@ namespace SMTags
 
 		namespace Common
 		{
+			namespace Item
+			{
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(Invincible);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(PowerUp);
+				UE_DECLARE_GAMEPLAY_TAG_EXTERN(MoveSpeedUp);
+			}
+
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Neutralize);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Immune);
 			UE_DECLARE_GAMEPLAY_TAG_EXTERN(Hold);

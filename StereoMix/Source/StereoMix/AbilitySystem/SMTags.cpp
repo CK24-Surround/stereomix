@@ -147,6 +147,13 @@ namespace SMTags
 
 		namespace Common
 		{
+			namespace Item
+			{
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Invincible, "GameplayCue.Common.Item.Invincible", "무적 아이템 효과를 받는 상태 게임플레이 큐의 태그입니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(PowerUp, "GameplayCue.Common.Item.PowerUp", "공격력 증가 아이템 효과를 받는 상태 게임플레이 큐의 태그입니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(MoveSpeedUp, "GameplayCue.Common.Item.MoveSpeedUp", "이동속도 증가 아이템 효과를 받는 상태 게임플레이 큐의 태그입니다.");
+			}
+
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Neutralize, "GameplayCue.Common.Neutralize", "무력화 상태 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Immune, "GameplayCue.Common.Immune", "면역 상태 게임플레이 큐의 태그입니다.");
 			UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "GameplayCue.Common.Hold", "잡기 시전 게임플레이 큐의 태그입니다.");

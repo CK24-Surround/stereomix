@@ -20,4 +20,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float Magnitude = 100.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	FGameplayTag GCTag;
 };

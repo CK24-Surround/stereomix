@@ -179,9 +179,9 @@ public:
 	UFUNCTION(Server, Reliable)
 	void ServerSetNoteState(bool bNewIsNote);
 
-	TArray<UMaterialInterface*> GetOriginalMaterials() { return OriginalMaterials; }
+	TArray<UMaterialInterface*> GetOriginalMaterials() const { return OriginalMaterials; }
 
-	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
+	UMaterialInterface* GetOriginalOverlayMaterial() const { return OriginalOverlayMaterial; }
 
 	ESMCharacterType GetCharacterType() const { return CharacterType; }
 
