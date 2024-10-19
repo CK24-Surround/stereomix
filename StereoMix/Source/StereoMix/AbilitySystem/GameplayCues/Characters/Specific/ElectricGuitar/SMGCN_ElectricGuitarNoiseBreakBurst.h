@@ -19,4 +19,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "VFX")
 	TObjectPtr<UNiagaraSystem> HealPackVFX;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	float DelayStep = 0.016f;
 };

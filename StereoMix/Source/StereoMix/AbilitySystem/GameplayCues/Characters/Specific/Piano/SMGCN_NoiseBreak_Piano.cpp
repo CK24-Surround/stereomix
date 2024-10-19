@@ -4,7 +4,6 @@
 #include "SMGCN_NoiseBreak_Piano.h"
 
 #include "FMODBlueprintStatics.h"
-#include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "FunctionLibraries/SMGameplayCueBlueprintLibrary.h"
