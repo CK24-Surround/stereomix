@@ -33,6 +33,8 @@ void USMCharacterSelectorInformationWidget::NativeConstruct()
 	PlayerCharacterTypes.Add(PlayerCharacterType1);
 	PlayerCharacterTypes.Add(PlayerCharacterType2);
 	PlayerCharacterTypes.Add(PlayerCharacterType3);
+
+	ResetInfo();
 }
 
 void USMCharacterSelectorInformationWidget::ResetInfo() const
