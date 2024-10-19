@@ -9,6 +9,7 @@
 #include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/PlayerStart/SMPlayerStartBase.h"
 #include "Games/SMGamePlayerState.h"
 #include "UI/Widget/Dummy/SMUserWidget_StaminaSkillGaugeDummyBar.h"
 #include "UI/Widget/Game/SMUserWidget_GameStatistics.h"
@@ -31,8 +32,7 @@ void ASMGamePlayerController::InitPlayerState()
 	if (HasAuthority() && GetWorld()->GetAuthGameMode())
 	{
 		// 오류를 방지하기위해 지연 스폰합니다.
-		auto ThisWeakPtr = MakeWeakObjectPtr(this);
-		GetWorldTimerManager().SetTimerForNextTick([ThisWeakPtr] {
+		GetWorldTimerManager().SetTimerForNextTick([ThisWeakPtr = MakeWeakObjectPtr(this)] {
 			if (ThisWeakPtr.IsValid())
 			{
 				ThisWeakPtr->SpawnCharacter();
@@ -142,36 +142,16 @@ void ASMGamePlayerController::SpawnCharacter(const TOptional<FVector>& InLocatio
 		return;
 	}
 
-	ESMCharacterType CharacterType = SMPlayerState->GetCharacterType();
+	const ESMCharacterType CharacterType = SMPlayerState->GetCharacterType() != ESMCharacterType::None ? SMPlayerState->GetCharacterType() : DefaultType;
 	const ESMTeam SourceTeam = SMPlayerState->GetTeam();
 
 	// 플레이어 스타트를 통해 알맞은 스폰 장소를 설정합니다.
-	FString TeamStarterTag;
-	switch (SourceTeam)
-	{
-		case ESMTeam::EDM:
-		{
-			TeamStarterTag = TEXT("Starter_EDM");
-			break;
-		}
-		case ESMTeam::FutureBass:
-		{
-			TeamStarterTag = TEXT("Starter_FB");
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
+	const FString StarterTag = ASMPlayerStartBase::GetPlayerStartTagByTypeAndTeam(CharacterType, SourceTeam);
+	const AActor* PlayerStarter = GameMode->FindPlayerStart(this, StarterTag);
 
 	// 스폰 위치와 회전을 구합니다.
-	const AActor* PlayerStarter = GameMode->FindPlayerStart(this, TeamStarterTag);
 	const FVector CharacterSpawnLocation = InLocationOption.Get(PlayerStarter ? PlayerStarter->GetActorLocation() : FVector::ZeroVector);
 	const FRotator CharacterSpawnRotation = InRotationOption.Get(PlayerStarter ? PlayerStarter->GetActorRotation() : FRotator::ZeroRotator);
-
-	// PlayerState에 캐릭터 타입이 지정되어있지 않다면 플레이어 컨트롤러에 설정된 기본 캐릭터 타입으로 덮어 씌웁니다. 테스트 환경을 위한 코드입니다.
-	CharacterType = (CharacterType == ESMCharacterType::None) ? DefaultType : CharacterType;
 
 	FCharacterSpawnData* CharacterSpawnDataPtr = CharacterClass.Find(CharacterType);
 	const TSubclassOf<ASMPlayerCharacterBase>* CharacterClassToSpawnPtr = CharacterSpawnDataPtr ? CharacterSpawnDataPtr->CharacterClass.Find(SourceTeam) : nullptr;
