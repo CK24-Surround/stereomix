@@ -5,11 +5,13 @@
 #include "CoreMinimal.h"
 #include "Components/ActorComponent.h"
 #include "Data/SMCharacterType.h"
+#include "Games/Room/SMRoomState.h"
 #include "SMTutorialManagerComponent.generated.h"
 
+class ASMTile;
 class ASMTrainingDummy;
 class ASMProgressTriggerBase;
-class ASMTutorialInvisibleWallBase;
+class ASMTutorialWall;
 class USMTutorialUIControlComponent;
 class UEnhancedInputComponent;
 class UInputAction;
@@ -51,7 +53,7 @@ protected:
 	void OnStep2Started();
 
 	UFUNCTION()
-	void OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount);
+	void OnSamplingTilesCaptured();
 
 	void OnStep2Completed();
 
@@ -122,17 +124,19 @@ protected:
 
 	int32 TargetTilesCaptureCountForStep9 = 100;
 
-	TWeakObjectPtr<ASMTutorialInvisibleWallBase> SamplingEventWall;
+	TWeakObjectPtr<ASMTutorialWall> SamplingWall;
 
-	TWeakObjectPtr<ASMTutorialInvisibleWallBase> NeutralizeEventWall;
+	TWeakObjectPtr<ASMTutorialWall> HoldWall;
 
-	TWeakObjectPtr<ASMTutorialInvisibleWallBase> NoiseBreakEventWall;
+	TWeakObjectPtr<ASMTutorialWall> NoiseBreakWall;
 
-	TWeakObjectPtr<ASMTutorialInvisibleWallBase> HealPackEventWall;
+	TWeakObjectPtr<ASMTutorialWall> HealPackWall;
 
-	TWeakObjectPtr<ASMTutorialInvisibleWallBase> BattleStartEventWall;
+	TWeakObjectPtr<ASMTutorialWall> NextSectionWall;
 
-	TWeakObjectPtr<ASMTutorialInvisibleWallBase> BattleEndEventWall;
+	TWeakObjectPtr<ASMTutorialWall> BattleEntranceWall;
+
+	TWeakObjectPtr<ASMTutorialWall> BattleExitWall;
 
 	TWeakObjectPtr<ASMProgressTriggerBase> MovePracticeTrigger;
 
@@ -141,4 +145,12 @@ protected:
 	TWeakObjectPtr<ASMProgressTriggerBase> EndTrigger;
 
 	TWeakObjectPtr<ASMTrainingDummy> TrainingDummy;
+
+	TArray<TWeakObjectPtr<ASMTile>> SamplingTiles;
+
+	TArray<TWeakObjectPtr<ASMTile>> NoiseBreakTiles;
+
+	TArray<TWeakObjectPtr<ASMTile>> HealPackTiles;
+
+	TArray<TWeakObjectPtr<ASMTile>> PreNextTiles;
 };

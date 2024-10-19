@@ -12,9 +12,10 @@
 #include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "AbilitySystem/Abilities/Skill/SMGA_Skill.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
+#include "Actors/Tiles/SMTile.h"
 #include "Actors/Tutorial/SMProgressTriggerBase.h"
 #include "Actors/Tutorial/SMTrainingDummy.h"
-#include "Actors/Tutorial/SMTutorialInvisibleWallBase.h"
+#include "Actors/Tutorial/SMTutorialWall.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
 #include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
@@ -35,51 +36,60 @@ void USMTutorialManagerComponent::InitializeComponent()
 {
 	Super::InitializeComponent();
 
-	for (ASMTutorialInvisibleWallBase* TutorialInvisibleWall : TActorRange<ASMTutorialInvisibleWallBase>(GetWorld()))
+	auto HideWall = [](ASMTutorialWall* Wall) {
+		Wall->SetActorHiddenInGame(true);
+	};
+
+	auto DeactivateWall = [](ASMTutorialWall* Wall) {
+		Wall->SetActorHiddenInGame(true);
+		Wall->SetActorEnableCollision(false);
+	};
+
+	for (ASMTutorialWall* TutorialWall : TActorRange<ASMTutorialWall>(GetWorld()))
 	{
-		if (!TutorialInvisibleWall)
+		if (!TutorialWall)
 		{
 			continue;
 		}
 
-		if (TutorialInvisibleWall->ActorHasTag(TEXT("Sampling")))
+		if (TutorialWall->ActorHasTag(TEXT("Sampling")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
-			SamplingEventWall = TutorialInvisibleWall;
+			SamplingWall = TutorialWall;
 		}
 
-		if (TutorialInvisibleWall->ActorHasTag(TEXT("Neutralize")))
+		if (TutorialWall->ActorHasTag(TEXT("Hold")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
-			NeutralizeEventWall = TutorialInvisibleWall;
+			HoldWall = TutorialWall;
+			HideWall(TutorialWall);
 		}
 
-		if (TutorialInvisibleWall->ActorHasTag(TEXT("NoiseBreak")))
+		if (TutorialWall->ActorHasTag(TEXT("NoiseBreak")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
-			NoiseBreakEventWall = TutorialInvisibleWall;
+			NoiseBreakWall = TutorialWall;
+			HideWall(TutorialWall);
 		}
 
-		if (TutorialInvisibleWall->ActorHasTag(TEXT("HealPack")))
+		if (TutorialWall->ActorHasTag(TEXT("HealPack")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
-			HealPackEventWall = TutorialInvisibleWall;
+			HealPackWall = TutorialWall;
+			HideWall(TutorialWall);
 		}
 
-		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleStart")))
+		if (TutorialWall->ActorHasTag(TEXT("NextSection")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
-			BattleStartEventWall = TutorialInvisibleWall;
-			if (BattleStartEventWall.IsValid())
-			{
-				BattleStartEventWall->SetActorEnableCollision(false);
-			}
+			NextSectionWall = TutorialWall;
+			DeactivateWall(TutorialWall);
 		}
 
-		if (TutorialInvisibleWall->ActorHasTag(TEXT("BattleEnd")))
+		if (TutorialWall->ActorHasTag(TEXT("BattleEntrance")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TutorialInvisibleWall));
-			BattleEndEventWall = TutorialInvisibleWall;
+			BattleEntranceWall = TutorialWall;
+			DeactivateWall(TutorialWall);
+		}
+
+		if (TutorialWall->ActorHasTag(TEXT("BattleExit")))
+		{
+			BattleExitWall = TutorialWall;
 		}
 	}
 
@@ -92,20 +102,45 @@ void USMTutorialManagerComponent::InitializeComponent()
 
 		if (ProgressTrigger->ActorHasTag(TEXT("MovePractice")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(ProgressTrigger));
 			MovePracticeTrigger = ProgressTrigger;
 		}
 
 		if (ProgressTrigger->ActorHasTag(TEXT("Next")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(ProgressTrigger));
 			NextTrigger = ProgressTrigger;
 		}
 
 		if (ProgressTrigger->ActorHasTag(TEXT("End")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(ProgressTrigger));
 			EndTrigger = ProgressTrigger;
+		}
+	}
+
+	for (const auto& Tile : TActorRange<ASMTile>(GetWorld()))
+	{
+		if (!Tile)
+		{
+			continue;
+		}
+
+		if (Tile->ActorHasTag(TEXT("Sampling")))
+		{
+			SamplingTiles.Add(Tile);
+		}
+
+		if (Tile->ActorHasTag(TEXT("NoiseBreak")))
+		{
+			NoiseBreakTiles.Add(Tile);
+		}
+
+		if (Tile->ActorHasTag(TEXT("HealPack")))
+		{
+			HealPackTiles.Add(Tile);
+		}
+
+		if (Tile->ActorHasTag(TEXT("PreNext")))
+		{
+			PreNextTiles.Add(Tile);
 		}
 	}
 
@@ -152,6 +187,30 @@ void USMTutorialManagerComponent::BeginPlay()
 	if (EndTrigger.IsValid())
 	{
 		EndTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep10Completed);
+	}
+
+	for (TWeakObjectPtr<ASMTile> NoiseBreakTile : NoiseBreakTiles)
+	{
+		if (NoiseBreakTile.IsValid())
+		{
+			NoiseBreakTile->SetActorEnableCollision(false);
+		}
+	}
+
+	for (TWeakObjectPtr<ASMTile> HealPackTile : HealPackTiles)
+	{
+		if (HealPackTile.IsValid())
+		{
+			HealPackTile->SetActorEnableCollision(false);
+		}
+	}
+
+	for (TWeakObjectPtr<ASMTile> PreNextTile : PreNextTiles)
+	{
+		if (PreNextTile.IsValid())
+		{
+			PreNextTile->SetActorEnableCollision(false);
+		}
 	}
 }
 
@@ -294,38 +353,25 @@ void USMTutorialManagerComponent::OnStep2Started()
 {
 	TilesCaptureCount = 0;
 
-	if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
+	for (TWeakObjectPtr<ASMTile> SamplingTile : SamplingTiles)
 	{
-		TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
+		if (SamplingTile.IsValid())
+		{
+			SamplingTile->OnChangeTile.AddDynamic(this, &ThisClass::OnSamplingTilesCaptured);
+		}
 	}
 
-	APawn* Pawn = GetLocalPlayerPawn();
-	if (UAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Pawn))
+	if (UAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetLocalPlayerPawn()))
 	{
-		const UWorld* World = GetWorld();
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Sampling);
-		USMTileFunctionLibrary::CaptureTiles(World, TArray{ USMTileFunctionLibrary::GetTileFromLocation(World, Pawn->GetActorLocation()) }, Pawn);
 	}
 }
 
-void USMTutorialManagerComponent::OnTilesCaptured(const AActor* CapturedInstigator, int32 CapturedTileCount)
+void USMTutorialManagerComponent::OnSamplingTilesCaptured()
 {
-	TilesCaptureCount += CapturedTileCount;
-
-	if (CurrentStepNumber == 2)
+	if (++TilesCaptureCount >= TargetTilesCaptureCountForStep2)
 	{
-		if (TilesCaptureCount >= TargetTilesCaptureCountForStep2)
-		{
-			OnStep2Completed();
-		}
-	}
-
-	if (CurrentStepNumber == 9)
-	{
-		if (TilesCaptureCount >= TargetTilesCaptureCountForStep9)
-		{
-			OnStep9Completed();
-		}
+		OnStep2Completed();
 	}
 }
 
@@ -349,14 +395,20 @@ void USMTutorialManagerComponent::OnStep3Started()
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Attack);
 	}
 
-	if (SamplingEventWall.IsValid())
+	if (SamplingWall.IsValid())
 	{
-		SamplingEventWall->Destroy();
+		SamplingWall->SetActorHiddenInGame(true);
+		SamplingWall->Destroy();
 	}
 
 	if (TrainingDummy.IsValid())
 	{
 		TrainingDummy->OnHalfHPReached.BindUObject(this, &ThisClass::OnStep3Completed);
+	}
+
+	if (HoldWall.IsValid())
+	{
+		HoldWall->SetActorHiddenInGame(false);
 	}
 }
 
@@ -444,11 +496,6 @@ void USMTutorialManagerComponent::OnStep6Started()
 		HoldInstance->OnHoldSucceed.AddDynamic(this, &ThisClass::OnStep6Completed);
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Hold);
 	}
-
-	if (NeutralizeEventWall.IsValid())
-	{
-		NeutralizeEventWall->Destroy();
-	}
 }
 
 void USMTutorialManagerComponent::OnStep6Completed()
@@ -477,6 +524,33 @@ void USMTutorialManagerComponent::OnStep7Started()
 	{
 		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep7Completed);
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
+	}
+
+	for (TWeakObjectPtr<ASMTile> NoiseBreakTile : NoiseBreakTiles)
+	{
+		if (NoiseBreakTile.IsValid())
+		{
+			NoiseBreakTile->SetActorEnableCollision(true);
+		}
+	}
+
+	for (TWeakObjectPtr<ASMTile> NoiseBreakTile : NoiseBreakTiles)
+	{
+		if (NoiseBreakTile.IsValid())
+		{
+			NoiseBreakTile->SetActorEnableCollision(true);
+		}
+	}
+
+	if (HoldWall.IsValid())
+	{
+		HoldWall->SetActorHiddenInGame(true);
+		HoldWall->Destroy();
+	}
+
+	if (NoiseBreakWall.IsValid())
+	{
+		NoiseBreakWall->SetActorHiddenInGame(false);
 	}
 }
 
@@ -529,9 +603,23 @@ void USMTutorialManagerComponent::OnStep8Started()
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
 	}
 
-	if (NoiseBreakEventWall.IsValid())
+	if (NoiseBreakWall.IsValid())
 	{
-		NoiseBreakEventWall->Destroy();
+		NoiseBreakWall->SetActorHiddenInGame(true);
+		NoiseBreakWall->Destroy();
+	}
+
+	if (HealPackWall.IsValid())
+	{
+		HealPackWall->SetActorHiddenInGame(false);
+	}
+
+	for (TWeakObjectPtr<ASMTile> HealPackTile : HealPackTiles)
+	{
+		if (HealPackTile.IsValid())
+		{
+			HealPackTile->SetActorEnableCollision(true);
+		}
 	}
 }
 
@@ -545,14 +633,22 @@ void USMTutorialManagerComponent::OnStep8Completed()
 		NoiseBreakInstance->OnNoiseBreakSucceed.RemoveAll(this);
 	}
 
-	if (HealPackEventWall.IsValid())
+	if (HealPackWall.IsValid())
 	{
-		HealPackEventWall->Destroy();
+		HealPackWall->Destroy();
 	}
 
 	if (NextTrigger.IsValid())
 	{
 		NextTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnNextTriggerBeginOverlap);
+	}
+
+	for (TWeakObjectPtr<ASMTile> PreNextTile : PreNextTiles)
+	{
+		if (PreNextTile.IsValid())
+		{
+			PreNextTile->SetActorEnableCollision(true);
+		}
 	}
 }
 
@@ -579,9 +675,10 @@ void USMTutorialManagerComponent::OnArrivedBattleZone()
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Uncontrollable);
 	}
 
-	if (BattleStartEventWall.IsValid())
+	if (NextSectionWall.IsValid())
 	{
-		BattleStartEventWall->SetActorEnableCollision(true);
+		NextSectionWall->SetActorHiddenInGame(false);
+		NextSectionWall->SetActorEnableCollision(true);
 	}
 
 	SetComponentTickEnabled(false);
@@ -614,9 +711,9 @@ void USMTutorialManagerComponent::OnStep9Completed()
 
 void USMTutorialManagerComponent::OnStep10Started()
 {
-	if (BattleEndEventWall.IsValid())
+	if (BattleExitWall.IsValid())
 	{
-		BattleEndEventWall->Destroy();
+		BattleExitWall->Destroy();
 	}
 }
 
