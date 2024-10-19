@@ -63,19 +63,44 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	}
 }
 
+void USMGA_Shoot::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
+{
+	bIsInputReleased = false;
+
+	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
+}
+
 void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	if (const UWorld* World = GetWorld())
+	bIsInputReleased = true;
+}
+
+void USMGA_Shoot::Shoot()
+{
+	if (bIsInputReleased) // 입력을 종료하면 기본 공격이 멈춥니다.
 	{
-		World->GetTimerManager().ClearTimer(ShootTimerHandle);
+		bIsInputReleased = false;
+
+		K2_EndAbility();
+		return;
 	}
 
-	K2_EndAbility(); // 마우스 클릭 속도 그대로 연발로 반영됨 ㅋ
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	if (SourceCharacter && K2_CheckAbilityCost())
+	{
+		const FVector SourceLocation = SourceCharacter->GetActorLocation();
+		const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
+		ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
+		ServerRPCApplyCost();
 
-	// TODO: 릴리즈 빌드시 아래 로직으로 수행해야함 ㅋ.
-	// UAbilityTask_WaitDelay* WaitTask = UAbilityTask_WaitDelay::WaitDelay(this, 0.5f / AttackPerSecond);
-	// WaitTask->OnFinish.AddDynamic(this, &ThisClass::K2_EndAbility);
-	// WaitTask->ReadyForActivation();
+		const FName SectionName = TEXT("Default");
+		MontageJumpToSection(SectionName);
+	}
+}
+
+void USMGA_Shoot::ServerRPCApplyCost_Implementation()
+{
+	K2_CommitAbilityCost();
 }
 
 void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
@@ -112,33 +137,11 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 	ProjectileParams.MaxDistance = MaxDistance;
 	Projectile->Launch(ProjectileParams);
 
-	if (USMAbilitySystemComponent* SourceASC = GetASC())
+	if (const USMAbilitySystemComponent* SourceASC = GetASC())
 	{
 		FGameplayCueParameters GCParams;
 		GCParams.TargetAttachComponent = SourceCharacter->GetRootComponent();
 		GCParams.Location = FVector(150.0, 0.0, 0.0);
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::Shoot, GCParams);
 	}
-}
-
-void USMGA_Shoot::Shoot()
-{
-	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	if (!SourceCharacter || !K2_CheckAbilityCost())
-	{
-		return;
-	}
-
-	const FVector SourceLocation = SourceCharacter->GetActorLocation();
-	const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
-	ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
-	ServerRPCApplyCost();
-
-	const FName SectionName = TEXT("Default");
-	MontageJumpToSection(SectionName);
-}
-
-void USMGA_Shoot::ServerRPCApplyCost_Implementation()
-{
-	K2_CommitAbilityCost();
 }
