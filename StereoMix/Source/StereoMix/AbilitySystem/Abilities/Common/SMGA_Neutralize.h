@@ -28,11 +28,15 @@ protected:
 	UFUNCTION()
 	void OnMinimalNeutralizeTimeEnded();
 
+	void MinimalNeutralizeTimerReset();
+
 	UFUNCTION()
-	void OnMinimalNeutralizeTimerReset(FGameplayEventData Payload);
+	void OnNoiseBreakEndedForMinimalTimer(FGameplayEventData Payload);
 
 	UFUNCTION()
 	void OnNeutralizeTimeEnded();
+
+	void StartNeutralizeExit();
 
 	void WaitUntilBuzzerBeaterEnd();
 
@@ -66,7 +70,7 @@ protected:
 
 	/** 무력화 최소 타이머를 리셋하기 위한 노이즈 브레이크 감지용 태스크입니다. */
 	UPROPERTY()
-	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitNoiseBreakEndWaitTask;
+	TObjectPtr<UAbilityTask_WaitGameplayEvent> WaitNoiseBreakEndWaitTaskForMinimalTimer;
 
 	UPROPERTY(EditAnywhere, Category = "GAS|GE")
 	TArray<TSubclassOf<UGameplayEffect>> StunEndedGEs;

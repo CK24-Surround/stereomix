@@ -36,8 +36,8 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	USMAbilitySystemComponent* SourceASC = GetASC();
-	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
+	USMHIC_Character* SourceHIC = GetHIC();
 	if (!SourceCharacter || !SourceASC || !SourceHIC)
 	{
 		EndAbilityByCancel();
@@ -68,10 +68,13 @@ void USMGA_Neutralize::ActivateAbility(const FGameplayAbilitySpecHandle Handle, 
 		MinimalWaitTask->OnFinish.AddDynamic(this, &ThisClass::OnMinimalNeutralizeTimeEnded);
 		MinimalWaitTask->ReadyForActivation();
 
-		// 최소 무력화 시간 초기화를 위해 노이즈 브레이크 종료 이벤트를 대기합니다. 
-		WaitNoiseBreakEndWaitTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterEnd);
-		WaitNoiseBreakEndWaitTask->EventReceived.AddDynamic(this, &ThisClass::OnMinimalNeutralizeTimerReset);
-		WaitNoiseBreakEndWaitTask->ReadyForActivation();
+		// 잡힐 경우 최소 무력화 시간 타이머가 리셋됩니다.
+		SourceHIC->OnHeldStateEntry.AddUObject(this, &ThisClass::MinimalNeutralizeTimerReset);
+
+		// 노이즈 브레이크 당해도 최소 무력화 시간 타이머가 리셋됩니다.
+		WaitNoiseBreakEndWaitTaskForMinimalTimer = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterEnd);
+		WaitNoiseBreakEndWaitTaskForMinimalTimer->EventReceived.AddDynamic(this, &ThisClass::OnNoiseBreakEndedForMinimalTimer);
+		WaitNoiseBreakEndWaitTaskForMinimalTimer->ReadyForActivation();
 
 		// 무언가를 잡고 있다면 잡은 대상을 놓습니다.
 		if (SourceASC->HasMatchingGameplayTag(SMTags::Character::State::Common::Hold))
@@ -137,8 +140,8 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 
 			if (USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>())
 			{
-				// 무력화가 종료되었기에 자신을 잡았던 캐릭터 리스트를 초기화합니다.
-				SourceHIC->EmptyHeldMeCharacterList();
+				SourceHIC->EmptyHeldMeCharacterList(); // 무력화가 종료되었기에 자신을 잡았던 캐릭터 리스트를 초기화합니다.
+				SourceHIC->OnHeldStateEntry.RemoveAll(this);
 			}
 
 			// 스턴 종료 시 적용해야할 GE들을 적용합니다.
@@ -168,41 +171,36 @@ void USMGA_Neutralize::EndAbility(const FGameplayAbilitySpecHandle Handle, const
 
 void USMGA_Neutralize::OnMinimalNeutralizeTimeEnded()
 {
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	const USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMHIC_Character* SourceHIC = GetHIC();
 	if (!SourceASC || !SourceHIC)
 	{
 		EndAbilityByCancel();
 		return;
 	}
 
-	if (SourceASC->HasAnyMatchingGameplayTags(NoiseBreakedTags)) // 노이즈 브레이크 당하는 중이라면 다시 최소 타이머를 돌릴 준비를 합니다.
+	if (SourceASC->HasAnyMatchingGameplayTags(NoiseBreakedTags)) // 노이즈 브레이크 당하는 중이라면 노이즈 브레이크 종료 이벤트에 최소 타이머 리셋을 맡깁니다. 따라서 여기서 처리하지 않습니다.
 	{
-		// 게임 종료 등의 이유로 자신을 잡고 있는 캐릭터가 노이즈 브레이크하다가 사라진 경우 예외처리입니다.
-		if (!SourceHIC->GetActorHoldingMe())
+		if (!SourceHIC->GetActorHoldingMe()) // 게임 종료 등의 이유로 자신을 잡고 있는 캐릭터가 노이즈 브레이크하다가 사라진 경우 예외처리입니다.
 		{
 			SourceASC->RemoveTag(SMTags::Character::State::Common::NoiseBreaked);
-			return;
 		}
 	}
 	else
 	{
-		NET_LOG(GetAvatarActor(), Log, TEXT("%s의 무력화 상태가 조기 종료 상태로 진입"), *GetNameSafe(GetAvatarActor()));
-
 		// 무력화 조기 종료를 위한 상태로 진입합니다.
 		if (WaitTask)
 		{
 			WaitTask->EndTask();
 		}
 
-		OnNeutralizeTimeEnded();
+		NET_LOG(GetAvatarActor(), Log, TEXT("%s가 무력화 조기 종료 상태로 진입"), *GetNameSafe(GetAvatarActor()));
+		StartNeutralizeExit();
 	}
 }
 
-void USMGA_Neutralize::OnMinimalNeutralizeTimerReset(FGameplayEventData Payload)
+void USMGA_Neutralize::MinimalNeutralizeTimerReset()
 {
-	NET_LOG(GetAvatarActor(), Log, TEXT("%s의 조기 무력화 타이머 초기화"), *GetNameSafe(GetAvatarActor()));
-
 	if (MinimalWaitTask)
 	{
 		MinimalWaitTask->EndTask();
@@ -213,9 +211,30 @@ void USMGA_Neutralize::OnMinimalNeutralizeTimerReset(FGameplayEventData Payload)
 	MinimalWaitTask->ReadyForActivation();
 }
 
+void USMGA_Neutralize::OnNoiseBreakEndedForMinimalTimer(FGameplayEventData Payload)
+{
+	// 최소 타이머와 관련된 태스크들을 정리해줍니다.
+	if (MinimalWaitTask)
+	{
+		MinimalWaitTask->EndTask();
+	}
+	if (WaitNoiseBreakEndWaitTaskForMinimalTimer)
+	{
+		WaitNoiseBreakEndWaitTaskForMinimalTimer->EndTask();
+	}
+
+	MinimalNeutralizeTimerReset();
+}
+
 void USMGA_Neutralize::OnNeutralizeTimeEnded()
 {
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	NET_LOG(GetAvatarActor(), Log, TEXT("%s가 무력화 종료 상태로 진입"), *GetNameSafe(GetAvatarActor()));
+	StartNeutralizeExit();
+}
+
+void USMGA_Neutralize::StartNeutralizeExit()
+{
+	USMAbilitySystemComponent* SourceASC = GetASC();
 	if (!SourceASC)
 	{
 		EndAbilityByCancel();
@@ -237,8 +256,8 @@ void USMGA_Neutralize::OnNeutralizeTimeEnded()
 
 void USMGA_Neutralize::WaitUntilBuzzerBeaterEnd()
 {
-	USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
-	const USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	USMAbilitySystemComponent* SourceASC = GetASC();
+	const USMHIC_Character* SourceHIC = GetHIC();
 	if (!SourceASC || !SourceHIC)
 	{
 		EndAbilityByCancel();
@@ -254,7 +273,7 @@ void USMGA_Neutralize::WaitUntilBuzzerBeaterEnd()
 		return;
 	}
 
-	NET_LOG(GetAvatarActorFromActorInfo(), Log, TEXT("%s가 버저 비터 종료 대기 상태 진입"), *GetNameSafe(GetAvatarActor()));
+	NET_LOG(GetAvatarActorFromActorInfo(), Warning, TEXT("%s가 버저 비터 종료 대기 상태 진입"), *GetNameSafe(GetAvatarActor()));
 
 	// 버저비터 종료 이벤트를 기다립니다.
 	UAbilityTask_WaitGameplayEvent* WaitEventTask = UAbilityTask_WaitGameplayEvent::WaitGameplayEvent(this, SMTags::Event::Character::BuzzerBeaterEnd);
@@ -273,7 +292,7 @@ void USMGA_Neutralize::OnBuzzerBeaterEnded(FGameplayEventData Payload)
 void USMGA_Neutralize::PrepareNeutralizeEnd()
 {
 	const UAbilitySystemComponent* SourceASC = GetASC();
-	USMHIC_Character* SourceHIC = GetHIC<USMHIC_Character>();
+	USMHIC_Character* SourceHIC = GetHIC();
 	if (!SourceASC || !SourceHIC)
 	{
 		EndAbilityByCancel();
@@ -298,8 +317,8 @@ void USMGA_Neutralize::NeutralizeExitSyncPoint()
 
 void USMGA_Neutralize::NeutralizeEnd()
 {
-	ASMPlayerCharacterBase* SourceCharacter = GetAvatarActor<ASMPlayerCharacterBase>();
-	const USMAbilitySystemComponent* SourceASC = GetASC<USMAbilitySystemComponent>();
+	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
+	const USMAbilitySystemComponent* SourceASC = GetASC();
 	const USMPlayerCharacterDataAsset* SourceCharacterDataAsset = GetDataAsset();
 	const UAnimInstance* SourceAnimInstance = CurrentActorInfo ? CurrentActorInfo->GetAnimInstance() : nullptr;
 	if (!SourceCharacter || !SourceASC || !SourceCharacterDataAsset || !SourceAnimInstance)
