@@ -115,7 +115,7 @@ void USMGA_ElectricGuitarNoiseBreak::ActivateAbility(const FGameplayAbilitySpecH
 		const FVector SourceToTargetDirection = SourceToTarget.GetSafeNormal();
 
 		const AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		const int32 HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0 : 1) : 0; // 0이면 캐릭터, 1이면 아이템입니다.
+		const int32 HoldingType = TargetActor ? (Cast<ASMCharacterBase>(TargetActor) ? 0 : 1) : 0; // 0이면 캐릭터, 1이면 아이템입니다.
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;

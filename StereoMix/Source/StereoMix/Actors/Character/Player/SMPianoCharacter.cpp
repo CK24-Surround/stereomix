@@ -37,7 +37,7 @@ void ASMPianoCharacter::OnHoldStateEntry()
 		{
 			FGameplayCueParameters GCParams;
 			GCParams.SourceObject = this;
-			GCParams.RawMagnitude = Cast<ASMPlayerCharacterBase>(HIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
+			GCParams.RawMagnitude = Cast<ASMCharacterBase>(HIC->GetActorIAmHolding()) ? 0.0f : 1.0f;
 			SourceASC->AddGameplayCue(SMTags::GameplayCue::Piano::HoldWeapon, GCParams);
 		}
 	}

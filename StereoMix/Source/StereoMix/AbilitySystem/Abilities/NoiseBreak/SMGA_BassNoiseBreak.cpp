@@ -218,7 +218,7 @@ void USMGA_BassNoiseBreak::OnLanded()
 		const FVector Offset(0.0, 0.0, 10.0); // 타일과 겹치게 되면 현재 이펙트가 잘 안 보이는데 이를 방지하는 오프셋입니다.
 
 		const AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+		const float HoldingType = TargetActor ? (Cast<ASMCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
@@ -267,7 +267,7 @@ void USMGA_BassNoiseBreak::OnWeaponTrailActivate(FGameplayEventData Payload)
 	const FVector WeaponOffset(30.0, 0.0, -145.0);
 
 	const auto TargetActor = SourceHIC->GetActorIAmHolding();
-	const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+	const float HoldingType = TargetActor ? (Cast<ASMCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
 
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
@@ -303,7 +303,7 @@ void USMGA_BassNoiseBreak::OnSlash(FGameplayEventData Payload)
 	}
 
 	const auto TargetActor = SourceHIC->GetActorIAmHolding();
-	const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+	const float HoldingType = TargetActor ? (Cast<ASMCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
 
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;

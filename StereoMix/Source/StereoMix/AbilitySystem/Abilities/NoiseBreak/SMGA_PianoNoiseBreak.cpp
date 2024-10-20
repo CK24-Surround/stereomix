@@ -85,7 +85,7 @@ void USMGA_PianoNoiseBreak::ActivateAbility(const FGameplayAbilitySpecHandle Han
 		constexpr float Offset = 250.0f;
 
 		const AActor* TargetActor = SourceHIC->GetActorIAmHolding();
-		const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+		const float HoldingType = TargetActor ? (Cast<ASMCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
 
 		FGameplayCueParameters GCParams;
 		GCParams.SourceObject = SourceCharacter;
@@ -178,7 +178,7 @@ void USMGA_PianoNoiseBreak::OnShoot(FGameplayEventData Payload)
 			}
 		}
 
-		const float HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
+		const float HoldingType = TargetActor ? (Cast<ASMCharacterBase>(TargetActor) ? 0.0f : 1.0f) : 0.0f; // 0이면 캐릭터, 1이면 아이템입니다.
 
 		const FVector SourceLocation = SourceCharacter->GetActorLocation();
 		const FVector TargetToSourceDirection = (SourceLocation - NoiseBreakTargetLocation).GetSafeNormal();
