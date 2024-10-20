@@ -8,7 +8,6 @@ void ASMPlayerStartBase::PostInitializeComponents()
 	Super::PostInitializeComponents();
 
 	PlayerStartTag = FName(GetPlayerStartTagByTypeAndTeam(CharacterType, Team));
-	UE_LOG(LogTemp, Warning, TEXT("InitCompTag: %d %d"), CharacterType, Team);
 }
 
 FString ASMPlayerStartBase::GetPlayerStartTagByTypeAndTeam(ESMCharacterType InType, ESMTeam InTeam)
