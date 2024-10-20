@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Actors/Character/SMCharacterBase.h"
 #include "Interfaces/SMDamageInterface.h"
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "Interfaces/SMTeamInterface.h"
@@ -20,7 +21,7 @@ DECLARE_DELEGATE(FOnTrainingDummyStateChanged);
 DECLARE_DELEGATE_TwoParams(FOnTrainingDummyStatChanged, float /*Current*/, float /*Max*/);
 
 UCLASS()
-class STEREOMIX_API ASMTrainingDummy : public AActor, public ISMTeamInterface, public ISMDamageInterface, public ISMHoldInteractionInterface
+class STEREOMIX_API ASMTrainingDummy : public ASMCharacterBase, public ISMTeamInterface, public ISMDamageInterface, public ISMHoldInteractionInterface
 {
 	GENERATED_BODY()
 
@@ -68,14 +69,8 @@ public:
 	FOnTrainingDummyStatChanged OnHPChanged;
 
 protected:
-	UPROPERTY(VisibleAnywhere, Category = "Root")
-	TObjectPtr<UCapsuleComponent> RootCapsuleComponent;
-
 	UPROPERTY(VisibleAnywhere, Category = "Collider")
 	TObjectPtr<USphereComponent> ColliderComponent;
-
-	UPROPERTY(VisibleAnywhere, Category = "Visual")
-	TObjectPtr<UStaticMeshComponent> MeshComponent;
 
 	UPROPERTY(VisibleAnywhere, Category = "Note")
 	TObjectPtr<USceneComponent> NoteRootComponent;

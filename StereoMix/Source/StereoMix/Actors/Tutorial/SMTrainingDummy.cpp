@@ -17,23 +17,22 @@ ASMTrainingDummy::ASMTrainingDummy()
 {
 	PrimaryActorTick.bCanEverTick = false;
 
-	RootCapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("RootCapsuleComponent"));
-	RootComponent = RootCapsuleComponent;
-	RootCapsuleComponent->SetCollisionProfileName(SMCollisionProfileName::Player);
+	UCapsuleComponent* CachedCapsule = GetCapsuleComponent();
+	CachedCapsule->SetCollisionProfileName(SMCollisionProfileName::Player);
 
 	ColliderComponent = CreateDefaultSubobject<USphereComponent>(TEXT("ColliderComponent"));
 	ColliderComponent->SetupAttachment(RootComponent);
 	ColliderComponent->SetCollisionProfileName(SMCollisionProfileName::PlayerProjectileHitbox);
 	ColliderComponent->InitSphereRadius(150.0f);
 
-	MeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("MeshComponent"));
-	MeshComponent->SetupAttachment(RootComponent);
-	MeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
-	MeshComponent->bReceivesDecals = false;
+	USkeletalMeshComponent* CachedMesh = GetMesh();
+	CachedMesh->SetupAttachment(RootComponent);
+	CachedMesh->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	CachedMesh->bReceivesDecals = false;
 
 	NoteRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("NoteRootComponent"));
 	NoteRootComponent->SetAbsolute(false, true, true);
-	NoteRootComponent->SetupAttachment(MeshComponent);
+	NoteRootComponent->SetupAttachment(CachedMesh);
 
 	StateWidgetComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBarWidgetComponent"));
 	StateWidgetComponent->SetupAttachment(RootComponent);
@@ -153,7 +152,11 @@ void ASMTrainingDummy::SetNoteState(bool bNewIsNoteState)
 	bIsNeutralized = bNewIsNoteState;
 
 	StateWidgetComponent->SetVisibility(!bNewIsNoteState);
-	MeshComponent->SetVisibility(!bNewIsNoteState);
+
+	if (USkeletalMeshComponent* CachedMesh = GetMesh())
+	{
+		CachedMesh->SetVisibility(!bNewIsNoteState);
+	}
 
 	bNewIsNoteState ? Note->PlayAnimation() : Note->StopAnimation();
 }
