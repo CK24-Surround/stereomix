@@ -9,7 +9,7 @@
 class ASMTile;
 struct FSMCharacterNoiseBreakData;
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnNoiseBreakSucceedDelegate);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnNoiseBreakSucceedDelegate, TArray<ASMTile*>, CapturedTiles);
 
 /**
  * 

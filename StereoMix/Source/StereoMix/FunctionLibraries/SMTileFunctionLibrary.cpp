@@ -85,27 +85,30 @@ TArray<ASMTile*> USMTileFunctionLibrary::GetTilesInCapsule(const UWorld* World, 
 	return Result;
 }
 
-void USMTileFunctionLibrary::CaptureTiles(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, const AActor* Instigator, const TOptional<ESMTeam>& OverrideTeamOption)
+TArray<ASMTile*> USMTileFunctionLibrary::CaptureTiles(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, const AActor* Instigator, const TOptional<ESMTeam>& OverrideTeamOption)
 {
+	TArray<ASMTile*> CapturedTiles;
 	if (USMTileManagerComponent* TileManager = GetTileManagerComponent(World))
 	{
-		TileManager->CaptureTiles(TilesToBeCaptured, Instigator, OverrideTeamOption);
+		CapturedTiles = TileManager->CaptureTiles(TilesToBeCaptured, Instigator, OverrideTeamOption);
 	}
+
+	return CapturedTiles;
 }
 
-void USMTileFunctionLibrary::CaptureTilesInSquare(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption)
+TArray<ASMTile*> USMTileFunctionLibrary::CaptureTilesInSquare(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption)
 {
 	USMTileManagerComponent* TileManager = GetTileManagerComponent(World);
 	const ASMTile* CenterTile = GetTileFromLocation(World, CenterLocation);
 	if (!TileManager || !CenterTile)
 	{
-		return;
+		return TArray<ASMTile*>();
 	}
 
 	constexpr float Offset = DefaultTileSize / 4.0f;
 	const float HalfSize = Offset + (DefaultTileSize * (TileExpansionCount - 1));
 	const FVector BoxExtend(HalfSize);
-	TileManager->CaptureTiles(GetTilesInBox(World, CenterLocation, BoxExtend), Instigator, OverrideTeamOption);
+	return TileManager->CaptureTiles(GetTilesInBox(World, CenterLocation, BoxExtend), Instigator, OverrideTeamOption);
 }
 
 void USMTileFunctionLibrary::CaptureTilesInSquareWithDelay(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, float TotalCaptureTime, const TOptional<ESMTeam>& OverrideTeamOption)

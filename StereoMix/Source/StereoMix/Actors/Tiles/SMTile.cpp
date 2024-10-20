@@ -53,6 +53,8 @@ void ASMTile::PostInitializeComponents()
 			}
 		}
 	}
+
+	DefaultMaterial = TileMeshComponent->GetMaterial(0);
 }
 
 void ASMTile::TileTrigger(ESMTeam InTeam)
@@ -81,17 +83,22 @@ FVector ASMTile::GetTileLocation() const
 
 void ASMTile::OnChangeTeamCallback()
 {
-	const ESMTeam Team = TeamComponent->GetTeam();
+	const ESMTeam OwnerTeam = TeamComponent->GetTeam();
 
 	if (GetNetMode() != NM_DedicatedServer && DataAsset)
 	{
+		UMaterialInterface* CachedTileMaterial = DataAsset->CapturedTileMaterial.Contains(OwnerTeam) ? DataAsset->CapturedTileMaterial[OwnerTeam] : nullptr;
+		CachedTileMaterial = OwnerTeam == ESMTeam::None ? DefaultMaterial.Get() : CachedTileMaterial;
 		for (int32 i = 0; i < TileMeshComponent->GetNumMaterials(); ++i)
 		{
-			TileMeshComponent->SetMaterial(i, DataAsset->CapturedTileMaterial[Team]);
+			TileMeshComponent->SetMaterial(i, CachedTileMaterial);
 		}
 
-		TileMeshComponent->SetOverlayMaterial(DataAsset->CapturedTileOverlayMaterial[Team]);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), DataAsset->TileChangeFX[Team], TileMeshComponent->GetComponentLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
+		UMaterialInterface* CachedTileOverlayMaterial = DataAsset->CapturedTileOverlayMaterial.Contains(OwnerTeam) ? DataAsset->CapturedTileOverlayMaterial[OwnerTeam] : nullptr;
+		TileMeshComponent->SetOverlayMaterial(CachedTileOverlayMaterial);
+
+		UNiagaraSystem* CachedTileChangeVFX = DataAsset->TileChangeFX.Contains(OwnerTeam) ? DataAsset->TileChangeFX[OwnerTeam] : nullptr;
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), CachedTileChangeVFX, TileMeshComponent->GetComponentLocation(), FRotator::ZeroRotator, FVector(1.0), false, true, ENCPoolMethod::AutoRelease);
 	}
 
 	OnChangeTile.Broadcast();

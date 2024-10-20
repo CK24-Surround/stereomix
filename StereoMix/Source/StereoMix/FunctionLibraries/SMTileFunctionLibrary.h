@@ -36,14 +36,14 @@ public:
 	 * @param TilesToBeCaptured 점령할 타일들의 배열입니다.
 	 * @param OverrideTeamOption 선택적 팀 매개변수입니다. 제공된다면 Instigator의 팀을 무시하고 이 팀으로 점령됩니다.
 	 */
-	static void CaptureTiles(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, const AActor* Instigator, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
+	static TArray<ASMTile*> CaptureTiles(const UWorld* World, const TArray<ASMTile*>& TilesToBeCaptured, const AActor* Instigator, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
 
 	/**
 	 * 해당 위치를 기준으로 타일을 사각형 모양으로 즉시 점령합니다.
 	 * @param TileExpansionCount 중심을 기준으로 점령되는 사이즈입니다.
 	 * @param OverrideTeamOption 기본적으로 Instigator의 팀으로 점령이 수행되지만 다른 팀으로 덮어 씌워 수행해야하는 경우 여기에 값을 넣어주면 됩니다. (예시: 타일 중립화 ESMTeam::None)
 	 */
-	static void CaptureTilesInSquare(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
+	static TArray<ASMTile*> CaptureTilesInSquare(const UWorld* World, const FVector& CenterLocation, const AActor* Instigator, int32 TileExpansionCount, const TOptional<ESMTeam>& OverrideTeamOption = TOptional<ESMTeam>());
 
 	/**
 	 * 해당 위치를 기준으로 타일을 사각형 모양으로 순차적으로 점령합니다.

@@ -65,10 +65,10 @@ void USMTileManagerComponent::BeginPlay()
 	CachedScoreMusicManager = CachedOwner ? CachedOwner->FindComponentByClass<USMScoreMusicManagerComponent>() : nullptr;
 }
 
-int32 USMTileManagerComponent::CaptureTiles(const TArray<ASMTile*>& TilesToBeCaptured, const AActor* Instigator, const TOptional<ESMTeam>& OverrideTeamOption)
+TArray<ASMTile*> USMTileManagerComponent::CaptureTiles(const TArray<ASMTile*>& TilesToBeCaptured, const AActor* Instigator, const TOptional<ESMTeam>& OverrideTeamOption)
 {
+	TArray<ASMTile*> CapturedTiles;
 	const ESMTeam InstigatorTeam = OverrideTeamOption.Get(USMTeamBlueprintLibrary::GetTeam(Instigator));
-	int32 SuccessCaptureTileCount = 0;
 
 	const FColor DebugColor = FColor::MakeRandomColor();
 	for (ASMTile* TileToBeCaptured : TilesToBeCaptured)
@@ -80,7 +80,7 @@ int32 USMTileManagerComponent::CaptureTiles(const TArray<ASMTile*>& TilesToBeCap
 		}
 
 		TileToBeCaptured->TileTrigger(InstigatorTeam);
-		++SuccessCaptureTileCount;
+		CapturedTiles.Add(TileToBeCaptured);
 
 		if (bShowDebug)
 		{
@@ -88,12 +88,12 @@ int32 USMTileManagerComponent::CaptureTiles(const TArray<ASMTile*>& TilesToBeCap
 		}
 	}
 
-	if (SuccessCaptureTileCount > 0)
+	if (CapturedTiles.Num() > 0)
 	{
-		OnTilesCaptured.Broadcast(Instigator, SuccessCaptureTileCount);
+		OnTilesCaptured.Broadcast(Instigator, CapturedTiles.Num());
 	}
 
-	return SuccessCaptureTileCount;
+	return CapturedTiles;
 }
 
 void USMTileManagerComponent::SetTileScores(ESMTeam Team, int32 Score)

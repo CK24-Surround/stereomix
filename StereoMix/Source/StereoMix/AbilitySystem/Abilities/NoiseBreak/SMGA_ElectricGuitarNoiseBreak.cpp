@@ -199,6 +199,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 
 	AActor* TargetActor = SourceHIC->GetActorIAmHolding();
 
+	TArray<ASMTile*> CapturedTiles;
 	if (USMHoldInteractionComponent* TargetHIC = USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetActor))
 	{
 		const TArray<ASMTile*> TilesToBeCaptured = GetTilesToBeCaptured();
@@ -210,7 +211,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 
 		if (TargetHIC->ShouldCaptureTilesFromNoiseBreak())
 		{
-			USMTileFunctionLibrary::CaptureTiles(GetWorld(), TilesToBeCaptured, SourceCharacter);
+			CapturedTiles = USMTileFunctionLibrary::CaptureTiles(GetWorld(), TilesToBeCaptured, SourceCharacter);
 		}
 
 		if (TargetHIC->ShouldApplyDamageFromNoiseBreak())
@@ -235,7 +236,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 
 	const FVector StartToTarget = NoiseBreakTargetLocation - NoiseBreakStartLocation;
 
-	const int32 HoldingType = TargetActor ? (Cast<ASMPlayerCharacterBase>(TargetActor) ? 0 : 1) : 0; // 0이면 캐릭터, 1이면 아이템입니다.
+	const int32 HoldingType = TargetActor ? (Cast<ASMCharacterBase>(TargetActor) ? 0 : 1) : 0; // 0이면 캐릭터, 1이면 아이템입니다.
 
 	FGameplayCueParameters GCParams;
 	GCParams.SourceObject = SourceCharacter;
@@ -247,7 +248,7 @@ void USMGA_ElectricGuitarNoiseBreak::OnNoiseBreakBurst()
 
 	SourceHIC->SetActorIAmHolding(nullptr);
 
-	OnNoiseBreakSucceed.Broadcast();
+	OnNoiseBreakSucceed.Broadcast(CapturedTiles);
 }
 
 TArray<ASMTile*> USMGA_ElectricGuitarNoiseBreak::GetTilesToBeCaptured() const

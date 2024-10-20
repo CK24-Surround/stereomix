@@ -78,6 +78,11 @@ protected:
 	void OnStep7Started();
 
 	UFUNCTION()
+	void OnTileCapturedByNoiseBreak(TArray<ASMTile*> CapturedTiles);
+
+	void RestartStep7();
+
+	UFUNCTION()
 	void OnStep7Completed();
 
 	void OnStep8Started();
@@ -146,6 +151,8 @@ protected:
 
 	TWeakObjectPtr<ASMTrainingDummy> TrainingDummy;
 
+	FVector TrainingDummyOriginalLocation;
+
 	TArray<TWeakObjectPtr<ASMTile>> SamplingTiles;
 
 	TArray<TWeakObjectPtr<ASMTile>> NoiseBreakTiles;
@@ -153,4 +160,6 @@ protected:
 	TArray<TWeakObjectPtr<ASMTile>> HealPackTiles;
 
 	TArray<TWeakObjectPtr<ASMTile>> PreNextTiles;
+
+	FVector NoiseBreakRestartLocation;
 };

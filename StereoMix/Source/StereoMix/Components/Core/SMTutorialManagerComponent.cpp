@@ -15,7 +15,9 @@
 #include "Actors/Tiles/SMTile.h"
 #include "Actors/Tutorial/SMProgressTriggerBase.h"
 #include "Actors/Tutorial/SMTrainingDummy.h"
+#include "Actors/Tutorial/SMTutorialLocation.h"
 #include "Actors/Tutorial/SMTutorialWall.h"
+#include "Components/CapsuleComponent.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
 #include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
@@ -144,10 +146,24 @@ void USMTutorialManagerComponent::InitializeComponent()
 		}
 	}
 
+	for (const ASMTutorialLocation* Location : TActorRange<ASMTutorialLocation>(GetWorld()))
+	{
+		if (!Location)
+		{
+			continue;
+		}
+
+		if (Location->ActorHasTag(TEXT("NoiseBreakRestart")))
+		{
+			NoiseBreakRestartLocation = Location->GetActorLocation();
+		}
+	}
+
 	for (ASMTrainingDummy* TrainingDummyActor : TActorRange<ASMTrainingDummy>(GetWorld()))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TrainingDummyActor));
 		TrainingDummy = TrainingDummyActor;
+		TrainingDummyOriginalLocation = TrainingDummyActor->GetActorLocation();
 	}
 }
 
@@ -522,7 +538,7 @@ void USMTutorialManagerComponent::OnStep7Started()
 	USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_NoiseBreak* NoiseBreakInstance = ASC ? ASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
-		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep7Completed);
+		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnTileCapturedByNoiseBreak);
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
 	}
 
@@ -551,6 +567,58 @@ void USMTutorialManagerComponent::OnStep7Started()
 	if (NoiseBreakWall.IsValid())
 	{
 		NoiseBreakWall->SetActorHiddenInGame(false);
+	}
+}
+
+void USMTutorialManagerComponent::OnTileCapturedByNoiseBreak(TArray<ASMTile*> CapturedTiles)
+{
+	int32 ValidCapturedTilesCount = 0;
+	for (TWeakObjectPtr<ASMTile> NoiseBreakTile : NoiseBreakTiles)
+	{
+		if (!NoiseBreakTile.IsValid())
+		{
+			continue;
+		}
+
+		if (CapturedTiles.Contains(NoiseBreakTile.Get()))
+		{
+			++ValidCapturedTilesCount;
+		}
+	}
+
+	const int32 TargetCapturedCount = NoiseBreakTiles.Num() / 2;
+	if (TargetCapturedCount <= ValidCapturedTilesCount)
+	{
+		OnStep7Completed();
+	}
+	else
+	{
+		RestartStep7();
+	}
+}
+
+void USMTutorialManagerComponent::RestartStep7()
+{
+	for (TWeakObjectPtr<ASMTile> NoiseBreakTile : NoiseBreakTiles)
+	{
+		if (NoiseBreakTile.IsValid())
+		{
+			NoiseBreakTile->TileTrigger(ESMTeam::None);
+		}
+	}
+
+	if (APawn* OwnerPawn = GetLocalPlayerPawn())
+	{
+		const UCapsuleComponent* OwnerCapsule = OwnerPawn->GetComponentByClass<UCapsuleComponent>();
+		const float CapsuleZ = OwnerCapsule ? OwnerCapsule->GetScaledCapsuleHalfHeight() : 0.0f;
+		const FVector TargetLocation = NoiseBreakRestartLocation + FVector(0.0, 0.0, CapsuleZ);
+		OwnerPawn->SetActorLocation(TargetLocation);
+	}
+
+	if (TrainingDummy.IsValid())
+	{
+		TrainingDummy->SetActorLocation(TrainingDummyOriginalLocation);
+		TrainingDummy->ReceiveDamage(nullptr, 999.0f);
 	}
 }
 
@@ -599,7 +667,7 @@ void USMTutorialManagerComponent::OnStep8Started()
 	USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_NoiseBreak* NoiseBreakInstance = ASC ? ASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
-		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep8Completed);
+		// NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep8Completed);
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
 	}
 
