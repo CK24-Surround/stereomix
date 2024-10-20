@@ -52,7 +52,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 
 	const FName TaskName = TEXT("ChargeMontage");
 	UAnimMontage* ChargeMontage = SourceDataAsset->SkillMontage[SourceCharacter->GetTeam()];
-	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TaskName, ChargeMontage);
+	UAbilityTask_PlayMontageAndWait* MontageTask = UAbilityTask_PlayMontageAndWait::CreatePlayMontageAndWaitProxy(this, TaskName, ChargeMontage, ChargeMoveSpeedMultiplier);
 	MontageTask->OnCancelled.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
 	MontageTask->OnInterrupted.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
 	MontageTask->OnBlendOut.AddDynamic(this, &ThisClass::OnChargeEndedSyncPoint);
@@ -69,7 +69,7 @@ void USMGA_Charge::ActivateAbility(const FGameplayAbilitySpecHandle Handle, cons
 		ChargeBlockedTask->ReadyForActivation();
 
 		// 돌진하며 방향 전환을 가능하게 합니다.
-		USMAT_AdjustableDash* AdjustableDashTask = USMAT_AdjustableDash::AdjustableDash(this, RotationPerSecond);
+		USMAT_AdjustableDash* AdjustableDashTask = USMAT_AdjustableDash::AdjustableDash(this, RotationPerSecond * ChargeMoveSpeedMultiplier);
 		AdjustableDashTask->ReadyForActivation();
 
 		// 박지 않고 끝나더라도 이펙트를 종료할 수 있도록 이벤트를 받습니다.
