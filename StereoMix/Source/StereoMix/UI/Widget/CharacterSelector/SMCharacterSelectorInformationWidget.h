@@ -11,7 +11,7 @@ class UCommonTextBlock;
 /**
  * 
  */
-UCLASS()
+UCLASS(Abstract)
 class STEREOMIX_API USMCharacterSelectorInformationWidget : public UCommonUserWidget
 {
 	GENERATED_BODY()
