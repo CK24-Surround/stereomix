@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonUserWidget.h"
+#include "Data/SMCharacterType.h"
 #include "SMCharacterSelectorInformationWidget.generated.h"
 
 class UImage;
@@ -20,12 +21,14 @@ public:
 	virtual void NativeConstruct() override;
 
 	void ResetInfo() const;
+
+	void ResetPlayerInfo() const;
 	
 	UFUNCTION(BlueprintCallable)
-	void SetPlayerInfo(const TArray<FString>& InPlayerNames, const TArray<FString>& InPlayerCharacterTypes, const TArray<UTexture2D*>& InPlayerTextures);
+	void SetPlayerInfo(const TArray<FString>& InPlayerNames, const TArray<ESMCharacterType>& InPlayerCharacterTypes);
 	
 	UFUNCTION(BlueprintCallable)
-	void SetSkillInfo(const TArray<FString>& InSkillNames, const TArray<FString>& InSkillDescriptions, const TArray<UTexture2D*>& InSkillTextures);
+	void SetSkillInfo(ESMCharacterType InPlayerCharacterTypes);
 	
 protected:
 	TArray<TObjectPtr<UImage>> SkillImages;

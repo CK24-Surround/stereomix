@@ -8,6 +8,7 @@
 #include "Games/CharacterSelect/SMCharacterSelectMode.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "Subsystem/SMBackgroundMusicSubsystem.h"
+#include "UI/Widget/CharacterSelector/SMCharacterSelectorScreenWidget.h"
 #include "Utilities/SMLog.h"
 
 ASMCharacterSelectPlayerController::ASMCharacterSelectPlayerController()
@@ -92,7 +93,7 @@ void ASMCharacterSelectPlayerController::OnCurrentCharacterSelectStateChanged(EC
 	if (NewCharacterSelectionState == ECharacterSelectionStateType::Select && !CharacterSelectWidget)
 	{
 		LoadingScreenWidget->HideLoadingScreen();
-		CharacterSelectWidget = CreateWidget<USMCharacterSelectWidget>(this, CharacterSelectWidgetClass);
+		CharacterSelectWidget = CreateWidget<USMCharacterSelectorScreenWidget>(this, CharacterSelectWidgetClass);
 		CharacterSelectWidget->InitWidget(GetCharacterSelectState(), GetCharacterSelectPlayerState());
 		CharacterSelectWidget->AddToViewport();
 

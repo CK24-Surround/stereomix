@@ -6,6 +6,7 @@
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 #include "SMPlayerController.h"
 #include "UI/Widget/CharacterSelect/SMCharacterSelectWidget.h"
+#include "UI/Widget/CharacterSelector/SMCharacterSelectorScreenWidget.h"
 #include "UI/Widget/Loading/SMLoadingScreenWidget.h"
 
 #include "SMCharacterSelectPlayerController.generated.h"
@@ -63,7 +64,7 @@ private:
 	TSubclassOf<USMLoadingScreenWidget> LoadingScreenWidgetClass;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Widget")
-	TSubclassOf<USMCharacterSelectWidget> CharacterSelectWidgetClass;
+	TSubclassOf<USMCharacterSelectorScreenWidget> CharacterSelectWidgetClass;
 
 	UPROPERTY(Transient, VisibleAnywhere, BlueprintReadOnly, Category = "Character", meta = (AllowPrivateAccess))
 	TMap<ESMCharacterType, TObjectPtr<ASMPreviewCharacter>> PreviewCharacters;
@@ -72,7 +73,7 @@ private:
 	TObjectPtr<USMLoadingScreenWidget> LoadingScreenWidget;
 
 	UPROPERTY(Transient)
-	TObjectPtr<USMCharacterSelectWidget> CharacterSelectWidget;
+	TObjectPtr<USMCharacterSelectorScreenWidget> CharacterSelectWidget;
 
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectState> CharacterSelectState;

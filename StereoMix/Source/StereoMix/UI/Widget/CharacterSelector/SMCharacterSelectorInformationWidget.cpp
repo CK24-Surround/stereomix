@@ -5,6 +5,7 @@
 
 #include "CommonTextBlock.h"
 #include "Components/Image.h"
+#include "Data/SMCharacterType.h"
 
 void USMCharacterSelectorInformationWidget::NativeConstruct()
 {
@@ -75,14 +76,35 @@ void USMCharacterSelectorInformationWidget::ResetInfo() const
 	}
 }
 
-void USMCharacterSelectorInformationWidget::SetPlayerInfo(const TArray<FString>& InPlayerNames, const TArray<FString>& InPlayerCharacterTypes, const TArray<UTexture2D*>& InPlayerTextures)
+void USMCharacterSelectorInformationWidget::ResetPlayerInfo() const
 {
 	for (int32 i = 0; i < 3; ++i)
 	{
-		if (PlayerImages.IsValidIndex(i) && InPlayerTextures.IsValidIndex(i))
+		if (PlayerImages.IsValidIndex(i))
 		{
-			PlayerImages[i]->SetBrushFromTexture(InPlayerTextures[i]);
+			PlayerImages[i]->SetBrushFromTexture(nullptr);
 		}
+
+		if (PlayerNames.IsValidIndex(i))
+		{
+			PlayerNames[i]->SetText(FText::FromString(""));
+		}
+
+		if (PlayerCharacterTypes.IsValidIndex(i))
+		{
+			PlayerCharacterTypes[i]->SetText(FText::FromString(""));
+		}
+	}
+}
+
+void USMCharacterSelectorInformationWidget::SetPlayerInfo(const TArray<FString>& InPlayerNames, const TArray<ESMCharacterType>& InPlayerCharacterTypes)
+{
+	for (int32 i = 0; i < 3; ++i)
+	{
+		// if (PlayerImages.IsValidIndex(i) && InPlayerTextures.IsValidIndex(i))
+		// {
+		// 	PlayerImages[i]->SetBrushFromTexture(InPlayerTextures[i]);
+		// }
 
 		if (PlayerNames.IsValidIndex(i) && InPlayerNames.IsValidIndex(i))
 		{
@@ -91,13 +113,61 @@ void USMCharacterSelectorInformationWidget::SetPlayerInfo(const TArray<FString>&
 
 		if (PlayerCharacterTypes.IsValidIndex(i) && InPlayerCharacterTypes.IsValidIndex(i))
 		{
-			PlayerCharacterTypes[i]->SetText(FText::FromString(InPlayerCharacterTypes[i]));
+			FString CharacterTypeString;
+			switch (InPlayerCharacterTypes[i]) {
+				case ESMCharacterType::None:
+					CharacterTypeString = TEXT("선택중...");
+					break;
+				case ESMCharacterType::ElectricGuitar:
+					CharacterTypeString = TEXT("일렉기타");
+					break;
+				case ESMCharacterType::Piano:
+					CharacterTypeString = TEXT("피아노");
+					break;
+				case ESMCharacterType::Bass:
+					CharacterTypeString = TEXT("베이스");
+					break;
+			}
+			PlayerCharacterTypes[i]->SetText(FText::FromString(CharacterTypeString));
 		}
 	}
 }
 
-void USMCharacterSelectorInformationWidget::SetSkillInfo(const TArray<FString>& InSkillNames, const TArray<FString>& InSkillDescriptions, const TArray<UTexture2D*>& InSkillTextures)
+void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType InPlayerCharacterTypes)
 {
+	TArray<UTexture2D*> InSkillTextures;
+	TArray<FString> InSkillNames;
+	TArray<FString> InSkillDescriptions;
+
+	switch (InPlayerCharacterTypes) {
+		case ESMCharacterType::None:
+			break;
+		case ESMCharacterType::ElectricGuitar:
+			InSkillNames.Add(TEXT("일렉기타"));
+			InSkillNames.Add(TEXT("일렉기타"));
+			InSkillNames.Add(TEXT("일렉기타"));
+			InSkillDescriptions.Add(TEXT("전방에 작은 탄환들을 빠른속도로 발사합니다"));
+			InSkillDescriptions.Add(TEXT("마비탄을 발사해 적을 느려지게 합니다"));
+			InSkillDescriptions.Add(TEXT("적과 함께 지정한 방향으로 빠르게 대쉬합니다"));
+			break;
+		case ESMCharacterType::Piano:
+			InSkillNames.Add(TEXT("피아노"));
+			InSkillNames.Add(TEXT("피아노"));
+			InSkillNames.Add(TEXT("피아노"));
+			InSkillDescriptions.Add(TEXT("에너지를 모은 화살을 충전해 발사합니다"));
+			InSkillDescriptions.Add(TEXT("선택한 지점에 충격화살을 발사해 적을 밀어냅니다"));
+			InSkillDescriptions.Add(TEXT("하늘로 뛰어오른뒤 지정한 위치로 적을 발사합니다"));
+			break;
+		case ESMCharacterType::Bass:
+			InSkillNames.Add(TEXT("베이스"));
+			InSkillNames.Add(TEXT("베이스"));
+			InSkillNames.Add(TEXT("베이스"));
+			InSkillDescriptions.Add(TEXT("베이스를 휘둘러 전방의 넓은 범위를 공격합니다"));
+			InSkillDescriptions.Add(TEXT("무적상태가 되어 돌진합니다. 부딪힌 적은 기절합니다"));
+			InSkillDescriptions.Add(TEXT("하늘로 뛰어올라 적을 바닥에 내리꽂습니다"));
+			break;
+	}
+	
 	for (int32 i = 0; i < 3; ++i)
 	{
 		if (SkillImages.IsValidIndex(i) && InSkillTextures.IsValidIndex(i))
