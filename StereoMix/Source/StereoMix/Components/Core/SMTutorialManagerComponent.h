@@ -3,9 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "Components/ActorComponent.h"
 #include "Data/SMCharacterType.h"
-#include "Games/Room/SMRoomState.h"
 #include "SMTutorialManagerComponent.generated.h"
 
 class ASMTile;
@@ -87,22 +87,31 @@ protected:
 
 	void OnStep8Started();
 
+	void OnHPChanged(const FOnAttributeChangeData& OnAttributeChangeData);
+
 	UFUNCTION()
 	void OnStep8Completed();
+
+	void OnStep9Started();
 
 	UFUNCTION()
 	void OnNextTriggerBeginOverlap(AActor* OverlappedActor, AActor* OtherActor);
 
 	void OnArrivedBattleZone();
 
-	void OnStep9Started();
-
 	void OnStep9Completed();
 
 	void OnStep10Started();
 
 	UFUNCTION()
-	void OnStep10Completed(AActor* OverlappedActor, AActor* OtherActor);
+	void StartBattle(AActor* OverlappedActor, AActor* OtherActor);
+
+	void OnStep10Completed();
+
+	void OnStep11Started();
+
+	UFUNCTION()
+	void OnStep11Completed(AActor* OverlappedActor, AActor* OtherActor);
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TObjectPtr<UDataTable> TutorialScriptDataTable;
@@ -127,8 +136,6 @@ protected:
 
 	int32 TargetTilesCaptureCountForStep2 = 9;
 
-	int32 TargetTilesCaptureCountForStep9 = 100;
-
 	TWeakObjectPtr<ASMTutorialWall> SamplingWall;
 
 	TWeakObjectPtr<ASMTutorialWall> HoldWall;
@@ -149,6 +156,8 @@ protected:
 
 	TWeakObjectPtr<ASMProgressTriggerBase> EndTrigger;
 
+	TWeakObjectPtr<ASMProgressTriggerBase> BattleStartTrigger;
+
 	TWeakObjectPtr<ASMTrainingDummy> TrainingDummy;
 
 	FVector TrainingDummyOriginalLocation;
@@ -159,7 +168,11 @@ protected:
 
 	TArray<TWeakObjectPtr<ASMTile>> HealPackTiles;
 
-	TArray<TWeakObjectPtr<ASMTile>> PreNextTiles;
+	TArray<TWeakObjectPtr<ASMTile>> PreNextSectionTiles;
 
 	FVector NoiseBreakRestartLocation;
+
+	float CachedOwnerMaxHP = 0.0f;
+
+	float BattleTime = 30.0f;
 };

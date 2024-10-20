@@ -5,12 +5,12 @@
 
 #include "GameFramework/GameModeBase.h"
 #include "EngineUtils.h"
-#include "SMTileManagerComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/Common/SMGA_Hold.h"
 #include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "AbilitySystem/Abilities/Skill/SMGA_Skill.h"
+#include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tiles/SMTile.h"
 #include "Actors/Tutorial/SMProgressTriggerBase.h"
@@ -22,7 +22,6 @@
 #include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
 #include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
-#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Games/SMGamePlayerState.h"
 #include "Utilities/SMLog.h"
 
@@ -116,6 +115,11 @@ void USMTutorialManagerComponent::InitializeComponent()
 		{
 			EndTrigger = ProgressTrigger;
 		}
+
+		if (ProgressTrigger->ActorHasTag(TEXT("BattleStart")))
+		{
+			BattleStartTrigger = ProgressTrigger;
+		}
 	}
 
 	for (const auto& Tile : TActorRange<ASMTile>(GetWorld()))
@@ -140,9 +144,9 @@ void USMTutorialManagerComponent::InitializeComponent()
 			HealPackTiles.Add(Tile);
 		}
 
-		if (Tile->ActorHasTag(TEXT("PreNext")))
+		if (Tile->ActorHasTag(TEXT("PreNextSection")))
 		{
-			PreNextTiles.Add(Tile);
+			PreNextSectionTiles.Add(Tile);
 		}
 	}
 
@@ -202,7 +206,7 @@ void USMTutorialManagerComponent::BeginPlay()
 
 	if (EndTrigger.IsValid())
 	{
-		EndTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep10Completed);
+		EndTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnStep11Completed);
 	}
 
 	for (TWeakObjectPtr<ASMTile> NoiseBreakTile : NoiseBreakTiles)
@@ -221,7 +225,7 @@ void USMTutorialManagerComponent::BeginPlay()
 		}
 	}
 
-	for (TWeakObjectPtr<ASMTile> PreNextTile : PreNextTiles)
+	for (TWeakObjectPtr<ASMTile> PreNextTile : PreNextSectionTiles)
 	{
 		if (PreNextTile.IsValid())
 		{
@@ -394,6 +398,14 @@ void USMTutorialManagerComponent::OnSamplingTilesCaptured()
 void USMTutorialManagerComponent::OnStep2Completed()
 {
 	CurrentStepNumber = 3;
+
+	for (TWeakObjectPtr<ASMTile> SamplingTile : SamplingTiles)
+	{
+		if (SamplingTile.IsValid())
+		{
+			SamplingTile->OnChangeTile.RemoveAll(this);
+		}
+	}
 
 	if (CachedTutorialUIControlComponent)
 	{
@@ -642,8 +654,8 @@ void USMTutorialManagerComponent::OnStep7Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("힐팩 아이템을 사용해 체력 모두회복 이후 오른쪽으로 이동");
-		const FString MissionText = TEXT("힐팩을 사용해 체력을 회복해보세요. 힐팩 또한 잡은 상태에서 좌클릭으로 사용할 수 있습니다. 시전범위에는 치유장판을 생성해 팀원을 치료할 수도 있습니다. 회복을 완료했다면 오른쪽으로 이동해주세요.");
+		const FString GuideText = TEXT("힐팩 아이템을 사용해 체력 회복");
+		const FString MissionText = TEXT("힐팩을 사용해 체력을 회복해보세요. 힐팩 또한 잡은 상태에서 좌클릭으로 사용할 수 있습니다. 시전범위에는 치유장판을 생성해 팀원을 치료할 수도 있습니다.");
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep8Started);
 	}
@@ -651,24 +663,25 @@ void USMTutorialManagerComponent::OnStep7Completed()
 
 void USMTutorialManagerComponent::OnStep8Started()
 {
-	ASMPlayerCharacterBase* SourceCharacter = Cast<ASMPlayerCharacterBase>(GetLocalPlayerPawn());
-	USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(SourceCharacter);
-	const USMPlayerCharacterDataAsset* DataAsset = SourceCharacter->GetDataAsset();
-	if (SourceASC && DataAsset)
+	ASMPlayerCharacterBase* OwnerCharacter = Cast<ASMPlayerCharacterBase>(GetLocalPlayerPawn());
+	USMAbilitySystemComponent* OwnerASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(OwnerCharacter);
+	const USMPlayerCharacterDataAsset* DataAsset = OwnerCharacter->GetDataAsset();
+	if (OwnerASC && DataAsset)
 	{
-		const FGameplayEffectSpecHandle GESpecHandle = SourceASC->MakeOutgoingSpec(DataAsset->DamageGE, 1.0f, SourceASC->MakeEffectContext());
+		const FGameplayEffectSpecHandle GESpecHandle = OwnerASC->MakeOutgoingSpec(DataAsset->DamageGE, 1.0f, OwnerASC->MakeEffectContext());
 		if (GESpecHandle.IsValid())
 		{
 			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, 50.0f);
-			SourceASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
+			OwnerASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
 	}
 
-	USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
-	if (USMGA_NoiseBreak* NoiseBreakInstance = ASC ? ASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
+	if (OwnerASC)
 	{
-		// NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnStep8Completed);
-		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
+		const USMCharacterAttributeSet* OwnerAttributeSet = OwnerASC->GetSet<USMCharacterAttributeSet>();
+		CachedOwnerMaxHP = OwnerAttributeSet ? OwnerAttributeSet->GetMaxPostureGauge() : 100.0f;
+		OwnerASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetPostureGaugeAttribute()).AddUObject(this, &ThisClass::OnHPChanged);
+		OwnerASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
 	}
 
 	if (NoiseBreakWall.IsValid())
@@ -691,15 +704,37 @@ void USMTutorialManagerComponent::OnStep8Started()
 	}
 }
 
+void USMTutorialManagerComponent::OnHPChanged(const FOnAttributeChangeData& OnAttributeChangeData)
+{
+	if (OnAttributeChangeData.NewValue >= CachedOwnerMaxHP)
+	{
+		OnStep8Completed();
+	}
+}
+
 void USMTutorialManagerComponent::OnStep8Completed()
 {
 	CurrentStepNumber = 9;
 
-	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
+	USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
 	if (USMGA_NoiseBreak* NoiseBreakInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_NoiseBreak>() : nullptr)
 	{
+		SourceASC->GetGameplayAttributeValueChangeDelegate(USMCharacterAttributeSet::GetPostureGaugeAttribute()).RemoveAll(this);
 		NoiseBreakInstance->OnNoiseBreakSucceed.RemoveAll(this);
 	}
+
+	if (CachedTutorialUIControlComponent)
+	{
+		const FString GuideText = TEXT("다음 지역으로 이동");
+		const FString MissionText = TEXT("오른쪽으로 움직여 다음지역으로 이동하세요.");
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
+		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep9Started);
+	}
+}
+
+void USMTutorialManagerComponent::OnStep9Started()
+{
+	TilesCaptureCount = 0;
 
 	if (HealPackWall.IsValid())
 	{
@@ -711,7 +746,7 @@ void USMTutorialManagerComponent::OnStep8Completed()
 		NextTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::OnNextTriggerBeginOverlap);
 	}
 
-	for (TWeakObjectPtr<ASMTile> PreNextTile : PreNextTiles)
+	for (TWeakObjectPtr<ASMTile> PreNextTile : PreNextSectionTiles)
 	{
 		if (PreNextTile.IsValid())
 		{
@@ -740,6 +775,7 @@ void USMTutorialManagerComponent::OnArrivedBattleZone()
 {
 	if (USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn()))
 	{
+		ASC->AddLooseGameplayTag(SMTags::Character::State::Common::Blocking::Sampling);
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Uncontrollable);
 	}
 
@@ -751,18 +787,7 @@ void USMTutorialManagerComponent::OnArrivedBattleZone()
 
 	SetComponentTickEnabled(false);
 
-	if (CachedTutorialUIControlComponent)
-	{
-		const FString GuideText = TEXT("적과 전투해서 100점 달성");
-		const FString MissionText = TEXT("훈련장에서 적과 전투하세요. 시간내에 적보다 많은 타일을 점령하면 승리합니다.");
-		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
-		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep9Started);
-	}
-}
-
-void USMTutorialManagerComponent::OnStep9Started()
-{
-	TilesCaptureCount = 0;
+	OnStep9Completed();
 }
 
 void USMTutorialManagerComponent::OnStep9Completed()
@@ -771,13 +796,58 @@ void USMTutorialManagerComponent::OnStep9Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		CachedTutorialUIControlComponent->TransitionToSuccess();
+		const FString GuideText = TEXT("적과 전투");
+		const FString MissionText = TEXT("30초간 훈련장에서 적과 전투하세요. 시간내에 적보다 많은 타일을 점령하면 승리합니다.");
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
+		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep10Started);
 	}
-
-	OnStep10Started();
 }
 
 void USMTutorialManagerComponent::OnStep10Started()
+{
+	if (BattleStartTrigger.IsValid())
+	{
+		BattleStartTrigger->OnActorBeginOverlap.AddDynamic(this, &ThisClass::StartBattle);
+	}
+}
+
+void USMTutorialManagerComponent::StartBattle(AActor* OverlappedActor, AActor* OtherActor)
+{
+	if (USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn()))
+	{
+		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Sampling);
+	}
+
+	if (OverlappedActor)
+	{
+		OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
+		OverlappedActor->Destroy();
+	}
+
+	BattleEntranceWall->SetActorHiddenInGame(false);
+	BattleEntranceWall->SetActorEnableCollision(true);
+
+	if (const UWorld* World = GetWorld())
+	{
+		FTimerHandle TimerHandle;
+		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep10Completed, BattleTime);
+	}
+
+	// TODO: AI 스폰 구현
+}
+
+void USMTutorialManagerComponent::OnStep10Completed()
+{
+	if (CachedTutorialUIControlComponent)
+	{
+		const FString GuideText = TEXT("차량에 탑승");
+		const FString MissionText = TEXT("우측 차량에 탑승해 튜토리얼을 종료하세요.");
+		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
+		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep11Started);
+	}
+}
+
+void USMTutorialManagerComponent::OnStep11Started()
 {
 	if (BattleExitWall.IsValid())
 	{
@@ -785,25 +855,17 @@ void USMTutorialManagerComponent::OnStep10Started()
 	}
 }
 
-void USMTutorialManagerComponent::OnStep10Completed(AActor* OverlappedActor, AActor* OtherActor)
+void USMTutorialManagerComponent::OnStep11Completed(AActor* OverlappedActor, AActor* OtherActor)
 {
-	if (CurrentStepNumber == 10) // 만약 Step이 10이 아닌데 End존 진입시 무효입니다.
+	if (OverlappedActor)
 	{
-		if (OverlappedActor)
-		{
-			OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
-			OverlappedActor->Destroy();
-		}
+		OverlappedActor->OnActorBeginOverlap.RemoveAll(this);
+		OverlappedActor->Destroy();
+	}
 
-		if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
-		{
-			TileManager->OnTilesCaptured.RemoveAll(this);
-		}
-
-		const UWorld* World = GetWorld();
-		if (AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr)
-		{
-			GameMode->ReturnToMainMenuHost();
-		}
+	const UWorld* World = GetWorld();
+	if (AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr)
+	{
+		GameMode->ReturnToMainMenuHost();
 	}
 }
