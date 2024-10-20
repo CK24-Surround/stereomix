@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CommonUserWidget.h"
+#include "Data/SMCharacterType.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 #include "SMCharacterSelectorScreenWidget.generated.h"
 
@@ -38,6 +39,9 @@ protected:
 	void OnPickBass();
 	
 	UFUNCTION()
+	void OnSelectButtonClicked();
+	
+	UFUNCTION()
 	void OnPlayerJoin(ASMPlayerState* JoinedPlayer);
 	
 	UFUNCTION()
@@ -50,6 +54,10 @@ protected:
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 
 	void UpdatePlayerList() const;
+
+	void UpdateSelectButton() const;
+
+	bool IsFocusedCharacterSelectable() const;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> SelectButton;
@@ -73,4 +81,6 @@ protected:
 
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectPlayerState> OwningPlayerState;
+
+	ESMCharacterType FocusedCharacterType = ESMCharacterType::None;
 };

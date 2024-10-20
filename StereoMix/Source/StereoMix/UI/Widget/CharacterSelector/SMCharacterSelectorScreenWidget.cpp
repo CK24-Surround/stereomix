@@ -3,6 +3,7 @@
 
 #include "SMCharacterSelectorScreenWidget.h"
 
+#include "CommonTextBlock.h"
 #include "SMCharacterSelectorInformationWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Button.h"
@@ -16,7 +17,7 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectState* Chara
 	{
 		OwningCharacterSelectState = CharacterSelectState;
 	}
-	
+
 	if (ensure(PlayerState))
 	{
 		OwningPlayerState = PlayerState;
@@ -39,6 +40,8 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectState* Chara
 	PickPiano->OnClicked.AddDynamic(this, &ThisClass::OnPickPiano);
 	PickBass->OnClicked.AddDynamic(this, &ThisClass::OnPickBass);
 
+	SelectButton->OnClicked.AddDynamic(this, &ThisClass::OnSelectButtonClicked);
+
 	OwningCharacterSelectState->OnPlayerJoined.AddDynamic(this, &ThisClass::OnPlayerJoin);
 	OwningCharacterSelectState->OnPlayerLeft.AddDynamic(this, &ThisClass::OnPlayerLeft);
 	OwningCharacterSelectState->OnPlayerCharacterChanged.AddDynamic(this, &ThisClass::OnPlayerCharacterChanged);
@@ -51,29 +54,52 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectState* Chara
 void USMCharacterSelectorScreenWidget::OnPickElectricGuitar()
 {
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
+
+	FocusedCharacterType = ESMCharacterType::ElectricGuitar;
 	CharacterSelectorInformationWidget->SetSkillInfo(ESMCharacterType::ElectricGuitar);
+
+	UpdateSelectButton();
 }
 
 void USMCharacterSelectorScreenWidget::OnPickPiano()
 {
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
+
+	FocusedCharacterType = ESMCharacterType::Piano;
 	CharacterSelectorInformationWidget->SetSkillInfo(ESMCharacterType::Piano);
+
+	UpdateSelectButton();
 }
 
 void USMCharacterSelectorScreenWidget::OnPickBass()
 {
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
+
+	FocusedCharacterType = ESMCharacterType::Bass;
 	CharacterSelectorInformationWidget->SetSkillInfo(ESMCharacterType::Bass);
+
+	UpdateSelectButton();
+}
+
+void USMCharacterSelectorScreenWidget::OnSelectButtonClicked()
+{
+	if (IsFocusedCharacterSelectable())
+	{
+		SelectButton->SetIsEnabled(false);
+		GetOwningPlayerState()->ChangeCharacterType(FocusedCharacterType);
+	}
 }
 
 void USMCharacterSelectorScreenWidget::OnPlayerJoin(ASMPlayerState* JoinedPlayer)
 {
 	UpdatePlayerList();
+	UpdateSelectButton();
 }
 
 void USMCharacterSelectorScreenWidget::OnPlayerLeft(ASMPlayerState* LeftPlayer)
 {
 	UpdatePlayerList();
+	UpdateSelectButton();
 }
 
 void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter)
@@ -84,6 +110,7 @@ void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* 
 	}
 
 	UpdatePlayerList();
+	UpdateSelectButton();
 }
 
 void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType)
@@ -94,7 +121,7 @@ void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, 
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Character changed successfully"));
-	UpdatePlayerList();
+	// SelectButton->SetIsEnabled(false);
 }
 
 void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
@@ -109,7 +136,7 @@ void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
 
 	TArray<FString> PlayerNames;
 	TArray<ESMCharacterType> PlayerCharacterTypes;
-	
+
 	const ESMTeam LocalPlayerTeam = GetOwningPlayerState()->GetTeam();
 	for (TArray<TObjectPtr<APlayerState>> Players = CharacterSelectState->PlayerArray; TObjectPtr<APlayerState> PlayerState : Players)
 	{
@@ -124,4 +151,31 @@ void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
 	}
 
 	CharacterSelectorInformationWidget->SetPlayerInfo(PlayerNames, PlayerCharacterTypes);
+}
+
+void USMCharacterSelectorScreenWidget::UpdateSelectButton() const
+{
+	SelectButton->SetIsEnabled(false);
+	SelectButtonText->SetText(FText::FromString(FocusedCharacterType == ESMCharacterType::None ? TEXT("확인") : TEXT("변경")));
+	SelectButton->SetIsEnabled(IsFocusedCharacterSelectable());
+}
+
+bool USMCharacterSelectorScreenWidget::IsFocusedCharacterSelectable() const
+{
+	bool bSelectButtonEnable = true;
+
+	const ESMTeam LocalPlayerTeam = GetOwningPlayerState()->GetTeam();
+	for (TArray<TObjectPtr<APlayerState>> Players = OwningCharacterSelectState->PlayerArray; TObjectPtr<APlayerState> PlayerState : Players)
+	{
+		if (const ASMCharacterSelectPlayerState* TargetPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
+		{
+			if (TargetPlayerState->GetTeam() == LocalPlayerTeam && TargetPlayerState->GetCharacterType() == FocusedCharacterType)
+			{
+				bSelectButtonEnable = false;
+				break;
+			}
+		}
+	}
+
+	return bSelectButtonEnable;
 }
