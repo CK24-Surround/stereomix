@@ -94,7 +94,7 @@ void ASMCharacterSelectPlayerController::OnCurrentCharacterSelectStateChanged(EC
 	{
 		LoadingScreenWidget->HideLoadingScreen();
 		CharacterSelectWidget = CreateWidget<USMCharacterSelectorScreenWidget>(this, CharacterSelectWidgetClass);
-		CharacterSelectWidget->InitWidget(GetCharacterSelectState(), GetCharacterSelectPlayerState());
+		CharacterSelectWidget->InitWidget(this, GetCharacterSelectState(), GetCharacterSelectPlayerState());
 		CharacterSelectWidget->AddToViewport();
 
 		GetGameInstance()->GetSubsystem<USMBackgroundMusicSubsystem>()->PlayTeamBackgroundMusic(CharacterSelectPlayerState->GetTeam());

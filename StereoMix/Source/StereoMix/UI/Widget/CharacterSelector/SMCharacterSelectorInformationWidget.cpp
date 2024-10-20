@@ -143,6 +143,7 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 		case ESMCharacterType::None:
 			break;
 		case ESMCharacterType::ElectricGuitar:
+			SelectedCharacterType->SetText(FText::FromString(TEXT("일렉기타")));
 			InSkillNames.Add(TEXT("일렉기타"));
 			InSkillNames.Add(TEXT("일렉기타"));
 			InSkillNames.Add(TEXT("일렉기타"));
@@ -151,6 +152,7 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 			InSkillDescriptions.Add(TEXT("적과 함께 지정한 방향으로 빠르게 대쉬합니다"));
 			break;
 		case ESMCharacterType::Piano:
+			SelectedCharacterType->SetText(FText::FromString(TEXT("피아노")));
 			InSkillNames.Add(TEXT("피아노"));
 			InSkillNames.Add(TEXT("피아노"));
 			InSkillNames.Add(TEXT("피아노"));
@@ -159,6 +161,7 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 			InSkillDescriptions.Add(TEXT("하늘로 뛰어오른뒤 지정한 위치로 적을 발사합니다"));
 			break;
 		case ESMCharacterType::Bass:
+			SelectedCharacterType->SetText(FText::FromString(TEXT("베이스")));
 			InSkillNames.Add(TEXT("베이스"));
 			InSkillNames.Add(TEXT("베이스"));
 			InSkillNames.Add(TEXT("베이스"));

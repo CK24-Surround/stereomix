@@ -8,6 +8,8 @@
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 #include "SMCharacterSelectorScreenWidget.generated.h"
 
+class ASkeletalMeshActor;
+class ASMCharacterSelectPlayerController;
 class USMCharacterSelectorInformationWidget;
 class ASMCharacterSelectPlayerState;
 class ASMCharacterSelectState;
@@ -22,7 +24,7 @@ class STEREOMIX_API USMCharacterSelectorScreenWidget : public UCommonUserWidget
 	GENERATED_BODY()
 
 public:
-	void InitWidget(ASMCharacterSelectState* CharacterSelectState, ASMCharacterSelectPlayerState* PlayerState);
+	void InitWidget(ASMCharacterSelectPlayerController* PlayerController, ASMCharacterSelectState* CharacterSelectState, ASMCharacterSelectPlayerState* PlayerState);
 
 	ASMCharacterSelectState* GetOwningCharacterSelectState() const { return OwningCharacterSelectState.Get(); }
 
@@ -37,21 +39,23 @@ protected:
 
 	UFUNCTION()
 	void OnPickBass();
-	
+
 	UFUNCTION()
 	void OnSelectButtonClicked();
-	
+
 	UFUNCTION()
 	void OnPlayerJoin(ASMPlayerState* JoinedPlayer);
-	
+
 	UFUNCTION()
 	void OnPlayerLeft(ASMPlayerState* LeftPlayer);
-	
+
 	UFUNCTION()
 	void OnPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter);
 
 	UFUNCTION()
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
+
+	void ShowPreviewCharacter(ESMCharacterType CharacterType);
 
 	void UpdatePlayerList() const;
 
@@ -77,10 +81,18 @@ protected:
 	TObjectPtr<USMCharacterSelectorInformationWidget> CharacterSelectorInformationWidget;
 
 	UPROPERTY()
+	TWeakObjectPtr<ASMCharacterSelectPlayerController> OwningPlayerController;
+	
+	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectState> OwningCharacterSelectState;
 
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectPlayerState> OwningPlayerState;
+
+	UPROPERTY()
+	TObjectPtr<ASkeletalMeshActor> CharacterMesh;
+
+	int32 bIsNeverSelected:1 = true;
 
 	ESMCharacterType FocusedCharacterType = ESMCharacterType::None;
 };

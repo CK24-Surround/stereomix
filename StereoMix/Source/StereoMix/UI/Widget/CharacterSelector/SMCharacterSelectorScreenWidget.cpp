@@ -4,15 +4,23 @@
 #include "SMCharacterSelectorScreenWidget.h"
 
 #include "CommonTextBlock.h"
+#include "EngineUtils.h"
 #include "SMCharacterSelectorInformationWidget.h"
+#include "Animation/SkeletalMeshActor.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Button.h"
+#include "Controllers/SMCharacterSelectPlayerController.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 
 
-void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectState* CharacterSelectState, ASMCharacterSelectPlayerState* PlayerState)
+void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerController* PlayerController, ASMCharacterSelectState* CharacterSelectState, ASMCharacterSelectPlayerState* PlayerState)
 {
+	if (ensure(PlayerController))
+	{
+		OwningPlayerController = PlayerController;
+	}
+	
 	if (ensure(CharacterSelectState))
 	{
 		OwningCharacterSelectState = CharacterSelectState;
@@ -48,36 +56,63 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectState* Chara
 
 	OwningPlayerState->OnCharacterChangeResponse.AddDynamic(this, &ThisClass::OnCharacterChangeResponse);
 
+	TArray AvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
+	FocusedCharacterType = AvailableCharacterTypes[FMath::RandRange(0, AvailableCharacterTypes.Num() - 1)];
+
 	UpdatePlayerList();
+	UpdateSelectButton();
+	ShowPreviewCharacter(FocusedCharacterType);
+	CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
 }
 
 void USMCharacterSelectorScreenWidget::OnPickElectricGuitar()
 {
+	if (FocusedCharacterType == ESMCharacterType::ElectricGuitar)
+	{
+		return;
+	}
+
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
 
 	FocusedCharacterType = ESMCharacterType::ElectricGuitar;
 	CharacterSelectorInformationWidget->SetSkillInfo(ESMCharacterType::ElectricGuitar);
+
+	ShowPreviewCharacter(ESMCharacterType::ElectricGuitar);
 
 	UpdateSelectButton();
 }
 
 void USMCharacterSelectorScreenWidget::OnPickPiano()
 {
+	if (FocusedCharacterType == ESMCharacterType::Piano)
+	{
+		return;
+	}
+
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
 
 	FocusedCharacterType = ESMCharacterType::Piano;
 	CharacterSelectorInformationWidget->SetSkillInfo(ESMCharacterType::Piano);
 
+	ShowPreviewCharacter(ESMCharacterType::Piano);
+	
 	UpdateSelectButton();
 }
 
 void USMCharacterSelectorScreenWidget::OnPickBass()
 {
+	if (FocusedCharacterType == ESMCharacterType::Bass)
+	{
+		return;
+	}
+
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
 
 	FocusedCharacterType = ESMCharacterType::Bass;
 	CharacterSelectorInformationWidget->SetSkillInfo(ESMCharacterType::Bass);
 
+	ShowPreviewCharacter(ESMCharacterType::Bass);
+	
 	UpdateSelectButton();
 }
 
@@ -85,6 +120,7 @@ void USMCharacterSelectorScreenWidget::OnSelectButtonClicked()
 {
 	if (IsFocusedCharacterSelectable())
 	{
+		bIsNeverSelected = false;
 		SelectButton->SetIsEnabled(false);
 		GetOwningPlayerState()->ChangeCharacterType(FocusedCharacterType);
 	}
@@ -121,7 +157,43 @@ void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, 
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Character changed successfully"));
-	// SelectButton->SetIsEnabled(false);
+}
+
+void USMCharacterSelectorScreenWidget::ShowPreviewCharacter(const ESMCharacterType CharacterType)
+{
+	FName TargetName = TEXT("ABP_None_FB");
+	const ESMTeam LocalTeam = GetOwningPlayerState()->GetTeam();
+	switch (CharacterType)
+	{
+		case ESMCharacterType::None:
+			break;
+		case ESMCharacterType::ElectricGuitar:
+			TargetName = LocalTeam == ESMTeam::EDM ? TEXT("ABP_ElectricGuitar_EDM") : TEXT("ABP_ElectricGuitar_FB");
+			break;
+		case ESMCharacterType::Piano:
+			TargetName = LocalTeam == ESMTeam::EDM ? TEXT("ABP_Piano_EDM") : TEXT("ABP_Piano_FB");
+			break;
+		case ESMCharacterType::Bass:
+			TargetName = LocalTeam == ESMTeam::EDM ? TEXT("ABP_Bass_EDM") : TEXT("ABP_Bass_FB");
+			break;
+	}
+
+	if (CharacterMesh)
+	{
+		CharacterMesh->SetActorHiddenInGame(true);
+	}
+	if (const UWorld* World = GetWorld())
+	{
+		for (ASkeletalMeshActor* Actor : TActorRange<ASkeletalMeshActor>(World))
+		{
+			if (Actor->GetActorLabel() == TargetName)
+			{
+				CharacterMesh = Actor;
+				CharacterMesh->SetActorHiddenInGame(false);
+				break;
+			}
+		}
+	}
 }
 
 void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
@@ -156,7 +228,7 @@ void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
 void USMCharacterSelectorScreenWidget::UpdateSelectButton() const
 {
 	SelectButton->SetIsEnabled(false);
-	SelectButtonText->SetText(FText::FromString(FocusedCharacterType == ESMCharacterType::None ? TEXT("확인") : TEXT("변경")));
+	SelectButtonText->SetText(FText::FromString(bIsNeverSelected ? TEXT("확인") : TEXT("변경")));
 	SelectButton->SetIsEnabled(IsFocusedCharacterSelectable());
 }
 
