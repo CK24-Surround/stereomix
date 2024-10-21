@@ -8,6 +8,8 @@
 #include "Data/SMCharacterType.h"
 #include "SMTutorialManagerComponent.generated.h"
 
+class UNiagaraComponent;
+class UNiagaraSystem;
 class ASMAICharacterBase;
 class ASMTile;
 class ASMTrainingDummy;
@@ -180,8 +182,26 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<ASMAICharacterBase> AICharacterClass;
 
-	UPROPERTY(EditAnywhere, Category = "Design")
+	UPROPERTY()
 	TObjectPtr<ASMAICharacterBase> AICharacter;
 
 	FVector AISpawnLocation;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UNiagaraSystem> LocationIndicator3X3;
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> LocationIndicator3X3Component;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UNiagaraSystem> LocationIndicator3X3Clear;
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> LocationIndicator3X3ClearComponent;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UNiagaraSystem> LocationIndicator5X5;
+
+	UPROPERTY()
+	TObjectPtr<UNiagaraComponent> LocationIndicator5X5Component;
 };

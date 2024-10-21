@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "AIController.h"
 #include "EngineUtils.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/Common/SMGA_Hold.h"
@@ -19,7 +21,6 @@
 #include "Actors/Tutorial/SMTrainingDummy.h"
 #include "Actors/Tutorial/SMTutorialLocation.h"
 #include "Actors/Tutorial/SMTutorialWall.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
 #include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
@@ -168,6 +169,18 @@ void USMTutorialManagerComponent::InitializeComponent()
 		if (Location->ActorHasTag(TEXT("AISpawn")))
 		{
 			AISpawnLocation = Location->GetActorLocation();
+		}
+
+		if (Location->ActorHasTag(TEXT("LocationIndicator3X3")))
+		{
+			LocationIndicator3X3Component = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), LocationIndicator3X3, Location->GetActorLocation(), FRotator::ZeroRotator, FVector(1), false, false, ENCPoolMethod::ManualRelease);
+
+			LocationIndicator3X3ClearComponent = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), LocationIndicator3X3Clear, Location->GetActorLocation(), FRotator::ZeroRotator, FVector(1), false, false, ENCPoolMethod::AutoRelease);
+		}
+
+		if (Location->ActorHasTag(TEXT("LocationIndicator5X5")))
+		{
+			LocationIndicator5X5Component = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), LocationIndicator5X5, Location->GetActorLocation(), FRotator::ZeroRotator, FVector(1), false, false, ENCPoolMethod::ManualRelease);
 		}
 	}
 
@@ -381,6 +394,11 @@ void USMTutorialManagerComponent::OnStep2Started()
 {
 	TilesCaptureCount = 0;
 
+	if (LocationIndicator3X3Component)
+	{
+		LocationIndicator3X3Component->Activate(true);
+	}
+
 	for (TWeakObjectPtr<ASMTile> SamplingTile : SamplingTiles)
 	{
 		if (SamplingTile.IsValid())
@@ -406,6 +424,18 @@ void USMTutorialManagerComponent::OnSamplingTilesCaptured()
 void USMTutorialManagerComponent::OnStep2Completed()
 {
 	CurrentStepNumber = 3;
+
+	if (LocationIndicator3X3ClearComponent)
+	{
+		LocationIndicator3X3ClearComponent->Activate(true);
+	}
+
+	if (LocationIndicator3X3Component)
+	{
+		LocationIndicator3X3Component->Deactivate();
+		LocationIndicator3X3Component->ReleaseToPool();
+		LocationIndicator3X3Component = nullptr;
+	}
 
 	for (TWeakObjectPtr<ASMTile> SamplingTile : SamplingTiles)
 	{
@@ -547,6 +577,11 @@ void USMTutorialManagerComponent::OnStep6Completed()
 		HoldInstance->OnHoldSucceed.RemoveAll(this);
 	}
 
+	if (LocationIndicator5X5Component)
+	{
+		LocationIndicator5X5Component->Activate(true);
+	}
+
 	if (CachedTutorialUIControlComponent)
 	{
 		const FString GuideText = TEXT("노이즈브레이크를 사용하여 점령");
@@ -648,6 +683,13 @@ void USMTutorialManagerComponent::RestartStep7()
 void USMTutorialManagerComponent::OnStep7Completed()
 {
 	CurrentStepNumber = 8;
+
+	if (LocationIndicator5X5Component)
+	{
+		LocationIndicator5X5Component->Deactivate();
+		LocationIndicator5X5Component->ReleaseToPool();
+		LocationIndicator5X5Component = nullptr;
+	}
 
 	if (TrainingDummy.IsValid())
 	{
