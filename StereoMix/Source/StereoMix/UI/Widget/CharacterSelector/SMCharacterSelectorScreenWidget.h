@@ -8,6 +8,8 @@
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 #include "SMCharacterSelectorScreenWidget.generated.h"
 
+class UImage;
+class UOverlay;
 class USMCharacterSelectorTimerWidget;
 class ASkeletalMeshActor;
 class ASMCharacterSelectPlayerController;
@@ -36,7 +38,7 @@ protected:
 	void OnCountdownTick();
 
 	UFUNCTION()
-	void OnCountdownFinished();
+	void OnCurrentStateChanged(ECharacterSelectionStateType NewCharacterSelectionState);
 
 	UFUNCTION()
 	void OnPickElectricGuitar();
@@ -62,6 +64,8 @@ protected:
 	UFUNCTION()
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 
+	void ChangeFocusedCharacter(ESMCharacterType CharacterType);
+	
 	void ShowPreviewCharacter(ESMCharacterType CharacterType);
 
 	void UpdatePlayerList() const;
@@ -70,6 +74,9 @@ protected:
 
 	bool IsFocusedCharacterSelectable(bool bExcludeOwner) const;
 
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UOverlay> CharacterSelectBox;
+	
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> SelectButton;
 
@@ -102,6 +109,10 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<ASkeletalMeshActor> CharacterMesh;
+	
+	FButtonStyle OriginalSelectButtonStyle;
+	
+	FButtonStyle OriginalSelectedButtonStyle;
 
 	int32 bIsNeverSelected:1 = true;
 

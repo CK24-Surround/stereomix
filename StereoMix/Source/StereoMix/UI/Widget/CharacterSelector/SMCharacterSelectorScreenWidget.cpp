@@ -10,6 +10,7 @@
 #include "Animation/SkeletalMeshActor.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Button.h"
+#include "Components/Overlay.h"
 #include "Controllers/SMCharacterSelectPlayerController.h"
 #include "Games/SMCountdownTimerComponent.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
@@ -54,6 +55,12 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 		}
 	}
 
+	OriginalSelectButtonStyle = PickElectricGuitar->GetStyle();
+	OriginalSelectButtonStyle.Normal = PickElectricGuitar->GetStyle().Normal;
+
+	OriginalSelectedButtonStyle = PickElectricGuitar->GetStyle();
+	OriginalSelectedButtonStyle.Normal = PickElectricGuitar->GetStyle().Disabled;
+
 	PickElectricGuitar->OnClicked.AddDynamic(this, &ThisClass::OnPickElectricGuitar);
 	PickPiano->OnClicked.AddDynamic(this, &ThisClass::OnPickPiano);
 	PickBass->OnClicked.AddDynamic(this, &ThisClass::OnPickBass);
@@ -67,15 +74,11 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 	OwningPlayerState->OnCharacterChangeResponse.AddDynamic(this, &ThisClass::OnCharacterChangeResponse);
 
 	OwningCharacterSelectState->GetCountdownTimer()->OnCountdownTick.AddDynamic(this, &ThisClass::OnCountdownTick);
-	OwningCharacterSelectState->GetCountdownTimer()->OnCountdownFinished.AddUniqueDynamic(this, &ThisClass::OnCountdownFinished);
+	OwningCharacterSelectState->OnCurrentStateChanged.AddDynamic(this, &ThisClass::OnCurrentStateChanged);
 
 	TArray AvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
-	FocusedCharacterType = AvailableCharacterTypes[FMath::RandRange(0, AvailableCharacterTypes.Num() - 1)];
 
-	UpdatePlayerList();
-	UpdateSelectButton();
-	ShowPreviewCharacter(FocusedCharacterType);
-	CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
+	ChangeFocusedCharacter(AvailableCharacterTypes[FMath::RandRange(0, AvailableCharacterTypes.Num() - 1)]);
 }
 
 void USMCharacterSelectorScreenWidget::OnCountdownTick()
@@ -87,19 +90,15 @@ void USMCharacterSelectorScreenWidget::OnCountdownTick()
 	}
 }
 
-void USMCharacterSelectorScreenWidget::OnCountdownFinished()
+void USMCharacterSelectorScreenWidget::OnCurrentStateChanged(ECharacterSelectionStateType NewCharacterSelectionState)
 {
-	SelectButton->SetIsEnabled(false);
-	PickElectricGuitar->SetIsEnabled(false);
-	PickPiano->SetIsEnabled(false);
-	PickBass->SetIsEnabled(false);
-
-	if (FocusedCharacterType = OwningPlayerState->GetCharacterType(); FocusedCharacterType != ESMCharacterType::None)
+	if (NewCharacterSelectionState == ECharacterSelectionStateType::End)
 	{
-		ShowPreviewCharacter(FocusedCharacterType);
-		if (CharacterSelectorInformationWidget.IsValid())
+		CharacterSelectBox->SetVisibility(ESlateVisibility::Hidden);
+
+		if (FocusedCharacterType != ESMCharacterType::None)
 		{
-			CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
+			ChangeFocusedCharacter(OwningPlayerState->GetCharacterType());
 		}
 	}
 }
@@ -113,14 +112,7 @@ void USMCharacterSelectorScreenWidget::OnPickElectricGuitar()
 
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
 
-	FocusedCharacterType = ESMCharacterType::ElectricGuitar;
-
-	UpdateSelectButton();
-	ShowPreviewCharacter(FocusedCharacterType);
-	if (CharacterSelectorInformationWidget.IsValid())
-	{
-		CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
-	}
+	ChangeFocusedCharacter(ESMCharacterType::ElectricGuitar);
 }
 
 void USMCharacterSelectorScreenWidget::OnPickPiano()
@@ -132,14 +124,7 @@ void USMCharacterSelectorScreenWidget::OnPickPiano()
 
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
 
-	FocusedCharacterType = ESMCharacterType::Piano;
-
-	UpdateSelectButton();
-	ShowPreviewCharacter(FocusedCharacterType);
-	if (CharacterSelectorInformationWidget.IsValid())
-	{
-		CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
-	}
+	ChangeFocusedCharacter(ESMCharacterType::Piano);
 }
 
 void USMCharacterSelectorScreenWidget::OnPickBass()
@@ -151,14 +136,7 @@ void USMCharacterSelectorScreenWidget::OnPickBass()
 
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
 
-	FocusedCharacterType = ESMCharacterType::Bass;
-
-	UpdateSelectButton();
-	ShowPreviewCharacter(FocusedCharacterType);
-	if (CharacterSelectorInformationWidget.IsValid())
-	{
-		CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
-	}
+	ChangeFocusedCharacter(ESMCharacterType::Bass);
 }
 
 void USMCharacterSelectorScreenWidget::OnSelectButtonClicked()
@@ -200,16 +178,13 @@ void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* 
 
 	if (Player == OwningPlayerState && NewCharacter != ESMCharacterType::None && FocusedCharacterType != NewCharacter)
 	{
-		FocusedCharacterType = NewCharacter;
-		ShowPreviewCharacter(FocusedCharacterType);
-		if (CharacterSelectorInformationWidget.IsValid())
-		{
-			CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
-		}
+		ChangeFocusedCharacter(NewCharacter);
 	}
-
-	UpdatePlayerList();
-	UpdateSelectButton();
+	else
+	{
+		UpdatePlayerList();
+		UpdateSelectButton();
+	}
 }
 
 void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType)
@@ -218,7 +193,7 @@ void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, 
 	{
 		return;
 	}
-	
+
 	if (!bSuccess || !IsFocusedCharacterSelectable(true))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Character change failed"));
@@ -227,6 +202,28 @@ void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, 
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Character changed successfully"));
+}
+
+void USMCharacterSelectorScreenWidget::ChangeFocusedCharacter(const ESMCharacterType CharacterType)
+{
+	if (FocusedCharacterType == CharacterType)
+	{
+		return;
+	}
+
+	FocusedCharacterType = CharacterType;
+
+	PickElectricGuitar->SetStyle(CharacterType == ESMCharacterType::ElectricGuitar ? OriginalSelectedButtonStyle : OriginalSelectButtonStyle);
+	PickPiano->SetStyle(CharacterType == ESMCharacterType::Piano ? OriginalSelectedButtonStyle : OriginalSelectButtonStyle);
+	PickBass->SetStyle(CharacterType == ESMCharacterType::Bass ? OriginalSelectedButtonStyle : OriginalSelectButtonStyle);
+
+	UpdatePlayerList();
+	UpdateSelectButton();
+	ShowPreviewCharacter(FocusedCharacterType);
+	if (CharacterSelectorInformationWidget.IsValid())
+	{
+		CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
+	}
 }
 
 void USMCharacterSelectorScreenWidget::ShowPreviewCharacter(const ESMCharacterType CharacterType)
@@ -252,6 +249,7 @@ void USMCharacterSelectorScreenWidget::ShowPreviewCharacter(const ESMCharacterTy
 	{
 		CharacterMesh->SetActorHiddenInGame(true);
 	}
+
 	if (const UWorld* World = GetWorld())
 	{
 		for (ASkeletalMeshActor* Actor : TActorRange<ASkeletalMeshActor>(World))
