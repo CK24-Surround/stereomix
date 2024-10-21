@@ -23,28 +23,35 @@ public:
 	void ResetInfo() const;
 
 	void ResetPlayerInfo() const;
-	
+
 	UFUNCTION(BlueprintCallable)
 	void SetPlayerInfo(const TArray<FString>& InPlayerNames, const TArray<ESMCharacterType>& InPlayerCharacterTypes);
-	
+
 	UFUNCTION(BlueprintCallable)
 	void SetSkillInfo(ESMCharacterType InPlayerCharacterTypes);
 
 	void SetPlayerReady(int32 PlayerIndex, bool bIsReady);
-	
+
 protected:
+	UPROPERTY()
 	TArray<TObjectPtr<UImage>> SkillImages;
 
+	UPROPERTY()
 	TArray<TObjectPtr<UCommonTextBlock>> SkillNames;
 
+	UPROPERTY()
 	TArray<TObjectPtr<UCommonTextBlock>> SkillDescriptions;
 
+	UPROPERTY()
 	TArray<TObjectPtr<UImage>> PlayerImages;
 
+	UPROPERTY()
 	TArray<TObjectPtr<UCommonTextBlock>> PlayerNames;
 
+	UPROPERTY()
 	TArray<TObjectPtr<UCommonTextBlock>> PlayerCharacterTypes;
 
+	UPROPERTY()
 	TArray<TObjectPtr<UWidgetAnimation>> PlayerReadyAnimations;
 
 	UPROPERTY(meta = (BindWidget))

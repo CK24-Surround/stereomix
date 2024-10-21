@@ -180,7 +180,7 @@ void ASMRoomMode::OnPostLogin(AController* NewPlayer)
 {
 	Super::OnPostLogin(NewPlayer);
 
-	for (auto TargetPlayerState : GameState->PlayerArray)
+	for (const APlayerState* TargetPlayerState : GameState->PlayerArray)
 	{
 		ASMPlayerController* TargetPlayerController = Cast<ASMPlayerController>(TargetPlayerState->GetOwner());
 		TargetPlayerController->ClientReceiveChat(TEXT("시스템"), FString::Printf(TEXT("%s 님이 입장했습니다."), *NewPlayer->PlayerState->GetPlayerName()));
@@ -190,7 +190,7 @@ void ASMRoomMode::OnPostLogin(AController* NewPlayer)
 void ASMRoomMode::Logout(AController* Exiting)
 {
 	Super::Logout(Exiting);
-	for (auto TargetPlayerState : GameState->PlayerArray)
+	for (const APlayerState* TargetPlayerState : GameState->PlayerArray)
 	{
 		ASMPlayerController* TargetPlayerController = Cast<ASMPlayerController>(TargetPlayerState->GetOwner());
 		TargetPlayerController->ClientReceiveChat(TEXT("시스템"), FString::Printf(TEXT("%s 님이 나갔습니다."), *Exiting->PlayerState->GetPlayerName()));

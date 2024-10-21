@@ -65,7 +65,7 @@ protected:
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 
 	void ChangeFocusedCharacter(ESMCharacterType CharacterType);
-	
+
 	void ShowPreviewCharacter(ESMCharacterType CharacterType);
 
 	void UpdatePlayerList() const;
@@ -76,7 +76,7 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UOverlay> CharacterSelectBox;
-	
+
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> SelectButton;
 
@@ -92,26 +92,21 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> PickBass;
 
-	UPROPERTY()
 	TWeakObjectPtr<USMCharacterSelectorInformationWidget> CharacterSelectorInformationWidget;
 
-	UPROPERTY()
 	TWeakObjectPtr<USMCharacterSelectorTimerWidget> CharacterSelectorTimerWidget;
 
-	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectPlayerController> OwningPlayerController;
 
-	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectState> OwningCharacterSelectState;
 
-	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectPlayerState> OwningPlayerState;
 
 	UPROPERTY()
 	TObjectPtr<ASkeletalMeshActor> CharacterMesh;
-	
+
 	FButtonStyle OriginalSelectButtonStyle;
-	
+
 	FButtonStyle OriginalSelectedButtonStyle;
 
 	int32 bIsNeverSelected:1 = true;

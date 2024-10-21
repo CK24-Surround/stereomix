@@ -21,7 +21,7 @@ public:
 	ASMCharacterSelectMode();
 
 	virtual void InitGameState() override;
-	
+
 	virtual void StartPlay() override;
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
