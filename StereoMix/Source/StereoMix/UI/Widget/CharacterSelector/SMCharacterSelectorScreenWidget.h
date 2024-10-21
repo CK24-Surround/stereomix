@@ -8,6 +8,7 @@
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 #include "SMCharacterSelectorScreenWidget.generated.h"
 
+class USMCharacterSelectorTimerWidget;
 class ASkeletalMeshActor;
 class ASMCharacterSelectPlayerController;
 class USMCharacterSelectorInformationWidget;
@@ -31,6 +32,9 @@ public:
 	ASMCharacterSelectPlayerState* GetOwningPlayerState() const { return OwningPlayerState.Get(); }
 
 protected:
+	UFUNCTION()
+	void OnCountdownTick();
+	
 	UFUNCTION()
 	void OnPickElectricGuitar();
 
@@ -79,6 +83,8 @@ protected:
 	TObjectPtr<UButton> PickBass;
 
 	TObjectPtr<USMCharacterSelectorInformationWidget> CharacterSelectorInformationWidget;
+	
+	TObjectPtr<USMCharacterSelectorTimerWidget> CharacterSelectorTimerWidget;
 
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectPlayerController> OwningPlayerController;

@@ -6,10 +6,12 @@
 #include "CommonTextBlock.h"
 #include "EngineUtils.h"
 #include "SMCharacterSelectorInformationWidget.h"
+#include "SMCharacterSelectorTimerWidget.h"
 #include "Animation/SkeletalMeshActor.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Components/Button.h"
 #include "Controllers/SMCharacterSelectPlayerController.h"
+#include "Games/SMCountdownTimerComponent.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
 
@@ -32,16 +34,24 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 	}
 
 	TArray<UUserWidget*> FoundWidgets;
-	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, USMCharacterSelectorInformationWidget::StaticClass(), false);
+	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), FoundWidgets, UUserWidget::StaticClass(), false);
+
 	for (UUserWidget* Widget : FoundWidgets)
 	{
-		if (!Widget)
+		if (CharacterSelectorInformationWidget == nullptr)
 		{
-			continue;
+			CharacterSelectorInformationWidget = Cast<USMCharacterSelectorInformationWidget>(Widget);
 		}
 
-		CharacterSelectorInformationWidget = Cast<USMCharacterSelectorInformationWidget>(Widget);
-		break;
+		if (CharacterSelectorTimerWidget == nullptr)
+		{
+			CharacterSelectorTimerWidget = Cast<USMCharacterSelectorTimerWidget>(Widget);
+		}
+
+		if (CharacterSelectorInformationWidget && CharacterSelectorTimerWidget)
+		{
+			break;
+		}
 	}
 
 	PickElectricGuitar->OnClicked.AddDynamic(this, &ThisClass::OnPickElectricGuitar);
@@ -56,6 +66,8 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 
 	OwningPlayerState->OnCharacterChangeResponse.AddDynamic(this, &ThisClass::OnCharacterChangeResponse);
 
+	OwningCharacterSelectState->GetCountdownTimer()->OnCountdownTick.AddDynamic(this, &ThisClass::OnCountdownTick);
+
 	TArray AvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
 	FocusedCharacterType = AvailableCharacterTypes[FMath::RandRange(0, AvailableCharacterTypes.Num() - 1)];
 
@@ -63,6 +75,15 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 	UpdateSelectButton();
 	ShowPreviewCharacter(FocusedCharacterType);
 	CharacterSelectorInformationWidget->SetSkillInfo(FocusedCharacterType);
+}
+
+void USMCharacterSelectorScreenWidget::OnCountdownTick()
+{
+	if (CharacterSelectorTimerWidget)
+	{
+		const int32 RemainingTime = OwningCharacterSelectState->GetCountdownTimer()->GetRemainingTime();
+		CharacterSelectorTimerWidget->SetRemainTime(RemainingTime);
+	}
 }
 
 void USMCharacterSelectorScreenWidget::OnPickElectricGuitar()
@@ -153,6 +174,8 @@ void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, 
 {
 	if (!bSuccess)
 	{
+		GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
+		UpdateSelectButton();
 		return;
 	}
 
