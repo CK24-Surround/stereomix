@@ -52,6 +52,7 @@ namespace SMTags
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Uncontrollable, "Character.State.Common.Uncontrollable", "조작 불가 상태임을 나타냅니다. ");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Invincible, "Character.State.Common.Invincible", "무적 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(UnlimitStamina, "Character.State.Common.UnlimitStamina", "스태미나 소모가 없는 상태를 나타냅니다.");
+				UE_DEFINE_GAMEPLAY_TAG_COMMENT(UnlimitSkillGauge, "Character.State.Common.UnlimitSkillGauge", "스킬 게이지 소모가 없는 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Hold, "Character.State.Common.Hold", "캐릭터를 잡고 있는 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Held, "Character.State.Common.Held", "상대 캐릭터에게 잡혀 있는 상태를 나타냅니다.");
 				UE_DEFINE_GAMEPLAY_TAG_COMMENT(Stun, "Character.State.Common.Stun", "기절 상태를 나타냅니다.");

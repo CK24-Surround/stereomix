@@ -23,6 +23,9 @@
 
 ASMAICharacterBase::ASMAICharacterBase()
 {
+	UCapsuleComponent* CachedCapsule = GetCapsuleComponent();
+	CachedCapsule->SetCollisionProfileName(SMCollisionProfileName::Player);
+
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 	CachedMeshComponent->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
 	CachedMeshComponent->SetRelativeRotation(FRotator(0.0, -90.0, 0.0));
@@ -49,7 +52,7 @@ ASMAICharacterBase::ASMAICharacterBase()
 
 	HitBox = CreateDefaultSubobject<UCapsuleComponent>(TEXT("HitBox"));
 	HitBox->SetupAttachment(RootComponent);
-	HitBox->SetCollisionProfileName(SMCollisionProfileName::Player);
+	HitBox->SetCollisionProfileName(SMCollisionProfileName::PlayerProjectileHitbox);
 	HitBox->InitCapsuleSize(125.0f, 125.0f);
 
 	TeamComponent = CreateDefaultSubobject<USMTeamComponent>(TEXT("Team"));
@@ -89,7 +92,7 @@ ESMTeam ASMAICharacterBase::GetTeam() const
 
 bool ASMAICharacterBase::CanIgnoreAttack() const
 {
-	if (bCanAttack)
+	if (!bCanAttack)
 	{
 		return true;
 	}
@@ -102,6 +105,13 @@ void ASMAICharacterBase::BeginPlay()
 	Super::BeginPlay();
 
 	OnChangeHP();
+}
+
+void ASMAICharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Weapon->Destroy();
+	Note->Destroy();
+	Super::EndPlay(EndPlayReason);
 }
 
 void ASMAICharacterBase::PossessedBy(AController* NewController)
@@ -211,18 +221,21 @@ void ASMAICharacterBase::RegisterNoteStateEndTimer(float Duration)
 	{
 		TWeakObjectPtr<ASMAICharacterBase> ThisWeakPtr = TWeakObjectPtr<ASMAICharacterBase>(this);
 		World->GetTimerManager().SetTimer(NoteStateEndTimerHandle, [ThisWeakPtr] {
-			USMHoldInteractionComponent* HIC = ThisWeakPtr->GetHoldInteractionComponent();
-			ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(HIC->GetActorHoldingMe());
-			USMHIC_Character* TargetHIC = Cast<USMHIC_Character>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetCharacter));
-
-			if (USMHIC_TutorialAI* TutorialAI = Cast<USMHIC_TutorialAI>(HIC))
+			if (ThisWeakPtr.IsValid())
 			{
-				TutorialAI->ReleasedFromBeingHeld(TargetCharacter);
-			}
+				USMHoldInteractionComponent* HIC = ThisWeakPtr->GetHoldInteractionComponent();
+				ASMPlayerCharacterBase* TargetCharacter = Cast<ASMPlayerCharacterBase>(HIC->GetActorHoldingMe());
+				USMHIC_Character* TargetHIC = Cast<USMHIC_Character>(USMHoldInteractionBlueprintLibrary::GetHoldInteractionComponent(TargetCharacter));
 
-			if (TargetHIC)
-			{
-				TargetHIC->SetActorIAmHolding(nullptr);
+				if (USMHIC_TutorialAI* TutorialAI = Cast<USMHIC_TutorialAI>(HIC))
+				{
+					TutorialAI->ReleasedFromBeingHeld(TargetCharacter);
+				}
+
+				if (TargetHIC)
+				{
+					TargetHIC->SetActorIAmHolding(nullptr);
+				}
 			}
 		}, Duration, false);
 	}

@@ -120,6 +120,15 @@ bool USMCharacterAttributeSet::PreGameplayEffectExecute(FGameplayEffectModCallba
 		}
 	}
 
+	if (Data.EvaluatedData.Attribute == GetSkillGaugeAttribute())
+	{
+		if (Data.Target.HasMatchingGameplayTag(SMTags::Character::State::Common::UnlimitSkillGauge))
+		{
+			Data.EvaluatedData.Magnitude = Data.EvaluatedData.Magnitude > 0.0f ? Data.EvaluatedData.Magnitude : 0.0f;
+			return false;
+		}
+	}
+
 	return true;
 }
 

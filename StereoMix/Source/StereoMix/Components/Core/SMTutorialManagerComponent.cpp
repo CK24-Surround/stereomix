@@ -4,6 +4,7 @@
 #include "SMTutorialManagerComponent.h"
 
 #include "GameFramework/GameModeBase.h"
+#include "AIController.h"
 #include "EngineUtils.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
@@ -11,12 +12,14 @@
 #include "AbilitySystem/Abilities/NoiseBreak/SMGA_NoiseBreak.h"
 #include "AbilitySystem/Abilities/Skill/SMGA_Skill.h"
 #include "AbilitySystem/AttributeSets/SMCharacterAttributeSet.h"
+#include "Actors/Character/AI/SMAICharacterBase.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Tiles/SMTile.h"
 #include "Actors/Tutorial/SMProgressTriggerBase.h"
 #include "Actors/Tutorial/SMTrainingDummy.h"
 #include "Actors/Tutorial/SMTutorialLocation.h"
 #include "Actors/Tutorial/SMTutorialWall.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/PlayerController/SMTutorialUIControlComponent.h"
 #include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
@@ -160,6 +163,11 @@ void USMTutorialManagerComponent::InitializeComponent()
 		if (Location->ActorHasTag(TEXT("NoiseBreakRestart")))
 		{
 			NoiseBreakRestartLocation = Location->GetActorLocation();
+		}
+
+		if (Location->ActorHasTag(TEXT("AISpawn")))
+		{
+			AISpawnLocation = Location->GetActorLocation();
 		}
 	}
 
@@ -462,11 +470,13 @@ void USMTutorialManagerComponent::OnStep3Completed()
 
 void USMTutorialManagerComponent::OnStep4Started()
 {
-	USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
-	if (USMGA_Skill* SkillInstance = ASC ? ASC->GetGAInstanceFromClass<USMGA_Skill>() : nullptr)
+	USMAbilitySystemComponent* OwnerASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
+	if (USMGA_Skill* SkillInstance = OwnerASC ? OwnerASC->GetGAInstanceFromClass<USMGA_Skill>() : nullptr)
 	{
+		OwnerASC->AddLooseGameplayTag(SMTags::Character::State::Common::UnlimitSkillGauge);
+
 		SkillInstance->OnSkillHit.AddDynamic(this, &ThisClass::OnStep4Completed);
-		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Skill);
+		OwnerASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Skill);
 	}
 }
 
@@ -474,9 +484,10 @@ void USMTutorialManagerComponent::OnStep4Completed()
 {
 	CurrentStepNumber = 5;
 
-	const USMAbilitySystemComponent* SourceASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
-	if (USMGA_Skill* SkillInstance = SourceASC ? SourceASC->GetGAInstanceFromClass<USMGA_Skill>() : nullptr)
+	USMAbilitySystemComponent* OwnerASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
+	if (USMGA_Skill* SkillInstance = OwnerASC ? OwnerASC->GetGAInstanceFromClass<USMGA_Skill>() : nullptr)
 	{
+		OwnerASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::UnlimitSkillGauge);
 		SkillInstance->OnSkillHit.RemoveAll(this);
 	}
 
@@ -640,8 +651,8 @@ void USMTutorialManagerComponent::OnStep7Completed()
 
 	if (TrainingDummy.IsValid())
 	{
-		const FVector DummyLocation = TrainingDummy->GetActorLocation();
-		TrainingDummy->SetActorLocation(FVector(-1800.0, -2780.0, DummyLocation.Z));
+		// const FVector DummyLocation = TrainingDummy->GetActorLocation();
+		// TrainingDummy->SetActorLocation(FVector(-1800.0, -2780.0, DummyLocation.Z));
 		TrainingDummy->SetInvincible(false);
 	}
 
@@ -833,11 +844,19 @@ void USMTutorialManagerComponent::StartBattle(AActor* OverlappedActor, AActor* O
 		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep10Completed, BattleTime);
 	}
 
-	// TODO: AI 스폰 구현
+	if (UWorld* World = GetWorld())
+	{
+		AICharacter = World->SpawnActor<ASMAICharacterBase>(AICharacterClass, AISpawnLocation, FRotator::ZeroRotator);
+		AICharacter->SpawnDefaultController();
+	}
 }
 
 void USMTutorialManagerComponent::OnStep10Completed()
 {
+	if (AICharacter)
+	{
+		AICharacter->Destroy();
+	}
 	if (CachedTutorialUIControlComponent)
 	{
 		const FString GuideText = TEXT("차량에 탑승");

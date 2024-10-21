@@ -30,6 +30,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void PossessedBy(AController* NewController) override;
 
 	virtual USMHoldInteractionComponent* GetHoldInteractionComponent() const override;

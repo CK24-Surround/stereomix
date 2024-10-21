@@ -8,6 +8,7 @@
 #include "Data/SMCharacterType.h"
 #include "SMTutorialManagerComponent.generated.h"
 
+class ASMAICharacterBase;
 class ASMTile;
 class ASMTrainingDummy;
 class ASMProgressTriggerBase;
@@ -175,4 +176,12 @@ protected:
 	float CachedOwnerMaxHP = 0.0f;
 
 	float BattleTime = 30.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TSubclassOf<ASMAICharacterBase> AICharacterClass;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<ASMAICharacterBase> AICharacter;
+
+	FVector AISpawnLocation;
 };
