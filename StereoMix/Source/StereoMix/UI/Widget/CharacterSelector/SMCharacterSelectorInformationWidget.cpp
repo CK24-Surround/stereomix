@@ -144,29 +144,29 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 			break;
 		case ESMCharacterType::ElectricGuitar:
 			SelectedCharacterType->SetText(FText::FromString(TEXT("일렉기타")));
-			InSkillNames.Add(TEXT("일렉기타"));
-			InSkillNames.Add(TEXT("일렉기타"));
-			InSkillNames.Add(TEXT("일렉기타"));
+			InSkillNames.Add(TEXT("속주"));
 			InSkillDescriptions.Add(TEXT("전방에 작은 탄환들을 빠른속도로 발사합니다"));
+			InSkillNames.Add(TEXT("찌릿!"));
 			InSkillDescriptions.Add(TEXT("마비탄을 발사해 적을 느려지게 합니다"));
+			InSkillNames.Add(TEXT("파워 스크래치"));
 			InSkillDescriptions.Add(TEXT("적과 함께 지정한 방향으로 빠르게 대쉬합니다"));
 			break;
 		case ESMCharacterType::Piano:
 			SelectedCharacterType->SetText(FText::FromString(TEXT("피아노")));
-			InSkillNames.Add(TEXT("피아노"));
-			InSkillNames.Add(TEXT("피아노"));
-			InSkillNames.Add(TEXT("피아노"));
+			InSkillNames.Add(TEXT("차징샷"));
 			InSkillDescriptions.Add(TEXT("에너지를 모은 화살을 충전해 발사합니다"));
+			InSkillNames.Add(TEXT("저리가!"));
 			InSkillDescriptions.Add(TEXT("선택한 지점에 충격화살을 발사해 적을 밀어냅니다"));
+			InSkillNames.Add(TEXT("피날레"));
 			InSkillDescriptions.Add(TEXT("하늘로 뛰어오른뒤 지정한 위치로 적을 발사합니다"));
 			break;
 		case ESMCharacterType::Bass:
 			SelectedCharacterType->SetText(FText::FromString(TEXT("베이스")));
-			InSkillNames.Add(TEXT("베이스"));
-			InSkillNames.Add(TEXT("베이스"));
-			InSkillNames.Add(TEXT("베이스"));
+			InSkillNames.Add(TEXT("헤비 스윙"));
 			InSkillDescriptions.Add(TEXT("베이스를 휘둘러 전방의 넓은 범위를 공격합니다"));
+			InSkillNames.Add(TEXT("내가 간다!"));
 			InSkillDescriptions.Add(TEXT("무적상태가 되어 돌진합니다. 부딪힌 적은 기절합니다"));
+			InSkillNames.Add(TEXT("스테이지 다이브"));
 			InSkillDescriptions.Add(TEXT("하늘로 뛰어올라 적을 바닥에 내리꽂습니다"));
 			break;
 	}
