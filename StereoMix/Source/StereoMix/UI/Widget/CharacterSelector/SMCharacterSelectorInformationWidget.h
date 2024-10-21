@@ -29,6 +29,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void SetSkillInfo(ESMCharacterType InPlayerCharacterTypes);
+
+	void SetPlayerReady(int32 PlayerIndex, bool bIsReady);
 	
 protected:
 	TArray<TObjectPtr<UImage>> SkillImages;
@@ -42,6 +44,8 @@ protected:
 	TArray<TObjectPtr<UCommonTextBlock>> PlayerNames;
 
 	TArray<TObjectPtr<UCommonTextBlock>> PlayerCharacterTypes;
+
+	TArray<TObjectPtr<UWidgetAnimation>> PlayerReadyAnimations;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> SelectedCharacterType;
@@ -99,4 +103,13 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> PlayerCharacterType3;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> Player1Ready;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> Player2Ready;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> Player3Ready;
 };

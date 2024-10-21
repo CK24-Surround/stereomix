@@ -35,6 +35,10 @@ void USMCharacterSelectorInformationWidget::NativeConstruct()
 	PlayerCharacterTypes.Add(PlayerCharacterType2);
 	PlayerCharacterTypes.Add(PlayerCharacterType3);
 
+	PlayerReadyAnimations.Add(Player1Ready);
+	PlayerReadyAnimations.Add(Player2Ready);
+	PlayerReadyAnimations.Add(Player3Ready);
+
 	ResetInfo();
 }
 
@@ -186,6 +190,21 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 		if (SkillDescriptions.IsValidIndex(i) && InSkillDescriptions.IsValidIndex(i))
 		{
 			SkillDescriptions[i]->SetText(FText::FromString(InSkillDescriptions[i]));
+		}
+	}
+}
+
+void USMCharacterSelectorInformationWidget::SetPlayerReady(const int32 PlayerIndex, const bool bIsReady)
+{
+	if (PlayerReadyAnimations.IsValidIndex(PlayerIndex))
+	{
+		if (bIsReady)
+		{
+			PlayAnimationForward(PlayerReadyAnimations[PlayerIndex]);
+		}
+		else
+		{
+			PlayAnimationReverse(PlayerReadyAnimations[PlayerIndex]);
 		}
 	}
 }

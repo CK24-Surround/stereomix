@@ -22,7 +22,7 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 	{
 		OwningPlayerController = PlayerController;
 	}
-	
+
 	if (ensure(CharacterSelectState))
 	{
 		OwningCharacterSelectState = CharacterSelectState;
@@ -116,7 +116,7 @@ void USMCharacterSelectorScreenWidget::OnPickPiano()
 	CharacterSelectorInformationWidget->SetSkillInfo(ESMCharacterType::Piano);
 
 	ShowPreviewCharacter(ESMCharacterType::Piano);
-	
+
 	UpdateSelectButton();
 }
 
@@ -133,7 +133,7 @@ void USMCharacterSelectorScreenWidget::OnPickBass()
 	CharacterSelectorInformationWidget->SetSkillInfo(ESMCharacterType::Bass);
 
 	ShowPreviewCharacter(ESMCharacterType::Bass);
-	
+
 	UpdateSelectButton();
 }
 
@@ -164,6 +164,11 @@ void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* 
 	if (Player->GetTeam() != OwningPlayerState->GetTeam())
 	{
 		return;
+	}
+
+	if (const int32 PlayerIndex = OwningCharacterSelectState->PlayerArray.IndexOfByKey(Player); PlayerIndex != INDEX_NONE)
+	{
+		CharacterSelectorInformationWidget->SetPlayerReady(PlayerIndex, NewCharacter != ESMCharacterType::None);
 	}
 
 	UpdatePlayerList();
