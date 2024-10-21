@@ -228,20 +228,20 @@ void USMCharacterSelectorScreenWidget::ChangeFocusedCharacter(const ESMCharacter
 
 void USMCharacterSelectorScreenWidget::ShowPreviewCharacter(const ESMCharacterType CharacterType)
 {
-	FName TargetName = TEXT("ABP_None_FB");
+	FName TargetTag = TEXT("ABP_None_FB");
 	const ESMTeam LocalTeam = GetOwningPlayerState()->GetTeam();
 	switch (CharacterType)
 	{
 		case ESMCharacterType::None:
 			break;
 		case ESMCharacterType::ElectricGuitar:
-			TargetName = LocalTeam == ESMTeam::EDM ? TEXT("ABP_ElectricGuitar_EDM") : TEXT("ABP_ElectricGuitar_FB");
+			TargetTag = LocalTeam == ESMTeam::EDM ? TEXT("ElectricGuitar_EDM") : TEXT("ElectricGuitar_FB");
 			break;
 		case ESMCharacterType::Piano:
-			TargetName = LocalTeam == ESMTeam::EDM ? TEXT("ABP_Piano_EDM") : TEXT("ABP_Piano_FB");
+			TargetTag = LocalTeam == ESMTeam::EDM ? TEXT("Piano_EDM") : TEXT("Piano_FB");
 			break;
 		case ESMCharacterType::Bass:
-			TargetName = LocalTeam == ESMTeam::EDM ? TEXT("ABP_Bass_EDM") : TEXT("ABP_Bass_FB");
+			TargetTag = LocalTeam == ESMTeam::EDM ? TEXT("Bass_EDM") : TEXT("Bass_FB");
 			break;
 	}
 
@@ -254,7 +254,7 @@ void USMCharacterSelectorScreenWidget::ShowPreviewCharacter(const ESMCharacterTy
 	{
 		for (ASkeletalMeshActor* Actor : TActorRange<ASkeletalMeshActor>(World))
 		{
-			if (Actor->GetActorLabel() == TargetName)
+			if (Actor->ActorHasTag(TargetTag))
 			{
 				CharacterMesh = Actor;
 				CharacterMesh->SetActorHiddenInGame(false);
