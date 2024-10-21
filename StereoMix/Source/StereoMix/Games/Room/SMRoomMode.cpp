@@ -163,7 +163,7 @@ void ASMRoomMode::StartGame()
 		RoomSession->UpdateRoomState(EGrpcLobbyRoomState::ROOM_STATE_PLAYING);
 	}
 
-	ProcessServerTravel("/Game/StereoMix/Levels/CharacterSelect/L_CharacterSelect");
+	ProcessServerTravel("/Game/StereoMix/Levels/Character_Pick/L_CharacterPick");
 }
 
 bool ASMRoomMode::StartGameIfReadyToStart()

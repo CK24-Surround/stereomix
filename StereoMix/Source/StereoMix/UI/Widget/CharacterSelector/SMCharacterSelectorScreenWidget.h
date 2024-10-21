@@ -34,7 +34,10 @@ public:
 protected:
 	UFUNCTION()
 	void OnCountdownTick();
-	
+
+	UFUNCTION()
+	void OnCountdownFinished();
+
 	UFUNCTION()
 	void OnPickElectricGuitar();
 
@@ -65,7 +68,7 @@ protected:
 
 	void UpdateSelectButton() const;
 
-	bool IsFocusedCharacterSelectable() const;
+	bool IsFocusedCharacterSelectable(bool bExcludeOwner) const;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> SelectButton;
@@ -82,13 +85,15 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> PickBass;
 
-	TObjectPtr<USMCharacterSelectorInformationWidget> CharacterSelectorInformationWidget;
-	
-	TObjectPtr<USMCharacterSelectorTimerWidget> CharacterSelectorTimerWidget;
+	UPROPERTY()
+	TWeakObjectPtr<USMCharacterSelectorInformationWidget> CharacterSelectorInformationWidget;
+
+	UPROPERTY()
+	TWeakObjectPtr<USMCharacterSelectorTimerWidget> CharacterSelectorTimerWidget;
 
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectPlayerController> OwningPlayerController;
-	
+
 	UPROPERTY()
 	TWeakObjectPtr<ASMCharacterSelectState> OwningCharacterSelectState;
 

@@ -110,12 +110,7 @@ void USMCharacterSelectorInformationWidget::SetPlayerInfo(const TArray<FString>&
 		// 	PlayerImages[i]->SetBrushFromTexture(InPlayerTextures[i]);
 		// }
 
-		if (PlayerNames.IsValidIndex(i) && InPlayerNames.IsValidIndex(i))
-		{
-			PlayerNames[i]->SetText(FText::FromString(InPlayerNames[i]));
-		}
-
-		if (PlayerCharacterTypes.IsValidIndex(i) && InPlayerCharacterTypes.IsValidIndex(i))
+		if (InPlayerNames.IsValidIndex(i) && InPlayerCharacterTypes.IsValidIndex(i))
 		{
 			FString CharacterTypeString;
 			switch (InPlayerCharacterTypes[i]) {
@@ -132,6 +127,7 @@ void USMCharacterSelectorInformationWidget::SetPlayerInfo(const TArray<FString>&
 					CharacterTypeString = TEXT("베이스");
 					break;
 			}
+			PlayerNames[i]->SetText(FText::FromString(InPlayerNames[i]));
 			PlayerCharacterTypes[i]->SetText(FText::FromString(CharacterTypeString));
 		}
 	}

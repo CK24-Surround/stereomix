@@ -32,6 +32,8 @@ void ASMCharacterSelectMode::StartPlay()
 
 	RemainingWaitingTime = 30;
 	GetWorldTimerManager().SetTimer(WaitingTimerHandle, this, &ASMCharacterSelectMode::WaitingTimerTick, 1.0f, true, 10.0f);
+
+	CharacterSelectState->GetCountdownTimer()->OnCountdownTick.AddDynamic(this, &ASMCharacterSelectMode::OnCountdownTick);
 }
 
 void ASMCharacterSelectMode::PostLogin(APlayerController* NewPlayer)
@@ -75,6 +77,7 @@ void ASMCharacterSelectMode::ImmediateStart()
 void ASMCharacterSelectMode::WaitingTimerTick()
 {
 	RemainingWaitingTime--;
+
 	if (IsAllPlayerReadyToSelect() || RemainingWaitingTime <= 0)
 	{
 		GetWorldTimerManager().ClearTimer(WaitingTimerHandle);
@@ -89,19 +92,77 @@ void ASMCharacterSelectMode::WaitingTimerTick()
 	UE_LOG(LogStereoMix, Verbose, TEXT("Waiting for players to join. %d seconds remaining."), RemainingWaitingTime)
 }
 
+void ASMCharacterSelectMode::OnCountdownTick()
+{
+	// 1초마다 플레이어들이 선택한 캐릭터가 중복되지 않도록 체크
+	if (CharacterSelectState.IsValid())
+	{
+		TArray AvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
+		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
+		{
+			if (ASMCharacterSelectPlayerState* CharacterSelectPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
+			{
+				if (CharacterSelectPlayerState->GetCharacterType() != ESMCharacterType::None)
+				{
+					if (!AvailableCharacterTypes.Contains(CharacterSelectPlayerState->GetCharacterType()))
+					{
+						CharacterSelectPlayerState->ChangeCharacterType(ESMCharacterType::None);
+					}
+					AvailableCharacterTypes.Remove(CharacterSelectPlayerState->GetCharacterType());
+				}
+			}
+		}
+	}
+}
+
 void ASMCharacterSelectMode::OnCharacterSelectCountdownFinished()
 {
 	if (CharacterSelectState.IsValid())
 	{
-		// 아직 선택하지 않은 플레이어들은 기본 캐릭터로 설정
+		TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>> CharacterTypesMap;
+		CharacterTypesMap.Add(ESMCharacterType::ElectricGuitar, TArray<ASMCharacterSelectPlayerState*>());
+		CharacterTypesMap.Add(ESMCharacterType::Piano, TArray<ASMCharacterSelectPlayerState*>());
+		CharacterTypesMap.Add(ESMCharacterType::Bass, TArray<ASMCharacterSelectPlayerState*>());
+
+		TArray AvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
+
+		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
+		{
+			if (ASMCharacterSelectPlayerState* CharacterSelectPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
+			{
+				if (CharacterSelectPlayerState->GetCharacterType() != ESMCharacterType::None)
+				{
+					if (CharacterTypesMap.Contains(CharacterSelectPlayerState->GetCharacterType()))
+					{
+						AvailableCharacterTypes.Remove(CharacterSelectPlayerState->GetCharacterType());
+						CharacterTypesMap[CharacterSelectPlayerState->GetCharacterType()].Add(CharacterSelectPlayerState);
+					}
+				}
+			}
+		}
+
+		for (const auto& CharacterTypeMap : CharacterTypesMap)
+		{
+			if (CharacterTypeMap.Value.Num() > 1)
+			{
+				AvailableCharacterTypes.Add(CharacterTypeMap.Key);
+				for (ASMCharacterSelectPlayerState* CharacterSelectPlayerState : CharacterTypeMap.Value)
+				{
+					CharacterSelectPlayerState->ChangeCharacterType(ESMCharacterType::None);
+				}
+			}
+		}
+
+		// 아직 선택하지 않은 플레이어들은 중복되지 않는 랜덤 캐릭터로 설정
 		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
 		{
 			if (ASMCharacterSelectPlayerState* CharacterSelectPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
 			{
 				if (CharacterSelectPlayerState->GetCharacterType() == ESMCharacterType::None)
 				{
-					// 임시로 기본 기타로 설정
-					CharacterSelectPlayerState->ChangeCharacterType(ESMCharacterType::ElectricGuitar);
+					ESMCharacterType RandomCharacterType = AvailableCharacterTypes[FMath::RandRange(0, AvailableCharacterTypes.Num() - 1)];
+					CharacterSelectPlayerState->ChangeCharacterType(RandomCharacterType);
+					AvailableCharacterTypes.Remove(RandomCharacterType);
 				}
 				UE_LOG(LogStereoMix, Log, TEXT("Player %s automatically select character %s."), *CharacterSelectPlayerState->GetPlayerName(), *UEnum::GetValueAsString(CharacterSelectPlayerState->GetCharacterType()))
 			}

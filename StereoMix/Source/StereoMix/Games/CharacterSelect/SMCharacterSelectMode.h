@@ -21,7 +21,7 @@ public:
 	ASMCharacterSelectMode();
 
 	virtual void InitGameState() override;
-
+	
 	virtual void StartPlay() override;
 
 	virtual void PostLogin(APlayerController* NewPlayer) override;
@@ -40,6 +40,9 @@ public:
 protected:
 	UFUNCTION()
 	void WaitingTimerTick();
+
+	UFUNCTION()
+	void OnCountdownTick();
 
 	UFUNCTION()
 	void OnCharacterSelectCountdownFinished();
