@@ -159,36 +159,41 @@ void ASMCharacterSelectMode::OnCharacterSelectCountdownFinished()
 					continue;
 				}
 
-				auto UpdateMapAndAvailableTypes = [&](TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>>& CharacterMap, TArray<ESMCharacterType>& AvailableTypes) {
-					if (CharacterMap.Contains(CharacterSelectPlayerState->GetCharacterType()))
+				auto UpdateMapAndAvailableTypes = [&](const ESMTeam TargetTeam, TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>>& CharacterMap, TArray<ESMCharacterType>& AvailableTypes) {
+					if (CharacterSelectPlayerState->GetTeam() == TargetTeam && CharacterMap.Contains(CharacterSelectPlayerState->GetCharacterType()))
 					{
 						AvailableTypes.Remove(CharacterSelectPlayerState->GetCharacterType());
 						CharacterMap[CharacterSelectPlayerState->GetCharacterType()].AddUnique(CharacterSelectPlayerState);
 					}
 				};
 
-				UpdateMapAndAvailableTypes(EDMCharacterTypesMap, EDMAvailableCharacterTypes);
-				UpdateMapAndAvailableTypes(FBCharacterTypesMap, FBAvailableCharacterTypes);
+				UpdateMapAndAvailableTypes(ESMTeam::EDM, EDMCharacterTypesMap, EDMAvailableCharacterTypes);
+				UpdateMapAndAvailableTypes(ESMTeam::FutureBass, FBCharacterTypesMap, FBAvailableCharacterTypes);
 			}
 		}
 
 		// 중복된 캐릭터 타입 초기화
-		auto ResetDuplicatedTypes = [](TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>>& CharacterMap, TArray<ESMCharacterType>& AvailableTypes) {
+		auto ResetDuplicatedTypes = [](const ESMTeam TargetTeam, TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>>& CharacterMap, TArray<ESMCharacterType>& AvailableTypes) {
 			for (const auto& CharacterTypeMap : CharacterMap)
 			{
 				if (CharacterTypeMap.Value.Num() > 1)
 				{
-					AvailableTypes.AddUnique(CharacterTypeMap.Key);
 					for (ASMCharacterSelectPlayerState* PlayerState : CharacterTypeMap.Value)
 					{
+						if (PlayerState->GetTeam() != TargetTeam)
+						{
+							continue;
+						}
+
+						AvailableTypes.AddUnique(CharacterTypeMap.Key);
 						PlayerState->ChangeCharacterType(ESMCharacterType::None);
 					}
 				}
 			}
 		};
 
-		ResetDuplicatedTypes(EDMCharacterTypesMap, EDMAvailableCharacterTypes);
-		ResetDuplicatedTypes(FBCharacterTypesMap, FBAvailableCharacterTypes);
+		ResetDuplicatedTypes(ESMTeam::EDM, EDMCharacterTypesMap, EDMAvailableCharacterTypes);
+		ResetDuplicatedTypes(ESMTeam::FutureBass, FBCharacterTypesMap, FBAvailableCharacterTypes);
 
 		// 아직 선택하지 않은 플레이어들을 무작위 캐릭터로 설정
 		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
