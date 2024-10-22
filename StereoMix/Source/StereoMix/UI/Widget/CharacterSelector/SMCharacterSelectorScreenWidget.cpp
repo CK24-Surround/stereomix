@@ -55,6 +55,9 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 		}
 	}
 
+	EDMProfiles->SetVisibility(OwningPlayerState->GetTeam() == ESMTeam::EDM ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Hidden);
+	FBProfiles->SetVisibility(OwningPlayerState->GetTeam() == ESMTeam::FutureBass ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Hidden);
+
 	OriginalSelectButtonStyle = PickElectricGuitar->GetStyle();
 	OriginalSelectButtonStyle.Normal = PickElectricGuitar->GetStyle().Normal;
 

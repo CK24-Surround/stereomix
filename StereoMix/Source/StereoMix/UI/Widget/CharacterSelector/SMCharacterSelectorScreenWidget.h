@@ -75,6 +75,12 @@ protected:
 	bool IsFocusedCharacterSelectable(bool bExcludeOwner) const;
 
 	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UOverlay> EDMProfiles;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UOverlay> FBProfiles;
+
+	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UOverlay> CharacterSelectBox;
 
 	UPROPERTY(meta = (BindWidget))
