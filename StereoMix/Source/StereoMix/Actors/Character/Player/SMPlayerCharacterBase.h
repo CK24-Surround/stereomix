@@ -332,6 +332,6 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float StaminaHealAmountPerCapture = 10.0f;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Face")
 	TObjectPtr<USMFaceControlComponent> FaceControlComponent;
 };
