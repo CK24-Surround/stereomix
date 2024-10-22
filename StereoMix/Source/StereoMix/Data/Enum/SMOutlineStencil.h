@@ -7,8 +7,7 @@ enum class ESMShaderStencil : uint8
 {
 	NonOutline = 0,
 	SelfOutline = 1,
-	EDMOutline = 2,
-	FBOutline = 3,
-	Hit = 4,
+	EnemyOutline = 2,
+	Hit = 3,
 	Max UMETA(Hidden)
 };

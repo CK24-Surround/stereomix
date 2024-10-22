@@ -604,27 +604,13 @@ void ASMPlayerCharacterBase::RecalculateDefaultStencil()
 
 	DefaultShaderStencil = ESMShaderStencil::NonOutline;
 
-	const ESMTeam OwnerTeam = GetTeam();
 	if (IsLocallyControlled())
 	{
 		DefaultShaderStencil = ESMShaderStencil::SelfOutline;
 	}
-	else if (USMTeamBlueprintLibrary::IsSameLocalTeam(this))
+	else if (!USMTeamBlueprintLibrary::IsSameLocalTeam(this))
 	{
-		switch (OwnerTeam)
-		{
-			case ESMTeam::EDM:
-			{
-				DefaultShaderStencil = ESMShaderStencil::EDMOutline;
-				break;
-			}
-			case ESMTeam::FutureBass:
-			{
-				DefaultShaderStencil = ESMShaderStencil::FBOutline;
-				break;
-			}
-			default: ;
-		}
+		DefaultShaderStencil = ESMShaderStencil::EnemyOutline;
 	}
 }
 
