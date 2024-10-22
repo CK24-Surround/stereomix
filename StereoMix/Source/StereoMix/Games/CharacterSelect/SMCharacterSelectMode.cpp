@@ -10,6 +10,7 @@
 #include "StereoMixLog.h"
 #include "GameInstance/SMGameInstance.h"
 #include "Games/SMCountdownTimerComponent.h"
+#include "Utilities/SMLog.h"
 
 ASMCharacterSelectMode::ASMCharacterSelectMode()
 {
@@ -99,7 +100,13 @@ void ASMCharacterSelectMode::OnCountdownTick()
 	{
 		TArray EDMAvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
 		TArray FBAvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
-		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
+
+		TArray<TObjectPtr<APlayerState>> PlayerArray = CharacterSelectState->PlayerArray;
+		PlayerArray.Sort([](const APlayerState& A, const APlayerState& B) {
+			return A.GetActorGuid() < B.GetActorGuid();
+		});
+
+		for (TObjectPtr<APlayerState> PlayerState : PlayerArray)
 		{
 			if (ASMCharacterSelectPlayerState* CharacterSelectPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
 			{
@@ -146,91 +153,81 @@ void ASMCharacterSelectMode::OnCharacterSelectCountdownFinished()
 
 		TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>> EDMCharacterTypesMap = InitializeCharacterTypeMap();
 		TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>> FBCharacterTypesMap = InitializeCharacterTypeMap();
-
 		TArray EDMAvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
 		TArray FBAvailableCharacterTypes = { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass };
 
+		TArray<ASMCharacterSelectPlayerState*> EDMDuplicatedPlayers;
+		TArray<ASMCharacterSelectPlayerState*> FBDuplicatedPlayers;
+
+		// 중복된 플레이어 찾기
 		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
 		{
 			if (ASMCharacterSelectPlayerState* CharacterSelectPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
 			{
-				if (CharacterSelectPlayerState->GetCharacterType() != ESMCharacterType::None)
+				if (CharacterSelectPlayerState->GetCharacterType() == ESMCharacterType::None)
 				{
+					(CharacterSelectPlayerState->GetTeam() == ESMTeam::EDM
+						 ? EDMDuplicatedPlayers
+						 : FBDuplicatedPlayers).Add(CharacterSelectPlayerState);
 					continue;
 				}
 
-				auto UpdateMapAndAvailableTypes = [&](const ESMTeam TargetTeam, TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>>& CharacterMap, TArray<ESMCharacterType>& AvailableTypes) {
-					if (CharacterSelectPlayerState->GetTeam() == TargetTeam && CharacterMap.Contains(CharacterSelectPlayerState->GetCharacterType()))
-					{
-						AvailableTypes.Remove(CharacterSelectPlayerState->GetCharacterType());
-						CharacterMap[CharacterSelectPlayerState->GetCharacterType()].AddUnique(CharacterSelectPlayerState);
-					}
-				};
+				TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>>& TargetMap = (CharacterSelectPlayerState->GetTeam() == ESMTeam::EDM) ? EDMCharacterTypesMap : FBCharacterTypesMap;
+				TArray<ESMCharacterType>& AvailableTypes = (CharacterSelectPlayerState->GetTeam() == ESMTeam::EDM) ? EDMAvailableCharacterTypes : FBAvailableCharacterTypes;
 
-				UpdateMapAndAvailableTypes(ESMTeam::EDM, EDMCharacterTypesMap, EDMAvailableCharacterTypes);
-				UpdateMapAndAvailableTypes(ESMTeam::FutureBass, FBCharacterTypesMap, FBAvailableCharacterTypes);
+				TargetMap[CharacterSelectPlayerState->GetCharacterType()].Add(CharacterSelectPlayerState);
+				AvailableTypes.Remove(CharacterSelectPlayerState->GetCharacterType());
 			}
 		}
 
-		// 중복된 캐릭터 타입 초기화
-		auto ResetDuplicatedTypes = [](const ESMTeam TargetTeam, TMap<ESMCharacterType, TArray<ASMCharacterSelectPlayerState*>>& CharacterMap, TArray<ESMCharacterType>& AvailableTypes) {
-			for (const auto& CharacterTypeMap : CharacterMap)
-			{
-				if (CharacterTypeMap.Value.Num() > 1)
-				{
-					for (ASMCharacterSelectPlayerState* PlayerState : CharacterTypeMap.Value)
-					{
-						if (PlayerState->GetTeam() != TargetTeam)
-						{
-							continue;
-						}
-
-						AvailableTypes.AddUnique(CharacterTypeMap.Key);
-						PlayerState->ChangeCharacterType(ESMCharacterType::None);
-					}
-				}
-			}
-		};
-
-		ResetDuplicatedTypes(ESMTeam::EDM, EDMCharacterTypesMap, EDMAvailableCharacterTypes);
-		ResetDuplicatedTypes(ESMTeam::FutureBass, FBCharacterTypesMap, FBAvailableCharacterTypes);
-
-		// 아직 선택하지 않은 플레이어들을 무작위 캐릭터로 설정
-		for (TObjectPtr<APlayerState> PlayerState : CharacterSelectState->PlayerArray)
+		for (const auto& [CharacterType, Players] : EDMCharacterTypesMap)
 		{
-			if (ASMCharacterSelectPlayerState* CharacterSelectPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
+			if (Players.Num() > 1)
 			{
-				if (CharacterSelectPlayerState->GetCharacterType() != ESMCharacterType::None)
-				{
-					continue;
-				}
-
-				auto AssignRandomCharacter = [&](TArray<ESMCharacterType>& AvailableTypes) {
-					if (AvailableTypes.Num() == 0)
-					{
-						CharacterSelectPlayerState->ChangeCharacterType(ESMCharacterType::ElectricGuitar);
-					}
-					else
-					{
-						const ESMCharacterType RandomCharacterType = AvailableTypes[FMath::RandRange(0, AvailableTypes.Num() - 1)];
-						CharacterSelectPlayerState->ChangeCharacterType(RandomCharacterType);
-						AvailableTypes.Remove(RandomCharacterType);
-					}
-
-					UE_LOG(LogStereoMix, Log, TEXT("Player %s automatically selected character %s."),
-						*CharacterSelectPlayerState->GetPlayerName(),
-						*UEnum::GetValueAsString(CharacterSelectPlayerState->GetCharacterType()));
-				};
-
-				if (CharacterSelectPlayerState->GetTeam() == ESMTeam::EDM)
-				{
-					AssignRandomCharacter(EDMAvailableCharacterTypes);
-				}
-				else if (CharacterSelectPlayerState->GetTeam() == ESMTeam::FutureBass)
-				{
-					AssignRandomCharacter(FBAvailableCharacterTypes);
-				}
+				EDMDuplicatedPlayers.Append(Players);
+				EDMAvailableCharacterTypes.AddUnique(CharacterType);
+				NET_LOG(this, Warning, TEXT("EDM Character Type [%s] has duplicated players."), *UEnum::GetValueAsString(CharacterType))
 			}
+		}
+
+		for (const auto& [CharacterType, Players] : FBCharacterTypesMap)
+		{
+			if (Players.Num() > 1)
+			{
+				FBDuplicatedPlayers.Append(Players);
+				FBAvailableCharacterTypes.AddUnique(CharacterType);
+				NET_LOG(this, Warning, TEXT("FB Character Type [%s] has duplicated players."), *UEnum::GetValueAsString(CharacterType))
+			}
+		}
+
+		EDMDuplicatedPlayers.Sort([](const ASMCharacterSelectPlayerState& A, const ASMCharacterSelectPlayerState& B) {
+			return A.GetActorGuid() < B.GetActorGuid();
+		});
+
+		FBDuplicatedPlayers.Sort([](const ASMCharacterSelectPlayerState& A, const ASMCharacterSelectPlayerState& B) {
+			return A.GetActorGuid() < B.GetActorGuid();
+		});
+
+		for (int32 i = 0; i < EDMDuplicatedPlayers.Num(); i++)
+		{
+			if (i >= EDMAvailableCharacterTypes.Num())
+			{
+				EDMDuplicatedPlayers[i]->ChangeCharacterType(ESMCharacterType::ElectricGuitar);
+				continue;
+			}
+			EDMDuplicatedPlayers[i]->ChangeCharacterType(EDMAvailableCharacterTypes[i]);
+			NET_LOG(this, Warning, TEXT("Player %s automatically changed to %s"), *EDMDuplicatedPlayers[i]->GetPlayerName(), *UEnum::GetValueAsString(EDMAvailableCharacterTypes[i]))
+		}
+
+		for (int32 i = 0; i < FBDuplicatedPlayers.Num(); i++)
+		{
+			if (i >= FBAvailableCharacterTypes.Num())
+			{
+				FBDuplicatedPlayers[i]->ChangeCharacterType(ESMCharacterType::ElectricGuitar);
+				continue;
+			}
+			FBDuplicatedPlayers[i]->ChangeCharacterType(FBAvailableCharacterTypes[i]);
+			NET_LOG(this, Warning, TEXT("Player %s automatically changed to %s"), *FBDuplicatedPlayers[i]->GetPlayerName(), *UEnum::GetValueAsString(FBAvailableCharacterTypes[i]))
 		}
 
 		// CharacterSelectState->GetCountdownTimer()->OnCountdownFinished.RemoveDynamic(this, &ASMCharacterSelectMode::OnCountdownFinished);
