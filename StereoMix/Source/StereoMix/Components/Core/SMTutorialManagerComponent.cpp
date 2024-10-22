@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "AIController.h"
 #include "EngineUtils.h"
+#include "LevelSequenceActor.h"
+#include "LevelSequencePlayer.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
@@ -924,9 +926,26 @@ void USMTutorialManagerComponent::OnStep11Completed(AActor* OverlappedActor, AAc
 		OverlappedActor->Destroy();
 	}
 
-	const UWorld* World = GetWorld();
-	if (AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr)
+	APawn* OwnerPawn = GetLocalPlayerPawn();
+	if (USMAbilitySystemComponent* OwnerASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn()))
 	{
-		GameMode->ReturnToMainMenuHost();
+		OwnerASC->AddLooseGameplayTag(SMTags::Character::State::Common::Uncontrollable);
+		OwnerPawn->SetActorHiddenInGame(true);
+	}
+
+	ALevelSequenceActor* LevelSequenceActor;
+	if (VanSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(GetWorld(), VanSequence, FMovieSceneSequencePlaybackSettings(), LevelSequenceActor); VanSequencePlayer)
+	{
+		VanSequencePlayer->Play();
+		VanSequencePlayer->OnNativeFinished.BindLambda([ThisWeakPtr = MakeWeakObjectPtr(this)] {
+			if (ThisWeakPtr.IsValid())
+			{
+				const UWorld* World = ThisWeakPtr->GetWorld();
+				if (AGameModeBase* GameMode = World ? World->GetAuthGameMode() : nullptr)
+				{
+					GameMode->ReturnToMainMenuHost();
+				}
+			}
+		});
 	}
 }

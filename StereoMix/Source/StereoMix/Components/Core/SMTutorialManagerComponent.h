@@ -8,6 +8,9 @@
 #include "Data/SMCharacterType.h"
 #include "SMTutorialManagerComponent.generated.h"
 
+class ALevelSequenceActor;
+class ULevelSequencePlayer;
+class ULevelSequence;
 class UNiagaraComponent;
 class UNiagaraSystem;
 class ASMAICharacterBase;
@@ -204,4 +207,10 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<UNiagaraComponent> LocationIndicator5X5Component;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<ULevelSequence> VanSequence;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<ULevelSequencePlayer> VanSequencePlayer;
 };

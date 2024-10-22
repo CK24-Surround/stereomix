@@ -28,7 +28,9 @@ public class StereoMix : ModuleRules
 			"StateTreeModule",
 			"DeveloperSettings",
 			"GameplayMessageRuntime",
-			"CADKernel"
+			"CADKernel",
+			"LevelSequence",
+			"MovieScene"
 		});
 
 		// Uncomment if you are using Slate UI
