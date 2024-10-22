@@ -26,8 +26,11 @@ public:
 	template<typename T>
 	T* GetWeapon() const { return Cast<T>(GetWeapon()); }
 
+	/** 스텐실 기본값을 다시 계산합니다. */
+	virtual void RecalculateDefaultStencil();
+
 	/** 스텐실을 기본값으로 초기화합니다. */
-	virtual void ResetStencil();
+	virtual void ApplyDefaultStencil();
 
 protected:
 	UFUNCTION()

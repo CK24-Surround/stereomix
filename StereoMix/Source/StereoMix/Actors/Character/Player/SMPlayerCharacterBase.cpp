@@ -6,6 +6,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
+#include "EngineUtils.h"
 #include "EnhancedInputComponent.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
@@ -183,6 +184,9 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 	OriginalMaterials = CachedMeshComponent->GetMaterials();
 	OriginalOverlayMaterial = CachedMeshComponent->GetOverlayMaterial();
 
+	RecalculateDefaultStencil();
+	ApplyDefaultStencil();
+
 	if (HasAuthority())
 	{
 		if (DataAsset->NoteClass.Contains(SourceTeam))
@@ -199,26 +203,6 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 			TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
 		}
 	}
-
-	if (USMTeamBlueprintLibrary::IsSameLocalTeam(this))
-	{
-		switch (SourceTeam)
-		{
-			case ESMTeam::EDM:
-			{
-				DefaultShaderStencil = ESMShaderStencil::EDMOutline;
-				break;
-			}
-			case ESMTeam::FutureBass:
-			{
-				DefaultShaderStencil = ESMShaderStencil::FBOutline;
-				break;
-			}
-			default: ;
-		}
-	}
-
-	ResetStencil();
 
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ThisClass::OnTeamChanged);
 }
@@ -284,11 +268,8 @@ void ASMPlayerCharacterBase::OnRep_Controller()
 		SMPlayerController = CachedPlayerController;
 		SMPlayerController->SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
 
-		if (IsLocallyControlled())
-		{
-			DefaultShaderStencil = ESMShaderStencil::SelfOutline;
-			ResetStencil();
-		}
+		RecalculateDefaultStencil();
+		ApplyDefaultStencil();
 	}
 }
 
@@ -304,11 +285,6 @@ void ASMPlayerCharacterBase::PossessedBy(AController* NewController)
 	}
 
 	InitASC();
-
-	if (GetNetMode() != NM_DedicatedServer)
-	{
-		InitUI();
-	}
 }
 
 void ASMPlayerCharacterBase::OnRep_PlayerState()
@@ -616,6 +592,39 @@ void ASMPlayerCharacterBase::ServerSetNoteState_Implementation(bool bNewIsNote)
 	{
 		bIsNoteState = bNewIsNote;
 		OnRep_bIsNoteState();
+	}
+}
+
+void ASMPlayerCharacterBase::RecalculateDefaultStencil()
+{
+	if (GetNetMode() == NM_DedicatedServer)
+	{
+		return;
+	}
+
+	DefaultShaderStencil = ESMShaderStencil::NonOutline;
+
+	const ESMTeam OwnerTeam = GetTeam();
+	if (IsLocallyControlled())
+	{
+		DefaultShaderStencil = ESMShaderStencil::SelfOutline;
+	}
+	else if (USMTeamBlueprintLibrary::IsSameLocalTeam(this))
+	{
+		switch (OwnerTeam)
+		{
+			case ESMTeam::EDM:
+			{
+				DefaultShaderStencil = ESMShaderStencil::EDMOutline;
+				break;
+			}
+			case ESMTeam::FutureBass:
+			{
+				DefaultShaderStencil = ESMShaderStencil::FBOutline;
+				break;
+			}
+			default: ;
+		}
 	}
 }
 

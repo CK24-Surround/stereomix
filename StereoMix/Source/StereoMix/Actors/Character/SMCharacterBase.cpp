@@ -19,8 +19,18 @@ void ASMCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty
 	DOREPLIFETIME(ThisClass, Weapon);
 }
 
-void ASMCharacterBase::ResetStencil()
+void ASMCharacterBase::RecalculateDefaultStencil()
 {
+	DefaultShaderStencil = ESMShaderStencil::NonOutline;
+}
+
+void ASMCharacterBase::ApplyDefaultStencil()
+{
+	if (GetNetMode() == NM_DedicatedServer)
+	{
+		return;
+	}
+
 	if (USkeletalMeshComponent* CachedMeshComponent = GetMesh())
 	{
 		CachedMeshComponent->SetCustomDepthStencilValue(static_cast<int32>(DefaultShaderStencil));
@@ -35,5 +45,5 @@ void ASMCharacterBase::ResetStencil()
 
 void ASMCharacterBase::OnRep_Weapon()
 {
-	ResetStencil();
+	ApplyDefaultStencil();
 }

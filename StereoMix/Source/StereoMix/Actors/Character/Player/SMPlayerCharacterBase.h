@@ -180,6 +180,8 @@ public:
 
 	ESMCharacterType GetCharacterType() const { return CharacterType; }
 
+	virtual void RecalculateDefaultStencil() override;
+
 	FOnCharacterLandedSignature OnCharacterLanded;
 
 protected:
