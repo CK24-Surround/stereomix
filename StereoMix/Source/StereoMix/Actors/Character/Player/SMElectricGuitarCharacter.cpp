@@ -5,6 +5,7 @@
 
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "Components/Character/SMFaceControlComponent.h"
 #include "Components/Character/SMHIC_Character.h"
 
 
@@ -12,6 +13,9 @@ ASMElectricGuitarCharacter::ASMElectricGuitarCharacter(const FObjectInitializer&
 	: Super(ObjectInitializer)
 {
 	CharacterType = ESMCharacterType::ElectricGuitar;
+
+	FaceControlComponent->InEyeMaterialIndex = 3;
+	FaceControlComponent->OutEyeMaterialIndex = 1;
 }
 
 void ASMElectricGuitarCharacter::OnHoldStateEntry()

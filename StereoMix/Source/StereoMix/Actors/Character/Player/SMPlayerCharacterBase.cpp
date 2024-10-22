@@ -6,7 +6,6 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
-#include "EngineUtils.h"
 #include "EnhancedInputComponent.h"
 #include "NiagaraComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
@@ -18,6 +17,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/WidgetComponent.h"
+#include "Components/Character/SMFaceControlComponent.h"
 #include "Components/Character/SMCharacterMovementComponent.h"
 #include "Components/Character/SMHIC_Character.h"
 #include "Components/Common/SMTeamComponent.h"
@@ -143,6 +143,8 @@ ASMPlayerCharacterBase::ASMPlayerCharacterBase(const FObjectInitializer& ObjectI
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::Immune);
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::Jump);
 	PushBackImmuneTags.AddTag(SMTags::Character::State::Common::Stun);
+
+	FaceControlComponent = CreateDefaultSubobject<USMFaceControlComponent>(TEXT("FaceControlComponent"));
 }
 
 void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimeProperty>& OutLifetimeProps) const
@@ -235,6 +237,13 @@ void ASMPlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerIn
 void ASMPlayerCharacterBase::BeginPlay()
 {
 	Super::BeginPlay();
+
+	if (GetNetMode() != NM_DedicatedServer)
+	{
+		FaceControlComponent->AddBlinkCurve(DataAsset->BlinkCurve);
+		FaceControlComponent->AddMouthCurve(DataAsset->MouthCurve);
+		FaceControlComponent->Activate(true);
+	}
 }
 
 void ASMPlayerCharacterBase::Tick(float DeltaSeconds)

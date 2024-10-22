@@ -104,4 +104,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "CameraShake")
 	TSubclassOf<UCameraShakeBase> NoiseBreakCameraShake;
+
+	UPROPERTY(EditAnywhere, Category = "Curve")
+	TObjectPtr<UCurveFloat> BlinkCurve;
+
+	UPROPERTY(EditAnywhere, Category = "Curve")
+	TObjectPtr<UCurveFloat> MouthCurve;
 };

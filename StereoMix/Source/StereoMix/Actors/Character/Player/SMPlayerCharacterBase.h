@@ -14,6 +14,8 @@
 #include "Interfaces/SMHoldInteractionInterface.h"
 #include "SMPlayerCharacterBase.generated.h"
 
+class USMFaceControlComponent;
+class UTimelineComponent;
 class ASMPlayerCharacterBase;
 class ASMNoteBase;
 class ASMWeaponBase;
@@ -329,4 +331,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	float StaminaHealAmountPerCapture = 10.0f;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<USMFaceControlComponent> FaceControlComponent;
 };
