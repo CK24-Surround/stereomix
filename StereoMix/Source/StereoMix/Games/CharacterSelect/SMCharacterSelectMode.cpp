@@ -103,7 +103,7 @@ void ASMCharacterSelectMode::OnCountdownTick()
 
 		TArray<TObjectPtr<APlayerState>> PlayerArray = CharacterSelectState->PlayerArray;
 		PlayerArray.Sort([](const APlayerState& A, const APlayerState& B) {
-			return A.GetActorGuid() < B.GetActorGuid();
+			return A.GetUniqueID() < B.GetUniqueID();
 		});
 
 		for (TObjectPtr<APlayerState> PlayerState : PlayerArray)
@@ -201,11 +201,11 @@ void ASMCharacterSelectMode::OnCharacterSelectCountdownFinished()
 		}
 
 		EDMDuplicatedPlayers.Sort([](const ASMCharacterSelectPlayerState& A, const ASMCharacterSelectPlayerState& B) {
-			return A.GetActorGuid() < B.GetActorGuid();
+			return A.GetUniqueID() < B.GetUniqueID();
 		});
 
 		FBDuplicatedPlayers.Sort([](const ASMCharacterSelectPlayerState& A, const ASMCharacterSelectPlayerState& B) {
-			return A.GetActorGuid() < B.GetActorGuid();
+			return A.GetUniqueID() < B.GetUniqueID();
 		});
 
 		for (int32 i = 0; i < EDMDuplicatedPlayers.Num(); i++)
