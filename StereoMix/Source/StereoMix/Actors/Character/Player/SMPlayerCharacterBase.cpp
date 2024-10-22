@@ -168,7 +168,7 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 		return;
 	}
 
-	const ESMTeam SourceTeam = GetTeam();
+	const ESMTeam OwnerTeam = GetTeam();
 
 	USkeletalMeshComponent* CachedMeshComponent = GetMesh();
 
@@ -184,14 +184,11 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 	OriginalMaterials = CachedMeshComponent->GetMaterials();
 	OriginalOverlayMaterial = CachedMeshComponent->GetOverlayMaterial();
 
-	RecalculateDefaultStencil();
-	ApplyDefaultStencil();
-
 	if (HasAuthority())
 	{
-		if (DataAsset->NoteClass.Contains(SourceTeam))
+		if (DataAsset->NoteClass.Contains(OwnerTeam))
 		{
-			if (Note = World->SpawnActor<ASMNoteBase>(DataAsset->NoteClass[SourceTeam]); Note)
+			if (Note = World->SpawnActor<ASMNoteBase>(DataAsset->NoteClass[OwnerTeam]); Note)
 			{
 				Note->AttachToComponent(NoteSlotComponent, FAttachmentTransformRules::KeepRelativeTransform);
 				Note->SetOwner(this);
@@ -202,7 +199,19 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 		{
 			TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
 		}
+
+		if (const TSubclassOf<ASMWeaponBase>& CachedWeaponClass = DataAsset->WeaponClass.Contains(OwnerTeam) ? DataAsset->WeaponClass[OwnerTeam] : nullptr)
+		{
+			if (Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(CachedWeaponClass); Weapon)
+			{
+				Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, DataAsset->WeaponSocketName);
+				Weapon->SetOwner(this);
+			}
+		}
 	}
+
+	RecalculateDefaultStencil();
+	ApplyDefaultStencil();
 
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ThisClass::OnTeamChanged);
 }
@@ -282,6 +291,9 @@ void ASMPlayerCharacterBase::PossessedBy(AController* NewController)
 	if (IsLocallyControlled())
 	{
 		SMPlayerController->SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
+
+		RecalculateDefaultStencil();
+		ApplyDefaultStencil();
 	}
 
 	InitASC();
@@ -570,21 +582,7 @@ void ASMPlayerCharacterBase::ClientRPCAddMoveSpeed_Implementation(float MoveSpee
 	ServerRPCAddMoveSpeed(MoveSpeedMultiplier, Duration);
 }
 
-void ASMPlayerCharacterBase::OnTeamChanged()
-{
-	if (HasAuthority())
-	{
-		const ESMTeam OwnerTeam = GetTeam();
-		if (const TSubclassOf<ASMWeaponBase>& CachedWeaponClass = DataAsset->WeaponClass.Contains(OwnerTeam) ? DataAsset->WeaponClass[OwnerTeam] : nullptr)
-		{
-			if (Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(CachedWeaponClass); Weapon)
-			{
-				Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, DataAsset->WeaponSocketName);
-				Weapon->SetOwner(this);
-			}
-		}
-	}
-}
+void ASMPlayerCharacterBase::OnTeamChanged() {}
 
 void ASMPlayerCharacterBase::ServerSetNoteState_Implementation(bool bNewIsNote)
 {
