@@ -3,25 +3,28 @@
 
 #include "SMGCN_HitFlash.h"
 
+#include "Actors/Character/SMCharacterBase.h"
 #include "Utilities/SMLog.h"
 
 
 bool USMGCN_HitFlash::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
 {
-	USkeletalMeshComponent* SourceMesh = Cast<USkeletalMeshComponent>(Parameters.TargetAttachComponent);
-	UWorld* World = MyTarget ? MyTarget->GetWorld() : nullptr;
+	UMeshComponent* SourceMesh = Cast<UMeshComponent>(Parameters.TargetAttachComponent);
+	const UWorld* World = MyTarget ? MyTarget->GetWorld() : nullptr;
 	if (!SourceMesh || !World)
 	{
 		return false;
 	}
 
-	SourceMesh->SetCustomDepthStencilValue(1);
+	const ASMCharacterBase* OwnerCharacter = Cast<ASMCharacterBase>(MyTarget);
+	ESMShaderStencil DefaultShaderStencil = OwnerCharacter ? OwnerCharacter->GetDefaultShaderStencil() : ESMShaderStencil::NonOutline;
 
-	TWeakObjectPtr<USkeletalMeshComponent> SourceMeshWeakPtr = MakeWeakObjectPtr(SourceMesh);
-	auto RecoverStencilValue = [SourceMeshWeakPtr]() {
-		if (SourceMeshWeakPtr.Get())
+	SourceMesh->SetCustomDepthStencilValue(static_cast<int32>(ESMShaderStencil::Hit));
+
+	auto RecoverStencilValue = [SourceMeshWeakPtr = MakeWeakObjectPtr(SourceMesh), CopiedDefaultShaderStencil = static_cast<int32>(DefaultShaderStencil)]() {
+		if (SourceMeshWeakPtr.IsValid())
 		{
-			SourceMeshWeakPtr->SetCustomDepthStencilValue(0);
+			SourceMeshWeakPtr->SetCustomDepthStencilValue(CopiedDefaultShaderStencil);
 		}
 	};
 

@@ -28,6 +28,7 @@
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMScoreFunctionLibrary.h"
+#include "FunctionLibraries/SMTeamBlueprintLibrary.h"
 #include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Games/SMGamePlayerState.h"
 #include "Net/UnrealNetwork.h"
@@ -197,6 +198,28 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 		if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(World))
 		{
 			TileManager->OnTilesCaptured.AddDynamic(this, &ThisClass::OnTilesCaptured);
+		}
+	}
+
+	if (IsLocallyControlled())
+	{
+		DefaultShaderStencil = ESMShaderStencil::SelfOutline;
+	}
+	else if (USMTeamBlueprintLibrary::IsSameLocalTeam(this))
+	{
+		switch (SourceTeam)
+		{
+			case ESMTeam::EDM:
+			{
+				DefaultShaderStencil = ESMShaderStencil::EDMOutline;
+				break;
+			}
+			case ESMTeam::FutureBass:
+			{
+				DefaultShaderStencil = ESMShaderStencil::FBOutline;
+				break;
+			}
+			default: ;
 		}
 	}
 
