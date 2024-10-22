@@ -297,6 +297,11 @@ void ASMPlayerCharacterBase::PossessedBy(AController* NewController)
 	}
 
 	InitASC();
+
+	if (GetNetMode() != NM_DedicatedServer)
+	{
+		InitUI();
+	}
 }
 
 void ASMPlayerCharacterBase::OnRep_PlayerState()
