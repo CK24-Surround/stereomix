@@ -228,14 +228,14 @@ void ASMPlayerCharacterBase::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 	UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent);
-	if (const USMControlData* ControlData = SMPlayerController->GetControlData())
+	if (const USMControlData* CachedControlData = SMPlayerController.IsValid() ? SMPlayerController->GetControlData() : nullptr)
 	{
-		EnhancedInputComponent->BindAction(ControlData->MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
-		EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Attack);
-		EnhancedInputComponent->BindAction(ControlData->AttackAction, ETriggerEvent::Completed, this, &ThisClass::GAInputReleased, EActiveAbility::Attack);
-		EnhancedInputComponent->BindAction(ControlData->HoldAction, ETriggerEvent::Started, this, &ThisClass::GAInputPressed, EActiveAbility::Hold);
-		EnhancedInputComponent->BindAction(ControlData->SkillAction, ETriggerEvent::Started, this, &ThisClass::GAInputPressed, EActiveAbility::Skill);
-		EnhancedInputComponent->BindAction(ControlData->NoiseBreakAction, ETriggerEvent::Started, this, &ThisClass::GAInputPressed, EActiveAbility::NoiseBreak);
+		EnhancedInputComponent->BindAction(CachedControlData->MoveAction, ETriggerEvent::Triggered, this, &ThisClass::Move);
+		EnhancedInputComponent->BindAction(CachedControlData->AttackAction, ETriggerEvent::Triggered, this, &ThisClass::GAInputPressed, EActiveAbility::Attack);
+		EnhancedInputComponent->BindAction(CachedControlData->AttackAction, ETriggerEvent::Completed, this, &ThisClass::GAInputReleased, EActiveAbility::Attack);
+		EnhancedInputComponent->BindAction(CachedControlData->HoldAction, ETriggerEvent::Started, this, &ThisClass::GAInputPressed, EActiveAbility::Hold);
+		EnhancedInputComponent->BindAction(CachedControlData->SkillAction, ETriggerEvent::Started, this, &ThisClass::GAInputPressed, EActiveAbility::Skill);
+		EnhancedInputComponent->BindAction(CachedControlData->NoiseBreakAction, ETriggerEvent::Started, this, &ThisClass::GAInputPressed, EActiveAbility::NoiseBreak);
 	}
 }
 
