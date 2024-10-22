@@ -159,11 +159,6 @@ public:
 	UFUNCTION(Client, Reliable)
 	void ClientRPCAddMoveSpeed(float MoveSpeedMultiplier, float Duration);
 
-	ASMWeaponBase* GetWeapon() const { return Weapon; }
-
-	template<typename T>
-	T* GetWeapon() const { return Cast<T>(GetWeapon()); }
-
 	UFUNCTION()
 	void OnTeamChanged();
 
@@ -254,9 +249,6 @@ protected:
 
 	UPROPERTY(VisibleAnywhere, Category = "Team")
 	TObjectPtr<USMTeamComponent> TeamComponent;
-
-	UPROPERTY(Replicated)
-	TObjectPtr<ASMWeaponBase> Weapon;
 
 	UPROPERTY(VisibleAnywhere, Category = "Note")
 	TObjectPtr<USceneComponent> NoteSlotComponent;

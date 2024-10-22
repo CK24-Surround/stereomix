@@ -71,8 +71,6 @@ public:
 
 	ASMNoteBase* GetNote() const { return Note; }
 
-	ASMWeaponBase* GetWeapon() const { return Weapon; }
-
 	TArray<UMaterialInterface*> GetOriginalMaterials() { return OriginalMaterials; }
 
 	UMaterialInterface* GetOriginalOverlayMaterial() { return OriginalOverlayMaterial; }
@@ -128,9 +126,6 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category = "Design|VFX")
 	TObjectPtr<UMaterialInterface> ImmuneOverlayMaterial;
-
-	UPROPERTY()
-	TObjectPtr<ASMWeaponBase> Weapon;
 
 	UPROPERTY()
 	TObjectPtr<ASMNoteBase> Note;

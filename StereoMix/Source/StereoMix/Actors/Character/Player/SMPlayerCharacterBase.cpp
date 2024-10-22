@@ -153,7 +153,6 @@ void ASMPlayerCharacterBase::GetLifetimeReplicatedProps(TArray<class FLifetimePr
 	DOREPLIFETIME(ThisClass, bIsMovementEnabled);
 	DOREPLIFETIME(ThisClass, bUseControllerRotation);
 	DOREPLIFETIME(ThisClass, LastAttacker);
-	DOREPLIFETIME(ThisClass, Weapon);
 	DOREPLIFETIME(ThisClass, Note);
 	DOREPLIFETIME(ThisClass, bIsNoteState);
 }
@@ -201,11 +200,7 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 		}
 	}
 
-	if (IsLocallyControlled())
-	{
-		DefaultShaderStencil = ESMShaderStencil::SelfOutline;
-	}
-	else if (USMTeamBlueprintLibrary::IsSameLocalTeam(this))
+	if (USMTeamBlueprintLibrary::IsSameLocalTeam(this))
 	{
 		switch (SourceTeam)
 		{
@@ -222,6 +217,8 @@ void ASMPlayerCharacterBase::PostInitializeComponents()
 			default: ;
 		}
 	}
+
+	ResetStencil();
 
 	TeamComponent->OnChangeTeam.AddDynamic(this, &ThisClass::OnTeamChanged);
 }
@@ -286,6 +283,12 @@ void ASMPlayerCharacterBase::OnRep_Controller()
 	{
 		SMPlayerController = CachedPlayerController;
 		SMPlayerController->SetAudioListenerOverride(ListenerComponent, FVector::ZeroVector, FRotator::ZeroRotator);
+
+		if (IsLocallyControlled())
+		{
+			DefaultShaderStencil = ESMShaderStencil::SelfOutline;
+			ResetStencil();
+		}
 	}
 }
 
@@ -595,11 +598,10 @@ void ASMPlayerCharacterBase::OnTeamChanged()
 {
 	if (HasAuthority())
 	{
-		const ESMTeam SourceTeam = GetTeam();
-		if (SourceTeam != ESMTeam::None)
+		const ESMTeam OwnerTeam = GetTeam();
+		if (const TSubclassOf<ASMWeaponBase>& CachedWeaponClass = DataAsset->WeaponClass.Contains(OwnerTeam) ? DataAsset->WeaponClass[OwnerTeam] : nullptr)
 		{
-			Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(DataAsset->WeaponClass[GetTeam()]);
-			if (Weapon)
+			if (Weapon = GetWorld()->SpawnActor<ASMWeaponBase>(CachedWeaponClass); Weapon)
 			{
 				Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, DataAsset->WeaponSocketName);
 				Weapon->SetOwner(this);
