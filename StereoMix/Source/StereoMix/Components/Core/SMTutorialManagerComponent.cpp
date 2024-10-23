@@ -4,9 +4,7 @@
 #include "SMTutorialManagerComponent.h"
 
 #include "GameFramework/GameModeBase.h"
-#include "AIController.h"
 #include "EngineUtils.h"
-#include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
@@ -203,10 +201,12 @@ void USMTutorialManagerComponent::BeginPlay()
 	const UWorld* World = GetWorld();
 	if (const APlayerController* PlayerController = World ? World->GetFirstPlayerController() : nullptr)
 	{
-		CachedTutorialUIControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>();
-		CachedTutorialUIControlComponent->SetGuideText(TEXT("목표 지점으로 이동하기"));
-		CachedTutorialUIControlComponent->SetMissionText(TEXT("WASD로 캐릭터를 움직일 수 있습니다. 목표지점으로 이동해보세요."));
-		CachedTutorialUIControlComponent->PlayShowGuideAnimation();
+		if (CachedTutorialUIControlComponent = PlayerController->GetComponentByClass<USMTutorialUIControlComponent>(); CachedTutorialUIControlComponent)
+		{
+			CachedTutorialUIControlComponent->SetGuideText(GetScriptText(CurrentStepNumber, 2, ESMCharacterType::None));
+			CachedTutorialUIControlComponent->SetMissionText(GetScriptText(CurrentStepNumber, 1, ESMCharacterType::None));
+			CachedTutorialUIControlComponent->PlayShowGuideAnimation();
+		}
 
 		// 캐릭터의 능력들을 일단 모두 잠그고 튜토리얼 진행에 따라 하나씩 풀어줍니다.
 		const ASMGamePlayerState* PlayerState = PlayerController->GetPlayerState<ASMGamePlayerState>();
@@ -296,7 +296,6 @@ APawn* USMTutorialManagerComponent::GetLocalPlayerPawn()
 
 void USMTutorialManagerComponent::TransformScriptsData()
 {
-	TMap<int32, TMap<int32, TMap<ESMCharacterType, FScriptData>>> DialogueScriptMap;
 	TMap<int32, TMap<int32, TMap<ESMCharacterType, FScriptData>>> UIScriptMap;
 	for (const FName& RowName : TutorialScriptDataTable->GetRowNames())
 	{
@@ -309,11 +308,7 @@ void USMTutorialManagerComponent::TransformScriptsData()
 
 			if (Row->ScriptNumberInStep >= 0)
 			{
-				DialogueScriptMap.FindOrAdd(Row->Step).FindOrAdd(Row->ScriptNumberInStep).FindOrAdd(Row->PlayerCharacterType, DialogueScript);
-			}
-			else
-			{
-				UIScriptMap.FindOrAdd(Row->Step).FindOrAdd(FMath::Abs(Row->ScriptNumberInStep)).FindOrAdd(Row->PlayerCharacterType, DialogueScript);
+				UIScriptMap.FindOrAdd(Row->Step).FindOrAdd(Row->ScriptNumberInStep).FindOrAdd(Row->PlayerCharacterType, DialogueScript);
 			}
 		}
 	}
@@ -345,20 +340,7 @@ void USMTutorialManagerComponent::TransformScriptsData()
 		}
 	};
 
-	Transform(DialogueScriptMap, DialogueScripts);
 	Transform(UIScriptMap, UIScripts);
-
-	for (int32 Step = 1; Step < DialogueScripts.Num(); ++Step)
-	{
-		UE_LOG(LogTemp, Verbose, TEXT("다이얼로그 스텝: %d"), Step);
-		for (int32 ScriptsNumber = 1; ScriptsNumber < DialogueScripts[Step].Num(); ++ScriptsNumber)
-		{
-			for (const auto& [CharacterType, ScriptData] : DialogueScripts[Step][ScriptsNumber])
-			{
-				UE_LOG(LogTemp, Verbose, TEXT("%d: %s [%s]"), ScriptsNumber, *DialogueScripts[Step][ScriptsNumber][CharacterType].Ko, *UEnum::GetValueAsString(CharacterType));
-			}
-		}
-	}
 
 	for (int32 Step = 1; Step < UIScripts.Num(); ++Step)
 	{
@@ -373,6 +355,27 @@ void USMTutorialManagerComponent::TransformScriptsData()
 	}
 }
 
+FString USMTutorialManagerComponent::GetScriptText(int32 StepNumber, int32 ScriptNumberInStep, ESMCharacterType CharacterType)
+{
+	if (UIScripts.IsValidIndex(StepNumber) && UIScripts[StepNumber].IsValidIndex(ScriptNumberInStep))
+	{
+		if (UIScripts[StepNumber][ScriptNumberInStep].Contains(CharacterType))
+		{
+			return UIScripts[StepNumber][ScriptNumberInStep][CharacterType].Ko;
+		}
+
+		return UIScripts[StepNumber][ScriptNumberInStep][ESMCharacterType::None].Ko;
+	}
+
+	return FString();
+}
+
+ESMCharacterType USMTutorialManagerComponent::GetLocalPlayerCharacterType()
+{
+	ASMPlayerCharacterBase* LocalCharacter = Cast<ASMPlayerCharacterBase>(GetLocalPlayerPawn());
+	return LocalCharacter ? LocalCharacter->GetCharacterType() : ESMCharacterType::None;
+}
+
 void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AActor* OtherActor)
 {
 	CurrentStepNumber = 2;
@@ -385,8 +388,9 @@ void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AAct
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("목표영역에 타일 9개 점령하기");
-		const FString MissionText = TEXT("이동 시 타일을 점령할 수 있습니다. 목표구역의 타일을 모두 점령해보세요.");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep2Started);
 	}
@@ -449,8 +453,9 @@ void USMTutorialManagerComponent::OnStep2Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("적 캐릭터 체력 50 깎기");
-		const FString MissionText = TEXT("일렉기타의 일반 공격은 전방에 총알을 난사합니다. 좌클릭을 눌러 앞의 적을 공격해보세요.");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep3Started);
 	}
@@ -493,8 +498,9 @@ void USMTutorialManagerComponent::OnStep3Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("적 캐릭터에게 일렉기타 스킬 맞추기");
-		const FString MissionText = TEXT("E 스킬을 누르면 스킬을 사용할 수 있습니다. 스킬을 다시 사용하려면 타일을 점령하여 스킬게이지를 채워야합니다. 적에게 \"마비탄\"을 적중시켜보세요");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep4Started);
 	}
@@ -525,8 +531,9 @@ void USMTutorialManagerComponent::OnStep4Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("적 캐릭터 무력화");
-		const FString MissionText = TEXT("적의 체력을 모두 깎으면 적을 무력화 시킬 수 있습니다. 공격과 스킬을 이용해 적을 무력화 시키세요.");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep5Started);
 	}
@@ -552,8 +559,9 @@ void USMTutorialManagerComponent::OnStep5Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("적 캐릭터 잡기");
-		const FString MissionText = TEXT("우클릭을 눌러 무력화 된 적을 잡을 수 있습니다. 앞의 적을 잡아보세요.");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep6Started);
 	}
@@ -586,8 +594,9 @@ void USMTutorialManagerComponent::OnStep6Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("노이즈브레이크를 사용하여 점령");
-		const FString MissionText = TEXT("적을 잡은 상태에서, 좌클릭을 눌러 노이즈 브레이크를 발동할 수 있습니다. 노이즈 브레이크는 한번에 많은 타일을 점령할 수 있습니다. 노이즈 브레이크를 사용해 목표지점의 타일을 점령해보세요!");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep7Started);
 	}
@@ -709,8 +718,9 @@ void USMTutorialManagerComponent::OnStep7Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("힐팩 아이템을 사용해 체력 회복");
-		const FString MissionText = TEXT("힐팩을 사용해 체력을 회복해보세요. 힐팩 또한 잡은 상태에서 좌클릭으로 사용할 수 있습니다. 시전범위에는 치유장판을 생성해 팀원을 치료할 수도 있습니다.");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep8Started);
 	}
@@ -780,8 +790,9 @@ void USMTutorialManagerComponent::OnStep8Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("다음 지역으로 이동");
-		const FString MissionText = TEXT("오른쪽으로 움직여 다음지역으로 이동하세요.");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep9Started);
 	}
@@ -851,8 +862,9 @@ void USMTutorialManagerComponent::OnStep9Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
-		const FString GuideText = TEXT("적과 전투");
-		const FString MissionText = TEXT("30초간 훈련장에서 적과 전투하세요. 시간내에 적보다 많은 타일을 점령하면 승리합니다.");
+		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
+		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
+		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
 		CachedTutorialUIControlComponent->TransitionAndSetText(GuideText, MissionText);
 		CachedTutorialUIControlComponent->OnTransitionAndSetTextEnded.BindUObject(this, &ThisClass::OnStep10Started);
 	}
@@ -897,6 +909,8 @@ void USMTutorialManagerComponent::StartBattle(AActor* OverlappedActor, AActor* O
 
 void USMTutorialManagerComponent::OnStep10Completed()
 {
+	CurrentStepNumber = 11;
+
 	if (AICharacter)
 	{
 		AICharacter->Destroy();

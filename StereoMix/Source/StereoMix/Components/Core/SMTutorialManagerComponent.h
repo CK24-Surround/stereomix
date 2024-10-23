@@ -53,6 +53,10 @@ protected:
 
 	void TransformScriptsData();
 
+	FString GetScriptText(int32 StepNumber, int32 ScriptNumberInStep, ESMCharacterType CharacterType);
+
+	ESMCharacterType GetLocalPlayerCharacterType();
+
 	UFUNCTION()
 	void OnStep1Completed(AActor* OverlappedActor, AActor* OtherActor);
 
@@ -129,14 +133,9 @@ protected:
 	TObjectPtr<ACharacter> CachedCharacter;
 
 	/** Step, ScriptNumberInStep, 캐릭터 타입 순서로 접근하면 됩니다. */
-	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> DialogueScripts;
-
-	/** Step, ScriptNumberInStep, 캐릭터 타입 순서로 접근하면 됩니다. */
 	TArray<TArray<TMap<ESMCharacterType, FScriptData>>> UIScripts;
 
 	int32 CurrentStepNumber = 1;
-
-	int32 CurrentScriptNumber = 0;
 
 	int32 TilesCaptureCount = 0;
 
