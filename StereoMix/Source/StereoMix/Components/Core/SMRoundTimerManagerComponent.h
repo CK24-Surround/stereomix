@@ -49,6 +49,12 @@ protected:
 	UFUNCTION()
 	void OnRep_RemainingTime();
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 AutoStartTimer:1 = true;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	uint32 AutoLeaveLevel:1 = true;
+
 	UPROPERTY(EditAnywhere, Category = "Design", meta = (ClampMin = "0"))
 	int32 PreRoundTime = 15;
 

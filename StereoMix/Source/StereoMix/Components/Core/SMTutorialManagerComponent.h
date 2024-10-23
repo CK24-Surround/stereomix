@@ -116,6 +116,7 @@ protected:
 	UFUNCTION()
 	void StartBattle(AActor* OverlappedActor, AActor* OtherActor);
 
+	UFUNCTION()
 	void OnStep10Completed();
 
 	void OnStep11Started();
@@ -174,8 +175,6 @@ protected:
 	FVector NoiseBreakRestartLocation;
 
 	float CachedOwnerMaxHP = 0.0f;
-
-	float BattleTime = 30.0f;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<ASMTrainingDummy> TrainingDummyClass;

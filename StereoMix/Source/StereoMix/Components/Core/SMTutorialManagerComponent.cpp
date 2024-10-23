@@ -8,6 +8,7 @@
 #include "LevelSequencePlayer.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
+#include "SMRoundTimerManagerComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/Common/SMGA_Hold.h"
@@ -27,6 +28,7 @@
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
 #include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
 #include "Games/SMGamePlayerState.h"
+#include "Games/SMGameState.h"
 #include "Utilities/SMLog.h"
 
 
@@ -613,11 +615,6 @@ void USMTutorialManagerComponent::OnStep6Completed()
 		HoldInstance->OnHoldSucceed.RemoveAll(this);
 	}
 
-	if (LocationIndicator5X5Component)
-	{
-		LocationIndicator5X5Component->Activate(true);
-	}
-
 	if (CachedTutorialUIControlComponent)
 	{
 		CachedTutorialUIControlComponent->HideAllKeyInfo();
@@ -642,6 +639,11 @@ void USMTutorialManagerComponent::OnStep7Started()
 	if (CachedTutorialUIControlComponent)
 	{
 		CachedTutorialUIControlComponent->ShowLeftClick();
+	}
+
+	if (LocationIndicator5X5Component)
+	{
+		LocationIndicator5X5Component->Activate(true);
 	}
 
 	for (TWeakObjectPtr<ASMTile> NoiseBreakTile : NoiseBreakTiles)
@@ -936,8 +938,12 @@ void USMTutorialManagerComponent::StartBattle(AActor* OverlappedActor, AActor* O
 
 	if (const UWorld* World = GetWorld())
 	{
-		FTimerHandle TimerHandle;
-		World->GetTimerManager().SetTimer(TimerHandle, this, &ThisClass::OnStep10Completed, BattleTime);
+		const AGameStateBase* GameState = World->GetGameState();
+		if (USMRoundTimerManagerComponent* RoundTimerManager = GameState ? GameState->GetComponentByClass<USMRoundTimerManagerComponent>() : nullptr)
+		{
+			RoundTimerManager->OnRoundTimeExpired.AddDynamic(this, &ThisClass::OnStep10Completed);
+			RoundTimerManager->StartTimer();
+		}
 	}
 
 	if (UWorld* World = GetWorld())

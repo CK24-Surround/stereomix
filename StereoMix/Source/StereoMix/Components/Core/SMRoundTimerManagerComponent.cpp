@@ -30,9 +30,12 @@ void USMRoundTimerManagerComponent::InitializeComponent()
 
 	if (GetOwnerRole() == ROLE_Authority)
 	{
-		if (ASMGameState* GameState = GetOwner<ASMGameState>())
+		if (AutoStartTimer)
 		{
-			GameState->OnPreRoundStart.AddDynamic(this, &ThisClass::StartTimer);
+			if (ASMGameState* GameState = GetOwner<ASMGameState>())
+			{
+				GameState->OnPreRoundStart.AddDynamic(this, &ThisClass::StartTimer);
+			}
 		}
 	}
 }
@@ -110,11 +113,15 @@ void USMRoundTimerManagerComponent::CountdownTime()
 					if (World)
 					{
 						World->GetTimerManager().ClearTimer(CountdownTimerHandle);
+						SetRemainingTime(0);
 					}
 
-					if (AGameMode* GameMode = World->GetAuthGameMode<AGameMode>())
+					if (AutoLeaveLevel)
 					{
-						GameMode->StartToLeaveMap();
+						if (AGameMode* GameMode = World->GetAuthGameMode<AGameMode>())
+						{
+							GameMode->StartToLeaveMap();
+						}
 					}
 
 					OnPostRoundTimeExpired.Broadcast();
