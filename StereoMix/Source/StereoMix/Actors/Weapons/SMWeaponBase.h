@@ -12,7 +12,7 @@ class STEREOMIX_API ASMWeaponBase : public AActor
 	GENERATED_BODY()
 
 public:
-	ASMWeaponBase(const FObjectInitializer& ObjectInitializer);
+	ASMWeaponBase(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 	virtual void PostInitializeComponents() override;
 
