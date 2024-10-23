@@ -74,7 +74,7 @@ void USMCharacterSelectorInformationWidget::SetPlayerInfo(const TArray<ASMCharac
 		if (InPlayerArray.IsValidIndex(i))
 		{
 			PlayerProfiles[i]->SetPlayerName(InPlayerArray[i]->GetPlayerName(), InOwnerPlayerIndex == i);
-			PlayerProfiles[i]->SetProfileImage(InPlayerArray[i]->GetTeam(), InPlayerArray[i]->GetCharacterType());
+			PlayerProfiles[i]->SetProfileImage(InPlayerArray[i]->GetTeam(), InPlayerArray[i]->GetCharacterType(), InPlayerArray[i]->GetFocusCharacterType());
 		}
 	}
 }

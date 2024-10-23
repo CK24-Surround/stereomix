@@ -98,6 +98,7 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 	OwningCharacterSelectState->OnPlayerJoined.AddDynamic(this, &ThisClass::OnPlayerJoin);
 	OwningCharacterSelectState->OnPlayerLeft.AddDynamic(this, &ThisClass::OnPlayerLeft);
 	OwningCharacterSelectState->OnPlayerCharacterChanged.AddDynamic(this, &ThisClass::OnPlayerCharacterChanged);
+	OwningCharacterSelectState->OnPlayerCharacterFocusChanged.AddDynamic(this, &ThisClass::ChangeFocusedCharacter);
 
 	OwningPlayerState->OnCharacterChangeResponse.AddDynamic(this, &ThisClass::OnCharacterChangeResponse);
 
@@ -215,6 +216,12 @@ void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* 
 	}
 }
 
+void USMCharacterSelectorScreenWidget::ChangeFocusedCharacter(ASMPlayerState* Player, ESMCharacterType NewCharacter)
+{
+	UpdatePlayerList();
+	UpdateSelectButton();
+}
+
 void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType)
 {
 	if (NewCharacterType == ESMCharacterType::None)
@@ -247,6 +254,8 @@ void USMCharacterSelectorScreenWidget::ChangeFocusedCharacter(const ESMCharacter
 	}
 
 	FocusedCharacterType = CharacterType;
+	GetOwningPlayerState()->SetPredictFocusCharacterType(CharacterType);
+	GetOwningPlayerState()->ChangeFocusCharacterType(CharacterType);
 
 	UpdatePlayerList();
 	UpdateSelectButton();

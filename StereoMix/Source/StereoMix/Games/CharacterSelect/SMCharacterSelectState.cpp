@@ -77,6 +77,14 @@ void ASMCharacterSelectState::NotifyPlayerCharacterChanged(ASMPlayerState* Playe
 	}
 }
 
+void ASMCharacterSelectState::NotifyPlayerCharacterFocusChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter)
+{
+	if (OnPlayerCharacterFocusChanged.IsBound())
+	{
+		OnPlayerCharacterFocusChanged.Broadcast(Player, NewCharacter);
+	}
+}
+
 void ASMCharacterSelectState::OnRep_CurrentState() const
 {
 	NET_LOG(this, Verbose, TEXT("OnRep_CurrentState"));

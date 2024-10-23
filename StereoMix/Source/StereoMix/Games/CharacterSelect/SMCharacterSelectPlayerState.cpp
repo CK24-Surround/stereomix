@@ -18,6 +18,7 @@ void ASMCharacterSelectPlayerState::GetLifetimeReplicatedProps(TArray<FLifetimeP
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ThisClass, CurrentState)
+	DOREPLIFETIME(ThisClass, FocusCharacterType)
 }
 
 void ASMCharacterSelectPlayerState::PostInitializeComponents()
@@ -33,6 +34,12 @@ void ASMCharacterSelectPlayerState::BeginPlay()
 {
 	Super::BeginPlay();
 	CharacterSelectState = GetWorld()->GetGameState<ASMCharacterSelectState>();
+}
+
+void ASMCharacterSelectPlayerState::ChangeFocusCharacterType_Implementation(ESMCharacterType NewCharacterType)
+{
+	FocusCharacterType = NewCharacterType;
+	OnRep_FocusCharacterType();
 }
 
 void ASMCharacterSelectPlayerState::ChangeCharacterType_Implementation(ESMCharacterType NewCharacterType)
@@ -65,6 +72,11 @@ void ASMCharacterSelectPlayerState::OnCharacterTypeChanged(const ESMCharacterTyp
 	Super::OnCharacterTypeChanged(PreviousCharacterType, NewCharacterType);
 }
 
+void ASMCharacterSelectPlayerState::SetPredictFocusCharacterType_Implementation(ESMCharacterType NewFocusCharacterType)
+{
+	FocusCharacterType = NewFocusCharacterType;
+}
+
 void ASMCharacterSelectPlayerState::SetCurrentState_Implementation(const ECharacterSelectPlayerStateType NewState)
 {
 	CurrentState = NewState;
@@ -79,5 +91,16 @@ void ASMCharacterSelectPlayerState::OnRep_CurrentState()
 	if (OnCurrentStateChanged.IsBound())
 	{
 		OnCurrentStateChanged.Broadcast(CurrentState);
+	}
+}
+
+void ASMCharacterSelectPlayerState::OnRep_FocusCharacterType()
+{
+	if (const UWorld* World = GetWorld())
+	{
+		if (ASMCharacterSelectState* GameStateNotify = Cast<ASMCharacterSelectState>(World->GetGameState()))
+		{
+			GameStateNotify->NotifyPlayerCharacterFocusChanged(this, FocusCharacterType);
+		}
 	}
 }

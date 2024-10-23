@@ -22,6 +22,8 @@ enum class ECharacterSelectionStateType : uint8
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FCharacterSelectionStateChangedEvent, ECharacterSelectionStateType, NewCharacterSelectionState);
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FPlayerCharacterFocusChanged, ASMPlayerState*, Player, ESMCharacterType, NewCharacter);
+
 /**
  *
  */
@@ -42,6 +44,9 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FPlayerCharacterChanged OnPlayerCharacterChanged;
+	
+	UPROPERTY(BlueprintAssignable)
+	FPlayerCharacterFocusChanged OnPlayerCharacterFocusChanged;
 
 	UPROPERTY(BlueprintAssignable)
 	FCharacterSelectionStateChangedEvent OnCurrentStateChanged;
@@ -68,6 +73,8 @@ public:
 	virtual void NotifyPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter) override;
 
 	virtual void NotifyPlayerTeamChanged(ASMPlayerState* Player, ESMTeam PreviousTeam, ESMTeam NewTeam) override { }
+
+	void NotifyPlayerCharacterFocusChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter);
 
 private:
 

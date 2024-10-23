@@ -47,6 +47,9 @@ public:
 	UFUNCTION(BlueprintCallable, Server, Reliable)
 	void ChangeCharacterType(ESMCharacterType NewCharacterType);
 
+	UFUNCTION(Server, Reliable)
+	void ChangeFocusCharacterType(ESMCharacterType NewCharacterType);
+
 	UFUNCTION(Client, Reliable)
 	void ResponseChangeCharacter(bool bSuccess, ESMCharacterType NewCharacterType);
 
@@ -58,6 +61,11 @@ public:
 
 	ECharacterSelectPlayerStateType GetCurrentState() const { return CurrentState; }
 
+	ESMCharacterType GetFocusCharacterType() const { return FocusCharacterType; }
+
+	UFUNCTION(Client, Reliable)
+	void SetPredictFocusCharacterType(ESMCharacterType NewFocusCharacterType);
+
 	UFUNCTION(Reliable, Server)
 	void SetCurrentState(ECharacterSelectPlayerStateType NewState);
 
@@ -68,8 +76,14 @@ protected:
 	UPROPERTY(VisibleInstanceOnly, ReplicatedUsing = OnRep_CurrentState)
 	ECharacterSelectPlayerStateType CurrentState;
 
+	UPROPERTY(ReplicatedUsing = OnRep_FocusCharacterType)
+	ESMCharacterType FocusCharacterType;
+
 	UFUNCTION()
 	void OnRep_CurrentState();
+
+	UFUNCTION()
+	void OnRep_FocusCharacterType();
 
 private:
 	UPROPERTY()

@@ -62,6 +62,9 @@ protected:
 	void OnPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter);
 
 	UFUNCTION()
+	void ChangeFocusedCharacter(ASMPlayerState* Player, ESMCharacterType NewCharacter);
+
+	UFUNCTION()
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 
 	TArray<TObjectPtr<ASMPlayerState>> GetCurrentTeamPlayers() const;

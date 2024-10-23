@@ -20,7 +20,7 @@ class STEREOMIX_API USMCharacterSelectorProfile : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	void SetProfileImage(ESMTeam Team, ESMCharacterType CharacterType);
+	void SetProfileImage(ESMTeam Team, ESMCharacterType CharacterType, ESMCharacterType FocusCharacterType);
 
 	void SetPlayerName(const FString& Name, bool bIsOwner);
 
