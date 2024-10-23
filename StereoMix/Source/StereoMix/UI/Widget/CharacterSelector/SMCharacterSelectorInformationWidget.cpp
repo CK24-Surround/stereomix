@@ -4,8 +4,9 @@
 #include "SMCharacterSelectorInformationWidget.h"
 
 #include "CommonTextBlock.h"
-#include "Components/Image.h"
+#include "SMCharacterSelectorProfile.h"
 #include "Data/SMCharacterType.h"
+#include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 
 void USMCharacterSelectorInformationWidget::NativeConstruct()
 {
@@ -23,21 +24,9 @@ void USMCharacterSelectorInformationWidget::NativeConstruct()
 	SkillDescriptions.Add(SkillDescription2);
 	SkillDescriptions.Add(SkillDescription3);
 
-	PlayerImages.Add(PlayerImage1);
-	PlayerImages.Add(PlayerImage2);
-	PlayerImages.Add(PlayerImage3);
-
-	PlayerNames.Add(PlayerName1);
-	PlayerNames.Add(PlayerName2);
-	PlayerNames.Add(PlayerName3);
-
-	PlayerCharacterTypes.Add(PlayerCharacterType1);
-	PlayerCharacterTypes.Add(PlayerCharacterType2);
-	PlayerCharacterTypes.Add(PlayerCharacterType3);
-
-	PlayerReadyAnimations.Add(Player1Ready);
-	PlayerReadyAnimations.Add(Player2Ready);
-	PlayerReadyAnimations.Add(Player3Ready);
+	PlayerProfiles.Add(PlayerProfile1);
+	PlayerProfiles.Add(PlayerProfile2);
+	PlayerProfiles.Add(PlayerProfile3);
 
 	ResetInfo();
 }
@@ -48,11 +37,6 @@ void USMCharacterSelectorInformationWidget::ResetInfo() const
 
 	for (int32 i = 0; i < 3; ++i)
 	{
-		// if (SkillImages.IsValidIndex(i))
-		// {
-		// 	SkillImages[i]->SetBrushFromTexture(nullptr);
-		// }
-
 		if (SkillNames.IsValidIndex(i))
 		{
 			SkillNames[i]->SetText(FText::FromString(""));
@@ -63,19 +47,9 @@ void USMCharacterSelectorInformationWidget::ResetInfo() const
 			SkillDescriptions[i]->SetText(FText::FromString(""));
 		}
 
-		// if (PlayerImages.IsValidIndex(i))
-		// {
-		// 	PlayerImages[i]->SetBrushFromTexture(nullptr);
-		// }
-
-		if (PlayerNames.IsValidIndex(i))
+		if (PlayerProfiles.IsValidIndex(i))
 		{
-			PlayerNames[i]->SetText(FText::FromString(""));
-		}
-
-		if (PlayerCharacterTypes.IsValidIndex(i))
-		{
-			PlayerCharacterTypes[i]->SetText(FText::FromString(""));
+			PlayerProfiles[i]->RemovePlayerInfo();
 		}
 	}
 }
@@ -84,51 +58,23 @@ void USMCharacterSelectorInformationWidget::ResetPlayerInfo() const
 {
 	for (int32 i = 0; i < 3; ++i)
 	{
-		// if (PlayerImages.IsValidIndex(i))
-		// {
-		// 	PlayerImages[i]->SetBrushFromTexture(nullptr);
-		// }
-
-		if (PlayerNames.IsValidIndex(i))
+		if (PlayerProfiles.IsValidIndex(i))
 		{
-			PlayerNames[i]->SetText(FText::FromString(""));
-		}
-
-		if (PlayerCharacterTypes.IsValidIndex(i))
-		{
-			PlayerCharacterTypes[i]->SetText(FText::FromString(""));
+			PlayerProfiles[i]->RemovePlayerInfo();
 		}
 	}
 }
 
-void USMCharacterSelectorInformationWidget::SetPlayerInfo(const TArray<FString>& InPlayerNames, const TArray<ESMCharacterType>& InPlayerCharacterTypes)
+void USMCharacterSelectorInformationWidget::SetPlayerInfo(const TArray<ASMCharacterSelectPlayerState*> InPlayerArray, int32 InOwnerPlayerIndex)
 {
+	ResetPlayerInfo();
+
 	for (int32 i = 0; i < 3; ++i)
 	{
-		// if (PlayerImages.IsValidIndex(i) && InPlayerTextures.IsValidIndex(i))
-		// {
-		// 	PlayerImages[i]->SetBrushFromTexture(InPlayerTextures[i]);
-		// }
-
-		if (InPlayerNames.IsValidIndex(i) && InPlayerCharacterTypes.IsValidIndex(i))
+		if (InPlayerArray.IsValidIndex(i))
 		{
-			FString CharacterTypeString;
-			switch (InPlayerCharacterTypes[i]) {
-				case ESMCharacterType::None:
-					CharacterTypeString = TEXT("선택중...");
-					break;
-				case ESMCharacterType::ElectricGuitar:
-					CharacterTypeString = TEXT("일렉기타");
-					break;
-				case ESMCharacterType::Piano:
-					CharacterTypeString = TEXT("피아노");
-					break;
-				case ESMCharacterType::Bass:
-					CharacterTypeString = TEXT("베이스");
-					break;
-			}
-			PlayerNames[i]->SetText(FText::FromString(InPlayerNames[i]));
-			PlayerCharacterTypes[i]->SetText(FText::FromString(CharacterTypeString));
+			PlayerProfiles[i]->SetPlayerName(InPlayerArray[i]->GetPlayerName(), InOwnerPlayerIndex == i);
+			PlayerProfiles[i]->SetProfileImage(InPlayerArray[i]->GetTeam(), InPlayerArray[i]->GetCharacterType());
 		}
 	}
 }
@@ -139,7 +85,8 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 	TArray<FString> InSkillNames;
 	TArray<FString> InSkillDescriptions;
 
-	switch (InPlayerCharacterTypes) {
+	switch (InPlayerCharacterTypes)
+	{
 		case ESMCharacterType::None:
 			break;
 		case ESMCharacterType::ElectricGuitar:
@@ -170,7 +117,7 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 			InSkillDescriptions.Add(TEXT("하늘로 뛰어올라 적을 바닥에 내리꽂습니다"));
 			break;
 	}
-	
+
 	for (int32 i = 0; i < 3; ++i)
 	{
 		// if (SkillImages.IsValidIndex(i) && InSkillTextures.IsValidIndex(i))
@@ -190,17 +137,7 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 	}
 }
 
-void USMCharacterSelectorInformationWidget::SetPlayerReady(const int32 PlayerIndex, const bool bIsReady)
+void USMCharacterSelectorInformationWidget::SetPlayerReady(ASMPlayerState* Player, const int32 PlayerIndex, const bool bIsReady)
 {
-	if (PlayerReadyAnimations.IsValidIndex(PlayerIndex))
-	{
-		if (bIsReady)
-		{
-			PlayAnimationForward(PlayerReadyAnimations[PlayerIndex]);
-		}
-		else
-		{
-			PlayAnimationReverse(PlayerReadyAnimations[PlayerIndex]);
-		}
-	}
+	PlayerProfiles[PlayerIndex]->SetPlayerReady(Player, bIsReady);
 }

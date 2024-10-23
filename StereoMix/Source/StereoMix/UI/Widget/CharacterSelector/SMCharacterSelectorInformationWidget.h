@@ -7,6 +7,9 @@
 #include "Data/SMCharacterType.h"
 #include "SMCharacterSelectorInformationWidget.generated.h"
 
+class ASMPlayerState;
+class ASMCharacterSelectPlayerState;
+class USMCharacterSelectorProfile;
 class UImage;
 class UCommonTextBlock;
 /**
@@ -24,13 +27,11 @@ public:
 
 	void ResetPlayerInfo() const;
 
-	UFUNCTION(BlueprintCallable)
-	void SetPlayerInfo(const TArray<FString>& InPlayerNames, const TArray<ESMCharacterType>& InPlayerCharacterTypes);
+	void SetPlayerInfo(const TArray<ASMCharacterSelectPlayerState*> InPlayerArray, int32 InOwnerPlayerIndex);
 
-	UFUNCTION(BlueprintCallable)
 	void SetSkillInfo(ESMCharacterType InPlayerCharacterTypes);
 
-	void SetPlayerReady(int32 PlayerIndex, bool bIsReady);
+	void SetPlayerReady(ASMPlayerState* Player, int32 PlayerIndex, bool bIsReady);
 
 protected:
 	UPROPERTY()
@@ -43,16 +44,7 @@ protected:
 	TArray<TObjectPtr<UCommonTextBlock>> SkillDescriptions;
 
 	UPROPERTY()
-	TArray<TObjectPtr<UImage>> PlayerImages;
-
-	UPROPERTY()
-	TArray<TObjectPtr<UCommonTextBlock>> PlayerNames;
-
-	UPROPERTY()
-	TArray<TObjectPtr<UCommonTextBlock>> PlayerCharacterTypes;
-
-	UPROPERTY()
-	TArray<TObjectPtr<UWidgetAnimation>> PlayerReadyAnimations;
+	TArray<TObjectPtr<USMCharacterSelectorProfile>> PlayerProfiles;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> SelectedCharacterType;
@@ -85,38 +77,11 @@ protected:
 	TObjectPtr<UCommonTextBlock> SkillDescription3;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> PlayerImage1;
+	TObjectPtr<USMCharacterSelectorProfile> PlayerProfile1;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UCommonTextBlock> PlayerName1;
+	TObjectPtr<USMCharacterSelectorProfile> PlayerProfile2;
 
 	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UCommonTextBlock> PlayerCharacterType1;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> PlayerImage2;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UCommonTextBlock> PlayerName2;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UCommonTextBlock> PlayerCharacterType2;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UImage> PlayerImage3;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UCommonTextBlock> PlayerName3;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UCommonTextBlock> PlayerCharacterType3;
-
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	TObjectPtr<UWidgetAnimation> Player1Ready;
-
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	TObjectPtr<UWidgetAnimation> Player2Ready;
-
-	UPROPERTY(Transient, meta = (BindWidgetAnim))
-	TObjectPtr<UWidgetAnimation> Player3Ready;
+	TObjectPtr<USMCharacterSelectorProfile> PlayerProfile3;
 };
