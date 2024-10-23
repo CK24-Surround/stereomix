@@ -52,4 +52,6 @@ void ASMAIElectricGuitarCharacter::Attack(AActor* AttackTarget)
 	ProjectileParams.Speed = ProjectileSpeed;
 	ProjectileParams.MaxDistance = MaxDistance;
 	Projectile->Launch(ProjectileParams);
+
+	OnAttack.Broadcast();
 }

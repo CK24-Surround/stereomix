@@ -6,6 +6,8 @@
 #include "SMAICharacterBase.h"
 #include "SMAIElectricGuitarCharacter.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnAICharacterAttack);
+
 UCLASS()
 class STEREOMIX_API ASMAIElectricGuitarCharacter : public ASMAICharacterBase
 {
@@ -25,4 +27,7 @@ public:
 	float SpreadAngle = 0.0f;
 
 	int32 AccuracyShootRate = 0;
+
+	UPROPERTY(BlueprintAssignable)
+	FOnAICharacterAttack OnAttack;
 };
