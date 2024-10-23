@@ -75,7 +75,7 @@ protected:
 
 	void UpdatePlayerList() const;
 
-	void UpdateSelectButton() const;
+	void UpdateSelectButton();
 
 	UFUNCTION(BlueprintCallable)
 	bool IsCharacterSelectable(ESMCharacterType CharacterType, bool bExcludeOwner) const;
@@ -119,6 +119,12 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UButton> PickBass;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCommonTextBlock> WarningText;
+
+	UPROPERTY(Transient, meta = (BindWidgetAnim))
+	TObjectPtr<UWidgetAnimation> OnDuplicatedWarning;
 
 	TWeakObjectPtr<USMCharacterSelectorInformationWidget> CharacterSelectorInformationWidget;
 

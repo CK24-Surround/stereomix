@@ -330,7 +330,7 @@ void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
 	}
 }
 
-void USMCharacterSelectorScreenWidget::UpdateSelectButton() const
+void USMCharacterSelectorScreenWidget::UpdateSelectButton()
 {
 	constexpr float EnabledScalar = 0.0f;
 
@@ -380,6 +380,12 @@ void USMCharacterSelectorScreenWidget::UpdateSelectButton() const
 
 	SelectButtonText->SetText(FText::FromString(bIsNeverSelected ? TEXT("확인") : TEXT("변경")));
 	SelectButton->SetIsEnabled(IsFocusedCharacterSelectable(false));
+
+	WarningText->SetVisibility(ESlateVisibility::Hidden);
+	if (!IsFocusedCharacterSelectable(true))
+	{
+		PlayAnimationForward(OnDuplicatedWarning);
+	}
 }
 
 bool USMCharacterSelectorScreenWidget::IsCharacterSelectable(ESMCharacterType CharacterType, bool bExcludeOwner) const
