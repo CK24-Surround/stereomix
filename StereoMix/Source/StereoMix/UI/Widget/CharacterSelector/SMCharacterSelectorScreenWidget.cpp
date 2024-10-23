@@ -316,6 +316,43 @@ void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
 
 void USMCharacterSelectorScreenWidget::UpdateSelectButton() const
 {
+	constexpr FLinearColor DisabledColor = FLinearColor(0.045f, 0.045f, 0.045f, 1.f);
+	constexpr FLinearColor EnabledColor = FLinearColor(1.f, 1.f, 1.f, 1.f);
+
+	EDMElectricGuitar->SetBrushTintColor(EnabledColor);
+	EDMPiano->SetBrushTintColor(EnabledColor);
+	EDMBass->SetBrushTintColor(EnabledColor);
+
+	FBElectricGuitar->SetBrushTintColor(EnabledColor);
+	FBPiano->SetBrushTintColor(EnabledColor);
+	FBBass->SetBrushTintColor(EnabledColor);
+
+	for (TObjectPtr<ASMPlayerState> Player : GetCurrentTeamPlayers())
+	{
+		if (const ASMCharacterSelectPlayerState* TargetPlayerState = Cast<ASMCharacterSelectPlayerState>(Player))
+		{
+			if (TargetPlayerState == OwningPlayerState || TargetPlayerState->GetCharacterType() == ESMCharacterType::None)
+			{
+				continue;
+			}
+
+			switch (TargetPlayerState->GetCharacterType())
+			{
+				case ESMCharacterType::ElectricGuitar:
+					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMElectricGuitar : FBElectricGuitar)->SetBrushTintColor(DisabledColor);
+					break;
+				case ESMCharacterType::Piano:
+					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMPiano : FBPiano)->SetBrushTintColor(DisabledColor);
+					break;
+				case ESMCharacterType::Bass:
+					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMBass : FBBass)->SetBrushTintColor(DisabledColor);
+					break;
+				default:
+					break;
+			}
+		}
+	}
+
 	SelectButtonText->SetText(FText::FromString(bIsNeverSelected ? TEXT("확인") : TEXT("변경")));
 	SelectButton->SetIsEnabled(IsFocusedCharacterSelectable(false));
 }
