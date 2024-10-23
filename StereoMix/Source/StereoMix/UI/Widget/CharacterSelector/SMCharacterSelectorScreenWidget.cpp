@@ -15,7 +15,6 @@
 #include "Games/SMCountdownTimerComponent.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
-#include "Utilities/SMLog.h"
 
 
 void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerController* PlayerController, ASMCharacterSelectState* CharacterSelectState, ASMCharacterSelectPlayerState* PlayerState)
@@ -67,14 +66,28 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 		}
 	}
 
-	EDMProfiles->SetVisibility(OwningPlayerState->GetTeam() == ESMTeam::EDM ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Hidden);
-	FBProfiles->SetVisibility(OwningPlayerState->GetTeam() == ESMTeam::FutureBass ? ESlateVisibility::HitTestInvisible : ESlateVisibility::Hidden);
+	if (OwningPlayerState->GetTeam() == ESMTeam::EDM)
+	{
+		FBElectricGuitar->SetVisibility(ESlateVisibility::Hidden);
+		FBPiano->SetVisibility(ESlateVisibility::Hidden);
+		FBBass->SetVisibility(ESlateVisibility::Hidden);
+	}
+	else
+	{
+		EDMElectricGuitar->SetVisibility(ESlateVisibility::Hidden);
+		EDMPiano->SetVisibility(ESlateVisibility::Hidden);
+		EDMBass->SetVisibility(ESlateVisibility::Hidden);
+	}
 
 	OriginalSelectButtonStyle = PickElectricGuitar->GetStyle();
 	OriginalSelectButtonStyle.Normal = PickElectricGuitar->GetStyle().Normal;
 
 	OriginalSelectedButtonStyle = PickElectricGuitar->GetStyle();
 	OriginalSelectedButtonStyle.Normal = PickElectricGuitar->GetStyle().Disabled;
+
+	OriginalDisabledButtonStyle = PickElectricGuitar->GetStyle();
+	OriginalDisabledButtonStyle.Normal = PickElectricGuitar->GetStyle().Hovered;
+	OriginalDisabledButtonStyle.Normal.SetImageSize(FVector2D(162.0, 162.0));
 
 	PickElectricGuitar->OnClicked.AddDynamic(this, &ThisClass::OnPickElectricGuitar);
 	PickPiano->OnClicked.AddDynamic(this, &ThisClass::OnPickPiano);
@@ -213,10 +226,7 @@ void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, 
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Character change failed"));
 		GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
-		return;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Character changed successfully"));
 }
 
 TArray<TObjectPtr<ASMPlayerState>> USMCharacterSelectorScreenWidget::GetCurrentTeamPlayers() const
@@ -237,10 +247,6 @@ void USMCharacterSelectorScreenWidget::ChangeFocusedCharacter(const ESMCharacter
 	}
 
 	FocusedCharacterType = CharacterType;
-
-	PickElectricGuitar->SetStyle(CharacterType == ESMCharacterType::ElectricGuitar ? OriginalSelectedButtonStyle : OriginalSelectButtonStyle);
-	PickPiano->SetStyle(CharacterType == ESMCharacterType::Piano ? OriginalSelectedButtonStyle : OriginalSelectButtonStyle);
-	PickBass->SetStyle(CharacterType == ESMCharacterType::Bass ? OriginalSelectedButtonStyle : OriginalSelectButtonStyle);
 
 	UpdatePlayerList();
 	UpdateSelectButton();
@@ -316,36 +322,45 @@ void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
 
 void USMCharacterSelectorScreenWidget::UpdateSelectButton() const
 {
-	constexpr FLinearColor DisabledColor = FLinearColor(0.045f, 0.045f, 0.045f, 1.f);
-	constexpr FLinearColor EnabledColor = FLinearColor(1.f, 1.f, 1.f, 1.f);
+	constexpr float EnabledScalar = 0.0f;
 
-	EDMElectricGuitar->SetBrushTintColor(EnabledColor);
-	EDMPiano->SetBrushTintColor(EnabledColor);
-	EDMBass->SetBrushTintColor(EnabledColor);
+	EDMElectricGuitar->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
+	EDMPiano->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
+	EDMBass->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
 
-	FBElectricGuitar->SetBrushTintColor(EnabledColor);
-	FBPiano->SetBrushTintColor(EnabledColor);
-	FBBass->SetBrushTintColor(EnabledColor);
+	FBElectricGuitar->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
+	FBPiano->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
+	FBBass->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
+
+	const FButtonStyle NewButtonStyle = IsFocusedCharacterSelectable(true) ? OriginalSelectedButtonStyle : OriginalDisabledButtonStyle;
+
+	PickElectricGuitar->SetStyle(FocusedCharacterType == ESMCharacterType::ElectricGuitar ? NewButtonStyle : OriginalSelectButtonStyle);
+	PickPiano->SetStyle(FocusedCharacterType == ESMCharacterType::Piano ? NewButtonStyle : OriginalSelectButtonStyle);
+	PickBass->SetStyle(FocusedCharacterType == ESMCharacterType::Bass ? NewButtonStyle : OriginalSelectButtonStyle);
 
 	for (TObjectPtr<ASMPlayerState> Player : GetCurrentTeamPlayers())
 	{
 		if (const ASMCharacterSelectPlayerState* TargetPlayerState = Cast<ASMCharacterSelectPlayerState>(Player))
 		{
-			if (TargetPlayerState == OwningPlayerState || TargetPlayerState->GetCharacterType() == ESMCharacterType::None)
+			if (TargetPlayerState == OwningPlayerState)
 			{
 				continue;
 			}
 
+			constexpr float SoftDisabledScalar = 1.0f;
+			constexpr float DisabledScalar = 2.0f;
+			const float SelectedScalar = TargetPlayerState->GetCharacterType() == FocusedCharacterType ? SoftDisabledScalar : DisabledScalar;
+
 			switch (TargetPlayerState->GetCharacterType())
 			{
 				case ESMCharacterType::ElectricGuitar:
-					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMElectricGuitar : FBElectricGuitar)->SetBrushTintColor(DisabledColor);
+					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMElectricGuitar : FBElectricGuitar)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), SelectedScalar);
 					break;
 				case ESMCharacterType::Piano:
-					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMPiano : FBPiano)->SetBrushTintColor(DisabledColor);
+					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMPiano : FBPiano)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), SelectedScalar);
 					break;
 				case ESMCharacterType::Bass:
-					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMBass : FBBass)->SetBrushTintColor(DisabledColor);
+					(TargetPlayerState->GetTeam() == ESMTeam::EDM ? EDMBass : FBBass)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), SelectedScalar);
 					break;
 				default:
 					break;

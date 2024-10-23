@@ -77,29 +77,23 @@ protected:
 	bool IsFocusedCharacterSelectable(bool bExcludeOwner) const;
 
 	void SetPlayerReady(ASMPlayerState* Player, const bool bIsReady) const;
-
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UOverlay> EDMProfiles;
 	
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> EDMElectricGuitar;
 	
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> EDMPiano;
 	
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> EDMBass;
 
-	UPROPERTY(meta = (BindWidget))
-	TObjectPtr<UOverlay> FBProfiles;
-
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> FBElectricGuitar;
 	
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> FBPiano;
 	
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> FBBass;
 
 	UPROPERTY(meta = (BindWidget))
@@ -136,6 +130,8 @@ protected:
 	FButtonStyle OriginalSelectButtonStyle;
 
 	FButtonStyle OriginalSelectedButtonStyle;
+	
+	FButtonStyle OriginalDisabledButtonStyle;
 
 	int32 bIsNeverSelected:1 = true;
 

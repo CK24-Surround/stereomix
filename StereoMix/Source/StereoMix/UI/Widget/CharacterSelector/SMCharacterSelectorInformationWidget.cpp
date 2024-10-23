@@ -48,10 +48,10 @@ void USMCharacterSelectorInformationWidget::ResetInfo() const
 
 	for (int32 i = 0; i < 3; ++i)
 	{
-		if (SkillImages.IsValidIndex(i))
-		{
-			SkillImages[i]->SetBrushFromTexture(nullptr);
-		}
+		// if (SkillImages.IsValidIndex(i))
+		// {
+		// 	SkillImages[i]->SetBrushFromTexture(nullptr);
+		// }
 
 		if (SkillNames.IsValidIndex(i))
 		{
@@ -63,10 +63,10 @@ void USMCharacterSelectorInformationWidget::ResetInfo() const
 			SkillDescriptions[i]->SetText(FText::FromString(""));
 		}
 
-		if (PlayerImages.IsValidIndex(i))
-		{
-			PlayerImages[i]->SetBrushFromTexture(nullptr);
-		}
+		// if (PlayerImages.IsValidIndex(i))
+		// {
+		// 	PlayerImages[i]->SetBrushFromTexture(nullptr);
+		// }
 
 		if (PlayerNames.IsValidIndex(i))
 		{
@@ -84,10 +84,10 @@ void USMCharacterSelectorInformationWidget::ResetPlayerInfo() const
 {
 	for (int32 i = 0; i < 3; ++i)
 	{
-		if (PlayerImages.IsValidIndex(i))
-		{
-			PlayerImages[i]->SetBrushFromTexture(nullptr);
-		}
+		// if (PlayerImages.IsValidIndex(i))
+		// {
+		// 	PlayerImages[i]->SetBrushFromTexture(nullptr);
+		// }
 
 		if (PlayerNames.IsValidIndex(i))
 		{
@@ -173,10 +173,10 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 	
 	for (int32 i = 0; i < 3; ++i)
 	{
-		if (SkillImages.IsValidIndex(i) && InSkillTextures.IsValidIndex(i))
-		{
-			SkillImages[i]->SetBrushFromTexture(InSkillTextures[i]);
-		}
+		// if (SkillImages.IsValidIndex(i) && InSkillTextures.IsValidIndex(i))
+		// {
+		// 	SkillImages[i]->SetBrushFromTexture(InSkillTextures[i]);
+		// }
 
 		if (SkillNames.IsValidIndex(i) && InSkillNames.IsValidIndex(i))
 		{
