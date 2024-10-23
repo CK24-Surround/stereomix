@@ -74,6 +74,9 @@ protected:
 
 	void UpdateSelectButton() const;
 
+	UFUNCTION(BlueprintCallable)
+	bool IsCharacterSelectable(ESMCharacterType CharacterType, bool bExcludeOwner) const;
+
 	bool IsFocusedCharacterSelectable(bool bExcludeOwner) const;
 
 	void SetPlayerReady(ASMPlayerState* Player, const bool bIsReady) const;

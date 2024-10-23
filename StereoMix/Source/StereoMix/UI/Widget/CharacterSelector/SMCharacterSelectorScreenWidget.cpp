@@ -372,6 +372,30 @@ void USMCharacterSelectorScreenWidget::UpdateSelectButton() const
 	SelectButton->SetIsEnabled(IsFocusedCharacterSelectable(false));
 }
 
+bool USMCharacterSelectorScreenWidget::IsCharacterSelectable(ESMCharacterType CharacterType, bool bExcludeOwner) const
+{
+	bool bSelectButtonEnable = true;
+
+	for (TObjectPtr<APlayerState> PlayerState : GetCurrentTeamPlayers())
+	{
+		if (bExcludeOwner && PlayerState == OwningPlayerState)
+		{
+			continue;
+		}
+
+		if (const ASMCharacterSelectPlayerState* TargetPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
+		{
+			if (TargetPlayerState->GetCharacterType() == CharacterType)
+			{
+				bSelectButtonEnable = false;
+				break;
+			}
+		}
+	}
+
+	return bSelectButtonEnable;
+}
+
 bool USMCharacterSelectorScreenWidget::IsFocusedCharacterSelectable(bool bExcludeOwner) const
 {
 	bool bSelectButtonEnable = true;
