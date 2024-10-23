@@ -105,6 +105,11 @@ void ASMAICharacterBase::BeginPlay()
 	Super::BeginPlay();
 
 	OnChangeHP();
+
+	if (SpawnVFX)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAttached(SpawnVFX, GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::AutoRelease);
+	}
 }
 
 void ASMAICharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)

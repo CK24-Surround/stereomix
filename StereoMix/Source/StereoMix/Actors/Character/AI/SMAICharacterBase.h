@@ -127,6 +127,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|VFX")
 	TObjectPtr<UMaterialInterface> ImmuneOverlayMaterial;
 
+	UPROPERTY(EditAnywhere, Category = "Design|VFX")
+	TObjectPtr<UNiagaraSystem> SpawnVFX;
+
 	UPROPERTY()
 	TObjectPtr<ASMNoteBase> Note;
 

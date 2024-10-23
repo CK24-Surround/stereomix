@@ -3,6 +3,7 @@
 
 #include "SMTrainingDummy.h"
 
+#include "NiagaraFunctionLibrary.h"
 #include "Actors/Notes/SMNoteBase.h"
 #include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
@@ -85,6 +86,11 @@ void ASMTrainingDummy::BeginPlay()
 		StateWidgetComponent->SetWidget(TrainingDummyStateWidget);
 		OnHPChanged.BindUObject(TrainingDummyStateWidget, &USMUserWidget_TrainingDummyState::SetHP);
 		TrainingDummyStateWidget->SetHP(HP, MaxHP);
+	}
+
+	if (SpawnVFX)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAttached(SpawnVFX, GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false, true, ENCPoolMethod::AutoRelease);
 	}
 }
 

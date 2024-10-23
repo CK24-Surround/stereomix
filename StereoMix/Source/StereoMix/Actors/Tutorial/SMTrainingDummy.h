@@ -10,6 +10,7 @@
 #include "Interfaces/SMTeamInterface.h"
 #include "SMTrainingDummy.generated.h"
 
+class UNiagaraSystem;
 class USMUserWidget_TrainingDummyState;
 class UWidgetComponent;
 class ASMNoteBase;
@@ -98,8 +99,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<USMUserWidget_TrainingDummyState> TrainingDummyStateWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TObjectPtr<UNiagaraSystem> SpawnVFX;
+
 	UPROPERTY(EditAnywhere, Category = "Stat")
 	float MaxHP = 100.0f;
+
 
 	float HP = 0.0f;
 
