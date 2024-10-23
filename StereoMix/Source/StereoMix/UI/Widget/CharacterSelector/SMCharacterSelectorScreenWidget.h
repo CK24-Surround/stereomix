@@ -64,6 +64,8 @@ protected:
 	UFUNCTION()
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 
+	TArray<TObjectPtr<ASMPlayerState>> GetCurrentTeamPlayers() const;
+	
 	void ChangeFocusedCharacter(ESMCharacterType CharacterType);
 
 	void ShowPreviewCharacter(ESMCharacterType CharacterType);
@@ -73,6 +75,8 @@ protected:
 	void UpdateSelectButton() const;
 
 	bool IsFocusedCharacterSelectable(bool bExcludeOwner) const;
+
+	void SetPlayerReady(ASMPlayerState* Player, const bool bIsReady) const;
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UOverlay> EDMProfiles;
@@ -118,4 +122,6 @@ protected:
 	int32 bIsNeverSelected:1 = true;
 
 	ESMCharacterType FocusedCharacterType = ESMCharacterType::None;
+
+	TArray<TObjectPtr<ASMPlayerState>> CurrentTeamPlayers;
 };

@@ -15,6 +15,7 @@
 #include "Games/SMCountdownTimerComponent.h"
 #include "Games/CharacterSelect/SMCharacterSelectPlayerState.h"
 #include "Games/CharacterSelect/SMCharacterSelectState.h"
+#include "Utilities/SMLog.h"
 
 
 void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerController* PlayerController, ASMCharacterSelectState* CharacterSelectState, ASMCharacterSelectPlayerState* PlayerState)
@@ -52,6 +53,17 @@ void USMCharacterSelectorScreenWidget::InitWidget(ASMCharacterSelectPlayerContro
 		if (CharacterSelectorInformationWidget.IsValid() && CharacterSelectorTimerWidget.IsValid())
 		{
 			break;
+		}
+	}
+
+	for (TObjectPtr<APlayerState> Player : GetOwningCharacterSelectState()->PlayerArray)
+	{
+		if (ASMPlayerState* TargetPlayerState = Cast<ASMPlayerState>(Player))
+		{
+			if (TargetPlayerState->GetTeam() == OwningPlayerState->GetTeam())
+			{
+				CurrentTeamPlayers.AddUnique(TargetPlayerState);
+			}
 		}
 	}
 
@@ -154,12 +166,18 @@ void USMCharacterSelectorScreenWidget::OnSelectButtonClicked()
 
 void USMCharacterSelectorScreenWidget::OnPlayerJoin(ASMPlayerState* JoinedPlayer)
 {
-	UpdatePlayerList();
-	UpdateSelectButton();
+	if (JoinedPlayer->GetTeam() == OwningPlayerState->GetTeam())
+	{
+		CurrentTeamPlayers.AddUnique(JoinedPlayer);
+		UpdatePlayerList();
+		UpdateSelectButton();
+	}
 }
 
 void USMCharacterSelectorScreenWidget::OnPlayerLeft(ASMPlayerState* LeftPlayer)
 {
+	SetPlayerReady(LeftPlayer, false);
+	CurrentTeamPlayers.Remove(LeftPlayer);
 	UpdatePlayerList();
 	UpdateSelectButton();
 }
@@ -171,13 +189,7 @@ void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* 
 		return;
 	}
 
-	if (const int32 PlayerIndex = OwningCharacterSelectState->PlayerArray.IndexOfByKey(Player); PlayerIndex != INDEX_NONE)
-	{
-		if (CharacterSelectorInformationWidget.IsValid())
-		{
-			CharacterSelectorInformationWidget->SetPlayerReady(PlayerIndex, NewCharacter != ESMCharacterType::None);
-		}
-	}
+	SetPlayerReady(Player, NewCharacter != ESMCharacterType::None);
 
 	if (Player == OwningPlayerState && NewCharacter != ESMCharacterType::None && FocusedCharacterType != NewCharacter)
 	{
@@ -205,6 +217,16 @@ void USMCharacterSelectorScreenWidget::OnCharacterChangeResponse(bool bSuccess, 
 	}
 
 	UE_LOG(LogTemp, Warning, TEXT("Character changed successfully"));
+}
+
+TArray<TObjectPtr<ASMPlayerState>> USMCharacterSelectorScreenWidget::GetCurrentTeamPlayers() const
+{
+	TArray<TObjectPtr<ASMPlayerState>> PlayerArray = CurrentTeamPlayers;
+	PlayerArray.Sort([](const APlayerState& A, const APlayerState& B) {
+		return A.GetUniqueID() < B.GetUniqueID();
+	});
+
+	return PlayerArray;
 }
 
 void USMCharacterSelectorScreenWidget::ChangeFocusedCharacter(const ESMCharacterType CharacterType)
@@ -280,16 +302,12 @@ void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
 	TArray<FString> PlayerNames;
 	TArray<ESMCharacterType> PlayerCharacterTypes;
 
-	const ESMTeam LocalPlayerTeam = GetOwningPlayerState()->GetTeam();
-	for (TArray<TObjectPtr<APlayerState>> Players = CharacterSelectState->PlayerArray; TObjectPtr<APlayerState> PlayerState : Players)
+	for (TObjectPtr<APlayerState> PlayerState : GetCurrentTeamPlayers())
 	{
 		if (const ASMCharacterSelectPlayerState* TargetPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
 		{
-			if (TargetPlayerState->GetTeam() == LocalPlayerTeam)
-			{
-				PlayerNames.Add(TargetPlayerState->GetPlayerName());
-				PlayerCharacterTypes.Add(TargetPlayerState->GetCharacterType());
-			}
+			PlayerNames.Add(TargetPlayerState->GetPlayerName());
+			PlayerCharacterTypes.Add(TargetPlayerState->GetCharacterType());
 		}
 	}
 
@@ -306,8 +324,7 @@ bool USMCharacterSelectorScreenWidget::IsFocusedCharacterSelectable(bool bExclud
 {
 	bool bSelectButtonEnable = true;
 
-	const ESMTeam LocalPlayerTeam = GetOwningPlayerState()->GetTeam();
-	for (TArray<TObjectPtr<APlayerState>> Players = OwningCharacterSelectState->PlayerArray; TObjectPtr<APlayerState> PlayerState : Players)
+	for (TObjectPtr<APlayerState> PlayerState : GetCurrentTeamPlayers())
 	{
 		if (bExcludeOwner && PlayerState == OwningPlayerState)
 		{
@@ -316,7 +333,7 @@ bool USMCharacterSelectorScreenWidget::IsFocusedCharacterSelectable(bool bExclud
 
 		if (const ASMCharacterSelectPlayerState* TargetPlayerState = Cast<ASMCharacterSelectPlayerState>(PlayerState))
 		{
-			if (TargetPlayerState->GetTeam() == LocalPlayerTeam && TargetPlayerState->GetCharacterType() == FocusedCharacterType)
+			if (TargetPlayerState->GetCharacterType() == FocusedCharacterType)
 			{
 				bSelectButtonEnable = false;
 				break;
@@ -325,4 +342,15 @@ bool USMCharacterSelectorScreenWidget::IsFocusedCharacterSelectable(bool bExclud
 	}
 
 	return bSelectButtonEnable;
+}
+
+void USMCharacterSelectorScreenWidget::SetPlayerReady(ASMPlayerState* Player, const bool bIsReady) const
+{
+	if (CharacterSelectorInformationWidget.IsValid())
+	{
+		if (const int32 PlayerIndex = GetCurrentTeamPlayers().IndexOfByKey(Player); PlayerIndex != INDEX_NONE)
+		{
+			CharacterSelectorInformationWidget->SetPlayerReady(PlayerIndex, bIsReady);
+		}
+	}
 }
