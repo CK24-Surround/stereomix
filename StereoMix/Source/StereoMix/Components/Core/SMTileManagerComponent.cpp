@@ -102,11 +102,22 @@ void USMTileManagerComponent::SetTileScores(ESMTeam Team, int32 Score)
 
 	EDMTileScore = TileScores[ESMTeam::EDM];
 	FBTileScore = TileScores[ESMTeam::FutureBass];
+
+	OnRep_EDMTileScore();
+	OnRep_FBTileScore();
 }
 
 void USMTileManagerComponent::ShowGameResult()
 {
 	MulticastSendGameResult(CalculateVictoryTeam());
+}
+
+void USMTileManagerComponent::ResetTileScores()
+{
+	for (int32 TeamAsInt32 = 1; TeamAsInt32 < static_cast<int32>(ESMTeam::Max); ++TeamAsInt32)
+	{
+		SetTileScores(static_cast<ESMTeam>(TeamAsInt32), 0);
+	}
 }
 
 void USMTileManagerComponent::OnTileChanged(ESMTeam PreviousTeam, ESMTeam NewTeam)

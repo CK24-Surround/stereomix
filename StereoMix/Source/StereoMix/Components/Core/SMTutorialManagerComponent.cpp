@@ -9,6 +9,7 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "SMRoundTimerManagerComponent.h"
+#include "SMTileManagerComponent.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
 #include "AbilitySystem/Abilities/Common/SMGA_Hold.h"
@@ -27,6 +28,7 @@
 #include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
 #include "Data/DataTable/Tutorial/SMTutorialScript.h"
 #include "FunctionLibraries/SMAbilitySystemBlueprintLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "Games/SMGamePlayerState.h"
 #include "Games/SMGameState.h"
 #include "Utilities/SMLog.h"
@@ -925,6 +927,11 @@ void USMTutorialManagerComponent::StartBattle(AActor* OverlappedActor, AActor* O
 	if (USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn()))
 	{
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Sampling);
+	}
+
+	if (USMTileManagerComponent* TileManager = USMTileFunctionLibrary::GetTileManagerComponent(GetWorld()))
+	{
+		TileManager->ResetTileScores();
 	}
 
 	if (OverlappedActor)

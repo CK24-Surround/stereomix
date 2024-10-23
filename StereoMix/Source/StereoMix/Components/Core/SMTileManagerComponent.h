@@ -47,6 +47,8 @@ public:
 
 	void ShowGameResult();
 
+	void ResetTileScores();
+
 	FTileScoreDelegate OnEDMTileScoreChanged;
 
 	FTileScoreDelegate OnFBTileScoreChanged;
