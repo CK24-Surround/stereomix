@@ -18,6 +18,8 @@ class STEREOMIX_API ASMProgressTriggerBase : public AActor
 public:
 	ASMProgressTriggerBase();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 protected:
 	UPROPERTY(VisibleAnywhere, Category = "Root")
 	TObjectPtr<USceneComponent> RootSceneComponent;
