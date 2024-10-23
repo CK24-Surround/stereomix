@@ -131,8 +131,21 @@ void ASMAICharacterBase::Tick(float DeltaSeconds)
 
 void ASMAICharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Weapon->Destroy();
-	Note->Destroy();
+	if (Weapon)
+	{
+		Weapon->Destroy();
+	}
+
+	if (Note)
+	{
+		Note->Destroy();
+	}
+
+	if ((EndPlayReason == EEndPlayReason::Destroyed) && DestroyVFX)
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), DestroyVFX, GetActorLocation(), FRotator::ZeroRotator, FVector(1), false, true, ENCPoolMethod::AutoRelease);
+	}
+
 	Super::EndPlay(EndPlayReason);
 }
 

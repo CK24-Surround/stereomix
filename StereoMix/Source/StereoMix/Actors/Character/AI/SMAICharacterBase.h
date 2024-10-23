@@ -132,6 +132,9 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Design|VFX")
 	TObjectPtr<UNiagaraSystem> SpawnVFX;
 
+	UPROPERTY(EditAnywhere, Category = "Design|VFX")
+	TObjectPtr<UNiagaraSystem> DestroyVFX; 
+
 	UPROPERTY()
 	TObjectPtr<ASMNoteBase> Note;
 
