@@ -7,6 +7,7 @@
 #include "GenericPlatform/GenericPlatformCrashContext.h"
 #include "UI/Widget/Tutorial/SMTutorialGuide.h"
 #include "UI/Widget/Tutorial/SMTutorialHUD.h"
+#include "UI/Widget/Tutorial/SMTutorialKeyInfo.h"
 #include "UI/Widget/Tutorial/SMTutorialMission.h"
 #include "UI/Widget/Tutorial/SMTutorialSuccess.h"
 
@@ -45,6 +46,11 @@ USMTutorialSuccess* USMTutorialUIControlComponent::GetTutorialSuccess() const
 USMTutorialMission* USMTutorialUIControlComponent::GetTutorialMission() const
 {
 	return TutorialHUD ? TutorialHUD->TutorialMission : nullptr;
+}
+
+USMTutorialKeyInfo* USMTutorialUIControlComponent::GetTutorialKeyInfo() const
+{
+	return TutorialHUD ? TutorialHUD->TutorialKeyInfo : nullptr;
 }
 
 void USMTutorialUIControlComponent::SetGuideText(const FString& InString)
@@ -96,6 +102,54 @@ void USMTutorialUIControlComponent::TransitionToGuide()
 void USMTutorialUIControlComponent::TransitionAndSetText(const FString& InGuideText, const FString& InMissionText)
 {
 	InternalTransitionAndSetText(InGuideText, InMissionText);
+}
+
+void USMTutorialUIControlComponent::HideAllKeyInfo()
+{
+	if (USMTutorialKeyInfo* TutorialKeyInfo = GetTutorialKeyInfo())
+	{
+		TutorialKeyInfo->HideAll();
+	}
+}
+
+void USMTutorialUIControlComponent::ShowLeftClick()
+{
+	if (USMTutorialKeyInfo* TutorialKeyInfo = GetTutorialKeyInfo())
+	{
+		TutorialKeyInfo->ShowLeftClick();
+	}
+}
+
+void USMTutorialUIControlComponent::ShowRightClick()
+{
+	if (USMTutorialKeyInfo* TutorialKeyInfo = GetTutorialKeyInfo())
+	{
+		TutorialKeyInfo->ShowRightClick();
+	}
+}
+
+void USMTutorialUIControlComponent::ShowRightLeftClick()
+{
+	if (USMTutorialKeyInfo* TutorialKeyInfo = GetTutorialKeyInfo())
+	{
+		TutorialKeyInfo->ShowRightLeftClick();
+	}
+}
+
+void USMTutorialUIControlComponent::ShowWASDKey()
+{
+	if (USMTutorialKeyInfo* TutorialKeyInfo = GetTutorialKeyInfo())
+	{
+		TutorialKeyInfo->ShowWASDKey();
+	}
+}
+
+void USMTutorialUIControlComponent::ShowEKey()
+{
+	if (USMTutorialKeyInfo* TutorialKeyInfo = GetTutorialKeyInfo())
+	{
+		TutorialKeyInfo->ShowEKey();
+	}
 }
 
 void USMTutorialUIControlComponent::InternalTransitionToSuccess()

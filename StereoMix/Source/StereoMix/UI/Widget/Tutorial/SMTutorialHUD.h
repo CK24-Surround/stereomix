@@ -6,9 +6,11 @@
 #include "CommonActivatableWidget.h"
 #include "SMTutorialHUD.generated.h"
 
+class USMTutorialKeyInfo;
 class USMTutorialMission;
 class USMTutorialSuccess;
 class USMTutorialGuide;
+
 /**
  * 
  */
@@ -26,4 +28,7 @@ public:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<USMTutorialMission> TutorialMission;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<USMTutorialKeyInfo> TutorialKeyInfo;
 };

@@ -182,13 +182,14 @@ void USMTutorialManagerComponent::InitializeComponent()
 		{
 			LocationIndicator5X5Component = UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), LocationIndicator5X5, Location->GetActorLocation(), FRotator::ZeroRotator, FVector(1), false, false, ENCPoolMethod::ManualRelease);
 		}
-	}
 
-	for (ASMTrainingDummy* TrainingDummyActor : TActorRange<ASMTrainingDummy>(GetWorld()))
-	{
-		UE_LOG(LogTemp, Warning, TEXT("%s"), *GetNameSafe(TrainingDummyActor));
-		TrainingDummy = TrainingDummyActor;
-		TrainingDummyOriginalLocation = TrainingDummyActor->GetActorLocation();
+		if (Location->ActorHasTag(TEXT("TrainingDummy")))
+		{
+			const ASMTrainingDummy* TrainingDummyCDO = TrainingDummyClass ? TrainingDummyClass->GetDefaultObject<ASMTrainingDummy>() : nullptr;
+			const UCapsuleComponent* TrainingDummyCDOCapsule = TrainingDummyCDO ? TrainingDummyCDO->GetCapsuleComponent() : nullptr;
+			const float TrainingDummyCDOCapsuleHalfHeight = TrainingDummyCDOCapsule ? TrainingDummyCDOCapsule->GetScaledCapsuleHalfHeight() : 0.0f;
+			TrainingDummyLocation = Location->GetActorLocation() + FVector(0.0, 0.0, TrainingDummyCDOCapsuleHalfHeight);
+		}
 	}
 }
 
@@ -206,6 +207,7 @@ void USMTutorialManagerComponent::BeginPlay()
 			CachedTutorialUIControlComponent->SetGuideText(GetScriptText(CurrentStepNumber, 2, ESMCharacterType::None));
 			CachedTutorialUIControlComponent->SetMissionText(GetScriptText(CurrentStepNumber, 1, ESMCharacterType::None));
 			CachedTutorialUIControlComponent->PlayShowGuideAnimation();
+			CachedTutorialUIControlComponent->ShowWASDKey();
 		}
 
 		// 캐릭터의 능력들을 일단 모두 잠그고 튜토리얼 진행에 따라 하나씩 풀어줍니다.
@@ -388,6 +390,8 @@ void USMTutorialManagerComponent::OnStep1Completed(AActor* OverlappedActor, AAct
 
 	if (CachedTutorialUIControlComponent)
 	{
+		CachedTutorialUIControlComponent->HideAllKeyInfo();
+
 		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
 		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
 		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
@@ -468,13 +472,21 @@ void USMTutorialManagerComponent::OnStep3Started()
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Attack);
 	}
 
+	UWorld* World = GetWorld();
+	TrainingDummy = World ? World->SpawnActor<ASMTrainingDummy>(TrainingDummyClass, TrainingDummyLocation, FVector::LeftVector.ToOrientationRotator()) : nullptr;
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->ShowLeftClick();
+	}
+
 	if (SamplingWall.IsValid())
 	{
 		SamplingWall->SetActorHiddenInGame(true);
 		SamplingWall->Destroy();
 	}
 
-	if (TrainingDummy.IsValid())
+	if (TrainingDummy)
 	{
 		TrainingDummy->OnHalfHPReached.BindUObject(this, &ThisClass::OnStep3Completed);
 	}
@@ -489,7 +501,7 @@ void USMTutorialManagerComponent::OnStep3Completed()
 {
 	CurrentStepNumber = 4;
 
-	if (TrainingDummy.IsValid())
+	if (TrainingDummy)
 	{
 		TrainingDummy->OnHalfHPReached.Unbind();
 		TrainingDummy->SetInvincible(true);
@@ -498,6 +510,8 @@ void USMTutorialManagerComponent::OnStep3Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
+		CachedTutorialUIControlComponent->HideAllKeyInfo();
+
 		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
 		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
 		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
@@ -516,6 +530,11 @@ void USMTutorialManagerComponent::OnStep4Started()
 		SkillInstance->OnSkillHit.AddDynamic(this, &ThisClass::OnStep4Completed);
 		OwnerASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Skill);
 	}
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->ShowEKey();
+	}
 }
 
 void USMTutorialManagerComponent::OnStep4Completed()
@@ -531,6 +550,8 @@ void USMTutorialManagerComponent::OnStep4Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
+		CachedTutorialUIControlComponent->HideAllKeyInfo();
+
 		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
 		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
 		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
@@ -541,7 +562,7 @@ void USMTutorialManagerComponent::OnStep4Completed()
 
 void USMTutorialManagerComponent::OnStep5Started()
 {
-	if (TrainingDummy.IsValid())
+	if (TrainingDummy)
 	{
 		TrainingDummy->SetInvincible(false);
 		TrainingDummy->OnNeutralized.BindUObject(this, &ThisClass::OnStep5Completed);
@@ -552,7 +573,7 @@ void USMTutorialManagerComponent::OnStep5Completed()
 {
 	CurrentStepNumber = 6;
 
-	if (TrainingDummy.IsValid())
+	if (TrainingDummy)
 	{
 		TrainingDummy->OnNeutralized.Unbind();
 	}
@@ -575,6 +596,11 @@ void USMTutorialManagerComponent::OnStep6Started()
 		HoldInstance->OnHoldSucceed.AddDynamic(this, &ThisClass::OnStep6Completed);
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::Hold);
 	}
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->ShowRightClick();
+	}
 }
 
 void USMTutorialManagerComponent::OnStep6Completed()
@@ -594,6 +620,8 @@ void USMTutorialManagerComponent::OnStep6Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
+		CachedTutorialUIControlComponent->HideAllKeyInfo();
+
 		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
 		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
 		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
@@ -609,6 +637,11 @@ void USMTutorialManagerComponent::OnStep7Started()
 	{
 		NoiseBreakInstance->OnNoiseBreakSucceed.AddDynamic(this, &ThisClass::OnTileCapturedByNoiseBreak);
 		ASC->RemoveLooseGameplayTag(SMTags::Character::State::Common::Blocking::NoiseBreak);
+	}
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->ShowLeftClick();
 	}
 
 	for (TWeakObjectPtr<ASMTile> NoiseBreakTile : NoiseBreakTiles)
@@ -684,9 +717,9 @@ void USMTutorialManagerComponent::RestartStep7()
 		OwnerPawn->SetActorLocation(TargetLocation);
 	}
 
-	if (TrainingDummy.IsValid())
+	if (TrainingDummy)
 	{
-		TrainingDummy->SetActorLocation(TrainingDummyOriginalLocation);
+		TrainingDummy->SetActorLocation(TrainingDummyLocation);
 		TrainingDummy->ReceiveDamage(nullptr, 999.0f);
 	}
 }
@@ -702,11 +735,9 @@ void USMTutorialManagerComponent::OnStep7Completed()
 		LocationIndicator5X5Component = nullptr;
 	}
 
-	if (TrainingDummy.IsValid())
+	if (TrainingDummy)
 	{
-		// const FVector DummyLocation = TrainingDummy->GetActorLocation();
-		// TrainingDummy->SetActorLocation(FVector(-1800.0, -2780.0, DummyLocation.Z));
-		TrainingDummy->SetInvincible(false);
+		TrainingDummy->Destroy();
 	}
 
 	USMAbilitySystemComponent* ASC = USMAbilitySystemBlueprintLibrary::GetSMAbilitySystemComponent(GetLocalPlayerPawn());
@@ -718,6 +749,8 @@ void USMTutorialManagerComponent::OnStep7Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
+		CachedTutorialUIControlComponent->HideAllKeyInfo();
+
 		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
 		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
 		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);
@@ -739,6 +772,11 @@ void USMTutorialManagerComponent::OnStep8Started()
 			GESpecHandle.Data->SetSetByCallerMagnitude(SMTags::AttributeSet::Damage, 50.0f);
 			OwnerASC->BP_ApplyGameplayEffectSpecToSelf(GESpecHandle);
 		}
+	}
+
+	if (CachedTutorialUIControlComponent)
+	{
+		CachedTutorialUIControlComponent->ShowRightLeftClick();
 	}
 
 	if (OwnerASC)
@@ -790,6 +828,8 @@ void USMTutorialManagerComponent::OnStep8Completed()
 
 	if (CachedTutorialUIControlComponent)
 	{
+		CachedTutorialUIControlComponent->HideAllKeyInfo();
+
 		const ESMCharacterType LocalCharacterType = GetLocalPlayerCharacterType();
 		const FString GuideText = GetScriptText(CurrentStepNumber, 2, LocalCharacterType);
 		const FString MissionText = GetScriptText(CurrentStepNumber, 1, LocalCharacterType);

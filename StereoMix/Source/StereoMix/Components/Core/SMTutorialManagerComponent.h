@@ -163,10 +163,6 @@ protected:
 
 	TWeakObjectPtr<ASMProgressTriggerBase> BattleStartTrigger;
 
-	TWeakObjectPtr<ASMTrainingDummy> TrainingDummy;
-
-	FVector TrainingDummyOriginalLocation;
-
 	TArray<TWeakObjectPtr<ASMTile>> SamplingTiles;
 
 	TArray<TWeakObjectPtr<ASMTile>> NoiseBreakTiles;
@@ -180,6 +176,13 @@ protected:
 	float CachedOwnerMaxHP = 0.0f;
 
 	float BattleTime = 30.0f;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TSubclassOf<ASMTrainingDummy> TrainingDummyClass;
+
+	TObjectPtr<ASMTrainingDummy> TrainingDummy;
+
+	FVector TrainingDummyLocation;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<ASMAICharacterBase> AICharacterClass;

@@ -6,6 +6,7 @@
 #include "Components/ActorComponent.h"
 #include "SMTutorialUIControlComponent.generated.h"
 
+class USMTutorialKeyInfo;
 DECLARE_DELEGATE(FOnWidgetTransitionEnded);
 
 class USMTutorialSuccess;
@@ -31,6 +32,8 @@ public:
 
 	USMTutorialMission* GetTutorialMission() const;
 
+	USMTutorialKeyInfo* GetTutorialKeyInfo() const;
+
 	void SetGuideText(const FString& InString);
 
 	void SetMissionText(const FString& InString);
@@ -42,6 +45,18 @@ public:
 	void TransitionToGuide();
 
 	void TransitionAndSetText(const FString& InGuideText, const FString& InMissionText);
+
+	void HideAllKeyInfo();
+
+	void ShowLeftClick();
+
+	void ShowRightClick();
+
+	void ShowRightLeftClick();
+
+	void ShowWASDKey();
+
+	void ShowEKey();
 
 	FOnWidgetTransitionEnded OnTransitionAndSetTextEnded;
 
