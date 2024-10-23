@@ -17,6 +17,7 @@
 #include "Components/Common/SMTeamComponent.h"
 #include "Components/PlayerController/SMScreenIndicatorComponent.h"
 #include "FunctionLibraries/SMHoldInteractionBlueprintLibrary.h"
+#include "FunctionLibraries/SMTileFunctionLibrary.h"
 #include "UI/Widget/Game/SMUserWidget_CharacterState.h"
 #include "Utilities/SMCollision.h"
 
@@ -112,6 +113,22 @@ void ASMAICharacterBase::BeginPlay()
 	}
 }
 
+void ASMAICharacterBase::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	SamplingElapsedTime += DeltaSeconds;
+	if (SamplingElapsedTime >= SamplingInterval)
+	{
+		SamplingElapsedTime -= SamplingInterval;
+
+		if (!bIsNoteState)
+		{
+			USMTileFunctionLibrary::CaptureTilesInSquare(GetWorld(), GetActorLocation(), this, 1, ESMTeam::FutureBass);
+		}
+	}
+}
+
 void ASMAICharacterBase::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Weapon->Destroy();
@@ -167,6 +184,15 @@ void ASMAICharacterBase::SetNoteState(bool bNewIsNote)
 		CurrentHP = HP;
 		Note->StopAnimation();
 		OnChangeHP();
+	}
+
+	if (bNewIsNote)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_None);
+	}
+	else
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	}
 }
 

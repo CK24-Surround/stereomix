@@ -30,6 +30,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void PossessedBy(AController* NewController) override;
@@ -148,4 +150,8 @@ protected:
 	uint32 bIsNoteState:1 = false;
 
 	uint32 bCanAttack:1 = true;
+
+	float SamplingInterval = 0.1f;
+
+	float SamplingElapsedTime = 0.0f;
 };
