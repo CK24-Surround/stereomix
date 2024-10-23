@@ -32,6 +32,8 @@ public:
 
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetActorHiddenInGame(bool bNewHidden) override;
@@ -89,6 +91,9 @@ protected:
 
 	UPROPERTY()
 	TObjectPtr<ASMNoteBase> Note;
+
+	UPROPERTY(EditAnywhere, Category = "Design")
+	TSubclassOf<ASMWeaponBase> WeaponClass;
 
 	UPROPERTY(EditAnywhere, Category = "Design")
 	TSubclassOf<USMUserWidget_TrainingDummyState> TrainingDummyStateWidgetClass;

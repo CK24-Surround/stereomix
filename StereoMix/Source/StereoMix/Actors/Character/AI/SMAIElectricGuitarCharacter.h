@@ -16,6 +16,8 @@ class STEREOMIX_API ASMAIElectricGuitarCharacter : public ASMAICharacterBase
 public:
 	ASMAIElectricGuitarCharacter();
 
+	virtual void BeginPlay() override;
+
 	virtual void Attack(AActor* AttackTarget) override;
 
 	float Damage = 0.0f;

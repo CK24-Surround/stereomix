@@ -4,6 +4,7 @@
 #include "SMAIElectricGuitarCharacter.h"
 
 #include "Actors/Projectiles/SMProjectile.h"
+#include "Actors/Weapons/SMWeaponBase.h"
 #include "Data/DataTable/SMCharacterData.h"
 #include "FunctionLibraries/SMDataTableFunctionLibrary.h"
 #include "FunctionLibraries/SMProjectileFunctionLibrary.h"
@@ -19,6 +20,24 @@ ASMAIElectricGuitarCharacter::ASMAIElectricGuitarCharacter()
 		ProjectileSpeed = AttackData->ProjectileSpeed;
 		SpreadAngle = AttackData->SpreadAngle;
 		AccuracyShootRate = AttackData->AccuracyAttackRate;
+	}
+}
+
+void ASMAIElectricGuitarCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if (USkeletalMeshComponent* CachedMesh = GetMesh())
+	{
+		CachedMesh->bRenderCustomDepth = true;
+		CachedMesh->SetCustomDepthStencilValue(static_cast<int32>(ESMShaderStencil::EnemyOutline));
+	}
+
+
+	if (UMeshComponent* WeaponMesh = Weapon ? Weapon->GetWeaponMeshComponent() : nullptr)
+	{
+		WeaponMesh->bRenderCustomDepth = true;
+		WeaponMesh->SetCustomDepthStencilValue(static_cast<int32>(ESMShaderStencil::EnemyOutline));
 	}
 }
 

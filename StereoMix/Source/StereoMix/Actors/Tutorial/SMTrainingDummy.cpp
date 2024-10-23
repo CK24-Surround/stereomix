@@ -4,11 +4,13 @@
 #include "SMTrainingDummy.h"
 
 #include "Actors/Notes/SMNoteBase.h"
+#include "Actors/Weapons/SMWeaponBase.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SphereComponent.h"
 #include "Components/WidgetComponent.h"
 #include "Components/Common/SMTeamComponent.h"
 #include "Components/Tutorial/TrainingDummy/SMHIC_TrainingDummy.h"
+#include "Data/DataAsset/Character/SMElectricGuitarCharacterDataAsset.h"
 #include "UI/Widget/Game/SMUserWidget_TrainingDummyState.h"
 #include "Utilities/SMCollision.h"
 
@@ -28,6 +30,8 @@ ASMTrainingDummy::ASMTrainingDummy()
 	USkeletalMeshComponent* CachedMesh = GetMesh();
 	CachedMesh->SetupAttachment(RootComponent);
 	CachedMesh->SetCollisionProfileName(SMCollisionProfileName::NoCollision);
+	CachedMesh->bRenderCustomDepth = true;
+	CachedMesh->SetCustomDepthStencilValue(static_cast<int32>(ESMShaderStencil::EnemyOutline));
 	CachedMesh->bReceivesDecals = false;
 
 	NoteRootComponent = CreateDefaultSubobject<USceneComponent>(TEXT("NoteRootComponent"));
@@ -57,6 +61,18 @@ void ASMTrainingDummy::PostInitializeComponents()
 		}
 	}
 
+	if (Weapon = World ? World->SpawnActor<ASMWeaponBase>(WeaponClass) : nullptr; Weapon)
+	{
+		const USMElectricGuitarCharacterDataAsset* ElectricGuitarDataAssetCDO = USMElectricGuitarCharacterDataAsset::StaticClass()->GetDefaultObject<USMElectricGuitarCharacterDataAsset>();
+		const FName SocketName = ElectricGuitarDataAssetCDO ? ElectricGuitarDataAssetCDO->WeaponSocketName : NAME_None;
+		Weapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepRelativeTransform, SocketName);
+
+		if (UMeshComponent* WeaponMesh = Weapon->GetWeaponMeshComponent())
+		{
+			WeaponMesh->SetCustomDepthStencilValue(static_cast<int32>(ESMShaderStencil::EnemyOutline));
+		}
+	}
+
 	HP = MaxHP;
 }
 
@@ -72,6 +88,21 @@ void ASMTrainingDummy::BeginPlay()
 	}
 }
 
+void ASMTrainingDummy::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	if (Note)
+	{
+		Note->Destroy();
+	}
+
+	if (Weapon)
+	{
+		Weapon->Destroy();
+	}
+
+	Super::EndPlay(EndPlayReason);
+}
+
 void ASMTrainingDummy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -84,6 +115,11 @@ void ASMTrainingDummy::SetActorHiddenInGame(bool bNewHidden)
 	if (Note)
 	{
 		Note->SetActorHiddenInGame(bNewHidden);
+	}
+
+	if (Weapon)
+	{
+		Weapon->SetActorHiddenInGame(bNewHidden);
 	}
 }
 
@@ -156,6 +192,11 @@ void ASMTrainingDummy::SetNoteState(bool bNewIsNoteState)
 	if (USkeletalMeshComponent* CachedMesh = GetMesh())
 	{
 		CachedMesh->SetVisibility(!bNewIsNoteState);
+	}
+
+	if (USceneComponent* WeaponRoot = Weapon ? Weapon->GetRootComponent() : nullptr)
+	{
+		WeaponRoot->SetVisibility(!bNewIsNoteState, true);
 	}
 
 	bNewIsNoteState ? Note->PlayAnimation() : Note->StopAnimation();
