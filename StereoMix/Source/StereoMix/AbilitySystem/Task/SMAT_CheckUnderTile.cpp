@@ -48,13 +48,6 @@ void USMAT_CheckUnderTile::TickTask(float DeltaTime)
 			return;
 		}
 
-		if (Tile == LastCheckedTile)
-		{
-			return;
-		}
-
-		LastCheckedTile = Tile;
-
 		if (ShouldBroadcastAbilityTaskDelegates())
 		{
 			(void)OnUnderTileChanged.ExecuteIfBound(Tile);

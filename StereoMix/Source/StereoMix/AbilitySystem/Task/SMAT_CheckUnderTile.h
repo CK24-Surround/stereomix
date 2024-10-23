@@ -33,8 +33,6 @@ protected:
 
 	TWeakObjectPtr<ASMPlayerCharacterBase> SourceCharacter;
 
-	TWeakObjectPtr<ASMTile> LastCheckedTile;
-
 	float AccumulatedTime = 0.0f;
 
 	float TickInterval = 0.0f;
