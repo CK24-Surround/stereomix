@@ -68,7 +68,7 @@ protected:
 	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
 
 	TArray<TObjectPtr<ASMPlayerState>> GetCurrentTeamPlayers() const;
-	
+
 	void ChangeFocusedCharacter(ESMCharacterType CharacterType);
 
 	void ShowPreviewCharacter(ESMCharacterType CharacterType);
@@ -82,23 +82,23 @@ protected:
 
 	bool IsFocusedCharacterSelectable(bool bExcludeOwner) const;
 
-	void SetPlayerReady(ASMPlayerState* Player, const bool bIsReady) const;
-	
+	void SetPlayerReady(ASMPlayerState* Player, ESMCharacterType CharacterType, const bool bIsReady, bool bIsPredicated = false) const;
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> EDMElectricGuitar;
-	
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> EDMPiano;
-	
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> EDMBass;
 
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> FBElectricGuitar;
-	
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> FBPiano;
-	
+
 	UPROPERTY(BlueprintReadWrite, meta = (BindWidget))
 	TObjectPtr<UImage> FBBass;
 
@@ -142,7 +142,7 @@ protected:
 	FButtonStyle OriginalSelectButtonStyle;
 
 	FButtonStyle OriginalSelectedButtonStyle;
-	
+
 	FButtonStyle OriginalDisabledButtonStyle;
 
 	int32 bIsNeverSelected:1 = true;

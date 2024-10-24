@@ -138,10 +138,10 @@ void USMCharacterSelectorScreenWidget::OnPickElectricGuitar()
 	{
 		return;
 	}
-	
-	if (OwningPlayerState->GetCharacterType() != ESMCharacterType::None)
+
+	if (GetOwningPlayerState()->GetCharacterType() != ESMCharacterType::None)
 	{
-		SetPlayerReady(GetOwningPlayerState(), false);
+		SetPlayerReady(GetOwningPlayerState(), ESMCharacterType::ElectricGuitar, false, true);
 	}
 
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
@@ -156,13 +156,13 @@ void USMCharacterSelectorScreenWidget::OnPickPiano()
 		return;
 	}
 
-	if (OwningPlayerState->GetCharacterType() != ESMCharacterType::None)
+	if (GetOwningPlayerState()->GetCharacterType() != ESMCharacterType::None)
 	{
-		SetPlayerReady(GetOwningPlayerState(), false);
+		SetPlayerReady(GetOwningPlayerState(), ESMCharacterType::Piano, false, true);
 	}
 
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
-	
+
 	ChangeFocusedCharacter(ESMCharacterType::Piano);
 }
 
@@ -173,9 +173,9 @@ void USMCharacterSelectorScreenWidget::OnPickBass()
 		return;
 	}
 
-	if (OwningPlayerState->GetCharacterType() != ESMCharacterType::None)
+	if (GetOwningPlayerState()->GetCharacterType() != ESMCharacterType::None)
 	{
-		SetPlayerReady(GetOwningPlayerState(), false);
+		SetPlayerReady(GetOwningPlayerState(), ESMCharacterType::Bass, false, true);
 	}
 
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
@@ -191,14 +191,14 @@ void USMCharacterSelectorScreenWidget::OnSelectButtonClicked()
 		bIsNeverSelected = false;
 		UpdatePlayerList();
 		UpdateSelectButton();
-		SetPlayerReady(GetOwningPlayerState(), true);
+		SetPlayerReady(GetOwningPlayerState(), FocusedCharacterType, true, true);
 		GetOwningPlayerState()->ChangeCharacterType(FocusedCharacterType);
 	}
 }
 
 void USMCharacterSelectorScreenWidget::OnPlayerJoin(ASMPlayerState* JoinedPlayer)
 {
-	if (JoinedPlayer->GetTeam() == OwningPlayerState->GetTeam())
+	if (JoinedPlayer->GetTeam() == GetOwningPlayerState()->GetTeam())
 	{
 		CurrentTeamPlayers.AddUnique(JoinedPlayer);
 		UpdatePlayerList();
@@ -208,7 +208,7 @@ void USMCharacterSelectorScreenWidget::OnPlayerJoin(ASMPlayerState* JoinedPlayer
 
 void USMCharacterSelectorScreenWidget::OnPlayerLeft(ASMPlayerState* LeftPlayer)
 {
-	SetPlayerReady(LeftPlayer, false);
+	SetPlayerReady(LeftPlayer, ESMCharacterType::None, false);
 	CurrentTeamPlayers.Remove(LeftPlayer);
 	UpdatePlayerList();
 	UpdateSelectButton();
@@ -216,14 +216,15 @@ void USMCharacterSelectorScreenWidget::OnPlayerLeft(ASMPlayerState* LeftPlayer)
 
 void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* Player, ESMCharacterType NewCharacter)
 {
-	if (Player->GetTeam() != OwningPlayerState->GetTeam())
+	if (Player->GetTeam() != GetOwningPlayerState()->GetTeam())
 	{
 		return;
 	}
 
-	SetPlayerReady(Player, NewCharacter != ESMCharacterType::None);
+	const bool IsOwningPlayer = (Player == GetOwningPlayerState());
+	const bool IsValidCharacter = (NewCharacter != ESMCharacterType::None);
 
-	if (Player == OwningPlayerState && NewCharacter != ESMCharacterType::None && FocusedCharacterType != NewCharacter)
+	if (const bool IsDifferentCharacter = (FocusedCharacterType != NewCharacter); IsOwningPlayer && IsValidCharacter && IsDifferentCharacter)
 	{
 		ChangeFocusedCharacter(NewCharacter);
 	}
@@ -231,6 +232,11 @@ void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* 
 	{
 		UpdatePlayerList();
 		UpdateSelectButton();
+
+		if (!IsOwningPlayer)
+		{
+			SetPlayerReady(Player, NewCharacter, IsValidCharacter);
+		}
 	}
 }
 
@@ -342,7 +348,7 @@ void USMCharacterSelectorScreenWidget::UpdatePlayerList() const
 		}
 	}
 
-	if (const int32 PlayerIndex = GetCurrentTeamPlayers().IndexOfByKey(OwningPlayerState); PlayerIndex != INDEX_NONE)
+	if (const int32 PlayerIndex = GetCurrentTeamPlayers().IndexOfByKey(GetOwningPlayerState()); PlayerIndex != INDEX_NONE)
 	{
 		CharacterSelectorInformationWidget->SetPlayerInfo(PlayerArray, PlayerIndex);
 	}
@@ -370,7 +376,7 @@ void USMCharacterSelectorScreenWidget::UpdateSelectButton()
 	{
 		if (const ASMCharacterSelectPlayerState* TargetPlayerState = Cast<ASMCharacterSelectPlayerState>(Player))
 		{
-			if (TargetPlayerState == OwningPlayerState)
+			if (TargetPlayerState == GetOwningPlayerState())
 			{
 				continue;
 			}
@@ -412,7 +418,7 @@ bool USMCharacterSelectorScreenWidget::IsCharacterSelectable(ESMCharacterType Ch
 
 	for (TObjectPtr<APlayerState> PlayerState : GetCurrentTeamPlayers())
 	{
-		if (bExcludeOwner && PlayerState == OwningPlayerState)
+		if (bExcludeOwner && PlayerState == GetOwningPlayerState())
 		{
 			continue;
 		}
@@ -435,14 +441,14 @@ bool USMCharacterSelectorScreenWidget::IsFocusedCharacterSelectable(bool bExclud
 	return IsCharacterSelectable(FocusedCharacterType, bExcludeOwner);
 }
 
-void USMCharacterSelectorScreenWidget::SetPlayerReady(ASMPlayerState* Player, const bool bIsReady) const
+void USMCharacterSelectorScreenWidget::SetPlayerReady(ASMPlayerState* Player, const ESMCharacterType CharacterType, const bool bIsReady, const bool bIsPredicated) const
 {
 	if (CharacterSelectorInformationWidget.IsValid())
 	{
-		TArray<ASMPlayerState*> PlayerArray = GetCurrentTeamPlayers();
+		const TArray<ASMPlayerState*> PlayerArray = GetCurrentTeamPlayers();
 		if (const int32 PlayerIndex = PlayerArray.IndexOfByKey(Player); PlayerIndex != INDEX_NONE)
 		{
-			CharacterSelectorInformationWidget->SetPlayerReady(PlayerArray[PlayerIndex], PlayerIndex, bIsReady);
+			CharacterSelectorInformationWidget->SetPlayerReady(PlayerIndex, CharacterType, bIsReady, bIsPredicated);
 		}
 	}
 }

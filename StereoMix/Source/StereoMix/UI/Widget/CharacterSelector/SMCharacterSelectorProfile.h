@@ -23,8 +23,14 @@ public:
 	void SetProfileImage(ESMTeam Team, ESMCharacterType CharacterType, ESMCharacterType FocusCharacterType);
 
 	void SetPlayerName(const FString& Name, bool bIsOwner);
+	
+	void SetCharacterType(ESMCharacterType CharacterType);
 
-	void SetPlayerReady(ASMPlayerState* Player, bool bIsReady);
+	void SetPlayerReady(bool bIsReady);
+
+	void SetProfileImageScalar(float InScalar);
+
+	void SetVisibilityByCharacterType(ESMTeam Team, ESMCharacterType InCharacterType, ESlateVisibility InVisibility, float InScalar);
 
 	void RemovePlayerInfo();
 

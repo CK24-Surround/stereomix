@@ -31,7 +31,7 @@ public:
 
 	void SetSkillInfo(ESMCharacterType InPlayerCharacterTypes);
 
-	void SetPlayerReady(ASMPlayerState* Player, int32 PlayerIndex, bool bIsReady);
+	void SetPlayerReady(int32 PlayerIndex, ESMCharacterType CharacterType, bool bIsReady, bool bIsPredicated = false);
 
 protected:
 	UPROPERTY()

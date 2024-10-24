@@ -137,7 +137,17 @@ void USMCharacterSelectorInformationWidget::SetSkillInfo(const ESMCharacterType 
 	}
 }
 
-void USMCharacterSelectorInformationWidget::SetPlayerReady(ASMPlayerState* Player, const int32 PlayerIndex, const bool bIsReady)
+void USMCharacterSelectorInformationWidget::SetPlayerReady(const int32 PlayerIndex, const ESMCharacterType CharacterType, const bool bIsReady, const bool bIsPredicated)
 {
-	PlayerProfiles[PlayerIndex]->SetPlayerReady(Player, bIsReady);
+	if (bIsPredicated)
+	{
+		constexpr float EnabledScalar = 0.0f;
+		constexpr float DisabledScalar = 2.0f;
+		PlayerProfiles[PlayerIndex]->SetProfileImageScalar(bIsReady ? EnabledScalar : DisabledScalar);
+		if (bIsReady)
+		{
+			PlayerProfiles[PlayerIndex]->SetCharacterType(CharacterType);
+		}
+	}
+	PlayerProfiles[PlayerIndex]->SetPlayerReady(bIsReady);
 }
