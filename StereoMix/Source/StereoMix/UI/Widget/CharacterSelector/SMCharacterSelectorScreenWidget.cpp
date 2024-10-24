@@ -5,6 +5,8 @@
 
 #include "CommonTextBlock.h"
 #include "EngineUtils.h"
+#include "NiagaraActor.h"
+#include "NiagaraComponent.h"
 #include "SMCharacterSelectorInformationWidget.h"
 #include "SMCharacterSelectorTimerWidget.h"
 #include "Animation/SkeletalMeshActor.h"
@@ -223,10 +225,20 @@ void USMCharacterSelectorScreenWidget::OnPlayerCharacterChanged(ASMPlayerState* 
 
 	const bool IsOwningPlayer = (Player == GetOwningPlayerState());
 	const bool IsValidCharacter = (NewCharacter != ESMCharacterType::None);
+	const bool IsDifferentCharacter = (FocusedCharacterType != NewCharacter);
 
-	if (const bool IsDifferentCharacter = (FocusedCharacterType != NewCharacter); IsOwningPlayer && IsValidCharacter && IsDifferentCharacter)
+	if (IsOwningPlayer && IsValidCharacter)
 	{
-		ChangeFocusedCharacter(NewCharacter);
+		// 캐릭터 선택 시간 종료 이후 강제 변경
+		if (GetOwningPlayerState()->GetCharacterType() != NewCharacter)
+		{
+			SetPlayerReady(GetOwningPlayerState(), NewCharacter, true);
+		}
+
+		if (IsDifferentCharacter)
+		{
+			ChangeFocusedCharacter(NewCharacter);
+		}
 	}
 	else
 	{
@@ -293,6 +305,7 @@ void USMCharacterSelectorScreenWidget::ChangeFocusedCharacter(const ESMCharacter
 void USMCharacterSelectorScreenWidget::ShowPreviewCharacter(const ESMCharacterType CharacterType)
 {
 	FName TargetTag = TEXT("ABP_None_FB");
+	FName SelectFXTag = TEXT("EDMCharacterSelectFX");
 	const ESMTeam LocalTeam = GetOwningPlayerState()->GetTeam();
 	switch (CharacterType)
 	{
@@ -316,12 +329,30 @@ void USMCharacterSelectorScreenWidget::ShowPreviewCharacter(const ESMCharacterTy
 
 	if (const UWorld* World = GetWorld())
 	{
+		ANiagaraActor* SelectFX = nullptr;
+		for (ANiagaraActor* Actor : TActorRange<ANiagaraActor>(World))
+		{
+			if (Actor->ActorHasTag(SelectFXTag))
+			{
+				SelectFX = Actor;
+				break;
+			}
+		}
+
 		for (ASkeletalMeshActor* Actor : TActorRange<ASkeletalMeshActor>(World))
 		{
 			if (Actor->ActorHasTag(TargetTag))
 			{
 				CharacterMesh = Actor;
 				CharacterMesh->SetActorHiddenInGame(false);
+				if (SelectFX)
+				{
+					SelectFX->AttachToActor(CharacterMesh, FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+					SelectFX->SetActorRelativeLocation(FVector::ZeroVector);
+					SelectFX->SetActorRelativeRotation(FRotator::ZeroRotator);
+					SelectFX->GetNiagaraComponent()->ResetSystem();
+					SelectFX->GetNiagaraComponent()->Activate();
+				}
 				break;
 			}
 		}
