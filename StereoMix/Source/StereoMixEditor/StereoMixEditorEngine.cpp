@@ -3,7 +3,7 @@
 
 #include "StereoMixEditorEngine.h"
 
-#include "Development/SMDeveloperSettings.h"
+#include "Development/SMEditorSettings.h"
 #include "Framework/Notifications/NotificationManager.h"
 #include "Engine/GameInstance.h"
 #include "Games/SMWorldSettings.h"
@@ -47,9 +47,6 @@ FGameInstancePIEResult UStereoMixEditorEngine::PreCreatePIEInstances(const bool 
 			}
 		}
 	}
-
-	//@TODO: Should add delegates that a *non-editor* module could bind to for PIE start/stop instead of poking directly
-	GetDefault<USMDeveloperSettings>()->OnPlayInEditorStarted();
 
 	return Super::PreCreatePIEInstances(bAnyBlueprintErrors, bStartInSpectatorMode, PIEStartTime, bSupportsOnlinePIE, InNumOnlinePIEInstances);
 }

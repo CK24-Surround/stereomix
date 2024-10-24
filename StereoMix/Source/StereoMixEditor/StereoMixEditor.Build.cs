@@ -21,6 +21,8 @@ public class StereoMixEditor : ModuleRules
             "GameplayAbilities",
             "GameplayAbilitiesEditor",
             "StudioTelemetry",
+            "ConsoleVariablesEditor",
+            "ConsoleVariablesEditorRuntime",
             "StereoMix"
 		});
 
@@ -34,10 +36,13 @@ public class StereoMixEditor : ModuleRules
             "DataValidation",
             "MessageLog",
             "Projects",
+            "DeveloperSettings",
             "DeveloperToolSettings",
             "CollectionManager",
             "SourceControl",
-            "Chaos"
+            "Chaos",
+            "CommonUI",
+            "CommonUIEditor"
 		});
 	}
 }

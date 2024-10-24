@@ -4,6 +4,8 @@
 #include "Editor/UnrealEd/Public/Editor.h"
 #include "Modules/ModuleManager.h"
 
+class UConsoleVariablesAsset;
+
 DECLARE_LOG_CATEGORY_EXTERN(LogStereoMixEditor, Log, All);
 
 class FStereoMixEditorModule : public IModuleInterface
