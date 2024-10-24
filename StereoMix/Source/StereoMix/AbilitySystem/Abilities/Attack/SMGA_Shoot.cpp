@@ -92,11 +92,15 @@ void USMGA_Shoot::Shoot()
 {
 #if WITH_SERVER_CODE
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
-	if (SourceCharacter && K2_CheckAbilityCost())
+	if (SourceCharacter && K2_CommitAbilityCost())
 	{
 		LaunchProjectile(SourceCharacter->GetActorLocation(), SourceCharacter->GetActorRotation());
-		K2_CommitAbilityCost();
 		ClientOnShoot();
+		ResetMontage();
+	}
+	else
+	{
+		EndAbilityByCancel();
 	}
 #endif
 }
