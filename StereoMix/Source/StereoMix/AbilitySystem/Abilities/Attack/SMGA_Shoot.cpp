@@ -7,6 +7,7 @@
 #include "Abilities/Tasks/AbilityTask_WaitDelay.h"
 #include "AbilitySystem/SMAbilitySystemComponent.h"
 #include "AbilitySystem/SMTags.h"
+#include "AbilitySystem/Task/SMAT_OnTick.h"
 #include "Actors/Character/Player/SMPlayerCharacterBase.h"
 #include "Actors/Projectiles/SMProjectile.h"
 #include "Data/DataAsset/Character/SMPlayerCharacterDataAsset.h"
@@ -28,6 +29,7 @@ USMGA_Shoot::USMGA_Shoot()
 		ProjectileSpeed = AttackData->ProjectileSpeed;
 		SpreadAngle = AttackData->SpreadAngle;
 		AccuracyShootRate = AttackData->AccuracyAttackRate;
+		AttackDelay = 1.0f / AttackPerSecond;
 	}
 }
 
@@ -53,58 +55,55 @@ void USMGA_Shoot::ActivateAbility(const FGameplayAbilitySpecHandle Handle, const
 	MontageTask->OnCompleted.AddDynamic(this, &ThisClass::K2_EndAbility);
 	MontageTask->ReadyForActivation();
 
-	if (IsLocallyControlled())
+	if (HasAuthority(&GetCurrentActivationInfoRef()))
 	{
-		if (const UWorld* World = GetWorld())
-		{
-			World->GetTimerManager().SetTimer(ShootTimerHandle, this, &USMGA_Shoot::Shoot, 1.0f / AttackPerSecond, true);
-			Shoot();
-		}
+		USMAT_OnTick* TickTask = USMAT_OnTick::AbilityTaskOnTick(this, TEXT("ShootTick"));
+		TickTask->OnTick.AddUObject(this, &ThisClass::ShootTick);
+		TickTask->ReadyForActivation();
 	}
 }
 
 void USMGA_Shoot::EndAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
-	bIsInputReleased = false;
-
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 
 void USMGA_Shoot::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
 {
-	bIsInputReleased = true;
+	EndAbility(CurrentSpecHandle, CurrentActorInfo, CurrentActivationInfo, true, false);
+}
+
+void USMGA_Shoot::ShootTick(const float DeltaTime)
+{
+#if WITH_SERVER_CODE
+	if (UWorld* World = GetWorld())
+	{
+		double CurrentTime = World->GetTimeSeconds();
+		if (CurrentTime > LastShootTime + AttackDelay)
+		{
+			Shoot();
+			LastShootTime = CurrentTime;
+		}
+	}
+#endif
 }
 
 void USMGA_Shoot::Shoot()
 {
-	if (bIsInputReleased) // 입력을 종료하면 기본 공격이 멈춥니다.
-	{
-		bIsInputReleased = false;
-
-		K2_EndAbility();
-		return;
-	}
-
+#if WITH_SERVER_CODE
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	if (SourceCharacter && K2_CheckAbilityCost())
 	{
-		const FVector SourceLocation = SourceCharacter->GetActorLocation();
-		const FVector TargetLocation = SourceCharacter->GetLocationFromCursor();
-		ServerRPCLaunchProjectile(SourceLocation, TargetLocation);
-		ServerRPCApplyCost();
-
-		const FName SectionName = TEXT("Default");
-		MontageJumpToSection(SectionName);
+		LaunchProjectile(SourceCharacter->GetActorLocation(), SourceCharacter->GetActorRotation());
+		K2_CommitAbilityCost();
+		ClientOnShoot();
 	}
+#endif
 }
 
-void USMGA_Shoot::ServerRPCApplyCost_Implementation()
+void USMGA_Shoot::LaunchProjectile(const FVector& InLocation, const FRotator& InRotation)
 {
-	K2_CommitAbilityCost();
-}
-
-void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuantize10& SourceLocation, const FVector_NetQuantize10& TargetLocation)
-{
+#if WITH_SERVER_CODE
 	ASMPlayerCharacterBase* SourceCharacter = GetCharacter();
 	const ESMTeam SourceTeam = SourceCharacter->GetTeam();
 	ASMProjectile* Projectile = USMProjectileFunctionLibrary::GetElectricGuitarProjectile(GetWorld(), SourceTeam);
@@ -125,12 +124,12 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 		RandomYaw = (FMath::Rand() % static_cast<int32>(SpreadAngle)) - (SpreadAngle / 2.0f);
 	}
 
-	const FVector LaunchDirection = ((TargetLocation - SourceLocation).Rotation() + FRotator(0.0, RandomYaw, 0.0)).Vector();
+	const FVector LaunchDirection = (InRotation + FRotator(0.0, RandomYaw, 0.0)).Vector();
 	const float MaxDistance = MaxDistanceByTile * 150.0f;
 
 	FSMProjectileParameters ProjectileParams;
 	ProjectileParams.Owner = SourceCharacter;
-	ProjectileParams.StartLocation = SourceLocation;
+	ProjectileParams.StartLocation = InLocation;
 	ProjectileParams.Normal = LaunchDirection;
 	ProjectileParams.Damage = Damage;
 	ProjectileParams.Speed = ProjectileSpeed;
@@ -144,4 +143,16 @@ void USMGA_Shoot::ServerRPCLaunchProjectile_Implementation(const FVector_NetQuan
 		GCParams.Location = FVector(150.0, 0.0, 0.0);
 		SourceASC->ExecuteGC(SourceCharacter, SMTags::GameplayCue::ElectricGuitar::Shoot, GCParams);
 	}
+#endif
+}
+
+void USMGA_Shoot::ClientOnShoot_Implementation()
+{
+	ResetMontage();
+}
+
+void USMGA_Shoot::ResetMontage()
+{
+	const FName SectionName = TEXT("Default");
+	MontageJumpToSection(SectionName);
 }
