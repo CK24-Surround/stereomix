@@ -17,6 +17,8 @@ ASMProjectile::ASMProjectile()
 	bAlwaysRelevant = true;
 	bReplicates = true;
 
+	NetPriority = 4.f;
+
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	RootComponent = SphereComponent;
 	SphereComponent->SetCollisionProfileName(SMCollisionProfileName::Projectile);
