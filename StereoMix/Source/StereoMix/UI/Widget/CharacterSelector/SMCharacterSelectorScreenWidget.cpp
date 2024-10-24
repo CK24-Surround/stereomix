@@ -138,6 +138,11 @@ void USMCharacterSelectorScreenWidget::OnPickElectricGuitar()
 	{
 		return;
 	}
+	
+	if (OwningPlayerState->GetCharacterType() != ESMCharacterType::None)
+	{
+		SetPlayerReady(GetOwningPlayerState(), false);
+	}
 
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
 
@@ -151,8 +156,13 @@ void USMCharacterSelectorScreenWidget::OnPickPiano()
 		return;
 	}
 
-	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
+	if (OwningPlayerState->GetCharacterType() != ESMCharacterType::None)
+	{
+		SetPlayerReady(GetOwningPlayerState(), false);
+	}
 
+	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
+	
 	ChangeFocusedCharacter(ESMCharacterType::Piano);
 }
 
@@ -161,6 +171,11 @@ void USMCharacterSelectorScreenWidget::OnPickBass()
 	if (FocusedCharacterType == ESMCharacterType::Bass)
 	{
 		return;
+	}
+
+	if (OwningPlayerState->GetCharacterType() != ESMCharacterType::None)
+	{
+		SetPlayerReady(GetOwningPlayerState(), false);
 	}
 
 	GetOwningPlayerState()->ChangeCharacterType(ESMCharacterType::None);
@@ -174,6 +189,9 @@ void USMCharacterSelectorScreenWidget::OnSelectButtonClicked()
 	if (IsFocusedCharacterSelectable(false))
 	{
 		bIsNeverSelected = false;
+		UpdatePlayerList();
+		UpdateSelectButton();
+		SetPlayerReady(GetOwningPlayerState(), true);
 		GetOwningPlayerState()->ChangeCharacterType(FocusedCharacterType);
 	}
 }

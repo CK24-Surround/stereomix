@@ -12,48 +12,62 @@ class ASMPlayerState;
 
 void USMCharacterSelectorProfile::SetProfileImage(ESMTeam Team, ESMCharacterType CharacterType, ESMCharacterType FocusCharacterType)
 {
-	(Team == ESMTeam::EDM ? ProfileEDM1 : ProfileFB1)->SetVisibility(ESlateVisibility::Hidden);
-	(Team == ESMTeam::EDM ? ProfileEDM2 : ProfileFB2)->SetVisibility(ESlateVisibility::Hidden);
-	(Team == ESMTeam::EDM ? ProfileEDM3 : ProfileFB3)->SetVisibility(ESlateVisibility::Hidden);
-
 	constexpr float EnabledScalar = 0.0f;
 	constexpr float DisabledScalar = 2.0f;
 
-	(Team == ESMTeam::EDM ? ProfileEDM1 : ProfileFB1)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), DisabledScalar);
-	(Team == ESMTeam::EDM ? ProfileEDM2 : ProfileFB2)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), DisabledScalar);
-	(Team == ESMTeam::EDM ? ProfileEDM3 : ProfileFB3)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), DisabledScalar);
+	auto SetVisibilityByCharacterType = [this, Team](ESMCharacterType InCharacterType, ESlateVisibility InVisibility, float InScalar = EnabledScalar) {
+		switch (InCharacterType)
+		{
+			case ESMCharacterType::None:
+				break;
+			case ESMCharacterType::ElectricGuitar:
+				(Team == ESMTeam::EDM ? ProfileEDM1 : ProfileFB1)->SetVisibility(InVisibility);
+				(Team == ESMTeam::EDM ? ProfileEDM1 : ProfileFB1)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), InScalar);
+				break;
+			case ESMCharacterType::Piano:
+				(Team == ESMTeam::EDM ? ProfileEDM2 : ProfileFB2)->SetVisibility(InVisibility);
+				(Team == ESMTeam::EDM ? ProfileEDM2 : ProfileFB2)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), InScalar);
+				break;
+			case ESMCharacterType::Bass:
+				(Team == ESMTeam::EDM ? ProfileEDM3 : ProfileFB3)->SetVisibility(InVisibility);
+				(Team == ESMTeam::EDM ? ProfileEDM3 : ProfileFB3)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), InScalar);
+				break;
+		}
+	};
 
+	// 모든 프로필 비활성화
+	for (auto& Profile : { ESMCharacterType::ElectricGuitar, ESMCharacterType::Piano, ESMCharacterType::Bass })
+	{
+		SetVisibilityByCharacterType(Profile, ESlateVisibility::Hidden, DisabledScalar);
+	}
+
+	if (FocusCharacterType == ESMCharacterType::None)
+	{
+		return;
+	}
+
+	// 선택된 상태에서 포커스를 변경한 경우
+	if (FocusCharacterType != CharacterType)
+	{
+		SetVisibilityByCharacterType(FocusCharacterType, ESlateVisibility::Visible, DisabledScalar);
+		return;
+	}
+
+	// 선택된 캐릭터 프로필 활성화
+	SetVisibilityByCharacterType(CharacterType, ESlateVisibility::Visible);
 	switch (CharacterType)
 	{
 		case ESMCharacterType::None:
 			PlayerCharacterType->SetText(FText::FromString(TEXT("선택중...")));
-			if (FocusCharacterType == ESMCharacterType::ElectricGuitar)
-			{
-				(Team == ESMTeam::EDM ? ProfileEDM1 : ProfileFB1)->SetVisibility(ESlateVisibility::Visible);
-			}
-			else if (FocusCharacterType == ESMCharacterType::Piano)
-			{
-				(Team == ESMTeam::EDM ? ProfileEDM2 : ProfileFB2)->SetVisibility(ESlateVisibility::Visible);
-			}
-			else if (FocusCharacterType == ESMCharacterType::Bass)
-			{
-				(Team == ESMTeam::EDM ? ProfileEDM3 : ProfileFB3)->SetVisibility(ESlateVisibility::Visible);
-			}
 			break;
 		case ESMCharacterType::ElectricGuitar:
 			PlayerCharacterType->SetText(FText::FromString(TEXT("일렉기타")));
-			(Team == ESMTeam::EDM ? ProfileEDM1 : ProfileFB1)->SetVisibility(ESlateVisibility::Visible);
-			(Team == ESMTeam::EDM ? ProfileEDM1 : ProfileFB1)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
 			break;
 		case ESMCharacterType::Piano:
 			PlayerCharacterType->SetText(FText::FromString(TEXT("피아노")));
-			(Team == ESMTeam::EDM ? ProfileEDM2 : ProfileFB2)->SetVisibility(ESlateVisibility::Visible);
-			(Team == ESMTeam::EDM ? ProfileEDM2 : ProfileFB2)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
 			break;
 		case ESMCharacterType::Bass:
 			PlayerCharacterType->SetText(FText::FromString(TEXT("베이스")));
-			(Team == ESMTeam::EDM ? ProfileEDM3 : ProfileFB3)->SetVisibility(ESlateVisibility::Visible);
-			(Team == ESMTeam::EDM ? ProfileEDM3 : ProfileFB3)->GetDynamicMaterial()->SetScalarParameterValue(TEXT("State"), EnabledScalar);
 			break;
 	}
 }
