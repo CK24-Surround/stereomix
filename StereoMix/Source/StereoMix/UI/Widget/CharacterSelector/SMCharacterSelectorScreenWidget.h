@@ -64,9 +64,6 @@ protected:
 	UFUNCTION()
 	void ChangeFocusedCharacter(ASMPlayerState* Player, ESMCharacterType NewCharacter);
 
-	UFUNCTION()
-	void OnCharacterChangeResponse(bool bSuccess, ESMCharacterType NewCharacterType);
-
 	TArray<TObjectPtr<ASMPlayerState>> GetCurrentTeamPlayers() const;
 
 	void ChangeFocusedCharacter(ESMCharacterType CharacterType);
@@ -145,7 +142,9 @@ protected:
 
 	FButtonStyle OriginalDisabledButtonStyle;
 
-	int32 bIsNeverSelected:1 = true;
+	uint32 bIsNeverSelected:1 = true;
+	
+	uint32 bSelectEnabled:1 = true;
 
 	ESMCharacterType FocusedCharacterType = ESMCharacterType::None;
 

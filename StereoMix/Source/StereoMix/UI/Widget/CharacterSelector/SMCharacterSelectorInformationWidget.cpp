@@ -144,10 +144,7 @@ void USMCharacterSelectorInformationWidget::SetPlayerReady(const int32 PlayerInd
 		constexpr float EnabledScalar = 0.0f;
 		constexpr float DisabledScalar = 2.0f;
 		PlayerProfiles[PlayerIndex]->SetProfileImageScalar(bIsReady ? EnabledScalar : DisabledScalar);
-		if (bIsReady)
-		{
-			PlayerProfiles[PlayerIndex]->SetCharacterType(CharacterType);
-		}
+		PlayerProfiles[PlayerIndex]->SetCharacterType(bIsReady ? CharacterType : ESMCharacterType::None);
 	}
 	PlayerProfiles[PlayerIndex]->SetPlayerReady(bIsReady);
 }

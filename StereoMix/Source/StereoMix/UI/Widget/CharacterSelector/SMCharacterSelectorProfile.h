@@ -23,7 +23,7 @@ public:
 	void SetProfileImage(ESMTeam Team, ESMCharacterType CharacterType, ESMCharacterType FocusCharacterType);
 
 	void SetPlayerName(const FString& Name, bool bIsOwner);
-	
+
 	void SetCharacterType(ESMCharacterType CharacterType);
 
 	void SetPlayerReady(bool bIsReady);
@@ -58,6 +58,9 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCommonTextBlock> PlayerCharacterType;
+
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UImage> PlayerReadyState;
 
 	UPROPERTY(Transient, meta = (BindWidgetAnim))
 	TObjectPtr<UWidgetAnimation> ReadyState;

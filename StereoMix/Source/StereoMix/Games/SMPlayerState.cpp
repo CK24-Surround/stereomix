@@ -68,6 +68,7 @@ void ASMPlayerState::OnRep_Team(const ESMTeam PreviousTeam)
 
 void ASMPlayerState::OnRep_CharacterType(const ESMCharacterType PreviousCharacterType)
 {
+	NET_LOG(this, Verbose, TEXT("[SMPlayerState] Player %s character type replicated: %s -> %s"), *GetPlayerName(), *UEnum::GetValueAsString(PreviousCharacterType), *UEnum::GetValueAsString(CharacterType))
 	OnCharacterTypeChanged(PreviousCharacterType, CharacterType);
 }
 
@@ -107,7 +108,8 @@ void ASMPlayerState::OnCharacterTypeChanged(const ESMCharacterType PreviousChara
 
 bool ASMPlayerState::SetCharacterType(ESMCharacterType NewCharacterType)
 {
-	if (!CanChangeCharacterType(NewCharacterType))
+	// !CanChangeCharacterType(NewCharacterType) 왜 안되는지 확인 필요...
+	if (CharacterType == NewCharacterType)
 	{
 		return false;
 	}

@@ -25,16 +25,18 @@ void USMCharacterSelectorProfile::SetProfileImage(ESMTeam Team, ESMCharacterType
 		return;
 	}
 
+	SetCharacterType(CharacterType);
+
 	// 선택된 상태에서 포커스를 변경한 경우
-	if (FocusCharacterType != CharacterType)
+	if (CharacterType == ESMCharacterType::None || CharacterType != FocusCharacterType)
 	{
-		SetCharacterType(ESMCharacterType::None);
+		SetPlayerReady(false);
 		SetVisibilityByCharacterType(Team, FocusCharacterType, ESlateVisibility::Visible, DisabledScalar);
 		return;
 	}
 
 	// 선택된 캐릭터 프로필 활성화
-	SetCharacterType(CharacterType);
+	SetPlayerReady(CharacterType != ESMCharacterType::None);
 	SetVisibilityByCharacterType(Team, CharacterType, ESlateVisibility::Visible, EnabledScalar);
 }
 
@@ -67,7 +69,19 @@ void USMCharacterSelectorProfile::SetCharacterType(const ESMCharacterType Charac
 
 void USMCharacterSelectorProfile::SetPlayerReady(bool bIsReady)
 {
-	bIsReady ? PlayAnimationForward(ReadyState) : PlayAnimationReverse(ReadyState);
+	if (!bIsReady)
+	{
+		PlayerReadyState->SetVisibility(ESlateVisibility::Hidden);
+		return;
+	}
+
+	// if (IsAnimationPlayingForward(ReadyState))
+	// {
+	// 	return;
+	// }
+
+	PlayerReadyState->SetVisibility(ESlateVisibility::Visible);
+	// PlayAnimationForward(ReadyState);
 }
 
 void USMCharacterSelectorProfile::SetProfileImageScalar(float InScalar)
@@ -104,6 +118,7 @@ void USMCharacterSelectorProfile::RemovePlayerInfo()
 		Profile->SetVisibility(ESlateVisibility::Hidden);
 	}
 
+	SetPlayerReady(false);
 	SetPlayerName("", false);
 	PlayerCharacterType->SetText(FText::FromString(TEXT("")));
 }
