@@ -292,28 +292,24 @@ void USMCharacterSelectorScreenWidget::ShowPreviewCharacter(const ESMCharacterTy
 			}
 		}
 
+		if (SelectFX == nullptr)
+		{
+			return;
+		}
+		
 		for (ASkeletalMeshActor* Actor : TActorRange<ASkeletalMeshActor>(World))
 		{
 			if (Actor->ActorHasTag(TargetTag))
 			{
 				CharacterMesh = Actor;
 				CharacterMesh->SetActorHiddenInGame(false);
-				if (SelectFX)
+				if (const USkeletalMeshComponent* MeshComponent = CharacterMesh->GetSkeletalMeshComponent())
 				{
-					const wchar_t* const AttachBoneName = TEXT("b_Spine_0");
-					if (const int32 AttachLocation = CharacterMesh->GetSkeletalMeshComponent()->GetBoneIndex(AttachBoneName); AttachLocation != INDEX_NONE)
-					{
-						const FAttachmentTransformRules AttachRules(EAttachmentRule::SnapToTarget, true);
-						SelectFX->AttachToComponent(
-							CharacterMesh->GetSkeletalMeshComponent(),
-							AttachRules,
-							AttachBoneName
-							);
-						SelectFX->SetActorRelativeLocation(FVector::ZeroVector);
-						SelectFX->SetActorRelativeRotation(FRotator::ZeroRotator);
-						SelectFX->GetNiagaraComponent()->ResetSystem();
-						SelectFX->GetNiagaraComponent()->Activate();
-					}
+					const wchar_t* const AttachBoneName = TEXT("b-Spine-0");
+					const FVector BoneLocation = MeshComponent->GetBoneLocation(AttachBoneName, static_cast<EBoneSpaces::Type>(RTS_World));
+					SelectFX->SetActorLocation(BoneLocation);
+					SelectFX->GetNiagaraComponent()->ResetSystem();
+					SelectFX->GetNiagaraComponent()->Activate();
 				}
 				break;
 			}
